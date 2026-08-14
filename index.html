@@ -1,24 +1,52 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="羽升 YuSheng 的个人博客 —— 记录 AI 成长、沉淀方法论、构建电子分身。">
 <title>羽升 · YuSheng · 电子分身 | 占位启航</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #06070d;
-    --bg-2: #0b0e1a;
-    --ink: #e8eaf2;
-    --ink-dim: #8b90a5;
-    --accent: #7c8cff;
-    --accent-2: #52e0c4;
-    --gold: #ffd166;
-    --rose: #ff6b9d;
-    --card: rgba(255, 255, 255, 0.04);
-    --card-border: rgba(255, 255, 255, 0.09);
     --font: "Inter", "PingFang SC", "Microsoft YaHei", -apple-system, sans-serif;
     --mono: "JetBrains Mono", "Cascadia Code", Consolas, monospace;
+    --transition: .3s;
+  }
+  html[data-theme="dark"] {
+    --bg: #0c0e14;
+    --bg-2: #12151f;
+    --ink: #e8eaf2;
+    --ink-dim: #8b90a5;
+    --accent: #d4a373;
+    --accent-rgb: 212, 163, 115;
+    --accent-2: #84a98c;
+    --accent-2-rgb: 132, 169, 140;
+    --gold: #e9c46a;
+    --rose: #e07a5f;
+    --card: rgba(255, 255, 255, 0.04);
+    --card-border: rgba(255, 255, 255, 0.09);
+    --nav-bg: rgba(12, 14, 20, 0.72);
+    --term-bg: rgba(4, 5, 10, 0.92);
+    --shadow: rgba(0, 0, 0, 0.55);
+  }
+  html[data-theme="light"] {
+    --bg: #f5f7fc;
+    --bg-2: #ffffff;
+    --ink: #111827;
+    --ink-dim: #4b5563;
+    --accent: #b45309;
+    --accent-rgb: 180, 83, 9;
+    --accent-2: #52796f;
+    --accent-2-rgb: 82, 121, 111;
+    --gold: #d97706;
+    --rose: #c2410c;
+    --card: rgba(0, 0, 0, 0.03);
+    --card-border: rgba(0, 0, 0, 0.08);
+    --nav-bg: rgba(245, 247, 252, 0.82);
+    --term-bg: rgba(245, 247, 252, 0.96);
+    --shadow: rgba(0, 0, 0, 0.1);
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html { scroll-behavior: smooth; }
@@ -38,7 +66,7 @@
   }
   .cursor-dot { width: 6px; height: 6px; background: var(--accent-2); transition: transform .15s; }
   .cursor-halo {
-    width: 36px; height: 36px; border: 1px solid rgba(124, 140, 255, .5);
+    width: 36px; height: 36px; border: 1px solid rgba(var(--accent-rgb), .5);
     transition: transform .18s ease-out, width .3s, height .3s, border-color .3s;
   }
   body.cursor-hover .cursor-halo { width: 56px; height: 56px; border-color: var(--accent-2); }
@@ -64,9 +92,19 @@
     display: flex; justify-content: space-between; align-items: center;
     padding: 18px 32px;
     backdrop-filter: blur(14px);
-    background: rgba(6, 7, 13, 0.55);
-    border-bottom: 1px solid rgba(255,255,255,0.05);
+    background: var(--nav-bg);
+    border-bottom: 1px solid var(--card-border);
   }
+  .nav-right { display: flex; align-items: center; gap: 14px; }
+  .theme-btn {
+    width: 38px; height: 38px;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--card); border: 1px solid var(--card-border); border-radius: 10px;
+    color: var(--ink); cursor: pointer;
+    transition: border-color var(--transition), transform var(--transition);
+  }
+  .theme-btn:hover { border-color: var(--accent); transform: translateY(-1px); }
+  .theme-btn svg { width: 18px; height: 18px; }
   .logo {
     font-family: var(--mono); font-weight: 700; font-size: 18px; letter-spacing: 1px;
     background: linear-gradient(120deg, var(--accent), var(--accent-2));
@@ -83,9 +121,9 @@
     animation: pulse 1.8s infinite;
   }
   @keyframes pulse {
-    0% { box-shadow: 0 0 0 0 rgba(82, 224, 196, .6); }
-    70% { box-shadow: 0 0 0 9px rgba(82, 224, 196, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(82, 224, 196, 0); }
+    0% { box-shadow: 0 0 0 0 rgba(var(--accent-2-rgb), .6); }
+    70% { box-shadow: 0 0 0 9px rgba(var(--accent-2-rgb), 0); }
+    100% { box-shadow: 0 0 0 0 rgba(var(--accent-2-rgb), 0); }
   }
 
   /* ---------- Hero ---------- */
@@ -100,7 +138,7 @@
   }
   .hero-meta a {
     color: var(--accent); text-decoration: none; position: relative;
-    border-bottom: 1px dashed rgba(124, 140, 255, .5);
+    border-bottom: 1px dashed rgba(var(--accent-rgb), .5);
     transition: color .25s, border-color .25s;
   }
   .hero-meta a:hover { color: var(--accent-2); border-bottom-style: solid; border-color: var(--accent-2); }
@@ -148,11 +186,11 @@
   }
   .card::before {
     content: ""; position: absolute; inset: 0;
-    background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), rgba(124,140,255,.13), transparent 45%);
+    background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), rgba(var(--accent-rgb),.13), transparent 45%);
     opacity: 0; transition: opacity .3s; pointer-events: none;
   }
   .card:hover::before { opacity: 1; }
-  .card:hover { border-color: rgba(124,140,255,.4); box-shadow: 0 18px 50px -18px rgba(124,140,255,.35); }
+  .card:hover { border-color: rgba(var(--accent-rgb),.4); box-shadow: 0 18px 50px -18px rgba(var(--accent-rgb),.35); }
   .card .num {
     font-family: var(--mono); font-size: 44px; font-weight: 800; line-height: 1;
     color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,.18);
@@ -161,7 +199,7 @@
   .card p { color: var(--ink-dim); font-size: 14px; line-height: 1.9; }
   .card .chip {
     display: inline-block; margin-top: 18px; font-family: var(--mono); font-size: 11px;
-    color: var(--accent-2); border: 1px solid rgba(82,224,196,.35);
+    color: var(--accent-2); border: 1px solid rgba(var(--accent-2-rgb),.35);
     padding: 3px 10px; border-radius: 999px;
   }
 
@@ -193,12 +231,12 @@
   /* ---------- 部署终端 ---------- */
   .terminal {
     border-radius: 14px; border: 1px solid var(--card-border); overflow: hidden;
-    background: rgba(4,5,10,.85); font-family: var(--mono); font-size: 13px;
-    box-shadow: 0 24px 70px -30px rgba(0,0,0,.9);
+    background: var(--term-bg); font-family: var(--mono); font-size: 13px;
+    box-shadow: 0 24px 70px -30px var(--shadow);
   }
   .term-bar {
     display: flex; align-items: center; gap: 7px; padding: 11px 16px;
-    background: rgba(255,255,255,.04); border-bottom: 1px solid var(--card-border);
+    background: var(--card); border-bottom: 1px solid var(--card-border);
   }
   .term-bar i { width: 11px; height: 11px; border-radius: 50%; }
   .term-bar i:nth-child(1) { background: #ff5f57; } .term-bar i:nth-child(2) { background: #febc2e; } .term-bar i:nth-child(3) { background: #28c840; }
@@ -251,7 +289,14 @@
 
 <nav>
   <div class="logo" id="logo" title="试试多点几下？">YU·SHENG</div>
-  <div class="nav-badge"><span class="pulse"></span>v0.0.1 · EdgeOne Pages 部署验证中</div>
+  <div class="nav-right">
+    <div class="nav-badge"><span class="pulse"></span>v0.0.1 · EdgeOne Pages 部署验证中</div>
+    <button class="theme-btn" id="themeToggle" aria-label="切换主题">
+      <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+      </svg>
+    </button>
+  </div>
 </nav>
 
 <main>
@@ -368,6 +413,9 @@
 /* ================= 星空粒子 ================= */
 const cvs = document.getElementById('stars'), ctx = cvs.getContext('2d');
 let W, H, stars = [], mouse = { x: -999, y: -999 };
+function getCssVar(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+let starRGB = getCssVar('--accent-rgb'), lineRGB = getCssVar('--accent-2-rgb');
+function updateStarColors() { starRGB = getCssVar('--accent-rgb'); lineRGB = getCssVar('--accent-2-rgb'); }
 function resize() {
   W = cvs.width = innerWidth; H = cvs.height = innerHeight;
   const n = Math.min(140, Math.floor(W * H / 12000));
@@ -377,6 +425,7 @@ function resize() {
     vx: (Math.random() - .5) * .25, vy: (Math.random() - .5) * .25,
     tw: Math.random() * Math.PI * 2
   }));
+  updateStarColors();
 }
 addEventListener('resize', resize); resize();
 (function loop() {
@@ -389,13 +438,13 @@ addEventListener('resize', resize); resize();
     if (d < 130) { s.x += dx / d * 1.1; s.y += dy / d * 1.1; }
     const a = .35 + Math.sin(s.tw) * .25;
     ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, 7);
-    ctx.fillStyle = `rgba(160,175,255,${a})`; ctx.fill();
+    ctx.fillStyle = `rgba(${starRGB},${a})`; ctx.fill();
   }
   for (let i = 0; i < stars.length; i++) for (let j = i + 1; j < stars.length; j++) {
     const a = stars[i], b = stars[j], d = Math.hypot(a.x - b.x, a.y - b.y);
     if (d < 110) {
       ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y);
-      ctx.strokeStyle = `rgba(124,140,255,${(1 - d / 110) * .12})`; ctx.stroke();
+      ctx.strokeStyle = `rgba(${lineRGB},${(1 - d / 110) * .12})`; ctx.stroke();
     }
   }
   requestAnimationFrame(loop);
@@ -413,7 +462,7 @@ addEventListener('mousemove', e => {
   halo.style.left = hx + 'px'; halo.style.top = hy + 'px';
   requestAnimationFrame(haloLoop);
 })();
-document.querySelectorAll('a, .card, .logo, .t-item').forEach(el => {
+document.querySelectorAll('a, .card, .logo, .t-item, .theme-btn').forEach(el => {
   el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
   el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
 });
@@ -518,9 +567,31 @@ addEventListener('keydown', e => {
 /* 控制台彩蛋（隐藏款，不计数） */
 console.log(
   '%c 羽升 · YU·SHENG %c 你好，翻控制台的朋友。\n这个站点还是一颗种子，但它会长成我的电子分身。\n—— 有些秘密写在代码里，有些藏在未来的权限系统之后。'
-  'background:linear-gradient(120deg,#7c8cff,#52e0c4);color:#fff;padding:4px 10px;border-radius:4px;font-weight:bold',
+  'background:linear-gradient(120deg,#d4a373,#84a98c);color:#fff;padding:4px 10px;border-radius:4px;font-weight:bold',
   'color:#8b90a5;line-height:1.8'
 );
+
+/* ================= 主题切换 ================= */
+const html = document.documentElement;
+const themeBtn = document.getElementById('themeToggle');
+const themeIcon = document.getElementById('themeIcon');
+function setTheme(theme) {
+  html.setAttribute('data-theme', theme);
+  localStorage.setItem('yusheng_theme', theme);
+  updateStarColors();
+  if (theme === 'light') {
+    themeIcon.innerHTML = '<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>';
+  } else {
+    themeIcon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>';
+  }
+}
+const saved = localStorage.getItem('yusheng_theme');
+if (saved) setTheme(saved);
+else if (!html.hasAttribute('data-theme')) setTheme('light');
+else setTheme(html.getAttribute('data-theme'));
+themeBtn.addEventListener('click', () => {
+  setTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+});
 </script>
 </body>
 </html>
