@@ -11,6 +11,10 @@
 - API 设计规范
 - 文档编写规范
 
+## 现有文档
+
+- [code-size-and-organization.md](./code-size-and-organization.md) — 代码长度与文件组织规范（长度阈值、colocation 放置原则、拆分判断方法）
+
 ## 与 AGENTS.md 的关系
 
 `AGENTS.md` 是面向 AI 编码代理的操作策略文件，而本目录存放的是面向人类开发者的完整规范文档。AGENTS.md 中的规则应与本目录下的规范保持一致，但本目录可以包含更详细的解释和背景说明。
