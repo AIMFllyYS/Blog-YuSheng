@@ -91,6 +91,7 @@ export function RopeNavigation({
             <Link
               className="flex min-h-11 min-w-20 items-center justify-center border border-[var(--line)] bg-[var(--accent)] px-4 py-2 [font-family:var(--font-serif)] text-sm font-semibold tracking-[0.18em] text-[var(--bg-elevated)] shadow-[0_9px_24px_var(--shadow-color)] transition-transform duration-[var(--dur-fast)] ease-out [clip-path:polygon(0_0,100%_0,100%_82%,50%_100%,0_82%)] hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]"
               href="/blog/"
+              prefetch={false}
             >
               博客
             </Link>

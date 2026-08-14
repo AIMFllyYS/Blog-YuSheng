@@ -483,6 +483,24 @@ class Acceptance:
         )
         context.close()
 
+        context, page = self.new_context(
+            browser,
+            viewport={"width": 390, "height": 844},
+            mobile=True,
+        )
+        self.wire_diagnostics(page, "blog-link-navigation")
+        page.goto(f"{self.base_url}/", wait_until="networkidle", timeout=60_000)
+        page.locator('[data-testid="mobile-home"]').wait_for(
+            state="visible", timeout=30_000
+        )
+        page.locator('[data-home-destination="blog"]').click()
+        page.wait_for_url("**/blog/", timeout=30_000)
+        self.check(
+            page.get_by_role("heading", name="博客").is_visible(),
+            "home-blog-link-navigates",
+        )
+        context.close()
+
     def verify_mobile_bundle_boundary(self) -> None:
         def contains_marker(url: str) -> bool:
             try:

@@ -50,6 +50,7 @@ function DestinationEntry({
         data-home-destination={destination.id}
         data-home-reveal
         href={destination.href}
+        prefetch={false}
       >
         {content}
       </Link>

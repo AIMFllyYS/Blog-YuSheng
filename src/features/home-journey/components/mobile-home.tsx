@@ -46,6 +46,7 @@ function MobileDestination({
         className={`${cardClassName} transition-[transform,border-color] duration-[var(--dur-fast)] ease-out active:translate-y-0.5`}
         data-home-destination={destination.id}
         href={destination.href}
+        prefetch={false}
       >
         {content}
       </Link>

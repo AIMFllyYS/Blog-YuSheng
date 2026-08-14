@@ -7,6 +7,7 @@ export function BlogIndex() {
         <Link
           className="inline-flex min-h-11 items-center border-b border-[var(--line)] text-sm tracking-[0.16em] text-[var(--accent)] transition-colors duration-[var(--dur-fast)] hover:border-[var(--accent)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--accent)]"
           href="/"
+          prefetch={false}
         >
           ← 返回众妙之门
         </Link>

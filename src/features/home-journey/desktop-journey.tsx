@@ -65,9 +65,6 @@ function MotionStage({ layout }: MotionStageProps) {
         return () => timeline.eventCallback('onUpdate', null)
       }
 
-      const stage = stageRef.current
-      if (!stage) return
-
       const trigger = ScrollTrigger.create({
         id: 'home-journey-master',
         trigger: root,
