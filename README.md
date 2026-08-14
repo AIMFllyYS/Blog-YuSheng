@@ -2,7 +2,7 @@
 
 # 🌌 Blog-YuSheng
 
-**我的电子分身 · 从一颗种子开始生长**
+**羽升 · 我的电子分身 · 从一颗种子开始生长**
 
 [![Status](https://img.shields.io/badge/status-🌱_占位启航-52e0c4?style=flat-square)](https://github.com/AIMFllyYS/Blog-YuSheng)
 [![Version](https://img.shields.io/badge/version-v0.0.1-7c8cff?style=flat-square)](#)
@@ -10,6 +10,8 @@
 [![Made With](https://img.shields.io/badge/made_with-♥_与困意-ff6b9d?style=flat-square)](#-一个诚实的说明)
 
 *这不只是一个博客，这是我留给未来的一份持续更新的自我。*
+
+**网址**：https://blog.yusheng.email · **联系**：contact@yusheng.email
 
 </div>
 
@@ -190,7 +192,7 @@ EdgeOne Pages 监听仓库变更
 
 <div align="center">
 
-**© 2026 YuSheng**
+**© 2026 羽升 YuSheng**
 
 *一颗会长大的种子 · 用 ♥ 与困意写于一个午后*
 
