@@ -75,13 +75,14 @@ export function Atmosphere({ gold, goldSoft, progressRef }: AtmosphereProps) {
     const ambientTime = snapshot?.qaFreeze ? 0 : clock.elapsedTime
 
     if (starGroupRef.current) {
-      starGroupRef.current.rotation.z = ambientTime * 0.0007
+      starGroupRef.current.rotation.z = ambientTime * 0.0007 + progress * 0.018
       starGroupRef.current.rotation.y = progress * 0.012
     }
 
     if (dustGroupRef.current) {
-      dustGroupRef.current.rotation.z = ambientTime * 0.006 + progress * 0.04
-      dustGroupRef.current.position.y = Math.sin(ambientTime * 0.09) * 0.035
+      dustGroupRef.current.rotation.z = ambientTime * 0.006 + progress * 0.09
+      dustGroupRef.current.position.y =
+        Math.sin(ambientTime * 0.09 + progress * Math.PI * 4) * 0.035
     }
   })
 

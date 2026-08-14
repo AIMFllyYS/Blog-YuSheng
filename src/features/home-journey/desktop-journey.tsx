@@ -2,7 +2,7 @@
 
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { HomeShell } from './components/home-shell'
 import { JourneyTypeLayer } from './components/journey-type-layer'
 import { buildJourneyTimeline } from './motion/build-journey-timeline'
@@ -32,6 +32,10 @@ function MotionStage({ layout }: MotionStageProps) {
   const isQa = qaProgress !== null
   const trackRef = useRef<HTMLElement>(null)
   const timelineRef = useRef<gsap.core.Timeline | null>(null)
+  const ambientTimelineRef = useRef<gsap.core.Timeline | null>(null)
+  const skipTimelineRef = useRef<gsap.core.Timeline | null>(null)
+  const skipRunningRef = useRef(false)
+  const canvasRenderRequestRef = useRef<(() => void) | null>(null)
   const progressRef = useRef<JourneyProgressSnapshot>({
     progress: qaProgress ?? 0,
     qaFreeze: isQa,
@@ -42,6 +46,15 @@ function MotionStage({ layout }: MotionStageProps) {
   const updateJourneyState = (timeline: gsap.core.Timeline, root: HTMLElement) => {
     const progress = timeline.progress()
     progressRef.current.progress = progress
+    canvasRenderRequestRef.current?.()
+    const ambientTimeline = ambientTimelineRef.current
+    if (ambientTimeline) {
+      if (progress <= 0.0005) {
+        if (ambientTimeline.paused()) ambientTimeline.play()
+      } else if (!ambientTimeline.paused() || ambientTimeline.time() > 0) {
+        ambientTimeline.pause(0)
+      }
+    }
     root.dataset.journeyProgress = progress.toFixed(4)
     root.dataset.journeyScene = getJourneyScene(progress)
   }
@@ -55,6 +68,9 @@ function MotionStage({ layout }: MotionStageProps) {
     },
     dependencies: [layout],
     attachTimeline: (timeline, root) => {
+      root.dataset.journeyTimelineBuilds = String(
+        Number(root.dataset.journeyTimelineBuilds ?? 0) + 1,
+      )
       root.dataset.journeyDuration = timeline.totalDuration().toFixed(4)
       timeline.eventCallback('onUpdate', () => updateJourneyState(timeline, root))
 
@@ -94,14 +110,92 @@ function MotionStage({ layout }: MotionStageProps) {
     },
   })
 
+  useEffect(() => {
+    if (isQa) return
+
+    const root = trackRef.current
+    if (!root) return
+
+    const waveGlyphs = gsap.utils.toArray<HTMLElement>(
+      '[data-idle-wave-glyph]',
+      root,
+    )
+    const scrollCueBreath = root.querySelector<HTMLElement>(
+      '[data-scroll-cue-breath]',
+    )
+
+    gsap.set(waveGlyphs, { '--journey-idle-y': '0px' })
+    const ambientTimeline = gsap.timeline({
+      paused: progressRef.current.progress > 0.0005,
+      repeat: -1,
+      yoyo: true,
+    })
+
+    ambientTimeline.to(
+      waveGlyphs,
+      {
+        '--journey-idle-y': (index: number) =>
+          `${Math.sin(index * 0.86 - 0.7) * 3.2 - 0.8}px`,
+        duration: 1.85,
+        ease: 'sine.inOut',
+        stagger: 0.08,
+      },
+      0,
+    )
+
+    if (scrollCueBreath) {
+      ambientTimeline.to(
+        scrollCueBreath,
+        {
+          autoAlpha: 0.42,
+          duration: 1.35,
+          ease: 'sine.inOut',
+          y: 6,
+        },
+        0,
+      )
+    }
+
+    ambientTimelineRef.current = ambientTimeline
+
+    return () => {
+      ambientTimeline.kill()
+      if (ambientTimelineRef.current === ambientTimeline) {
+        ambientTimelineRef.current = null
+      }
+      gsap.set(waveGlyphs, { '--journey-idle-y': '0px' })
+      if (scrollCueBreath) {
+        gsap.set(scrollCueBreath, {
+          clearProps: 'opacity,transform,visibility',
+        })
+      }
+    }
+  }, [isQa, layout])
+
+  useEffect(
+    () => () => {
+      skipTimelineRef.current?.kill()
+      skipTimelineRef.current = null
+      skipRunningRef.current = false
+    },
+    [],
+  )
+
   const handleSkip = () => {
     const timeline = timelineRef.current
     const root = trackRef.current
-    if (!timeline || !root) return
+    if (!timeline || !root || skipRunningRef.current) return
 
     const flash = root.querySelector<HTMLElement>('[data-journey-flash]')
     const scrollTarget = root.offsetTop + root.offsetHeight - window.innerHeight
-    const skipTimeline = gsap.timeline()
+    skipRunningRef.current = true
+    const skipTimeline = gsap.timeline({
+      onComplete: () => {
+        skipRunningRef.current = false
+        skipTimelineRef.current = null
+      },
+    })
+    skipTimelineRef.current = skipTimeline
 
     if (flash) {
       skipTimeline.to(flash, {
@@ -127,7 +221,7 @@ function MotionStage({ layout }: MotionStageProps) {
   const ready = canvasReady && timelineReady
 
   return (
-    <section
+    <main
       ref={trackRef}
       data-testid="home-journey"
       data-journey-mode="cinematic"
@@ -135,6 +229,7 @@ function MotionStage({ layout }: MotionStageProps) {
       data-journey-progress={(qaProgress ?? 0).toFixed(4)}
       data-journey-scene={getJourneyScene(qaProgress ?? 0)}
       data-journey-qa={isQa ? 'true' : 'false'}
+      data-journey-typesetter="pretext"
       className="journey-stage relative h-[500vh] min-h-screen overflow-clip bg-[var(--journey-void)] text-[var(--journey-paper)]"
       aria-label="羽升首页叙事"
     >
@@ -147,7 +242,9 @@ function MotionStage({ layout }: MotionStageProps) {
           data-testid="journey-canvas"
         >
           <JourneyCanvas
+            diagnostics={isQa}
             progressRef={progressRef}
+            renderRequestRef={canvasRenderRequestRef}
             onCanvasReady={() => setCanvasReady(true)}
           />
         </div>
@@ -159,7 +256,7 @@ function MotionStage({ layout }: MotionStageProps) {
 
         <div
           data-home-shell-layer
-          className="invisible pointer-events-none absolute inset-0 z-[var(--z-panel)] opacity-0"
+          className="invisible pointer-events-none absolute inset-0 z-[var(--z-panel)] overflow-y-auto opacity-0 [scrollbar-gutter:stable]"
         >
           <HomeShell mode="cinematic" />
         </div>
@@ -180,10 +277,15 @@ function MotionStage({ layout }: MotionStageProps) {
 
         <div
           data-scroll-cue
-          className="pointer-events-none absolute bottom-[clamp(1.5rem,4vh,3rem)] left-1/2 z-[var(--z-floating)] flex -translate-x-1/2 flex-col items-center gap-3 font-serif text-xs tracking-[0.34em] text-[var(--journey-gold-soft)]"
+          className="pointer-events-none absolute bottom-[clamp(1.5rem,4vh,3rem)] left-1/2 z-[var(--z-floating)] -translate-x-1/2 font-serif text-xs tracking-[0.34em] text-[var(--journey-gold-soft)]"
         >
-          <span>向下 · 入卷</span>
-          <span className="journey-scroll-mark block h-12 w-px" />
+          <span
+            data-scroll-cue-breath
+            className="flex flex-col items-center gap-3 will-change-transform"
+          >
+            <span>向下 · 入卷</span>
+            <span className="journey-scroll-mark block h-12 w-px" />
+          </span>
         </div>
 
         <p className="sr-only">
@@ -196,7 +298,7 @@ function MotionStage({ layout }: MotionStageProps) {
           </div>
         ) : null}
       </div>
-    </section>
+    </main>
   )
 }
 
@@ -205,14 +307,14 @@ export function DesktopJourney() {
 
   if (!layout) {
     return (
-      <section
+      <main
         data-testid="home-journey"
         data-journey-mode="cinematic"
         data-journey-ready="false"
         className="journey-stage flex min-h-screen items-center justify-center bg-[var(--journey-void)] font-serif text-sm tracking-[0.28em] text-[var(--journey-gold-soft)]"
       >
         正在研墨排字…
-      </section>
+      </main>
     )
   }
 

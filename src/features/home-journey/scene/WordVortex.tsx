@@ -42,8 +42,11 @@ export function WordVortex({ color, progressRef }: WordVortexProps) {
     material.opacity = opacity * 0.94
     material.emissiveIntensity = 0.82 + collapse * 1.85
 
+    if (!mesh.visible) return
+
     strokes.forEach((stroke, index) => {
-      const liveAngle = stroke.angle + collapse * 4.2 + ambientTime * 0.018
+      const liveAngle =
+        stroke.angle + collapse * 4.2 + progress * 0.18 + ambientTime * 0.018
       const tightenedRadius = stroke.radius * (1 - collapse * 0.93)
       const vortexX = Math.cos(liveAngle) * tightenedRadius
       const vortexY = Math.sin(liveAngle) * tightenedRadius * 0.57

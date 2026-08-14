@@ -11,28 +11,28 @@ const DesktopJourney = dynamic(
   {
     ssr: false,
     loading: () => (
-      <section
+      <main
         data-testid="home-journey"
         data-journey-mode="cinematic"
         data-journey-ready="false"
         className="journey-stage flex min-h-screen items-center justify-center bg-[var(--journey-void)] font-serif text-sm tracking-[0.28em] text-[var(--journey-gold-soft)]"
       >
         正在展开星卷…
-      </section>
+      </main>
     ),
   },
 )
 
 function resolveJourneyMode(): Exclude<JourneyMode, 'pending'> {
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    return 'reduced'
-  }
-
   if (
     window.matchMedia('(max-width: 767px)').matches ||
     window.matchMedia('(pointer: coarse)').matches
   ) {
     return 'mobile'
+  }
+
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    return 'reduced'
   }
 
   return 'cinematic'

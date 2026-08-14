@@ -19,6 +19,7 @@ export function JourneyTypeLayer({ layout }: JourneyTypeLayerProps) {
   const titleFragments = Array.from({ length: 64 }, (_, index) => {
     const glyph = layout.title[index % layout.title.length]
     const sourceX = glyph?.x ?? 0
+    const sourceWidth = glyph?.width ?? layout.styles.title.fontSize
     const scatterAngle = seededUnit(20260815, index, 'scatter-angle') * Math.PI * 2
     const scatterRadius = 140 + seededUnit(20260815, index, 'scatter-radius') * 430
     const swirlAngle = (index / 64) * Math.PI * 2.8
@@ -27,8 +28,13 @@ export function JourneyTypeLayer({ layout }: JourneyTypeLayerProps) {
     return {
       id: `title-fragment-${index}`,
       char: STROKE_GLYPHS[index % STROKE_GLYPHS.length],
-      homeX: sourceX + (seededUnit(20260815, index, 'home-x') - 0.5) * 90,
-      homeY: (seededUnit(20260815, index, 'home-y') - 0.5) * 120,
+      homeX:
+        sourceX +
+        (seededUnit(20260815, index, 'home-x') - 0.5) * sourceWidth * 0.78,
+      homeY:
+        (seededUnit(20260815, index, 'home-y') - 0.5) *
+        layout.styles.title.fontSize *
+        0.68,
       scatterX: Math.cos(scatterAngle) * scatterRadius,
       scatterY: Math.sin(scatterAngle) * scatterRadius * 0.62,
       scatterRotation: -80 + seededUnit(20260815, index, 'rotation') * 160,
@@ -54,14 +60,37 @@ export function JourneyTypeLayer({ layout }: JourneyTypeLayerProps) {
             <span
               key={glyph.id}
               data-title-glyph
+              data-idle-wave-glyph
+              data-idle-wave-index={glyph.index}
               data-motion-id={glyph.id}
-              className="journey-title-glyph absolute top-0 -translate-x-1/2 font-serif font-semibold leading-none"
+              data-pretext-char={glyph.char}
+              data-pretext-role="title"
+              data-pretext-font-size={layout.styles.title.fontSize.toFixed(2)}
+              data-pretext-font-weight={layout.styles.title.fontWeight}
+              data-pretext-letter-spacing={layout.styles.title.letterSpacing.toFixed(2)}
+              data-pretext-line-width={layout.styles.title.lineWidth.toFixed(2)}
+              data-pretext-width={glyph.width.toFixed(2)}
+              data-pretext-x={glyph.x.toFixed(2)}
+              className="absolute top-0 -translate-x-1/2 text-center leading-none"
               style={{
                 left: calcLeft(glyph.x),
-                fontSize: 'clamp(7.75rem, 12.5vw, 11.5rem)',
+                fontFamily: layout.styles.title.fontFamily,
+                fontSize: layout.styles.title.fontSize,
+                fontWeight: layout.styles.title.fontWeight,
+                letterSpacing: 0,
+                width: glyph.width,
               }}
             >
-              {glyph.char}
+              <span
+                data-idle-wave-visual
+                className="journey-title-glyph block will-change-transform"
+                style={{
+                  transform:
+                    'translate3d(0, var(--journey-idle-y, 0px), 0)',
+                }}
+              >
+                {glyph.char}
+              </span>
             </span>
           ))}
         </div>
@@ -71,14 +100,24 @@ export function JourneyTypeLayer({ layout }: JourneyTypeLayerProps) {
             const rune = RUNE_GLYPHS[glyph.index % RUNE_GLYPHS.length]
             const style = {
               left: calcLeft(glyph.x),
-              width: Math.max(12, glyph.width),
+              width: glyph.width,
             } satisfies CSSProperties
 
             return (
               <span
                 key={glyph.id}
                 data-motto-glyph
+                data-idle-wave-glyph
+                data-idle-wave-index={glyph.index}
                 data-motion-id={glyph.id}
+                data-pretext-char={glyph.char}
+                data-pretext-role="motto"
+                data-pretext-font-size={layout.styles.motto.fontSize.toFixed(2)}
+                data-pretext-font-weight={layout.styles.motto.fontWeight}
+                data-pretext-letter-spacing={layout.styles.motto.letterSpacing.toFixed(2)}
+                data-pretext-line-width={layout.styles.motto.lineWidth.toFixed(2)}
+                data-pretext-width={glyph.width.toFixed(2)}
+                data-pretext-x={glyph.x.toFixed(2)}
                 data-scatter-x={(
                   (seededUnit(20260815, glyph.id, 'motto-x') - 0.5) *
                   720
@@ -90,18 +129,33 @@ export function JourneyTypeLayer({ layout }: JourneyTypeLayerProps) {
                 data-scatter-rotation={(
                   -48 + seededUnit(20260815, glyph.id, 'motto-r') * 96
                 ).toFixed(2)}
-                className="absolute top-0 -translate-x-1/2 text-center font-serif text-[clamp(1.15rem,2.1vw,1.9rem)] tracking-[0.16em]"
-                style={style}
+                className="absolute top-0 -translate-x-1/2 text-center"
+                style={{
+                  ...style,
+                  fontFamily: layout.styles.motto.fontFamily,
+                  fontSize: layout.styles.motto.fontSize,
+                  fontWeight: layout.styles.motto.fontWeight,
+                  letterSpacing: 0,
+                  lineHeight: `${layout.styles.motto.lineHeight}px`,
+                }}
               >
                 <span
                   data-motion-resolved-glyph
-                  className="journey-resolved-glyph absolute inset-0"
+                  className="journey-resolved-glyph absolute inset-0 will-change-transform"
+                  style={{
+                    transform:
+                      'translate3d(0, var(--journey-idle-y, 0px), 0)',
+                  }}
                 >
                   {glyph.char === ' ' ? '\u00A0' : glyph.char}
                 </span>
                 <span
                   data-motion-cipher-glyph
-                  className="journey-rune-glyph invisible absolute inset-0 opacity-0"
+                  className="journey-rune-glyph invisible absolute inset-0 opacity-0 will-change-transform"
+                  style={{
+                    transform:
+                      'translate3d(0, var(--journey-idle-y, 0px), 0)',
+                  }}
                 >
                   {glyph.char === ' ' ? '·' : rune}
                 </span>
@@ -122,8 +176,9 @@ export function JourneyTypeLayer({ layout }: JourneyTypeLayerProps) {
             data-scatter-rotation={fragment.scatterRotation.toFixed(2)}
             data-swirl-x={fragment.swirlX.toFixed(2)}
             data-swirl-y={fragment.swirlY.toFixed(2)}
-            className="journey-title-fragment invisible absolute top-[43%] -translate-x-1/2 -translate-y-1/2 font-serif opacity-0"
+            className="journey-title-fragment invisible absolute top-[43%] -translate-x-1/2 -translate-y-1/2 opacity-0"
             style={{
+              fontFamily: layout.styles.title.fontFamily,
               left: calcLeft(fragment.homeX),
               marginTop: fragment.homeY,
               fontSize: `${16 + (fragment.id.length % 5) * 3}px`,
@@ -166,8 +221,17 @@ export function JourneyTypeLayer({ layout }: JourneyTypeLayerProps) {
             key={glyph.id}
             data-open-glyph
             data-motion-id={glyph.id}
+            data-pretext-char={glyph.char}
+            data-pretext-role="floating"
+            data-pretext-font-size={layout.styles.floating.fontSize.toFixed(2)}
+            data-pretext-font-weight={layout.styles.floating.fontWeight}
+            data-pretext-letter-spacing={layout.styles.floating.letterSpacing.toFixed(2)}
+            data-pretext-line-width={layout.styles.floating.lineWidth.toFixed(2)}
+            data-pretext-width={glyph.width.toFixed(2)}
+            data-pretext-x={glyph.x.toFixed(2)}
             data-float-x={(
-              (seededUnit(20260815, glyph.id, 'float-x') - 0.5) * 760
+              (seededUnit(20260815, glyph.id, 'float-x') - 0.5) * 760 -
+              glyph.x
             ).toFixed(2)}
             data-float-y={(
               -80 - seededUnit(20260815, glyph.id, 'float-y') * 240
@@ -175,7 +239,16 @@ export function JourneyTypeLayer({ layout }: JourneyTypeLayerProps) {
             data-rain-y={(
               260 + seededUnit(20260815, glyph.id, 'rain-y') * 430
             ).toFixed(2)}
-            className="journey-floating-glyph invisible absolute left-1/2 top-[58%] -translate-x-1/2 -translate-y-1/2 font-serif text-[clamp(1rem,1.7vw,1.55rem)] opacity-0"
+            className="journey-floating-glyph invisible absolute top-[58%] -translate-x-1/2 -translate-y-1/2 opacity-0"
+            style={{
+              fontFamily: layout.styles.floating.fontFamily,
+              fontSize: layout.styles.floating.fontSize,
+              fontWeight: layout.styles.floating.fontWeight,
+              letterSpacing: 0,
+              left: calcLeft(glyph.x),
+              lineHeight: `${layout.styles.floating.lineHeight}px`,
+              width: glyph.width,
+            }}
           >
             {glyph.char}
           </span>
@@ -184,14 +257,31 @@ export function JourneyTypeLayer({ layout }: JourneyTypeLayerProps) {
 
       <p
         data-narrative-line
-        className="invisible absolute inset-x-6 top-[24%] m-0 text-center font-serif text-[clamp(1.25rem,2.45vw,2.25rem)] tracking-[0.11em] opacity-0"
+        className="invisible absolute inset-x-0 top-[24%] m-0 h-16 opacity-0"
       >
         {layout.narrative.map((glyph) => (
           <span
             key={glyph.id}
             data-narrative-glyph
             data-motion-id={glyph.id}
-            className="inline-block"
+            data-pretext-char={glyph.char}
+            data-pretext-role="narrative"
+            data-pretext-font-size={layout.styles.narrative.fontSize.toFixed(2)}
+            data-pretext-font-weight={layout.styles.narrative.fontWeight}
+            data-pretext-letter-spacing={layout.styles.narrative.letterSpacing.toFixed(2)}
+            data-pretext-line-width={layout.styles.narrative.lineWidth.toFixed(2)}
+            data-pretext-width={glyph.width.toFixed(2)}
+            data-pretext-x={glyph.x.toFixed(2)}
+            className="absolute top-0 -translate-x-1/2 text-center"
+            style={{
+              fontFamily: layout.styles.narrative.fontFamily,
+              fontSize: layout.styles.narrative.fontSize,
+              fontWeight: layout.styles.narrative.fontWeight,
+              letterSpacing: 0,
+              left: calcLeft(glyph.x),
+              lineHeight: `${layout.styles.narrative.lineHeight}px`,
+              width: glyph.width,
+            }}
           >
             {glyph.char}
           </span>

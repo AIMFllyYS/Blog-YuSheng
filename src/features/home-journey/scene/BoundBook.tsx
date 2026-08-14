@@ -257,7 +257,7 @@ export function BoundBook({ palette, progressRef }: BoundBookProps) {
     book.scale.setScalar(bookScale)
     book.position.set(
       2.3 * open,
-      Math.sin(ambientTime * 0.23) * 0.035,
+      Math.sin(ambientTime * 0.23 + progress * Math.PI * 4) * 0.035,
       0,
     )
     book.rotation.set((1 - overheadTurn) * 1.18, -0.08 + overheadTurn * 0.12, 0)

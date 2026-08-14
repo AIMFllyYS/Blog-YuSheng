@@ -21,6 +21,8 @@ export type JourneyProgressSnapshot = {
 export type JourneyProgressRef = RefObject<JourneyProgressSnapshot>
 
 export type JourneyScene3DProps = {
+  diagnostics?: boolean
   progressRef: JourneyProgressRef
+  renderRequestRef: RefObject<(() => void) | null>
   onCanvasReady?: () => void
 }
