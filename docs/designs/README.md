@@ -9,6 +9,11 @@
 - UI/UX 设计（页面布局、交互设计、组件设计）
 - 技术方案（技术选型对比、方案决策记录）
 
+## 现有文档
+
+- [architecture-overview.md](./architecture-overview.md) — 全站架构总览与决策记录（D1–D17，滚动更新）
+- [home-journey-storyboard.md](./home-journey-storyboard.md) — 首页 3D 叙事分镜节拍表（四章 + 尾声，draft）
+
 ## 文档结构模板
 
 ```markdown
