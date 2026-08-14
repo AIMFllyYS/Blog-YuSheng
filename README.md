@@ -1,199 +1,104 @@
-<div align="center">
+# blog-yusheng
 
-# 🌌 Blog-YuSheng
+> 羽升的个人博客
 
-**羽升 · 我的电子分身 · 从一颗种子开始生长**
+## 项目简介
 
-[![Status](https://img.shields.io/badge/status-🌱_占位启航-52e0c4?style=flat-square)](https://github.com/AIMFllyYS/Blog-YuSheng)
-[![Version](https://img.shields.io/badge/version-v0.0.1-7c8cff?style=flat-square)](#)
-[![Deploy](https://img.shields.io/badge/deploy-EdgeOne_Pages-ffd166?style=flat-square)](https://edgeone.cloud.tencent.com/pages)
-[![Made With](https://img.shields.io/badge/made_with-♥_与困意-ff6b9d?style=flat-square)](#-一个诚实的说明)
+羽升的个人博客与电子分身项目。记录 AI 领域成长轨迹、沉淀方法论、构建带有权限系统的个人内容空间。从占位启航，逐步生长为完整的电子分身。
 
-*这不只是一个博客，这是我留给未来的一份持续更新的自我。*
+### 核心能力
 
-**网址**：https://blog.yusheng.email · **联系**：contact@yusheng.email
+- **Next.js App Router 架构**
+- **EdgeOne Pages SSG 部署**
+- **Tailwind 样式**
+- **占位首页**
 
-</div>
+## 技术栈
 
----
+| 类别 | 技术 | 版本 |
+|---|---|---|
+| 框架 | Next.js (App Router) | ≥16.2.0 |
+| UI 库 | React | ≥19.2 |
+| 语言 | TypeScript | strict mode |
+| 包管理 | pnpm | — |
+| 样式 | Tailwind CSS | — |
+| 运行时 | Node.js | 22.11.0 |
+| 部署 | 腾讯云 EdgeOne Pages | SSG 静态导出 |
 
-## 🧭 它为什么存在
+## 快速开始
 
-> 在写下第一行博客之前，先写下它为什么存在。
+### 环境要求
 
-<table>
-<tr>
-<td width="50%" valign="top">
+- Node.js 22.11.0
+- pnpm
 
-### 📈 01 · 记录 — AI 成长轨迹
+### 安装与运行
 
-记录我在 AI 领域的成长经历：从基础架构的分析与摸索开始，
-逐步汇总过去写过的内容，让每一步都有迹可循。
-
-`#成长日志` `#AI` `#内容汇总`
-
-</td>
-<td width="50%" valign="top">
-
-### 🔒 02 · 私密 — 权限与边界
-
-这个博客首先是**写给我自己的**，所以它必须有价值。
-它会记录我过去的很多事情，未来会有权限系统 ——
-**有的文章只有我自己能看**。
-
-`#对内价值` `#权限控制`
-
-</td>
-</tr>
-<tr>
-<td width="50%" valign="top">
-
-### 📚 03 · 沉淀 — 方法论输出
-
-当理解足够深，个人经历会被梳理成一套**方法论**，
-甚至一套**课程** —— 从记录自己，到帮助大家。
-
-`#知识沉淀` `#课程化`
-
-</td>
-<td width="50%" valign="top">
-
-### 🌊 04 · 生活 — 思考与日常
-
-想法、思考的成长、每日日报与打卡统计……
-这些内容我随时可以回看，甚至**交给智能体去看** ——
-它就是我的另一个**电子分身**。
-
-`#日报` `#打卡` `#电子分身`
-
-</td>
-</tr>
-</table>
-
----
-
-## 🗺️ 生长路线
-
-```mermaid
-timeline
-    title 从种子到分身
-    section 现在
-        v0.0.1 占位启航 : 纯 HTML 单页
-                        : EdgeOne Pages 自动部署
-                        : 跑通 Push → Build → Deploy
-    section 接下来
-        基础架构讨论 : 内容组织与技术选型
-                     : 汇总历史文章入库
-    section 之后
-        权限系统 : 公开 / 私密内容分层
-                 : 部分文章仅自己可见
-    section 未来
-        电子分身 : 大量交互彩蛋 🥚
-                 : 日报打卡统计聚合
-                 : 方法论与课程输出
+```bash
+pnpm install
+pnpm dev
 ```
 
-> ⚠️ **架构声明**：当前只做产品层面的简单决策，技术架构会随能力成长而重构。
-> 但该有的设计，从第一天就要有。
+打开 [http://localhost:3000](http://localhost:3000) 查看运行效果。
 
----
+### 构建
 
-## 🚀 部署链路
-
-本仓库通过 **腾讯云 EdgeOne Pages** 自动部署：
-
-```
-git push origin main
-      │
-      ▼
-EdgeOne Pages 监听仓库变更
-      │
-      ▼
-读取 edgeone.json（静态站点，无需构建）
-      │
-      ▼
-分发至全球边缘节点 ⚡
+```bash
+pnpm build
 ```
 
-| 文件 | 作用 |
-|------|------|
-| `index.html` | 占位单页 —— 星空粒子 / 打字机 / 3D 卡片 / 彩蛋系统 |
-| `edgeone.json` | EdgeOne Pages 部署配置（静态托管 + 缓存与安全头） |
-| `README.md` | 你正在看的这份宣言 |
+构建产物输出到 `out/` 目录。
 
----
+## 项目结构
 
-## 🥚 彩蛋区
+```
+.
+├── src/                        # 源代码
+│   ├── app/                    # 路由层
+│   ├── components/ui/          # 纯展示组件
+│   ├── features/               # 业务功能模块
+│   ├── lib/                    # 工具函数
+│   └── server/                 # server-only 代码
+├── docs/                       # 项目内部文档
+│   ├── plans/                  # 项目计划、路线图
+│   ├── conventions/            # 编码规范、架构规范
+│   ├── updates/                # 更新日志
+│   ├── specs/                  # 技术规格
+│   ├── audits/                 # 审计报告
+│   ├── ops/                    # 运维指南
+│   ├── issues/                 # 问题追踪
+│   └── designs/                # 设计文档
+├── scripts/                    # 辅助脚本
+│   ├── setup/                  # 环境初始化
+│   ├── build/                  # 构建辅助
+│   ├── deploy/                 # 部署脚本
+│   └── dev/                    # 开发辅助
+├── public/                     # 静态资源
+├── AGENTS.md                   # AI 编码代理操作策略
+├── edgeone.json                # EdgeOne 部署配置
+└── next.config.ts              # Next.js 配置
+```
 
-这个博客的信条之一：**一定要有很多很多的彩蛋**。占位页里已经埋了 3 + 1 个：
+详细结构说明见 [AGENTS.md](./AGENTS.md)。
 
-<details>
-<summary>🖱️ 彩蛋一 · 提示：有一张卡片和别的不太一样……</summary>
+## 部署
 
-<br>
+项目部署到腾讯云 EdgeOne Pages（SSG 静态导出模式）。
 
-在首页找到那张 **🔒 虚线边框** 的卡片，点它一下。
+```bash
+# 构建并部署
+pnpm build
+edgeone pages deploy
+```
 
-> 🗝️ *你会窥见一角秘密。但真正的秘密，藏在未来的权限系统之后。*
+部署指南详见 [docs/ops/](./docs/ops/)。
 
-</details>
+## 文档
 
-<details>
-<summary>🌱 彩蛋二 · 提示：左上角的名字，敲一敲会醒</summary>
+- [AGENTS.md](./AGENTS.md) — AI 编码代理操作策略
+- [docs/](./docs/) — 项目内部文档（计划、规范、规格、设计等）
+- [scripts/](./scripts/) — 辅助脚本
 
-<br>
+## License
 
-对着页面左上角的 `YU·SHENG` Logo **连点 5 次**。
-
-> *种子被你敲醒了。*
-
-</details>
-
-<details>
-<summary>🌈 彩蛋三 · 提示：老玩家都懂的那串按键</summary>
-
-<br>
-
-在页面上输入 `↑ ↑ ↓ ↓ ← → ← → B A`
-
-> *Konami Code！整片星空会为你变色。*
-
-</details>
-
-<details>
-<summary>👀 隐藏款 · 提示：真正的开发者会打开那个东西</summary>
-
-<br>
-
-按 `F12` 打开控制台看看。
-
-> *有些秘密写在代码里。*
-
-</details>
-
----
-
-## 😴 一个诚实的说明
-
-<details>
-<summary>为什么 v0.0.1 只是一个占位页？（点开看一个抽象的理由）</summary>
-
-<br>
-
-> 就很离谱：因为中午吃完饭很困，所以决定先发布这个占位网站，
-> 保证自动化部署流程是 OK 的，然后去睡觉。
-> 顺便在额度刷新前把当天的模型额度用完。
->
-> 对，就是这么抽象的原因。但种子已经种下了。🌱
-
-</details>
-
----
-
-<div align="center">
-
-**© 2026 羽升 YuSheng**
-
-*一颗会长大的种子 · 用 ♥ 与困意写于一个午后*
-
-</div>
+MIT
