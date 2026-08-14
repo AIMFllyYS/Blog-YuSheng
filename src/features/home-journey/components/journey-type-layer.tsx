@@ -101,7 +101,7 @@ export function JourneyTypeLayer({ layout }: JourneyTypeLayerProps) {
                 </span>
                 <span
                   data-motion-cipher-glyph
-                  className="journey-rune-glyph absolute inset-0"
+                  className="journey-rune-glyph invisible absolute inset-0 opacity-0"
                 >
                   {glyph.char === ' ' ? '·' : rune}
                 </span>
@@ -122,7 +122,7 @@ export function JourneyTypeLayer({ layout }: JourneyTypeLayerProps) {
             data-scatter-rotation={fragment.scatterRotation.toFixed(2)}
             data-swirl-x={fragment.swirlX.toFixed(2)}
             data-swirl-y={fragment.swirlY.toFixed(2)}
-            className="journey-title-fragment absolute top-[43%] -translate-x-1/2 -translate-y-1/2 font-serif"
+            className="journey-title-fragment invisible absolute top-[43%] -translate-x-1/2 -translate-y-1/2 font-serif opacity-0"
             style={{
               left: calcLeft(fragment.homeX),
               marginTop: fragment.homeY,
@@ -148,14 +148,14 @@ export function JourneyTypeLayer({ layout }: JourneyTypeLayerProps) {
             data-entry-rotation={tile.rotation.toFixed(2)}
             data-exit-x={tile.exitX.toFixed(2)}
             data-exit-y={tile.exitY.toFixed(2)}
-            className="journey-cover-tile block h-full w-full"
+            className="journey-cover-tile invisible block h-full w-full opacity-0"
           />
         ))}
       </div>
 
       <div
         data-book-title
-        className="journey-book-title absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 font-serif text-[clamp(2.1rem,4.4vw,4.4rem)] tracking-[0.34em] [writing-mode:vertical-rl]"
+        className="journey-book-title invisible absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 font-serif text-[clamp(2.1rem,4.4vw,4.4rem)] tracking-[0.34em] opacity-0 [writing-mode:vertical-rl]"
       >
         {JOURNEY_CONTENT.bookTitle}
       </div>
@@ -175,7 +175,7 @@ export function JourneyTypeLayer({ layout }: JourneyTypeLayerProps) {
             data-rain-y={(
               260 + seededUnit(20260815, glyph.id, 'rain-y') * 430
             ).toFixed(2)}
-            className="journey-floating-glyph absolute left-1/2 top-[58%] -translate-x-1/2 -translate-y-1/2 font-serif text-[clamp(1rem,1.7vw,1.55rem)]"
+            className="journey-floating-glyph invisible absolute left-1/2 top-[58%] -translate-x-1/2 -translate-y-1/2 font-serif text-[clamp(1rem,1.7vw,1.55rem)] opacity-0"
           >
             {glyph.char}
           </span>
@@ -184,7 +184,7 @@ export function JourneyTypeLayer({ layout }: JourneyTypeLayerProps) {
 
       <p
         data-narrative-line
-        className="absolute inset-x-6 top-[24%] m-0 text-center font-serif text-[clamp(1.25rem,2.45vw,2.25rem)] tracking-[0.11em]"
+        className="invisible absolute inset-x-6 top-[24%] m-0 text-center font-serif text-[clamp(1.25rem,2.45vw,2.25rem)] tracking-[0.11em] opacity-0"
       >
         {layout.narrative.map((glyph) => (
           <span
@@ -200,7 +200,7 @@ export function JourneyTypeLayer({ layout }: JourneyTypeLayerProps) {
 
       <p
         data-gate-line
-        className="journey-gate-line absolute inset-x-6 top-[25%] m-0 text-center font-serif text-[clamp(1.45rem,3vw,3rem)] tracking-[0.28em]"
+        className="journey-gate-line invisible absolute inset-x-6 top-[25%] m-0 text-center font-serif text-[clamp(1.45rem,3vw,3rem)] tracking-[0.28em] opacity-0"
       >
         {JOURNEY_CONTENT.gateLine}
       </p>

@@ -143,7 +143,7 @@ function buildG33GlyphCover(context: MotionBuildContext) {
         rotation: 0,
         scale: 1,
         autoAlpha: 1,
-        duration: span(context, 0.25, 0.32),
+        duration: context.frames(18),
         stagger: context.frames(1),
         ease: 'power4.in',
       },
@@ -157,7 +157,7 @@ function buildG33GlyphCover(context: MotionBuildContext) {
         rotation: (_index) => (_index % 2 === 0 ? -16 : 16),
         scale: 0.34,
         autoAlpha: 0,
-        duration: span(context, 0.32, 0.42),
+        duration: context.frames(48),
         stagger: (_index, target) =>
           seededDelay(
             context.seed,
@@ -174,6 +174,7 @@ function buildG33GlyphCover(context: MotionBuildContext) {
 
 export function buildJourneyTimeline(context: MotionBuildContext) {
   const titleGlyphs = selectAll(context.scope, '[data-title-glyph]')
+  const mottoGlyphs = selectAll(context.scope, '[data-motto-glyph]')
   const titleFragments = selectAll(context.scope, '[data-title-fragment]')
   const scrollCue = selectOne(context.scope, '[data-scroll-cue]')
   const bookTitle = selectOne(context.scope, '[data-book-title]')
@@ -191,6 +192,16 @@ export function buildJourneyTimeline(context: MotionBuildContext) {
   context.timeline
     .addLabel('prologue', 0)
     .set('[data-motion-cipher-glyph]', { autoAlpha: 0 }, 0)
+    .set(
+      titleGlyphs,
+      { y: (index) => Math.sin(index * 1.1) * 4 },
+      0,
+    )
+    .set(
+      mottoGlyphs,
+      { y: (index) => Math.sin(index * 0.72) * 2.5 },
+      0,
+    )
     .set(titleFragments, { autoAlpha: 0, scale: 0.35 }, 0)
     .set('[data-motion-tile]', { autoAlpha: 0 }, 0)
     .set(bookTitle, { autoAlpha: 0, y: 22, rotateZ: -3 }, 0)
@@ -218,6 +229,15 @@ export function buildJourneyTimeline(context: MotionBuildContext) {
         y: 12,
         duration: span(context, 0, 0.03),
         ease: 'power2.out',
+      },
+      0,
+    )
+    .to(
+      [titleGlyphs, mottoGlyphs],
+      {
+        y: 0,
+        duration: span(context, 0, 0.03),
+        ease: 'sine.inOut',
       },
       0,
     )
@@ -433,7 +453,7 @@ export function buildJourneyTimeline(context: MotionBuildContext) {
       {
         y: 0,
         rotation: 0,
-        duration: span(context, 0.955, 0.992),
+        duration: context.frames(15),
         stagger: context.frames(3),
         ease: 'back.out(1.35)',
       },
@@ -444,7 +464,7 @@ export function buildJourneyTimeline(context: MotionBuildContext) {
       {
         autoAlpha: 1,
         y: 0,
-        duration: span(context, 0.965, 1),
+        duration: context.frames(12),
         stagger: context.frames(3),
         ease: 'power4.out',
       },
@@ -470,25 +490,4 @@ export function buildJourneyTimeline(context: MotionBuildContext) {
       at(context, 0.95),
     )
     .addLabel('epilogue', at(context, 1))
-}
-
-export function setPrologueWave(
-  scope: HTMLElement,
-  phase: number,
-  timelineProgress: number,
-) {
-  if (timelineProgress > 0.025) return
-  const titleGlyphs = Array.from(
-    scope.querySelectorAll<HTMLElement>('[data-title-glyph]'),
-  )
-  const mottoGlyphs = Array.from(
-    scope.querySelectorAll<HTMLElement>('[data-motto-glyph]'),
-  )
-
-  titleGlyphs.forEach((glyph, index) => {
-    gsap.set(glyph, { y: Math.sin(phase * 0.72 + index * 1.1) * 4 })
-  })
-  mottoGlyphs.forEach((glyph, index) => {
-    gsap.set(glyph, { y: Math.sin(phase * 0.9 + index * 0.72) * 2.5 })
-  })
 }

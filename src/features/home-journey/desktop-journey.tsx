@@ -5,7 +5,7 @@ import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useRef, useState } from 'react'
 import { HomeShell } from './components/home-shell'
 import { JourneyTypeLayer } from './components/journey-type-layer'
-import { buildJourneyTimeline, setPrologueWave } from './motion/build-journey-timeline'
+import { buildJourneyTimeline } from './motion/build-journey-timeline'
 import { getChapterSnapTarget, getJourneyScene } from './motion/progress'
 import { usePretextLayout } from './motion/use-pretext-layout'
 import { useWebGsapTimeline } from './motion/use-web-gsap-timeline'
@@ -31,7 +31,6 @@ function MotionStage({ layout }: MotionStageProps) {
   const [qaProgress] = useState(readQaProgress)
   const isQa = qaProgress !== null
   const trackRef = useRef<HTMLElement>(null)
-  const stageRef = useRef<HTMLDivElement>(null)
   const timelineRef = useRef<gsap.core.Timeline | null>(null)
   const progressRef = useRef<JourneyProgressSnapshot>({
     progress: qaProgress ?? 0,
@@ -56,6 +55,7 @@ function MotionStage({ layout }: MotionStageProps) {
     },
     dependencies: [layout],
     attachTimeline: (timeline, root) => {
+      root.dataset.journeyDuration = timeline.totalDuration().toFixed(4)
       timeline.eventCallback('onUpdate', () => updateJourneyState(timeline, root))
 
       if (isQa) {
@@ -74,10 +74,7 @@ function MotionStage({ layout }: MotionStageProps) {
         start: 'top top',
         end: 'bottom bottom',
         animation: timeline,
-        pin: stage,
-        pinSpacing: false,
         scrub: 0.38,
-        anticipatePin: 1,
         invalidateOnRefresh: true,
         snap: {
           snapTo: (value, self) =>
@@ -85,23 +82,15 @@ function MotionStage({ layout }: MotionStageProps) {
           duration: { min: 0.3, max: 0.62 },
           delay: 0.08,
           ease: 'power3.inOut',
+          inertia: false,
         },
       })
 
-      const tick = (time: number) => {
-        setPrologueWave(root, time, timeline.progress())
-      }
-      gsap.ticker.add(tick)
-
-      const refreshFrame = requestAnimationFrame(() => {
-        trigger.refresh()
-        updateJourneyState(timeline, root)
-        setTimelineReady(true)
-      })
+      trigger.refresh()
+      updateJourneyState(timeline, root)
+      setTimelineReady(true)
 
       return () => {
-        cancelAnimationFrame(refreshFrame)
-        gsap.ticker.remove(tick)
         timeline.eventCallback('onUpdate', null)
         trigger.kill()
       }
@@ -153,9 +142,8 @@ function MotionStage({ layout }: MotionStageProps) {
       aria-label="羽升首页叙事"
     >
       <div
-        ref={stageRef}
         data-testid="journey-scroll-track"
-        className="relative h-screen w-full overflow-hidden bg-[var(--journey-void)]"
+        className="sticky top-0 h-screen w-full overflow-hidden bg-[var(--journey-void)]"
       >
         <div
           className="absolute inset-0"
@@ -174,14 +162,14 @@ function MotionStage({ layout }: MotionStageProps) {
 
         <div
           data-home-shell-layer
-          className="absolute inset-0 z-[var(--z-panel)]"
+          className="invisible pointer-events-none absolute inset-0 z-[var(--z-panel)] opacity-0"
         >
           <HomeShell mode="cinematic" />
         </div>
 
         <div
           data-journey-flash
-          className="journey-flash pointer-events-none absolute inset-0 z-[var(--z-overlay)]"
+          className="journey-flash invisible pointer-events-none absolute inset-0 z-[var(--z-overlay)] opacity-0"
         />
 
         <button
