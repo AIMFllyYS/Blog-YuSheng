@@ -1,1 +1,111 @@
 @import "tailwindcss";
+
+/*
+ * 主题 token 系统（docs/conventions/frontend-design.md 第一节）
+ * 语义命名，禁止在组件内硬编码颜色；换主题只改 <html data-theme="...">。
+ * Tailwind v4：@theme inline 把语义 token 暴露为 bg-bg / text-ink 等工具类。
+ */
+@theme inline {
+  --color-bg: var(--bg);
+  --color-bg-elevated: var(--bg-elevated);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-ink-faint: var(--ink-faint);
+  --color-accent: var(--accent);
+  --color-line: var(--line);
+  --color-highlight: var(--highlight);
+  --color-scroll-paper: var(--scroll-paper);
+  --color-shadow-color: var(--shadow-color);
+
+  --dur-fast: 150ms;
+  --dur-base: 250ms;
+  --dur-slow: 400ms;
+}
+
+:root,
+:root[data-theme="paper"] {
+  --bg: #f3ead8;
+  --bg-elevated: #faf4e6;
+  --ink: #2c2620;
+  --ink-muted: #5d554a;
+  --ink-faint: #8d8474;
+  --accent: #8c5a13;
+  --line: #d8cbb0;
+  --highlight: #f0d489;
+  --scroll-paper: #f7f0de;
+  --shadow-color: #3a2f1d;
+}
+
+:root[data-theme="mist"] {
+  --bg: #e8eef2;
+  --bg-elevated: #f4f8fa;
+  --ink: #22303a;
+  --ink-muted: #4a5c68;
+  --ink-faint: #7d8f9a;
+  --accent: #2f6480;
+  --line: #c3d2da;
+  --highlight: #bcd9e8;
+  --scroll-paper: #eef4f7;
+  --shadow-color: #1d2c36;
+}
+
+:root[data-theme="snow"] {
+  --bg: #faf8f4;
+  --bg-elevated: #ffffff;
+  --ink: #26241f;
+  --ink-muted: #59564e;
+  --ink-faint: #8f8c82;
+  --accent: #7a5410;
+  --line: #e2ddd2;
+  --highlight: #f2e3b6;
+  --scroll-paper: #fdfaf3;
+  --shadow-color: #33302a;
+}
+
+:root[data-theme="night"] {
+  --bg: #0b0b0d;
+  --bg-elevated: #16161a;
+  --ink: #e8e4da;
+  --ink-muted: #a8a396;
+  --ink-faint: #6f6b60;
+  --accent: #d8ad57;
+  --line: #2c2c33;
+  --highlight: #4a3d1e;
+  --scroll-paper: #1b1a17;
+  --shadow-color: #000000;
+}
+
+html {
+  background-color: var(--bg);
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--ink);
+  font-family: "Source Han Serif SC", "Noto Serif SC", "Songti SC", "SimSun", serif;
+}
+
+/* 主题切换全局过渡（frontend-design 3.3：400ms 避免闪跳） */
+*,
+*::before,
+*::after {
+  transition-property: background-color, border-color, color, fill, stroke;
+  transition-duration: var(--dur-slow);
+  transition-timing-function: ease-out;
+}
+
+/* 首页 3D 叙事场景自带固定视觉（D11），不参与主题过渡 */
+.journey-stage,
+.journey-stage * {
+  transition: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
