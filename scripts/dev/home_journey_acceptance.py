@@ -131,9 +131,21 @@ class Acceptance:
                 }
             )
 
+        def http_error(response: Any) -> None:
+            if response.status < 400:
+                return
+            self.browser_errors.append(
+                {
+                    "scope": label,
+                    "kind": f"http-{response.status}",
+                    "message": response.url,
+                }
+            )
+
         page.on("console", console_error)
         page.on("pageerror", page_error)
         page.on("requestfailed", request_failed)
+        page.on("response", http_error)
 
     def new_context(
         self,
@@ -255,7 +267,11 @@ class Acceptance:
             self.check(
                 deterministic,
                 f"determinism-{frame:03d}",
-                f"{hash_a} != {hash_b}",
+                (
+                    f"sha256={hash_a}"
+                    if deterministic
+                    else f"{hash_a} != {hash_b}"
+                ),
             )
             paths.append(path_a)
 
