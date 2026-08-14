@@ -130,10 +130,17 @@ public/          静态资源（不放 >25MB 文件）
 ### docs/conventions/ — 项目规范
 
 - [code-size-and-organization.md](docs/conventions/code-size-and-organization.md) — 代码长度与文件组织（colocation 原则、`src/features/` 提升条件、拆分判断方法）
-- [project-structure.md](docs/conventions/project-structure.md) — 完整目录结构与分层规则
+- [project-structure.md](docs/conventions/project-structure.md) — 完整目录结构与分层规则（含 content/ 内容仓库与 features 模块划分）
+- [routing.md](docs/conventions/routing.md) — 路由规范（页面地图、URL 规则、导航映射、分享规范）
+- [frontend-design.md](docs/conventions/frontend-design.md) — 前端设计规范（主题 token、字体、动效、z-index、响应式、音效）
+- [ports-and-env.md](docs/conventions/ports-and-env.md) — 端口与本地环境规范
 - [nextjs-16-patterns.md](docs/conventions/nextjs-16-patterns.md) — Next.js 16.2+ 关键模式与陷阱（proxy.ts、async APIs、Turbopack、SSG 配置等）
 - [code-style.md](docs/conventions/code-style.md) — 代码风格（Server Component、use client、TypeScript、Tailwind、_dev/ 规则）
 - [code-review.md](docs/conventions/code-review.md) — Code review 检查清单
+
+### docs/designs/ — 设计文档
+
+- [architecture-overview.md](docs/designs/architecture-overview.md) — 整体架构决策记录（D1-D14：内容格式、文档引擎、评论锚定、动画分层、主题、模块划分等，含待决事项）
 
 ### docs/ops/ — 运维指南
 
