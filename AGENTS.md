@@ -215,12 +215,30 @@ export const dynamicParams = true
 - 环境变量：`NEXT_PUBLIC_` 前缀进客户端，敏感信息不带前缀
 - 部署时在 EdgeOne 控制台同步所有环境变量
 
+### buildCommand 必须走包管理器脚本（防错条款）
+
+> ⚠️ 这一节是踩坑后补的硬性规则，**不要违反**。背景见 [docs/ops/deploy-edgeone.md](docs/ops/deploy-edgeone.md)。
+
+- **`buildCommand` 必须写成 `pnpm run build`（或 `pnpm exec next build` / `npx next build`），禁止写成裸命令 `next build`**
+- 原因：EdgeOne 构建环境用 `sh -c "<buildCommand>"` 直接执行，**不会把 `node_modules/.bin` 注入 PATH**。裸 `next build` 会报 `sh: next: command not found`（exit code 127），构建直接失败
+- `pnpm run` / `pnpm exec` / `npx` 会自动解析本地 `node_modules/.bin`，是唯一可靠的写法
+- 同理，`installCommand` 用 `pnpm install`（已是正确写法），不要写成裸命令
+- **修改 `edgeone.json` 后，必须本地 `pnpm build` 验证一遍再推送**——EdgeOne 构建环境与本地不完全等价，配置错误只在部署时才暴露
+
+### cloudFunctions 字段格式（防错条款）
+
+> ⚠️ 旧字段已 DEPRECATED，未来版本会移除。**必须用新格式**。
+
+- `cloudFunctions.maxDuration` — 顶层字段（旧写法 `cloudFunctions.nodejs.maxDuration` 已废弃）
+- `cloudFunctions.regions.mainland` — 数组（旧写法 `cloudFunctions.mainlandRegions` 已废弃）
+- 任何 `cloudFunctions.nodejs.*` 或 `cloudFunctions.mainlandRegions` 写法都会触发 DEPRECATED 警告，必须迁移
+
 ### edgeone.json Reference
 
 ```json
 {
   "name": "blog-yusheng",
-  "buildCommand": "next build",
+  "buildCommand": "pnpm run build",
   "installCommand": "pnpm install",
   "outputDirectory": "out",
   "nodeVersion": "22.11.0",
@@ -236,8 +254,8 @@ export const dynamicParams = true
     }
   ],
   "cloudFunctions": {
-    "mainlandRegions": ["ap-guangzhou"],
-    "nodejs": { "maxDuration": 30 }
+    "maxDuration": 30,
+    "regions": { "mainland": ["ap-guangzhou"] }
   }
 }
 ```
