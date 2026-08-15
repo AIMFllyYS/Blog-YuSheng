@@ -57,8 +57,8 @@ a:hover{border-bottom-color:var(--accent)}
 ::selection{background:var(--highlight)}
 
 /* ============================ 滚动条 ============================ */
-/* 静止时完全隐去，指针进入可滚动容器才淡出一条细轨；颜色走主题 token，不留系统灰。
-   不用 scrollbar-width:none —— 那样彻底没有滚动位置提示，长文里是可用性倒退。 */
+/* 左栏（目录模式）与中栏：静止隐去，指针进入才淡出细轨。
+   窗体最右侧（html/body）和右栏工作区：彻底不画。页尾仍可滚，只是不占窗口右缘。 */
 *{scrollbar-width:thin;scrollbar-color:transparent transparent}
 *:hover{scrollbar-color:var(--scrollbar) transparent}
 ::-webkit-scrollbar{width:10px;height:10px;background:transparent}
@@ -70,6 +70,18 @@ a:hover{border-bottom-color:var(--accent)}
 :hover::-webkit-scrollbar-thumb{background:var(--scrollbar);background-clip:content-box}
 :hover::-webkit-scrollbar-thumb:hover{background:var(--scrollbar-hover);background-clip:content-box}
 :hover::-webkit-scrollbar-thumb:active{background:var(--scrollbar-hover);background-clip:content-box}
+html,body,.col-right,
+html:hover,body:hover,.col-right:hover{
+  scrollbar-width:none;scrollbar-color:transparent transparent;
+}
+html::-webkit-scrollbar,body::-webkit-scrollbar,.col-right::-webkit-scrollbar,
+html:hover::-webkit-scrollbar,body:hover::-webkit-scrollbar,.col-right:hover::-webkit-scrollbar{
+  width:0;height:0;display:none;
+}
+html::-webkit-scrollbar-thumb,body::-webkit-scrollbar-thumb,.col-right::-webkit-scrollbar-thumb,
+html:hover::-webkit-scrollbar-thumb,body:hover::-webkit-scrollbar-thumb,.col-right:hover::-webkit-scrollbar-thumb{
+  background:transparent;
+}
 
 /* ============================ 原型角标 ============================ */
 .proto-badge{
@@ -734,7 +746,8 @@ body.in-footer .footer-comments{margin-top:-40px}
 .bc-more:hover{border-color:var(--accent);color:var(--accent)}
 
 /* ============================ 悬浮入口 ============================ */
-.balls{position:fixed;inset:auto 0 22px 0;z-index:var(--z-floating);display:flex;justify-content:space-between;padding:0 20px;pointer-events:none;transition:opacity var(--dur-base) ease-out}
+/* 左右入口各自钉死，禁止用 space-between：左球隐藏时右入口会跑到左边。 */
+.balls{position:fixed;inset:0;z-index:var(--z-floating);pointer-events:none;transition:opacity var(--dur-base) ease-out}
 .ball{
   pointer-events:auto;display:none;align-items:center;gap:8px;padding:11px 16px;border-radius:999px;
   background:var(--scroll-paper);border:1px solid var(--line);color:var(--ink-muted);
@@ -742,41 +755,100 @@ body.in-footer .footer-comments{margin-top:-40px}
   transition:color var(--dur-fast) ease-out,border-color var(--dur-fast) ease-out,box-shadow var(--dur-fast) ease-out;
 }
 .ball:hover{color:var(--accent);border-color:var(--accent);box-shadow:0 16px 36px var(--shadow-color)}
-.ball .num{
-  min-width:18px;height:18px;border-radius:999px;background:var(--annotation);color:var(--bg-elevated);
-  font-size:10px;line-height:18px;text-align:center;
-}
-.ball-left{padding:11px 17px}
-/* 左栏不支持收起，所以左球只在移动端出现（抽屉入口）；右球桌面收起后也出现 */
-body.right-collapsed .ball-right{display:inline-flex}
+.ball-left{position:absolute;left:20px;bottom:22px;padding:11px 17px}
+/* 左栏不支持收起，所以左球只在移动端出现（抽屉入口）；右入口桌面收起后钉在右侧 */
+body.right-collapsed .ball-right{display:block}
 
-/* 右下批注球：评论气泡图标 + 只动 transform/opacity 的轻动画 */
+/* 右侧批注入口：数字锚在笔尖正下方，沿笔画慢慢描出。 */
 .ball-right{
-  padding:10px 14px 10px 12px;
+  position:absolute;right:26px;bottom:28px;
+  display:none;width:auto;height:auto;padding:8px;
+  background:none;border:none;box-shadow:none;border-radius:0;
+  color:var(--ink-muted);letter-spacing:0;
   animation:ball-in var(--dur-slow) ease-out both;
 }
-.ball-right .ball-icon{
-  display:grid;place-items:center;width:28px;height:28px;flex:none;
-  animation:ball-float 3.8s ease-in-out infinite;
+.ball-right:hover{background:none;border:none;box-shadow:none;color:var(--accent)}
+.ball-right .pen-stage{position:relative;display:block;width:64px;height:88px}
+.ball-right .pen-ico{
+  position:absolute;left:18px;top:22px;width:30px;height:50px;
+  transform:rotate(45deg);transform-origin:50% 90%;
+  filter:drop-shadow(0 3px 6px var(--shadow-color));
 }
-.ball-right .ball-icon svg{
-  width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;
+.ball-right.is-motion .pen-ico{animation:pen-sway 3.6s ease-in-out infinite}
+.ball-right.is-still .pen-ico{transform:rotate(45deg)}
+.ball-right .pen-num{
+  position:absolute;left:27px;top:48px;z-index:1;
+  display:block;width:22px;height:28px;
+  transform:translateX(-50%);
+}
+.ball-right .pen-num svg{width:100%;height:100%;display:block;overflow:visible}
+.ball-right .pen-num path{
+  fill:none;stroke:var(--annotation);stroke-width:1.7;
   stroke-linecap:round;stroke-linejoin:round;
+  stroke-dasharray:1;stroke-dashoffset:1;
 }
-.ball-right .ball-icon .bubble{fill:var(--highlight)}
-.ball-right .num{animation:badge-breathe 2.8s ease-in-out infinite}
-.ball-right:hover .ball-icon{animation-play-state:paused;transform:translateY(-2px) rotate(-6deg)}
+.ball-right.is-motion .pen-num path{animation:count-write 7.2s ease-in-out infinite}
+.ball-right.is-still .pen-num path{stroke-dashoffset:0;opacity:.9}
+.ball-right .pen-ico svg{width:100%;height:100%;display:block;overflow:visible}
+.ball-right .pen-barrel{fill:none;stroke:currentColor;stroke-width:1.35;stroke-linejoin:round}
+.ball-right .pen-band{fill:none;stroke:var(--accent);stroke-width:1.45;stroke-linecap:round}
+.ball-right .pen-nib{fill:var(--accent);stroke:currentColor;stroke-width:1.1;stroke-linejoin:round}
+.ball-right .pen-slit{fill:none;stroke:var(--bg);stroke-width:1.05;stroke-linecap:round}
+.ball-right .pen-hole{fill:var(--bg)}
+.ball-right{overflow:visible}
+.ball-right .pen-tip{
+  position:absolute;right:calc(100% - 10px);top:50%;
+  display:flex;flex-direction:column;gap:7px;align-items:flex-end;
+  padding:0 10px 0 0;border:none;border-radius:0;
+  background:none;box-shadow:none;color:var(--annotation);
+  font-size:12px;letter-spacing:.14em;line-height:1.2;white-space:nowrap;
+  opacity:0;pointer-events:none;
+  transform:translate(8px,-50%) rotate(-4deg);
+  transition:opacity var(--dur-fast) ease-out,transform var(--dur-fast) ease-out;
+}
+.ball-right .pen-tip::after{
+  content:"";position:absolute;right:0;top:2px;bottom:2px;width:1px;
+  background:currentColor;opacity:.35;transform:rotate(-6deg);
+}
+.ball-right .pen-tip span{
+  position:relative;display:block;
+}
+.ball-right .pen-tip span::after{
+  content:"";position:absolute;left:4%;right:0;bottom:-3px;height:1px;
+  background:currentColor;opacity:.4;transform:rotate(-2deg);
+  border-radius:1px;
+}
+.ball-right:hover .pen-tip,.ball-right:focus-visible .pen-tip{
+  opacity:.92;transform:translate(0,-50%) rotate(-4deg);
+}
+.ball-right.is-menu .pen-tip{opacity:0}
+.pen-menu{
+  position:fixed;z-index:var(--z-overlay);display:none;
+  min-width:92px;padding:4px;
+  background:var(--bg-elevated);border:1px solid var(--line);border-radius:4px;
+  box-shadow:0 12px 28px var(--shadow-color);
+}
+.pen-menu.is-on{display:block}
+.pen-menu button{
+  display:block;width:100%;padding:7px 12px;border-radius:3px;
+  text-align:left;font-size:12.5px;color:var(--ink-muted);
+}
+.pen-menu button:hover{color:var(--accent);background:var(--highlight)}
+.pen-menu button[aria-pressed="true"]{color:var(--accent)}
 @keyframes ball-in{
-  from{opacity:0;transform:translateY(14px) scale(.88)}
+  from{opacity:0;transform:translate(10px,8px) scale(.86)}
   to{opacity:1;transform:none}
 }
-@keyframes ball-float{
-  0%,100%{transform:translateY(0)}
-  50%{transform:translateY(-4px)}
+@keyframes pen-sway{
+  0%,100%{transform:rotate(42deg) translate(0,0)}
+  50%{transform:rotate(52deg) translate(0,-2px)}
 }
-@keyframes badge-breathe{
-  0%,100%{transform:scale(1)}
-  50%{transform:scale(1.08)}
+@keyframes count-write{
+  0%{stroke-dashoffset:1;opacity:0}
+  10%{opacity:1}
+  58%{stroke-dashoffset:0;opacity:1}
+  84%{stroke-dashoffset:0;opacity:.92}
+  100%{stroke-dashoffset:0;opacity:0}
 }
 
 /* ============================ 遮罩 / 弹窗 / 提示 ============================ */
@@ -847,7 +919,8 @@ body.right-collapsed .ball-right{display:inline-flex}
   .col-right{right:0;transform:translateX(101%)}
   body.drawer-left .col-left,body.drawer-right .col-right{transform:none}
   body.right-collapsed .col-right{opacity:1}
-  .ball-left,.ball-right{display:inline-flex !important}
+  .ball-left{display:inline-flex !important}
+  .ball-right{display:block !important}
   .article{padding:88px 20px 8vh}
   .footer-comments{padding-bottom:20vh}
   .fc-inner{padding:8px 20px 0}
@@ -862,7 +935,9 @@ body.right-collapsed .ball-right{display:inline-flex}
   .footer-comments{--reveal:1}
   .fc-wave{transform:none}
   .fc-inner{opacity:1}
-  .ball-right,.ball-right .ball-icon,.ball-right .num{animation:none}
+  .ball-right,.ball-right .pen-ico,.ball-right .pen-num path{animation:none}
+  .ball-right .pen-ico{transform:rotate(45deg)}
+  .ball-right .pen-num path{stroke-dashoffset:0;opacity:.9}
   .toast.is-on,.toast.is-fading{transition:none;opacity:1}
   .toast.is-fading{opacity:0}
   .toc-tag,.toc-tag:hover,.toc-tag[aria-selected="true"]{transition:none;transform:none}
@@ -1510,15 +1585,28 @@ body.right-collapsed .ball-right{display:inline-flex}
 <div class="balls">
   <button class="ball ball-left" type="button" data-open="left">目录</button>
   <button class="ball ball-right" type="button" data-open="right" aria-label="打开批注工作区">
-    <span class="ball-icon" aria-hidden="true">
-      <svg viewBox="0 0 24 24">
-        <path class="bubble" d="M5 6.2h14a1.8 1.8 0 0 1 1.8 1.8v7.2a1.8 1.8 0 0 1-1.8 1.8h-5.1L9.2 20.4v-3.4H5A1.8 1.8 0 0 1 3.2 15.2V8A1.8 1.8 0 0 1 5 6.2z"/>
-        <path d="M8 10.2h8M8 13.2h5.2"/>
+    <span class="pen-tip" id="penTip"><span data-pen-tip="annos"></span><span data-pen-tip="comments"></span></span>
+    <span class="pen-stage">
+    <span class="pen-num" id="penNum" aria-hidden="true"></span>
+    <span class="pen-ico" aria-hidden="true">
+      <svg viewBox="0 0 28 48">
+        <path class="pen-barrel" d="M18.4 6.4h3.2c.7 0 1.2.5 1.2 1.1v7.6"/>
+        <rect class="pen-barrel" x="9.4" y="3.4" width="10" height="7.4" rx="1.6"/>
+        <path class="pen-band" d="M9.4 10.8h10"/>
+        <path class="pen-barrel" d="M9.8 10.8h9.2v17.2c0 1.1-.8 1.8-1.8 1.8h-5.6c-1 0-1.8-.7-1.8-1.8z"/>
+        <rect class="pen-band" x="9.6" y="28" width="9.6" height="2.3" rx=".35"/>
+        <path class="pen-barrel" d="M10.4 30.3h8l-1.15 4.1H11.55z"/>
+        <path class="pen-nib" d="M11.55 34.4L14 46.2L16.45 34.4z"/>
+        <path class="pen-slit" d="M14 35.1v8.4"/>
+        <circle class="pen-hole" cx="14" cy="37" r=".85"/>
       </svg>
     </span>
-    <span>批注</span>
-    <span class="num">5</span>
+    </span>
   </button>
+</div>
+<div class="pen-menu" id="penMenu" role="menu" aria-label="笔的动效">
+  <button type="button" role="menuitemradio" data-pen-motion="on" aria-pressed="true">运动</button>
+  <button type="button" role="menuitemradio" data-pen-motion="off" aria-pressed="false">静止</button>
 </div>
 
 <!-- ===================== 划词工具条 ===================== -->
@@ -1548,7 +1636,7 @@ body.right-collapsed .ball-right{display:inline-flex}
   <p>对应设计文档 <code>docs/designs/blog-reader-design.md</code>。纯静态、零依赖、无任何后端。</p>
   <ul>
     <li>绳挂导航只在中栏顶部 88px 感应区或键盘聚焦时唤出，左右栏顶部不触发；挂件落在幕布上，不骑到侧栏页签</li>
-    <li>滚动条静止时隐去、指针进入容器才浮现，颜色随主题</li>
+    <li>左栏目录与中栏滚动条静止隐去、指针进入才浮现；窗体最右侧与右栏彻底不画滚动条</li>
     <li>左侧目录双模式：常驻挂签；图形只画一级标题 + 正文骨架；条数按篇内篇幅相对映射</li>
     <li>正文内容矩阵：公式、代码、表格、图片、视频、音频、Mermaid、Canvas、SVG、沙箱 HTML、网页降级卡、问答题、降级卡片</li>
     <li>划词工具条：复制、询问、注释；文章级评论只能从评论入口发起</li>
@@ -1556,7 +1644,7 @@ body.right-collapsed .ball-right{display:inline-flex}
     <li>Agent 外壳原型：上下文条、对话气泡、引用来源、建议提问、输入区，全部为示意</li>
     <li>首屏只占一屏三栏。正文滚到尽头先收口，继续下滚才拉出页尾；波浪与收口浪同形，不再压扁</li>
     <li>页尾评论区与右栏评论页签共享同一份数据；移动端右栏收起后页尾是主入口</li>
-    <li>右侧三页签可收起为右下批注球（评论气泡图标 + 轻浮动），移动端降级为抽屉 + 悬浮球</li>
+    <li>右侧三页签可收起为裸笔：数字在笔尖正下方沿笔画慢写；悬停出示注释/评论；右键可切静止/运动</li>
     <li>挂件悬停出现小便笺提示；通知可同时多张，左右落点随机，1 秒冷却；悬停停住，点击撕碎</li>
     <li>三栏可拖动，正文最小宽度优先；双击分隔线恢复默认</li>
     <li>导出二级菜单：格式 × 范围 × 答案开关，直接下载不调用打印</li>
@@ -2201,6 +2289,90 @@ body.right-collapsed .ball-right{display:inline-flex}
     });
   });
   overlay.addEventListener('click',function(){closeDrawers();closeModals()});
+
+  /* 数字在左、笔左倾 45°。动效走 HTML transform，不再扭 SVG 坐标系。 */
+  var DIGIT_STROKES={
+    '0':['M9.1 3.2C4.6 3.6 3.1 8.4 3.2 12.6C3.4 18.2 6.1 21.4 9.2 21.3C14.1 21.1 15.4 16.2 15.2 11.6C15 6.4 13.3 2.9 9.1 3.2'],
+    '1':['M6.6 7.4C8.5 5 10.8 2.9 11 3.1C11.1 7 11 21.2 10.9 21.2'],
+    '2':['M4.1 8.2C4.8 3.8 14.4 3 14.6 8.6C14.7 12.6 6.2 15.2 5.1 19.8C4.7 21.6 6.4 21.1 15 20.7'],
+    '3':['M5 5C10.8 2.8 15.2 5.1 13.7 9.3C12.7 12.3 8.1 12.4 8.3 12.4C14.1 12.1 15.5 16.8 13.5 19.8C11.3 22.6 4.9 21.3 4.7 18.5'],
+    '4':['M13 3.1L4.1 15.7H15.6','M12.6 3.3V21.1'],
+    '5':['M14.8 3.5C12.2 3.3 8.4 3.6 6.2 3.9L5.1 11.6C8.8 9.2 15.4 10 15 16.1C14.6 21.6 6.8 22.6 4.5 18.1'],
+    '6':['M13.9 4C8 3.6 4.1 9.3 4.3 15C4.5 20.5 9.4 22.5 12.9 20.6C16.5 18.6 16.3 12.9 11.5 12.1C7.6 11.4 5.3 14.4 5.5 16.3'],
+    '7':['M4.5 4.1H15L8.1 21.2'],
+    '8':['M9 12.1C4.5 11.7 4.1 3.5 9 3.3C13.9 3.1 14.3 11.5 9 12.1C4.1 12.7 4.3 21.4 9.2 21.2C14.2 21 14.6 12.9 9 12.1'],
+    '9':['M5.1 20.2C9 22.1 15.1 19.1 14.7 12.9C14.4 6.8 10 3.1 6.7 4.5C3.5 5.9 3.7 12.4 8.3 13.6C12 14.6 14.5 11.9 14.6 11.7']
+  };
+  var PEN_DW=18,PEN_GAP=3,PEN_MOTION_KEY='reader-pen-motion';
+  var penBtn=$('.ball-right'),penMenu=$('#penMenu'),penNum=$('#penNum');
+  function penMotionOn(){
+    try{return localStorage.getItem(PEN_MOTION_KEY)!=='0'}catch(err){return true}
+  }
+  function setPenMotion(on){
+    try{localStorage.setItem(PEN_MOTION_KEY,on?'1':'0')}catch(err){}
+    if(!penBtn) return;
+    penBtn.classList.toggle('is-motion',on);
+    penBtn.classList.toggle('is-still',!on);
+    $$('#penMenu [data-pen-motion]').forEach(function(b){
+      b.setAttribute('aria-pressed',String((b.getAttribute('data-pen-motion')==='on')===on));
+    });
+  }
+  function closePenMenu(){
+    if(penMenu) penMenu.classList.remove('is-on');
+    if(penBtn) penBtn.classList.remove('is-menu');
+  }
+  function openPenMenu(x,y){
+    if(!penMenu) return;
+    if(penBtn) penBtn.classList.add('is-menu');
+    penMenu.classList.add('is-on');
+    var w=penMenu.offsetWidth,h=penMenu.offsetHeight;
+    penMenu.style.left=Math.max(8,Math.min(window.innerWidth-w-8,x))+'px';
+    penMenu.style.top=Math.max(8,Math.min(window.innerHeight-h-8,y-h-6))+'px';
+  }
+  function renderPenCount(){
+    if(!penNum||!penBtn) return;
+    var annos=$$('#paneAnnos > .thread').length;
+    var comments=$$('#footerComments .bc-list > .thread').length;
+    if(!comments) comments=$$('#paneComments > .thread').length;
+    var chars=String(annos);
+    var html='';
+    chars.split('').forEach(function(ch,i){
+      (DIGIT_STROKES[ch]||DIGIT_STROKES['0']).forEach(function(d,j){
+        html+='<path pathLength="1" style="animation-delay:'+(i*0.35+j*0.2)+'s" transform="translate('+(i*(PEN_DW+PEN_GAP))+' 0)" d="'+d+'"/>';
+      });
+    });
+    var vw=chars.length*PEN_DW+Math.max(0,chars.length-1)*PEN_GAP;
+    penNum.innerHTML='<svg viewBox="0 0 '+vw+' 24">'+html+'</svg>';
+    penNum.style.width=(chars.length>1?32:22)+'px';
+    var tipAnnos=$('[data-pen-tip="annos"]'),tipComments=$('[data-pen-tip="comments"]');
+    if(tipAnnos) tipAnnos.textContent='注释 '+annos;
+    if(tipComments) tipComments.textContent='评论 '+comments;
+    penBtn.setAttribute('aria-label','打开工作区。注释 '+annos+'，评论 '+comments+'。右键可切换动效');
+    if(reduced()){
+      penBtn.classList.add('is-still');
+      penBtn.classList.remove('is-motion');
+    }else setPenMotion(penMotionOn());
+  }
+  renderPenCount();
+  if(penBtn){
+    penBtn.addEventListener('click',function(){closePenMenu()});
+    penBtn.addEventListener('contextmenu',function(e){
+      e.preventDefault();
+      openPenMenu(e.clientX,e.clientY);
+    });
+  }
+  if(penMenu){
+    $$('#penMenu [data-pen-motion]').forEach(function(b){
+      b.addEventListener('click',function(){
+        setPenMotion(b.getAttribute('data-pen-motion')==='on');
+        closePenMenu();
+      });
+    });
+  }
+  document.addEventListener('click',function(e){
+    if(!e.target.closest('#penMenu')&&!e.target.closest('.ball-right')) closePenMenu();
+  });
+  document.addEventListener('keydown',function(e){if(e.key==='Escape') closePenMenu()});
 
   /* ---------------- 右栏页签 ---------------- */
   var panes={comments:$('#paneComments'),annos:$('#paneAnnos'),agent:$('#paneAgent')};
