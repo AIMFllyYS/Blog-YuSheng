@@ -1,13 +1,12 @@
-import type { ColorRepresentation } from 'three'
-
+/** 取值来自 getComputedStyle，恒为 CSS 颜色字符串，不是 three 的 Color 实例。 */
 export type JourneyPalette = {
-  void: ColorRepresentation
-  voidRaised: ColorRepresentation
-  gold: ColorRepresentation
-  goldSoft: ColorRepresentation
-  paper: ColorRepresentation
-  paperEdge: ColorRepresentation
-  ink: ColorRepresentation
+  void: string
+  voidRaised: string
+  gold: string
+  goldSoft: string
+  paper: string
+  paperEdge: string
+  ink: string
 }
 
 const JOURNEY_COLOR_PROPERTIES = {
