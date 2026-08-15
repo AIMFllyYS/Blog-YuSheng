@@ -1,7 +1,7 @@
 # 博客整体架构设计（滚动总览）
 
 > Created: 2026-08-14
-> Updated: 2026-08-15
+> Updated: 2026-08-16
 > Status: accepted baseline（已拍板原则可实施；阶段进入门见文末）
 >
 > 本文档记录全站架构与已经对齐的产品边界。已拍板的决策标 ✅，方向已定但实现细节仍需规格化的标 🔶，完全待讨论的事项收录在文末。
@@ -275,6 +275,7 @@ PDF 与 DOCX 库尚未锁定；不得在没有中文长文档验证的情况下�
 - 右工作区至少包含评论、注释和未来 Agent 入口；评论和注释是两个明确面板。
 - 中小屏将左右栏收成抽屉，划词工具条与右侧面板必须适配触摸操作。
 - `/blog/` 与 `/blog/<slug>/` 的布局、交互与视觉 **1:1 对标** [blog-reader-prototype.html](./blog-reader-prototype.html)；文字说明见 [blog-reader-design.md](./blog-reader-design.md)。架构本文只定产品边界，不为博客页另写一套外观。
+- 左栏图形模式是文章的骨架屏缩略，不是第二棵标题树：只画一级标题 + 正文骨架条，条数按篇内正文篇幅相对映射（文字越长条越多）。原则写入 [frontend-design.md](../conventions/frontend-design.md)。
 
 ### D15 路由与未来板块 ✅
 

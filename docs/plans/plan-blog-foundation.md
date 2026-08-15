@@ -1,7 +1,7 @@
 # 博客内容系统工程计划（P0–P3）
 
 > Created: 2026-08-15
-> Updated: 2026-08-15
+> Updated: 2026-08-16
 > Status: accepted roadmap（进入每阶段前仍须满足对应技术门）
 >
 > 本计划描述依赖顺序和阶段验收，不替代 [博客内容引擎功能规格](../specs/blog-content-engine.md)。优先级按“错误地基会让多少后续工作返工”排序，不按界面显眼程度排序。
@@ -110,10 +110,12 @@ P0/P1/P2 是博客功能底座的递进完成度；P3 是明确后置的增强�
 - `/blog/` 与 `/blog/<slug>/` 的视觉与交互 **1:1 对标** [blog-reader-prototype.html](../designs/blog-reader-prototype.html)，不得另起一套外观。
 - 中小屏抽屉、悬浮入口、键盘与 reduced motion。
 - 标题锚点、目录提取、分享基础和 OG metadata。
+- 图形目录是文章的骨架屏缩略：只画一级标题 + 正文骨架（不拆二三四级）。条数按该节去空白字数在篇内相对映射（最短最少、最长最多，2–8 条，末条吃余数），禁止开方压平。三类嵌入微标只挂在一级标题行，各用不同语义色（自定义标签 / 图片 / 思维导图；**音频不进微标**）。虚线视口框只定位。公式与实现以 [blog-reader-prototype.html](../designs/blog-reader-prototype.html) 为准。
 
 #### 首批 Renderer
 
 - 普通图片、高级图片基础、视频、音频。
+- 思维导图：P1 可先复用严格 Mermaid `mindmap`；是否另立 renderer 标签见文末待锁定项。音频组件照常渲染，但不进入图形目录微标。
 - Canvas 注册机制和至少一个函数图像示例。
 - SVG 资源引用与矢量/PNG fallback。
 - 本地 HTML sandbox、站内/自有/第三方网页尽力嵌入与预览卡片降级。
@@ -278,3 +280,4 @@ P0/P1/P2 是博客功能底座的递进完成度；P3 是明确后置的增强�
 - [ ] PDF/DOCX 技术验证方案及依赖安装授权；
 - [ ] iframe 隔离源、CSP/Permissions Policy 与当前 `X-Frame-Options: DENY` 的协调方式；
 - [ ] 每阶段是否另拆 GitHub Issues（创建时必须使用项目指定 skill）。
+- [ ] 思维导图嵌入的正式形态：复用严格 Mermaid `mindmap`，还是新增独立 renderer 标签（不得与已锁定首批标签撞名）。

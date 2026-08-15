@@ -1,7 +1,7 @@
 # 前端设计规范
 
 > Created: 2026-08-14
-> Updated: 2026-08-15
+> Updated: 2026-08-16
 > Status: accepted（决策背景见 [docs/designs/architecture-overview.md](../designs/architecture-overview.md)）
 >
 > 本文管全站 token 与通用规则。`/blog/` 与 `/blog/<slug>/` 的布局、交互与视觉 **1:1 对标** [blog-reader-prototype.html](../designs/blog-reader-prototype.html)，文字说明见 [blog-reader-design.md](../designs/blog-reader-design.md)。本文不为博客页另写一套外观。
@@ -204,3 +204,14 @@
 - **统一 z-index 表**：多浮层产品（导航/面板/悬浮球/弹窗）最易层级打架，提前立表成本几乎为零
 - **统一渲染器、不同 profile**：文章和讨论共享能力实现，但用户内容只能调用经过明确允许的安全子集
 - **评论与注释分区**：文章级讨论和选区级批注拥有不同入口与排序语义，不能用一个发布类型开关混在一起
+- **图形目录是骨架尺，不是第二棵树**：篇幅对比必须一眼可读；压缩到各节同高等于丢掉这根尺
+
+## 十、博客阅读页图形目录（原则）
+
+外观仍 **1:1 对标** [blog-reader-prototype.html](../designs/blog-reader-prototype.html)，细节说明见 [blog-reader-design.md](../designs/blog-reader-design.md)。本文只锁产品原则，落地时不得另写一套节点皮肤。
+
+- 图形模式把整篇文章缩成一张可点击的骨架屏：每个一级章节一张卡片，标题行统一，正文是堆叠的骨架条。
+- **文字越长，条越多。** 计量用该节去空白字数（含该节下的二三四级），不按标题层级再拆节点。
+- 条数在**一篇文章内部相对映射**：最短的节最少、最长的节最多，中间线性插值（2–8 条）。末条宽度表示余数。禁止开方或其它把各节压成同一档的算法。
+- 自定义标签 / 图片 / 思维导图三类微标只挂在一级标题行，各用 `--accent` / `--annotation` / `--comment`。音频不进微标。
+- 虚线视口框只定位当前阅读位置，高度不随章节篇幅缩放。

@@ -211,7 +211,15 @@ body.right-collapsed{--w-right:0px}
 /* 正文到底或已进入页尾：任意栏继续下滚都交给文档，不要再 contain */
 body.is-article-end .col-left,body.is-article-end .col-right,
 body.in-footer .col-left,body.in-footer .col-right{overscroll-behavior:auto}
-.col-left{border-right-width:1px;padding-right:16px}
+.col-left{
+  border-right-width:1px;padding-right:16px;
+  overflow:hidden;display:flex;flex-direction:column;
+}
+.col-left .panel-body{
+  flex:1 1 auto;min-height:0;overflow:auto;overscroll-behavior:contain;
+}
+body.is-article-end .col-left .panel-body,
+body.in-footer .col-left .panel-body{overscroll-behavior:auto}
 .col-right{border-left-width:1px}
 /* 读到尽头：左右栏一起坐实，右栏多走一步，和底边收口浪对齐 */
 @media (min-width:1025px){
@@ -288,13 +296,15 @@ body.toc-graph .toc-hang{background:transparent}
 body.toc-graph .col-left{
   background:transparent;border-right-width:0;padding-right:8px;
   z-index:var(--z-panel);
+}
+body.toc-graph .col-left .panel-body,
+body.toc-graph .col-left .panel-body:hover{
   scrollbar-width:none;scrollbar-color:transparent transparent;
 }
-body.toc-graph .col-left:hover{scrollbar-color:transparent transparent}
-body.toc-graph .col-left::-webkit-scrollbar,
-body.toc-graph .col-left:hover::-webkit-scrollbar{width:0;height:0;display:none}
-body.toc-graph .col-left::-webkit-scrollbar-thumb,
-body.toc-graph .col-left:hover::-webkit-scrollbar-thumb{background:transparent}
+body.toc-graph .col-left .panel-body::-webkit-scrollbar,
+body.toc-graph .col-left .panel-body:hover::-webkit-scrollbar{width:0;height:0;display:none}
+body.toc-graph .col-left .panel-body::-webkit-scrollbar-thumb,
+body.toc-graph .col-left .panel-body:hover::-webkit-scrollbar-thumb{background:transparent}
 body.toc-graph #divLeft::after{opacity:0}
 body.toc-graph .panel-body{padding:8px 6px 24px}
 body.toc-graph .graph{padding:4px 4px 20px;overflow:visible}
@@ -329,6 +339,8 @@ body.toc-graph .graph-note{opacity:.75}
 .toc-link.is-active{color:var(--ink);border-left-color:var(--accent);background:var(--highlight);font-weight:600}
 .toc-list .lv3 .toc-link{padding-left:28px;font-size:12.5px;color:var(--ink-faint)}
 .toc-list .lv3 .toc-link.is-active{color:var(--ink)}
+.toc-list .lv4 .toc-link{padding-left:42px;font-size:12px;color:var(--ink-faint)}
+.toc-list .lv4 .toc-link.is-active{color:var(--ink)}
 .fold{
   position:absolute;left:-2px;top:7px;width:16px;height:16px;display:grid;place-items:center;
   color:var(--ink-faint);font-size:9px;line-height:1;
@@ -349,52 +361,103 @@ li.is-folded > .children{display:none}
   box-shadow:inset 0 1px 8px var(--shadow-color);
 }
 .graph-viewport{
-  position:absolute;left:8px;right:8px;height:60px;top:12px;
+  position:absolute;left:8px;right:8px;height:44px;top:12px;
   border:1px dashed var(--accent);border-radius:6px;background:var(--highlight);
   opacity:.6;pointer-events:none;transition:top var(--dur-fast) linear;
 }
 .gnodes{list-style:none;margin:0;padding:0;position:relative}
-.gnodes::before{content:"";position:absolute;left:6px;top:15px;bottom:15px;width:1px;background:var(--line)}
-.gnodes li{position:relative;padding-left:19px}
-.gnodes li::before{content:"";position:absolute;left:6px;top:16px;width:13px;height:1px;background:var(--line)}
-.gnodes li.g3{padding-left:38px}
-.gnodes li.g3::before{width:32px}
+.gnodes::before{content:"";position:absolute;left:6px;top:12px;bottom:12px;width:1px;background:var(--line)}
+.gnodes li{position:relative;padding-left:18px}
+.gnodes li::before{content:"";position:absolute;left:6px;top:18px;width:12px;height:1px;background:var(--line)}
 .gnode{
-  position:relative;display:flex;align-items:center;gap:8px;width:100%;margin:4px 0;padding:8px 10px;
+  position:relative;display:flex;flex-direction:column;align-items:stretch;gap:6px;
+  width:100%;margin:4px 0;padding:7px 8px 8px;
   border:1px solid var(--line);border-radius:6px;background:var(--bg-elevated);
   box-shadow:0 2px 5px var(--shadow-color);
   transition:transform var(--dur-fast) ease-out,border-color var(--dur-fast) ease-out,box-shadow var(--dur-fast) ease-out,background-color var(--dur-fast) ease-out;
 }
-.gnode:hover{border-color:var(--accent);transform:translateX(3px);box-shadow:0 6px 16px var(--shadow-color)}
+.gnode:hover{border-color:var(--accent);transform:translateX(2px);box-shadow:0 6px 16px var(--shadow-color)}
 .gnode.is-active{border-color:var(--accent);background:var(--highlight)}
-.gnode .dot{flex:none;width:5px;height:5px;border-radius:999px;background:var(--ink-faint);opacity:.6}
+.ghead{display:flex;align-items:center;gap:6px;min-height:14px}
+.gnode .dot{flex:none;width:4px;height:4px;border-radius:999px;background:var(--ink-faint);opacity:.6}
 .gnode.is-active .dot{background:var(--accent);opacity:1}
-.gnode .bar{display:block;height:5px;border-radius:999px;background:var(--ink-faint);opacity:.38}
+.gnode .bar{display:block;height:4px;width:var(--bar,48%);border-radius:999px;background:var(--ink-faint);opacity:.4}
 .gnode.is-active .bar{background:var(--accent);opacity:.72}
-.gnodes li.g3 .gnode{padding:6px 9px;background:transparent;box-shadow:none}
-.gnodes li.g3 .gnode:hover,.gnodes li.g3 .gnode.is-active{background:var(--bg-elevated)}
-.gnodes li.g3 .bar{height:4px}
-.graph-legend{display:flex;align-items:center;gap:14px;margin-top:10px;padding:0 2px;font-size:10.5px;color:var(--ink-faint)}
-.graph-legend span{display:flex;align-items:center;gap:5px}
+.gbody{display:flex;flex-direction:column;gap:3px;padding-left:10px}
+.gbody i{display:block;height:3px;border-radius:999px;background:var(--ink-faint);opacity:.26}
+.gnode.is-active .gbody i{background:var(--accent);opacity:.4}
+.gnode .gmarks{margin-left:auto;display:flex;align-items:center;gap:4px;flex:none}
+.gnode .gmarks svg{width:11px;height:11px;display:block}
+.gnode .gmarks svg *{fill:none;stroke:currentColor;stroke-width:1.2;stroke-linecap:round;stroke-linejoin:round}
+.gmarks .gm-tag{color:var(--accent)}
+.gmarks .gm-image{color:var(--annotation)}
+.gmarks .gm-mindmap{color:var(--comment)}
+.graph-legend{display:flex;flex-direction:column;align-items:flex-start;gap:8px;margin:0 0 10px;font-size:11px;color:var(--ink-muted)}
+.graph-legend span{display:flex;align-items:center;gap:6px}
 .graph-legend i{display:inline-block;flex:none}
 .lg-box{width:14px;height:9px;border:1px dashed var(--accent);border-radius:2px;background:var(--highlight)}
 .lg-bar{width:14px;height:4px;border-radius:999px;background:var(--ink-faint);opacity:.45}
+.lg-ribs{display:flex;flex-direction:column;gap:2px;width:14px}
+.lg-ribs i{display:block;height:2px;border-radius:999px;background:var(--ink-faint);opacity:.35}
+.lg-ribs i:nth-child(2){width:72%}
+.lg-ribs i:nth-child(3){width:54%}
 .gbadge{
   position:absolute;right:-6px;top:-6px;min-width:16px;height:16px;padding:0 4px;border-radius:999px;
   background:var(--annotation);color:var(--bg-elevated);font-size:10px;line-height:16px;text-align:center;
 }
-.gtip{
-  position:absolute;left:calc(100% + 8px);top:50%;transform:translateY(-50%);
-  padding:4px 9px;border-radius:3px;background:var(--ink);color:var(--bg);font-size:11px;white-space:nowrap;
-  opacity:0;pointer-events:none;transition:opacity var(--dur-fast);z-index:1;
+.gtip{display:none}
+.gtip-float{
+  position:fixed;z-index:var(--z-overlay);padding:4px 9px;border-radius:3px;
+  background:var(--ink);color:var(--bg);font-size:11px;line-height:1.4;white-space:nowrap;
+  opacity:0;visibility:hidden;pointer-events:none;
+  transform:translateY(-50%);
+  transition:opacity var(--dur-fast) ease-out,visibility var(--dur-fast);
 }
-.gnode:hover{z-index:2}
-.gnode:hover .gtip{opacity:.92}
-.gtip.is-float{
-  position:fixed;left:auto;top:auto;transform:translateY(-50%);
-  z-index:var(--z-overlay);opacity:.92;
+.gtip-float.is-on{opacity:.92;visibility:visible}
+.graph-note{margin:0;font-size:11px;line-height:1.75;color:var(--ink-faint)}
+
+/* 图形图例：左下角书签常驻，卡片覆盖长骨架并做毛边 */
+.graph-dock{
+  display:none;position:absolute;left:12px;bottom:12px;z-index:4;
+  width:min(228px,calc(100% - 24px));pointer-events:none;
 }
-.graph-note{margin:14px 8px 0;font-size:11px;line-height:1.8;color:var(--ink-faint)}
+body.toc-graph .graph-dock{display:block}
+.graph-mark{
+  pointer-events:auto;display:block;width:28px;height:40px;padding:0;margin:0;
+  color:var(--ink-muted);filter:drop-shadow(0 7px 14px var(--shadow-color));
+  transform:translateY(0);
+  transition:transform 320ms cubic-bezier(.22,.82,.28,1),color 320ms ease-out;
+}
+.graph-mark svg{width:28px;height:40px;display:block}
+.graph-mark .mark-body{fill:var(--scroll-paper);stroke:currentColor;stroke-width:1.15;stroke-linejoin:round}
+.graph-mark .mark-hole{fill:var(--bg);stroke:currentColor;stroke-width:1.1}
+.graph-mark .mark-stitch{fill:none;stroke:currentColor;stroke-width:1;stroke-linecap:round;opacity:.45}
+.graph-mark:hover{transform:translateY(-3px);color:var(--accent)}
+.graph-dock.is-open .graph-mark{transform:translateY(-4px);color:var(--accent)}
+.graph-card{
+  pointer-events:none;position:absolute;left:0;bottom:46px;width:100%;
+  padding:18px 14px 14px;
+  background:var(--scroll-paper);
+  background:color-mix(in srgb,var(--scroll-paper) 76%,transparent);
+  -webkit-backdrop-filter:blur(12px) saturate(1.04);
+  backdrop-filter:blur(12px) saturate(1.04);
+  border:1px solid var(--line);border-radius:3px;
+  box-shadow:0 16px 36px var(--shadow-color);
+  -webkit-mask-image:linear-gradient(to bottom,transparent 0%,#000 16%,#000 100%);
+  mask-image:linear-gradient(to bottom,transparent 0%,#000 16%,#000 100%);
+  touch-action:none;user-select:none;
+  transform:translateY(22px);opacity:0;visibility:hidden;
+  transform-origin:bottom left;
+  transition:transform 560ms cubic-bezier(.22,.82,.28,1),
+             opacity 420ms ease-out,visibility 560ms;
+}
+.graph-dock.is-open .graph-card{
+  pointer-events:auto;transform:none;opacity:1;visibility:visible;cursor:grab;
+}
+.graph-card.is-dragging{transition:none;cursor:grabbing}
+.graph-card-grip{
+  width:22px;height:3px;margin:0 auto 10px;border-radius:999px;background:var(--ink-faint);opacity:.45;
+}
 
 /* ============================ 中栏：正文 ============================ */
 .col-center{scroll-behavior:smooth}
@@ -406,6 +469,7 @@ li.is-folded > .children{display:none}
 .tag{padding:2px 9px;border:1px solid var(--line);border-radius:999px;font-size:11px}
 .article h2{margin:52px 0 16px;font-size:24px;letter-spacing:.03em;font-weight:600;scroll-margin-top:96px}
 .article h3{margin:36px 0 12px;font-size:18px;letter-spacing:.02em;font-weight:600;color:var(--ink);scroll-margin-top:96px}
+.article h4{margin:28px 0 10px;font-size:16px;letter-spacing:.02em;font-weight:600;color:var(--ink-muted);scroll-margin-top:96px}
 .article p{margin:0 0 20px;font-size:16.5px;line-height:2}
 .article ul,.article ol{margin:0 0 20px;padding-left:1.5em;font-size:16.5px;line-height:2}
 .article li{margin-bottom:6px}
@@ -802,6 +866,7 @@ body.right-collapsed .ball-right{display:inline-flex}
   .toast.is-on,.toast.is-fading{transition:none;opacity:1}
   .toast.is-fading{opacity:0}
   .toc-tag,.toc-tag:hover,.toc-tag[aria-selected="true"]{transition:none;transform:none}
+  .graph-card,.graph-mark{transition:none}
   [data-tip]::after{transform:translateX(-50%)}
   .fc-inner > *{transform:none}
 }
@@ -917,7 +982,7 @@ body.right-collapsed .ball-right{display:inline-flex}
       </div>
     </div>
 
-    <div class="panel-body">
+    <div class="panel-body" id="leftBody">
       <!-- 常规模式：对标飞书 -->
       <ul class="toc-list" id="tocList">
         <li>
@@ -934,6 +999,7 @@ body.right-collapsed .ball-right{display:inline-flex}
           <ul class="children">
             <li class="lv3"><button class="toc-link" data-target="s2a">李雅普诺夫指数</button></li>
             <li class="lv3"><button class="toc-link" data-target="s2b">敏感依赖</button></li>
+            <li class="lv4"><button class="toc-link" data-target="s2b1">一张思维导图</button></li>
           </ul>
         </li>
         <li>
@@ -953,28 +1019,28 @@ body.right-collapsed .ball-right{display:inline-flex}
       <div class="graph" id="tocGraph">
         <div class="graph-canvas">
           <div class="graph-viewport" id="graphViewport"></div>
-          <ul class="gnodes">
-            <li><button class="gnode" data-target="s1"><span class="dot"></span><span class="bar" style="width:76%"></span><span class="gbadge">2</span><span class="gtip">引子：三个天体，一个难题</span></button></li>
-            <li class="g3"><button class="gnode" data-target="s1a"><span class="dot"></span><span class="bar" style="width:52%"></span><span class="gtip">从两体到三体</span></button></li>
-            <li class="g3"><button class="gnode" data-target="s1b"><span class="dot"></span><span class="bar" style="width:62%"></span><span class="gbadge">1</span><span class="gtip">为什么没有解析解</span></button></li>
-            <li><button class="gnode" data-target="s2"><span class="dot"></span><span class="bar" style="width:70%"></span><span class="gtip">混沌的数学面貌</span></button></li>
-            <li class="g3"><button class="gnode" data-target="s2a"><span class="dot"></span><span class="bar" style="width:58%"></span><span class="gtip">李雅普诺夫指数</span></button></li>
-            <li class="g3"><button class="gnode" data-target="s2b"><span class="dot"></span><span class="bar" style="width:44%"></span><span class="gtip">敏感依赖</span></button></li>
-            <li><button class="gnode" data-target="s3"><span class="dot"></span><span class="bar" style="width:56%"></span><span class="gtip">数值实验</span></button></li>
-            <li class="g3"><button class="gnode" data-target="s3a"><span class="dot"></span><span class="bar" style="width:40%"></span><span class="gtip">交互演示</span></button></li>
-            <li class="g3"><button class="gnode" data-target="s3b"><span class="dot"></span><span class="bar" style="width:40%"></span><span class="gtip">影音记录</span></button></li>
-            <li><button class="gnode" data-target="s4"><span class="dot"></span><span class="bar" style="width:66%"></span><span class="gbadge">1</span><span class="gtip">特殊解与周期轨道</span></button></li>
-            <li><button class="gnode" data-target="s5"><span class="dot"></span><span class="bar" style="width:48%"></span><span class="gtip">读到这里，测一测</span></button></li>
-            <li><button class="gnode" data-target="s6"><span class="dot"></span><span class="bar" style="width:30%"></span><span class="gtip">结语</span></button></li>
-          </ul>
+          <ul class="gnodes" id="gnodes"></ul>
         </div>
+      </div>
+    </div>
+
+    <div class="graph-dock" id="graphDock">
+      <div class="graph-card" id="graphCard">
+        <div class="graph-card-grip" aria-hidden="true"></div>
         <div class="graph-legend">
           <span><i class="lg-box"></i>当前视窗</span>
           <span><i class="lg-bar"></i>标题长度</span>
-          <span>缩进 = 层级</span>
+          <span><i class="lg-ribs" aria-hidden="true"><i></i><i></i><i></i></i>条数 = 篇幅</span>
         </div>
-        <p class="graph-note">骨架节点只表示结构与长度，悬停浮出真实标题；虚线框跟随阅读位置。点击节点跳转正文。</p>
+        <p class="graph-note">条数随该节正文篇幅增减：一篇里最短的节最少、最长的节最多。悬停浮出真实标题；虚线框跟随阅读位置。点击节点跳转正文。</p>
       </div>
+      <button class="graph-mark" id="graphMark" type="button" aria-expanded="false" aria-controls="graphCard" aria-label="图形图例">
+        <svg viewBox="0 0 28 40" aria-hidden="true">
+          <path class="mark-body" d="M5.2 1.8h17.6c.9 0 1.6.7 1.6 1.6v32.2l-10.4-6.4-10.4 6.4V3.4c0-.9.7-1.6 1.6-1.6z"/>
+          <circle class="mark-hole" cx="14" cy="8.2" r="2.1"/>
+          <path class="mark-stitch" d="M9.2 14.2h9.6M9.2 18.2h9.6"/>
+        </svg>
+      </button>
     </div>
   </aside>
 
@@ -986,7 +1052,7 @@ body.right-collapsed .ball-right{display:inline-flex}
 
       <header class="art-head">
         <p class="kicker">卷一 · 长文</p>
-        <h1>三体运动的混沌之美</h1>
+        <h1 id="s0">三体运动的混沌之美</h1>
         <div class="art-meta">
           <span>2026-08-15</span><span>约 12 分钟</span>
           <span class="tag">天体力学</span><span class="tag">混沌</span><span class="tag">数值方法</span>
@@ -1059,16 +1125,42 @@ body.right-collapsed .ball-right{display:inline-flex}
         </div>
         <p class="card-cap">严格安全模式渲染，图中文字不参与划词</p>
       </div>
-      <div class="card">
+      <div class="card" data-embed="image">
         <div class="card-bar"><span class="name">图 2 · 三体轨迹的十万步叠加</span><span class="badge">图片</span></div>
         <div class="card-body"><div class="ph-image" role="img" aria-label="三体轨迹示意图占位"></div></div>
         <p class="card-cap">图注：同一初值下三个天体在相平面留下的痕迹</p>
       </div>
 
+      <h4 id="s2b1">一张思维导图</h4>
+      <p>把这一节的概念摊成一张图，比再写一段更省事。正式实现里这是思维导图嵌入，不是音频。</p>
+      <div class="card" data-embed="mindmap">
+        <div class="card-bar"><span class="name">mindmap-embed · chaos-map</span><span class="badge">思维导图</span></div>
+        <div class="card-body" style="display:grid;place-items:center">
+          <svg viewBox="0 0 360 140" style="width:100%;max-width:340px" aria-label="混沌概念思维导图占位">
+            <g fill="none" stroke="var(--ink-muted)" stroke-width="1.1">
+              <path d="M180 70L86 38M180 70L86 102M180 70L274 38M180 70L274 102"/>
+              <rect x="138" y="54" width="84" height="32" rx="16" stroke="var(--accent)"/>
+              <rect x="18" y="24" width="78" height="28" rx="8"/>
+              <rect x="18" y="88" width="78" height="28" rx="8"/>
+              <rect x="264" y="24" width="78" height="28" rx="8"/>
+              <rect x="264" y="88" width="78" height="28" rx="8"/>
+            </g>
+            <g fill="var(--ink)" font-size="11" text-anchor="middle" font-family="var(--font-serif)">
+              <text x="180" y="74" fill="var(--accent)">混沌</text>
+              <text x="57" y="42">初值</text>
+              <text x="57" y="106">指数</text>
+              <text x="303" y="42">轨道</text>
+              <text x="303" y="106">窗口</text>
+            </g>
+          </svg>
+        </div>
+        <p class="card-cap">原型示意；正式实现复用严格 Mermaid mindmap 或独立 renderer</p>
+      </div>
+
       <h2 id="s3">数值实验</h2>
       <h3 id="s3a">交互演示</h3>
       <p>下面这个组件是注册在文档引擎里的画布渲染器，参数与数据都放在文章包的 <code>data/</code> 里，正文只引用它的 ID。</p>
-      <div class="card">
+      <div class="card" data-embed="tag">
         <div class="card-bar"><span class="name">canvas-render · three-body</span><span class="badge live">交互</span></div>
         <div class="card-body">
           <svg viewBox="0 0 520 200" style="width:100%" aria-label="函数图像占位">
@@ -1086,7 +1178,7 @@ body.right-collapsed .ball-right{display:inline-flex}
         </div>
         <p class="card-cap">原型中为静态示意；正式实现里可拖动参数并实时重算</p>
       </div>
-      <div class="card">
+      <div class="card" data-embed="tag">
         <div class="card-bar"><span class="name">svg-embed · phase-space</span><span class="badge">SVG</span></div>
         <div class="card-body" style="display:grid;place-items:center">
           <svg viewBox="0 0 200 110" style="width:220px" aria-label="相空间示意">
@@ -1099,7 +1191,7 @@ body.right-collapsed .ball-right{display:inline-flex}
       </div>
 
       <h3 id="s3b">影音记录</h3>
-      <div class="card">
+      <div class="card" data-embed="tag">
         <div class="card-bar"><span class="name">实验室录屏：轨道崩解的瞬间</span><span class="badge">视频</span></div>
         <div class="card-body"><div class="ph-video"><div class="play" role="img" aria-label="播放按钮占位"></div></div></div>
         <p class="card-cap">不自动播放，必须有标题；推荐提供封面</p>
@@ -1123,7 +1215,7 @@ body.right-collapsed .ball-right{display:inline-flex}
 
       <h2 id="s4">特殊解与周期轨道</h2>
       <p><mark class="anno" data-anno="a3">拉格朗日点与八字形周期解说明混沌并不排斥秩序</mark>：在参数空间的特定位置，三体系统能维持长期稳定的编排。</p>
-      <div class="card">
+      <div class="card" data-embed="tag">
         <div class="card-bar"><span class="name">html-embed · 周期解参数计算器</span><span class="badge sandbox">沙箱运行</span></div>
         <div class="card-body">
           <div style="border:1px solid var(--line);border-radius:4px;padding:16px;background:var(--bg)">
@@ -1137,7 +1229,7 @@ body.right-collapsed .ball-right{display:inline-flex}
         </div>
         <p class="card-cap">无法加载时显示降级链接，不会让整篇文章崩溃</p>
       </div>
-      <div class="card">
+      <div class="card" data-embed="tag">
         <div class="card-bar"><span class="name">web-embed · 外部资料</span><span class="badge">网页</span></div>
         <div class="card-body">
           <div style="display:flex;gap:14px;align-items:center">
@@ -1157,7 +1249,7 @@ body.right-collapsed .ball-right{display:inline-flex}
       </ul>
 
       <h2 id="s5">读到这里，测一测</h2>
-      <div class="card">
+      <div class="card" data-embed="tag">
         <div class="card-bar"><span class="name">choice-question · q1</span><span class="badge live">自测</span></div>
         <div class="card-body">
           <p class="q-stem">下列关于一般三体问题的说法，正确的是：</p>
@@ -1175,7 +1267,7 @@ body.right-collapsed .ball-right{display:inline-flex}
         </div>
         <p class="card-cap">纯前端判分，不登录、不上报、不排行，刷新即重置</p>
       </div>
-      <div class="card">
+      <div class="card" data-embed="tag">
         <div class="card-bar"><span class="name">fill-blank-question · q2</span><span class="badge live">自测</span></div>
         <div class="card-body">
           <div data-quiz="fill" data-answer="李雅普诺夫">
@@ -1191,7 +1283,7 @@ body.right-collapsed .ball-right{display:inline-flex}
 
       <h2 id="s6">结语</h2>
       <p>混沌不是失败，而是一类系统真实的性格。承认它，才能给出诚实的预测区间。</p>
-      <div class="card fallback">
+      <div class="card fallback" data-embed="tag">
         <div class="card-bar"><span class="name">canvas-render · orbit-explorer</span><span class="badge">降级</span></div>
         <div class="card-body">
           这个交互图形组件没有加载成功。你仍然可以查看它的静态快照，或稍后重试。
@@ -1457,7 +1549,7 @@ body.right-collapsed .ball-right{display:inline-flex}
   <ul>
     <li>绳挂导航只在中栏顶部 88px 感应区或键盘聚焦时唤出，左右栏顶部不触发；挂件落在幕布上，不骑到侧栏页签</li>
     <li>滚动条静止时隐去、指针进入容器才浮现，颜色随主题</li>
-    <li>左侧目录双模式：常驻挂签；顶栏唤出时加长垂绳；图形模式不显示左栏滚动条，悬停提示在最上层</li>
+    <li>左侧目录双模式：常驻挂签；图形只画一级标题 + 正文骨架；条数按篇内篇幅相对映射</li>
     <li>正文内容矩阵：公式、代码、表格、图片、视频、音频、Mermaid、Canvas、SVG、沙箱 HTML、网页降级卡、问答题、降级卡片</li>
     <li>划词工具条：复制、询问、注释；文章级评论只能从评论入口发起</li>
     <li>注释高亮与右侧卡片双向定位，含已锚定、已重连、失锚三种状态</li>
@@ -1472,6 +1564,7 @@ body.right-collapsed .ball-right{display:inline-flex}
   </ul>
 </div>
 
+<div class="gtip-float" id="gtipFloat" role="tooltip" hidden></div>
 <div class="toast-layer" id="toastLayer" aria-live="polite"></div>
 
 <script>
@@ -1781,6 +1874,109 @@ body.right-collapsed .ball-right{display:inline-flex}
     },160);
   });
 
+  /* ---------------- 图形图例：书签拉出 / 下拉收起 ---------------- */
+  var graphDock=$('#graphDock'),graphCard=$('#graphCard'),graphMark=$('#graphMark');
+  var graphDrag=null;
+  function openGraphCard(){
+    graphDock.classList.add('is-open');
+    graphMark.setAttribute('aria-expanded','true');
+    graphCard.style.transform='';
+  }
+  function closeGraphCard(){
+    graphDock.classList.remove('is-open');
+    graphMark.setAttribute('aria-expanded','false');
+    graphCard.classList.remove('is-dragging');
+    graphCard.style.transform='';
+    graphDrag=null;
+  }
+  graphMark.addEventListener('click',function(){
+    if(graphDock.classList.contains('is-open')) closeGraphCard();
+    else openGraphCard();
+  });
+  graphCard.addEventListener('pointerdown',function(e){
+    if(!graphDock.classList.contains('is-open')||e.button) return;
+    graphDrag={id:e.pointerId,y:e.clientY};
+    graphCard.classList.add('is-dragging');
+    graphCard.setPointerCapture(e.pointerId);
+  });
+  graphCard.addEventListener('pointermove',function(e){
+    if(!graphDrag||e.pointerId!==graphDrag.id) return;
+    var dy=e.clientY-graphDrag.y;
+    if(dy<0) dy*=.18;
+    graphCard.style.transform='translateY('+dy+'px)';
+  });
+  function endGraphDrag(e){
+    if(!graphDrag||e.pointerId!==graphDrag.id) return;
+    var dy=e.clientY-graphDrag.y;
+    graphCard.classList.remove('is-dragging');
+    graphCard.style.transform='';
+    graphDrag=null;
+    if(dy>46) closeGraphCard();
+  }
+  graphCard.addEventListener('pointerup',endGraphDrag);
+  graphCard.addEventListener('pointercancel',endGraphDrag);
+
+  /* ---------------- 图形骨架：只画一级标题 + 正文骨架条 ---------------- */
+  /* 篇幅 = 该节去空白字数（含子集）。一篇文章内部相对映射：最短最少、最长最多。
+     禁止开方压缩。末条宽度吃余数，避免两节同档时完全一样。 */
+  var BAR_MIN=2, BAR_MAX=8;
+  var BAR_WIDTHS=[94,86,91,70,88,78,92];
+  var MARK_SVG={
+    tag:'<svg class="gm-tag" viewBox="0 0 12 12" aria-hidden="true"><rect x="1.2" y="2.4" width="9.6" height="7.2" rx="1.2"/><path d="M3.6 6.2l1.6 1.6 3.2-3.2"/></svg>',
+    image:'<svg class="gm-image" viewBox="0 0 12 12" aria-hidden="true"><rect x="1.2" y="2.2" width="9.6" height="7.6" rx="1.2"/><path d="M1.8 8.2l2.4-2.4 1.8 1.8 1.4-1.4 3 2.8"/><circle cx="4.1" cy="4.6" r=".85"/></svg>',
+    mindmap:'<svg class="gm-mindmap" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="1.55"/><circle cx="2.2" cy="2.6" r="1"/><circle cx="9.8" cy="2.8" r="1"/><circle cx="2.3" cy="9.3" r="1"/><circle cx="9.7" cy="9.2" r="1"/><path d="M4.7 5.1L3 3.3M7.3 5.1L8.9 3.5M4.7 6.9L3.1 8.4M7.3 6.9L8.8 8.3"/></svg>'
+  };
+  function escText(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+  function sectionSlice(el,next){
+    var chars=0,notes=0,embeds={tag:false,image:false,mindmap:false};
+    var n=el.nextElementSibling;
+    while(n && n!==next){
+      if(n.tagName==='H2') break;
+      chars+=(n.textContent||'').replace(/\s+/g,'').length;
+      notes+=n.querySelectorAll?n.querySelectorAll('mark.anno').length:0;
+      var kind=n.getAttribute('data-embed');
+      if(kind==='image') embeds.image=true;
+      else if(kind==='mindmap') embeds.mindmap=true;
+      else if(kind==='tag') embeds.tag=true;
+      n=n.nextElementSibling;
+    }
+    return {weight:Math.max(1,chars),notes:notes,embeds:embeds};
+  }
+  function mapSkeleton(weights){
+    var lo=Math.min.apply(null,weights),hi=Math.max.apply(null,weights);
+    return weights.map(function(w){
+      var t=hi<=lo?0.4:(w-lo)/(hi-lo);
+      var raw=BAR_MIN+t*(BAR_MAX-BAR_MIN);
+      var n=Math.max(BAR_MIN,Math.min(BAR_MAX,Math.round(raw)));
+      var frac=raw-Math.floor(raw);
+      var last=frac<0.08?88:34+frac*58;
+      return {n:n,last:Math.max(28,Math.min(94,last))};
+    });
+  }
+  function buildGraph(){
+    var list=$('#gnodes'); if(!list) return;
+    var heads=$$('#article h2');
+    var slices=heads.map(function(el,i){return sectionSlice(el,heads[i+1]||null)});
+    var mapped=mapSkeleton(slices.map(function(s){return s.weight}));
+    list.innerHTML=heads.map(function(el,i){
+      var slice=slices[i],skel=mapped[i];
+      var marks='';
+      if(slice.embeds.tag) marks+=MARK_SVG.tag;
+      if(slice.embeds.image) marks+=MARK_SVG.image;
+      if(slice.embeds.mindmap) marks+=MARK_SVG.mindmap;
+      var badge=slice.notes?'<span class="gbadge">'+slice.notes+'</span>':'';
+      var title=el.textContent.replace(/\s+/g,' ').trim();
+      var bar=Math.max(30,Math.min(72,title.length*3.2));
+      var ribs='';
+      for(var k=0;k<skel.n;k++){
+        var w=k===skel.n-1?skel.last:BAR_WIDTHS[k%BAR_WIDTHS.length];
+        ribs+='<i style="width:'+w.toFixed(1)+'%"></i>';
+      }
+      return '<li><button class="gnode" type="button" data-target="'+escText(el.id)+'" style="--bar:'+bar.toFixed(1)+'%"><span class="ghead"><span class="dot"></span><span class="bar"></span>'+(marks?'<span class="gmarks">'+marks+'</span>':'')+'</span><span class="gbody">'+ribs+'</span>'+badge+'<span class="gtip">'+escText(title)+'</span></button></li>';
+    }).join('');
+  }
+  buildGraph();
+
   /* ---------------- 目录：模式切换 ---------------- */
   $$('[data-toc]').forEach(function(tab){
     tab.addEventListener('click',function(){
@@ -1790,34 +1986,42 @@ body.right-collapsed .ball-right{display:inline-flex}
       document.body.classList.toggle('toc-graph',graph);
       $('#tocGraph').classList.toggle('is-on',graph);
       $('#tocList').style.display=graph?'none':'block';
+      if(!graph){closeGraphCard();hideGtip()}
       if(graph) syncGraphViewport();
     });
   });
-  $$('.gnode').forEach(function(n){
-    var tip=$('.gtip',n);
-    if(!tip) return;
-    function placeTip(){
-      var r=n.getBoundingClientRect();
-      tip.classList.add('is-float');
-      tip.style.left=(r.right+10)+'px';
-      tip.style.top=(r.top+r.height/2)+'px';
-    }
-    n.addEventListener('mouseenter',placeTip);
-    n.addEventListener('mousemove',placeTip);
-    n.addEventListener('mouseleave',function(){
-      tip.classList.remove('is-float');
-      tip.style.left='';
-      tip.style.top='';
-    });
-  });
-  $('#colLeft').addEventListener('scroll',function(){
-    var n=document.querySelector('.gnode:hover');
+  var gtipFloat=$('#gtipFloat'),gtipNode=null;
+  function hideGtip(){
+    gtipNode=null;
+    gtipFloat.hidden=true;
+    gtipFloat.classList.remove('is-on');
+    gtipFloat.textContent='';
+  }
+  function placeGtip(n){
     if(!n) return;
-    var tip=$('.gtip',n);
-    if(!tip||!tip.classList.contains('is-float')) return;
+    var src=$('.gtip',n);
+    if(!src) return;
     var r=n.getBoundingClientRect();
-    tip.style.left=(r.right+10)+'px';
-    tip.style.top=(r.top+r.height/2)+'px';
+    gtipNode=n;
+    gtipFloat.hidden=false;
+    gtipFloat.textContent=src.textContent;
+    gtipFloat.style.left=(r.right+10)+'px';
+    gtipFloat.style.top=(r.top+r.height/2)+'px';
+    gtipFloat.classList.add('is-on');
+  }
+  $('#gnodes').addEventListener('mouseover',function(e){
+    var n=e.target.closest('.gnode');
+    if(n) placeGtip(n);
+  });
+  $('#gnodes').addEventListener('mouseout',function(e){
+    var n=e.target.closest('.gnode');
+    if(!n) return;
+    var to=e.relatedTarget;
+    if(to&&n.contains(to)) return;
+    if(gtipNode===n) hideGtip();
+  });
+  $('#leftBody').addEventListener('scroll',function(){
+    if(gtipNode) placeGtip(gtipNode);
   });
 
   /* ---------------- 目录：折叠 ---------------- */
@@ -1835,16 +2039,26 @@ body.right-collapsed .ball-right{display:inline-flex}
     if(isNarrow()) closeDrawers();
   }
   function reduced(){return window.matchMedia('(prefers-reduced-motion: reduce)').matches}
-  $$('.toc-link,.gnode').forEach(function(b){
-    b.addEventListener('click',function(){jumpTo(b.getAttribute('data-target'))});
+  $('#tocList').addEventListener('click',function(e){
+    var b=e.target.closest('.toc-link');
+    if(b) jumpTo(b.getAttribute('data-target'));
+  });
+  $('#gnodes').addEventListener('click',function(e){
+    var b=e.target.closest('.gnode');
+    if(b) jumpTo(b.getAttribute('data-target'));
   });
 
   /* ---------------- 当前章节跟随 ---------------- */
-  var heads=$$('#article h2, #article h3');
+  var heads=$$('#article h1, #article h2, #article h3, #article h4');
   var vp=$('#graphViewport');
   function currentId(){
     var y=center.scrollTop+120,id=heads.length?heads[0].id:null;
     heads.forEach(function(h){if(h.offsetTop<=y) id=h.id});
+    return id;
+  }
+  function currentSectionId(){
+    var y=center.scrollTop+120,id=null;
+    $$('#article h2').forEach(function(h){if(h.offsetTop<=y) id=h.id});
     return id;
   }
   function syncGraphViewport(){
@@ -1857,7 +2071,8 @@ body.right-collapsed .ball-right{display:inline-flex}
   function syncActive(){
     var id=currentId();
     $$('.toc-link').forEach(function(l){l.classList.toggle('is-active',l.getAttribute('data-target')===id)});
-    $$('.gnode').forEach(function(n){n.classList.toggle('is-active',n.getAttribute('data-target')===id)});
+    var sec=currentSectionId();
+    $$('.gnode').forEach(function(n){n.classList.toggle('is-active',n.getAttribute('data-target')===sec)});
     syncGraphViewport();
   }
   var scrollRaf=null;
