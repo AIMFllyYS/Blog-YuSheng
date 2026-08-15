@@ -108,7 +108,7 @@
 | floating | 20 | 收起后的右下批注球 / 移动端目录入口 |
 | nav | 30 | 顶部绳挂导航（渐隐层） |
 | overlay | 40 | 弹窗 / 抽屉遮罩 |
-| toast | 50 | 全局便笺通知 |
+| toast | 50 | 全局通知 |
 
 **渐隐层的命中区规则 ✅**：顶部绳挂导航是横贯整屏、约 88px 高的固定层，正下方压着左右栏页签与正文顶部。容器与装饰（绳索、挂钩、占位）必须 `pointer-events: none`，只有挂件本身在导航可见时可点，弹出面板只在打开时可点。否则左右栏页签点不动、正文顶部无法划词，而且因为导航是渐隐的极难排查。
 
@@ -119,15 +119,18 @@
 - 禁止 `scrollbar-width: none` 或彻底隐藏——长文的滚动位置是必要信息
 - 同时写 `scrollbar-color`（Firefox）与 `::-webkit-scrollbar-*`；滑块用透明边框 + `background-clip: content-box` 内缩
 
-## 四之三、便笺通知（toast）
+## 四之三、通知（toast）
 
-全站轻量反馈统一为**底部居中便笺**，视觉与交互以 [blog-reader-prototype.html](../designs/blog-reader-prototype.html) 为准。评论发布成功、注释写下、复制链接、导出完成、登录邮件已发送都走这一套，禁止再做一套右上角角标或系统灰条。
+全站轻量反馈统一为**顶部居中的纸质通知**，视觉与交互以 [blog-reader-prototype.html](../designs/blog-reader-prototype.html) 为准。评论发布成功、注释写下、复制链接、导出完成、登录邮件已发送都走这一套，禁止再做一套右上角角标或系统灰条。
 
 - `--scroll-paper` 底、`--line` 边框、顶部半透明胶带、右下折页、轻微倾斜
-- 一行「便笺」抬头 + 一句正文；约 2.2 秒后自行消失
-- `role="status"`，不抢焦点；需要决策的失败走弹窗或就地状态
-- 只动 `opacity` / `transform`；`prefers-reduced-motion` 下取消倾斜与位移
-- 层级走 `--z-toast`（50），避开右下批注球
+- 一行「通知」抬头 + 一句正文
+- 从视口顶飘落贴住（胶带在上，带一次轻回弹）；约 2.4 秒后绕顶边卷起隐去
+- 用户点击通知本身也会立刻卷起；`role="status"`，不抢焦点
+- 卷起用 CSS 3D（`perspective` + `rotateX`，`transform-origin: top`），不引入 Three.js——通知是两秒级反馈，3D 运行时留给首页叙事
+- 需要决策的失败走弹窗或就地状态
+- 只动 `opacity` / `transform`；`prefers-reduced-motion` 下取消下落与卷起，只做显隐
+- 层级走 `--z-toast`（50），避开绳挂导航与右下批注球
 
 ## 五、响应式与移动端策略
 

@@ -158,9 +158,10 @@ body.in-footer .balls,body.in-footer .rope-nav{opacity:0;pointer-events:none}
 .bookmark:hover{transform:translateY(-2px);color:var(--accent)}
 .bookmark.is-brand{background:var(--accent);color:var(--bg-elevated)}
 
-/* 弹出面板（设置 / 导出） */
+/* 弹出面板（设置 / 导出）：fixed，由脚本对准触发挂件，禁止写死 right */
 .popover{
-  position:absolute;top:96px;z-index:var(--z-nav);min-width:250px;padding:16px;
+  position:fixed;top:96px;left:12px;z-index:var(--z-nav);
+  width:min(360px,calc(100vw - 24px));padding:16px;
   background:var(--bg-elevated);border:1px solid var(--line);border-radius:4px;
   box-shadow:0 24px 60px var(--shadow-color);display:none;
 }
@@ -631,32 +632,49 @@ body.right-collapsed .ball-right{display:inline-flex}
 .modal input[type=email]{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:4px;background:var(--bg);font-size:14px}
 .modal ul{margin:0;padding-left:1.3em;font-size:13px;line-height:2;color:var(--ink-muted)}
 .modal-close{position:absolute;right:14px;top:12px;color:var(--ink-faint);font-size:18px;line-height:1}
-/* 全站便笺通知：底部居中，评论成功/复制/导出完成共用这一套，不做右上角角标 */
+/* 全站通知：从视口顶飘落贴住，胶带在上。点击后纸面绕顶边卷起隐去。
+   卷起用 CSS 3D（perspective + rotateX），不引入 Three.js——通知是 2 秒级反馈，不该拉 3D 运行时。 */
 .toast{
-  position:fixed;left:50%;bottom:78px;z-index:var(--z-toast);
-  width:min(360px,92vw);padding:16px 18px 14px;
+  position:fixed;left:50%;top:92px;z-index:var(--z-toast);
+  width:min(360px,92vw);perspective:900px;
+  opacity:0;pointer-events:none;
+  transform:translate(-50%,-64px);
+}
+.toast.is-on{opacity:1;pointer-events:auto;cursor:pointer;animation:toast-drop 820ms cubic-bezier(.22,.82,.28,1) both}
+.toast-sheet{
+  position:relative;padding:16px 18px 14px;
   background:var(--scroll-paper);color:var(--ink);
   border:1px solid var(--line);border-radius:2px;
   box-shadow:2px 10px 28px var(--shadow-color),0 1px 0 var(--highlight);
-  opacity:0;pointer-events:none;
-  transform:translate(-50%,18px) rotate(-1.4deg);
-  transition:opacity var(--dur-base) ease-out,transform var(--dur-base) ease-out;
+  transform-origin:top center;transform-style:preserve-3d;
+  backface-visibility:hidden;
 }
-.toast.is-on{opacity:1;transform:translate(-50%,0) rotate(-1.4deg)}
+.toast.is-curling .toast-sheet{animation:toast-curl 640ms ease-in forwards}
 .toast-kicker{
   display:block;margin-bottom:4px;font-size:10px;letter-spacing:.18em;
   color:var(--ink-faint);font-weight:600;
 }
 .toast-body{margin:0;font-size:13.5px;line-height:1.7;color:var(--ink)}
-.toast::before{
+.toast-sheet::before{
   content:"";position:absolute;top:-9px;left:50%;width:58px;height:18px;
   transform:translateX(-50%) rotate(-3deg);
   background:var(--highlight);border:1px solid var(--line);opacity:.85;
 }
-.toast::after{
+.toast-sheet::after{
   content:"";position:absolute;right:0;bottom:0;width:14px;height:14px;
   background:linear-gradient(135deg,transparent 50%,var(--bg) 50%);
   border-left:1px solid var(--line);
+}
+@keyframes toast-drop{
+  0%{transform:translate(-50%,-80px) rotate(-8deg);opacity:0}
+  56%{transform:translate(-50%,9px) rotate(1.5deg);opacity:1}
+  78%{transform:translate(-50%,-3px) rotate(-2.1deg)}
+  100%{transform:translate(-50%,0) rotate(-1.4deg);opacity:1}
+}
+@keyframes toast-curl{
+  0%{transform:rotateX(0) scaleY(1);opacity:1;box-shadow:2px 10px 28px var(--shadow-color)}
+  58%{transform:rotateX(-76deg) scaleY(.62);opacity:.7;box-shadow:0 2px 8px var(--shadow-color)}
+  100%{transform:rotateX(-128deg) scaleY(.28) translateY(-8px);opacity:0;box-shadow:none}
 }
 
 /* ============================ 响应式 ============================ */
@@ -688,9 +706,9 @@ body.right-collapsed .ball-right{display:inline-flex}
   .fc-wave{transform:none}
   .fc-inner{opacity:1}
   .ball-right,.ball-right .ball-icon,.ball-right .num{animation:none}
-  .toast,.toast.is-on{transform:translate(-50%,0)}
+  .toast.is-on{animation:none;transform:translate(-50%,0);opacity:1}
+  .toast.is-curling .toast-sheet{animation:none;opacity:0}
   [data-tip]::after{transform:translateX(-50%)}
-}
   .fc-inner > *{transform:none}
 }
 </style>
@@ -750,7 +768,7 @@ body.right-collapsed .ball-right{display:inline-flex}
   </div>
 
   <!-- 导出二级菜单 -->
-  <div class="popover" id="popExport" style="right:16px" role="dialog" aria-label="导出">
+  <div class="popover" id="popExport" role="dialog" aria-label="导出">
     <h4>格式</h4>
     <div class="pop-row" data-group="fmt">
       <button class="chip" aria-pressed="true">Markdown</button>
@@ -775,7 +793,7 @@ body.right-collapsed .ball-right{display:inline-flex}
   </div>
 
   <!-- 设置面板 -->
-  <div class="popover" id="popSettings" style="right:16px" role="dialog" aria-label="设置">
+  <div class="popover" id="popSettings" role="dialog" aria-label="设置">
     <h4>主题</h4>
     <div class="pop-row" data-group="theme">
       <button class="chip" data-theme-name="paper" aria-pressed="true">宣纸黄</button>
@@ -1258,7 +1276,7 @@ body.right-collapsed .ball-right{display:inline-flex}
       <div class="bc-foot">
         <span>登录后可发布 · 内容会被 sanitize，禁用原始 HTML 与脚本</span>
         <button class="btn-solid" type="button" data-login>登录</button>
-        <button class="btn-outline" type="button" data-toast="评论已写下。正式站点成功发布后也走这张便笺。">写下</button>
+        <button class="btn-outline" type="button" data-toast="评论已写下。正式站点成功发布后也走这张通知。">写下</button>
       </div>
     </div>
 
@@ -1345,16 +1363,18 @@ body.right-collapsed .ball-right{display:inline-flex}
     <li>整幅页尾评论区：三栏占满一屏，读到正文尽头后滚动链式传给文档，页尾带阻尼被拉出；波浪即左右栏终止线，与左右栏同底色</li>
     <li>页尾评论区与右栏评论页签共享同一份数据；移动端右栏收起后页尾是主入口</li>
     <li>右侧三页签可收起为右下批注球（评论气泡图标 + 轻浮动），移动端降级为抽屉 + 悬浮球</li>
-    <li>挂件悬停出现小便笺提示；底部便笺通知是复制/评论/导出等轻量反馈的统一形态</li>
+    <li>挂件悬停出现小便笺提示；顶部通知从视口顶飘落贴住，点击后纸面卷起隐去</li>
     <li>三栏可拖动，正文最小宽度优先；双击分隔线恢复默认</li>
     <li>导出二级菜单：格式 × 范围 × 答案开关，直接下载不调用打印</li>
     <li>四套主题全部走语义 token；尊重 reduced motion</li>
   </ul>
 </div>
 
-<div class="toast" id="toast" role="status" aria-live="polite">
-  <span class="toast-kicker">便笺</span>
-  <p class="toast-body" id="toastBody"></p>
+<div class="toast" id="toast" role="status" aria-live="polite" title="点击卷起">
+  <div class="toast-sheet">
+    <span class="toast-kicker">通知</span>
+    <p class="toast-body" id="toastBody"></p>
+  </div>
 </div>
 
 <script>
@@ -1363,12 +1383,31 @@ body.right-collapsed .ball-right{display:inline-flex}
   var $=function(s,r){return (r||document).querySelector(s)};
   var $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
 
-  /* ---------------- toast ---------------- */
-  var toastEl=$('#toast'),toastBody=$('#toastBody'),toastTimer;
-  function toast(msg){
-    toastBody.textContent=msg; toastEl.classList.add('is-on');
-    clearTimeout(toastTimer); toastTimer=setTimeout(function(){toastEl.classList.remove('is-on')},2200);
+  /* ---------------- toast：顶部落下，点击或超时后绕顶边卷起 ---------------- */
+  var toastEl=$('#toast'),toastBody=$('#toastBody'),toastTimer,toastCurlTimer;
+  function reduceMotion(){
+    return window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   }
+  function hideToast(){
+    toastEl.classList.remove('is-on','is-curling');
+  }
+  function dismissToast(){
+    if(!toastEl.classList.contains('is-on')||toastEl.classList.contains('is-curling')) return;
+    clearTimeout(toastTimer);
+    if(reduceMotion()){hideToast();return}
+    toastEl.classList.add('is-curling');
+    clearTimeout(toastCurlTimer);
+    toastCurlTimer=setTimeout(hideToast,680);
+  }
+  function toast(msg){
+    clearTimeout(toastTimer);clearTimeout(toastCurlTimer);
+    toastEl.classList.remove('is-curling','is-on');
+    void toastEl.offsetWidth;
+    toastBody.textContent=msg;
+    toastEl.classList.add('is-on');
+    toastTimer=setTimeout(dismissToast,2400);
+  }
+  toastEl.addEventListener('click',function(e){e.stopPropagation();dismissToast()});
   document.addEventListener('click',function(e){
     var t=e.target.closest('[data-toast]');
     if(t) toast(t.getAttribute('data-toast'));
@@ -1439,18 +1478,38 @@ body.right-collapsed .ball-right{display:inline-flex}
   window.addEventListener('blur',function(){hideNav(200)});
   showNav(); hideNav(2400);
 
-  /* ---------------- 弹出面板 ---------------- */
+  /* ---------------- 弹出面板：对准触发挂件，并夹在视口内 ---------------- */
+  var openPop=null,openPopBtn=null;
+  function placePop(pop,btn){
+    var br=btn.getBoundingClientRect();
+    var w=pop.offsetWidth,h=pop.offsetHeight;
+    var left=br.left+br.width/2-w/2;
+    left=Math.max(12,Math.min(left,window.innerWidth-w-12));
+    var top=br.bottom+10;
+    if(top+h>window.innerHeight-12) top=Math.max(12,br.top-h-10);
+    pop.style.left=left+'px';
+    pop.style.right='auto';
+    pop.style.top=top+'px';
+  }
   function closePopovers(){
     $$('.popover').forEach(function(p){p.classList.remove('is-open')});
     $('#btnExport').setAttribute('aria-expanded','false');
     $('#btnSettings').setAttribute('aria-expanded','false');
-    menuOpen=false;
+    menuOpen=false;openPop=null;openPopBtn=null;
   }
   function togglePop(pop,btn){
     var willOpen=!pop.classList.contains('is-open');
     closePopovers();
-    if(willOpen){pop.classList.add('is-open');btn.setAttribute('aria-expanded','true');menuOpen=true;showNav()}
+    if(willOpen){
+      pop.classList.add('is-open');
+      btn.setAttribute('aria-expanded','true');
+      menuOpen=true;showNav();
+      openPop=pop;openPopBtn=btn;
+      placePop(pop,btn);
+      requestAnimationFrame(function(){placePop(pop,btn)});
+    }
   }
+  window.addEventListener('resize',function(){if(openPop&&openPopBtn) placePop(openPop,openPopBtn)});
   $('#btnExport').addEventListener('click',function(e){e.stopPropagation();togglePop($('#popExport'),this)});
   $('#btnSettings').addEventListener('click',function(e){e.stopPropagation();togglePop($('#popSettings'),this)});
   document.addEventListener('click',function(e){
