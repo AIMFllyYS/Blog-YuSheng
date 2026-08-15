@@ -632,24 +632,29 @@ body.right-collapsed .ball-right{display:inline-flex}
 .modal input[type=email]{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:4px;background:var(--bg);font-size:14px}
 .modal ul{margin:0;padding-left:1.3em;font-size:13px;line-height:2;color:var(--ink-muted)}
 .modal-close{position:absolute;right:14px;top:12px;color:var(--ink-faint);font-size:18px;line-height:1}
-/* 全站通知：从视口顶飘落贴住，胶带在上。点击后纸面绕顶边卷起隐去。
-   卷起用 CSS 3D（perspective + rotateX），不引入 Three.js——通知是 2 秒级反馈，不该拉 3D 运行时。 */
+/* 全站通知：可同时多张。左右落点随机、起始高度相同；默认 1s 冷却。
+   下落用脚本重力，撕碎用 clip-path 碎片，不引入 Three.js。 */
 .toast{
-  position:fixed;left:50%;top:92px;z-index:var(--z-toast);
-  width:min(360px,92vw);perspective:900px;
+  position:fixed;left:50%;top:56px;z-index:var(--z-toast);
+  width:min(360px,92vw);
   opacity:0;pointer-events:none;
-  transform:translate(-50%,-64px);
+  transform:translateX(-50%);
 }
-.toast.is-on{opacity:1;pointer-events:auto;cursor:pointer;animation:toast-drop 820ms cubic-bezier(.22,.82,.28,1) both}
+.toast.is-on{opacity:1;pointer-events:auto;cursor:pointer}
+.toast.is-fading{opacity:0;transition:opacity 420ms ease-out}
+.toast.is-held .toast-sheet{box-shadow:3px 14px 32px var(--shadow-color),0 1px 0 var(--highlight)}
+.toast-stage{position:relative}
 .toast-sheet{
   position:relative;padding:16px 18px 14px;
   background:var(--scroll-paper);color:var(--ink);
   border:1px solid var(--line);border-radius:2px;
   box-shadow:2px 10px 28px var(--shadow-color),0 1px 0 var(--highlight);
-  transform-origin:top center;transform-style:preserve-3d;
-  backface-visibility:hidden;
 }
-.toast.is-curling .toast-sheet{animation:toast-curl 640ms ease-in forwards}
+.toast-shard{
+  position:absolute;left:0;top:0;width:100%;
+  pointer-events:none;
+  transition:transform 720ms cubic-bezier(.12,.68,.22,1),opacity 640ms ease-in;
+}
 .toast-kicker{
   display:block;margin-bottom:4px;font-size:10px;letter-spacing:.18em;
   color:var(--ink-faint);font-weight:600;
@@ -664,17 +669,6 @@ body.right-collapsed .ball-right{display:inline-flex}
   content:"";position:absolute;right:0;bottom:0;width:14px;height:14px;
   background:linear-gradient(135deg,transparent 50%,var(--bg) 50%);
   border-left:1px solid var(--line);
-}
-@keyframes toast-drop{
-  0%{transform:translate(-50%,-80px) rotate(-8deg);opacity:0}
-  56%{transform:translate(-50%,9px) rotate(1.5deg);opacity:1}
-  78%{transform:translate(-50%,-3px) rotate(-2.1deg)}
-  100%{transform:translate(-50%,0) rotate(-1.4deg);opacity:1}
-}
-@keyframes toast-curl{
-  0%{transform:rotateX(0) scaleY(1);opacity:1;box-shadow:2px 10px 28px var(--shadow-color)}
-  58%{transform:rotateX(-76deg) scaleY(.62);opacity:.7;box-shadow:0 2px 8px var(--shadow-color)}
-  100%{transform:rotateX(-128deg) scaleY(.28) translateY(-8px);opacity:0;box-shadow:none}
 }
 
 /* ============================ 响应式 ============================ */
@@ -706,8 +700,8 @@ body.right-collapsed .ball-right{display:inline-flex}
   .fc-wave{transform:none}
   .fc-inner{opacity:1}
   .ball-right,.ball-right .ball-icon,.ball-right .num{animation:none}
-  .toast.is-on{animation:none;transform:translate(-50%,0);opacity:1}
-  .toast.is-curling .toast-sheet{animation:none;opacity:0}
+  .toast.is-on,.toast.is-fading{transition:none;opacity:1}
+  .toast.is-fading{opacity:0}
   [data-tip]::after{transform:translateX(-50%)}
   .fc-inner > *{transform:none}
 }
@@ -1363,19 +1357,14 @@ body.right-collapsed .ball-right{display:inline-flex}
     <li>整幅页尾评论区：三栏占满一屏，读到正文尽头后滚动链式传给文档，页尾带阻尼被拉出；波浪即左右栏终止线，与左右栏同底色</li>
     <li>页尾评论区与右栏评论页签共享同一份数据；移动端右栏收起后页尾是主入口</li>
     <li>右侧三页签可收起为右下批注球（评论气泡图标 + 轻浮动），移动端降级为抽屉 + 悬浮球</li>
-    <li>挂件悬停出现小便笺提示；顶部通知从视口顶飘落贴住，点击后纸面卷起隐去</li>
+    <li>挂件悬停出现小便笺提示；通知可同时多张，左右落点随机，1 秒冷却；悬停停住，点击撕碎</li>
     <li>三栏可拖动，正文最小宽度优先；双击分隔线恢复默认</li>
     <li>导出二级菜单：格式 × 范围 × 答案开关，直接下载不调用打印</li>
     <li>四套主题全部走语义 token；尊重 reduced motion</li>
   </ul>
 </div>
 
-<div class="toast" id="toast" role="status" aria-live="polite" title="点击卷起">
-  <div class="toast-sheet">
-    <span class="toast-kicker">通知</span>
-    <p class="toast-body" id="toastBody"></p>
-  </div>
-</div>
+<div class="toast-layer" id="toastLayer" aria-live="polite"></div>
 
 <script>
 (function(){
@@ -1383,31 +1372,174 @@ body.right-collapsed .ball-right{display:inline-flex}
   var $=function(s,r){return (r||document).querySelector(s)};
   var $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
 
-  /* ---------------- toast：顶部落下，点击或超时后绕顶边卷起 ---------------- */
-  var toastEl=$('#toast'),toastBody=$('#toastBody'),toastTimer,toastCurlTimer;
+  /* ---------------- toast：多张并存，左右随机，默认 1s 冷却 ---------------- */
+  var toastLayer=$('#toastLayer');
+  var TOAST_COOLDOWN=1000;
+  var TOAST_START_Y=56;
+  var toasts=[];
+  var toastRaf=0;
+  var lastToastAt=0;
+  var TOAST_CLIPS=[
+    'polygon(0% 0%,54% 0%,47% 18%,58% 36%,12% 48%,0% 28%)',
+    'polygon(54% 0%,100% 0%,100% 22%,86% 40%,61% 28%,47% 18%)',
+    'polygon(100% 22%,100% 68%,78% 82%,64% 54%,86% 40%)',
+    'polygon(100% 68%,100% 100%,56% 100%,48% 78%,78% 82%)',
+    'polygon(56% 100%,0% 100%,0% 62%,22% 70%,48% 78%)',
+    'polygon(0% 28%,12% 48%,36% 58%,22% 70%,0% 62%)',
+    'polygon(58% 36%,61% 28%,86% 40%,64% 54%,36% 58%,12% 48%)'
+  ];
+  var TOAST_KICKS=[
+    [-110,-36,-28],[96,-42,24],[128,18,36],[88,92,20],[-102,86,-24],[-74,28,-16],[12,64,10]
+  ];
   function reduceMotion(){
     return window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   }
-  function hideToast(){
-    toastEl.classList.remove('is-on','is-curling');
+  function toastWidth(){
+    return Math.min(360,window.innerWidth*0.92);
   }
-  function dismissToast(){
-    if(!toastEl.classList.contains('is-on')||toastEl.classList.contains('is-curling')) return;
-    clearTimeout(toastTimer);
-    if(reduceMotion()){hideToast();return}
-    toastEl.classList.add('is-curling');
-    clearTimeout(toastCurlTimer);
-    toastCurlTimer=setTimeout(hideToast,680);
+  function pickToastX(){
+    var half=toastWidth()/2;
+    var min=16+half;
+    var max=window.innerWidth-16-half;
+    if(max<=min) return window.innerWidth/2;
+    var x,tries=0;
+    do{
+      x=min+Math.random()*(max-min);
+      tries++;
+    }while(tries<8&&toasts.some(function(item){
+      return Math.abs(item.x-x)<96&&item.y<160;
+    }));
+    return x;
+  }
+  function poseToast(item){
+    item.el.style.left=item.x+'px';
+    item.el.style.top=item.y+'px';
+    item.el.style.transform='translateX(-50%) rotate('+item.rot+'deg)';
+  }
+  function toastFloor(item){
+    return Math.max(24,window.innerHeight-item.el.offsetHeight-56);
+  }
+  function removeToast(item){
+    clearTimeout(item.timer);
+    var i=toasts.indexOf(item);
+    if(i>=0) toasts.splice(i,1);
+    if(item.el.parentNode) item.el.parentNode.removeChild(item.el);
+  }
+  function ensureToastLoop(){
+    if(!toastRaf&&toasts.length) toastRaf=requestAnimationFrame(tickToasts);
+  }
+  function tickToasts(now){
+    toastRaf=0;
+    for(var i=0;i<toasts.length;i++){
+      var item=toasts[i];
+      if(item.tearing) continue;
+      if(item.held){item.t=now;continue}
+      var dt=Math.min(32,now-(item.t||now))/16.67;
+      item.t=now;
+      item.age+=dt;
+      item.vy=Math.min(3.2,item.vy+0.055*dt);
+      item.y+=item.vy*dt;
+      item.rot=item.baseRot+Math.sin(item.age*0.1)*2.6;
+      var floor=toastFloor(item);
+      if(item.y>=floor){
+        item.y=floor;
+        item.vy=0;
+        item.rot=item.baseRot;
+        if(!item.fading){
+          item.fading=true;
+          item.el.classList.add('is-fading');
+          clearTimeout(item.timer);
+          item.timer=setTimeout(function(target){return function(){removeToast(target)}}(item),460);
+        }
+      }
+      poseToast(item);
+    }
+    if(toasts.length) toastRaf=requestAnimationFrame(tickToasts);
+  }
+  function bindToast(item){
+    item.el.addEventListener('mouseenter',function(){
+      if(item.tearing||reduceMotion()) return;
+      item.held=true;
+      item.el.classList.add('is-held');
+      if(item.fading){
+        item.fading=false;
+        item.el.classList.remove('is-fading');
+        clearTimeout(item.timer);
+      }
+    });
+    item.el.addEventListener('mouseleave',function(){
+      if(item.tearing) return;
+      item.held=false;
+      item.el.classList.remove('is-held');
+      item.t=0;
+    });
+    item.el.addEventListener('click',function(e){
+      e.stopPropagation();
+      if(item.tearing) return;
+      if(reduceMotion()){removeToast(item);return}
+      item.tearing=true;
+      item.held=true;
+      item.el.classList.add('is-tearing');
+      item.el.classList.remove('is-fading','is-held');
+      clearTimeout(item.timer);
+      var sheet=$('.toast-sheet',item.el);
+      sheet.style.visibility='hidden';
+      TOAST_CLIPS.forEach(function(clip,i){
+        var piece=sheet.cloneNode(true);
+        piece.className='toast-sheet toast-shard';
+        piece.style.visibility='visible';
+        piece.style.clipPath=clip;
+        piece.style.webkitClipPath=clip;
+        sheet.parentNode.appendChild(piece);
+        var k=TOAST_KICKS[i];
+        requestAnimationFrame(function(){
+          requestAnimationFrame(function(){
+            piece.style.transform='translate('+k[0]+'px,'+k[1]+'px) rotate('+k[2]+'deg)';
+            piece.style.opacity='0';
+          });
+        });
+      });
+      item.timer=setTimeout(function(){removeToast(item)},780);
+    });
   }
   function toast(msg){
-    clearTimeout(toastTimer);clearTimeout(toastCurlTimer);
-    toastEl.classList.remove('is-curling','is-on');
-    void toastEl.offsetWidth;
-    toastBody.textContent=msg;
-    toastEl.classList.add('is-on');
-    toastTimer=setTimeout(dismissToast,2400);
+    var now=Date.now();
+    if(now-lastToastAt<TOAST_COOLDOWN) return;
+    lastToastAt=now;
+    var el=document.createElement('div');
+    el.className='toast is-on';
+    el.setAttribute('role','status');
+    el.title='悬停暂停，点击撕碎';
+    el.innerHTML='<div class="toast-stage"><div class="toast-sheet"><span class="toast-kicker">通知</span><p class="toast-body"></p></div></div>';
+    $('.toast-body',el).textContent=msg;
+    toastLayer.appendChild(el);
+    var item={
+      el:el,
+      x:pickToastX(),
+      y:TOAST_START_Y,
+      vy:0.45,
+      baseRot:-2.4+Math.random()*2.2,
+      rot:0,
+      held:false,
+      tearing:false,
+      fading:false,
+      t:0,
+      age:0,
+      timer:0
+    };
+    item.rot=item.baseRot;
+    poseToast(item);
+    toasts.push(item);
+    bindToast(item);
+    if(reduceMotion()){
+      item.y=92;
+      item.vy=0;
+      poseToast(item);
+      item.timer=setTimeout(function(){removeToast(item)},2400);
+      return;
+    }
+    ensureToastLoop();
   }
-  toastEl.addEventListener('click',function(e){e.stopPropagation();dismissToast()});
   document.addEventListener('click',function(e){
     var t=e.target.closest('[data-toast]');
     if(t) toast(t.getAttribute('data-toast'));
