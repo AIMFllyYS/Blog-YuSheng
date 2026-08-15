@@ -198,7 +198,7 @@
 │       └── capture-reader-journey.*
 │
 ├── public/                                # 仅全站共享资源
-│   ├── fonts/                             # 自托管字体；中文字体需体积治理
+│   ├── fonts/                             # 仅极小的装饰性 subset（如有）；中文正文字体走云字体服务，不放这里
 │   └── sounds/                            # UI 音效，默认关闭
 ├── .tmp/                                  # 本地临时文件（gitignore，不入库）
 ├── AGENTS.md
