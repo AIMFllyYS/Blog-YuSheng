@@ -53,14 +53,8 @@ export const CHAPTER_RANGES = {
   gate: [0.75, 1] as const, // 第四章 · 门 + 尾声
 }
 
-/** snap 锚点 = 各章终点 */
-export const SNAP_POINTS = [0, 0.25, 0.5, 0.75, 1] as const
-
-/** 磁吸阈值：进入某章超过其长度该比例即补完（storyboard 未定参数，初始 40%） */
-export const SNAP_THRESHOLD = 0.4
-
-/** 钉屏总滚动长度（约 500vh） */
-export const JOURNEY_SCROLL_VH = 500
+/** 钉屏总滚动长度（800vh：加长轨道让每章节奏从容，动画进度完全由滚动控制） */
+export const JOURNEY_SCROLL_VH = 800
 
 /** 文字排版参数（Pretext 用）：字号随视口缩放，在布局时计算 */
 export const TYPE_SCALE = {

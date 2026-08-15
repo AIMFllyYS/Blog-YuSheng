@@ -41,7 +41,6 @@ const url = argValue('--url', 'http://localhost:9981')
 const outDir = resolve(argValue('--out', '.captures/home-journey'))
 const isMobile = args.includes('--mobile')
 const isReduced = args.includes('--reduced')
-const noSnap = args.includes('--nosnap')
 const defaultProgress = [0, 0.02, 0.06, 0.15, 0.23, 0.3, 0.38, 0.46, 0.53, 0.6, 0.68, 0.73, 0.79, 0.85, 0.92, 0.975, 1]
 const progressList = argValue('--progress', '')
   ? argValue('--progress', '').split(',').map(Number)
@@ -83,8 +82,7 @@ try {
   page.on('pageerror', (err) => console.error('[pageerror]', err.message))
 
   const mode = isMobile ? 'mobile' : isReduced ? 'reduced' : 'desktop'
-  const targetUrl = noSnap ? `${url}${url.includes('?') ? '&' : '?'}nosnap=1` : url
-  await page.goto(targetUrl, { waitUntil: 'networkidle', timeout: 30000 })
+  await page.goto(url, { waitUntil: 'networkidle', timeout: 30000 })
   // 等 GL 画布就绪（移动端/reduced 无画布，直接过）
   await page
     .waitForSelector('canvas', { timeout: 15000 })
@@ -101,7 +99,7 @@ try {
         const top = root.offsetTop + track * progress
         window.scrollTo({ top, behavior: 'instant' })
       }, p)
-      // scrub 平滑（scrub:1）+ snap 需要追赶时间
+      // scrub:1 平滑追赶需要留出时间
       await page.waitForTimeout(1600)
     }
     const name = `${mode}-p${String(Math.round(p * 1000)).padStart(4, '0')}.png`

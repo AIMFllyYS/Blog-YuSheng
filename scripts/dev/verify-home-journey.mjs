@@ -3,10 +3,9 @@
  * verify-home-journey.mjs — 首页 3D 叙事交互断言（scripts/dev/）
  *
  * 用途：无头 Chromium 对开发服务器首页做行为级验收：
- *   1. 磁吸回卷：滚动到第一章 24% 局部进度（< SNAP_THRESHOLD 0.4）应吸回 0
- *   2. 磁吸前进：滚动到第一章 60% 局部进度应吸到章末 0.25
- *   3. 跳过按钮：点击「跳过 → 直接入门」应直达终态（尾声揭示、入口可操作）
- *   4. 入口链接：尾声入口卡应带站内 href
+ *   1. 自由停靠：滚动到任意中途位置应保持不动（无章节磁吸、无自动补完）
+ *   2. 跳过按钮：点击「跳过 → 直接入门」应直达终态（尾声揭示、入口可操作）
+ *   3. 入口链接：尾声入口卡应带站内 href
  *
  * 用法：node scripts/dev/verify-home-journey.mjs [--url http://localhost:9981]
  * 退出码：0 = 全部断言通过；1 = 任一断言失败 / 运行错误
@@ -70,17 +69,17 @@ try {
   await page.waitForSelector('canvas', { timeout: 15000 })
   await page.waitForTimeout(1500)
 
-  /* 1. 磁吸回卷：0.06（第一章 local 0.24 < 0.4）→ 吸回 0 */
+  /* 1. 自由停靠：0.06 处停住不被吸走（scrub 追赶后仍 ≈0.06） */
   await page.evaluate(scrollToProgress, 0.06)
   await page.waitForTimeout(3000)
   const p1 = await page.evaluate(readProgress)
-  check('磁吸回卷（0.06 → 0）', Math.abs(p1) < 0.02, `实际进度 ${p1.toFixed(4)}`)
+  check('自由停靠（0.06 保持）', Math.abs(p1 - 0.06) < 0.02, `实际进度 ${p1.toFixed(4)}`)
 
-  /* 2. 磁吸前进：0.15（第一章 local 0.6 > 0.4）→ 吸到 0.25 */
-  await page.evaluate(scrollToProgress, 0.15)
+  /* 2. 自由停靠：0.44 处停住不补完到章终点 */
+  await page.evaluate(scrollToProgress, 0.44)
   await page.waitForTimeout(3000)
   const p2 = await page.evaluate(readProgress)
-  check('磁吸前进（0.15 → 0.25）', Math.abs(p2 - 0.25) < 0.02, `实际进度 ${p2.toFixed(4)}`)
+  check('自由停靠（0.44 保持）', Math.abs(p2 - 0.44) < 0.02, `实际进度 ${p2.toFixed(4)}`)
 
   /* 3. 跳过按钮 → 直达终态 */
   await page.goto(url, { waitUntil: 'networkidle', timeout: 30000 })

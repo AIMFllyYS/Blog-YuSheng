@@ -1,10 +1,11 @@
 /**
- * 主时间线（storyboard「技术备注」：单条 master timeline + snap，四章即四段）。
+ * 主时间线（storyboard「技术备注」：单条 master timeline，四章即四段）。
  * 时间线总时长 100 个单位 = 滚动进度 0–100%，tween 落位与节拍表百分比一一对应。
  * GSAP 只负责缓动与时间编排：tween 的全是频道值（channels）与 DOM overlay。
+ * 进度完全由用户滚动驱动，无章节磁吸（snap 机制已按体验反馈移除）。
  */
 import gsap from 'gsap'
-import { JOURNEY_COPY, SNAP_THRESHOLD } from '../constants'
+import { JOURNEY_COPY } from '../constants'
 import type { JourneyChannels } from '../types'
 
 export function createInitialChannels(): JourneyChannels {
@@ -31,28 +32,6 @@ export function createInitialChannels(): JourneyChannels {
     passThrough: 0,
     unveil: 0,
   }
-}
-
-/**
- * 磁吸规则（storyboard）：进入某章超过其长度 40% → 补完至章终点；反向回滚同理。
- * 位置制（不依赖方向）：落在哪章就按该章局部进度判定。
- */
-export function magneticSnap(value: number): number {
-  const chapters: [number, number][] = [
-    [0, 0.25],
-    [0.25, 0.5],
-    [0.5, 0.75],
-    [0.75, 1],
-  ]
-  if (value <= 0) return 0
-  if (value >= 1) return 1
-  for (const [start, end] of chapters) {
-    if (value >= start && value < end) {
-      const local = (value - start) / (end - start)
-      return local > SNAP_THRESHOLD ? end : start
-    }
-  }
-  return 1
 }
 
 const e = {

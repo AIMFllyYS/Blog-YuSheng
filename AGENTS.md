@@ -16,8 +16,8 @@
 - Install: `pnpm install` | Dev: `pnpm dev` | Build: `pnpm build` | Start: `pnpm start`
 - Typecheck: `pnpm tsc --noEmit` | Lint: `pnpm lint` | Lint fix: `pnpm lint --fix`
 - Analyze bundle: `ANALYZE=true pnpm build`
-- 首页叙事截图验收: `node scripts/dev/capture-home-journey.mjs`（需 dev server，加 `--nosnap` 截中途帧）
-- 首页叙事交互断言: `node scripts/dev/verify-home-journey.mjs`（磁吸/跳过/入口链接）
+- 首页叙事截图验收: `node scripts/dev/capture-home-journey.mjs`（需 dev server）
+- 首页叙事交互断言: `node scripts/dev/verify-home-journey.mjs`（自由停靠/跳过/入口链接）
 
 ## Shell Environment
 

@@ -2,8 +2,8 @@
 
 /**
  * 首页 3D 滚动叙事 · 体验编排器。
- * 结构：外层 500vh 滚动轨道 + 内层 sticky 视口；ScrollTrigger scrub 驱动主时间线，
- * 磁吸（snap）落在各章终点。GL 画布只渲染场景；DOM overlay 承担常驻 UI 与尾声主页。
+ * 结构：外层加长滚动轨道 + 内层 sticky 视口；ScrollTrigger scrub 驱动主时间线，
+ * 进度完全由用户滚动控制（无章节磁吸）。GL 画布只渲染场景；DOM overlay 承担常驻 UI 与尾声主页。
  */
 import { useCallback, useEffect, useRef, useState } from 'react'
 import dynamic from 'next/dynamic'
@@ -11,7 +11,7 @@ import gsap from 'gsap'
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { JOURNEY_PALETTE, JOURNEY_SCROLL_VH } from './constants'
-import { buildMasterTimeline, createInitialChannels, magneticSnap } from './engine/master-timeline'
+import { buildMasterTimeline, createInitialChannels } from './engine/master-timeline'
 import { EpilogueHome } from './epilogue/epilogue-home'
 import { GateMotto } from './overlay/gate-motto'
 import { PrologueSplash } from './overlay/prologue-splash'
@@ -33,9 +33,7 @@ export default function JourneyExperience() {
     if (!root) return
     const ctx = gsap.context(() => {
       const tl = buildMasterTimeline(channelsRef.current, root)
-      // ?nosnap=1：验收工具截中途帧时禁用章节磁吸（见 scripts/dev/capture-home-journey.mjs）
-      const snapDisabled =
-        typeof window !== 'undefined' && window.location.search.includes('nosnap')
+      // 纯滚动驱动：不设章节磁吸，动画进度完全由用户滚动控制
       stRef.current = ScrollTrigger.create({
         trigger: root,
         start: 'top top',
@@ -43,15 +41,6 @@ export default function JourneyExperience() {
         scrub: 1,
         animation: tl,
         anticipatePin: 1,
-        snap: snapDisabled
-          ? undefined
-          : {
-              snapTo: (value) => magneticSnap(value),
-              duration: { min: 0.15, max: 0.7 },
-              ease: 'power2.inOut',
-              delay: 0.05,
-              inertia: false,
-            },
       })
     }, root)
     return () => ctx.revert()
