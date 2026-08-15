@@ -80,10 +80,11 @@ a:hover{border-bottom-color:var(--accent)}
 }
 
 /* ============================ 绳挂导航 ============================ */
-/* 顶部感应区：只作为视觉标注，指针事件必须放行，否则会挡住左右栏页签与正文选区 */
+/* 顶部感应区：只作为高度标注，指针事件必须放行。真正的唤出范围由脚本按中栏左右边界裁切。 */
 .nav-sensor{position:fixed;inset:0 0 auto 0;height:88px;z-index:var(--z-nav);pointer-events:none}
 .rope-nav{
-  position:fixed; inset:0 0 auto 0; z-index:var(--z-nav); padding:0 16px 6px;
+  position:fixed; inset:0 0 auto 0; z-index:var(--z-nav); padding:0 0 14px;
+  overflow:visible;
   opacity:0; transform:translateY(-14px); pointer-events:none;
   transition:opacity var(--dur-base) ease-out,transform var(--dur-base) ease-out;
 }
@@ -100,9 +101,14 @@ body.in-footer .balls,body.in-footer .rope-nav{opacity:0;pointer-events:none}
 .rope-nav .popover.is-open{pointer-events:auto}
 .rope{position:absolute;inset:0 0 auto 0;width:100%;height:30px;fill:none;stroke:var(--ink-muted);
   filter:drop-shadow(0 3px 3px var(--shadow-color));pointer-events:none}
-.rope-row{max-width:60rem;margin:0 auto;display:flex;align-items:flex-start;gap:10px}
+.rope-row{
+  display:flex;align-items:flex-start;gap:12px;
+  /* 挂件落在中栏幕布上，不骑到左右栏页签上；右侧多留一截，避免贴住工作区 */
+  padding-left:calc(var(--w-left) + 7px + 16px);
+  padding-right:calc(var(--w-right) + 7px + 40px);
+}
 .rope-row .spacer{flex:1}
-.hanger{display:flex;flex-direction:column;align-items:center;overflow:visible}
+.hanger{display:flex;flex-direction:column;align-items:center;overflow:visible;position:relative;z-index:1}
 .hanger::before{content:"";width:1px;background:var(--ink-muted);opacity:.75;height:var(--rope,26px)}
 .charm{
   display:grid;place-items:center;width:42px;height:42px;border-radius:999px;
@@ -148,10 +154,11 @@ body.in-footer .balls,body.in-footer .rope-nav{opacity:0;pointer-events:none}
 .scroll-tag::before{content:"";position:absolute;left:-6px;right:-6px;top:-4px;height:8px;border-radius:999px;
   border:1px solid var(--line);background:var(--ink-muted)}
 .bookmark{
-  min-height:42px;display:flex;align-items:center;justify-content:center;padding:8px 16px;
+  position:relative;z-index:1;
+  min-height:44px;display:flex;align-items:center;justify-content:center;padding:8px 16px 14px;
   border:1px solid var(--line);background:var(--scroll-paper);color:var(--ink);
   letter-spacing:.16em;font-size:13px;font-weight:600;box-shadow:0 9px 24px var(--shadow-color);
-  clip-path:polygon(0 0,100% 0,100% 80%,50% 100%,0 80%);
+  clip-path:polygon(0 0,100% 0,100% 78%,50% 100%,0 78%);
   transition:transform var(--dur-fast) ease-out,color var(--dur-fast) ease-out;
 }
 .bookmark:hover{transform:translateY(-2px);color:var(--accent)}
@@ -204,7 +211,7 @@ body.right-collapsed{--w-right:0px}
 /* 正文到底或已进入页尾：任意栏继续下滚都交给文档，不要再 contain */
 body.is-article-end .col-left,body.is-article-end .col-right,
 body.in-footer .col-left,body.in-footer .col-right{overscroll-behavior:auto}
-.col-left{border-right-width:1px}
+.col-left{border-right-width:1px;padding-right:16px}
 .col-right{border-left-width:1px}
 /* 读到尽头：左右栏一起坐实，右栏多走一步，和底边收口浪对齐 */
 @media (min-width:1025px){
@@ -242,6 +249,62 @@ body.right-collapsed #divRight::after{opacity:0}
   position:sticky;top:0;z-index:2;display:flex;align-items:center;gap:8px;padding:14px 16px 10px;
   background:var(--bg-elevated);border-bottom:1px solid var(--line);
 }
+/* 左栏模式切换：常驻挂签，绳长参差，选中缓落。不做成整条色带。 */
+.toc-hang{
+  position:sticky;top:0;z-index:3;
+  display:flex;align-items:flex-start;gap:14px;
+  padding:0 10px 12px 18px;border:0;
+  background:linear-gradient(to bottom,var(--bg-elevated) 72%,transparent);
+  transition:padding var(--dur-base) cubic-bezier(.22,.82,.28,1),
+             background var(--dur-base) ease-out;
+}
+.toc-hanger{display:flex;flex-direction:column;align-items:center}
+.toc-hanger::before{
+  content:"";width:1px;height:var(--rope,22px);background:var(--ink-muted);opacity:.75;
+  transition:height 320ms cubic-bezier(.22,.82,.28,1);
+}
+/* 顶栏唤出时：左挂签加长垂绳、去掉色带，和绳挂导航同一套悬挂语言 */
+.rope-nav.is-visible ~ .shell .toc-hang{
+  padding-top:8px;background:transparent;
+}
+.rope-nav.is-visible ~ .shell .toc-hanger::before{height:calc(var(--rope,22px) + 56px)}
+.toc-tag{
+  min-height:36px;padding:7px 14px;
+  border:1px solid var(--line);background:var(--scroll-paper);color:var(--ink-muted);
+  letter-spacing:.14em;font-size:12px;font-weight:600;
+  box-shadow:0 7px 16px var(--shadow-color);
+  clip-path:polygon(0 0,100% 0,100% 78%,50% 100%,0 78%);
+  transform:translateY(0);
+  transition:transform 320ms cubic-bezier(.22,.82,.28,1),
+             background-color 320ms ease-out,color 320ms ease-out,
+             border-color 320ms ease-out,box-shadow 320ms ease-out;
+}
+.toc-tag:hover{transform:translateY(-3px);color:var(--accent);border-color:var(--accent)}
+.toc-tag[aria-selected="true"]{
+  transform:translateY(5px);background:var(--accent);color:var(--bg-elevated);border-color:var(--accent);
+  box-shadow:0 10px 22px var(--shadow-color);
+}
+body.toc-graph .toc-hang{background:transparent}
+body.toc-graph .col-left{
+  background:transparent;border-right-width:0;padding-right:8px;
+  z-index:var(--z-panel);
+  scrollbar-width:none;scrollbar-color:transparent transparent;
+}
+body.toc-graph .col-left:hover{scrollbar-color:transparent transparent}
+body.toc-graph .col-left::-webkit-scrollbar,
+body.toc-graph .col-left:hover::-webkit-scrollbar{width:0;height:0;display:none}
+body.toc-graph .col-left::-webkit-scrollbar-thumb,
+body.toc-graph .col-left:hover::-webkit-scrollbar-thumb{background:transparent}
+body.toc-graph #divLeft::after{opacity:0}
+body.toc-graph .panel-body{padding:8px 6px 24px}
+body.toc-graph .graph{padding:4px 4px 20px;overflow:visible}
+body.toc-graph .graph-canvas{
+  border:0;border-radius:0;box-shadow:none;overflow:visible;
+  background-color:transparent;background-image:none;min-height:calc(100vh - 108px);
+}
+body.toc-graph .gnode{background:transparent;box-shadow:none}
+body.toc-graph .gnode:hover,body.toc-graph .gnode.is-active{background:var(--highlight)}
+body.toc-graph .graph-note{opacity:.75}
 .tabs{display:flex;gap:2px;flex:1;min-width:0}
 .tab{
   padding:6px 11px;font-size:12px;letter-spacing:.1em;color:var(--ink-faint);border-radius:3px;
@@ -255,7 +318,7 @@ body.right-collapsed #divRight::after{opacity:0}
 .panel-body{padding:12px 10px 40px}
 
 /* 常规目录（对标飞书） */
-.toc-list{list-style:none;margin:0;padding:0}
+.toc-list{list-style:none;margin:0;padding:0 6px 0 0}
 .toc-list li{position:relative}
 .toc-link{
   display:block;width:100%;text-align:left;padding:6px 10px 6px 14px;font-size:13px;line-height:1.6;
@@ -323,9 +386,14 @@ li.is-folded > .children{display:none}
 .gtip{
   position:absolute;left:calc(100% + 8px);top:50%;transform:translateY(-50%);
   padding:4px 9px;border-radius:3px;background:var(--ink);color:var(--bg);font-size:11px;white-space:nowrap;
-  opacity:0;pointer-events:none;transition:opacity var(--dur-fast);z-index:3;
+  opacity:0;pointer-events:none;transition:opacity var(--dur-fast);z-index:1;
 }
+.gnode:hover{z-index:2}
 .gnode:hover .gtip{opacity:.92}
+.gtip.is-float{
+  position:fixed;left:auto;top:auto;transform:translateY(-50%);
+  z-index:var(--z-overlay);opacity:.92;
+}
 .graph-note{margin:14px 8px 0;font-size:11px;line-height:1.8;color:var(--ink-faint)}
 
 /* ============================ 中栏：正文 ============================ */
@@ -720,7 +788,7 @@ body.right-collapsed .ball-right{display:inline-flex}
   .footer-comments{padding-bottom:20vh}
   .fc-inner{padding:8px 20px 0}
   .bc-head .sort{margin-left:0;width:100%}
-  .rope-row{gap:6px}
+  .rope-row{gap:6px;padding-left:16px;padding-right:16px}
   .rope-row .hide-sm{display:none}
 }
 @media (prefers-reduced-motion:reduce){
@@ -733,6 +801,7 @@ body.right-collapsed .ball-right{display:inline-flex}
   .ball-right,.ball-right .ball-icon,.ball-right .num{animation:none}
   .toast.is-on,.toast.is-fading{transition:none;opacity:1}
   .toast.is-fading{opacity:0}
+  .toc-tag,.toc-tag:hover,.toc-tag[aria-selected="true"]{transition:none;transform:none}
   [data-tip]::after{transform:translateX(-50%)}
   .fc-inner > *{transform:none}
 }
@@ -757,7 +826,7 @@ body.right-collapsed .ball-right{display:inline-flex}
       <button class="bookmark is-brand" type="button" data-tip="文章列表" data-toast="原型中不跳转，正式站点回到 /blog/">博客</button>
     </div>
     <div class="spacer"></div>
-    <div class="hanger" style="--rope:24px">
+    <div class="hanger" style="--rope:36px">
       <button class="bookmark" type="button" id="btnExport" aria-expanded="false" data-tip="导出本文">导出</button>
     </div>
     <div class="hanger hide-sm" style="--rope:38px">
@@ -839,10 +908,12 @@ body.right-collapsed .ball-right{display:inline-flex}
 
   <!-- ---------- 左栏：目录 ---------- -->
   <aside class="col col-left" id="colLeft" aria-label="文章目录">
-    <div class="panel-head">
-      <div class="tabs" role="tablist" aria-label="目录模式">
-        <button class="tab" role="tab" aria-selected="true" data-toc="list">目录</button>
-        <button class="tab" role="tab" aria-selected="false" data-toc="graph">图形</button>
+    <div class="toc-hang" role="tablist" aria-label="目录模式">
+      <div class="toc-hanger" style="--rope:20px">
+        <button class="toc-tag" role="tab" aria-selected="true" data-toc="list">目录</button>
+      </div>
+      <div class="toc-hanger" style="--rope:28px">
+        <button class="toc-tag" role="tab" aria-selected="false" data-toc="graph">图形</button>
       </div>
     </div>
 
@@ -1384,9 +1455,9 @@ body.right-collapsed .ball-right{display:inline-flex}
   <h3>这个原型在演示什么</h3>
   <p>对应设计文档 <code>docs/designs/blog-reader-design.md</code>。纯静态、零依赖、无任何后端。</p>
   <ul>
-    <li>绳挂导航只在指针进入顶部 88px 感应区或键盘聚焦时唤出；命中区只有挂件本身，导航层不吞点击</li>
+    <li>绳挂导航只在中栏顶部 88px 感应区或键盘聚焦时唤出，左右栏顶部不触发；挂件落在幕布上，不骑到侧栏页签</li>
     <li>滚动条静止时隐去、指针进入容器才浮现，颜色随主题</li>
-    <li>左侧目录双模式：常规树（对标飞书）与图形小地图（点阵画布 + 骨架节点 + 视口虚线框 + 点击跳转）；左栏不支持收起</li>
+    <li>左侧目录双模式：常驻挂签；顶栏唤出时加长垂绳；图形模式不显示左栏滚动条，悬停提示在最上层</li>
     <li>正文内容矩阵：公式、代码、表格、图片、视频、音频、Mermaid、Canvas、SVG、沙箱 HTML、网页降级卡、问答题、降级卡片</li>
     <li>划词工具条：复制、询问、注释；文章级评论只能从评论入口发起</li>
     <li>注释高亮与右侧卡片双向定位，含已锚定、已重连、失锚三种状态</li>
@@ -1625,7 +1696,7 @@ body.right-collapsed .ball-right{display:inline-flex}
   });
 
   /* ---------------- 导航渐隐 ---------------- */
-  /* 唯一触发条件：指针进入顶部感应区。
+  /* 鼠标唤出：中栏顶部感应区。左右栏与分隔线不唤出，避免和目录挂签、右栏页签抢手。
      不再用"任意位置向上移动"触发——正常阅读时手会不断微抖，那条规则几乎等于常驻显示。 */
   var nav=$('#ropeNav'),hideTimer=null,menuOpen=false;
   /* 88px = 挂件带的实际高度（最长绳 42 + 挂件 42），保证指针停在任意挂件上都不会淡出 */
@@ -1636,8 +1707,17 @@ body.right-collapsed .ball-right{display:inline-flex}
     clearTimeout(hideTimer);
     hideTimer=setTimeout(function(){if(!menuOpen) nav.classList.remove('is-visible')},delay||400);
   }
+  function inNavRevealZone(e){
+    if(e.clientY>TOP_ZONE) return false;
+    var t=e.target;
+    if(t&&t.closest&&t.closest('.col-left,.col-right,.divider')) return false;
+    var center=$('#colCenter');
+    if(!center) return true;
+    var r=center.getBoundingClientRect();
+    return e.clientX>=r.left && e.clientX<=r.right;
+  }
   document.addEventListener('mousemove',function(e){
-    if(e.clientY<=TOP_ZONE){showNav();return}
+    if(inNavRevealZone(e)){showNav();return}
     if(!nav.classList.contains('is-visible')||menuOpen) return;
     /* 指针已经落在展开后的导航实体上时不收起 */
     if(e.target&&e.target.closest&&e.target.closest('.rope-nav')) return;
@@ -1707,10 +1787,37 @@ body.right-collapsed .ball-right{display:inline-flex}
       $$('[data-toc]').forEach(function(t){t.setAttribute('aria-selected','false')});
       tab.setAttribute('aria-selected','true');
       var graph=tab.getAttribute('data-toc')==='graph';
+      document.body.classList.toggle('toc-graph',graph);
       $('#tocGraph').classList.toggle('is-on',graph);
       $('#tocList').style.display=graph?'none':'block';
       if(graph) syncGraphViewport();
     });
+  });
+  $$('.gnode').forEach(function(n){
+    var tip=$('.gtip',n);
+    if(!tip) return;
+    function placeTip(){
+      var r=n.getBoundingClientRect();
+      tip.classList.add('is-float');
+      tip.style.left=(r.right+10)+'px';
+      tip.style.top=(r.top+r.height/2)+'px';
+    }
+    n.addEventListener('mouseenter',placeTip);
+    n.addEventListener('mousemove',placeTip);
+    n.addEventListener('mouseleave',function(){
+      tip.classList.remove('is-float');
+      tip.style.left='';
+      tip.style.top='';
+    });
+  });
+  $('#colLeft').addEventListener('scroll',function(){
+    var n=document.querySelector('.gnode:hover');
+    if(!n) return;
+    var tip=$('.gtip',n);
+    if(!tip||!tip.classList.contains('is-float')) return;
+    var r=n.getBoundingClientRect();
+    tip.style.left=(r.right+10)+'px';
+    tip.style.top=(r.top+r.height/2)+'px';
   });
 
   /* ---------------- 目录：折叠 ---------------- */
@@ -1835,6 +1942,7 @@ body.right-collapsed .ball-right{display:inline-flex}
         var otherVar=invert?'--w-left':'--w-right';
         var other=parseInt(getComputedStyle(shell).getPropertyValue(otherVar),10)||0;
         if(window.innerWidth-w-other<520) return; /* 正文最小宽度优先 */
+        document.documentElement.style.setProperty(varName,w+'px');
         shell.style.setProperty(varName,w+'px');
       }
       function up(){
@@ -1844,6 +1952,7 @@ body.right-collapsed .ball-right{display:inline-flex}
       document.addEventListener('mousemove',move); document.addEventListener('mouseup',up);
     });
     divider.addEventListener('dblclick',function(){
+      document.documentElement.style.removeProperty(varName);
       shell.style.removeProperty(varName); toast('已恢复默认宽度');
     });
   }
