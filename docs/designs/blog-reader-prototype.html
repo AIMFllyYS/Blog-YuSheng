@@ -43,8 +43,7 @@ html[data-theme="night"]{
 
 *{box-sizing:border-box}
 html,body{margin:0}
-/* 文档本身可纵向滚动：三栏只占满第一屏，读到正文尽头后滚动会链式传递到文档，
-   把整幅页尾评论区拉上来。这是"页尾在左右栏之下"这个布局的前提。 */
+/* 首屏只占一屏三栏。页尾在文档流里排在 shell 下面，未下滚时不得探进视口。 */
 body{
   background:var(--bg); color:var(--ink); font-family:var(--font-serif);
   transition:background-color var(--dur-slow) ease-out,color var(--dur-slow) ease-out;
@@ -193,16 +192,44 @@ body.in-footer .balls,body.in-footer .rope-nav{opacity:0;pointer-events:none}
 /* ============================ 三栏骨架 ============================ */
 /* 三栏严格等于一屏高。页尾评论区是它的兄弟节点，因此天然位于左右栏"之下"。 */
 .shell{
-  height:100vh;display:grid;
+  position:relative;z-index:1;height:100vh;display:grid;
   grid-template-columns:var(--w-left) 7px minmax(0,1fr) 7px var(--w-right);
   transition:grid-template-columns var(--dur-base) ease-out;
+  background:var(--bg);
 }
 body.dragging .shell{transition:none}
 body.right-collapsed{--w-right:0px}
 .col{height:100vh;overflow:hidden auto;position:relative}
-.col-left,.col-right{background:var(--bg-elevated);border-color:var(--line);border-style:solid;border-width:0}
+.col-left,.col-right{background:var(--bg-elevated);border-color:var(--line);border-style:solid;border-width:0;overscroll-behavior:contain}
+/* 正文到底或已进入页尾：任意栏继续下滚都交给文档，不要再 contain */
+body.is-article-end .col-left,body.is-article-end .col-right,
+body.in-footer .col-left,body.in-footer .col-right{overscroll-behavior:auto}
 .col-left{border-right-width:1px}
 .col-right{border-left-width:1px}
+/* 读到尽头：左右栏一起坐实，右栏多走一步，和底边收口浪对齐 */
+@media (min-width:1025px){
+  .col-left,.col-right{
+    transition:transform 520ms cubic-bezier(.22,.82,.28,1),box-shadow 520ms ease-out;
+  }
+  body.is-article-end .col-left{box-shadow:inset 0 -28px 36px -30px var(--shadow-color)}
+  body.is-article-end .col-right{box-shadow:inset 0 -36px 44px -28px var(--shadow-color)}
+  body.is-end-nudge .col-left{transform:translateY(4px)}
+  body.is-end-nudge .col-right{transform:translateY(8px)}
+  body.is-article-end .col-right .thread,
+  body.is-article-end .col-right .compose,
+  body.is-article-end .col-right .agent{
+    transform:translateY(-6px);
+    transition:transform 560ms cubic-bezier(.22,.82,.28,1);
+  }
+  body.is-end-nudge .col-right .thread,
+  body.is-end-nudge .col-right .compose,
+  body.is-end-nudge .col-right .agent{transform:translateY(2px)}
+  body.in-footer .col-left,
+  body.in-footer .col-right{
+    -webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 calc(100% - 52px),transparent 100%);
+    mask-image:linear-gradient(to bottom,#000 0%,#000 calc(100% - 52px),transparent 100%);
+  }
+}
 body.right-collapsed .col-right{opacity:0;pointer-events:none;border-width:0}
 .divider{position:relative;background:transparent}
 .divider::after{content:"";position:absolute;inset:0 3px;background:var(--line);transition:background var(--dur-fast)}
@@ -303,7 +330,7 @@ li.is-folded > .children{display:none}
 
 /* ============================ 中栏：正文 ============================ */
 .col-center{scroll-behavior:smooth}
-.article{max-width:var(--read-measure);margin:0 auto;padding:104px 28px 16vh}
+.article{max-width:var(--read-measure);margin:0 auto;padding:104px 28px 8vh}
 .art-head{border-bottom:1px solid var(--line);padding-bottom:26px;margin-bottom:34px}
 .kicker{margin:0;font-size:11px;letter-spacing:.34em;color:var(--accent);font-weight:600}
 .art-head h1{margin:14px 0 0;font-size:clamp(28px,4vw,42px);line-height:1.35;letter-spacing:.04em;font-weight:600}
@@ -508,46 +535,50 @@ textarea.editor{
 .agent-input .hint{margin:8px 0 0;font-size:10.5px;line-height:1.7;color:var(--ink-faint)}
 
 /* ---------- 整幅页尾评论区 ---------- */
-/* 它是 .shell 的兄弟节点、跨整页宽度：波浪就是左右栏的终止线，波浪以下再没有分栏。
-   底色与左右栏同为 --bg-elevated，所以波浪扫过左右栏正下方时颜色连续，读起来是同一张纸。
-   --reveal 由脚本按文档滚动进度带阻尼地推进，CSS 只负责把它翻译成位移与波形。 */
+/* 波浪与三栏底边收口浪共用一条曲线。不再用 scaleY 压扁——压扁会在衔接处
+   堆出一条硬色带。页尾上移重叠栏底，左右栏用渐隐溶进浪里。 */
+.shell-hem{
+  position:fixed;left:0;right:0;bottom:0;z-index:15;
+  display:block;width:100%;height:0;opacity:0;
+  pointer-events:none;overflow:visible;
+  filter:drop-shadow(0 -3px 10px var(--shadow-color));
+  transition:height 480ms cubic-bezier(.22,.82,.28,1),opacity 360ms ease-out;
+}
+body.is-article-end:not(.in-footer) .shell-hem{height:72px;opacity:1}
+body.is-end-nudge:not(.in-footer) .shell-hem{height:88px}
+body.in-footer .shell-hem{opacity:0;height:0}
+body.is-article-end:not(.in-footer) .proto-badge{bottom:28px}
+.shell-hem path,.fc-wave path{stroke:none}
+.shell-hem .w-back,.fc-wave .w-back{fill:var(--highlight);opacity:.42}
+.shell-hem .w-front,.fc-wave .w-front{fill:var(--bg-elevated)}
+.shell-hem .w-line,.fc-wave .w-line{fill:none;stroke:var(--line);stroke-width:1.1;vector-effect:non-scaling-stroke}
 .footer-comments{
   --reveal:0;
-  position:relative;padding-bottom:14vh;
+  position:relative;margin-top:0;padding-bottom:14vh;
   background:var(--bg-elevated);
 }
+body.in-footer .footer-comments{margin-top:-40px}
 .fc-wave{
-  display:block;width:100%;height:clamp(78px,11vw,132px);margin-bottom:-1px;
-  /* 从顶边缩放，而不是从底边：波峰始终贴着左右栏的下沿，
-     被压掉的那部分露出的是页尾自身的 --bg-elevated，与波浪同色，接缝不可见。
-     若从底边缩放，波浪上方会空出一条 --bg，页尾就和左右栏断开了。 */
-  transform:scaleY(calc(.3 + var(--reveal) * .7));transform-origin:top;
-  /* 向上投影：让页尾读成一张浮在正文之上的纸，低对比主题里这是波浪唯一可辨的线索 */
-  filter:drop-shadow(0 -4px 10px var(--shadow-color));
+  display:block;width:100%;height:68px;margin-bottom:-1px;
+  filter:drop-shadow(0 -2px 8px var(--shadow-color));
 }
-.fc-wave path{stroke:none}
-/* 后浪用 --highlight（半透明强调色）作为唯一有色层，两条浪交错才有水面层次 */
-.fc-wave .w-back{fill:var(--highlight);opacity:.5}
-.fc-wave .w-front{fill:var(--bg-elevated)}
-.fc-wave .w-line{fill:none;stroke:var(--line);stroke-width:1.4;vector-effect:non-scaling-stroke}
-/* 页尾比正文栏宽一档：它已经不受阅读行宽约束，但仍居中收口，避免变成通栏表格感 */
 .fc-inner{
-  max-width:min(54rem,100%);margin:0 auto;padding:20px 28px 0;
-  opacity:calc(.1 + var(--reveal) * .9);
+  max-width:min(54rem,100%);margin:0 auto;padding:4px 28px 0;
+  opacity:calc(.28 + var(--reveal) * .72);
 }
 /* 分层滞后：越靠下的块拉出得越晚，整段读起来像被一起拽上来 */
-.fc-inner > *{transform:translateY(calc((1 - var(--reveal)) * var(--lag,60px)))}
-.fc-inner > *:nth-child(1){--lag:44px}
-.fc-inner > *:nth-child(2){--lag:62px}
-.fc-inner > *:nth-child(3){--lag:82px}
-.fc-inner > *:nth-child(4){--lag:104px}
-.fc-inner > *:nth-child(5){--lag:126px}
+.fc-inner > *{transform:translateY(calc((1 - var(--reveal)) * var(--lag,28px)))}
+.fc-inner > *:nth-child(1){--lag:16px}
+.fc-inner > *:nth-child(2){--lag:24px}
+.fc-inner > *:nth-child(3){--lag:32px}
+.fc-inner > *:nth-child(4){--lag:40px}
+.fc-inner > *:nth-child(5){--lag:48px}
 .bc-head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
 .bc-head h2{margin:0;font-size:21px;letter-spacing:.05em}
 .bc-head .n{font-size:12px;color:var(--ink-faint)}
 .bc-head .sort{margin-left:auto;display:flex;gap:12px;font-size:12px;color:var(--ink-faint)}
 .bc-head .sort button.is-on{color:var(--accent)}
-.bc-tip{margin:8px 0 20px;font-size:12px;line-height:1.9;color:var(--ink-faint)}
+.bc-tip{margin:6px 0 16px;font-size:12px;line-height:1.9;color:var(--ink-faint)}
 .bc-compose{
   padding:14px;border:1px solid var(--line);border-radius:7px;background:var(--bg);
   margin-bottom:10px;
@@ -685,9 +716,9 @@ body.right-collapsed .ball-right{display:inline-flex}
   body.drawer-left .col-left,body.drawer-right .col-right{transform:none}
   body.right-collapsed .col-right{opacity:1}
   .ball-left,.ball-right{display:inline-flex !important}
-  .article{padding:88px 20px 14vh}
+  .article{padding:88px 20px 8vh}
   .footer-comments{padding-bottom:20vh}
-  .fc-inner{padding:14px 20px 0}
+  .fc-inner{padding:8px 20px 0}
   .bc-head .sort{margin-left:0;width:100%}
   .rope-row{gap:6px}
   .rope-row .hide-sm{display:none}
@@ -1246,12 +1277,18 @@ body.right-collapsed .ball-right{display:inline-flex}
   </aside>
 </main>
 
+<svg class="shell-hem" viewBox="0 0 1200 80" preserveAspectRatio="none" aria-hidden="true">
+  <path class="w-back" d="M0 50 C180 28 360 70 540 44 C720 20 900 68 1080 40 C1140 32 1180 36 1200 38 L1200 80 L0 80 Z"/>
+  <path class="w-front" d="M0 40 C200 22 420 64 640 42 C860 22 1040 60 1200 36 L1200 80 L0 80 Z"/>
+  <path class="w-line" d="M0 40 C200 22 420 64 640 42 C860 22 1040 60 1200 36"/>
+</svg>
+
 <!-- ===================== 整幅页尾评论区：左右栏在此终止 ===================== -->
 <section class="footer-comments" id="footerComments" aria-label="文章评论">
-  <svg class="fc-wave" viewBox="0 0 1200 120" preserveAspectRatio="none" aria-hidden="true">
-    <path class="w-back" d="M0 74 C150 22 330 106 520 62 C700 22 900 100 1080 56 C1132 44 1172 48 1200 54 L1200 120 L0 120 Z"/>
-    <path class="w-front" d="M0 60 C180 32 380 110 600 80 C800 52 980 106 1150 74 C1175 70 1191 71 1200 72 L1200 120 L0 120 Z"/>
-    <path class="w-line" d="M0 60 C180 32 380 110 600 80 C800 52 980 106 1150 74 C1175 70 1191 71 1200 72"/>
+  <svg class="fc-wave" viewBox="0 0 1200 80" preserveAspectRatio="none" aria-hidden="true">
+    <path class="w-back" d="M0 50 C180 28 360 70 540 44 C720 20 900 68 1080 40 C1140 32 1180 36 1200 38 L1200 80 L0 80 Z"/>
+    <path class="w-front" d="M0 40 C200 22 420 64 640 42 C860 22 1040 60 1200 36 L1200 80 L0 80 Z"/>
+    <path class="w-line" d="M0 40 C200 22 420 64 640 42 C860 22 1040 60 1200 36"/>
   </svg>
 
   <div class="fc-inner">
@@ -1354,7 +1391,7 @@ body.right-collapsed .ball-right{display:inline-flex}
     <li>划词工具条：复制、询问、注释；文章级评论只能从评论入口发起</li>
     <li>注释高亮与右侧卡片双向定位，含已锚定、已重连、失锚三种状态</li>
     <li>Agent 外壳原型：上下文条、对话气泡、引用来源、建议提问、输入区，全部为示意</li>
-    <li>整幅页尾评论区：三栏占满一屏，读到正文尽头后滚动链式传给文档，页尾带阻尼被拉出；波浪即左右栏终止线，与左右栏同底色</li>
+    <li>首屏只占一屏三栏。正文滚到尽头先收口，继续下滚才拉出页尾；波浪与收口浪同形，不再压扁</li>
     <li>页尾评论区与右栏评论页签共享同一份数据；移动端右栏收起后页尾是主入口</li>
     <li>右侧三页签可收起为右下批注球（评论气泡图标 + 轻浮动），移动端降级为抽屉 + 悬浮球</li>
     <li>挂件悬停出现小便笺提示；通知可同时多张，左右落点随机，1 秒冷却；悬停停住，点击撕碎</li>
@@ -1717,23 +1754,45 @@ body.right-collapsed .ball-right{display:inline-flex}
     syncGraphViewport();
   }
   var scrollRaf=null;
+  function articleAtEnd(){
+    return center.scrollTop+center.clientHeight>=center.scrollHeight-28;
+  }
+  var didEndNudge=false;
+  function syncArticleEnd(){
+    var atEnd=articleAtEnd();
+    document.body.classList.toggle('is-article-end',atEnd);
+    if(atEnd&&!didEndNudge&&window.scrollY<2){
+      didEndNudge=true;
+      pulseEndNudge();
+    }
+    if(!atEnd) didEndNudge=false;
+  }
   center.addEventListener('scroll',function(){
     if(scrollRaf) return;
-    scrollRaf=requestAnimationFrame(function(){scrollRaf=null;syncActive();hideNav(150)});
+    scrollRaf=requestAnimationFrame(function(){
+      scrollRaf=null;syncActive();syncArticleEnd();hideNav(150);
+    });
   });
   syncActive();
+  syncArticleEnd();
 
-  /* ---------------- 整幅页尾：带阻尼地被拉出 ---------------- */
-  /* 三栏正好一屏高，页尾在它下方。正文滚到尽头后滚动链式传给文档，
-     整幅页尾随文档上移——"拉出"这件事本身由浏览器的滚动链完成，不需要劫持滚轮。
-     位移不直接绑滚动量，而是让当前值以固定比例追赶目标值：
-     比例越小越"重"，初段明显滞后于滚动，停手后还会继续滑一小段。 */
+  /* ---------------- 页尾：收口只做视觉，滚轮不再拦截 ---------------- */
+  /* 曾经用 preventDefault + 320ms 闸门“挡一次再放行”。触控板会连续派发
+     wheel，每次都清掉计时器，releaseChain 永远到不了，于是卡住；停手或
+     猛滑出现空档才偶尔出去。收口改成到达尽头时播一次，不吃滚轮。 */
   var footer=$('#footerComments');
-  var DAMP=0.07, target=0, cur=0, revealRaf=null;
+  var DAMP=0.07, target=0, cur=0, revealRaf=null, nudgeTimer=0;
+  function isDesktop(){return window.matchMedia('(min-width: 1025px)').matches}
+  function pulseEndNudge(){
+    if(reduced()||!isDesktop()) return;
+    document.body.classList.add('is-end-nudge');
+    clearTimeout(nudgeTimer);
+    nudgeTimer=setTimeout(function(){document.body.classList.remove('is-end-nudge')},420);
+  }
   function measureFooter(){
     var top=footer.getBoundingClientRect().top;
     var h=window.innerHeight;
-    var dist=Math.min(h*0.8,520);            /* 完全展开所需的进入距离 */
+    var dist=Math.min(h*0.8,520);
     target=Math.max(0,Math.min(1,(h-top)/dist));
   }
   function tickReveal(){
@@ -1761,6 +1820,8 @@ body.right-collapsed .ball-right{display:inline-flex}
   $('#btnToFooter').addEventListener('click',function(){
     footer.scrollIntoView({block:'start',behavior:reduced()?'auto':'smooth'});
   });
+  window.scrollTo(0,0);
+  center.scrollTop=0;
 
   /* ---------------- 分栏拖动 ---------------- */
   var shell=$('#shell');
