@@ -276,6 +276,7 @@ PDF 与 DOCX 库尚未锁定；不得在没有中文长文档验证的情况下�
 - 中小屏将左右栏收成抽屉，划词工具条与右侧面板必须适配触摸操作。
 - `/blog/` 与 `/blog/<slug>/` 的布局、交互与视觉 **1:1 对标** [blog-reader-prototype.html](./blog-reader-prototype.html)；文字说明见 [blog-reader-design.md](./blog-reader-design.md)。架构本文只定产品边界，不为博客页另写一套外观。
 - 左栏图形模式是文章的骨架屏缩略，不是第二棵标题树：只画一级标题 + 正文骨架条，条数按篇内正文篇幅相对映射（文字越长条越多）。原则写入 [frontend-design.md](../conventions/frontend-design.md)。
+- 进入博客页先盖一层跟主题走的书册遮罩；右栏展开/收起先出骨架再缓出真内容。形态以原型为准。
 
 ### D15 路由与未来板块 ✅
 
