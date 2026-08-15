@@ -1,97 +1,303 @@
 # 项目结构与文件组织
 
-> 本文档是 `AGENTS.md` 中 "Project Structure" 的完整版。
-> 文件放置的详细规则（colocation 原则、`src/features/` 提升条件）见 [code-size-and-organization.md](./code-size-and-organization.md)。
+> Created: 2026-08-14
+> Updated: 2026-08-15
+> Status: accepted（领域边界已定；未实现的目标文件名可随详细设计小幅调整）
+>
+> 本文档是项目目标目录树的权威说明。目录按领域和依赖方向组织，不要求一次性创建所有空目录；实现某项能力时再创建对应路径。
 
-## 完整目录结构（目标结构）
+## 完整目标目录树
 
-> 本结构已合并博客项目的架构设计（见 [docs/designs/architecture-overview.md](../designs/architecture-overview.md)）。
-> 路由细则见 [routing.md](./routing.md)，设计规范见 [frontend-design.md](./frontend-design.md)。
-
-```
+```text
 .
-├── content/                    # ★ 文章内容仓库（权威 MD 文件，与代码分离）
-│   ├── posts/                  # 正式文章（构建时打进静态站）
-│   │   └── <slug>/             # 一篇文章一个文件夹（slug 即 URL，文与资产共居）
-│   │       ├── index.md        # 正文：frontmatter + MD + 自定义标签
-│   │       ├── data/           # 该文章板块的大数据（图表 JSON 等）
-│   │       └── media/          # 该文章专属图片/视频（单文件 <25MB）
-│   └── pages/                  # 独立页面内容（关于我等，同走 doc-engine 渲染）
-├── src/                        # 源代码
-│   ├── app/                    # 路由层：只放路由文件，不放业务逻辑
-│   │   ├── layout.tsx          # 根 layout（必须含 <html> <body>；主题 data-theme、字体）
-│   │   ├── page.tsx            # 首页 /（桌面 3D 叙事 / 移动端卡片入口）
-│   │   ├── loading.tsx         # 全局 loading skeleton
-│   │   ├── error.tsx           # 全局 error boundary（必须 'use client'）
-│   │   ├── not-found.tsx       # 全局 404
-│   │   ├── global-error.tsx    # 根 layout 级 error boundary
-│   │   ├── globals.css         # 全局样式（主题 token 定义入口）
+├── content/                              # 内容仓库：文章是数据，不放入 src/
+│   ├── posts/                            # 正式博客文章
+│   │   └── <slug>/                       # slug 即公开 URL；一篇文章一个完整文件夹
+│   │       ├── index.md                  # 唯一正式权威源：frontmatter + MD + 自定义标签
+│   │       ├── data/                     # 图表、Canvas、问答等结构化数据
+│   │       │   ├── *.json
+│   │       │   └── *.csv
+│   │       ├── media/                    # 文章专属图片、视频、音频、SVG、poster
+│   │       │   ├── images/
+│   │       │   ├── video/
+│   │       │   ├── audio/
+│   │       │   └── svg/
+│   │       └── embeds/                   # 文章专属 HTML/站内嵌入页面及其局部资产
+│   │           └── <embed-id>/
+│   │               ├── index.html
+│   │               └── assets/
+│   ├── pages/                            # 未来独立内容源预留；不自动映射 /pages/* 路由
+│   │   └── <slug>/index.md
+│   ├── notes/                            # 未来 /notes/ 短随笔
+│   └── works/                            # 未来 /works/ 作品内容
+│
+├── src/
+│   ├── app/                              # App Router 路由入口；只组合，不承载业务内核
+│   │   ├── layout.tsx                    # 根 layout：html/body、主题、字体
+│   │   ├── page.tsx                      # 首页：桌面叙事 / 移动卡片
+│   │   ├── loading.tsx
+│   │   ├── error.tsx
+│   │   ├── global-error.tsx
+│   │   ├── not-found.tsx
+│   │   ├── globals.css
 │   │   ├── blog/
-│   │   │   ├── page.tsx        # /blog/ 文章列表（书架风）
-│   │   │   └── [slug]/page.tsx # /blog/<slug>/ 阅读页（generateStaticParams 全量静态化）
-│   │   └── _dev/               # 开发调试页面（不暴露给用户，production 返回 404）
+│   │   │   ├── page.tsx                  # /blog/ 文章列表
+│   │   │   └── [slug]/
+│   │   │       └── page.tsx              # /blog/<slug>/；generateStaticParams 全量静态化
+│   │   ├── notes/                        # 未来预留，不提前实现空页面
+│   │   ├── works/                        # 未来预留
+│   │   ├── about/                        # 未来预留
+│   │   └── _dev/                         # 隔离调试页；production 必须 notFound()
+│   │
 │   ├── components/
-│   │   └── ui/                 # 纯展示组件（Radix + Tailwind 自绘：Button, Tabs, Dialog 等）
-│   ├── features/               # 业务功能模块（按领域聚合）
-│   │   ├── doc-engine/         # ★ 统一文档内核（registry/renderers/pipeline/exporter/toc）
-│   │   ├── home-journey/       # 首页 3D 滚动叙事 + 移动端卡片入口
-│   │   ├── navigation/         # 绳挂卷轴导航（首页 + 阅读页顶部渐隐导航共用）
-│   │   ├── toc/                # 左侧目录（树模式 + React Flow 图形模式）
-│   │   ├── comments/           # 画词评论（选区捕获、锚定、面板、Supabase 适配层）
-│   │   ├── agent-shell/        # 右侧智能体外壳
-│   │   ├── reader-layout/      # 阅读页三栏布局（悬浮球收展、分栏拉动）
-│   │   └── settings/           # 设置面板（主题、音效）
-│   │   # 每个 feature 内部结构参照：
-│   │   #   queries.ts / schemas.ts / types.ts / components/
-│   ├── lib/                    # 工具函数、通用 hooks
-│   │   ├── supabase/           # Supabase 浏览器客户端、表类型定义
-│   │   ├── audio/              # 音效管理（统一播放 + 全局开关）
-│   │   └── theme/              # 主题 tokens 定义与切换逻辑
-│   └── server/                 # server-only 代码（import 'server-only'）
-│       └── content/            # 构建时读取 content/（fs 扫描、frontmatter 解析，仅 SSG 构建期执行）
-├── docs/                       # 项目内部文档
-│   ├── plans/                  # 项目计划、路线图、里程碑
-│   ├── conventions/            # 项目规范、编码约定、架构规范
-│   ├── updates/                # 更新日志、变更记录
-│   ├── specs/                  # 技术规格（功能/API/AI harness 规格）
-│   ├── audits/                 # 审计报告（性能/安全/代码）
-│   ├── ops/                    # 运维指南（本地运行/部署教程）
-│   ├── issues/                 # 问题追踪与记录
-│   └── designs/                # 设计文档（架构/UI/技术方案）
-├── scripts/                    # 辅助脚本
-│   ├── setup/                  # 环境初始化、依赖安装、配置生成
-│   ├── build/                  # 构建辅助、产物检查、bundle 分析
-│   ├── deploy/                 # EdgeOne 部署、环境变量同步
-│   └── dev/                    # 开发辅助、mock 数据、调试脚本
-├── public/                     # 静态公共资源（不放 >25MB 文件）
-├── AGENTS.md                   # AI 编码代理操作策略
-├── edgeone.json                # EdgeOne 部署配置
-├── next.config.ts              # Next.js 配置
-└── package.json
+│   │   └── ui/                           # 无业务逻辑的展示/交互基座
+│   │       ├── button.tsx
+│   │       ├── dialog.tsx
+│   │       ├── tabs.tsx
+│   │       └── ...
+│   │
+│   ├── features/                         # 跨路由或独立可迁移的业务领域
+│   │   ├── doc-engine/                   # ★ 统一文档内核
+│   │   │   ├── core/
+│   │   │   │   ├── document-types.ts     # Canonical Document IR
+│   │   │   │   ├── parse-document.ts     # 源文本 -> AST
+│   │   │   │   ├── compile-document.ts   # AST -> Canonical IR
+│   │   │   │   └── diagnostics.ts        # 可定位解析/校验诊断
+│   │   │   ├── registry/
+│   │   │   │   ├── renderer-definition.ts
+│   │   │   │   ├── renderer-registry.ts
+│   │   │   │   └── register-builtins.ts
+│   │   │   ├── profiles/
+│   │   │   │   ├── article-profile.ts    # 仓库受信任正文能力
+│   │   │   │   ├── discussion-profile.ts # 不可信评论/注释安全能力
+│   │   │   │   ├── editor-profile.ts     # 未来源码预览能力
+│   │   │   │   └── projection-policy.ts  # 节点级导出投影能力，不是屏幕 profile
+│   │   │   ├── security/
+│   │   │   │   ├── sanitize-discussion.ts
+│   │   │   │   ├── validate-url.ts
+│   │   │   │   ├── validate-component-use.ts
+│   │   │   │   └── render-limits.ts
+│   │   │   ├── renderers/                 # 每个组件完整拥有 schema/屏幕/导出/测试
+│   │   │   │   ├── markdown/
+│   │   │   │   ├── code/
+│   │   │   │   ├── katex/
+│   │   │   │   ├── mermaid/
+│   │   │   │   ├── image/
+│   │   │   │   ├── video/
+│   │   │   │   ├── audio/
+│   │   │   │   ├── canvas/
+│   │   │   │   ├── svg/
+│   │   │   │   ├── html/
+│   │   │   │   ├── web/
+│   │   │   │   ├── quiz-choice/
+│   │   │   │   └── quiz-fill/
+│   │   │   ├── screen/
+│   │   │   │   └── document-renderer.tsx # profile 驱动的统一屏幕入口
+│   │   │   ├── selection/
+│   │   │   │   ├── source-map.ts          # DOM selection -> 源节点坐标
+│   │   │   │   └── selectable-node.ts
+│   │   │   ├── toc/
+│   │   │   │   └── extract-outline.ts
+│   │   │
+│   │   ├── export-service/                # 组合文章与讨论；依赖 doc-engine + discussions
+│   │   │   ├── export-document.ts         # Export Document IR
+│   │   │   ├── assemble-export.ts
+│   │   │   ├── discussion-snapshot.ts
+│   │   │   ├── markdown/
+│   │   │   ├── text/
+│   │   │   ├── docx/
+│   │   │   └── pdf/
+│   │   │
+│   │   ├── discussions/                   # 评论/注释共享的讨论内核
+│   │   │   ├── domain/
+│   │   │   │   ├── discussion-entry.ts
+│   │   │   │   ├── discussion-thread.ts
+│   │   │   │   ├── discussion-permissions.ts
+│   │   │   │   └── auth-port.ts           # P1 假身份 / P2 真实身份共用端口
+│   │   │   ├── repository/
+│   │   │   │   ├── discussion-repository.ts
+│   │   │   │   ├── memory-discussion-repository.ts
+│   │   │   │   └── supabase-discussion-repository.ts
+│   │   │   └── components/
+│   │   │       ├── discussion-thread.tsx
+│   │   │       ├── discussion-composer.tsx
+│   │   │       ├── discussion-content.tsx # 调用 DocumentRenderer discussion profile
+│   │   │       ├── discussion-entry-menu.tsx
+│   │   │       └── author-badge.tsx
+│   │   │
+│   │   ├── comments/                      # 文章级评论，不含文本锚点
+│   │   │   ├── article-comment-panel.tsx
+│   │   │   ├── article-comment-list.tsx
+│   │   │   └── article-comment-composer.tsx
+│   │   │
+│   │   ├── annotations/                   # 选区级注释
+│   │   │   ├── selection/
+│   │   │   │   ├── capture-selection.ts
+│   │   │   │   └── selection-toolbar.tsx
+│   │   │   ├── anchors/
+│   │   │   │   ├── text-anchor.ts
+│   │   │   │   ├── create-text-anchor.ts
+│   │   │   │   └── resolve-text-anchor.ts
+│   │   │   ├── highlights/
+│   │   │   │   └── annotation-highlights.tsx
+│   │   │   ├── annotation-panel.tsx
+│   │   │   ├── annotation-list.tsx
+│   │   │   └── annotation-composer.tsx
+│   │   │
+│   │   ├── reader-layout/                 # 三栏/抽屉、面板收展、分栏拉动
+│   │   ├── toc/                           # 左目录树与 React Flow 图形模式
+│   │   ├── navigation/                    # 绳挂导航与阅读页顶部动作
+│   │   ├── settings/                      # 主题、音效
+│   │   ├── home-journey/                  # 首页叙事；不依赖 doc-engine
+│   │   ├── auth-shell/                    # 后期：登录弹窗、身份接口、作者白名单
+│   │   ├── article-editor/                # 后期：源码编辑、云草稿、发布
+│   │   └── agent-shell/                   # 后期：选区询问与电子分身接口
+│   │
+│   ├── lib/
+│   │   ├── supabase/                      # 客户端、生成类型、最小适配基础
+│   │   ├── theme/                         # 主题 token 与切换
+│   │   ├── audio/                         # 全站音效开关与统一播放
+│   │   └── download/                      # 浏览器 Blob 下载等通用工具
+│   │
+│   └── server/
+│       └── content/                       # 仅构建期运行；必须 import 'server-only'
+│           ├── discover-posts.ts
+│           ├── read-post.ts
+│           ├── validate-frontmatter.ts
+│           ├── validate-assets.ts
+│           ├── create-anchor-manifest.ts
+│           └── create-static-params.ts
+│
+├── docs/
+│   ├── plans/                             # 路线图、优先级、里程碑
+│   │   └── plan-blog-foundation.md        # 博客内容系统 P0–P3 工程计划
+│   ├── conventions/                       # 编码、路由、结构、前端规范
+│   ├── updates/                           # 版本变更
+│   ├── specs/                             # 内容协议、功能/API/安全规格
+│   │   ├── blog-content-engine.md         # 内容引擎、讨论、锚定与导出契约
+│   │   └── auth-and-discussions.md        # P2 开工前新增：认证、邮件、表/RLS/RPC
+│   ├── audits/                            # 性能、安全、架构审计
+│   ├── ops/                               # 本地运行与 EdgeOne 运维
+│   ├── issues/                            # 已知问题与技术债
+│   └── designs/                           # 总体架构和交互设计决策
+│       ├── architecture-overview.md       # 全站滚动架构总览
+│       └── home-journey-storyboard.md     # 首页叙事分镜
+│
+├── scripts/
+│   ├── setup/
+│   ├── build/
+│   │   ├── validate-content.*             # frontmatter/标签/资源/唯一 ID
+│   │   ├── copy-content-assets.*          # 文章资产搬运到静态产物
+│   │   └── verify-static-output.*         # 25 MB/20,000 文件等限制
+│   ├── deploy/
+│   └── dev/
+│       ├── validate-content-fixtures.*
+│       └── capture-reader-journey.*
+│
+├── public/                                # 仅全站共享资源
+│   ├── fonts/                             # 自托管字体；中文字体需体积治理
+│   └── sounds/                            # UI 音效，默认关闭
+├── AGENTS.md
+├── edgeone.json
+├── next.config.ts
+├── package.json
+└── pnpm-lock.yaml
 ```
 
-## 分层规则
+## 分层与依赖方向
 
-- `src/app/` 只放路由入口文件，业务逻辑下沉到 `src/features/`
-- `src/components/ui/` 只放无业务逻辑的纯 UI 组件
-- 单个路由专用文件（actions/schemas）可 colocate 在路由目录内
-- 跨路由共享的逻辑必须提升到 `src/features/`
-- `docs/` 存放项目内部文档，每个子目录有 README.md 说明用途
-- `scripts/` 存放辅助脚本，按 setup/build/deploy/dev 分类
-- `src/app/_dev/` 是隔离调试区：调试/原型代码放此处，不放入正式路由
+```text
+src/app
+  → features
+      → components/ui + lib
 
-## 内容与资源的放置规则
+server/content
+  → content/
 
-- **`content/` 与 `src/` 分离**：文章是"数据"不是"代码"——写文章不碰 `src/`，改代码不碰 `content/`，内容可整体备份/迁移；
-  且避免 lint/tsc/打包器扫描内容文件拖慢工具链、避免代码意外引用内容
-- **EdgeOne 部署兼容性已验证**（见 [architecture-overview.md D16](../designs/architecture-overview.md)）：
-  EdgeOne 构建时完整拉取仓库并在根目录执行构建，根目录 `content/` 构建期完全可读；部署只上传 `out/`，`content/` 原始文件不暴露到线上
-- **一篇文章一个文件夹**：正文、数据、媒体共居；删除一篇文章 = 删一个文件夹
-- **媒体搬运工序（实现期硬性要求）**：`content/<slug>/media/` 内的图片/视频必须由构建步骤复制进 `out/` 产物，否则线上访问不到；
-  搬运后的产物路径规则在实现期定义，媒体文件计入 EdgeOne 单文件 ≤25MB / 总文件数 ≤20,000 限制
-- **`public/` 只放全站共享资源**（`fonts/` 字体、`sounds/` UI 音效、Logo 等）；文章专属媒体放文章自己的 `media/`
-- 预留板块（`/notes/` 短随笔、`/works/` 作品集、`/about/` 关于我）落地时，内容目录采用 `content/<板块名>/` 平行扩展，路由规则见 [routing.md](./routing.md)
+comments + annotations
+  → discussions
+      → doc-engine(screen, discussion profile)
+
+export-service
+  → doc-engine(Canonical IR + renderer projections)
+  → discussions(repository contracts + normalized snapshot)
+  → 不依赖阅读页 DOM
+```
+
+硬规则：
+
+- `src/app/` 只组合页面、生成 metadata 和静态参数，不实现解析器、评论规则或导出算法。
+- `doc-engine` 不依赖 `discussions`、评论/注释 UI 或仓储；只负责文档语义、屏幕渲染和节点级导出投影。
+- `export-service` 是唯一同时依赖 `doc-engine` 与 `discussions` 的组合层，避免 `doc-engine ↔ discussions` 循环依赖。
+- `comments` 与 `annotations` 是不同产品领域；共享能力放 `discussions`，不得用复制粘贴维持两套线程实现。
+- `discussion` profile 复用正文渲染器定义，但默认权限更小；不得为评论另写一套 Markdown 渲染器。
+- `server/content` 只在构建期读取仓库文件，客户端组件不得直接依赖 `fs` 或 `content/` 绝对路径。
+- 导出器只消费统一 IR，不抓取当前页面 DOM，不依赖某个具体布局组件。
+- 每个 renderer 自己拥有 schema、屏幕渲染、导出投影、降级和测试；不建立按输出格式复制的第二套组件目录。
+
+## 内容与资源放置规则
+
+### 一篇文章一个完整边界
+
+```text
+content/posts/<slug>/
+├── index.md
+├── data/
+├── media/
+└── embeds/
+```
+
+- slug 即 URL，不在 frontmatter 重复定义。
+- 删除/迁移一篇文章时，以整个文章目录为边界。
+- `index.md` 只放适合人读、Git diff 和 AI 编辑的内容；大型 JSON、SVG、HTML、音视频不内嵌。
+- 文章相对路径只能解析到自己的目录内部；禁止 `../` 逃逸到其他文章或仓库任意位置。
+- 路径校验必须对真实路径执行：拒绝盘符/UNC 绝对路径、反斜杠或编码 traversal、symlink/junction/reparse point 逃逸；realpath 后仍须位于文章包根目录。
+- 所有自定义标签 ID 在文章内唯一，构建期严格校验。
+
+### `media/` 与 `embeds/`
+
+- 普通图片、视频、音频、SVG 放 `media/`；复杂独立 HTML 小页面放 `embeds/<embed-id>/`。
+- renderer 的 `collectAssets` 只声明依赖；`server/content` 汇总并验证唯一 manifest；构建脚本只执行 manifest 中资产的复制与静态 URL 落位，不重复发现逻辑。
+- 构建步骤必须把被引用资源搬运进 `out/`；HTML `embeds/` 的 CSS、JS、图片、字体等传递依赖也必须进入同一 manifest。验证真实文件类型、大小和数量，外部 URL 永不自动下载。
+- 静态产物路径必须由构建器统一生成，不允许组件自己拼接本地文件系统路径。
+- 每个文件 ≤25 MB；全站产物总文件数 ≤20,000。
+- 第三方网页 URL 不下载进仓库，只保存经过 schema 验证的链接和降级元信息。
+
+### `public/`
+
+`public/` 只放全站共享的字体、音效、Logo 等。文章专属资源一律放文章目录，避免全局资源堆积和删除边界模糊。
+
+### `content/pages/`
+
+该目录只为未来 `/about/` 等独立内容页预留，不自动产生 `/pages/<slug>/` 或根级路由。具体页面仍须在 `src/app/<route>/page.tsx` 显式映射；实现前不创建空内容或不可达路由。
+
+## Renderer 内部结构约定
+
+一个成熟 renderer 的推荐结构：
+
+```text
+renderers/<renderer-name>/
+├── definition.ts             # 名称、版本、allowedProfiles、安全与能力声明
+├── schema.ts                 # 属性/数据 schema 与边界
+├── compile.ts                # 源节点 -> Canonical IR
+├── screen-renderer.tsx       # 网页显示
+├── markdown-export.ts
+├── text-export.ts
+├── docx-export.ts
+├── pdf-export.ts
+├── fallback.tsx              # 错误/不支持/资源失效时的稳定降级
+├── fixtures/                 # 合法、非法、边界样例
+└── <renderer-name>.test.ts
+```
+
+不是每个 renderer 在第一天都必须有全部文件，但注册契约必须能表达这些能力；缺少某种导出时必须走显式 fallback，不能静默丢内容。
 
 ## 文件放置决策
 
-详见 [code-size-and-organization.md](./code-size-and-organization.md) 的"文件放置决策树"和 `src/features/` 提升条件。
+仍遵守 [代码长度与文件组织规范](./code-size-and-organization.md)：
+
+- 单路由专用代码优先 colocate；
+- 跨不相关路由、可独立删除/迁移的领域才进入 `features/`；
+- `features/` 不是长文件回收站；
+- 长度只触发审视，职责边界才决定拆分；
+- 本文目标树描述稳定领域边界，不要求为了“看起来完整”提前创建空目录。

@@ -13,9 +13,10 @@
 
 ## Key Commands
 
-- Install: `pnpm install` | Dev: `pnpm dev` | Build: `pnpm build` | Start: `pnpm start`
+- Install: `pnpm install` | Dev: `pnpm dev` | Build: `pnpm build`
 - Typecheck: `pnpm tsc --noEmit` | Lint: `pnpm lint` | Lint fix: `pnpm lint --fix`
-- Analyze bundle: `ANALYZE=true pnpm build`
+- Analyze bundle (PowerShell): `$env:ANALYZE='true'; pnpm build; Remove-Item Env:ANALYZE`
+- `output: 'export'` 的交付物是 `out/` 静态目录；不要把 `next start` 当成正式静态产物预览命令
 
 ## Shell Environment
 
@@ -48,6 +49,7 @@ src/components/  纯 UI 组件（ui/ 子目录只放无业务逻辑的展示组�
 src/features/    业务领域模块（跨路由复用时才提升，不是长文件回收站）
 src/lib/         工具函数、通用 hooks
 src/server/      server-only 代码
+content/         正式内容仓库（index.md 是文章唯一权威源，文章资产共居）
 docs/            项目内部文档（规范/计划/运维/审计）
 scripts/         辅助脚本（setup/build/deploy/dev）
 public/          静态资源（不放 >25MB 文件）
@@ -68,13 +70,18 @@ public/          静态资源（不放 >25MB 文件）
 - **默认 Server Component，`'use client'` 放叶子组件** — 不放页面级
 - **`_dev/` 单向引用 + production 守卫** — 每页顶部 `if (process.env.NODE_ENV === 'production') notFound()`；正式代码不得引用 `_dev/`
 - **TypeScript strict，禁止 `any`** — 用 `unknown` + 类型收窄
+- **正式文章唯一权威源是 `content/posts/<slug>/index.md`** — 评论、注释、草稿不得覆盖或写回正本
+- **一套 doc-engine，多种 profile** — 正文、评论/注释、编辑预览与导出共享 Canonical IR/注册表；不得各写一套解析器
+- **评论是文章级，注释是选区级** — 划词入口只能创建注释；评论区只能创建文章评论
+- **讨论内容是永久不可信输入** — 只走 `discussion` profile，禁用原始 HTML、任意 JS/CSS/iframe/动态 import，并在最终渲染前 sanitize
+- **PDF 必须直接下载** — 禁止使用 `window.print()` 或系统打印对话框代替 PDF 导出
 
 > 完整代码风格规范见 [docs/conventions/code-style.md](docs/conventions/code-style.md)。
 > Code review 检查清单见 [docs/conventions/code-review.md](docs/conventions/code-review.md)。
 
 ## Git Workflow
 
-- 从 `main` 分支切出，前缀 `feat/`、`fix/`、`chore/`
+- 默认从 `main` 分支切出；任务明确指定 `dev` 或其他基线时服从任务，前缀使用 `feat/`、`fix/`、`chore/`
 - Commit: Conventional Commits（`feat(video): add preview component`）
 - Squash merge PRs，PR 需通过 CI 和至少一次审查
 
@@ -119,9 +126,11 @@ public/          静态资源（不放 >25MB 文件）
 - `edgeone.json` — EdgeOne 部署配置（详见 [docs/ops/deploy-edgeone.md](docs/ops/deploy-edgeone.md)）
 - `src/app/layout.tsx` — 根 layout（必须含 `<html>` `<body>`）
 - `src/app/globals.css` — 全局样式入口
-- `proxy.ts` — 网络边界代理（替代 middleware.ts）
-- `instrumentation.ts` — 监控/性能追踪
-- `.env.example` — 环境变量模板（真实 `.env*` 不提交）
+- `content/posts/<slug>/index.md` — 正式文章唯一权威源（实现后存在）
+- `src/features/doc-engine/` — 文档解析、注册表、profile、安全与导出内核（实现后存在）
+- `proxy.ts` — 网络边界代理（替代 middleware.ts；需要网络边界时创建）
+- `instrumentation.ts` — 监控/性能追踪（接入监控时创建）
+- `.env.example` — 环境变量模板（首次引入环境变量时创建；真实 `.env*` 不提交）
 
 ## Documentation Index
 
@@ -140,7 +149,15 @@ public/          静态资源（不放 >25MB 文件）
 
 ### docs/designs/ — 设计文档
 
-- [architecture-overview.md](docs/designs/architecture-overview.md) — 整体架构决策记录（D1-D14：内容格式、文档引擎、评论锚定、动画分层、主题、模块划分等，含待决事项）
+- [architecture-overview.md](docs/designs/architecture-overview.md) — 整体架构决策记录（公开身份、内容协议、文档引擎、评论/注释、安全渲染、导出、动画与部署）
+
+### docs/specs/ — 技术规格
+
+- [blog-content-engine.md](docs/specs/blog-content-engine.md) — 内容协议、Canonical IR、renderer/profile、安全讨论、划词锚定与多格式导出契约
+
+### docs/plans/ — 工程计划
+
+- [plan-blog-foundation.md](docs/plans/plan-blog-foundation.md) — 博客内容系统 P0–P3 范围、依赖与验收标准
 
 ### docs/ops/ — 运维指南
 
