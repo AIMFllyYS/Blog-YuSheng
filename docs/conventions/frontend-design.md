@@ -1,7 +1,7 @@
 # 前端设计规范
 
 > Created: 2026-08-14
-> Updated: 2026-08-14
+> Updated: 2026-08-15
 > Status: accepted（决策背景见 [docs/designs/architecture-overview.md](../designs/architecture-overview.md)）
 
 ## 一、主题系统
@@ -41,6 +41,18 @@
 ```
 
 命名规则：**语义命名，不用色值命名**（`--accent` 而非 `--gold-500`），换主题只改变量值。token 清单随开发滚动扩充，扩充时更新本文档。
+
+首页电影化叙事固定使用以下场景语义 token，不受四套常规主题切换影响；3D 材质、DOM 字幕与场景特效必须共同引用它们：
+
+```css
+--journey-void        /* 深空底色 */
+--journey-void-raised /* 抬升的深空层 */
+--journey-gold        /* 核心金光 */
+--journey-gold-soft   /* 柔和金光与星点 */
+--journey-paper       /* 古书纸面 */
+--journey-paper-edge  /* 书页边缘与装订 */
+--journey-ink         /* 纸面墨色 */
+```
 
 ## 二、字体
 
