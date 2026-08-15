@@ -43,7 +43,7 @@ pnpm install
 pnpm dev
 ```
 
-打开 [http://localhost:3000](http://localhost:3000) 查看运行效果。
+打开 [http://localhost:9981](http://localhost:9981) 查看运行效果（端口以 `package.json` 的 `dev` 脚本为准）。
 
 ### 构建
 
@@ -84,7 +84,7 @@ pnpm build
 └── next.config.ts              # Next.js 配置
 ```
 
-详细结构说明见 [AGENTS.md](./AGENTS.md)。
+完整目标目录树见 [docs/conventions/project-structure.md](./docs/conventions/project-structure.md)；高频操作规则见 [AGENTS.md](./AGENTS.md)。
 
 ## 部署
 
@@ -101,7 +101,11 @@ edgeone pages deploy
 ## 文档
 
 - [AGENTS.md](./AGENTS.md) — AI 编码代理操作策略
-- [docs/](./docs/) — 项目内部文档（计划、规范、规格、设计等）
+- [docs/designs/architecture-overview.md](./docs/designs/architecture-overview.md) — 博客总体架构与产品边界
+- [docs/conventions/project-structure.md](./docs/conventions/project-structure.md) — 完整目标目录树
+- [docs/specs/blog-content-engine.md](./docs/specs/blog-content-engine.md) — 内容引擎与公开讨论功能规格
+- [docs/plans/plan-blog-foundation.md](./docs/plans/plan-blog-foundation.md) — P0–P3 工程计划
+- [docs/](./docs/) — 全部项目内部文档
 - [scripts/](./scripts/) — 辅助脚本
 
 ## License

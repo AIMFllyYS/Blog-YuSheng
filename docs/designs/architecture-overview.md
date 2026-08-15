@@ -2,7 +2,7 @@
 
 > Created: 2026-08-14
 > Updated: 2026-08-15
-> Status: draft
+> Status: accepted baseline（已拍板原则可实施；阶段进入门见文末）
 >
 > 本文档记录全站架构与已经对齐的产品边界。已拍板的决策标 ✅，方向已定但实现细节仍需规格化的标 🔶，完全待讨论的事项收录在文末。
 
@@ -40,7 +40,7 @@ Supabase（运行时公开增量）
 - 部署形态维持 `output: 'export'` 纯静态导出；所有正式文章默认公开。
 - 正式文章不以数据库为权威源；Supabase 只承载运行时增量和未来草稿。
 - 评论与注释不写回 `index.md`，只在阅读和导出时叠加。
-- 文档只解析一次形成统一中间模型；屏幕阅读、评论渲染和各种导出不得各自重写解析规则。
+- 每次消费动作都通过同一 parser/Canonical IR/registry 契约编译；同一次消费中的屏幕、目录、选择和导出投影复用 IR，不为不同输出维护不同语法实现。讨论内容仍须在写入和每次读取时复验，不能把“统一管线”误解成永久信任一次解析结果。
 - 当前 `src/app/api/ping/route.ts` 与 export 模式的兼容性仍需在实现期处理。
 
 ## 决策记录
@@ -53,12 +53,13 @@ Supabase（运行时公开增量）
 
 | 身份 | 阅读 | 评论/注释/回复 | 编辑自己发布的内容 | 编辑文章 | 删除任意讨论内容 |
 |---|:---:|:---:|:---:|:---:|:---:|
-| 访客 | ✅ | ❌ | ❌ | ❌ | ❌ |
-| 已登录用户 | ✅ | ✅ | ✅ | ❌ | ❌ |
+| 匿名读者 | ✅ | ❌ | ❌ | ❌ | ❌ |
+| 普通成员（已登录） | ✅ | ✅ | ✅ | ❌ | ❌ |
 | 作者（白名单邮箱） | ✅ | ✅ | ✅ | ✅ | ✅ |
 
 - 登录后才能创建评论、注释或回复；未登录时由弹窗式登录入口承接，不设置独立 `/login/` 页面。
-- “作者/访客”是根据认证系统提供的已验证邮箱派生的展示徽标，不接受客户端传入的 `isAuthor`。
+- 权限身份固定使用“匿名读者 / 普通成员 / 作者”；“作者/访客”只是一组讨论展示徽标，其中普通成员显示“访客”，不要把展示文案反推成权限。
+- “作者/访客”徽标由认证系统的已验证邮箱与服务端白名单派生，不接受客户端传入的 `isAuthor`。
 - 普通用户和作者都只能编辑自己创建的评论、注释或回复；作者不能篡改其他人的文字。
 - 作者可以删除任意评论、注释和回复。
 - 编辑只更新正文与 `updatedAt`，不保存编辑历史。
@@ -104,7 +105,7 @@ flowchart LR
 ```
 
 <canvas-embed id="three-body" renderer="three-body" data-src="./data/three-body.json" />
-<video-embed id="experiment-video" src="./media/experiment.mp4" poster="./media/poster.webp" />
+<video-embed id="experiment-video" src="./media/video/experiment.mp4" poster="./media/images/poster.webp" />
 ````
 
 标签语法规则：
@@ -175,11 +176,11 @@ fallback / security / accessibility / allowed profiles
 ```
 
 - `article`：仓库内受信任内容，可使用完整注册能力；高风险 HTML/网页仍必须在沙箱中运行。
-- `discussion`：登录用户提交的不可信内容，只允许安全富文本和显式标记为 `discussionSafe` 的注册组件。
+- `discussion`：登录用户提交的不可信内容，只允许安全富文本，以及同时通过集中 allowlist 和安全审查的注册组件；组件自报能力不能直接放行。
 - `editor-preview`：未来源码编辑预览，与文章 schema 一致但具有清晰错误诊断。
 - `export`：从统一文档模型投影到 Markdown/TXT/DOCX/PDF，不重新解析页面 DOM。
 
-评论/注释默认允许 Markdown、代码、表格、KaTeX、严格模式 Mermaid；默认禁止原始 HTML、任意 JS/CSS、图片、音视频、SVG/HTML/网页嵌入和任意动态模块路径。Canvas 等组件只有显式声明 `discussionSafe`、参数 schema 有界且不接受脚本时才可开放。
+评论/注释默认允许 Markdown、代码、表格、KaTeX、严格模式 Mermaid；默认禁止原始 HTML、任意 JS/CSS、图片、音视频、SVG/HTML/网页嵌入和任意动态模块路径。v1 不开放 discussion Canvas；后续组件必须进入集中 allowlist、参数 schema 有界且通过专项安全审查后才能开放。
 
 不可信讨论内容必须在写入前验证，并在每次读取渲染时再次经过 profile 校验和最终 sanitize；数据库中的已存内容不能被视为可信 HTML。
 
@@ -187,12 +188,14 @@ fallback / security / accessibility / allowed profiles
 
 | 能力 | 正文实现 | 讨论区 | 静态导出 |
 |---|---|---|---|
-| Canvas | 注册键映射仓库内受审查代码，参数/数据外置 | 仅 `discussionSafe` 组件 | 组件提供 PNG/SVG 快照 |
-| SVG | 引用文章资源，普通 SVG 不执行内部 JS | 默认禁止 | 优先矢量，必要时 PNG |
-| 本地 HTML | 引用 `embeds/`，sandbox iframe，允许脚本但默认不授予同源能力 | 禁止 | 截图或降级卡片 |
+| Canvas | 注册键映射仓库内受审查代码，参数/数据外置 | v1 禁止；以后仅集中安全清单 | 组件提供 PNG/SVG 快照 |
+| SVG | 构建期清洗后以独立资源/`img` 加载，不内联父 DOM | 禁止 | 复用同一安全投影，优先矢量 |
+| 本地 HTML | 只允许 `<html-embed>` 引用 `embeds/`；sandbox iframe 可运行脚本但不授予同源能力 | 禁止 | 截图或降级卡片 |
 | 站内网页 | 专用嵌入页或构建期 `srcdoc` | 禁止 | 预览图 + 标题 + URL |
 | 自有外部页面 | iframe + 最小权限 | 禁止 | 预览图 + 标题 + URL |
 | 第三方网页 | 尽力 iframe，必须处理对方拒绝嵌入 | 禁止 | 预览图 + 标题 + URL |
+
+iframe 的默认 sandbox 仅含 `allow-scripts`；表单、弹窗、下载、顶层导航、modals、剪贴板、同源能力和其他浏览器权限均默认关闭。额外能力只能由受审 renderer 固定声明，不能由文章属性任意开启。`postMessage` 必须校验 iframe window、随机 capability nonce 和消息 schema；CSP、Permissions Policy、`referrerPolicy`、隔离源以及 `X-Frame-Options` 的路由例外是 renderer 开工前的安全门。
 
 “允许脚本运行”不等于“允许读取博客登录态和父页面 DOM”。沙箱内容与父页面通信时只能使用有来源校验和消息 schema 的 `postMessage` 协议。
 
@@ -203,11 +206,11 @@ fallback / security / accessibility / allowed profiles
 - 媒体文件计入 EdgeOne 单文件 ≤25 MB 和总文件数 ≤20,000 限制。
 - 选择题和填空题是纯前端自测组件：不登录、不上报、不统计、不排行、不保存成绩，刷新后可重置。
 - 题目复杂数据优先放 `data/*.json`；正文只引用组件 ID 和数据路径。
-- 问答组件的讨论区使用默认关闭，未来有真实场景时由组件显式声明 `discussionSafe`。
+- 问答组件的讨论区使用默认关闭，未来有真实场景时须经集中 allowlist 与专项审查开放，不能只由组件自报安全。
 
 ### D9 导出：一份 Export Document IR，多种格式 ✅
 
-所有导出从 Canonical Document IR 与公开评论/注释生成统一 Export Document IR，再投影到具体格式。不得让每个导出器重新解析 Markdown 或抓取当前页面 DOM。
+所有导出从 Canonical Document IR、编译结果保存的不可变 `originalSource` 与公开评论/注释生成统一 Export Document IR，再投影到具体格式。不得让每个导出器重写 Markdown 语法或抓取当前页面 DOM；Markdown 纯正文直接返回已校验的 `originalSource`，其他格式消费语义 IR。
 
 Markdown 导出保留原始 frontmatter、Markdown、KaTeX、Mermaid 和自定义标签。运行时讨论内容不插入原句内部，而以带稳定目标、精确引语、作者、时间和回复关系的审阅附录追加，避免破坏列表、表格、代码和公式。
 
@@ -222,7 +225,7 @@ TXT、DOCX 和 PDF 默认可选择相同内容范围。DOCX 是结构化 OOXML �
 
 PDF 必须点击后直接生成并下载文件，不调用 `window.print()` 或系统打印对话框。PDF 追求语义与结构保真，不要求动态网页逐像素复刻：Canvas 用快照，Mermaid/SVG 优先矢量，音视频用封面/标题/链接，网页嵌入用预览卡片，问答题用静态题面并可选择是否包含答案与解析。
 
-浏览器端 Blob 生成是第一候选，具体 PDF/DOCX 库必须经过中文字体、分页、公式、SVG、长文档和包体积技术验证后再锁定；导出实现动态加载，不进入普通阅读首屏包。
+浏览器端 Blob 生成是第一候选，具体 PDF/DOCX 库必须经过中文字体、分页、公式、SVG、长文档、包体积和 active-content 安全验证后再锁定；导出实现动态加载，不进入普通阅读首屏包。不可信讨论在每种目标格式中都必须重新经过 discussion profile 与格式专用编码，导出器不得服务端抓取用户控制 URL。
 
 ### D10 在线编辑：后期接入、白名单独占 ✅
 
@@ -301,7 +304,8 @@ Pretext 只服务首页活字效果：它计算字符位置，GSAP 管时间线�
 ## 模块边界总览 ✅
 
 ```text
-doc-engine      文档解析、注册表、profile、安全、屏幕渲染与导出投影
+doc-engine      文档解析、注册表、profile、安全、屏幕渲染与节点级导出投影
+export-service  组合文章 IR 与规范化讨论快照，生成各格式文件
 discussions     评论/注释共享的线程、回复、权限、仓储和富文本基础
 comments        文章级评论面板与评论输入
 annotations     选区捕获、锚点、高亮、注释面板与注释输入
@@ -312,18 +316,19 @@ article-editor  后期源码编辑、草稿和正式发布流程
 agent-shell     未来选区询问与电子分身接口外壳
 ```
 
-完整目标目录树以 `docs/conventions/project-structure.md` 为准。
+完整目标目录树以 [项目结构与文件组织](../conventions/project-structure.md) 为准；详细字段与行为以 [博客内容引擎功能规格](../specs/blog-content-engine.md) 为准；实施顺序以 [P0–P3 工程计划](../plans/plan-blog-foundation.md) 为准。
 
-## 仍待实现前收口的事项
+## 阶段进入门与后置事项
 
-- [ ] frontmatter 完整字段、必填项和 schema 版本；
-- [ ] 各注册组件的最终标签名、属性 schema 与错误码；
-- [ ] `discussion` profile 的最终允许组件清单和资源上限；
-- [ ] 评论/注释输入是否允许 KaTeX、Mermaid、安全 Canvas 以外的扩展；
+- [x] frontmatter v1 最小字段、slug 归属、首批标签名/最小属性、错误分级、原始 Markdown 保存方式与锚点 offset 协议已锁定，见功能规格；
+- [x] `discussion` v1 允许 Markdown/代码/表格/KaTeX/严格 Mermaid，图片、媒体、HTML、iframe、SVG 和 Canvas 均不开放；
+- [ ] P0 所需解析/schema/测试依赖安装授权；
+- [ ] 各注册组件的扩展属性、错误码和综合黄金 fixture；
 - [ ] 注释列表排序和同一锚点聚合的最终交互；
-- [ ] 登录提供方、作者白名单配置、阿里云邮件推送接入方式；
-- [ ] Supabase 表结构、RLS、删除级联和限流；
-- [ ] PDF/DOCX 技术验证与中文字体策略；
+- [ ] iframe 隔离源、CSP/Permissions Policy/响应头与当前 `X-Frame-Options: DENY` 的协调；
+- [ ] P2 前完成登录提供方、作者白名单私有配置、阿里云邮件推送独立规格；
+- [ ] P2 前完成 Supabase 表结构、RLS/RPC、不变量、anchor manifest 同步、删除级联和限流；
+- [ ] PDF/DOCX 技术验证、中文字体与目标格式安全策略；
 - [ ] 在线编辑回写仓库的发布流程；
 - [ ] Agent “询问”接口上下文协议；
 - [ ] `src/app/api/ping/route.ts` 与 export 模式冲突处理；
@@ -333,7 +338,7 @@ agent-shell     未来选区询问与电子分身接口外壳
 
 1. **博客优先**：这是公开个人博客，不把评论、测验或编辑扩张成独立平台。
 2. **正本不动**：仓库 Markdown 是正式文章唯一权威源；运行时增量不污染正本。
-3. **一套内核，多种档位**：文章、讨论、预览和导出复用同一文档模型与注册表，通过 profile 控制权限。
+3. **一套内核，多种档位**：文章、讨论和预览复用同一文档模型与注册表，通过屏幕 profile 控制权限；导出在同一 IR 上做目标格式投影。
 4. **代码复用不等于权限复用**：不可信评论可以调用安全能力，但不能执行任意 HTML、JS、CSS 或远程模块。
 5. **组件自证完整**：每个注册组件同时声明屏幕、失败降级、选择、安全和导出能力。
 6. **语义导出优先**：导出从统一 IR 生成；PDF/DOCX 是结构化投影，不抓取当前页面碰运气。

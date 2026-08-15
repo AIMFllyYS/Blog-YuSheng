@@ -10,6 +10,10 @@
 - 里程碑定义
 - 研究计划
 
+## 现有文档
+
+- [plan-blog-foundation.md](./plan-blog-foundation.md) — 博客内容系统 P0–P3 工程计划、阶段范围、依赖关系、验收标准和阶段进入门
+
 ## 文件命名
 
 - `roadmap-<year>.md` — 年度路线图

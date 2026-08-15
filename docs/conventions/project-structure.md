@@ -2,7 +2,7 @@
 
 > Created: 2026-08-14
 > Updated: 2026-08-15
-> Status: accepted
+> Status: accepted（领域边界已定；未实现的目标文件名可随详细设计小幅调整）
 >
 > 本文档是项目目标目录树的权威说明。目录按领域和依赖方向组织，不要求一次性创建所有空目录；实现某项能力时再创建对应路径。
 
@@ -26,7 +26,7 @@
 │   │           └── <embed-id>/
 │   │               ├── index.html
 │   │               └── assets/
-│   ├── pages/                            # 独立内容页，仍走 doc-engine
+│   ├── pages/                            # 未来独立内容源预留；不自动映射 /pages/* 路由
 │   │   └── <slug>/index.md
 │   ├── notes/                            # 未来 /notes/ 短随笔
 │   └── works/                            # 未来 /works/ 作品内容
@@ -71,7 +71,7 @@
 │   │   │   │   ├── article-profile.ts    # 仓库受信任正文能力
 │   │   │   │   ├── discussion-profile.ts # 不可信评论/注释安全能力
 │   │   │   │   ├── editor-profile.ts     # 未来源码预览能力
-│   │   │   │   └── export-profile.ts     # 导出投影能力
+│   │   │   │   └── projection-policy.ts  # 节点级导出投影能力，不是屏幕 profile
 │   │   │   ├── security/
 │   │   │   │   ├── sanitize-discussion.ts
 │   │   │   │   ├── validate-url.ts
@@ -98,21 +98,25 @@
 │   │   │   │   └── selectable-node.ts
 │   │   │   ├── toc/
 │   │   │   │   └── extract-outline.ts
-│   │   │   └── export/
-│   │   │       ├── export-document.ts     # Export Document IR
-│   │   │       ├── assemble-discussions.ts
-│   │   │       ├── markdown/
-│   │   │       ├── text/
-│   │   │       ├── docx/
-│   │   │       └── pdf/
+│   │   │
+│   │   ├── export-service/                # 组合文章与讨论；依赖 doc-engine + discussions
+│   │   │   ├── export-document.ts         # Export Document IR
+│   │   │   ├── assemble-export.ts
+│   │   │   ├── discussion-snapshot.ts
+│   │   │   ├── markdown/
+│   │   │   ├── text/
+│   │   │   ├── docx/
+│   │   │   └── pdf/
 │   │   │
 │   │   ├── discussions/                   # 评论/注释共享的讨论内核
 │   │   │   ├── domain/
 │   │   │   │   ├── discussion-entry.ts
 │   │   │   │   ├── discussion-thread.ts
-│   │   │   │   └── discussion-permissions.ts
+│   │   │   │   ├── discussion-permissions.ts
+│   │   │   │   └── auth-port.ts           # P1 假身份 / P2 真实身份共用端口
 │   │   │   ├── repository/
 │   │   │   │   ├── discussion-repository.ts
+│   │   │   │   ├── memory-discussion-repository.ts
 │   │   │   │   └── supabase-discussion-repository.ts
 │   │   │   └── components/
 │   │   │       ├── discussion-thread.tsx
@@ -161,17 +165,23 @@
 │           ├── read-post.ts
 │           ├── validate-frontmatter.ts
 │           ├── validate-assets.ts
+│           ├── create-anchor-manifest.ts
 │           └── create-static-params.ts
 │
 ├── docs/
 │   ├── plans/                             # 路线图、优先级、里程碑
+│   │   └── plan-blog-foundation.md        # 博客内容系统 P0–P3 工程计划
 │   ├── conventions/                       # 编码、路由、结构、前端规范
 │   ├── updates/                           # 版本变更
 │   ├── specs/                             # 内容协议、功能/API/安全规格
+│   │   ├── blog-content-engine.md         # 内容引擎、讨论、锚定与导出契约
+│   │   └── auth-and-discussions.md        # P2 开工前新增：认证、邮件、表/RLS/RPC
 │   ├── audits/                            # 性能、安全、架构审计
 │   ├── ops/                               # 本地运行与 EdgeOne 运维
 │   ├── issues/                            # 已知问题与技术债
 │   └── designs/                           # 总体架构和交互设计决策
+│       ├── architecture-overview.md       # 全站滚动架构总览
+│       └── home-journey-storyboard.md     # 首页叙事分镜
 │
 ├── scripts/
 │   ├── setup/
@@ -208,15 +218,17 @@ comments + annotations
   → discussions
       → doc-engine(screen, discussion profile)
 
-doc-engine/export
-  → Canonical Document IR + discussions repository contracts
+export-service
+  → doc-engine(Canonical IR + renderer projections)
+  → discussions(repository contracts + normalized snapshot)
   → 不依赖阅读页 DOM
 ```
 
 硬规则：
 
 - `src/app/` 只组合页面、生成 metadata 和静态参数，不实现解析器、评论规则或导出算法。
-- `doc-engine` 不依赖评论/注释 UI；它只接收规范化讨论数据用于导出组装。
+- `doc-engine` 不依赖 `discussions`、评论/注释 UI 或仓储；只负责文档语义、屏幕渲染和节点级导出投影。
+- `export-service` 是唯一同时依赖 `doc-engine` 与 `discussions` 的组合层，避免 `doc-engine ↔ discussions` 循环依赖。
 - `comments` 与 `annotations` 是不同产品领域；共享能力放 `discussions`，不得用复制粘贴维持两套线程实现。
 - `discussion` profile 复用正文渲染器定义，但默认权限更小；不得为评论另写一套 Markdown 渲染器。
 - `server/content` 只在构建期读取仓库文件，客户端组件不得直接依赖 `fs` 或 `content/` 绝对路径。
@@ -239,12 +251,14 @@ content/posts/<slug>/
 - 删除/迁移一篇文章时，以整个文章目录为边界。
 - `index.md` 只放适合人读、Git diff 和 AI 编辑的内容；大型 JSON、SVG、HTML、音视频不内嵌。
 - 文章相对路径只能解析到自己的目录内部；禁止 `../` 逃逸到其他文章或仓库任意位置。
+- 路径校验必须对真实路径执行：拒绝盘符/UNC 绝对路径、反斜杠或编码 traversal、symlink/junction/reparse point 逃逸；realpath 后仍须位于文章包根目录。
 - 所有自定义标签 ID 在文章内唯一，构建期严格校验。
 
 ### `media/` 与 `embeds/`
 
 - 普通图片、视频、音频、SVG 放 `media/`；复杂独立 HTML 小页面放 `embeds/<embed-id>/`。
-- 构建步骤必须把被引用资源搬运进 `out/`；未引用资源是否搬运由后续资产策略决定。
+- renderer 的 `collectAssets` 只声明依赖；`server/content` 汇总并验证唯一 manifest；构建脚本只执行 manifest 中资产的复制与静态 URL 落位，不重复发现逻辑。
+- 构建步骤必须把被引用资源搬运进 `out/`；HTML `embeds/` 的 CSS、JS、图片、字体等传递依赖也必须进入同一 manifest。验证真实文件类型、大小和数量，外部 URL 永不自动下载。
 - 静态产物路径必须由构建器统一生成，不允许组件自己拼接本地文件系统路径。
 - 每个文件 ≤25 MB；全站产物总文件数 ≤20,000。
 - 第三方网页 URL 不下载进仓库，只保存经过 schema 验证的链接和降级元信息。
@@ -252,6 +266,10 @@ content/posts/<slug>/
 ### `public/`
 
 `public/` 只放全站共享的字体、音效、Logo 等。文章专属资源一律放文章目录，避免全局资源堆积和删除边界模糊。
+
+### `content/pages/`
+
+该目录只为未来 `/about/` 等独立内容页预留，不自动产生 `/pages/<slug>/` 或根级路由。具体页面仍须在 `src/app/<route>/page.tsx` 显式映射；实现前不创建空内容或不可达路由。
 
 ## Renderer 内部结构约定
 

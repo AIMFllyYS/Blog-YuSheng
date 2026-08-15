@@ -13,9 +13,10 @@
 
 ## Key Commands
 
-- Install: `pnpm install` | Dev: `pnpm dev` | Build: `pnpm build` | Start: `pnpm start`
+- Install: `pnpm install` | Dev: `pnpm dev` | Build: `pnpm build`
 - Typecheck: `pnpm tsc --noEmit` | Lint: `pnpm lint` | Lint fix: `pnpm lint --fix`
-- Analyze bundle: `ANALYZE=true pnpm build`
+- Analyze bundle (PowerShell): `$env:ANALYZE='true'; pnpm build; Remove-Item Env:ANALYZE`
+- `output: 'export'` 的交付物是 `out/` 静态目录；不要把 `next start` 当成正式静态产物预览命令
 
 ## Shell Environment
 
@@ -80,7 +81,7 @@ public/          静态资源（不放 >25MB 文件）
 
 ## Git Workflow
 
-- 从 `main` 分支切出，前缀 `feat/`、`fix/`、`chore/`
+- 默认从 `main` 分支切出；任务明确指定 `dev` 或其他基线时服从任务，前缀使用 `feat/`、`fix/`、`chore/`
 - Commit: Conventional Commits（`feat(video): add preview component`）
 - Squash merge PRs，PR 需通过 CI 和至少一次审查
 
@@ -127,9 +128,9 @@ public/          静态资源（不放 >25MB 文件）
 - `src/app/globals.css` — 全局样式入口
 - `content/posts/<slug>/index.md` — 正式文章唯一权威源（实现后存在）
 - `src/features/doc-engine/` — 文档解析、注册表、profile、安全与导出内核（实现后存在）
-- `proxy.ts` — 网络边界代理（替代 middleware.ts）
-- `instrumentation.ts` — 监控/性能追踪
-- `.env.example` — 环境变量模板（真实 `.env*` 不提交）
+- `proxy.ts` — 网络边界代理（替代 middleware.ts；需要网络边界时创建）
+- `instrumentation.ts` — 监控/性能追踪（接入监控时创建）
+- `.env.example` — 环境变量模板（首次引入环境变量时创建；真实 `.env*` 不提交）
 
 ## Documentation Index
 
@@ -149,6 +150,14 @@ public/          静态资源（不放 >25MB 文件）
 ### docs/designs/ — 设计文档
 
 - [architecture-overview.md](docs/designs/architecture-overview.md) — 整体架构决策记录（公开身份、内容协议、文档引擎、评论/注释、安全渲染、导出、动画与部署）
+
+### docs/specs/ — 技术规格
+
+- [blog-content-engine.md](docs/specs/blog-content-engine.md) — 内容协议、Canonical IR、renderer/profile、安全讨论、划词锚定与多格式导出契约
+
+### docs/plans/ — 工程计划
+
+- [plan-blog-foundation.md](docs/plans/plan-blog-foundation.md) — 博客内容系统 P0–P3 范围、依赖与验收标准
 
 ### docs/ops/ — 运维指南
 
