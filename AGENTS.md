@@ -15,7 +15,7 @@
 
 - Install: `pnpm install` | Dev: `pnpm dev` (9981) | Build: `pnpm build`
 - Typecheck: `pnpm tsc --noEmit` | Lint: `pnpm lint` | Lint fix: `pnpm lint --fix`
-- Test: `pnpm test`（测试栈随 issue #4 落地；未落地前 CI 用 `pnpm run test --if-present` 跳过）
+- Test: `pnpm test`（测试栈随 issue #4 落地；未落地前 CI 用 `pnpm run --if-present test` 跳过）
 - Preview static output: `pnpm preview`（9982，验证 `out/`；`edgeone.json` 的响应头在本地不生效）
 - Analyze bundle (PowerShell): `$env:ANALYZE='true'; pnpm build; Remove-Item Env:ANALYZE`
   —— 需先接入 `@next/bundle-analyzer` 并改 `next.config.ts`，两者都要单独授权
