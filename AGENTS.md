@@ -48,6 +48,7 @@ src/components/  纯 UI 组件（ui/ 子目录只放无业务逻辑的展示组�
 src/features/    业务领域模块（跨路由复用时才提升，不是长文件回收站）
 src/lib/         工具函数、通用 hooks
 src/server/      server-only 代码
+content/         正式内容仓库（index.md 是文章唯一权威源，文章资产共居）
 docs/            项目内部文档（规范/计划/运维/审计）
 scripts/         辅助脚本（setup/build/deploy/dev）
 public/          静态资源（不放 >25MB 文件）
@@ -68,6 +69,11 @@ public/          静态资源（不放 >25MB 文件）
 - **默认 Server Component，`'use client'` 放叶子组件** — 不放页面级
 - **`_dev/` 单向引用 + production 守卫** — 每页顶部 `if (process.env.NODE_ENV === 'production') notFound()`；正式代码不得引用 `_dev/`
 - **TypeScript strict，禁止 `any`** — 用 `unknown` + 类型收窄
+- **正式文章唯一权威源是 `content/posts/<slug>/index.md`** — 评论、注释、草稿不得覆盖或写回正本
+- **一套 doc-engine，多种 profile** — 正文、评论/注释、编辑预览与导出共享 Canonical IR/注册表；不得各写一套解析器
+- **评论是文章级，注释是选区级** — 划词入口只能创建注释；评论区只能创建文章评论
+- **讨论内容是永久不可信输入** — 只走 `discussion` profile，禁用原始 HTML、任意 JS/CSS/iframe/动态 import，并在最终渲染前 sanitize
+- **PDF 必须直接下载** — 禁止使用 `window.print()` 或系统打印对话框代替 PDF 导出
 
 > 完整代码风格规范见 [docs/conventions/code-style.md](docs/conventions/code-style.md)。
 > Code review 检查清单见 [docs/conventions/code-review.md](docs/conventions/code-review.md)。
@@ -119,6 +125,8 @@ public/          静态资源（不放 >25MB 文件）
 - `edgeone.json` — EdgeOne 部署配置（详见 [docs/ops/deploy-edgeone.md](docs/ops/deploy-edgeone.md)）
 - `src/app/layout.tsx` — 根 layout（必须含 `<html>` `<body>`）
 - `src/app/globals.css` — 全局样式入口
+- `content/posts/<slug>/index.md` — 正式文章唯一权威源（实现后存在）
+- `src/features/doc-engine/` — 文档解析、注册表、profile、安全与导出内核（实现后存在）
 - `proxy.ts` — 网络边界代理（替代 middleware.ts）
 - `instrumentation.ts` — 监控/性能追踪
 - `.env.example` — 环境变量模板（真实 `.env*` 不提交）
@@ -140,7 +148,7 @@ public/          静态资源（不放 >25MB 文件）
 
 ### docs/designs/ — 设计文档
 
-- [architecture-overview.md](docs/designs/architecture-overview.md) — 整体架构决策记录（D1-D14：内容格式、文档引擎、评论锚定、动画分层、主题、模块划分等，含待决事项）
+- [architecture-overview.md](docs/designs/architecture-overview.md) — 整体架构决策记录（公开身份、内容协议、文档引擎、评论/注释、安全渲染、导出、动画与部署）
 
 ### docs/ops/ — 运维指南
 

@@ -11,7 +11,11 @@
 - **Next.js App Router 架构**
 - **EdgeOne Pages SSG 部署**
 - **Tailwind 样式**
-- **占位首页**
+- **Markdown 正式内容仓库（规划中）**
+- **可注册文档渲染内核（规划中）**
+- **文章评论与划词注释（规划中）**
+- **Markdown / TXT / DOCX / PDF 导出（规划中）**
+- **首页叙事与阅读三栏（规划中）**
 
 ## 技术栈
 
@@ -56,9 +60,10 @@ pnpm build
 ├── src/                        # 源代码
 │   ├── app/                    # 路由层
 │   ├── components/ui/          # 纯展示组件
-│   ├── features/               # 业务功能模块
+│   ├── features/               # 业务功能模块（doc-engine/discussions 等）
 │   ├── lib/                    # 工具函数
 │   └── server/                 # server-only 代码
+├── content/                    # 正式文章、文章数据与专属媒体（目标结构）
 ├── docs/                       # 项目内部文档
 │   ├── plans/                  # 项目计划、路线图
 │   ├── conventions/            # 编码规范、架构规范
