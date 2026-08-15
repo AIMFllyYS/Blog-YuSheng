@@ -16,7 +16,7 @@
 - [code-size-and-organization.md](./code-size-and-organization.md) — 代码长度与文件组织规范（长度阈值、colocation 放置原则、拆分判断方法）
 - [project-structure.md](./project-structure.md) — 完整目标目录树与依赖方向（含 content、doc-engine、评论、注释和导出模块）
 - [routing.md](./routing.md) — 路由规范（页面地图、URL 规则、导航映射、分享规范）
-- [frontend-design.md](./frontend-design.md) — 前端设计规范（主题 token、动效、z-index、响应式；博客页形态 1:1 对标 `docs/designs/blog-reader-prototype.html`，本文不另写外观）
+- [frontend-design.md](./frontend-design.md) — 前端设计规范（主题 token、阻尼动效语言、z-index、全站共用外壳；形态 1:1 对标 `docs/designs/blog-reader-prototype.html`，本文不另写外观）
 - [ports-and-env.md](./ports-and-env.md) — 端口与本地环境规范
 - [nextjs-16-patterns.md](./nextjs-16-patterns.md) — Next.js 16.2+ 关键模式与陷阱（proxy.ts、async APIs、Turbopack、SSG 配置等）
 - [code-style.md](./code-style.md) — 代码风格规范（Server Component、use client、TypeScript、Tailwind、_dev/ 规则）

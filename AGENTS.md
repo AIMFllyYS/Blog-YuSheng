@@ -79,6 +79,7 @@ public/          静态资源（不放 >25MB 文件）
 - **默认构建期完成，推不动才进浏览器** — 公式渲染、图片尺寸/格式转换在构建期；Mermaid、嵌入、讨论解析、导出在浏览器且必须按需加载；阅读首屏与讨论/导出/3D 分开计量，预算见 [blog-content-engine.md 13.1–13.3](docs/specs/blog-content-engine.md)
 - **中文字体按 `unicode-range` 切片** — 不按"站内已用字"整体裁剪（讨论区字符集构建期不可知）
 - **博客页 1:1 对标原型** — `/blog/` 与 `/blog/<slug>/` 的布局、交互与视觉以 [blog-reader-prototype.html](docs/designs/blog-reader-prototype.html) 为准，不得另起一套外观；文字说明见 [blog-reader-design.md](docs/designs/blog-reader-design.md)，token 仍走 [frontend-design.md](docs/conventions/frontend-design.md)
+- **全站共用外壳与阻尼动效** — 绳挂导航、下落便签通知、弹窗、抽屉、滚动条以同一份原型为模板，其它路由只换内容；UI 动效是阻尼、慢、`--ease-damp`。大块栏/页尾禁止弹簧回弹；导出/设置/弹窗用 `--ease-pop` 放大并只回弹一次；Tab 切换走短骨架懒载。细则见 frontend-design 第三节 / 四之四，架构 D21
 
 > 完整代码风格规范见 [docs/conventions/code-style.md](docs/conventions/code-style.md)。
 > Code review 检查清单见 [docs/conventions/code-review.md](docs/conventions/code-review.md)。
@@ -145,7 +146,7 @@ public/          静态资源（不放 >25MB 文件）
 - [code-size-and-organization.md](docs/conventions/code-size-and-organization.md) — 代码长度与文件组织（colocation 原则、`src/features/` 提升条件、拆分判断方法）
 - [project-structure.md](docs/conventions/project-structure.md) — 完整目录结构与分层规则（含 content/ 内容仓库与 features 模块划分）
 - [routing.md](docs/conventions/routing.md) — 路由规范（页面地图、URL 规则、导航映射、分享规范）
-- [frontend-design.md](docs/conventions/frontend-design.md) — 前端设计规范（主题 token、字体、动效、z-index、响应式、音效；博客页形态不在本文另写，1:1 对标原型）
+- [frontend-design.md](docs/conventions/frontend-design.md) — 前端设计规范（主题 token、字体、阻尼动效、z-index、全站共用外壳、音效；形态 1:1 对标原型）
 - [ports-and-env.md](docs/conventions/ports-and-env.md) — 端口与本地环境规范
 - [nextjs-16-patterns.md](docs/conventions/nextjs-16-patterns.md) — Next.js 16.2+ 关键模式与陷阱（proxy.ts、async APIs、Turbopack、SSG 配置等）
 - [code-style.md](docs/conventions/code-style.md) — 代码风格（Server Component、use client、TypeScript、Tailwind、_dev/ 规则）

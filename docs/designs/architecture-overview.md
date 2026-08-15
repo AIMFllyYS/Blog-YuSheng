@@ -242,7 +242,9 @@ PDF 必须点击后直接生成并下载文件，不调用 `window.print()` 或�
 | L1 UI 微交互 | 按钮、面板收展、导航渐隐 | CSS transition + Tailwind |
 | L2 编排动画 | 滚动叙事、文字效果 | GSAP + ScrollTrigger |
 | L3 3D 场景 | 立体书、摄像机、金光 | Three.js via R3F + drei |
-| 绳挂导航 | 绳子摆动 | 轻量 verlet 或 SVG+GSAP |
+| 绳挂导航 | 绳子慢摆 | 轻量 verlet 或 SVG+GSAP |
+
+**UI 动效语言**：阻尼、慢、ease-out，用来塑温馨书卷。大位移默认 `cubic-bezier(.22, .82, .28, 1)`（`--ease-damp`）；连续量每帧约 0.035 追赶。大块栏与页尾禁止弹簧回弹。含义菜单（导出、设置、弹窗）统一 `--ease-pop` 缓动放大，只允许一次很小的过冲；Tab 切换用短骨架懒载，不用整栏时长。首页 3D 叙事可以更有戏剧性，入门后的绳挂、通知、面板仍走这套语言。细则见 [frontend-design.md 第三节](../conventions/frontend-design.md)。
 
 首页滚动叙事的详细决策继续由 `home-journey-storyboard.md` 管理；博客文档引擎不得与首页 3D 运行时耦合。
 
@@ -302,7 +304,7 @@ EdgeOne 构建期可读取根目录 `content/`，只上传 `out/`。文章媒体
 
 ### D19 首页活字引擎：Pretext ✅
 
-Pretext 只服务首页活字效果：它计算字符位置，GSAP 管时间线，Three.js/Canvas 负责绘制。正文阅读页不用 Pretext。
+Pretext 服务两处，都不进正文包：首页活字用它算字符位置（GSAP 管时间线，Canvas/WebGL 绘制）；阅读页进页书册遮罩只用 **Pretext Two**（`prepareWithSegments` + `layoutNextLineRange`）在 Canvas 上铺浅印章，绕开中间的书，揭开后卸掉。正文与讨论渲染不用 Pretext。
 
 ### D20 执行位置与性能预算 ✅
 
@@ -316,6 +318,10 @@ Pretext 只服务首页活字效果：它计算字符位置，GSAP 管时间线�
 - 讨论、注释与登录是增强能力，其数据来自境外服务；较高延迟与偶发失败属预期，任何情况下不得阻塞正文渲染。
 - DOCX/PDF 导出在 Web Worker 中执行，否则"可取消"无法成立。
 - 具体预算数字与实测要求见功能规格 13.1–13.3；每阶段验收必须实测并记录首屏体积。
+
+### D21 全站共用外壳：以阅读页原型为模板 ✅
+
+绳挂导航、下落便签通知、弹窗、抽屉、滚动条、便笺提示、正文组件卡片，全站只此一套。`/notes/` `/works/` `/about/`、404、登录未另出原型前，只换内容，不换外壳。实现 1:1 对标 [blog-reader-prototype.html](./blog-reader-prototype.html)，禁止按页面再做一套通知栏或顶栏。清单见 [frontend-design.md 四之四](../conventions/frontend-design.md)。
 
 ## 模块边界总览 ✅
 

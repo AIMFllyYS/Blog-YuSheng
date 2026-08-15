@@ -26,8 +26,9 @@
 ## 博客内容系统入口
 
 - [总体架构](./designs/architecture-overview.md) — 产品边界与全局决策
-- [博客页 1:1 原型](./designs/blog-reader-prototype.html) — `/blog/` 与 `/blog/<slug>/` 的视觉与交互对标；实现不得另起一套外观
+- [博客页 1:1 原型](./designs/blog-reader-prototype.html) — `/blog/` 与 `/blog/<slug>/` 的视觉与交互对标，也是全站导航/通知/弹窗/动效的统一模板；实现不得另起一套外观
 - [博客页设计说明](./designs/blog-reader-design.md) — 原型的文字说明、待确认项与实现归属
+- [前端设计规范](./conventions/frontend-design.md) — token、阻尼动效语言、全站共用外壳清单
 - [完整目标目录树](./conventions/project-structure.md) — 模块、文件和依赖方向
 - [内容引擎功能规格](./specs/blog-content-engine.md) — 内容协议、注册表、安全、评论/注释与导出契约
 - [P0–P3 工程计划](./plans/plan-blog-foundation.md) — 实施顺序与阶段验收

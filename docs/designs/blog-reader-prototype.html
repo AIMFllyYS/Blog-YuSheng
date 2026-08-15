@@ -9,7 +9,9 @@
    主题 token —— 与 docs/conventions/frontend-design.md 一致
    ============================================================ */
 :root{
-  --dur-fast:150ms; --dur-base:250ms; --dur-slow:400ms; --dur-reveal:780ms;
+  --dur-fast:150ms; --dur-base:250ms; --dur-slow:400ms; --dur-reveal:780ms; --dur-pop:480ms;
+  --ease-damp:cubic-bezier(.22,.82,.28,1);
+  --ease-pop:cubic-bezier(.34,1.22,.42,1);
   --z-base:0; --z-panel:10; --z-floating:20; --z-nav:30; --z-overlay:40; --z-drawer:41; --z-toast:50; --z-boot:60;
   --font-serif:"Source Han Serif SC","Noto Serif SC","Songti SC","SimSun",serif;
   --font-mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Consolas,monospace;
@@ -176,14 +178,31 @@ body.in-footer .balls,body.in-footer .rope-nav{opacity:0;pointer-events:none}
 .bookmark:hover{transform:translateY(-2px);color:var(--accent)}
 .bookmark.is-brand{background:var(--accent);color:var(--bg-elevated)}
 
-/* 弹出面板（设置 / 导出）：fixed，由脚本对准触发挂件，禁止写死 right */
+/* 弹出面板（设置 / 导出）：fixed，由脚本对准触发挂件，禁止写死 right。
+   含义菜单统一：缓动放大 + 一次小回弹。 */
 .popover{
   position:fixed;top:96px;left:12px;z-index:var(--z-nav);
   width:min(360px,calc(100vw - 24px));padding:16px;
   background:var(--bg-elevated);border:1px solid var(--line);border-radius:4px;
   box-shadow:0 24px 60px var(--shadow-color);display:none;
+  transform-origin:top center;
 }
-.popover.is-open{display:block}
+.popover.is-open{
+  display:block;
+  animation:menu-pop var(--dur-pop) var(--ease-pop) both;
+}
+.popover.is-leaving{
+  display:block;
+  animation:menu-unpop 280ms ease-out both;
+}
+@keyframes menu-pop{
+  0%{opacity:0;transform:scale(.88) translateY(-8px)}
+  58%{opacity:1;transform:scale(1.04) translateY(1px)}
+  100%{opacity:1;transform:none}
+}
+@keyframes menu-unpop{
+  to{opacity:0;transform:scale(.94) translateY(-6px)}
+}
 .popover h4{margin:0 0 10px;font-size:12px;letter-spacing:.2em;color:var(--ink-faint);font-weight:600}
 .popover + .popover{margin-top:0}
 .pop-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
@@ -339,6 +358,20 @@ body.toc-graph .graph-note{opacity:.75}
 .icon-btn:hover{color:var(--accent);background:var(--bg)}
 .icon-btn svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 .panel-body{padding:12px 10px 40px}
+#leftBody{position:relative}
+#tocList,#tocGraph{transition:opacity 280ms ease-out}
+.left-skel{
+  position:absolute;inset:8px 8px 24px;z-index:2;
+  display:flex;flex-direction:column;gap:11px;padding:10px 8px;
+  background:var(--bg-elevated);
+  opacity:0;visibility:hidden;pointer-events:none;
+  transition:opacity 280ms ease-out,visibility 280ms;
+}
+body.toc-graph .left-skel{background:var(--bg)}
+body.left-tabbing .left-skel{opacity:1;visibility:visible}
+body.left-tabbing #tocList,
+body.left-tabbing #tocGraph{opacity:0}
+.left-skel i{display:block;height:9px;border-radius:999px}
 
 /* 常规目录（对标飞书） */
 .toc-list{list-style:none;margin:0;padding:0 6px 0 0}
@@ -459,10 +492,10 @@ body.toc-graph .graph-dock{display:block}
   -webkit-mask-image:linear-gradient(to bottom,transparent 0%,#000 16%,#000 100%);
   mask-image:linear-gradient(to bottom,transparent 0%,#000 16%,#000 100%);
   touch-action:none;user-select:none;
-  transform:translateY(22px);opacity:0;visibility:hidden;
+  transform:translateY(16px) scale(.9);opacity:0;visibility:hidden;
   transform-origin:bottom left;
-  transition:transform 560ms cubic-bezier(.22,.82,.28,1),
-             opacity 420ms ease-out,visibility 560ms;
+  transition:transform var(--dur-pop) var(--ease-pop),
+             opacity 360ms ease-out,visibility var(--dur-pop);
 }
 .graph-dock.is-open .graph-card{
   pointer-events:auto;transform:none;opacity:1;visibility:visible;cursor:grab;
@@ -831,8 +864,12 @@ body.right-collapsed:not(.right-hiding) .ball-right{display:block}
   min-width:92px;padding:4px;
   background:var(--bg-elevated);border:1px solid var(--line);border-radius:4px;
   box-shadow:0 12px 28px var(--shadow-color);
+  transform-origin:bottom right;
 }
-.pen-menu.is-on{display:block}
+.pen-menu.is-on{
+  display:block;
+  animation:menu-pop var(--dur-pop) var(--ease-pop) both;
+}
 .pen-menu button{
   display:block;width:100%;padding:7px 12px;border-radius:3px;
   text-align:left;font-size:12.5px;color:var(--ink-muted);
@@ -859,12 +896,20 @@ body.right-collapsed:not(.right-hiding) .ball-right{display:block}
 .overlay{position:fixed;inset:0;z-index:var(--z-overlay);background:rgba(0,0,0,.4);opacity:0;pointer-events:none;transition:opacity var(--dur-base)}
 .overlay.is-on{opacity:1;pointer-events:auto}
 .modal{
-  position:fixed;left:50%;top:50%;transform:translate(-50%,-46%);z-index:var(--z-drawer);
+  position:fixed;left:50%;top:50%;z-index:var(--z-drawer);
   width:min(92vw,440px);max-height:82vh;overflow:auto;padding:26px;background:var(--bg-elevated);
   border:1px solid var(--line);border-radius:6px;box-shadow:0 30px 80px var(--shadow-color);
-  display:none;
+  display:none;transform-origin:center center;
 }
-.modal.is-on{display:block}
+.modal.is-on{
+  display:block;
+  animation:modal-pop var(--dur-pop) var(--ease-pop) both;
+}
+@keyframes modal-pop{
+  0%{opacity:0;transform:translate(-50%,-46%) scale(.88)}
+  58%{opacity:1;transform:translate(-50%,-50.6%) scale(1.03)}
+  100%{opacity:1;transform:translate(-50%,-50%) scale(1)}
+}
 .modal.wide{width:min(94vw,620px)}
 .modal h3{margin:0 0 6px;font-size:20px;letter-spacing:.04em}
 .modal p{margin:0 0 14px;font-size:13.5px;line-height:1.9;color:var(--ink-muted)}
@@ -939,7 +984,17 @@ body.right-hiding .right-stage{
   transition:opacity 420ms ease-out,visibility 420ms;
 }
 body.right-revealing .right-skel,
-body.right-hiding .right-skel{opacity:1;visibility:visible}
+body.right-hiding .right-skel,
+body.right-tabbing .right-skel{opacity:1;visibility:visible}
+body.right-tabbing .col-right{overflow:hidden}
+body.right-tabbing .right-live{opacity:0;pointer-events:none}
+body.right-tabbing .right-stage{
+  animation:tab-soft var(--dur-pop) var(--ease-damp) both;
+}
+@keyframes tab-soft{
+  from{opacity:.5;transform:translateY(8px)}
+  to{opacity:1;transform:none}
+}
 .skel-tabs{display:flex;gap:8px;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--line)}
 .skel-tabs i{display:block;height:12px;border-radius:3px;width:18%}
 .skel-tabs i:nth-child(2){width:16%}
@@ -955,6 +1010,7 @@ body.right-hiding .right-skel{opacity:1;visibility:visible}
 .skel-card b{
   display:block;width:28%;height:8px;border-radius:999px;margin-bottom:4px;
 }
+.left-skel i,
 .right-skel i,.right-skel b,.skel-bubble,.skel-ctx,.skel-chips i{
   background:linear-gradient(
     90deg,
@@ -993,6 +1049,11 @@ body.is-booting{overflow:hidden}
   transition:opacity 480ms ease-out,visibility 480ms;
 }
 .boot-veil.is-out{opacity:0;visibility:hidden;pointer-events:none}
+.boot-stamp{
+  position:absolute;inset:0;width:100%;height:100%;
+  pointer-events:none;z-index:0;
+}
+.boot-veil .loader{position:relative;z-index:1}
 /* From Uiverse.io by Nawsome - Tags: blue, loader, book */
 .loader {
   --background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 58%, var(--ink)));
@@ -1157,8 +1218,9 @@ body.is-booting{overflow:hidden}
   .graph-card,.graph-mark{transition:none}
   [data-tip]::after{transform:translateX(-50%)}
   .fc-inner > *{transform:none}
-  .right-stage,.right-live,.right-skel{animation:none;transition:none}
-  .right-skel i,.right-skel b,.skel-bubble,.skel-ctx,.skel-chips i{animation:none}
+  .right-stage,.right-live,.right-skel,.left-skel{animation:none;transition:none}
+  .right-skel i,.right-skel b,.skel-bubble,.skel-ctx,.skel-chips i,.left-skel i{animation:none}
+  .popover,.popover.is-open,.popover.is-leaving,.pen-menu,.pen-menu.is-on,.modal,.modal.is-on{animation:none}
   .boot-veil{transition:none}
   .loader,.loader div ul li{animation:none}
 }
@@ -1168,6 +1230,7 @@ body.is-booting{overflow:hidden}
 
 <!-- From Uiverse.io by Nawsome -->
 <div class="boot-veil" id="bootVeil" role="status" aria-live="polite" aria-busy="true" aria-label="页面载入中">
+<canvas class="boot-stamp" id="bootStamp" aria-hidden="true"></canvas>
 <div class="loader">
   <div>
     <ul>
@@ -1352,6 +1415,11 @@ body.is-booting{overflow:hidden}
           <div class="graph-viewport" id="graphViewport"></div>
           <ul class="gnodes" id="gnodes"></ul>
         </div>
+      </div>
+      <div class="left-skel" id="leftSkel" aria-hidden="true">
+        <i style="width:64%"></i><i style="width:86%"></i><i style="width:54%"></i>
+        <i style="width:78%"></i><i style="width:46%"></i><i style="width:70%"></i>
+        <i style="width:38%"></i>
       </div>
     </div>
 
@@ -1917,11 +1985,12 @@ body.is-booting{overflow:hidden}
     <li>Agent 外壳原型：上下文条、对话气泡、引用来源、建议提问、输入区，全部为示意</li>
     <li>首屏只占一屏三栏。正文滚到尽头先收口，继续下滚才拉出页尾；波浪与收口浪同形，不再压扁</li>
     <li>页尾评论区与右栏评论页签共享同一份数据；移动端右栏收起后页尾是主入口</li>
-    <li>进入阅读页先盖一层书册遮罩（Uiverse Nawsome 原结构，只换主题色）；右栏展开收起先出骨架再换真内容</li>
+    <li>进入阅读页先盖一层书册遮罩（Uiverse Nawsome 原结构，只换主题色）；四周用 Pretext Two 浅印章绕开书册</li>
     <li>滑进页尾评论区有阻尼缓出：整块上移、分层滞后，不拦截滚轮；「去页尾」按钮同一套阻尼滚动</li>
     <li>右侧三页签可收起为裸笔：数字在笔尖正下方沿笔画慢写；悬停出示注释/评论；右键可切静止/运动</li>
     <li>挂件悬停出现小便笺提示；通知可同时多张，左右落点随机，1 秒冷却；悬停停住，点击撕碎</li>
     <li>三栏可拖动，正文最小宽度优先；双击分隔线恢复默认</li>
+    <li>导出 / 设置 / 弹窗 / 笔菜单统一缓动放大弹出，带一次小回弹；左右 Tab 切换先出短骨架再淡入</li>
     <li>导出二级菜单：格式 × 范围 × 答案开关，直接下载不调用打印</li>
     <li>四套主题全部走语义 token；尊重 reduced motion</li>
   </ul>
@@ -2196,16 +2265,26 @@ body.is-booting{overflow:hidden}
     pop.style.right='auto';
     pop.style.top=top+'px';
   }
-  function closePopovers(){
-    $$('.popover').forEach(function(p){p.classList.remove('is-open')});
+  function closePopovers(soft){
+    $$('.popover').forEach(function(p){
+      var open=p.classList.contains('is-open');
+      p.classList.remove('is-open');
+      if(soft&&open&&!reduced()){
+        p.classList.add('is-leaving');
+        setTimeout(function(){p.classList.remove('is-leaving')},280);
+      }else{
+        p.classList.remove('is-leaving');
+      }
+    });
     $('#btnExport').setAttribute('aria-expanded','false');
     $('#btnSettings').setAttribute('aria-expanded','false');
     menuOpen=false;openPop=null;openPopBtn=null;
   }
   function togglePop(pop,btn){
     var willOpen=!pop.classList.contains('is-open');
-    closePopovers();
+    closePopovers(false);
     if(willOpen){
+      pop.classList.remove('is-leaving');
       pop.classList.add('is-open');
       btn.setAttribute('aria-expanded','true');
       menuOpen=true;showNav();
@@ -2218,7 +2297,7 @@ body.is-booting{overflow:hidden}
   $('#btnExport').addEventListener('click',function(e){e.stopPropagation();togglePop($('#popExport'),this)});
   $('#btnSettings').addEventListener('click',function(e){e.stopPropagation();togglePop($('#popSettings'),this)});
   document.addEventListener('click',function(e){
-    if(!e.target.closest('.popover')&&!e.target.closest('#btnExport')&&!e.target.closest('#btnSettings')) closePopovers();
+    if(!e.target.closest('.popover')&&!e.target.closest('#btnExport')&&!e.target.closest('#btnSettings')) closePopovers(true);
   });
   $('#btnShare').addEventListener('click',function(){toast('已复制链接（原型示意）')});
   $('#btnGithub').addEventListener('click',function(){
@@ -2341,16 +2420,30 @@ body.is-booting{overflow:hidden}
   buildGraph();
 
   /* ---------------- 目录：模式切换 ---------------- */
+  var leftTabLock=false,leftTabTimer=0;
   $$('[data-toc]').forEach(function(tab){
     tab.addEventListener('click',function(){
+      var graph=tab.getAttribute('data-toc')==='graph';
+      if(document.body.classList.contains('toc-graph')===graph) return;
       $$('[data-toc]').forEach(function(t){t.setAttribute('aria-selected','false')});
       tab.setAttribute('aria-selected','true');
-      var graph=tab.getAttribute('data-toc')==='graph';
-      document.body.classList.toggle('toc-graph',graph);
-      $('#tocGraph').classList.toggle('is-on',graph);
-      $('#tocList').style.display=graph?'none':'block';
-      if(!graph){closeGraphCard();hideGtip()}
-      if(graph) syncGraphViewport();
+      function applyToc(){
+        document.body.classList.toggle('toc-graph',graph);
+        $('#tocGraph').classList.toggle('is-on',graph);
+        $('#tocList').style.display=graph?'none':'block';
+        if(!graph){closeGraphCard();hideGtip()}
+        if(graph) syncGraphViewport();
+      }
+      if(reduced()){applyToc();return}
+      if(leftTabLock) return;
+      leftTabLock=true;
+      document.body.classList.add('left-tabbing');
+      if(leftTabTimer) clearTimeout(leftTabTimer);
+      leftTabTimer=setTimeout(function(){
+        applyToc();
+        document.body.classList.remove('left-tabbing');
+        leftTabLock=false;
+      },380);
     });
   });
   var gtipFloat=$('#gtipFloat'),gtipNode=null;
@@ -2680,6 +2773,8 @@ body.is-booting{overflow:hidden}
   function openPenMenu(x,y){
     if(!penMenu) return;
     if(penBtn) penBtn.classList.add('is-menu');
+    penMenu.classList.remove('is-on');
+    void penMenu.offsetWidth;
     penMenu.classList.add('is-on');
     var w=penMenu.offsetWidth,h=penMenu.offsetHeight;
     penMenu.style.left=Math.max(8,Math.min(window.innerWidth-w-8,x))+'px';
@@ -2732,10 +2827,38 @@ body.is-booting{overflow:hidden}
 
   /* ---------------- 右栏页签 ---------------- */
   var panes={comments:$('#paneComments'),annos:$('#paneAnnos'),agent:$('#paneAgent')};
+  var tabLock=false,tabTimer=0;
   function showPane(name){
     $$('[data-pane]').forEach(function(t){t.setAttribute('aria-selected',String(t.getAttribute('data-pane')===name))});
-    Object.keys(panes).forEach(function(k){panes[k].hidden=(k!==name)});
-    if(document.body.classList.contains('right-revealing')||document.body.classList.contains('right-hiding')) adaptSkel(name);
+    var pane=panes[name];
+    if(!pane) return;
+    var already=!pane.hidden;
+    var railBusy=document.body.classList.contains('right-revealing')||document.body.classList.contains('right-hiding');
+    var collapsed=document.body.classList.contains('right-collapsed');
+    var drawerOn=document.body.classList.contains('drawer-right');
+    function applyPane(){
+      Object.keys(panes).forEach(function(k){panes[k].hidden=(k!==name)});
+    }
+    if(already){
+      if(railBusy) adaptSkel(name);
+      return;
+    }
+    if(railBusy||collapsed||(isNarrow()&&!drawerOn)||reduced()){
+      applyPane();
+      if(railBusy) adaptSkel(name);
+      return;
+    }
+    if(tabLock) return;
+    tabLock=true;
+    adaptSkel(name);
+    document.body.classList.add('right-tabbing');
+    if(tabTimer) clearTimeout(tabTimer);
+    tabTimer=setTimeout(function(){
+      applyPane();
+      document.body.classList.remove('right-tabbing');
+      clearRightBusy();
+      tabLock=false;
+    },400);
   }
   $$('[data-pane]').forEach(function(t){
     t.addEventListener('click',function(){showPane(t.getAttribute('data-pane'))});
@@ -2876,15 +2999,143 @@ body.is-booting{overflow:hidden}
 
   window.addEventListener('resize',function(){
     syncGraphViewport();hideSel();if(!reduced()) pumpReveal();
-    document.body.classList.remove('right-revealing','right-hiding');
+    document.body.classList.remove('right-revealing','right-hiding','right-tabbing','left-tabbing');
     clearRightBusy();
     rightLock=false;
+    tabLock=false;
+    leftTabLock=false;
   });
 
   /* ---------------- 进页书册遮罩 ---------------- */
+  /* Pretext Two = prepareWithSegments + layoutNextLineRange，自己画字。
+     单页 HTML 用 esm.sh 钉版本；断网或无 Segmenter 时退回纯 Canvas 印章。 */
   (function bootVeil(){
     var veil=$('#bootVeil');
     if(!veil) return;
+    var stamp=$('#bootStamp');
+    var STAMP_FONT='"Source Han Serif SC","Noto Serif SC","Songti SC","SimSun",serif';
+    function stampColors(){
+      var s=getComputedStyle(document.documentElement);
+      return {
+        accent:(s.getPropertyValue('--accent')||'').trim()||'#a9762f',
+        faint:(s.getPropertyValue('--ink-faint')||'').trim()||'#9c9184'
+      };
+    }
+    function fitStampCanvas(ctx){
+      var dpr=Math.min(window.devicePixelRatio||1,2);
+      var w=window.innerWidth,h=window.innerHeight;
+      stamp.width=Math.round(w*dpr);
+      stamp.height=Math.round(h*dpr);
+      stamp.style.width=w+'px';
+      stamp.style.height=h+'px';
+      ctx.setTransform(dpr,0,0,dpr,0,0);
+      ctx.clearRect(0,0,w,h);
+      return {w:w,h:h,ctx:ctx};
+    }
+    function paintStampMarks(ctx, marks, size, color){
+      ctx.fillStyle=color;
+      ctx.shadowColor=color;
+      ctx.shadowOffsetX=0;
+      ctx.shadowOffsetY=0;
+      ctx.shadowBlur=size*0.95;
+      ctx.globalAlpha=0.022;
+      marks.forEach(function(m){ctx.fillText(m.t,m.x,m.y)});
+      ctx.shadowBlur=size*0.32;
+      ctx.globalAlpha=0.034;
+      marks.forEach(function(m){ctx.fillText(m.t,m.x,m.y)});
+    }
+    function paintStampFallback(){
+      if(!stamp) return;
+      var ctx=stamp.getContext('2d');
+      if(!ctx) return;
+      var box=fitStampCanvas(ctx);
+      var w=box.w,h=box.h,c=stampColors();
+      var size=Math.max(72,Math.min(w,h)*0.22);
+      ctx.save();
+      ctx.translate(w/2,h/2);
+      ctx.rotate(-9*Math.PI/180);
+      ctx.textAlign='center';
+      ctx.textBaseline='middle';
+      ctx.font='600 '+size+'px '+STAMP_FONT;
+      var marks=[{t:'羽升',x:0,y:0}];
+      ctx.font='600 '+(size*0.38)+'px '+STAMP_FONT;
+      [[-0.38,-0.34],[-0.36,0.36],[0.36,-0.32],[0.34,0.34]].forEach(function(p){
+        marks.push({t:'羽升',x:w*p[0],y:h*p[1]});
+      });
+      ctx.font='600 '+size+'px '+STAMP_FONT;
+      paintStampMarks(ctx,[marks[0]],size,c.accent);
+      ctx.font='600 '+(size*0.38)+'px '+STAMP_FONT;
+      paintStampMarks(ctx,marks.slice(1),size*0.38,c.faint);
+      ctx.restore();
+    }
+    function paintStampPretext(api){
+      if(!stamp) return;
+      var ctx=stamp.getContext('2d');
+      if(!ctx) return;
+      var box=fitStampCanvas(ctx);
+      var w=box.w,h=box.h,c=stampColors();
+      var unit='羽升';
+      var size=Math.max(56,Math.min(w,h)*0.118);
+      var font='600 '+size+'px '+STAMP_FONT;
+      var prepared=api.prepareWithSegments(unit,font,{
+        whiteSpace:'pre-wrap',
+        wordBreak:'keep-all',
+        letterSpacing:size*0.08
+      });
+      var range=api.layoutNextLineRange(prepared,{segmentIndex:0,graphemeIndex:0},w);
+      if(!range){paintStampFallback();return}
+      var measured=api.materializeLineRange(prepared,range);
+      var cellW=measured.width+size*0.78;
+      var cellH=size*1.46;
+      var nCols=Math.ceil(w/cellW)+3;
+      var nRows=Math.ceil(h/cellH)+3;
+      if(nCols%2===0) nCols++;
+      if(nRows%2===0) nRows++;
+      var startX=w/2-((nCols-1)*cellW)/2;
+      var startY=h/2-((nRows-1)*cellH)/2;
+      var holeW=328,holeH=256;
+      var ang=-7*Math.PI/180,cos=Math.cos(ang),sin=Math.sin(ang);
+      function hitsBook(x,y){
+        var dx=x-w/2,dy=y-h/2;
+        var sx=w/2+dx*cos-dy*sin;
+        var sy=h/2+dx*sin+dy*cos;
+        return Math.abs(sx-w/2)<holeW/2&&Math.abs(sy-h/2)<holeH/2;
+      }
+      var marks=[],r,col,x,y;
+      for(r=0;r<nRows;r++){
+        for(col=0;col<nCols;col++){
+          x=startX+col*cellW;
+          y=startY+r*cellH;
+          if(hitsBook(x,y)) continue;
+          marks.push({t:unit,x:x,y:y});
+        }
+      }
+      ctx.save();
+      ctx.translate(w/2,h/2);
+      ctx.rotate(ang);
+      ctx.translate(-w/2,-h/2);
+      ctx.font=font;
+      ctx.textAlign='center';
+      ctx.textBaseline='middle';
+      paintStampMarks(ctx,marks,size,c.accent);
+      ctx.restore();
+    }
+    function startStamp(){
+      if(!stamp) return;
+      function go(){
+        if(typeof Intl==='undefined'||!Intl.Segmenter){paintStampFallback();return}
+        import('https://esm.sh/@chenglou/pretext@0.0.8').then(function(mod){
+          if(!mod||!mod.prepareWithSegments||!mod.layoutNextLineRange||!mod.materializeLineRange){
+            paintStampFallback();return;
+          }
+          if(typeof mod.setLocale==='function') mod.setLocale('zh-CN');
+          paintStampPretext(mod);
+        }).catch(paintStampFallback);
+      }
+      if(document.fonts&&document.fonts.ready) document.fonts.ready.then(go).catch(go);
+      else go();
+    }
+    startStamp();
     function dismiss(){
       veil.classList.add('is-out');
       veil.setAttribute('aria-busy','false');
@@ -2893,7 +3144,7 @@ body.is-booting{overflow:hidden}
         if(veil&&veil.parentNode) veil.parentNode.removeChild(veil);
       },reduced()?0:520);
     }
-    var wait=reduced()?60:2000;
+    var wait=reduced()?60:2200;
     if(document.readyState==='complete') setTimeout(dismiss,wait);
     else window.addEventListener('load',function(){setTimeout(dismiss,wait)});
   })();

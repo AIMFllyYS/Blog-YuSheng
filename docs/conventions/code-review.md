@@ -74,6 +74,8 @@
 
 - 检查 `/blog/` 与 `/blog/<slug>/` 的布局、交互与视觉是否 **1:1 对标** [blog-reader-prototype.html](../designs/blog-reader-prototype.html)，不得另起一套外观或自行简化骨架
 - 检查颜色、字体、动效、z-index 是否仍走 [frontend-design.md](./frontend-design.md) 的语义 token，禁止硬编码一套与原型无关的配色
+- 检查动效是否仍是阻尼、慢、`--ease-damp`，有没有弹簧回弹或把大位移砍成 150ms
+- 检查通知、绳挂导航、弹窗、抽屉是否复用原型那一套外壳，有没有按页面另做 snackbar / 顶栏
 - 检查导航命中区、双层滚动、右栏收起为悬浮球、整幅页尾评论区等已定型交互是否被改回旧口径
 
 ## 中文与文档质量
