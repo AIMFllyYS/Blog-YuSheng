@@ -104,7 +104,7 @@ flowchart LR
   A --> B
 ```
 
-<canvas-embed id="three-body" renderer="three-body" data-src="./data/three-body.json" />
+<canvas-render id="three-body" renderer="three-body" data-src="./data/three-body.json" />
 <video-embed id="experiment-video" src="./media/video/experiment.mp4" poster="./media/images/poster.webp" />
 ````
 
@@ -191,11 +191,22 @@ fallback / security / accessibility / allowed profiles
 | Canvas | 注册键映射仓库内受审查代码，参数/数据外置 | v1 禁止；以后仅集中安全清单 | 组件提供 PNG/SVG 快照 |
 | SVG | 构建期清洗后以独立资源/`img` 加载，不内联父 DOM | 禁止 | 复用同一安全投影，优先矢量 |
 | 本地 HTML | 只允许 `<html-embed>` 引用 `embeds/`；sandbox iframe 可运行脚本但不授予同源能力 | 禁止 | 截图或降级卡片 |
-| 站内网页 | 专用嵌入页或构建期 `srcdoc` | 禁止 | 预览图 + 标题 + URL |
-| 自有外部页面 | iframe + 最小权限 | 禁止 | 预览图 + 标题 + URL |
-| 第三方网页 | 尽力 iframe，必须处理对方拒绝嵌入 | 禁止 | 预览图 + 标题 + URL |
+| 站内网页 | 专用嵌入页或构建期 `srcdoc` | 禁止 | 标题 + 域名 + 打开链接 |
+| 自有外部页面 | iframe + 最小权限 | 禁止 | 标题 + 域名 + 打开链接 |
+| 第三方网页 | 尽力 iframe，必须处理对方拒绝嵌入 | 禁止 | 标题 + 域名 + 打开链接 |
 
-iframe 的默认 sandbox 仅含 `allow-scripts`；表单、弹窗、下载、顶层导航、modals、剪贴板、同源能力和其他浏览器权限均默认关闭。额外能力只能由受审 renderer 固定声明，不能由文章属性任意开启。`postMessage` 必须校验 iframe window、随机 capability nonce 和消息 schema；CSP、Permissions Policy、`referrerPolicy`、隔离源以及 `X-Frame-Options` 的路由例外是 renderer 开工前的安全门。
+导出不抓取远端预览图：规格 12.4 禁止服务端代抓作者提供的任意 URL，静态站也没有运行时可抓。
+
+iframe 的默认 sandbox 仅含 `allow-scripts`；表单、弹窗、下载、顶层导航、modals、剪贴板、同源能力和其他浏览器权限均默认关闭。额外能力只能由受审 renderer 固定声明，不能由文章属性任意开启。`postMessage` 必须校验 iframe window、随机 capability nonce 和消息 schema。
+
+**v1 安全门（方案 A，已 accepted，详见 issue #25）**
+
+- **不引入独立子域**。`output: 'export'` + EdgeOne Pages 没有运行时，独立源需要第二套 DNS/证书/站点。隔离性由 sandbox **不含 `allow-same-origin`** 提供的 opaque origin 承担；独立子域后置到 P1。
+- 因为是 opaque origin，`event.origin` 恒为 `"null"`，`postMessage` 校验必须落在 `event.source` 比对 + 一次性 capability nonce + 严格消息 schema 上。
+- **嵌入页公开 URL 固定为单一前缀 `/embeds/<slug>/<embed-id>/`**，不落在 `/blog/<slug>/` 之下。原因是 EdgeOne `edgeone.json` 的 `source` 最多只能含一个 `*`，`/blog/*/embeds/*` 非法，而 `/blog/*` 会连带放开整站文章页的点击劫持保护。
+- 全局 `X-Frame-Options: DENY` 保留；`/embeds/*` 用**同 key 覆盖**为 `SAMEORIGIN` 并补 `Content-Security-Policy: frame-ancestors 'self'`。EdgeOne 的 header `value` 长度下限是 1，无法用空值删除已有响应头，所以只能覆盖不能撤销。
+- `web-embed` 走集中 allowlist；未命中或远端拒绝嵌入时降级为预览卡片（标题 + 域名 + 打开链接）。
+- 顶层直接访问 `/embeds/.../index.html` 时，作者 HTML 运行在主站源上。P0 无登录态与本站 cookie，风险可接受；引入登录（P1）前必须改为独立子域或补文档级 CSP `sandbox`。
 
 “允许脚本运行”不等于“允许读取博客登录态和父页面 DOM”。沙箱内容与父页面通信时只能使用有来源校验和消息 schema 的 `postMessage` 协议。
 
@@ -347,7 +358,7 @@ agent-shell     未来选区询问与电子分身接口外壳
 - [ ] P0 所需解析/schema/测试依赖安装授权；
 - [ ] 各注册组件的扩展属性、错误码和综合黄金 fixture；
 - [ ] 注释列表排序和同一锚点聚合的最终交互；
-- [ ] iframe 隔离源、CSP/Permissions Policy/响应头与当前 `X-Frame-Options: DENY` 的协调；
+- [x] iframe 隔离源、CSP/Permissions Policy/响应头与当前 `X-Frame-Options: DENY` 的协调 —— 见 D7「v1 安全门（方案 A）」，issue #25；
 - [ ] P2 前完成登录提供方、作者白名单私有配置、阿里云邮件推送独立规格；
 - [ ] P2 前完成 Supabase 表结构、RLS/RPC、不变量、anchor manifest 同步、删除级联和限流；
 - [ ] PDF/DOCX 技术验证、中文字体与目标格式安全策略；

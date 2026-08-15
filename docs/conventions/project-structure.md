@@ -145,7 +145,8 @@
 │   │   │   └── annotation-composer.tsx
 │   │   │
 │   │   ├── reader-layout/                 # 三栏/抽屉、面板收展、分栏拉动
-│   │   ├── toc/                           # 左目录树与 React Flow 图形模式
+│   │   ├── toc/                           # 左目录树与图形骨架缩略模式
+│   │   ├── blog-index/                    # /blog/ 列表页书架形态
 │   │   ├── navigation/                    # 绳挂导航与阅读页顶部动作
 │   │   ├── settings/                      # 主题、音效
 │   │   ├── home-journey/                  # 首页叙事；不依赖 doc-engine
@@ -267,6 +268,14 @@ content/posts/<slug>/
 - 派生变体成倍放大 `out/` 文件数，必须计入 20,000 文件上限校验。
 - 静态产物路径必须由构建器统一生成，不允许组件自己拼接本地文件系统路径。
 - 每个文件 ≤25 MB；全站产物总文件数 ≤20,000。
+
+#### `embeds/` 的公开 URL 契约（安全门约束，不可改）
+
+`content/posts/<slug>/embeds/<embed-id>/**` 必须落位到 **`out/embeds/<slug>/<embed-id>/**`**，即公开 URL 是 `/embeds/<slug>/<embed-id>/`，**不放在 `/blog/<slug>/` 之下**。
+
+这不是审美选择：`edgeone.json` 的 `source` 最多只能含一个 `*`，所以 `/blog/*/embeds/*` 是非法规则；若退化成 `/blog/*`，`X-Frame-Options` 的例外会连带放开整站文章页的点击劫持保护。只有单一前缀 `/embeds/*` 能写出既生效又不过宽的响应头规则。详见架构 D7「v1 安全门（方案 A）」与 [deploy-edgeone.md](../ops/deploy-edgeone.md)。
+
+`media/` 与 `data/` 无此约束，按文章包就近落位即可。
 - 第三方网页 URL 不下载进仓库，只保存经过 schema 验证的链接和降级元信息。
 
 ### `public/`

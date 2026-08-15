@@ -189,10 +189,10 @@ M5 阅读页与全站外壳（可与 M2–M4 并行开工，接入时依赖 M2/M
 - [x] P0 导出范围 = Markdown 纯正文 + TXT；DOCX/PDF 与讨论组合归 P1；
 - [x] 字体改用云字体服务，不自托管（见计划原则 6）；
 - [x] 每模块拆 GitHub parent + sub-issues，用项目指定 skill 创建与实施；
-- [ ] P0 解析、schema 与测试依赖安装授权（M1 进入门）；
-- [ ] 云字体服务商选定（国内延迟 + 许可证验证，M5 内决策）；
+- [x] P0 解析、schema 与测试依赖安装授权（M1 进入门）—— 见 issue #4 评论的家族清单；范围外依赖仍需单独授权；
+- [x] 云字体服务商选定 —— ZeoSeven FontsAPI 思源宋体（ID 285，OFL-1.1），见 issue #35 评论；国内延迟实测仍须在国内网络环境补做；
 - [ ] renderer 错误码和综合黄金 fixture；
-- [ ] iframe 隔离源、CSP/Permissions Policy 与 `X-Frame-Options: DENY` 的协调方式（M4 html/web 进入门）；
+- [x] iframe 隔离源、CSP/Permissions Policy 与 `X-Frame-Options: DENY` 的协调方式（M4 html/web 进入门）—— 方案 A，见 issue #25 评论与架构 D7「v1 安全门」；
 - [ ] Supabase/认证/阿里云邮件独立规格与实现授权（P1 进入门）；
 - [ ] PDF/DOCX 技术验证方案及依赖安装授权（P1 进入门）；
 - [ ] 思维导图嵌入的正式形态：复用严格 Mermaid `mindmap`，还是新增独立 renderer 标签（不得与已锁定首批标签撞名）。

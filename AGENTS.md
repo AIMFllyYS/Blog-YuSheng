@@ -13,10 +13,15 @@
 
 ## Key Commands
 
-- Install: `pnpm install` | Dev: `pnpm dev` | Build: `pnpm build`
+- Install: `pnpm install` | Dev: `pnpm dev` (9981) | Build: `pnpm build`
 - Typecheck: `pnpm tsc --noEmit` | Lint: `pnpm lint` | Lint fix: `pnpm lint --fix`
+- Test: `pnpm test`（测试栈随 issue #4 落地；未落地前 CI 用 `pnpm run test --if-present` 跳过）
+- Preview static output: `pnpm preview`（9982，验证 `out/`；`edgeone.json` 的响应头在本地不生效）
 - Analyze bundle (PowerShell): `$env:ANALYZE='true'; pnpm build; Remove-Item Env:ANALYZE`
+  —— 需先接入 `@next/bundle-analyzer` 并改 `next.config.ts`，两者都要单独授权
 - `output: 'export'` 的交付物是 `out/` 静态目录；不要把 `next start` 当成正式静态产物预览命令
+- **验证 CI/生产行为必须用干净安装**：本地陈旧的 `node_modules` 会掩盖 peer 解析漂移。
+  可疑时 `Remove-Item -Recurse -Force node_modules; pnpm install --frozen-lockfile`
 
 ## Shell Environment
 
@@ -30,9 +35,9 @@
 
 ## Definition of Done
 
-1. `pnpm lint` exits 0 | 2. `pnpm tsc --noEmit` exits 0 | 3. `pnpm build` exits 0
-4. No file in `out/` exceeds 25 MB | 5. `out/` total files ≤ 20,000
-6. Changed files staged | 7. Commit follows Conventional Commits: `type(scope): description`
+1. `pnpm lint` exits 0 | 2. `pnpm tsc --noEmit` exits 0 | 3. `pnpm test` exits 0（#4 之后）| 4. `pnpm build` exits 0
+5. No file in `out/` exceeds 25 MB | 6. `out/` total files ≤ 20,000
+7. Changed files staged | 8. Commit follows Conventional Commits: `type(scope): description`
 
 ## When Blocked
 

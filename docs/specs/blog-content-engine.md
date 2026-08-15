@@ -155,6 +155,16 @@ type CompiledDocument = {
 - 普通块 ID 结合标题路径、块类型、同级序号和内容指纹；协议版本写入编译结果。正文小改动时由引语/上下文负责重连，不能把块 ID 当成唯一恢复手段。
 - DOM 必须携带源映射数据，供 Selection Range 转换，不能把 DOM 层级作为持久化锚点。
 
+DOM 源映射属性名是跨模块契约（编译期写入、划词侧读取），固定为：
+
+| 属性 | 挂载位置 | 值 |
+|---|---|---|
+| `data-block-id` | 每个语义块的最外层元素 | 5.2 的稳定块 ID |
+| `data-node-id` | 需要整节点锚定的 renderer 根元素（公式、注册组件等） | 该节点的 `nodeId` |
+| `data-selectable` | 同上 | `none` 表示只能整节点选中，不进入字符级偏移 |
+
+`documentFingerprint` 是对**规范化后的编译输入**取版本化 SHA-256：输入为 `index.md` 原文，先统一换行为 LF、去除 BOM、按 NFC 规范化，再连同协议版本号一起摘要；不含资产字节，也不含构建时间等易变量。
+
 ### 5.3 诊断
 
 ```ts
@@ -433,6 +443,7 @@ type DiscussionExportScope =
 
 ### 12.2 Markdown
 
+- `originalSource` 是 `index.md` 的**完整原文，含 frontmatter**，以 UTF-8 无 BOM、LF 换行保存；编译器只读不改。`body-only` 的下载物就是它逐字节原样输出，因此与源文件整文件一致（而不是去掉 frontmatter 后的片段）。
 - `body-only` 直接返回编译结果保留的不可变 `originalSource`，而不是试图从 IR 反向猜回空行、属性顺序和围栏格式；同时仍要求该 source 已通过同一 parser/IR 校验。
 - 其他模式在原文后追加审阅附录，不改写原句。
 - 每个注释附录包含稳定目标、标题路径、精确引语和上下文；评论附录定位整篇文章。
@@ -476,6 +487,7 @@ type DiscussionExportScope =
 | 图片响应式与格式转换 | 构建期 | 见 13.3 |
 | `discussion` 解析、校验与 sanitize | 浏览器，面板打开后 | 7.2 要求每次读取重新验证，不可预编译或缓存为可信 HTML |
 | Canvas / `html-embed` / `web-embed` | 浏览器，视口内懒加载 | 运行时能力，无法静态化 |
+| Markdown / TXT 导出 | 浏览器，点击后动态加载；主线程即可 | 只是字符串投影与 `Blob` 下载，无重排版计算，不值得为它引入 Worker 打包链路 |
 | DOCX / PDF 导出 | 浏览器 Web Worker | 主线程执行会冻结页面并使取消按钮失效 |
 
 - 同一套 parser/Canonical IR/registry 在两个位置执行：`article` 路径在构建机器上运行，`discussion` 路径在浏览器中运行。共享实现是为了规则一致，不代表两侧成本相同。
@@ -494,10 +506,18 @@ type DiscussionExportScope =
 | 单张文章图片 | 300 KB | 构建期转换后实际投放的变体 |
 | 讨论面板打开后追加 | 300 KB | 解析器 + sanitizer + KaTeX |
 | 首页 3D（桌面、动态加载后） | 400 KB | 不计入任何首屏 |
-| 导出运行时（点击后） | 不设上限 | 必须 Worker 执行 + 独立字体，与阅读完全隔离 |
+| 导出运行时（点击后） | 不设上限 | 与阅读完全隔离；DOCX/PDF 必须 Worker 执行 + 独立字体，MD/TXT 见 13.1 |
 
 - 数字是初值，可依实测调整，但调整必须更新本表；不接受"这次先超一点"。
 - 每阶段验收必须实测并记录首屏体积，否则本表无效：用 `$env:ANALYZE='true'; pnpm build` 分析包组成，并统计 `out/` 中首屏 HTML 实际引用的脚本与字体体积。
+
+测量口径（不写死就没法复现，也没法判定是否超标）：
+
+- **「压缩后」= gzip 后字节数**，不是磁盘大小，也不是 bundle analyzer 的 parsed 列。
+- **测量对象是中文综合验收文章的 `/blog/<slug>/`**，因为它命中的 renderer 最多，是最坏情况。
+- `ANALYZE` 是**约定而非现成能力**：`next.config.ts` 需要接入 `@next/bundle-analyzer` 分支，依赖与配置改动都要单独授权。未接入前只能记录「未测」，不得用 `out/` 目录大小假装完成。
+- **字体不进 `out/`**（走云字体 CDN，见 13.3），所以字体预算只能用浏览器 DevTools/HAR 量实际下载的切片，扫 `out/` 会得到 0。
+- 实测超标时，优化与「更新本表」都属于产品决策，必须由人确认，不能由执行方自行改预算。
 
 ### 13.3 图片与字体
 
