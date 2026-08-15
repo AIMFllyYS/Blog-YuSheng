@@ -181,12 +181,15 @@
 │   ├── issues/                            # 已知问题与技术债
 │   └── designs/                           # 总体架构和交互设计决策
 │       ├── architecture-overview.md       # 全站滚动架构总览
-│       └── home-journey-storyboard.md     # 首页叙事分镜
+│       ├── home-journey-storyboard.md     # 首页叙事分镜
+│       ├── blog-reader-design.md          # 博客页文字说明与待确认项
+│       └── blog-reader-prototype.html     # 博客页 1:1 视觉与交互对标（零依赖，纯展示）
 │
 ├── scripts/
 │   ├── setup/
 │   ├── build/
 │   │   ├── validate-content.*             # frontmatter/标签/资源/唯一 ID
+│   │   ├── transform-content-images.*     # 响应式尺寸与现代格式（静态导出无图片优化）
 │   │   ├── copy-content-assets.*          # 文章资产搬运到静态产物
 │   │   └── verify-static-output.*         # 25 MB/20,000 文件等限制
 │   ├── deploy/
@@ -197,6 +200,7 @@
 ├── public/                                # 仅全站共享资源
 │   ├── fonts/                             # 自托管字体；中文字体需体积治理
 │   └── sounds/                            # UI 音效，默认关闭
+├── .tmp/                                  # 本地临时文件（gitignore，不入库）
 ├── AGENTS.md
 ├── edgeone.json
 ├── next.config.ts
@@ -259,6 +263,8 @@ content/posts/<slug>/
 - 普通图片、视频、音频、SVG 放 `media/`；复杂独立 HTML 小页面放 `embeds/<embed-id>/`。
 - renderer 的 `collectAssets` 只声明依赖；`server/content` 汇总并验证唯一 manifest；构建脚本只执行 manifest 中资产的复制与静态 URL 落位，不重复发现逻辑。
 - 构建步骤必须把被引用资源搬运进 `out/`；HTML `embeds/` 的 CSS、JS、图片、字体等传递依赖也必须进入同一 manifest。验证真实文件类型、大小和数量，外部 URL 永不自动下载。
+- `output: 'export'` 关闭了 Next.js 图片优化，原图会原样投放；响应式尺寸与现代格式由构建期图片流水线产出，`index.md` 只引用原图，manifest 记录全部派生变体。
+- 派生变体成倍放大 `out/` 文件数，必须计入 20,000 文件上限校验。
 - 静态产物路径必须由构建器统一生成，不允许组件自己拼接本地文件系统路径。
 - 每个文件 ≤25 MB；全站产物总文件数 ≤20,000。
 - 第三方网页 URL 不下载进仓库，只保存经过 schema 验证的链接和降级元信息。

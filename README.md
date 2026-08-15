@@ -102,6 +102,8 @@ edgeone pages deploy
 
 - [AGENTS.md](./AGENTS.md) — AI 编码代理操作策略
 - [docs/designs/architecture-overview.md](./docs/designs/architecture-overview.md) — 博客总体架构与产品边界
+- [docs/designs/blog-reader-prototype.html](./docs/designs/blog-reader-prototype.html) — 博客列表页/阅读页 **1:1 视觉与交互对标**（浏览器直接打开；实现不得另起一套外观）
+- [docs/designs/blog-reader-design.md](./docs/designs/blog-reader-design.md) — 上述原型的文字说明与待确认项
 - [docs/conventions/project-structure.md](./docs/conventions/project-structure.md) — 完整目标目录树
 - [docs/specs/blog-content-engine.md](./docs/specs/blog-content-engine.md) — 内容引擎与公开讨论功能规格
 - [docs/plans/plan-blog-foundation.md](./docs/plans/plan-blog-foundation.md) — P0–P3 工程计划

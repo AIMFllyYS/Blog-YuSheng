@@ -106,7 +106,8 @@ P0/P1/P2 是博客功能底座的递进完成度；P3 是明确后置的增强�
 #### 阅读体验
 
 - 书架/书屋风 `/blog/` 列表。
-- 三栏阅读布局：目录 / 正文 / 评论、注释、Agent 工作区。
+- 三栏阅读布局：目录 / 正文 / 评论、注释、Agent 工作区；下接整幅页尾评论区。
+- `/blog/` 与 `/blog/<slug>/` 的视觉与交互 **1:1 对标** [blog-reader-prototype.html](../designs/blog-reader-prototype.html)，不得另起一套外观。
 - 中小屏抽屉、悬浮入口、键盘与 reduced motion。
 - 标题锚点、目录提取、分享基础和 OG metadata。
 

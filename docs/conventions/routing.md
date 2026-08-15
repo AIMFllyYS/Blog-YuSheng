@@ -13,8 +13,8 @@
 | URL | 页面 | 说明 |
 |---|---|---|
 | `/` | 首页 | 桌面端：3D 滚动叙事落地页 + 绳挂卷轴导航；移动端：经典卡片式板块入口（见第四节） |
-| `/blog/` | 文章列表 | 书架/书屋风（与首页 3D 书的世界观连贯） |
-| `/blog/<slug>/` | 文章阅读页 | 三栏布局：左目录 / 中正文 / 右评论、注释与 Agent 工作区 |
+| `/blog/` | 文章列表 | 书架/书屋风（与首页 3D 书的世界观连贯）。视觉与交互 **1:1 对标** [blog-reader-prototype.html](../designs/blog-reader-prototype.html) |
+| `/blog/<slug>/` | 文章阅读页 | 三栏 + 整幅页尾评论区。视觉与交互 **1:1 对标** [blog-reader-prototype.html](../designs/blog-reader-prototype.html)；文字说明见 [blog-reader-design.md](../designs/blog-reader-design.md) |
 | `/_dev/*` | 调试页 | 仅开发环境，production 守卫 404 |
 
 ### 预留路由（已确定未来会做，现在留位不实现）

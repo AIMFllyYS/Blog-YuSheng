@@ -3,6 +3,8 @@
 > Created: 2026-08-14
 > Updated: 2026-08-15
 > Status: accepted（决策背景见 [docs/designs/architecture-overview.md](../designs/architecture-overview.md)）
+>
+> 本文管全站 token 与通用规则。`/blog/` 与 `/blog/<slug>/` 的布局、交互与视觉 **1:1 对标** [blog-reader-prototype.html](../designs/blog-reader-prototype.html)，文字说明见 [blog-reader-design.md](../designs/blog-reader-design.md)。本文不为博客页另写一套外观。
 
 ## 一、主题系统
 
@@ -61,10 +63,13 @@
 
 - 字体文件自托管放 `public/fonts/`（EdgeOne 国内访问，不依赖 Google Fonts）
 - **正文与标题：衬线字（宋体系）**——与宣纸/书卷氛围统一。候选：思源宋体（Source Han Serif SC，开源可自托管）
-  - ⚠️ 中文字体动辄 10-20MB，**必须子集化**（按站内实际用字裁剪 + 按需分片加载），这是实现期硬性工序
-  - 降级栈：`"Source Han Serif SC", "Noto Serif SC", serif`，字体加载完成前用系统衬线过渡
+  - ⚠️ 中文字体动辄 10–20MB，比全站 JavaScript 重一个量级，**必须按 `unicode-range` 切片自托管**：切成上百个字符区间分片，浏览器只下载当前页面命中的那几片，这是实现期硬性工序
+  - ⚠️ **不要按"站内已用字"整体裁剪**：文章用字构建期可知，但评论/注释的字符集由访客决定，构建期不可知；整体裁剪会让讨论区出现缺字
+  - 降级栈：`"Source Han Serif SC", "Noto Serif SC", serif`，字体加载完成前用系统衬线过渡，不阻塞文字显示
+  - 首屏字体体积上限见 [内容引擎规格 13.2 性能预算](../specs/blog-content-engine.md#132-性能预算)
 - 附魔台文字效果需一款符文风格展示字体（仅首页装饰用，subset 后体积可控）
 - 代码块：等宽字体（JetBrains Mono 或系统等宽栈）
+- 导出（PDF/DOCX）需要覆盖任意访客用字，只能带完整中文字体；它与阅读用切片分开计量，仅在触发导出时加载
 
 ## 三、动效规范
 
@@ -105,12 +110,24 @@
 | overlay | 40 | 弹窗 / 抽屉遮罩 |
 | toast | 50 | 全局提示 |
 
+**渐隐层的命中区规则 ✅**：顶部绳挂导航是横贯整屏、约 88px 高的固定层，正下方压着左右栏页签与正文顶部。容器与装饰（绳索、挂钩、占位）必须 `pointer-events: none`，只有挂件本身在导航可见时可点，弹出面板只在打开时可点。否则左右栏页签点不动、正文顶部无法划词，而且因为导航是渐隐的极难排查。
+
+## 四之二、滚动条
+
+- 每套主题各出两个滑块颜色 token（常态 / 悬停），取 `--ink` 系低透明度值，不引入新色
+- **静止时完全透明**，指针进入可滚动容器才浮现无轨细滑块，离开即隐去
+- 禁止 `scrollbar-width: none` 或彻底隐藏——长文的滚动位置是必要信息
+- 同时写 `scrollbar-color`（Firefox）与 `::-webkit-scrollbar-*`；滑块用透明边框 + `background-clip: content-box` 内缩
+
 ## 五、响应式与移动端策略
 
 - 断点沿用 Tailwind 默认（sm 640 / md 768 / lg 1024 / xl 1280）
 - **首页移动端降级 ✅**：检测到移动设备（视口/指针类型，客户端判定）时不加载 3D 叙事，直接显示**经典卡片式板块入口**（博客/短随笔/作品集/关于我 + 主题与音效挂件）；移动端用户以读文章为主，入口效率优先
-- 阅读页三栏：`lg` 以上三栏可拉动；`md` 以下左右栏收成抽屉，从悬浮球呼出
+- 阅读页三栏：>1024px 三栏可拉动（左栏常驻不可收起，右栏可收为悬浮球）；≤1024px 左右栏都收成抽屉，从悬浮球呼出，整幅页尾评论区成为评论主入口
+- 阅读页是**双层滚动**：三栏各自 `height:100vh; overflow:auto`，整幅页尾评论区是三栏容器的兄弟节点，靠浏览器原生滚动链拉出。不要给栏设 `overscroll-behavior: contain`，也不要劫持滚轮（详见 [blog-reader-design.md 3.1](../designs/blog-reader-design.md)）
 - 3D/GSAP 相关代码全部动态 import，移动端首页不下载 3D 资源（不只是不渲染）
+- 3D 场景运行时必须：标签页不可见时暂停、滚动离开首屏后暂停、帧率不足时自动降档（减少粒子/关闭后处理），不硬扛低端集显
+- 各场景体积上限与实测要求见 [内容引擎规格 13.2 性能预算](../specs/blog-content-engine.md#132-性能预算)
 
 ## 六、阅读页评论、注释与划词交互
 
