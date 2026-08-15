@@ -23,9 +23,10 @@
 > 本地开发环境是 **Windows + PowerShell**，不是 bash/zsh。
 
 - **不要用 `&&` 串联命令** — PowerShell 中 `&` 是调用运算符，`&&` 在旧版 PowerShell 会报语法错误。用 `;` 分隔，或 `cmd1; if ($?) { cmd2 }` 做条件执行
-- **不要用 bash heredoc (`<<'EOF'`)** 写多行 commit message — PowerShell 不支持。用 `git commit -F <file>` 配合临时文件
+- **不要用 bash heredoc (`<<'EOF'`)** 写多行 commit message — PowerShell 不支持。用 `git commit -F .tmp/<file>` 配合临时文件
 - **不要用 `&&`、`||`、`!` 做 shell 条件判断** — PowerShell 语法不同（`-and`、`-or`、`-not`，或 `if ($?)`）
 - 路径用反斜杠 `\` 或正斜杠 `/` 都可以，但含空格的路径必须用双引号包裹
+- **临时文件只放 `.tmp/`** — 截图、一次性检查脚本、commit message 草稿都写到仓库根目录的 `.tmp/`，不要散落到根目录或其他已跟踪目录；该目录已被 gitignore
 
 ## Definition of Done
 
@@ -75,6 +76,9 @@ public/          静态资源（不放 >25MB 文件）
 - **评论是文章级，注释是选区级** — 划词入口只能创建注释；评论区只能创建文章评论
 - **讨论内容是永久不可信输入** — 只走 `discussion` profile，禁用原始 HTML、任意 JS/CSS/iframe/动态 import，并在最终渲染前 sanitize
 - **PDF 必须直接下载** — 禁止使用 `window.print()` 或系统打印对话框代替 PDF 导出
+- **默认构建期完成，推不动才进浏览器** — 公式渲染、图片尺寸/格式转换在构建期；Mermaid、嵌入、讨论解析、导出在浏览器且必须按需加载；阅读首屏与讨论/导出/3D 分开计量，预算见 [blog-content-engine.md 13.1–13.3](docs/specs/blog-content-engine.md)
+- **中文字体按 `unicode-range` 切片** — 不按"站内已用字"整体裁剪（讨论区字符集构建期不可知）
+- **博客页 1:1 对标原型** — `/blog/` 与 `/blog/<slug>/` 的布局、交互与视觉以 [blog-reader-prototype.html](docs/designs/blog-reader-prototype.html) 为准，不得另起一套外观；文字说明见 [blog-reader-design.md](docs/designs/blog-reader-design.md)，token 仍走 [frontend-design.md](docs/conventions/frontend-design.md)
 
 > 完整代码风格规范见 [docs/conventions/code-style.md](docs/conventions/code-style.md)。
 > Code review 检查清单见 [docs/conventions/code-review.md](docs/conventions/code-review.md)。
@@ -141,7 +145,7 @@ public/          静态资源（不放 >25MB 文件）
 - [code-size-and-organization.md](docs/conventions/code-size-and-organization.md) — 代码长度与文件组织（colocation 原则、`src/features/` 提升条件、拆分判断方法）
 - [project-structure.md](docs/conventions/project-structure.md) — 完整目录结构与分层规则（含 content/ 内容仓库与 features 模块划分）
 - [routing.md](docs/conventions/routing.md) — 路由规范（页面地图、URL 规则、导航映射、分享规范）
-- [frontend-design.md](docs/conventions/frontend-design.md) — 前端设计规范（主题 token、字体、动效、z-index、响应式、音效）
+- [frontend-design.md](docs/conventions/frontend-design.md) — 前端设计规范（主题 token、字体、动效、z-index、响应式、音效；博客页形态不在本文另写，1:1 对标原型）
 - [ports-and-env.md](docs/conventions/ports-and-env.md) — 端口与本地环境规范
 - [nextjs-16-patterns.md](docs/conventions/nextjs-16-patterns.md) — Next.js 16.2+ 关键模式与陷阱（proxy.ts、async APIs、Turbopack、SSG 配置等）
 - [code-style.md](docs/conventions/code-style.md) — 代码风格（Server Component、use client、TypeScript、Tailwind、_dev/ 规则）
@@ -150,10 +154,12 @@ public/          静态资源（不放 >25MB 文件）
 ### docs/designs/ — 设计文档
 
 - [architecture-overview.md](docs/designs/architecture-overview.md) — 整体架构决策记录（公开身份、内容协议、文档引擎、评论/注释、安全渲染、导出、动画与部署）
+- [blog-reader-prototype.html](docs/designs/blog-reader-prototype.html) — 博客列表页/阅读页 **1:1 视觉与交互对标**
+- [blog-reader-design.md](docs/designs/blog-reader-design.md) — 上述原型的文字说明与待确认项
 
 ### docs/specs/ — 技术规格
 
-- [blog-content-engine.md](docs/specs/blog-content-engine.md) — 内容协议、Canonical IR、renderer/profile、安全讨论、划词锚定与多格式导出契约
+- [blog-content-engine.md](docs/specs/blog-content-engine.md) — 内容协议、Canonical IR、renderer/profile、安全讨论、划词锚定、多格式导出契约与执行位置/性能预算
 
 ### docs/plans/ — 工程计划
 
