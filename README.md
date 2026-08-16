@@ -11,7 +11,11 @@
 - **Next.js App Router 架构**
 - **EdgeOne Pages SSG 部署**
 - **Tailwind 样式**
-- **占位首页**
+- **Markdown 正式内容仓库（规划中）**
+- **可注册文档渲染内核（规划中）**
+- **文章评论与划词注释（规划中）**
+- **Markdown / TXT / DOCX / PDF 导出（规划中）**
+- **首页叙事与阅读三栏（规划中）**
 
 ## 技术栈
 
@@ -39,7 +43,7 @@ pnpm install
 pnpm dev
 ```
 
-打开 [http://localhost:3000](http://localhost:3000) 查看运行效果。
+打开 [http://localhost:9981](http://localhost:9981) 查看运行效果（端口以 `package.json` 的 `dev` 脚本为准）。
 
 ### 构建
 
@@ -56,9 +60,10 @@ pnpm build
 ├── src/                        # 源代码
 │   ├── app/                    # 路由层
 │   ├── components/ui/          # 纯展示组件
-│   ├── features/               # 业务功能模块
+│   ├── features/               # 业务功能模块（doc-engine/discussions 等）
 │   ├── lib/                    # 工具函数
 │   └── server/                 # server-only 代码
+├── content/                    # 正式文章、文章数据与专属媒体（目标结构）
 ├── docs/                       # 项目内部文档
 │   ├── plans/                  # 项目计划、路线图
 │   ├── conventions/            # 编码规范、架构规范
@@ -79,7 +84,7 @@ pnpm build
 └── next.config.ts              # Next.js 配置
 ```
 
-详细结构说明见 [AGENTS.md](./AGENTS.md)。
+完整目标目录树见 [docs/conventions/project-structure.md](./docs/conventions/project-structure.md)；高频操作规则见 [AGENTS.md](./AGENTS.md)。
 
 ## 部署
 
@@ -96,7 +101,13 @@ edgeone pages deploy
 ## 文档
 
 - [AGENTS.md](./AGENTS.md) — AI 编码代理操作策略
-- [docs/](./docs/) — 项目内部文档（计划、规范、规格、设计等）
+- [docs/designs/architecture-overview.md](./docs/designs/architecture-overview.md) — 博客总体架构与产品边界
+- [docs/designs/blog-reader-prototype.html](./docs/designs/blog-reader-prototype.html) — 博客列表页/阅读页 **1:1 视觉与交互对标**（浏览器直接打开；实现不得另起一套外观）
+- [docs/designs/blog-reader-design.md](./docs/designs/blog-reader-design.md) — 上述原型的文字说明与待确认项
+- [docs/conventions/project-structure.md](./docs/conventions/project-structure.md) — 完整目标目录树
+- [docs/specs/blog-content-engine.md](./docs/specs/blog-content-engine.md) — 内容引擎与公开讨论功能规格
+- [docs/plans/plan-blog-foundation.md](./docs/plans/plan-blog-foundation.md) — P0–P3 工程计划
+- [docs/](./docs/) — 全部项目内部文档
 - [scripts/](./scripts/) — 辅助脚本
 
 ## License

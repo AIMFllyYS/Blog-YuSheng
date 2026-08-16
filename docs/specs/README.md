@@ -9,6 +9,11 @@
 - API 规格（接口定义、请求/响应格式）
 - 技术方案规格
 
+## 现有文档
+
+- [blog-content-engine.md](./blog-content-engine.md) — 博客内容协议、Canonical IR、renderer registry/profile、评论与注释、划词锚定、安全富文本、Markdown/TXT/DOCX/PDF 导出规格与执行位置/性能预算
+- `auth-and-discussions.md`（P2 开工前新增）— 邮箱认证、阿里云邮件接口、作者白名单、Supabase 表/RLS/RPC、anchor manifest 与限流规格
+
 ## 文档结构模板
 
 ```markdown
@@ -16,7 +21,7 @@
 
 > Created: YYYY-MM-DD
 > Updated: YYYY-MM-DD
-> Status: draft | review | approved
+> Status: draft | review | accepted baseline | deprecated
 
 ## 背景
 [为什么需要这个规格]

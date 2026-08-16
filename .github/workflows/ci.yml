@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main, dev]
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          # 锁定 EdgeOne 预装版本，避免本地/CI/生产三处不一致
+          node-version: 22.11.0
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm lint
+
+      - run: pnpm tsc --noEmit
+
+      # 测试栈在 issue #4 落地；脚本不存在时跳过而不是判红
+      # 注意 pnpm 的 --if-present 必须写在脚本名之前，写在之后会被当成脚本参数
+      - run: pnpm run --if-present test
+
+      - run: pnpm build
+
+      - name: Verify static output limits
+        run: |
+          count=$(find out -type f | wc -l)
+          echo "out/ file count: $count"
+          if [ "$count" -gt 20000 ]; then
+            echo "::error::out/ has $count files, limit is 20000"
+            exit 1
+          fi
+          oversized=$(find out -type f -size +25M)
+          if [ -n "$oversized" ]; then
+            echo "::error::files over 25MB found:"
+            echo "$oversized"
+            exit 1
+          fi

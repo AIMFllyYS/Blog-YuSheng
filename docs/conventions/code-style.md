@@ -19,6 +19,7 @@
 
 - Tailwind CSS for styling，不使用 CSS Modules（除非覆盖第三方组件）
 - 使用 `clsx` 或 `cn()` 处理条件 className
+- `/blog/` 与 `/blog/<slug>/` 的布局与交互 **1:1 对标** [blog-reader-prototype.html](../designs/blog-reader-prototype.html)；颜色/字体/动效走 [frontend-design.md](./frontend-design.md) 的 token，禁止另起一套外观
 
 ## 测试与质量
 

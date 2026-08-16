@@ -1,0 +1,32 @@
+import type { Metadata } from 'next'
+import { BlogArticlePlaceholder } from '@/features/blog-article'
+import {
+  createBlogStaticParams,
+  createAssetManifest,
+  createPostMetadata,
+  readPost,
+  transformContentImages,
+} from '@/server/content'
+
+type Props = { params: Promise<{ slug: string }> }
+
+export const dynamicParams = false
+
+export function generateStaticParams() {
+  return createBlogStaticParams()
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params
+  return createPostMetadata(slug)
+}
+
+export default async function BlogArticlePage({ params }: Props) {
+  const { slug } = await params
+  const [post, sourceAssetManifest] = await Promise.all([
+    readPost(slug),
+    createAssetManifest(),
+  ])
+  const assetManifest = await transformContentImages(sourceAssetManifest)
+  return <BlogArticlePlaceholder assetManifest={assetManifest} post={post} />
+}

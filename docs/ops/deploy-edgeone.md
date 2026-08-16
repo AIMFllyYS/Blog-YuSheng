@@ -103,12 +103,33 @@ SSG 模式下 Next.js 输出到 `out/`，不是 `.next/`。这个值由 `next.co
 - `headers` 用于设置缓存策略和安全头
 - 静态资源 `/_next/static/*` 设置长缓存：`public, max-age=31536000, immutable`
 
+#### `source` 匹配规则的硬约束（写安全头前必读）
+
+`source` 是 URL 路径匹配，**不是文件系统 glob**：
+
+| 类型 | 示例 | 说明 |
+|---|---|---|
+| 精确路径 | `/api/hello` | 只匹配该路径 |
+| 占位符 | `/articles/:id` | 匹配单级路径参数 |
+| 通配符 | `/assets/*` | 匹配任意后续内容 |
+| 带后缀通配 | `/assets/*.png` | 匹配该目录下的 PNG |
+
+三条容易踩的限制：
+
+1. **`source` 中最多含一个 `*`** —— `/blog/*/embeds/*` 是非法写法。需要按目录层级下钻做例外时，只能把资源落位到单一前缀（本项目的 `embeds/` 因此固定为 `/embeds/*`，见 [project-structure.md](../conventions/project-structure.md)）。
+2. **header `value` 长度下限是 1，不能为空** —— 无法用空值「删掉」更宽规则里已设的响应头。更具体路径上的规则是**按 key 覆盖**，不是整段替换。想去掉 `/*` 上的 `X-Frame-Options: DENY`，只能在子路径上把同一个 key 覆盖成别的值（如 `SAMEORIGIN`）。
+3. **`headers` 规则最多 30 条** —— 不能给每篇文章写一条精确路径。
+
+响应头只在 EdgeOne 边缘生效：`pnpm dev` 与 `pnpm preview` 都读不到 `edgeone.json`，本地 Playwright 断言不到真实响应头。安全头的真实校验必须在部署后对公网 URL 做（`curl -I`）。
+
 ## 硬性限制
 
 | Constraint | Limit |
 |---|---|
 | 单文件大小 | ≤ 25 MB |
 | 项目总文件数 | ≤ 20,000 |
+| `headers` 规则数 | ≤ 30 |
+| `redirects` / `rewrites` 规则数 | ≤ 100 |
 | 总存储 | ≤ 5 GB |
 | 构建超时 | 20 分钟 |
 | Cloud Function 包大小 | ≤ 128 MB |
