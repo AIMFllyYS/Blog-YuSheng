@@ -109,6 +109,12 @@ export const DOCUMENT_DIAGNOSTIC_DEFINITIONS = {
     phase: 'runtime',
     disposition: 'safe-fallback',
   },
+  'DOC-RENDER-002': {
+    severity: 'warning',
+    message: '此内容组件暂时没有可用的屏幕实现，已显示替代内容。',
+    phase: 'runtime',
+    disposition: 'safe-fallback',
+  },
 } as const
 
 export type DocumentDiagnosticCode =

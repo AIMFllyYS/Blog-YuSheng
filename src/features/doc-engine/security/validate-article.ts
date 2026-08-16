@@ -29,6 +29,12 @@ export function validateArticleDocument(
     }
     if (node.type === 'image' && !validImageSource(node.src)) {
       diagnostics.push(articleError(document, node, `图片地址无效：${node.src}`))
+    } else if (
+      node.type === 'image' &&
+      node.src.startsWith('./') &&
+      !manifestContainsLocalAsset(document, node.src)
+    ) {
+      diagnostics.push(missingAssetError(document, node, node.src))
     }
     if (node.type === 'math') {
       const failure = validateKatexSource(node.value)
@@ -72,6 +78,9 @@ function validateArticleComponent(
   for (const [name, value] of pathAttributes) {
     if (!validatePackageRelativePath(value)) {
       return [articleError(document, node, `${node.name} 的 ${name} 路径无效：${value}`)]
+    }
+    if (!manifestContainsLocalAsset(document, value)) {
+      return [missingAssetError(document, node, value)]
     }
   }
   if (node.name === 'canvas-render') {
@@ -135,6 +144,43 @@ function articleError(
     nodeId: node.nodeId,
     sourceRange: node.sourceRange,
     message,
+  })
+}
+
+function missingAssetError(
+  document: CompiledDocument,
+  node: DocumentNode,
+  source: string,
+): DocumentDiagnostic {
+  return createDocumentDiagnostic('DOC-ASSET-002', {
+    articleSlug: document.articleSlug,
+    nodeId: node.nodeId,
+    sourceRange: node.sourceRange,
+    message: `正文所需的本地资源不存在：${source}`,
+  })
+}
+
+function manifestContainsLocalAsset(
+  document: CompiledDocument,
+  source: string,
+): boolean {
+  let relativePath = source.slice(2)
+  for (let index = 0; index < 8; index += 1) {
+    const decoded = decodeURIComponent(relativePath)
+    if (decoded === relativePath) break
+    relativePath = decoded
+  }
+  relativePath = relativePath.replace(/\\/g, '/')
+  const expectedOutputPath = relativePath.startsWith('embeds/')
+    ? `embeds/${document.articleSlug}/${relativePath.slice('embeds/'.length)}`
+    : `blog/${document.articleSlug}/${relativePath}`
+  return document.assetManifest.some((item) => {
+    if (!item || typeof item !== 'object') return false
+    const entry = item as { articleSlug?: unknown; outputPath?: unknown }
+    return (
+      entry.articleSlug === document.articleSlug &&
+      entry.outputPath === expectedOutputPath
+    )
   })
 }
 

@@ -134,7 +134,9 @@ describe('Markdown to Canonical IR compiler', () => {
         source,
         frontmatter: {},
       }),
-    ).rejects.toMatchObject({ diagnostics: result.diagnostics })
+    ).rejects.toMatchObject({
+      diagnostics: expect.arrayContaining([...result.diagnostics]),
+    })
   })
 
   it('compiles CommonMark references, hard breaks, and thematic breaks', async () => {
