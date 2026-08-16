@@ -21,6 +21,8 @@ export type StableBlockNodeType =
   | 'mermaid'
   | 'image'
   | 'registeredComponent'
+  | 'footnoteDefinition'
+  | 'thematicBreak'
 
 export function normalizeDocumentSource(source: string): string {
   return source

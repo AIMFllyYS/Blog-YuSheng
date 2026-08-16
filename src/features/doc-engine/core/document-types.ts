@@ -20,6 +20,7 @@ export type DocumentNodeType =
   | 'text'
   | 'emphasis'
   | 'strong'
+  | 'delete'
   | 'link'
   | 'list'
   | 'listItem'
@@ -33,6 +34,18 @@ export type DocumentNodeType =
   | 'mermaid'
   | 'image'
   | 'registeredComponent'
+  | 'footnoteReference'
+  | 'footnoteDefinition'
+  | 'thematicBreak'
+
+export type SourceMapSegment = {
+  readonly nodeId: string
+  readonly canonicalStart: number
+  readonly canonicalEnd: number
+  readonly sourceStart: number
+  readonly sourceEnd: number
+  readonly kind: 'text' | 'soft-break' | 'atomic'
+}
 
 export type DocumentNodeBase<TType extends DocumentNodeType> = {
   readonly nodeId: string
@@ -75,6 +88,10 @@ export type StrongNode = DocumentNodeBase<'strong'> & {
   readonly children: readonly InlineNode[]
 }
 
+export type DeleteNode = DocumentNodeBase<'delete'> & {
+  readonly children: readonly InlineNode[]
+}
+
 export type LinkNode = DocumentNodeBase<'link'> & {
   readonly url: string
   readonly title?: string
@@ -83,6 +100,11 @@ export type LinkNode = DocumentNodeBase<'link'> & {
 
 export type InlineCodeNode = DocumentNodeBase<'inlineCode'> & {
   readonly value: string
+  readonly canonicalText: string
+}
+
+export type FootnoteReferenceNode = DocumentNodeBase<'footnoteReference'> & {
+  readonly identifier: string
   readonly canonicalText: string
 }
 
@@ -163,14 +185,23 @@ export type RegisteredComponentNode = SemanticBlockBase<'registeredComponent'> &
   readonly selectable: 'text-range' | 'whole-node' | 'none'
 }
 
+export type FootnoteDefinitionNode = SemanticBlockBase<'footnoteDefinition'> & {
+  readonly identifier: string
+  readonly children: readonly BlockNode[]
+}
+
+export type ThematicBreakNode = SemanticBlockBase<'thematicBreak'>
+
 export type InlineNode =
   | TextNode
   | EmphasisNode
   | StrongNode
+  | DeleteNode
   | LinkNode
   | InlineCodeNode
   | InlineMathNode
   | InlineImageNode
+  | FootnoteReferenceNode
 
 export type BlockNode =
   | HeadingNode
@@ -183,6 +214,8 @@ export type BlockNode =
   | MermaidNode
   | BlockImageNode
   | RegisteredComponentNode
+  | FootnoteDefinitionNode
+  | ThematicBreakNode
 
 export type DocumentNode =
   | RootNode
@@ -202,4 +235,5 @@ export type CompiledDocument = {
   /** Complete validated index.md source, including frontmatter. */
   readonly originalSource: string
   readonly assetManifest: readonly unknown[]
+  readonly sourceMap: Readonly<Record<string, readonly SourceMapSegment[]>>
 }

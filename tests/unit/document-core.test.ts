@@ -40,6 +40,7 @@ describe('Canonical Document IR protocol', () => {
       frontmatter: { title: '黄金样例' },
       originalSource: '---\ntitle: 黄金样例\n---\n\n# 标题\n',
       assetManifest: [],
+      sourceMap: {},
       root: {
         type: 'root',
         nodeId: 'root',

@@ -1,6 +1,24 @@
 import type { SourceRange } from './document-types'
 
 export const DOCUMENT_DIAGNOSTIC_DEFINITIONS = {
+  'DOC-PARSE-001': {
+    severity: 'error',
+    message: '正文不允许原始 HTML。',
+    phase: 'article-build',
+    disposition: 'block-build',
+  },
+  'DOC-PARSE-002': {
+    severity: 'error',
+    message: '正文包含当前协议无法识别的 Markdown 节点。',
+    phase: 'article-build',
+    disposition: 'block-build',
+  },
+  'DOC-PARSE-003': {
+    severity: 'error',
+    message: '自定义组件标签语法或属性类型无效。',
+    phase: 'article-build',
+    disposition: 'block-build',
+  },
   'DOC-REGISTRY-001': {
     severity: 'error',
     message: '正文包含未注册的组件标签。',
@@ -84,6 +102,9 @@ export const DOCUMENT_DIAGNOSTIC_DEFINITIONS = {
 export type DocumentDiagnosticCode =
   keyof typeof DOCUMENT_DIAGNOSTIC_DEFINITIONS
 export type ArticleBlockingDiagnosticCode =
+  | 'DOC-PARSE-001'
+  | 'DOC-PARSE-002'
+  | 'DOC-PARSE-003'
   | 'DOC-REGISTRY-001'
   | 'DOC-REGISTRY-002'
   | 'DOC-REGISTRY-003'
