@@ -217,7 +217,7 @@ function ReaderExportPanel({ panelId }: { readonly panelId: string }) {
   return (
     <section
       aria-label="导出"
-      className="pointer-events-auto fixed z-[var(--z-overlay)] w-[min(22rem,calc(100vw-1.5rem))] origin-top rounded border border-[var(--line)] bg-[var(--bg-elevated)] p-4 text-[var(--ink)] shadow-[0_24px_60px_var(--shadow-color)] animate-[reader-pop_var(--dur-pop)_var(--ease-pop)_both]"
+      className="pointer-events-auto fixed z-[var(--z-overlay)] w-[min(22.5rem,calc(100vw-1.5rem))] origin-top rounded border border-[var(--line)] bg-[var(--bg-elevated)] p-4 text-[var(--ink)] shadow-[0_24px_60px_var(--shadow-color)] animate-[reader-pop_var(--dur-pop)_var(--ease-pop)_both]"
       id={panelId}
       ref={panelRef}
       role="dialog"
