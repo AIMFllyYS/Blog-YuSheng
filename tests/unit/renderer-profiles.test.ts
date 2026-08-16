@@ -151,7 +151,7 @@ describe('central security configuration', () => {
   it('authenticates postMessage by source and one-time nonce before accepting the strict schema', () => {
     const expectedSource = {}
     const nonce = createEmbedCapabilityNonce()
-    const gate = createEmbedMessageGate(expectedSource, nonce)
+    const gate = createEmbedMessageGate(expectedSource, nonce, vi.fn())
     expect(
       gate.accept({
         source: {},

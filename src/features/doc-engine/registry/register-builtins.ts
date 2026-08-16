@@ -1,10 +1,16 @@
-import { z } from 'zod'
-
 import type { DocumentNode } from '../core'
 import { CODE_RENDERER_DEFINITION } from '../renderers/code'
 import { KATEX_RENDERER_DEFINITION } from '../renderers/katex'
 import { IMAGE_RENDERER_DEFINITION } from '../renderers/image'
 import { MERMAID_RENDERER_DEFINITION } from '../renderers/mermaid'
+import { VIDEO_RENDERER_DEFINITION } from '../renderers/video'
+import { AUDIO_RENDERER_DEFINITION } from '../renderers/audio'
+import { CANVAS_RENDERER_DEFINITION } from '../renderers/canvas'
+import { SVG_RENDERER_DEFINITION } from '../renderers/svg'
+import { HTML_RENDERER_DEFINITION } from '../renderers/html'
+import { WEB_RENDERER_DEFINITION } from '../renderers/web'
+import { CHOICE_QUESTION_RENDERER_DEFINITION } from '../renderers/quiz-choice'
+import { FILL_BLANK_QUESTION_RENDERER_DEFINITION } from '../renderers/quiz-fill'
 import { RendererRegistry } from './renderer-registry'
 import type {
   RenderProfile,
@@ -23,34 +29,7 @@ const ARTICLE_PROFILES = [
 
 const safeBuiltins = new Set(['markdown', 'code', 'katex', 'mermaid'])
 
-const COMPONENT_SCHEMAS = {
-  'video-embed': z
-    .object({ id: z.string(), src: z.string(), title: z.string(), poster: z.string().optional() })
-    .strict(),
-  'audio-embed': z
-    .object({ id: z.string(), src: z.string(), title: z.string() })
-    .strict(),
-  'canvas-render': z
-    .object({
-      id: z.string(),
-      renderer: z.string(),
-      'data-src': z.string().optional(),
-      width: z.number().int().positive().optional(),
-      height: z.number().int().positive().optional(),
-    })
-    .strict(),
-  'svg-embed': z
-    .object({ id: z.string(), src: z.string(), title: z.string() })
-    .strict(),
-  'html-embed': z
-    .object({ id: z.string(), src: z.string(), title: z.string(), height: z.number().int().positive().optional() })
-    .strict(),
-  'web-embed': z
-    .object({ id: z.string(), src: z.string(), title: z.string(), height: z.number().int().positive().optional() })
-    .strict(),
-  'choice-question': z.object({ id: z.string(), 'data-src': z.string() }).strict(),
-  'fill-blank-question': z.object({ id: z.string(), 'data-src': z.string() }).strict(),
-} as const
+import { z } from 'zod'
 
 const EMPTY_SCHEMA = z.object({}).strict()
 
@@ -70,6 +49,7 @@ function createDefinition(
     trustLevel?: RendererDefinition['security']['trustLevel']
     allowsScript?: boolean
     allowsExternalResource?: boolean
+    assetAttributes?: readonly string[]
     selectable?: RendererDefinition['selectable']
   } = {},
 ): RendererDefinition {
@@ -86,7 +66,15 @@ function createDefinition(
       if (!parsed.success) throw new Error(`${name} renderer 属性未通过 schema。`)
       return parsed.data
     },
-    collectAssets: () => [],
+    collectAssets: (node) =>
+      Object.freeze(
+        (options.assetAttributes ?? []).flatMap((attribute) => {
+          const source = node.attributes[attribute]
+          return typeof source === 'string'
+            ? [{ source, kind: 'local' as const, attribute }]
+            : []
+        }),
+      ),
     renderScreen: (node) => fallbackValue(name, node),
     renderFallback: (node) => fallbackValue(name, node),
     security: {
@@ -104,49 +92,14 @@ const DEFINITIONS: readonly RendererDefinition[] = Object.freeze([
   KATEX_RENDERER_DEFINITION,
   MERMAID_RENDERER_DEFINITION,
   IMAGE_RENDERER_DEFINITION,
-  createDefinition('video-embed', {
-    schema: COMPONENT_SCHEMAS['video-embed'],
-    allowsExternalResource: true,
-    selectable: 'none',
-  }),
-  createDefinition('audio-embed', {
-    schema: COMPONENT_SCHEMAS['audio-embed'],
-    allowsExternalResource: true,
-    selectable: 'none',
-  }),
-  createDefinition('canvas-render', {
-    schema: COMPONENT_SCHEMAS['canvas-render'],
-    trustLevel: 'registered',
-    allowsScript: true,
-    selectable: 'none',
-  }),
-  createDefinition('svg-embed', {
-    schema: COMPONENT_SCHEMAS['svg-embed'],
-    trustLevel: 'registered',
-    selectable: 'none',
-  }),
-  createDefinition('html-embed', {
-    schema: COMPONENT_SCHEMAS['html-embed'],
-    trustLevel: 'sandboxed',
-    allowsScript: true,
-    selectable: 'none',
-  }),
-  createDefinition('web-embed', {
-    schema: COMPONENT_SCHEMAS['web-embed'],
-    trustLevel: 'sandboxed',
-    allowsExternalResource: true,
-    selectable: 'none',
-  }),
-  createDefinition('choice-question', {
-    schema: COMPONENT_SCHEMAS['choice-question'],
-    trustLevel: 'registered',
-    selectable: 'none',
-  }),
-  createDefinition('fill-blank-question', {
-    schema: COMPONENT_SCHEMAS['fill-blank-question'],
-    trustLevel: 'registered',
-    selectable: 'none',
-  }),
+  VIDEO_RENDERER_DEFINITION,
+  AUDIO_RENDERER_DEFINITION,
+  CANVAS_RENDERER_DEFINITION,
+  SVG_RENDERER_DEFINITION,
+  HTML_RENDERER_DEFINITION,
+  WEB_RENDERER_DEFINITION,
+  CHOICE_QUESTION_RENDERER_DEFINITION,
+  FILL_BLANK_QUESTION_RENDERER_DEFINITION,
 ])
 
 export const BUILTIN_RENDERER_REGISTRY = new RendererRegistry(DEFINITIONS)

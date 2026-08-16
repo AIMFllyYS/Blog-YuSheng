@@ -64,11 +64,15 @@
 ## 二、字体
 
 - **字体走云字体服务，不自托管**：字体文件不进仓库、不进 `public/fonts/`、不进 `out/`——EdgeOne 的空间与 20,000 文件数限制不允许承载大中文字体及其上百个切片。选用国内可达的云字体 CDN；**不依赖 Google Fonts**（国内可达性差），但也不限定于 Google 系字体
-- **正文与标题：衬线字（宋体系）**——与宣纸/书卷氛围统一。候选：思源宋体（Source Han Serif SC，开源、多数云字体服务可分发）
+- **正文与标题：衬线字（宋体系）**——与宣纸/书卷氛围统一。P0 选定 ZeoSeven FontsAPI 的思源宋体（字体 ID `285`，CDN 族名 `Noto Serif CJK`，版本 2.003，OFL-1.1）
+  - 接入方式固定为 `@import url("https://fontsapi.zeoseven.com/285/main/result.css")`；根 layout 的客户端叶子会在系统衬线首屏已经可读后动态注入该规则，避免 CDN 悬挂时让全站主 CSS 一起阻塞。服务商 CSS 负责 `font-display: swap` 与 `unicode-range` 切片，本站不下载、自托管或预加载字体文件
+  - 字体来源与许可：[ZeoSeven 字体条目](https://fonts.zeoseven.com/items/285/) / [SIL Open Font License 1.1](https://openfontlicense.org/)。远程 CSS 已保留 Adobe/OFL 版权声明，本站不另建自托管 NOTICE
   - ⚠️ 中文字体动辄 10–20MB，比全站 JavaScript 重一个量级，**必须按 `unicode-range` 切片加载**：切片与分发由云字体服务商承担，浏览器只下载当前页面命中的那几片；选服务商时必须确认其提供 `unicode-range` 切片式 CSS，而不是整包 woff2
   - ⚠️ **不要按"站内已用字"整体裁剪**：文章用字构建期可知，但评论/注释的字符集由访客决定，构建期不可知；整体裁剪会让讨论区出现缺字
-  - 服务商选定须验证：国内访问延迟、HTTPS、字体许可证允许 Web 分发、切片粒度；选定结果与接入方式记录到本文档
-  - 降级栈：`"Source Han Serif SC", "Noto Serif SC", serif`，字体加载完成前用系统衬线过渡（`font-display: swap` 语义），不阻塞文字显示
+  - 服务商选定须验证：国内访问延迟、HTTPS、字体许可证允许 Web 分发、切片粒度；P0 当前执行环境不具备可证明的中国大陆网络，国内延迟需人工补测，不得用境外/未知线路数字冒充
+  - 生效栈：`"Noto Serif CJK", "Source Han Serif SC", "Noto Serif SC", serif`；CDN 加载完成前或失败时使用后三项系统衬线降级（`font-display: swap` 语义），不阻塞文字显示
+  - P0 接入实测（2026-08-17）：Windows 本地开发服务 + 新建无缓存 Chromium，访问中文综合验收文章；DevTools Protocol 确认标题实际渲染为自定义字体 `Noto Serif CJK SC`（PostScript `Noto-Serif-CJK-SC`）。初始加载命中远程 CSS 1 个（网络传输 76,055 bytes；解压后 289,053 bytes）与 WOFF2 切片 38 个（网络传输 1,736,881 bytes），字体相关合计 1,812,936 bytes，**超过 13.2 的 300 KB 初始预算**。按 #35 决策仅记录，不改预算、不换服务商
+  - 同一执行环境单独请求远程 CSS 得到 HTTPS 200、约 322 ms；该 Codex 执行线路地理位置不可证明为中国大陆，因此此数字不是“国内延迟”。中国大陆网络的冷缓存延迟仍需人工补测
   - 首屏字体体积上限见 [内容引擎规格 13.2 性能预算](../specs/blog-content-engine.md#132-性能预算)，计量对象是云字体实际命中的切片流量
 - 附魔台文字效果需一款符文风格展示字体（仅首页装饰用，同样走云字体或极小 subset）
 - 代码块：等宽字体（JetBrains Mono 或系统等宽栈）

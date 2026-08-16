@@ -1,0 +1,313 @@
+.page {
+  position: relative;
+  min-height: 100svh;
+  overflow: hidden;
+  padding: 11.5rem 1.25rem 8rem;
+  background:
+    radial-gradient(circle at 14% 14%, color-mix(in srgb, var(--accent) 9%, transparent), transparent 27rem),
+    linear-gradient(90deg, transparent 0 7%, color-mix(in srgb, var(--line) 24%, transparent) 7% 7.08%, transparent 7.08% 93%, color-mix(in srgb, var(--line) 24%, transparent) 93% 93.08%, transparent 93.08%),
+    var(--bg);
+  color: var(--ink);
+}
+
+.page::before {
+  position: absolute;
+  inset: 7.5rem 0 auto;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--line) 18% 82%, transparent);
+  content: '';
+  opacity: 0.64;
+}
+
+.room {
+  position: relative;
+  width: min(100%, 68rem);
+  margin: 0 auto;
+}
+
+.header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(14rem, 0.45fr);
+  align-items: end;
+  gap: 3rem;
+  padding: 0 0 3rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.eyebrow,
+.shelfLabel,
+.volumeNumber,
+.date,
+.readingTime,
+.tag,
+.emptyEyebrow {
+  font-family: var(--font-sans), sans-serif;
+  font-size: 0.72rem;
+  font-weight: 650;
+  letter-spacing: 0.24em;
+}
+
+.eyebrow,
+.shelfLabel,
+.emptyEyebrow {
+  color: var(--accent);
+}
+
+.title {
+  margin: 1rem 0 0;
+  font-family: var(--font-serif), serif;
+  font-size: clamp(3.35rem, 8vw, 6.8rem);
+  font-weight: 650;
+  letter-spacing: 0.22em;
+  line-height: 0.94;
+}
+
+.intro {
+  max-width: 31rem;
+  margin: 0;
+  color: var(--ink-muted);
+  font-family: var(--font-serif), serif;
+  font-size: 1rem;
+  letter-spacing: 0.03em;
+  line-height: 2;
+}
+
+.shelfHeading {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 2.5rem 0 1.25rem;
+}
+
+.shelfHeading::after {
+  height: 1px;
+  flex: 1;
+  background: var(--line);
+  content: '';
+}
+
+.shelfCount {
+  color: var(--ink-faint);
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+}
+
+.volumes {
+  display: grid;
+  gap: 1.15rem;
+}
+
+.volume {
+  position: relative;
+  display: grid;
+  min-height: 15rem;
+  grid-template-columns: 4rem minmax(0, 1fr) 3rem;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background:
+    repeating-linear-gradient(0deg, transparent 0 7px, color-mix(in srgb, var(--line) 11%, transparent) 7px 8px),
+    var(--scroll-paper);
+  box-shadow: 0 1.5rem 3.6rem var(--shadow-color);
+  color: var(--ink);
+  text-decoration: none;
+  transform: translateZ(0);
+  transition:
+    border-color var(--dur-base) var(--ease-damp),
+    box-shadow var(--dur-base) var(--ease-damp),
+    transform var(--dur-base) var(--ease-damp);
+}
+
+.volume:nth-child(even) {
+  margin-left: 2.25rem;
+}
+
+.volume::after {
+  position: absolute;
+  inset: 0;
+  border: 0 solid var(--accent);
+  content: '';
+  pointer-events: none;
+  transition: border-width var(--dur-fast) ease-out;
+}
+
+.volume:hover,
+.volume:focus-visible {
+  border-color: var(--accent);
+  box-shadow: 0 1.8rem 4.5rem var(--shadow-color);
+  outline: none;
+  transform: translateX(0.45rem);
+}
+
+.volume:hover::after,
+.volume:focus-visible::after {
+  border-left-width: 0.3rem;
+}
+
+.spine {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-right: 1px solid color-mix(in srgb, var(--accent) 54%, var(--line));
+  background: color-mix(in srgb, var(--accent) 82%, var(--ink));
+  color: var(--bg-elevated);
+}
+
+.volumeNumber {
+  writing-mode: vertical-rl;
+}
+
+.volumeBody {
+  padding: 2rem clamp(1.4rem, 4vw, 3.5rem) 2.1rem;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem 1.2rem;
+  color: var(--ink-faint);
+}
+
+.date,
+.readingTime {
+  letter-spacing: 0.14em;
+}
+
+.articleTitle {
+  margin: 1.15rem 0 0;
+  font-family: var(--font-serif), serif;
+  font-size: clamp(1.7rem, 4vw, 2.5rem);
+  font-weight: 650;
+  letter-spacing: 0.07em;
+  line-height: 1.32;
+}
+
+.description {
+  max-width: 48rem;
+  margin: 1rem 0 0;
+  color: var(--ink-muted);
+  font-size: 0.95rem;
+  line-height: 1.9;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  margin: 1.35rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tag {
+  border: 1px solid var(--line);
+  padding: 0.38rem 0.64rem;
+  background: color-mix(in srgb, var(--bg-elevated) 72%, transparent);
+  color: var(--ink-muted);
+  letter-spacing: 0.1em;
+}
+
+.enterMark {
+  display: grid;
+  place-items: center;
+  border-left: 1px solid var(--line);
+  color: var(--accent);
+  font-size: 1.2rem;
+  transition: background var(--dur-fast) ease-out;
+}
+
+.volume:hover .enterMark,
+.volume:focus-visible .enterMark {
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+}
+
+.shelfRail {
+  height: 0.85rem;
+  margin: 0.75rem -0.75rem 0;
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--ink) 76%, var(--accent));
+  box-shadow: 0 0.8rem 1.2rem var(--shadow-color);
+}
+
+.empty {
+  min-height: 24rem;
+  padding: 3.5rem clamp(1.5rem, 6vw, 4.5rem);
+  border: 1px solid var(--line);
+  background: var(--scroll-paper);
+  box-shadow: 0 1.5rem 3.6rem var(--shadow-color);
+  text-align: center;
+}
+
+.emptyBooks {
+  display: flex;
+  height: 8rem;
+  align-items: end;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-bottom: 2.5rem;
+  border-bottom: 0.75rem solid color-mix(in srgb, var(--ink) 76%, var(--accent));
+}
+
+.emptyBook {
+  width: 2.5rem;
+  height: 4.5rem;
+  border: 1px dashed var(--line);
+  background: color-mix(in srgb, var(--bg-elevated) 40%, transparent);
+}
+
+.emptyBook:nth-child(2) {
+  height: 6.2rem;
+  transform: rotate(-3deg);
+}
+
+.emptyTitle {
+  margin: 1rem 0 0;
+  font-family: var(--font-serif), serif;
+  font-size: 2rem;
+  letter-spacing: 0.12em;
+}
+
+.emptyText {
+  margin: 1rem auto 0;
+  color: var(--ink-muted);
+  line-height: 1.9;
+}
+
+@media (max-width: 720px) {
+  .page {
+    padding: 10rem 1rem 5rem;
+    background:
+      radial-gradient(circle at 14% 14%, color-mix(in srgb, var(--accent) 8%, transparent), transparent 22rem),
+      var(--bg);
+  }
+
+  .header {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    padding-bottom: 2rem;
+  }
+
+  .title {
+    font-size: clamp(3rem, 18vw, 5rem);
+  }
+
+  .volume,
+  .volume:nth-child(even) {
+    min-height: 0;
+    grid-template-columns: 2.75rem minmax(0, 1fr);
+    margin-left: 0;
+  }
+
+  .volumeBody {
+    padding: 1.5rem 1.2rem 1.65rem;
+  }
+
+  .enterMark {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .volume {
+    transition: none;
+  }
+}

@@ -27,6 +27,19 @@ import {
 import { CodeScreenRenderer } from '../renderers/code/screen-renderer'
 import { KatexScreenRenderer } from '../renderers/katex/screen-renderer'
 import { ImageScreenRenderer } from '../renderers/image/screen-renderer'
+import {
+  projectHtmlEmbedUrl,
+  projectPackageAssetData,
+  projectPackageMediaUrl,
+} from '../renderers/media/asset-projection'
+import { MediaPlayer } from '../renderers/media/media-player'
+import { CanvasScreenRenderer } from '../renderers/canvas/screen-renderer'
+import { SvgScreenRenderer } from '../renderers/svg/screen-renderer'
+import { HtmlEmbedScreenRenderer } from '../renderers/html/screen-renderer'
+import { WebEmbedScreenRenderer } from '../renderers/web/screen-renderer'
+import { WebEmbedPreviewCard } from '../renderers/web/web-preview-card'
+import { ChoiceQuestionScreenRenderer } from '../renderers/quiz-choice/screen-renderer'
+import { FillBlankQuestionScreenRenderer } from '../renderers/quiz-fill/screen-renderer'
 import { MermaidScreenRenderer } from '../renderers/mermaid/screen-renderer'
 import { sanitizeDiscussionRead } from '../security'
 import { DocumentFallbackCard } from './fallback-card'
@@ -637,12 +650,12 @@ function DocumentHeading({
   readonly node: Extract<BlockNode, { type: 'heading' }>
   readonly children: ReactNode
 }) {
-  if (node.depth === 1) return <h1 id={node.slug}>{children}</h1>
-  if (node.depth === 2) return <h2 id={node.slug}>{children}</h2>
-  if (node.depth === 3) return <h3 id={node.slug}>{children}</h3>
-  if (node.depth === 4) return <h4 id={node.slug}>{children}</h4>
-  if (node.depth === 5) return <h5 id={node.slug}>{children}</h5>
-  return <h6 id={node.slug}>{children}</h6>
+  if (node.depth === 1) return <h1 data-block-id={node.blockId} id={node.slug}>{children}</h1>
+  if (node.depth === 2) return <h2 data-block-id={node.blockId} id={node.slug}>{children}</h2>
+  if (node.depth === 3) return <h3 data-block-id={node.blockId} id={node.slug}>{children}</h3>
+  if (node.depth === 4) return <h4 data-block-id={node.blockId} id={node.slug}>{children}</h4>
+  if (node.depth === 5) return <h5 data-block-id={node.blockId} id={node.slug}>{children}</h5>
+  return <h6 data-block-id={node.blockId} id={node.slug}>{children}</h6>
 }
 
 function TableRow({ node, context }: { readonly node: TableRowNode; readonly context: RenderContext }) {
@@ -681,6 +694,101 @@ function RegisteredComponent({
       </DocumentFallbackCard>
     )
   }
+  if (node.name === 'video-embed' || node.name === 'audio-embed') {
+    return (
+      <RendererErrorBoundary
+        alternative={alternative}
+        nodeId={node.nodeId}
+        rendererName={node.name}
+        showDetails={context.showDetails}
+      >
+        <RegisteredMediaRenderer context={context} node={node} />
+      </RendererErrorBoundary>
+    )
+  }
+  if (node.name === 'canvas-render') {
+    const source =
+      typeof node.attributes['data-src'] === 'string'
+        ? node.attributes['data-src']
+        : undefined
+    return (
+      <RendererErrorBoundary
+        alternative={alternative}
+        blockId={node.blockId}
+        nodeId={node.nodeId}
+        rendererName={node.name}
+        selectable="none"
+        showDetails={context.showDetails}
+      >
+        <CanvasScreenRenderer
+          dataUrl={
+            source
+              ? projectPackageMediaUrl(
+                  source,
+                  context.articleSlug,
+                  context.assetManifest,
+                )
+              : undefined
+          }
+          developmentCrash={
+            context.developmentCrashComponentIds?.includes(node.componentId) ===
+            true
+          }
+          node={node}
+          showDetails={context.showDetails}
+        />
+      </RendererErrorBoundary>
+    )
+  }
+  if (node.name === 'svg-embed') {
+    return (
+      <RendererErrorBoundary
+        alternative={alternative}
+        blockId={node.blockId}
+        nodeId={node.nodeId}
+        rendererName={node.name}
+        selectable="none"
+        showDetails={context.showDetails}
+      >
+        <RegisteredSvgRenderer context={context} node={node} />
+      </RendererErrorBoundary>
+    )
+  }
+  if (node.name === 'html-embed' || node.name === 'web-embed') {
+    return (
+      <RendererErrorBoundary
+        alternative={alternative}
+        blockId={node.blockId}
+        nodeId={node.nodeId}
+        rendererName={node.name}
+        selectable="none"
+        showDetails={context.showDetails}
+      >
+        <RegisteredEmbedRenderer
+          alternative={alternative}
+          context={context}
+          node={node}
+        />
+      </RendererErrorBoundary>
+    )
+  }
+  if (
+    node.name === 'choice-question' ||
+    node.name === 'fill-blank-question'
+  ) {
+    return (
+      <RendererErrorBoundary
+        alternative={alternative}
+        blockId={node.blockId}
+        nodeId={node.nodeId}
+        rendererName={node.name}
+        selectable="none"
+        showDetails={context.showDetails}
+      >
+        <RegisteredQuizRenderer context={context} node={node} />
+      </RendererErrorBoundary>
+    )
+  }
   return (
     <RendererErrorBoundary
       alternative={alternative}
@@ -698,6 +806,220 @@ function RegisteredComponent({
         showDetails={context.showDetails}
       />
     </RendererErrorBoundary>
+  )
+}
+
+function RegisteredQuizRenderer({
+  context,
+  node,
+}: {
+  readonly context: RenderContext
+  readonly node: RegisteredComponentNode
+}) {
+  const definition = BUILTIN_RENDERER_REGISTRY.get(node.name)
+  const projection = definition?.renderScreen(node, {
+    profile: context.profile.name,
+  })
+  if (
+    !isRendererProjection(
+      projection,
+      'browser-screen-projection',
+      node.name,
+      node.nodeId,
+    )
+  ) {
+    return (
+      <DocumentFallbackCard
+        blockId={node.blockId}
+        code="DOC-RENDER-002"
+        message="这道自测题暂时无法显示。"
+        nodeId={node.nodeId}
+        selectable="none"
+      />
+    )
+  }
+  const source = String(node.attributes['data-src'])
+  const data = projectPackageAssetData(
+    source,
+    context.articleSlug,
+    node.name,
+    context.assetManifest,
+  )
+  return node.name === 'choice-question' ? (
+    <ChoiceQuestionScreenRenderer data={data} node={node} />
+  ) : (
+    <FillBlankQuestionScreenRenderer data={data} node={node} />
+  )
+}
+
+function RegisteredEmbedRenderer({
+  alternative,
+  context,
+  node,
+}: {
+  readonly alternative: ReactNode
+  readonly context: RenderContext
+  readonly node: RegisteredComponentNode
+}) {
+  const definition = BUILTIN_RENDERER_REGISTRY.get(node.name)
+  const projection = definition?.renderScreen(node, {
+    profile: context.profile.name,
+  })
+  if (
+    !isRendererProjection(
+      projection,
+      'browser-screen-projection',
+      node.name,
+      node.nodeId,
+    )
+  ) {
+    return (
+      <DocumentFallbackCard
+        blockId={node.blockId}
+        code="DOC-RENDER-002"
+        message="这个嵌入内容暂时无法显示。"
+        nodeId={node.nodeId}
+        selectable="none"
+      >
+        {alternative}
+      </DocumentFallbackCard>
+    )
+  }
+  const height =
+    typeof node.attributes.height === 'number' ? node.attributes.height : 320
+  const title = String(node.attributes.title)
+  if (node.name === 'html-embed') {
+    const src = projectHtmlEmbedUrl(
+      context.articleSlug,
+      node.nodeId,
+      node.componentId,
+      context.assetManifest,
+    )
+    return (
+      <HtmlEmbedScreenRenderer
+        key={src}
+        alternative={alternative}
+        height={height}
+        node={node}
+        src={src}
+        title={title}
+      />
+    )
+  }
+  return (
+    <WebEmbedScreenRenderer
+      key={String(node.attributes.src)}
+      alternative={alternative}
+      height={height}
+      node={node}
+      src={String(node.attributes.src)}
+      title={title}
+    />
+  )
+}
+
+function RegisteredSvgRenderer({
+  context,
+  node,
+}: {
+  readonly context: RenderContext
+  readonly node: RegisteredComponentNode
+}) {
+  const definition = BUILTIN_RENDERER_REGISTRY.get('svg-embed')
+  const projection = definition?.renderScreen(node, {
+    profile: context.profile.name,
+  })
+  if (
+    !isRendererProjection(
+      projection,
+      'server-screen-projection',
+      'svg-embed',
+      node.nodeId,
+    )
+  ) {
+    return (
+      <DocumentFallbackCard
+        blockId={node.blockId}
+        code="DOC-RENDER-002"
+        message="这张 SVG 暂时无法显示。"
+        nodeId={node.nodeId}
+        selectable="none"
+      >
+        {node.canonicalText}
+      </DocumentFallbackCard>
+    )
+  }
+  const src = projectPackageMediaUrl(
+    String(node.attributes.src),
+    context.articleSlug,
+    context.assetManifest,
+  )
+  return (
+    <SvgScreenRenderer
+      key={src}
+      node={node}
+      showDetails={context.showDetails}
+      src={src}
+      title={String(node.attributes.title)}
+    />
+  )
+}
+
+function RegisteredMediaRenderer({
+  context,
+  node,
+}: {
+  readonly context: RenderContext
+  readonly node: RegisteredComponentNode
+}) {
+  const definition = BUILTIN_RENDERER_REGISTRY.get(node.name)
+  const projection = definition?.renderScreen(node, {
+    profile: context.profile.name,
+  })
+  if (
+    !isRendererProjection(
+      projection,
+      'server-screen-projection',
+      node.name,
+      node.nodeId,
+    )
+  ) {
+    return (
+      <DocumentFallbackCard
+        blockId={node.blockId}
+        code="DOC-RENDER-002"
+        message="这个媒体组件暂时无法显示。"
+        nodeId={node.nodeId}
+        selectable="none"
+      >
+        {node.canonicalText}
+      </DocumentFallbackCard>
+    )
+  }
+  const src = String(node.attributes.src)
+  const poster =
+    typeof node.attributes.poster === 'string'
+      ? projectPackageMediaUrl(
+          node.attributes.poster,
+          context.articleSlug,
+          context.assetManifest,
+        )
+      : undefined
+  const mediaSrc = projectPackageMediaUrl(
+    src,
+    context.articleSlug,
+    context.assetManifest,
+  )
+  return (
+    <MediaPlayer
+      key={mediaSrc}
+      kind={node.name === 'video-embed' ? 'video' : 'audio'}
+      node={node}
+      poster={poster}
+      showDetails={context.showDetails}
+      src={mediaSrc}
+      title={String(node.attributes.title)}
+    />
   )
 }
 
@@ -729,6 +1051,31 @@ function NodeDiagnosticFallback({
         {safeNodeText(node) || '此处内容不可用'}
         <span className="sr-only">（{diagnostic.code}，关联 ID：{node.nodeId}）</span>
       </span>
+    )
+  }
+  if (
+    diagnostic.code === 'DOC-SECURITY-006' &&
+    node.type === 'registeredComponent' &&
+    node.name === 'web-embed'
+  ) {
+    return (
+      <WebEmbedPreviewCard
+        node={node}
+        src={String(node.attributes.src)}
+        title={String(node.attributes.title)}
+      >
+        {node.children.length > 0 ? (
+          <DocumentNodeChildren
+            {...context}
+            inlineFallback={false}
+            nodes={node.children}
+            orphanDiagnostics={context.orphanDiagnostics}
+            parentRange={node.sourceRange}
+          />
+        ) : (
+          '该网页未进入受审 allowlist，请在新窗口中打开。'
+        )}
+      </WebEmbedPreviewCard>
     )
   }
   return (

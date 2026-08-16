@@ -574,7 +574,7 @@ function compileInline(nodes: readonly MarkdownNode[], context: CompileContext):
     if (node.type === 'image') {
       const alt = stringValue(node.alt).normalize('NFC')
       append({
-        nodes: [{ type: 'image', placement: 'inline', nodeId, src: stringValue(node.url), alt, title: typeof node.title === 'string' ? node.title : undefined, sourceRange: range, sourceText: sliceRange(context.input.source, range), ...findImageDimensions(context.input.assetManifest ?? [], context.input.articleSlug, stringValue(node.url)) }],
+        nodes: [{ type: 'image', placement: 'inline', nodeId, src: stringValue(node.url), srcSourceRange: rangeForImageUrl(node, context.input.source), alt, title: typeof node.title === 'string' ? node.title : undefined, sourceRange: range, sourceText: sliceRange(context.input.source, range), ...findImageDimensions(context.input.assetManifest ?? [], context.input.articleSlug, stringValue(node.url)) }],
         canonicalText: alt,
         segments: [atomicSegment(node, nodeId, alt, context)],
       })
@@ -594,7 +594,7 @@ function compileInline(nodes: readonly MarkdownNode[], context: CompileContext):
       }
       const alt = stringValue(node.alt).normalize('NFC')
       append({
-        nodes: [{ type: 'image', placement: 'inline', nodeId, src: definition.url, alt, title: typeof definition.title === 'string' ? definition.title : undefined, sourceRange: range, sourceText: sliceRange(context.input.source, range), ...findImageDimensions(context.input.assetManifest ?? [], context.input.articleSlug, definition.url) }],
+        nodes: [{ type: 'image', placement: 'inline', nodeId, src: definition.url, srcSourceRange: rangeForImageUrl(definition, context.input.source), alt, title: typeof definition.title === 'string' ? definition.title : undefined, sourceRange: range, sourceText: sliceRange(context.input.source, range), ...findImageDimensions(context.input.assetManifest ?? [], context.input.articleSlug, definition.url) }],
         canonicalText: alt,
         segments: [atomicSegment(node, nodeId, alt, context)],
       })
@@ -729,7 +729,7 @@ async function compileHtmlComponent(node: MarkdownNode, context: CompileContext,
   ])
   context.headingStack = savedHeadingStack
   context.sourceMap[blockId] = [atomicSegment(node, allocated.nodeId, canonicalText, context)]
-  return { type: 'registeredComponent', nodeId: allocated.nodeId, componentId: parsed.component.id, blockId, name: parsed.component.name, attributes: parsed.component.attributes, selectable: 'none', canonicalText, sourceRange: range, sourceText: sliceRange(context.input.source, range), children }
+  return { type: 'registeredComponent', nodeId: allocated.nodeId, componentId: parsed.component.id, blockId, name: parsed.component.name, attributes: parsed.component.attributes, attributeSourceRanges: Object.fromEntries(Object.entries(parsed.component.attributeOffsets).map(([name, offsets]) => [name, rangeForLogicalOffsets(node, offsets.start, offsets.end, context.input.source)])), selectable: 'none', canonicalText, sourceRange: range, sourceText: sliceRange(context.input.source, range), children }
 }
 
 async function blockIdFor(context: CompileContext, structuralPath: readonly string[], blockType: StableBlockNodeType, siblingIndex: number, canonicalText: string) {
@@ -770,6 +770,205 @@ function pointFromOffset(source: string, offset: number) {
     column: (lines.at(-1)?.length ?? 0) + 1,
     offset,
   }
+}
+
+function rangeForLogicalOffsets(
+  node: MarkdownNode,
+  start: number,
+  end: number,
+  source: string,
+): SourceRange {
+  const base = node.position?.start.offset ?? 0
+  const startOffset = node.sourceOffsetMap?.[start] ?? base + start
+  const endOffset = node.sourceOffsetMap?.[end] ?? base + end
+  return {
+    start: pointFromOffset(source, startOffset),
+    end: pointFromOffset(source, endOffset),
+  }
+}
+
+function rangeForImageUrl(
+  node: MarkdownNode,
+  source: string,
+): SourceRange {
+  const range = rangeOf(node, source)
+  const slice = source.slice(range.start.offset, range.end.offset)
+  const marker =
+    node.type === 'definition'
+      ? findUnescapedSequence(slice, ']:')
+      : findOuterImageDestinationMarker(slice)
+  if (marker < 0) return range
+  let start = marker + 2
+  while (/\s/.test(slice[start] ?? '')) start += 1
+  const angled = slice[start] === '<'
+  if (angled) start += 1
+  const end = findMarkdownDestinationEnd(slice, start, angled)
+  if (end <= start) return range
+  return {
+    start: pointFromOffset(source, range.start.offset + start),
+    end: pointFromOffset(source, range.start.offset + end),
+  }
+}
+
+function findOuterImageDestinationMarker(source: string): number {
+  if (!source.startsWith('![')) return -1
+  let brackets = 1
+  for (let index = 2; index < source.length; index += 1) {
+    const character = source[index]
+    if (character === '\\') {
+      index += 1
+      continue
+    }
+    if (character === '`') {
+      let openingEnd = index + 1
+      while (source[openingEnd] === '`') openingEnd += 1
+      const closing = findClosingBacktickRun(
+        source,
+        openingEnd,
+        openingEnd - index,
+      )
+      if (closing >= 0) {
+        index = closing + (openingEnd - index) - 1
+        continue
+      }
+    }
+    if (character === '<') {
+      const angleEnd = findInlineAngleEnd(source, index + 1)
+      if (angleEnd >= 0) {
+        index = angleEnd
+        continue
+      }
+    }
+    if (character === '[') brackets += 1
+    if (character === ']') {
+      brackets -= 1
+      if (brackets === 0) return source[index + 1] === '(' ? index : -1
+    }
+  }
+  return -1
+}
+
+function findInlineAngleEnd(source: string, start: number): number {
+  const opening = source.slice(Math.max(0, start - 1))
+  if (opening.startsWith('<!--')) {
+    const contentStart = start + 3
+    if (
+      source[contentStart] === '>' ||
+      (source[contentStart] === '-' && source[contentStart + 1] === '>')
+    ) {
+      return -1
+    }
+    const end = source.indexOf('-->', contentStart)
+    return end < 0 ? -1 : end + 2
+  }
+  if (opening.startsWith('<![CDATA[')) {
+    const end = source.indexOf(']]>', start + 8)
+    return end < 0 ? -1 : end + 2
+  }
+  if (opening.startsWith('<?')) {
+    const end = source.indexOf('?>', start + 1)
+    return end < 0 ? -1 : end + 1
+  }
+  const beginsInlineAngleToken =
+    /^[A-Za-z]/.test(source[start] ?? '') ||
+    (source[start] === '/' && /^[A-Za-z]/.test(source[start + 1] ?? '')) ||
+    (source[start] === '!' && /^[A-Z]/.test(source[start + 1] ?? ''))
+  if (!beginsInlineAngleToken) return -1
+  let quote: '"' | "'" | undefined
+  for (let index = start; index < source.length; index += 1) {
+    const character = source[index]
+    if (quote) {
+      if (character === quote) quote = undefined
+      continue
+    }
+    if (character === '"' || character === "'") {
+      quote = character
+      continue
+    }
+    if (character === '>') {
+      if (!isValidInlineAngleToken(source.slice(start - 1, index + 1))) {
+        return -1
+      }
+      return index
+    }
+  }
+  return -1
+}
+
+function isValidInlineAngleToken(token: string): boolean {
+  const tagName = '[A-Za-z][A-Za-z0-9-]*'
+  const attributeName = '[A-Za-z_:][A-Za-z0-9_.:-]*'
+  const attributeValue = `(?:[^\\s"'=<>\x60]+|'[^']*'|"[^"]*")`
+  const attribute = `(?:\\s+${attributeName}(?:\\s*=\\s*${attributeValue})?)`
+  const openingTag = new RegExp(`^<${tagName}(?:${attribute})*\\s*\\/?>$`)
+  const closingTag = new RegExp(`^<\\/${tagName}\\s*>$`)
+  const uriAutolink = /^<[A-Za-z][A-Za-z0-9+.-]{1,31}:[^<>\u0000-\u0020]*>$/
+  const emailAutolink =
+    /^<[A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]+@[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?(?:\.[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)+>$/
+  const declaration = /^<![A-Z][^>]*>$/
+  return (
+    openingTag.test(token) ||
+    closingTag.test(token) ||
+    uriAutolink.test(token) ||
+    emailAutolink.test(token) ||
+    declaration.test(token)
+  )
+}
+
+function findClosingBacktickRun(
+  source: string,
+  start: number,
+  length: number,
+): number {
+  const delimiter = '`'.repeat(length)
+  let cursor = start
+  while (cursor < source.length) {
+    const match = source.indexOf(delimiter, cursor)
+    if (match < 0) return -1
+    if (source[match - 1] !== '`' && source[match + length] !== '`') {
+      return match
+    }
+    cursor = match + length
+  }
+  return -1
+}
+
+function findUnescapedSequence(source: string, sequence: string): number {
+  for (let index = 0; index <= source.length - sequence.length; index += 1) {
+    if (source.slice(index, index + sequence.length) !== sequence) continue
+    let backslashes = 0
+    for (let cursor = index - 1; cursor >= 0 && source[cursor] === '\\'; cursor -= 1) {
+      backslashes += 1
+    }
+    if (backslashes % 2 === 0) return index
+  }
+  return -1
+}
+
+function findMarkdownDestinationEnd(
+  source: string,
+  start: number,
+  angled: boolean,
+): number {
+  let parentheses = 0
+  for (let index = start; index < source.length; index += 1) {
+    const character = source[index]
+    if (character === '\\') {
+      index += 1
+      continue
+    }
+    if (angled) {
+      if (character === '>') return index
+      continue
+    }
+    if (/\s/.test(character)) return index
+    if (character === '(') parentheses += 1
+    if (character === ')') {
+      if (parentheses === 0) return index
+      parentheses -= 1
+    }
+  }
+  return source.length
 }
 
 function rangeOf(node: MarkdownNode, source: string): SourceRange {

@@ -60,7 +60,7 @@ describe('image renderer', () => {
     const node = await imageNode(source, MANIFEST)
 
     expect(renderImageMarkdown(node)).toBe(source)
-    expect(renderImageText(node)).toBe('【图片】方括号]与中文（图注）')
+    expect(renderImageText(node)).toBe('[图片：方括号]与中文]（./media/photo.png）')
   })
 
   it('percent-encodes manifest URLs before placing them in srcset grammar', async () => {

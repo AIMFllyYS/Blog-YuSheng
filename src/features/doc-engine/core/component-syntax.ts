@@ -60,6 +60,9 @@ export type ParsedComponent = {
   name: ComponentName
   id: string
   attributes: Readonly<Record<string, string | number>>
+  attributeOffsets: Readonly<
+    Record<string, { readonly start: number; readonly end: number }>
+  >
   fallbackText: string
   fallbackSource: string
   fallbackOffset: number
@@ -104,6 +107,7 @@ export function parseComponentSyntax(
   }
 
   const attributes: Record<string, string | number> = {}
+  const attributeOffsets: Record<string, { start: number; end: number }> = {}
   const attributePattern = /([a-z][a-z\d-]*)\s*=\s*(?:"([^"]*)"|'([^']*)')/g
   let cursor = 0
   for (const attribute of rawAttributes.matchAll(attributePattern)) {
@@ -134,6 +138,14 @@ export function parseComponentSyntax(
     } else {
       attributes[key] = value
     }
+    const valueOffset =
+      match[0].indexOf(rawAttributes) +
+      attribute.index +
+      attribute[0].indexOf(value, attribute[0].indexOf('=') + 1)
+    attributeOffsets[key] = {
+      start: valueOffset,
+      end: valueOffset + value.length,
+    }
     cursor = attribute.index + attribute[0].length
   }
   if (rawAttributes.slice(cursor).trim()) {
@@ -154,6 +166,7 @@ export function parseComponentSyntax(
       name,
       id,
       attributes,
+      attributeOffsets,
       fallbackText: fallback.trim().normalize('NFC'),
       fallbackSource: fallback.trim(),
       fallbackOffset:

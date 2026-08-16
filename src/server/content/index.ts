@@ -18,6 +18,11 @@ export {
   transformContentImages,
 } from './transform-content-images'
 export { createBlogStaticParams } from './create-static-params'
+export {
+  createAnchorManifest,
+  writeAnchorManifests,
+  type AnchorManifest,
+} from './create-anchor-manifest'
 export { createPostMetadata } from './create-post-metadata'
 export {
   discoverPostSlugs,
@@ -31,3 +36,4 @@ export {
   validateArticleAssetPath,
   type AssetPathValidationResult,
 } from './validate-assets'
+export { sanitizeSvgSource, type SanitizedSvgResult } from './sanitize-svg'
