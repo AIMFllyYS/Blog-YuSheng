@@ -33,12 +33,15 @@ export type MemoryDiscussionSeed = {
 }
 
 export function createMemoryDiscussionRepository(options?: {
-  readonly writesOpen?: boolean
+  readonly writesOpen?: boolean | (() => boolean)
   readonly seed?: MemoryDiscussionSeed
   readonly now?: () => string
   readonly id?: () => string
 }): DiscussionRepository {
-  const writesOpen = options?.writesOpen ?? DISCUSSION_WRITES_OPEN
+  const isWritesOpen = () => {
+    if (typeof options?.writesOpen === 'function') return options.writesOpen()
+    return options?.writesOpen ?? DISCUSSION_WRITES_OPEN
+  }
   const now = options?.now ?? (() => new Date().toISOString())
   const nextId = options?.id ?? (() => crypto.randomUUID())
   const threads = new Map<string, DiscussionThread>()
@@ -60,7 +63,7 @@ export function createMemoryDiscussionRepository(options?: {
   const gateWrite = (
     user: CreateAnnotationInput['user'],
   ): DiscussionMutationResult<never> | undefined => {
-    if (!writesOpen) {
+    if (!isWritesOpen()) {
       return fail('WRITES_CLOSED', '注释功能将随登录开放')
     }
     if (!canCreateDiscussion(user)) {
@@ -225,7 +228,7 @@ export function createMemoryDiscussionRepository(options?: {
     },
 
     async editEntry(input: EditEntryInput) {
-      if (!writesOpen) return fail('WRITES_CLOSED', '注释功能将随登录开放')
+      if (!isWritesOpen()) return fail('WRITES_CLOSED', '注释功能将随登录开放')
       const entry = entries.get(input.entryId)
       if (!entry) return fail('NOT_FOUND', '讨论条目不存在。')
       if (!canEditEntry(input.user, entry)) {
@@ -245,7 +248,7 @@ export function createMemoryDiscussionRepository(options?: {
     },
 
     async deleteEntry(input: DeleteEntryInput) {
-      if (!writesOpen) return fail('WRITES_CLOSED', '注释功能将随登录开放')
+      if (!isWritesOpen()) return fail('WRITES_CLOSED', '注释功能将随登录开放')
       const entry = entries.get(input.entryId)
       if (!entry) return fail('NOT_FOUND', '讨论条目不存在。')
       if (!canDeleteEntry(input.user, entry)) {

@@ -12,6 +12,7 @@ export type DiscussionErrorCode =
   | 'MAX_DEPTH'
   | 'INVALID_SOURCE'
   | 'NOT_FOUND'
+  | 'STORAGE_QUOTA'
 
 export type DiscussionMutationResult<T> =
   | { readonly ok: true; readonly value: T }
