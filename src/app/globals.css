@@ -6,7 +6,9 @@
   --z-floating: 20;
   --z-nav: 30;
   --z-overlay: 40;
+  --z-drawer: 41;
   --z-toast: 50;
+  --z-boot: 60;
 }
 
 * {
@@ -24,6 +26,124 @@ body {
   background: var(--bg);
   color: var(--ink);
   font-family: var(--font-serif), "Songti SC", SimSun, serif;
+  overflow-x: hidden;
+  transition:
+    background-color var(--dur-slow) ease-out,
+    color var(--dur-slow) ease-out;
+}
+
+body.reader-is-booting {
+  overflow: hidden;
+}
+
+@keyframes reader-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  68% {
+    opacity: 1;
+    transform: scale(1.035);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+[data-tip] {
+  position: relative;
+}
+
+[data-tip]::after {
+  position: absolute;
+  z-index: 1;
+  top: calc(100% + 11px);
+  left: 50%;
+  padding: 5px 10px;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  background: var(--scroll-paper);
+  box-shadow: 0 8px 18px var(--shadow-color);
+  color: var(--ink-muted);
+  content: attr(data-tip);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  line-height: 1.4;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-50%) translateY(5px) rotate(-1deg);
+  transition:
+    opacity var(--dur-fast) ease-out,
+    transform var(--dur-fast) ease-out;
+  white-space: nowrap;
+}
+
+[data-tip]:hover::after,
+[data-tip]:focus-visible::after {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0) rotate(-1deg);
+}
+
+[data-tip][aria-expanded="true"]::after {
+  opacity: 0;
+}
+
+* {
+  scrollbar-color: transparent transparent;
+  scrollbar-width: thin;
+}
+
+*:hover {
+  scrollbar-color: var(--scrollbar) transparent;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+  background: transparent;
+}
+
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-corner {
+  border: 0;
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  border: 3px solid transparent;
+  border-radius: 999px;
+  background: transparent;
+  background-clip: content-box;
+}
+
+:hover::-webkit-scrollbar-thumb {
+  background: var(--scrollbar);
+  background-clip: content-box;
+}
+
+:hover::-webkit-scrollbar-thumb:hover,
+:hover::-webkit-scrollbar-thumb:active {
+  background: var(--scrollbar-hover);
+  background-clip: content-box;
+}
+
+html,
+body,
+[data-reader-column="right"],
+html:hover,
+body:hover,
+[data-reader-column="right"]:hover {
+  scrollbar-color: transparent transparent;
+  scrollbar-width: none;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+[data-reader-column="right"]::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
 }
 
 button,

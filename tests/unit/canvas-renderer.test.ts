@@ -74,7 +74,7 @@ describe('canvas renderer', () => {
     })
     expect(projectRendererNode(definition, 'markdown', NODE).value).toBe(NODE.sourceText)
     expect(projectRendererNode(definition, 'text', NODE).value).toBe(
-      '【交互式 Canvas】function-plot：./data/plot.json',
+      '[交互图形：function-plot]',
     )
   })
 

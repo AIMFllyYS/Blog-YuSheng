@@ -29,7 +29,7 @@ export const HTML_RENDERER_DEFINITION: RendererDefinition = Object.freeze({
   renderMarkdown: (node) => isHtmlEmbed(node) ? node.sourceText : fallback(node),
   renderText: (node) =>
     isHtmlEmbed(node)
-      ? `【HTML 沙箱】${String(node.attributes.title)}：${String(node.attributes.src)}`
+      ? `[HTML：${String(node.attributes.title ?? '')}]（${String(node.attributes.src ?? '')}）`
       : fallback(node),
   renderFallback: (node) => fallback(node),
   security: Object.freeze({

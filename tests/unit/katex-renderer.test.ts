@@ -45,9 +45,9 @@ describe('KaTeX renderer', () => {
     const display = await mathNode('$$\n\\frac{1}{3}\n$$', true)
 
     expect(renderKatexMarkdown(inline)).toBe('$E = mc^2$')
-    expect(renderKatexText(inline)).toBe('E = mc^2')
+    expect(renderKatexText(inline)).toBe('$E = mc^2$')
     expect(renderKatexMarkdown(display)).toBe('$$\n\\frac{1}{3}\n$$')
-    expect(renderKatexText(display)).toBe('\\frac{1}{3}')
+    expect(renderKatexText(display)).toBe('$$\n\\frac{1}{3}\n$$')
   })
 
   it('registers a server projection consumed by DocumentRenderer', async () => {

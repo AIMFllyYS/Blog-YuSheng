@@ -55,6 +55,25 @@ describe('build-time content repository', () => {
     ])
   })
 
+  it('sorts mixed timezone offsets by their actual instant', async () => {
+    const root = await createPostsRoot()
+    await writePost(
+      root,
+      'local-new-year',
+      validSource('本地跨年', '2026-01-01T00:30:00+08:00'),
+    )
+    await writePost(
+      root,
+      'utc-later',
+      validSource('实际更新', '2025-12-31T23:00:00Z'),
+    )
+
+    expect((await listPublishedPosts(root)).map((post) => post.slug)).toEqual([
+      'utc-later',
+      'local-new-year',
+    ])
+  })
+
   it('still validates malformed drafts before filtering them', async () => {
     const root = await createPostsRoot()
     await writePost(
