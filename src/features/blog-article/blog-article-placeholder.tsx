@@ -1,3 +1,5 @@
+import kitchenSinkAnnotations from '@/features/annotations/__fixtures__/kitchen-sink-annotations.json'
+import { toMemoryDiscussionSeed } from '@/features/annotations/__fixtures__/to-memory-seed'
 import {
   assertDocumentBuildCanContinue,
   compileArticleDocumentWithDiagnostics,
@@ -43,6 +45,11 @@ export async function BlogArticlePlaceholder({
         }
         articleSlug={post.slug}
         description={post.frontmatter.description}
+        discussionSeed={
+          post.slug === 'p0-kitchen-sink'
+            ? toMemoryDiscussionSeed(kitchenSinkAnnotations)
+            : undefined
+        }
         outline={outline}
         publishedAt={post.frontmatter.publishedAt}
         selectionIndex={selectionIndex}

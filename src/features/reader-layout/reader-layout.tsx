@@ -1,6 +1,9 @@
 import type { ReactNode } from 'react'
 import { FallingToastProvider } from '@/components/ui/falling-toast'
+import { AnnotationHighlights } from '@/features/annotations/highlights'
 import { SelectionToolbar } from '@/features/annotations/selection'
+import { DiscussionRuntimeProvider } from '@/features/discussions/runtime'
+import type { MemoryDiscussionSeed } from '@/features/discussions/repository'
 import type { SelectionDocumentIndex } from '@/features/doc-engine/selection'
 import type { DocumentOutline } from '@/features/doc-engine/toc'
 import { ArticleToc } from '@/features/toc'
@@ -14,6 +17,7 @@ type ReaderLayoutProps = {
   readonly article: ReactNode
   readonly articleSlug: string
   readonly description: string
+  readonly discussionSeed?: MemoryDiscussionSeed
   readonly outline: DocumentOutline
   readonly publishedAt: string
   readonly selectionIndex: SelectionDocumentIndex
@@ -45,6 +49,7 @@ export function ReaderLayout({
   article,
   articleSlug,
   description,
+  discussionSeed,
   outline,
   publishedAt,
   selectionIndex,
@@ -52,7 +57,12 @@ export function ReaderLayout({
 }: ReaderLayoutProps) {
   return (
     <FallingToastProvider>
-      <main className={styles.readerPage} data-reader-page>
+      <DiscussionRuntimeProvider
+        articleSlug={articleSlug}
+        seed={discussionSeed}
+        selectionIndex={selectionIndex}
+      >
+        <main className={styles.readerPage} data-reader-page>
         <ReaderChrome />
         <SelectionToolbar index={selectionIndex} />
         <section className={styles.shell} data-reader-shell>
@@ -120,8 +130,10 @@ export function ReaderLayout({
           </div>
         </section>
 
-        <ReaderLayoutInteractions annotationCount={0} />
-      </main>
+        <AnnotationHighlights />
+        <ReaderLayoutInteractions />
+        </main>
+      </DiscussionRuntimeProvider>
     </FallingToastProvider>
   )
 }

@@ -1,5 +1,7 @@
 import { expect, test, type Page } from '@playwright/test'
 
+import { revealSelectionToolbar, selectTextRange } from './helpers/select-text-range'
+
 const articlePath = '/blog/p0-kitchen-sink/'
 
 const paragraphAcrossStrong = {
@@ -29,47 +31,6 @@ async function waitForReader(page: Page) {
   }).toPass({ timeout: 30_000 })
 }
 
-async function selectTextRange(
-  page: Page,
-  blockId: string,
-  startOffset: number,
-  endOffset: number,
-) {
-  await page.evaluate(
-    ({ blockId, startOffset, endOffset }: { blockId: string; startOffset: number; endOffset: number }) => {
-      const block = document.querySelector(`[data-block-id="${blockId}"]`)
-      if (!block) throw new Error(`块 ${blockId} 不存在`)
-      const texts: Text[] = []
-      const walker = document.createTreeWalker(block, NodeFilter.SHOW_TEXT)
-      for (let node = walker.nextNode(); node; node = walker.nextNode()) {
-        const text = node as Text
-        const chrome = text.parentElement?.closest(
-          'button, figcaption, [aria-hidden="true"]',
-        )
-        if (!chrome) texts.push(text)
-      }
-      const locate = (target: number) => {
-        let seen = 0
-        for (const text of texts) {
-          if (target <= seen + text.data.length) {
-            return { node: text, offset: target - seen }
-          }
-          seen += text.data.length
-        }
-        const last = texts.at(-1)
-        if (!last) throw new Error('块内没有文本节点')
-        return { node: last, offset: last.data.length }
-      }
-      const selection = document.getSelection()
-      const range = document.createRange()
-      range.setStart(locate(startOffset).node, locate(startOffset).offset)
-      range.setEnd(locate(endOffset).node, locate(endOffset).offset)
-      selection?.removeAllRanges()
-      selection?.addRange(range)
-    },
-    { blockId, startOffset, endOffset },
-  )
-}
 
 async function selectCrossBlocks(page: Page, fromBlockId: string, toBlockId: string) {
   await page.evaluate(
@@ -94,23 +55,17 @@ async function selectCrossBlocks(page: Page, fromBlockId: string, toBlockId: str
   )
 }
 
-async function revealToolbar(page: Page) {
-  await page.evaluate(() => {
-    document.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }))
-  })
-  await expect(page.locator('[data-sel-bar]')).toHaveClass(/is-on/)
-}
 
 test('划词后只出现复制和注释，没有询问或评论', async ({ page }) => {
   await waitForReader(page)
-  await expect(page.getByText('划词后，注释会出现在这里')).toBeVisible()
+  await expect(page.getByText('这里同时验证中文与协议正文')).toBeVisible()
   await selectTextRange(
     page,
     paragraphAcrossStrong.blockId,
     paragraphAcrossStrong.startOffset,
     paragraphAcrossStrong.endOffset,
   )
-  await revealToolbar(page)
+  await revealSelectionToolbar(page)
 
   const toolbar = page.getByRole('toolbar', { name: '划词操作' })
   await expect(toolbar).toBeVisible()
@@ -129,7 +84,7 @@ test('复制选区后落下「已复制」通知', async ({ page, context }) => 
     paragraphAcrossStrong.startOffset,
     paragraphAcrossStrong.endOffset,
   )
-  await revealToolbar(page)
+  await revealSelectionToolbar(page)
   await page.getByRole('toolbar', { name: '划词操作' }).getByRole('button', { name: '复制' }).click()
   await expect(page.locator('[data-toast-layer]')).toContainText('已复制')
   await expect(page.getByRole('status').filter({ hasText: '已复制' })).toHaveCount(1)
@@ -143,7 +98,7 @@ test('注释把选区带到右栏并聚焦输入框', async ({ page }) => {
     paragraphAcrossStrong.startOffset,
     paragraphAcrossStrong.endOffset,
   )
-  await revealToolbar(page)
+  await revealSelectionToolbar(page)
   await page.getByRole('toolbar', { name: '划词操作' }).getByRole('button', { name: '注释' }).click()
 
   const workspace = page.locator('[data-reader-workspace]')
@@ -158,7 +113,7 @@ test('注释把选区带到右栏并聚焦输入框', async ({ page }) => {
 test('跨段落选区点注释会提示不可跨块', async ({ page }) => {
   await waitForReader(page)
   await selectCrossBlocks(page, crossParagraph.fromBlockId, crossParagraph.toBlockId)
-  await revealToolbar(page)
+  await revealSelectionToolbar(page)
   await page.getByRole('toolbar', { name: '划词操作' }).getByRole('button', { name: '注释' }).click()
   await expect(page.locator('[data-toast-layer]')).toContainText('不可跨段落/块注释')
 })
@@ -168,7 +123,7 @@ test('中栏顶部选区的工具条按钮能点到', async ({ page }) => {
   const heading = page.locator(`[data-block-id="${heading2Full.blockId}"]`)
   await heading.scrollIntoViewIfNeeded()
   await selectTextRange(page, heading2Full.blockId, heading2Full.startOffset, heading2Full.endOffset)
-  await revealToolbar(page)
+  await revealSelectionToolbar(page)
 
   const annotate = page.getByRole('toolbar', { name: '划词操作' }).getByRole('button', { name: '注释' })
   await expect(annotate).toBeVisible()

@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState, type MouseEvent as ReactMouseEvent } from 'react'
+import { useDiscussionRuntime } from '@/features/discussions/runtime'
 import styles from './reader-layout.module.css'
 
 const REVEAL_DAMPING = 0.035
@@ -23,7 +24,9 @@ const digitStrokes: Readonly<Record<string, readonly string[]>> = {
   '9': ['M5.1 20.2C9 22.1 15.1 19.1 14.7 12.9C14.4 6.8 10 3.1 6.7 4.5C3.5 5.9 3.7 12.4 8.3 13.6C12 14.6 14.5 11.9 14.6 11.7'],
 }
 
-export function ReaderLayoutInteractions({ annotationCount }: { readonly annotationCount: number }) {
+export function ReaderLayoutInteractions() {
+  const { threads } = useDiscussionRuntime()
+  const annotationCount = threads.length
   const [drawer, setDrawer] = useState<'left' | 'right' | null>(null)
   const [rightCollapsed, setRightCollapsed] = useState(false)
   const [rightPhase, setRightPhase] = useState<'idle' | 'revealing' | 'hiding'>('idle')
