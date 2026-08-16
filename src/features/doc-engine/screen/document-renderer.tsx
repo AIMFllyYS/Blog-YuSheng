@@ -30,6 +30,7 @@ import { ImageScreenRenderer } from '../renderers/image/screen-renderer'
 import { projectPackageMediaUrl } from '../renderers/media/asset-projection'
 import { MediaPlayer } from '../renderers/media/media-player'
 import { CanvasScreenRenderer } from '../renderers/canvas/screen-renderer'
+import { SvgScreenRenderer } from '../renderers/svg/screen-renderer'
 import { MermaidScreenRenderer } from '../renderers/mermaid/screen-renderer'
 import { sanitizeDiscussionRead } from '../security'
 import { DocumentFallbackCard } from './fallback-card'
@@ -730,6 +731,20 @@ function RegisteredComponent({
       </RendererErrorBoundary>
     )
   }
+  if (node.name === 'svg-embed') {
+    return (
+      <RendererErrorBoundary
+        alternative={alternative}
+        blockId={node.blockId}
+        nodeId={node.nodeId}
+        rendererName={node.name}
+        selectable="none"
+        showDetails={context.showDetails}
+      >
+        <RegisteredSvgRenderer context={context} node={node} />
+      </RendererErrorBoundary>
+    )
+  }
   return (
     <RendererErrorBoundary
       alternative={alternative}
@@ -747,6 +762,53 @@ function RegisteredComponent({
         showDetails={context.showDetails}
       />
     </RendererErrorBoundary>
+  )
+}
+
+function RegisteredSvgRenderer({
+  context,
+  node,
+}: {
+  readonly context: RenderContext
+  readonly node: RegisteredComponentNode
+}) {
+  const definition = BUILTIN_RENDERER_REGISTRY.get('svg-embed')
+  const projection = definition?.renderScreen(node, {
+    profile: context.profile.name,
+  })
+  if (
+    !isRendererProjection(
+      projection,
+      'server-screen-projection',
+      'svg-embed',
+      node.nodeId,
+    )
+  ) {
+    return (
+      <DocumentFallbackCard
+        blockId={node.blockId}
+        code="DOC-RENDER-002"
+        message="这张 SVG 暂时无法显示。"
+        nodeId={node.nodeId}
+        selectable="none"
+      >
+        {node.canonicalText}
+      </DocumentFallbackCard>
+    )
+  }
+  const src = projectPackageMediaUrl(
+    String(node.attributes.src),
+    context.articleSlug,
+    context.assetManifest,
+  )
+  return (
+    <SvgScreenRenderer
+      key={src}
+      node={node}
+      showDetails={context.showDetails}
+      src={src}
+      title={String(node.attributes.title)}
+    />
   )
 }
 

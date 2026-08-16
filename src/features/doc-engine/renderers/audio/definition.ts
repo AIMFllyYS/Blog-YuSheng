@@ -20,7 +20,11 @@ export const AUDIO_RENDERER_DEFINITION: RendererDefinition = Object.freeze({
       node.name === 'audio-embed' && typeof node.attributes.src === 'string'
         ? node.attributes.src
         : undefined
-    return src ? Object.freeze([{ source: src, kind: 'local' as const }]) : []
+    return src
+      ? Object.freeze([
+          { source: src, kind: 'local' as const, attribute: 'src' },
+        ])
+      : []
   },
   renderScreen: (node) => projection(node),
   renderMarkdown: (node) =>

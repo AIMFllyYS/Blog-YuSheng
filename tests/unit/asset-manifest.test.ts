@@ -32,6 +32,13 @@ describe('content asset manifest', () => {
     )
     expect(paths).toContain('blog/p0-kitchen-sink/media/video/demo.mp4')
     expect(paths).toContain('blog/p0-kitchen-sink/data/function-plot.json')
+    expect(
+      manifest.find(
+        (entry) =>
+          entry.outputPath ===
+          'blog/p0-kitchen-sink/media/svg/safe-diagram.svg',
+      )?.transform,
+    ).toBe('sanitize-svg')
     expect(paths).toContain(
       'embeds/p0-kitchen-sink/mini-card/index.html',
     )
@@ -79,11 +86,324 @@ describe('content asset manifest', () => {
       outputRoot,
       'embeds/p0-kitchen-sink/mini-card/index.html',
     )
+    const copiedSvg = path.join(
+      outputRoot,
+      'blog/p0-kitchen-sink/media/svg/safe-diagram.svg',
+    )
     await expect(verifyStaticOutput(outputRoot)).resolves.toMatchObject({
       fileCount: manifest.length + 1,
     })
     expect(await import('node:fs/promises').then((fs) => fs.stat(copied))).toMatchObject({
       size: 888,
+    })
+    const sanitizedSvg = await import('node:fs/promises').then((fs) =>
+      fs.readFile(copiedSvg, 'utf8'),
+    )
+    expect(sanitizedSvg).toContain('<svg xmlns="http://www.w3.org/2000/svg"')
+    expect(sanitizedSvg).not.toMatch(/<script|foreignObject|\son[a-z]+=/i)
+  })
+
+  it('blocks unsafe SVG before it can enter the asset manifest', async () => {
+    const postsRoot = await createPostsRoot()
+    await writeArticle(
+      postsRoot,
+      'unsafe-svg',
+      '<svg-embed id="unsafe" src="./media/svg/unsafe.svg" title="不安全" />',
+    )
+    const svgRoot = path.join(postsRoot, 'unsafe-svg/media/svg')
+    await mkdir(svgRoot, { recursive: true })
+    await writeFile(
+      path.join(svgRoot, 'unsafe.svg'),
+      '<svg xmlns="http://www.w3.org/2000/svg"><rect onload="alert(1)" /></svg>',
+      'utf8',
+    )
+
+    await expect(createAssetManifest(postsRoot)).rejects.toMatchObject({
+      diagnostics: [
+        expect.objectContaining({
+          code: 'ASSET_SVG_UNSAFE',
+          nodeId: 'unsafe',
+          sourceRange: expect.objectContaining({
+            start: expect.objectContaining({ line: 9, column: 29 }),
+          }),
+        }),
+      ],
+    })
+  })
+
+  it('propagates compiler diagnostics and never collects a schema-invalid component', async () => {
+    const postsRoot = await createPostsRoot()
+    await writeArticle(
+      postsRoot,
+      'missing-svg-src',
+      '<svg-embed id="missing" title="缺少资源" />',
+    )
+
+    await expect(createAssetManifest(postsRoot)).rejects.toMatchObject({
+      diagnostics: [
+        expect.objectContaining({
+          code: 'DOC-REGISTRY-002',
+          message: expect.not.stringContaining('undefined'),
+        }),
+      ],
+    })
+  })
+
+  it('points Markdown image path diagnostics at the URL token', async () => {
+    const postsRoot = await createPostsRoot()
+    await writeArticle(
+      postsRoot,
+      'image-range',
+      '![越界图](../outside.png)',
+    )
+
+    await expect(createAssetManifest(postsRoot)).rejects.toMatchObject({
+      diagnostics: [
+        expect.objectContaining({
+          code: 'ARTICLE_ASSET_PATH_INVALID',
+          sourceRange: expect.objectContaining({
+            start: expect.objectContaining({ line: 9, column: 8 }),
+          }),
+        }),
+      ],
+    })
+  })
+
+  it('points referenced-image diagnostics at the effective definition URL', async () => {
+    const postsRoot = await createPostsRoot()
+    await writeArticle(
+      postsRoot,
+      'image-definition-range',
+      '![引用][asset]\n\n[asset]: ../outside.png',
+    )
+
+    await expect(createAssetManifest(postsRoot)).rejects.toMatchObject({
+      diagnostics: [
+        expect.objectContaining({
+          code: 'ARTICLE_ASSET_PATH_INVALID',
+          sourceRange: expect.objectContaining({
+            start: expect.objectContaining({ line: 11, column: 10 }),
+          }),
+        }),
+      ],
+    })
+  })
+
+  it('maps component asset ranges through a Markdown container prefix', async () => {
+    const postsRoot = await createPostsRoot()
+    await writeArticle(
+      postsRoot,
+      'nested-svg-range',
+      '> <svg-embed id="nested" src="../outside.svg" title="嵌套" />',
+    )
+
+    await expect(createAssetManifest(postsRoot)).rejects.toMatchObject({
+      diagnostics: [
+        expect.objectContaining({
+          code: 'ARTICLE_ASSET_PATH_INVALID',
+          sourceRange: expect.objectContaining({
+            start: expect.objectContaining({ line: 9, column: 31 }),
+          }),
+        }),
+      ],
+    })
+  })
+
+  it.each([
+    {
+      label: 'direct entity',
+      body: '![x](../foo&amp;bar.png)',
+      line: 9,
+      column: 6,
+      raw: '../foo&amp;bar.png',
+    },
+    {
+      label: 'definition entity',
+      body: '![x][a]\n\n[a]: ../foo&amp;bar.png',
+      line: 11,
+      column: 6,
+      raw: '../foo&amp;bar.png',
+    },
+    {
+      label: 'direct escape',
+      body: '![x](../foo\\(bar\\).png)',
+      line: 9,
+      column: 6,
+      raw: '../foo\\(bar\\).png',
+    },
+    {
+      label: 'definition escape',
+      body: '![x][a]\n\n[a]: ../foo\\(bar\\).png',
+      line: 11,
+      column: 6,
+      raw: '../foo\\(bar\\).png',
+    },
+  ])('keeps the raw Markdown URL range for $label', async (fixture) => {
+    const postsRoot = await createPostsRoot()
+    await writeArticle(
+      postsRoot,
+      `raw-range-${fixture.label.replace(' ', '-')}`,
+      fixture.body,
+    )
+
+    await expect(createAssetManifest(postsRoot)).rejects.toMatchObject({
+      diagnostics: [
+        expect.objectContaining({
+          code: 'ARTICLE_ASSET_PATH_INVALID',
+          sourceRange: {
+            start: expect.objectContaining({
+              line: fixture.line,
+              column: fixture.column,
+            }),
+            end: expect.objectContaining({
+              line: fixture.line,
+              column: fixture.column + fixture.raw.length,
+            }),
+          },
+        }),
+      ],
+    })
+  })
+
+  it.each([
+    ['nested link', '![a [x](y)](../outside.png)'],
+    ['nested image', '![a ![x](y)](../outside.png)'],
+    ['code span opening bracket', '![a `[`](../outside.png)'],
+    ['code span closing bracket', '![a `]`](../outside.png)'],
+    [
+      'inline html attribute bracket',
+      '![a <span data-x="[">x</span>](../outside.png)',
+    ],
+    ['autolink-like bracket', '![a <x[y]>](../outside.png)'],
+    ['literal less-than with angled destination', '![a < foo](<../outside.png>)'],
+    [
+      'literal less-than with greater-than in title',
+      '![a < foo](../outside.png "x > y")',
+    ],
+    [
+      'literal tag-like text with unmatched double quote',
+      '![a <foo "](../outside.png "x > y")',
+    ],
+    [
+      'literal tag-like text with unmatched single quote',
+      `![a <foo '](../outside.png "x > y")`,
+    ],
+    [
+      'unquoted HTML attribute containing an image marker',
+      '![a <span data-x=](>x</span>](../outside.png)',
+    ],
+    [
+      'URI autolink containing an image marker',
+      '![a <http://x/](foo)>](../outside.png)',
+    ],
+    [
+      'declaration containing an image marker',
+      '![a <!FOO ]( [>](../outside.png)',
+    ],
+    [
+      'invalid tag-like angle content containing a bracket',
+      '![a <foo [>x]](../outside.png)',
+    ],
+    [
+      'invalid short comment opener containing a bracket',
+      '![a <!--> [-->x]](../outside.png)',
+    ],
+    [
+      'invalid dash comment opener containing a bracket',
+      '![a <!---> [-->x]](../outside.png)',
+    ],
+    [
+      'accepted comment with internal double dash and bracket',
+      '![a <!-- foo -- [ -->x](../outside.png)',
+    ],
+    [
+      'accepted comment with trailing dash content and bracket',
+      '![a <!-- foo [ - -->x](../outside.png)',
+    ],
+  ])('uses the outer image destination for %s alt content', async (label, body) => {
+    const postsRoot = await createPostsRoot()
+    await writeArticle(
+      postsRoot,
+      `outer-image-${label.toLowerCase().replace(/ /g, '-')}`,
+      body,
+    )
+    const rawUrl = '../outside.png'
+    const column = body.indexOf(rawUrl) + 1
+
+    await expect(createAssetManifest(postsRoot)).rejects.toMatchObject({
+      diagnostics: [
+        expect.objectContaining({
+          code: 'ARTICLE_ASSET_PATH_INVALID',
+          sourceRange: {
+            start: expect.objectContaining({ line: 9, column }),
+            end: expect.objectContaining({
+              line: 9,
+              column: column + rawUrl.length,
+            }),
+          },
+        }),
+      ],
+    })
+  })
+
+  it('uses Canonical IR assets when quoted greater-than and multiline attributes are present', async () => {
+    const postsRoot = await createPostsRoot()
+    await writeArticle(
+      postsRoot,
+      'quoted-svg',
+      [
+        '<svg-embed',
+        '  title="A > B"',
+        '  src="./media/svg/safe.svg"',
+        '  id="diagram"',
+        '/>',
+        '',
+        '![同一安全资源](./media/svg/safe.svg)',
+      ].join('\n'),
+    )
+    const svgRoot = path.join(postsRoot, 'quoted-svg/media/svg')
+    await mkdir(svgRoot, { recursive: true })
+    await writeFile(
+      path.join(svgRoot, 'safe.svg'),
+      '<svg xmlns="http://www.w3.org/2000/svg"><title>A &gt; B</title><path d="M0 0h10" /></svg>',
+      'utf8',
+    )
+
+    const manifest = await createAssetManifest(postsRoot)
+    expect(manifest).toHaveLength(1)
+    expect(manifest[0]).toMatchObject({
+      nodeId: 'diagram',
+      nodeName: 'svg-embed',
+      transform: 'sanitize-svg',
+    })
+  })
+
+  it('cannot publish an unsafe SVG through a second Markdown image reference', async () => {
+    const postsRoot = await createPostsRoot()
+    await writeArticle(
+      postsRoot,
+      'dual-svg',
+      [
+        '<svg-embed id="diagram" title="A > B" src="./media/svg/unsafe.svg" />',
+        '',
+        '![also](./media/svg/unsafe.svg)',
+      ].join('\n'),
+    )
+    const svgRoot = path.join(postsRoot, 'dual-svg/media/svg')
+    await mkdir(svgRoot, { recursive: true })
+    await writeFile(
+      path.join(svgRoot, 'unsafe.svg'),
+      '<svg xmlns="http://www.w3.org/2000/svg"><script>alert(1)</script></svg>',
+      'utf8',
+    )
+
+    await expect(createAssetManifest(postsRoot)).rejects.toMatchObject({
+      diagnostics: [
+        expect.objectContaining({
+          code: 'ASSET_SVG_UNSAFE',
+          nodeId: 'diagram',
+        }),
+      ],
     })
   })
 
@@ -162,14 +482,14 @@ describe('content asset manifest', () => {
     await writeArticle(
       postsRoot,
       'duplicate-post',
-      '<web-embed id="same" src="https://example.com" title="一" />\n' +
-        '<web-embed id="same" src="https://example.com" title="二" />',
+      '<web-embed id="same" src="https://example.com" title="一">\n替代一。\n</web-embed>\n\n' +
+        '<web-embed id="same" src="https://example.com" title="二">\n替代二。\n</web-embed>',
     )
 
     await expect(createAssetManifest(postsRoot)).rejects.toMatchObject({
-      diagnostics: [
+      diagnostics: expect.arrayContaining([
         expect.objectContaining({ code: 'ASSET_COMPONENT_ID_DUPLICATE' }),
-      ],
+      ]),
     })
   })
 
@@ -273,7 +593,7 @@ describe('content asset manifest', () => {
     await writeArticle(
       postsRoot,
       'binary-script',
-      '<html-embed id="demo" src="./embeds/demo/index.html" title="二进制" />',
+      '<html-embed id="demo" src="./embeds/demo/index.html" title="二进制">\n安全替代。\n</html-embed>',
     )
     const embedRoot = path.join(postsRoot, 'binary-script/embeds/demo')
     await mkdir(embedRoot, { recursive: true })

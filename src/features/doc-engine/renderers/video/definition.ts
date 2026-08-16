@@ -20,8 +20,8 @@ export const VIDEO_RENDERER_DEFINITION: RendererDefinition = Object.freeze({
     const src = stringAttribute(node, 'src')
     const poster = stringAttribute(node, 'poster')
     return Object.freeze([
-      ...(src ? [{ source: src, kind: 'local' as const }] : []),
-      ...(poster ? [{ source: poster, kind: 'local' as const }] : []),
+      ...(src ? [{ source: src, kind: 'local' as const, attribute: 'src' }] : []),
+      ...(poster ? [{ source: poster, kind: 'local' as const, attribute: 'poster' }] : []),
     ])
   },
   renderScreen: (node) => projection(node, 'video-embed'),

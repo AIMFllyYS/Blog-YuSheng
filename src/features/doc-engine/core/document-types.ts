@@ -161,6 +161,7 @@ export type MermaidNode = SemanticBlockBase<'mermaid'> & {
 
 type ImageFields = {
   readonly src: string
+  readonly srcSourceRange?: SourceRange
   readonly alt: string
   readonly title?: string
   readonly width?: number
@@ -181,6 +182,7 @@ export type RegisteredComponentNode = SemanticBlockBase<'registeredComponent'> &
   readonly name: string
   readonly componentId: string
   readonly attributes: Readonly<Record<string, unknown>>
+  readonly attributeSourceRanges?: Readonly<Record<string, SourceRange>>
   readonly children: readonly BlockNode[]
   readonly selectable: 'text-range' | 'whole-node' | 'none'
 }

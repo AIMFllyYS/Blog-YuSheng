@@ -20,7 +20,11 @@ export const CANVAS_RENDERER_DEFINITION: RendererDefinition = Object.freeze({
     node.name === 'canvas-render' &&
     typeof node.attributes['data-src'] === 'string'
       ? Object.freeze([
-          { source: node.attributes['data-src'], kind: 'local' as const },
+          {
+            source: node.attributes['data-src'],
+            kind: 'local' as const,
+            attribute: 'data-src',
+          },
         ])
       : [],
   renderScreen: (node) =>

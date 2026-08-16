@@ -44,11 +44,15 @@ describe('video and audio renderers', () => {
       nodeId: audio.nodeId,
     })
     expect(videoDefinition?.collectAssets(video)).toEqual([
-      { source: './media/video/demo.mp4', kind: 'local' },
-      { source: './media/images/海报 poster.png', kind: 'local' },
+      { source: './media/video/demo.mp4', kind: 'local', attribute: 'src' },
+      {
+        source: './media/images/海报 poster.png',
+        kind: 'local',
+        attribute: 'poster',
+      },
     ])
     expect(audioDefinition?.collectAssets(audio)).toEqual([
-      { source: './media/audio/demo.mp3', kind: 'local' },
+      { source: './media/audio/demo.mp3', kind: 'local', attribute: 'src' },
     ])
   })
 

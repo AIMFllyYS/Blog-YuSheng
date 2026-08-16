@@ -8,6 +8,7 @@ import { MERMAID_RENDERER_DEFINITION } from '../renderers/mermaid'
 import { VIDEO_RENDERER_DEFINITION } from '../renderers/video'
 import { AUDIO_RENDERER_DEFINITION } from '../renderers/audio'
 import { CANVAS_RENDERER_DEFINITION } from '../renderers/canvas'
+import { SVG_RENDERER_DEFINITION } from '../renderers/svg'
 import { RendererRegistry } from './renderer-registry'
 import type {
   RenderProfile,
@@ -27,9 +28,6 @@ const ARTICLE_PROFILES = [
 const safeBuiltins = new Set(['markdown', 'code', 'katex', 'mermaid'])
 
 const COMPONENT_SCHEMAS = {
-  'svg-embed': z
-    .object({ id: z.string(), src: z.string(), title: z.string() })
-    .strict(),
   'html-embed': z
     .object({ id: z.string(), src: z.string(), title: z.string(), height: z.number().int().positive().optional() })
     .strict(),
@@ -58,6 +56,7 @@ function createDefinition(
     trustLevel?: RendererDefinition['security']['trustLevel']
     allowsScript?: boolean
     allowsExternalResource?: boolean
+    assetAttributes?: readonly string[]
     selectable?: RendererDefinition['selectable']
   } = {},
 ): RendererDefinition {
@@ -74,7 +73,15 @@ function createDefinition(
       if (!parsed.success) throw new Error(`${name} renderer 属性未通过 schema。`)
       return parsed.data
     },
-    collectAssets: () => [],
+    collectAssets: (node) =>
+      Object.freeze(
+        (options.assetAttributes ?? []).flatMap((attribute) => {
+          const source = node.attributes[attribute]
+          return typeof source === 'string'
+            ? [{ source, kind: 'local' as const, attribute }]
+            : []
+        }),
+      ),
     renderScreen: (node) => fallbackValue(name, node),
     renderFallback: (node) => fallbackValue(name, node),
     security: {
@@ -95,15 +102,12 @@ const DEFINITIONS: readonly RendererDefinition[] = Object.freeze([
   VIDEO_RENDERER_DEFINITION,
   AUDIO_RENDERER_DEFINITION,
   CANVAS_RENDERER_DEFINITION,
-  createDefinition('svg-embed', {
-    schema: COMPONENT_SCHEMAS['svg-embed'],
-    trustLevel: 'registered',
-    selectable: 'none',
-  }),
+  SVG_RENDERER_DEFINITION,
   createDefinition('html-embed', {
     schema: COMPONENT_SCHEMAS['html-embed'],
     trustLevel: 'sandboxed',
     allowsScript: true,
+    assetAttributes: ['src'],
     selectable: 'none',
   }),
   createDefinition('web-embed', {
@@ -115,11 +119,13 @@ const DEFINITIONS: readonly RendererDefinition[] = Object.freeze([
   createDefinition('choice-question', {
     schema: COMPONENT_SCHEMAS['choice-question'],
     trustLevel: 'registered',
+    assetAttributes: ['data-src'],
     selectable: 'none',
   }),
   createDefinition('fill-blank-question', {
     schema: COMPONENT_SCHEMAS['fill-blank-question'],
     trustLevel: 'registered',
+    assetAttributes: ['data-src'],
     selectable: 'none',
   }),
 ])

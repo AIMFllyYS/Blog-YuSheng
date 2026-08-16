@@ -31,3 +31,4 @@ export {
   validateArticleAssetPath,
   type AssetPathValidationResult,
 } from './validate-assets'
+export { sanitizeSvgSource, type SanitizedSvgResult } from './sanitize-svg'

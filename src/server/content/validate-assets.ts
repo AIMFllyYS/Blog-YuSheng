@@ -20,6 +20,7 @@ type AssetPathInput = {
   relativePath: string
   source: string
   sourceOffset: number
+  sourceLength?: number
 }
 
 export async function validateArticleAssetPath({
@@ -28,10 +29,17 @@ export async function validateArticleAssetPath({
   relativePath,
   source,
   sourceOffset,
+  sourceLength,
 }: AssetPathInput): Promise<AssetPathValidationResult> {
   const decoded = decodeSafeRelativePath(relativePath)
   if (!decoded) {
-    return invalidPathResult(source, articleSlug, sourceOffset, relativePath)
+    return invalidPathResult(
+      source,
+      articleSlug,
+      sourceOffset,
+      relativePath,
+      sourceLength,
+    )
   }
 
   let realRoot: string
@@ -49,7 +57,7 @@ export async function validateArticleAssetPath({
           'ARTICLE_ASSET_NOT_FOUND',
           `文章资源不存在：${relativePath}`,
           sourceOffset,
-          relativePath.length,
+          sourceLength ?? relativePath.length,
         ),
       ],
     }
@@ -62,7 +70,13 @@ export async function validateArticleAssetPath({
     relativeToRoot.startsWith(`..${path.sep}`) ||
     path.isAbsolute(relativeToRoot)
   ) {
-    return invalidPathResult(source, articleSlug, sourceOffset, relativePath)
+    return invalidPathResult(
+      source,
+      articleSlug,
+      sourceOffset,
+      relativePath,
+      sourceLength,
+    )
   }
 
   return {
@@ -118,6 +132,7 @@ function invalidPathResult(
   articleSlug: string,
   sourceOffset: number,
   relativePath: string,
+  sourceLength = relativePath.length,
 ): AssetPathValidationResult {
   return {
     ok: false,
@@ -128,7 +143,7 @@ function invalidPathResult(
         'ARTICLE_ASSET_PATH_INVALID',
         `文章资源路径必须留在当前文章包内：${relativePath}`,
         sourceOffset,
-        relativePath.length,
+        sourceLength,
       ),
     ],
   }

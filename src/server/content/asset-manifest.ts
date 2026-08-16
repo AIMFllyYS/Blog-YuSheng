@@ -3,11 +3,12 @@ import 'server-only'
 import { readFile, readdir, realpath, stat } from 'node:fs/promises'
 import path from 'node:path'
 import { ContentBuildError } from './content-error'
-import { collectTemporaryAssetReferences } from './collect-temporary-assets'
+import { collectAssetReferences } from './collect-asset-references'
 import { readAllPosts } from './discover-posts'
 import { validateArticleAssetPath } from './validate-assets'
 import type { FrontmatterDiagnostic, SourceRange } from './validate-frontmatter'
 import { getCanvasRendererRegistration } from '../../features/doc-engine/registry/canvas-renderer-registry'
+import { sanitizeSvgSource } from './sanitize-svg'
 
 export const MAX_STATIC_FILE_BYTES = 25 * 1024 * 1024
 export const MAX_STATIC_FILE_COUNT = 20_000
@@ -22,6 +23,7 @@ export type AssetManifestEntry = {
   outputPath: string
   publicUrl: string
   bytes: number
+  transform?: 'sanitize-svg'
   derivedFrom?: string
   image?: {
     width: number
@@ -40,7 +42,8 @@ export async function createAssetManifest(postsRoot?: string) {
   const outputOwners = new Map<string, string>()
 
   for (const post of posts) {
-    const collected = collectTemporaryAssetReferences(post)
+    const collected = await collectAssetReferences(post)
+    diagnostics.push(...collected.diagnostics)
     const seenIds = new Set<string>()
     for (const component of collected.componentIds) {
       if (seenIds.has(component.id)) {
@@ -64,6 +67,9 @@ export async function createAssetManifest(postsRoot?: string) {
         relativePath: reference.relativePath,
         source: post.source,
         sourceOffset: reference.sourceRange.start.offset,
+        sourceLength:
+          reference.sourceRange.end.offset -
+          reference.sourceRange.start.offset,
       })
       if (!validation.ok) {
         diagnostics.push(
@@ -144,6 +150,22 @@ export async function createAssetManifest(postsRoot?: string) {
           )
           continue
         }
+        if (reference.nodeName === 'svg-embed') {
+          const source = decodeStrictText(await readFile(sourcePath))
+          const sanitized = source ? sanitizeSvgSource(source) : undefined
+          if (!sanitized?.ok) {
+            diagnostics.push(
+              diagnostic(
+                post.slug,
+                'ASSET_SVG_UNSAFE',
+                `SVG 未通过构建期安全清洗：${sanitized?.reason ?? reference.relativePath}`,
+                reference.sourceRange,
+                reference.nodeId,
+              ),
+            )
+            continue
+          }
+        }
         if (
           reference.nodeName === 'canvas-render' &&
           reference.attribute === 'data-src'
@@ -201,6 +223,8 @@ export async function createAssetManifest(postsRoot?: string) {
           outputPath,
           publicUrl,
           bytes: file.size,
+          transform:
+            reference.nodeName === 'svg-embed' ? 'sanitize-svg' : undefined,
           sourceRange: reference.sourceRange,
         })
       }
@@ -284,11 +308,16 @@ async function collectEmbedFiles(
 }
 
 function deduplicateEntries(entries: AssetManifestEntry[]) {
-  return [
-    ...new Map(
-      entries.map((entry) => [entry.outputPath.toLowerCase(), entry]),
-    ).values(),
-  ].sort((a, b) => a.outputPath.localeCompare(b.outputPath, 'en'))
+  const deduplicated = new Map<string, AssetManifestEntry>()
+  for (const entry of entries) {
+    const key = entry.outputPath.toLowerCase()
+    const previous = deduplicated.get(key)
+    if (previous?.transform === 'sanitize-svg') continue
+    deduplicated.set(key, entry)
+  }
+  return [...deduplicated.values()].sort((a, b) =>
+    a.outputPath.localeCompare(b.outputPath, 'en'),
+  )
 }
 
 function diagnostic(
