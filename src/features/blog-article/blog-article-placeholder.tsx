@@ -43,6 +43,7 @@ export async function BlogArticlePlaceholder({
         description={post.frontmatter.description}
         outline={outline}
         publishedAt={post.frontmatter.publishedAt}
+        title={post.frontmatter.title}
       />
     </>
   )

@@ -83,6 +83,7 @@ export default async function TocDevelopmentPage() {
       description={frontmatter.description}
       outline={outline}
       publishedAt={frontmatter.publishedAt}
+      title={frontmatter.title}
     />
   )
 }

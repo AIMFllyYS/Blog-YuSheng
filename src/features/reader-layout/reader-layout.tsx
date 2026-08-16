@@ -4,6 +4,7 @@ import { ArticleToc } from '@/features/toc'
 import { ReaderDivider } from './reader-divider'
 import { ReaderChrome } from './reader-chrome'
 import { ReaderLayoutInteractions } from './reader-layout-interactions'
+import { ReaderWorkspace } from './reader-workspace'
 import styles from './reader-layout.module.css'
 
 type ReaderLayoutProps = {
@@ -12,6 +13,7 @@ type ReaderLayoutProps = {
   readonly description: string
   readonly outline: DocumentOutline
   readonly publishedAt: string
+  readonly title: string
 }
 
 const wavePaths = {
@@ -41,6 +43,7 @@ export function ReaderLayout({
   description,
   outline,
   publishedAt,
+  title,
 }: ReaderLayoutProps) {
   return (
     <main className={styles.readerPage} data-reader-page>
@@ -80,15 +83,7 @@ export function ReaderLayout({
           id="reader-right-drawer"
           tabIndex={-1}
         >
-          <div className={styles.panelHeading}>
-            <span className={styles.workspaceTab}>注释</span>
-            <span>评论</span>
-            <span>Agent</span>
-          </div>
-          <div className={styles.placeholderPanel}>
-            <p>边读边记</p>
-            <span>工作区将在后续阶段接入注释、评论与电子分身。</span>
-          </div>
+          <ReaderWorkspace articleTitle={title} />
         </aside>
       </section>
 
@@ -118,7 +113,7 @@ export function ReaderLayout({
         </div>
       </section>
 
-      <ReaderLayoutInteractions />
+      <ReaderLayoutInteractions annotationCount={0} />
     </main>
   )
 }
