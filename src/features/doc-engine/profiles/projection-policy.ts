@@ -17,21 +17,24 @@ export function projectRendererNode(
   definition: RendererDefinition,
   format: ExportProjection,
   node: DocumentNode,
+  context?: Partial<RendererProjectionContext>,
 ): RendererProjectionResult {
-  const context: RendererProjectionContext = {
-    profile: 'article',
+  const projectionContext: RendererProjectionContext = {
+    profile: context?.profile ?? 'article',
     format,
+    data: context?.data,
+    includeAnswers: context?.includeAnswers,
   }
   const projection = definition[PROJECTION_FIELDS[format]]
   if (typeof projection === 'function') {
     return {
-      value: projection(node, context),
+      value: projection(node, projectionContext),
       usedFallback: false,
       rendererName: definition.name,
     }
   }
   return {
-    value: definition.renderFallback(node, context),
+    value: definition.renderFallback(node, projectionContext),
     usedFallback: true,
     rendererName: definition.name,
   }

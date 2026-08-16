@@ -39,13 +39,15 @@ describe('code renderer', () => {
     expect(highlighted.lines.flat().map((token) => token.content).join('')).toBe(source)
   })
 
-  it('projects fenced Markdown and readable indented text', async () => {
+  it('projects fenced Markdown and keeps the same fence in TXT', async () => {
     const node = await codeNode('const fence = ```value```', 'ts')
 
     expect(renderCodeMarkdown(node)).toBe(
       '````ts\nconst fence = ```value```\n````',
     )
-    expect(renderCodeText(node)).toBe('    const fence = ```value```')
+    expect(renderCodeText(node)).toBe(
+      '````ts\nconst fence = ```value```\n````',
+    )
   })
 
   it('round-trips a legal tilde-fence language containing a backtick', async () => {
@@ -90,7 +92,7 @@ describe('code renderer', () => {
       '```ts\nconst answer = 42\n```',
     )
     expect(definition?.renderText?.(node, { profile: 'article', format: 'text' })).toBe(
-      '    const answer = 42',
+      '```ts\nconst answer = 42\n```',
     )
   })
 })

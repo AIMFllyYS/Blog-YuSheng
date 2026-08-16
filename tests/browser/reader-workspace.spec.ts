@@ -26,7 +26,7 @@ test('三页签使用目标同构骨架、记忆选择且 Agent 外壳不发请�
     'aria-selected',
     'true',
   )
-  await expect(workspace.getByText('划词后，注释会出现在这里')).toBeVisible()
+  await expect(workspace.getByText('这里同时验证中文与协议正文')).toBeVisible()
   const annotationTab = workspace.getByRole('tab', { name: '注释', exact: true })
   await annotationTab.focus()
   await page.keyboard.press('ArrowRight')
@@ -39,7 +39,7 @@ test('三页签使用目标同构骨架、记忆选择且 Agent 外壳不发请�
   await expect(workspace.getByText('本轮上下文')).toBeVisible({ timeout: 1_000 })
   await page.keyboard.press('ArrowLeft')
   await expect(annotationTab).toBeFocused()
-  await expect(workspace.getByText('划词后，注释会出现在这里')).toBeVisible({ timeout: 1_000 })
+  await expect(workspace.getByText('这里同时验证中文与协议正文')).toBeVisible({ timeout: 1_000 })
   await page.evaluate(() => {
     const annotation = document.querySelector<HTMLButtonElement>('[data-workspace-tab="annotations"]')
     const comments = document.querySelector<HTMLButtonElement>('[data-workspace-tab="comments"]')
@@ -51,7 +51,7 @@ test('三页签使用目标同构骨架、记忆选择且 Agent 外壳不发请�
   await expect(agentTab).toHaveAttribute('aria-selected', 'true')
   await expect(workspace.getByText('本轮上下文')).toBeVisible({ timeout: 1_000 })
   await page.keyboard.press('ArrowLeft')
-  await expect(workspace.getByText('划词后，注释会出现在这里')).toBeVisible({ timeout: 1_000 })
+  await expect(workspace.getByText('这里同时验证中文与协议正文')).toBeVisible({ timeout: 1_000 })
 
   const tabSwitchStartedAt = Date.now()
   await workspace.getByRole('tab', { name: '评论 0', exact: true }).click()

@@ -39,7 +39,7 @@ export const CANVAS_RENDERER_DEFINITION: RendererDefinition = Object.freeze({
     isCanvas(node) ? node.sourceText : fallback(node),
   renderText: (node) =>
     isCanvas(node)
-      ? `【交互式 Canvas】${String(node.attributes.renderer)}${typeof node.attributes['data-src'] === 'string' ? `：${node.attributes['data-src']}` : ''}`
+      ? `[交互图形：${String(node.attributes.renderer ?? '')}]`
       : fallback(node),
   renderFallback: fallback,
   security: Object.freeze({

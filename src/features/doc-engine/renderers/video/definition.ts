@@ -52,7 +52,7 @@ function sourceText(node: DocumentNode, name: string) {
 
 function textProjection(node: DocumentNode, name: string, label: string) {
   if (!isComponent(node, name)) return fallback(node, name)
-  return `【${label}】${stringAttribute(node, 'title') ?? name}：${stringAttribute(node, 'src') ?? ''}`
+  return `[${label}：${stringAttribute(node, 'title') ?? ''}]（${stringAttribute(node, 'src') ?? ''}）`
 }
 
 function fallback(node: DocumentNode, name: string) {

@@ -1,6 +1,12 @@
 'use client'
 
-import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from 'react'
+import { useCallback, useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from 'react'
+import { AnnotationPanel } from '@/features/annotations/annotation-panel'
+import { SHOW_ANNOTATIONS_PANE_EVENT } from '@/features/annotations/annotation-events'
+import {
+  ANNOTATE_SELECTION_EVENT,
+  isAnnotateSelectionDetail,
+} from '@/features/annotations/selection'
 import styles from './reader-layout.module.css'
 
 type WorkspacePane = 'comments' | 'annotations' | 'agent'
@@ -45,7 +51,7 @@ export function ReaderWorkspace({ articleTitle }: { readonly articleTitle: strin
     [],
   )
 
-  const selectPane = (nextPane: WorkspacePane) => {
+  const selectPane = useCallback((nextPane: WorkspacePane) => {
     if (nextPane === selectedPaneRef.current || switchingRef.current) return false
     selectedPaneRef.current = nextPane
     setSelectedPane(nextPane)
@@ -74,7 +80,25 @@ export function ReaderWorkspace({ articleTitle }: { readonly articleTitle: strin
       document.body.classList.remove('reader-right-tabbing')
     }, TAB_DELAY_MS)
     return true
-  }
+  }, [])
+
+  useEffect(() => {
+    const onAnnotate = (event: Event) => {
+      if (!(event instanceof CustomEvent) || !isAnnotateSelectionDetail(event.detail)) {
+        return
+      }
+      selectPane('annotations')
+    }
+    const onShowAnnotations = () => {
+      selectPane('annotations')
+    }
+    window.addEventListener(ANNOTATE_SELECTION_EVENT, onAnnotate)
+    window.addEventListener(SHOW_ANNOTATIONS_PANE_EVENT, onShowAnnotations)
+    return () => {
+      window.removeEventListener(ANNOTATE_SELECTION_EVENT, onAnnotate)
+      window.removeEventListener(SHOW_ANNOTATIONS_PANE_EVENT, onShowAnnotations)
+    }
+  }, [selectPane])
 
   const handleTabKeyDown = (
     event: KeyboardEvent<HTMLButtonElement>,
@@ -177,11 +201,7 @@ export function ReaderWorkspace({ articleTitle }: { readonly articleTitle: strin
           id="workspace-pane-annotations"
           role="tabpanel"
         >
-          <WorkspaceStatus
-            detail="M6 会在此接入选区锚点、开发仓储和注释线程；正文正本不会被改写。"
-            eyebrow="选区级注释"
-            title="划词后，注释会出现在这里"
-          />
+          <AnnotationPanel />
         </section>
 
         <section

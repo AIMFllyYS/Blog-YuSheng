@@ -4,6 +4,7 @@ import {
   compileArticleDocumentWithDiagnostics,
 } from '@/features/doc-engine/core'
 import { DocumentRenderer } from '@/features/doc-engine/screen/document-renderer'
+import { buildSelectionIndex } from '@/features/doc-engine/selection'
 import { extractOutline } from '@/features/doc-engine/toc'
 import { ReaderLayout } from '@/features/reader-layout'
 
@@ -81,8 +82,10 @@ export default async function TocDevelopmentPage() {
       }
       articleSlug="toc-browser-fixture"
       description={frontmatter.description}
+      document={compiled.document}
       outline={outline}
       publishedAt={frontmatter.publishedAt}
+      selectionIndex={buildSelectionIndex(compiled.document)}
       title={frontmatter.title}
     />
   )
