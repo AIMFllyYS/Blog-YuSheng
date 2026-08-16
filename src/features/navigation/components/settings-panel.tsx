@@ -1,4 +1,4 @@
-import { forwardRef } from 'react'
+import { forwardRef, useLayoutEffect, useRef, useState } from 'react'
 import { THEMES, type ThemeName } from '@/lib/theme'
 import { CloseIcon } from './navigation-icons'
 
@@ -23,12 +23,47 @@ export const SettingsPanel = forwardRef<HTMLButtonElement, SettingsPanelProps>(
     },
     firstThemeRef,
   ) {
+    const panelRef = useRef<HTMLElement>(null)
+    const [position, setPosition] = useState({ left: 12, top: 96 })
+
+    useLayoutEffect(() => {
+      const place = () => {
+        const panel = panelRef.current
+        if (!panel) return
+        const anchorElement = document.querySelector<HTMLElement>(
+          `[aria-controls="${CSS.escape(panelId)}"]`,
+        )
+        if (!anchorElement) return
+        const anchorRect = anchorElement.getBoundingClientRect()
+        const width = panel.offsetWidth
+        const height = panel.offsetHeight
+        const left = Math.max(
+          12,
+          Math.min(
+            anchorRect.left + anchorRect.width / 2 - width / 2,
+            window.innerWidth - width - 12,
+          ),
+        )
+        const preferredTop = anchorRect.bottom + 10
+        const top =
+          preferredTop + height > window.innerHeight - 12
+            ? Math.max(12, anchorRect.top - height - 10)
+            : preferredTop
+        setPosition({ left, top })
+      }
+      place()
+      window.addEventListener('resize', place)
+      return () => window.removeEventListener('resize', place)
+    }, [panelId])
+
     return (
       <section
         aria-label="显示与声音设置"
-        className="absolute right-2 top-[8.75rem] z-[var(--z-overlay)] w-[min(20rem,calc(100vw-1rem))] rounded-sm border border-[var(--line)] bg-[var(--bg-elevated)] p-4 text-[var(--ink)] shadow-[0_24px_72px_var(--shadow-color)] md:right-6 md:top-[10.25rem]"
+        className="pointer-events-auto fixed z-[var(--z-overlay)] max-h-[calc(100vh-24px)] w-[min(20rem,calc(100vw-1.5rem))] origin-top overflow-auto rounded-sm border border-[var(--line)] bg-[var(--bg-elevated)] p-4 text-[var(--ink)] shadow-[0_24px_72px_var(--shadow-color)] animate-[reader-pop_var(--dur-pop)_var(--ease-pop)_both]"
         id={panelId}
+        ref={panelRef}
         role="dialog"
+        style={position}
       >
         <div className="flex items-start justify-between gap-4 border-b border-[var(--line)] pb-3">
           <div>

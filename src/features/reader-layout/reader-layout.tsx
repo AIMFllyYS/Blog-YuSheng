@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { ReaderDivider } from './reader-divider'
+import { ReaderChrome } from './reader-chrome'
 import { ReaderLayoutInteractions } from './reader-layout-interactions'
 import styles from './reader-layout.module.css'
 
@@ -33,6 +34,7 @@ function ReaderWave({ className }: { readonly className: string }) {
 export function ReaderLayout({ article, description, publishedAt }: ReaderLayoutProps) {
   return (
     <main className={styles.readerPage} data-reader-page>
+      <ReaderChrome />
       <section className={styles.shell} data-reader-shell>
         <aside
           className={`${styles.column} ${styles.leftColumn}`}
