@@ -26,13 +26,33 @@ test('exports markdown and txt from the reader menu without printing', async ({
   await openExportMenu(page)
 
   const dialog = page.getByRole('dialog', { name: '导出' })
-  await expect(dialog).toContainText('随后续版本开放')
+  const formatChips = dialog.locator('[data-export-formats] button')
+  await expect(formatChips).toHaveCount(4)
+  const formatTops = await formatChips.evaluateAll((elements) =>
+    elements.map((element) => element.getBoundingClientRect().top),
+  )
+  expect(Math.max(...formatTops) - Math.min(...formatTops)).toBeLessThan(1)
+  await expect(dialog.getByRole('button', { name: 'DOCX' })).toHaveAttribute(
+    'aria-disabled',
+    'true',
+  )
+  await expect(dialog.getByRole('button', { name: 'PDF' })).toHaveAttribute(
+    'aria-disabled',
+    'true',
+  )
+  await expect(dialog.getByRole('button', { name: '正文+注释' })).toHaveAttribute(
+    'aria-disabled',
+    'true',
+  )
+  await expect(dialog.getByRole('button', { name: '正文+评论' })).toHaveAttribute(
+    'aria-disabled',
+    'true',
+  )
+  await expect(dialog.getByRole('button', { name: '全部' })).toHaveAttribute(
+    'aria-disabled',
+    'true',
+  )
   await expect(dialog).toContainText('未开放')
-  await expect(dialog.getByRole('button', { name: /DOCX/ })).toBeVisible()
-  await expect(dialog.getByRole('button', { name: /PDF/ })).toBeVisible()
-  await expect(dialog.getByRole('button', { name: /正文\+注释/ })).toBeVisible()
-  await expect(dialog.getByRole('button', { name: /正文\+评论/ })).toBeVisible()
-  await expect(dialog.getByRole('button', { name: /^全部/ })).toBeVisible()
 
   const [markdown] = await Promise.all([
     page.waitForEvent('download'),
@@ -51,9 +71,9 @@ test('exports markdown and txt from the reader menu without printing', async ({
   ])
   expect(text.suggestedFilename()).toBe('p0-kitchen-sink.txt')
 
-  await dialog.getByRole('button', { name: /DOCX/ }).click()
+  await dialog.getByRole('button', { name: 'DOCX' }).click({ force: true })
   await expect(dialog).toContainText('DOCX 导出随后续版本开放')
-  await dialog.getByRole('button', { name: /正文\+注释/ }).click()
+  await dialog.getByRole('button', { name: '正文+注释' }).click({ force: true })
   await expect(dialog).toContainText('该内容范围随后续版本开放')
 
   const printed = await page.evaluate(

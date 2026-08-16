@@ -28,7 +28,7 @@ const SCOPES = [
 }[]
 
 const chipClassName =
-  'min-h-9 rounded-full border border-[var(--line)] bg-transparent px-3 py-1.5 text-left text-xs text-[var(--ink-muted)] transition-[border-color,color,background-color] duration-[var(--dur-fast)] ease-out hover:border-[var(--accent)] hover:text-[var(--accent)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] aria-pressed:border-[var(--accent)] aria-pressed:bg-[var(--highlight)] aria-pressed:text-[var(--accent)]'
+  'min-h-9 rounded-full border border-[var(--line)] bg-transparent px-3 py-1.5 text-xs text-[var(--ink-muted)] transition-[border-color,color,background-color] duration-[var(--dur-fast)] ease-out hover:border-[var(--accent)] hover:text-[var(--accent)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] aria-pressed:border-[var(--accent)] aria-pressed:bg-[var(--highlight)] aria-pressed:text-[var(--accent)] aria-disabled:text-[var(--ink-faint)] aria-disabled:hover:border-[var(--line)] aria-disabled:hover:text-[var(--ink-faint)]'
 
 export function ExportMenu() {
   const runtime = useExportRuntime()
@@ -96,9 +96,10 @@ export function ExportMenu() {
       <h3 className="text-xs font-semibold tracking-[0.18em] text-[var(--ink-muted)]">
         格式
       </h3>
-      <div className="mt-2 mb-3.5 flex flex-wrap gap-2">
+      <div className="mt-2 mb-3.5 flex flex-wrap gap-2" data-export-formats>
         {FORMATS.map((item) => (
           <button
+            aria-disabled={!item.available}
             aria-pressed={format === item.id}
             className={chipClassName}
             key={item.id}
@@ -108,12 +109,7 @@ export function ExportMenu() {
             }}
             type="button"
           >
-            <span>{item.label}</span>
-            {!item.available ? (
-              <span className="mt-0.5 block text-[10px] leading-4 text-[var(--ink-faint)]">
-                随后续版本开放
-              </span>
-            ) : null}
+            {item.label}
           </button>
         ))}
       </div>
@@ -121,9 +117,10 @@ export function ExportMenu() {
       <h3 className="text-xs font-semibold tracking-[0.18em] text-[var(--ink-muted)]">
         内容范围
       </h3>
-      <div className="mt-2 mb-3 flex flex-wrap gap-2">
+      <div className="mt-2 mb-3 flex flex-wrap gap-2" data-export-scopes>
         {SCOPES.map((item) => (
           <button
+            aria-disabled={!item.available}
             aria-pressed={scope === item.id}
             className={chipClassName}
             key={item.id}
@@ -133,20 +130,20 @@ export function ExportMenu() {
             }}
             type="button"
           >
-            <span>{item.label}</span>
-            {!item.available ? (
-              <span className="mt-0.5 block text-[10px] leading-4 text-[var(--ink-faint)]">
-                随后续版本开放
-              </span>
-            ) : null}
+            {item.label}
           </button>
         ))}
       </div>
 
       <div className="mb-3 flex min-h-11 items-center justify-between gap-3 text-[13px] text-[var(--ink-muted)]">
-        <span>问答题包含答案与解析</span>
-        <span className="text-[11px] text-[var(--ink-faint)]">未开放</span>
+        <span>
+          问答题包含答案与解析
+          <span className="mt-0.5 block text-[11px] leading-4 text-[var(--ink-faint)]">
+            未开放
+          </span>
+        </span>
         <button
+          aria-disabled="true"
           aria-label="包含答案与解析"
           aria-pressed="false"
           className="relative h-[22px] w-10 shrink-0 rounded-full border border-[var(--line)] bg-[var(--bg)]"

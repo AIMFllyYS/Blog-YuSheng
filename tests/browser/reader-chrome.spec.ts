@@ -67,9 +67,11 @@ test('首页保持常显 absolute 导航，阅读页只由中栏顶部唤出', a
     page.locator('[data-rope-navigation], [data-sel-bar]').getByRole('button', { name: /编辑|询问/ }),
   ).toHaveCount(0)
   await page.getByRole('button', { name: '导出' }).click()
-  await expect(page.getByRole('dialog', { name: '导出' })).toContainText('开始导出')
-  await expect(page.getByRole('dialog', { name: '导出' })).toContainText(
-    '随后续版本开放',
+  const exportDialog = page.getByRole('dialog', { name: '导出' })
+  await expect(exportDialog).toContainText('开始导出')
+  await expect(exportDialog.getByRole('button', { name: 'DOCX' })).toHaveAttribute(
+    'aria-disabled',
+    'true',
   )
   await page.keyboard.press('Escape')
 
