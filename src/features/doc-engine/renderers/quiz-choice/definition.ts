@@ -46,13 +46,11 @@ export const CHOICE_QUESTION_RENDERER_DEFINITION: RendererDefinition = Object.fr
       ? authorData
       : CHOICE_QUESTION_RENDER_DATA_SCHEMA.safeParse(context.data)
     if (!data.success) {
-      return `【选择题】题目数据：${String(node.attributes['data-src'])}`
+      return String(node.attributes['data-src'] ?? '')
     }
     const lines = [
-      `【选择题】${data.data.prompt}`,
-      ...data.data.options.map(
-        (option) => `${option.id}. ${option.label}`,
-      ),
+      data.data.prompt,
+      ...data.data.options.map((option) => `${option.id}. ${option.label}`),
     ]
     if (context.includeAnswers) {
       lines.push(`答案：${data.data.answers.join('、')}`)

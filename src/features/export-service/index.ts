@@ -17,3 +17,7 @@ export {
 export { assembleBodyOnlyMarkdown, encodeUtf8 } from './markdown/body-only'
 export { assembleUnsupportedDocx } from './docx/unsupported'
 export { assembleUnsupportedPdf } from './pdf/unsupported'
+export {
+  assembleBodyOnlyText,
+  projectDocumentText,
+} from './text/project-text'

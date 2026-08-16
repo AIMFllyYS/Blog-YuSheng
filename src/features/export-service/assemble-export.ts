@@ -1,4 +1,4 @@
-import type { CompiledDocument } from '@/features/doc-engine/core'
+import type { CompiledDocument } from '../doc-engine/core'
 import {
   EXPORT_DOCUMENT_SCHEMA_VERSION,
   freezeExportDocument,
@@ -9,6 +9,7 @@ import {
 import { assembleUnsupportedDocx } from './docx/unsupported'
 import { assembleBodyOnlyMarkdown } from './markdown/body-only'
 import { assembleUnsupportedPdf } from './pdf/unsupported'
+import { assembleBodyOnlyText } from './text/project-text'
 
 export type AssembleExportInput = {
   readonly document: CompiledDocument
@@ -47,8 +48,11 @@ export function assembleExport(input: AssembleExportInput): AssembleExportResult
   }
 
   return Object.freeze({
-    ok: false,
-    reason: 'unsupported-format',
-    message: 'TXT 导出随后续版本开放',
+    ok: true,
+    document: exportDocument,
+    artifact: assembleBodyOnlyText(
+      input.document,
+      input.assetManifest ?? input.document.assetManifest,
+    ),
   })
 }

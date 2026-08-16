@@ -42,9 +42,9 @@ export const FILL_BLANK_QUESTION_RENDERER_DEFINITION: RendererDefinition = Objec
     if (!isFillBlankQuestion(node)) return fallback(node)
     const data = FILL_BLANK_QUESTION_DATA_SCHEMA.safeParse(context.data)
     if (!data.success) {
-      return `【填空题】题目数据：${String(node.attributes['data-src'])}`
+      return String(node.attributes['data-src'] ?? '')
     }
-    const lines = [`【填空题】${data.data.prompt}`]
+    const lines = [data.data.prompt]
     if (context.includeAnswers) {
       lines.push(`可接受答案：${data.data.answers.join('、')}`)
       lines.push(`解析：${data.data.explanation}`)

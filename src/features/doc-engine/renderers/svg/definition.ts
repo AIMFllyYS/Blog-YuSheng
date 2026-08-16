@@ -37,7 +37,7 @@ export const SVG_RENDERER_DEFINITION: RendererDefinition = Object.freeze({
     isSvg(node) ? node.sourceText : fallback(node),
   renderText: (node) =>
     isSvg(node)
-      ? `【SVG】${String(node.attributes.title)}：${String(node.attributes.src)}`
+      ? `[SVG：${String(node.attributes.title ?? '')}]（${String(node.attributes.src ?? '')}）`
       : fallback(node),
   renderFallback: fallback,
   security: Object.freeze({

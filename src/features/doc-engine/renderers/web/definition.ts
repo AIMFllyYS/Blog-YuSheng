@@ -18,7 +18,7 @@ export const WEB_RENDERER_DEFINITION: RendererDefinition = Object.freeze({
   renderMarkdown: (node) => isWebEmbed(node) ? node.sourceText : fallback(node),
   renderText: (node) =>
     isWebEmbed(node)
-      ? `【网页】${String(node.attributes.title)}：${String(node.attributes.src)}`
+      ? `[网页：${String(node.attributes.title ?? '')}]（${String(node.attributes.src ?? '')}）`
       : fallback(node),
   renderFallback: fallback,
   security: Object.freeze({

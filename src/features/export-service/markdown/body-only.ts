@@ -1,4 +1,4 @@
-import type { CompiledDocument } from '@/features/doc-engine/core'
+import type { CompiledDocument } from '../../doc-engine/core'
 import type { ExportArtifact } from '../export-document'
 
 export function assembleBodyOnlyMarkdown(

@@ -31,7 +31,7 @@ export const AUDIO_RENDERER_DEFINITION: RendererDefinition = Object.freeze({
     isAudio(node) ? node.sourceText : fallback(node),
   renderText: (node) =>
     isAudio(node)
-      ? `【音频】${String(node.attributes.title)}：${String(node.attributes.src)}`
+      ? `[音频：${String(node.attributes.title ?? '')}]（${String(node.attributes.src ?? '')}）`
       : fallback(node),
   renderFallback: fallback,
   security: Object.freeze({
