@@ -23,6 +23,7 @@ import {
   StableIdAllocator,
   type StableBlockNodeType,
 } from './stable-ids'
+import { validateArticleDocument } from '../security/validate-article'
 
 export type CompileDocumentInput = {
   articleSlug: string
@@ -90,9 +91,20 @@ export async function compileDocument(
 export async function compileArticleDocument(
   input: CompileDocumentInput,
 ): Promise<CompiledDocument> {
-  const result = await compileDocument(input)
+  const result = await compileArticleDocumentWithDiagnostics(input)
   assertDocumentBuildCanContinue(result.diagnostics)
   return result.document
+}
+
+export async function compileArticleDocumentWithDiagnostics(
+  input: CompileDocumentInput,
+): Promise<DocumentCompilationResult> {
+  const result = await compileDocument(input)
+  const diagnostics = [
+    ...result.diagnostics,
+    ...validateArticleDocument(result.document),
+  ]
+  return { document: result.document, diagnostics }
 }
 
 async function compileBlocks(
@@ -855,22 +867,33 @@ function textSegments(node: MarkdownNode, nodeId: string, originalValue: string,
   const segments: SourceMapSegment[] = []
   const graphemes = new Intl.Segmenter(undefined, { granularity: 'grapheme' })
   let canonicalCursor = 0
+  let alignedCursor = 0
   for (const grapheme of graphemes.segment(originalValue)) {
     const originalEnd = grapheme.index + grapheme.segment.length
-    const members = aligned.filter(
-      (primitive) =>
-        primitive.originalStart < originalEnd &&
-        primitive.originalEnd > grapheme.index,
-    )
+    while (
+      alignedCursor < aligned.length &&
+      aligned[alignedCursor]!.originalEnd <= grapheme.index
+    ) {
+      alignedCursor += 1
+    }
+    let alignedEnd = alignedCursor
+    while (
+      alignedEnd < aligned.length &&
+      aligned[alignedEnd]!.originalStart < originalEnd
+    ) {
+      alignedEnd += 1
+    }
+    const firstMember = aligned[alignedCursor]
+    const lastMember = aligned[alignedEnd - 1]
     const canonicalCluster = grapheme.segment.normalize('NFC')
     segments.push({
       nodeId,
       canonicalStart: canonicalCursor,
       canonicalEnd: canonicalCursor + canonicalCluster.length,
       sourceStart:
-        range.start.offset + (members[0]?.sourceStart ?? 0),
+        range.start.offset + (firstMember?.sourceStart ?? 0),
       sourceEnd:
-        range.start.offset + (members.at(-1)?.sourceEnd ?? raw.length),
+        range.start.offset + (lastMember?.sourceEnd ?? raw.length),
       kind: canonicalCluster === '\n' ? 'soft-break' : 'text',
     })
     canonicalCursor += canonicalCluster.length
@@ -952,61 +975,35 @@ function alignSourceTokens(
   tokens: readonly SourceToken[],
   originalValue: string,
 ): AlignedSourceToken[] | undefined {
-  const memo = new Map<string, AlignedSourceToken[] | null>()
-  const search = (
-    tokenIndex: number,
-    originalIndex: number,
-  ): AlignedSourceToken[] | undefined => {
-    const key = `${tokenIndex}:${originalIndex}`
-    const cached = memo.get(key)
-    if (cached !== undefined) return cached ?? undefined
-    if (tokenIndex === tokens.length) {
-      const result = originalIndex === originalValue.length ? [] : undefined
-      memo.set(key, result ?? null)
-      return result
-    }
+  const aligned: AlignedSourceToken[] = []
+  let originalIndex = 0
+  for (let tokenIndex = 0; tokenIndex < tokens.length; tokenIndex += 1) {
     const token = tokens[tokenIndex]!
-    if (token.decoded !== undefined) {
-      if (!originalValue.startsWith(token.decoded, originalIndex)) return undefined
-      const rest = search(tokenIndex + 1, originalIndex + token.decoded.length)
-      const result = rest
-        ? [
-            {
-              ...token,
-              originalStart: originalIndex,
-              originalEnd: originalIndex + token.decoded.length,
-            },
-            ...rest,
-          ]
-        : undefined
-      memo.set(key, result ?? null)
-      return result
+    if (token.decoded === undefined) {
+      const nextDecoded = tokens
+        .slice(tokenIndex + 1)
+        .find((candidate) => candidate.decoded !== undefined)?.decoded
+      const end = nextDecoded
+        ? originalValue.indexOf(nextDecoded, originalIndex)
+        : originalValue.length
+      if (end < originalIndex) return undefined
+      aligned.push({
+        ...token,
+        originalStart: originalIndex,
+        originalEnd: end,
+      })
+      originalIndex = end
+      continue
     }
-    for (
-      let end = nextCodePointBoundary(originalValue, originalIndex);
-      end <= originalValue.length;
-      end = nextCodePointBoundary(originalValue, end)
-    ) {
-      const rest = search(tokenIndex + 1, end)
-      if (rest) {
-        const result = [
-          { ...token, originalStart: originalIndex, originalEnd: end },
-          ...rest,
-        ]
-        memo.set(key, result)
-        return result
-      }
-      if (end === originalValue.length) break
-    }
-    memo.set(key, null)
-    return undefined
+    if (!originalValue.startsWith(token.decoded, originalIndex)) return undefined
+    aligned.push({
+      ...token,
+      originalStart: originalIndex,
+      originalEnd: originalIndex + token.decoded.length,
+    })
+    originalIndex += token.decoded.length
   }
-  return search(0, 0)
-}
-
-function nextCodePointBoundary(value: string, index: number): number {
-  if (index >= value.length) return value.length + 1
-  return index + (value.codePointAt(index)! > 0xffff ? 2 : 1)
+  return originalIndex === originalValue.length ? aligned : undefined
 }
 
 function shiftSegments(segments: readonly SourceMapSegment[], offset: number): SourceMapSegment[] { return segments.map((segment) => ({ ...segment, canonicalStart: segment.canonicalStart + offset, canonicalEnd: segment.canonicalEnd + offset })) }

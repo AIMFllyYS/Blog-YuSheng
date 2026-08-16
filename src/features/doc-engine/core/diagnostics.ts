@@ -85,6 +85,18 @@ export const DOCUMENT_DIAGNOSTIC_DEFINITIONS = {
     phase: 'discussion-read',
     disposition: 'safe-fallback',
   },
+  'DOC-SECURITY-005': {
+    severity: 'error',
+    message: '正文包含不安全的链接、资源或执行配置。',
+    phase: 'article-build',
+    disposition: 'block-build',
+  },
+  'DOC-SECURITY-006': {
+    severity: 'warning',
+    message: '网页嵌入未通过集中 allowlist，已降级为安全预览卡片。',
+    phase: 'article-build',
+    disposition: 'continue-with-fallback',
+  },
   'DOC-ASSET-004': {
     severity: 'warning',
     message: '资源暂时不可用，当前节点已安全降级。',
@@ -110,6 +122,7 @@ export type ArticleBlockingDiagnosticCode =
   | 'DOC-REGISTRY-003'
   | 'DOC-ASSET-001'
   | 'DOC-ASSET-002'
+  | 'DOC-SECURITY-005'
 export type NonBlockingDiagnosticCode = Exclude<
   DocumentDiagnosticCode,
   ArticleBlockingDiagnosticCode
