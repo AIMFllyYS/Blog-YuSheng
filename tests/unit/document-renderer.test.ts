@@ -109,6 +109,55 @@ describe('DocumentRenderer', () => {
     expect(html).not.toContain('<img')
   })
 
+  it('缺 alt 只产生编辑期原位 warning，图片仍正常渲染', async () => {
+    const assetManifest = [
+      {
+        articleSlug: 'missing-image-alt',
+        outputPath: 'blog/missing-image-alt/media/photo.png',
+        publicUrl: '/blog/missing-image-alt/media/photo.png',
+        image: {
+          width: 800,
+          height: 450,
+          format: 'png',
+          derived: false,
+        },
+      },
+    ] as const
+    const preview = await DocumentRenderer({
+      articleSlug: 'missing-image-alt',
+      assetManifest,
+      profile: 'editor-preview',
+      source: '![](./media/photo.png)',
+    })
+    const html = renderToStaticMarkup(preview)
+
+    expect(html).toContain('data-document-diagnostic="DOC-ASSET-005"')
+    expect(html).toContain('<img alt=""')
+    expect(html).not.toContain('data-document-fallback="DOC-ASSET-005"')
+
+    await expect(
+      DocumentRenderer({
+        articleSlug: 'missing-image-alt',
+        assetManifest,
+        profile: 'article',
+        source: '![](./media/photo.png)',
+      }),
+    ).resolves.toBeDefined()
+  })
+
+  it('空 alt 与缺资源并存时保留 warning 和阻断 fallback', async () => {
+    const preview = await DocumentRenderer({
+      articleSlug: 'missing-image-and-alt',
+      profile: 'editor-preview',
+      source: '![](./media/missing.png)',
+    })
+    const html = renderToStaticMarkup(preview)
+
+    expect(html).toContain('data-document-diagnostic="DOC-ASSET-005"')
+    expect(html).toContain('data-document-fallback="DOC-ASSET-002"')
+    expect(html).not.toContain('<img')
+  })
+
   it('discussion 读取期错误只输出安全卡，不渲染危险节点', async () => {
     const element = await DocumentRenderer({
       articleSlug: 'unsafe-discussion',

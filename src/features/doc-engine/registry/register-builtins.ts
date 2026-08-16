@@ -3,6 +3,7 @@ import { z } from 'zod'
 import type { DocumentNode } from '../core'
 import { CODE_RENDERER_DEFINITION } from '../renderers/code'
 import { KATEX_RENDERER_DEFINITION } from '../renderers/katex'
+import { IMAGE_RENDERER_DEFINITION } from '../renderers/image'
 import { RendererRegistry } from './renderer-registry'
 import type {
   RenderProfile,
@@ -101,7 +102,7 @@ const DEFINITIONS: readonly RendererDefinition[] = Object.freeze([
   CODE_RENDERER_DEFINITION,
   KATEX_RENDERER_DEFINITION,
   createDefinition('mermaid', { selectable: 'none' }),
-  createDefinition('image', { allowsExternalResource: true, selectable: 'whole-node' }),
+  IMAGE_RENDERER_DEFINITION,
   createDefinition('video-embed', {
     schema: COMPONENT_SCHEMAS['video-embed'],
     allowsExternalResource: true,

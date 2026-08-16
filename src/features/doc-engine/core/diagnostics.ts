@@ -103,6 +103,18 @@ export const DOCUMENT_DIAGNOSTIC_DEFINITIONS = {
     phase: 'runtime',
     disposition: 'safe-fallback',
   },
+  'DOC-ASSET-005': {
+    severity: 'warning',
+    message: '图片缺少替代文本。',
+    phase: 'article-build',
+    disposition: 'continue',
+  },
+  'DOC-ASSET-006': {
+    severity: 'error',
+    message: '图片缺少构建期可验证的宽高。',
+    phase: 'article-build',
+    disposition: 'block-build',
+  },
   'DOC-RENDER-001': {
     severity: 'error',
     message: '内容节点渲染失败，其他内容仍可继续阅读。',
@@ -134,6 +146,7 @@ export type ArticleBlockingDiagnosticCode =
   | 'DOC-REGISTRY-003'
   | 'DOC-ASSET-001'
   | 'DOC-ASSET-002'
+  | 'DOC-ASSET-006'
   | 'DOC-SECURITY-005'
 export type NonBlockingDiagnosticCode = Exclude<
   DocumentDiagnosticCode,
@@ -150,6 +163,7 @@ export type DocumentDiagnosticDisposition =
   | 'reject-entry'
   | 'safe-fallback'
   | 'continue-with-fallback'
+  | 'continue'
 
 export type DocumentDiagnostic = {
   readonly code: DocumentDiagnosticCode

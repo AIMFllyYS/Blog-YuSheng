@@ -14,6 +14,7 @@ import {
   type SourceMapSegment,
   type SourceRange,
 } from './document-types'
+import { normalizeArticleImageRelativePath } from './image-path'
 import { parseComponentSyntax } from './component-syntax'
 import { parseDocument, type MarkdownNode } from './parse-document'
 import {
@@ -1014,7 +1015,7 @@ function shiftSegments(segments: readonly SourceMapSegment[], offset: number): S
 function collectChildSegments(children: readonly { blockId: string }[], context: CompileContext): SourceMapSegment[] { const result: SourceMapSegment[] = []; let offset = 0; for (const child of children) { const segments = context.sourceMap[child.blockId] ?? []; result.push(...shiftSegments(segments, offset)); const length = segments.reduce((max, segment) => Math.max(max, segment.canonicalEnd), 0); offset += length + 1 } return result }
 
 function findImageDimensions(manifest: readonly unknown[], articleSlug: string, src: string): { width?: number; height?: number } {
-  const suffix = src.replace(/^\.\//, '').replace(/\\/g, '/')
+  const suffix = normalizeArticleImageRelativePath(src)
   const expectedOutputPath = `blog/${articleSlug}/${suffix}`
   for (const item of manifest) {
     if (!item || typeof item !== 'object') continue

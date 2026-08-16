@@ -5,6 +5,7 @@ import {
   createAssetManifest,
   createPostMetadata,
   readPost,
+  transformContentImages,
 } from '@/server/content'
 
 type Props = { params: Promise<{ slug: string }> }
@@ -22,9 +23,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function BlogArticlePage({ params }: Props) {
   const { slug } = await params
-  const [post, assetManifest] = await Promise.all([
+  const [post, sourceAssetManifest] = await Promise.all([
     readPost(slug),
     createAssetManifest(),
   ])
+  const assetManifest = await transformContentImages(sourceAssetManifest)
   return <BlogArticlePlaceholder assetManifest={assetManifest} post={post} />
 }

@@ -43,6 +43,13 @@ const FIXTURE_MANIFEST = [
   {
     articleSlug: 'document-renderer-fixture',
     outputPath: 'blog/document-renderer-fixture/media/missing.png',
+    publicUrl: '/blog/document-renderer-fixture/media/missing.png',
+    image: {
+      width: 640,
+      height: 360,
+      format: 'png',
+      derived: false,
+    },
   },
 ] as const
 

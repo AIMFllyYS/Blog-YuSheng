@@ -35,6 +35,31 @@ export function validateArticleDocument(
       !manifestContainsLocalAsset(document, node.src)
     ) {
       diagnostics.push(missingAssetError(document, node, node.src))
+    } else if (
+      node.type === 'image' &&
+      (!Number.isSafeInteger(node.width) ||
+        !Number.isSafeInteger(node.height) ||
+        (node.width ?? 0) <= 0 ||
+        (node.height ?? 0) <= 0)
+    ) {
+      diagnostics.push(
+        createDocumentDiagnostic('DOC-ASSET-006', {
+          articleSlug: document.articleSlug,
+          nodeId: node.nodeId,
+          sourceRange: node.sourceRange,
+          message: `图片必须由构建期资产清单提供可验证宽高：${node.src}`,
+        }),
+      )
+    }
+    if (node.type === 'image' && node.alt.trim().length === 0) {
+      diagnostics.push(
+        createDocumentDiagnostic('DOC-ASSET-005', {
+          articleSlug: document.articleSlug,
+          nodeId: node.nodeId,
+          sourceRange: node.sourceRange,
+          message: '图片缺少 alt 替代文本，请补充对图片内容或用途的简短说明。',
+        }),
+      )
     }
     if (node.type === 'math') {
       const failure = validateKatexSource(node.value)

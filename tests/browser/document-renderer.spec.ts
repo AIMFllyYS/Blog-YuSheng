@@ -41,10 +41,22 @@ test('DocumentRenderer 在真实浏览器隔离未知标签与 renderer 崩溃',
     .toBeLessThan(ordered.findIndex((text) => text.includes('未知标签后的内容仍然可见。')))
 
   const recovery = page.getByRole('region', { name: '图片恢复 fixture' })
-  await expect(recovery.locator('[data-document-fallback="DOC-ASSET-004"]')).toBeVisible()
+  const recoveryFallback = recovery.locator(
+    '[data-document-fallback="DOC-ASSET-004"]',
+  )
+  await expect(recoveryFallback).toBeVisible()
+  await expect(recoveryFallback).toHaveAttribute(
+    'data-block-id',
+    'block-image-recovery-fixture',
+  )
+  await expect(recoveryFallback).toHaveAttribute('data-selectable', 'none')
   await recovery.getByRole('button', { name: '切换有效图片' }).click()
-  await expect(recovery.locator('[data-document-fallback="DOC-ASSET-004"]')).toHaveCount(0)
+  await expect(recoveryFallback).toHaveCount(0)
   const recoveredImage = recovery.getByAltText('恢复图片')
   await expect(recoveredImage).toBeVisible()
+  const recoveredFigure = recovery.locator(
+    'figure[data-block-id="block-image-recovery-fixture"]',
+  )
+  await expect(recoveredFigure).toHaveAttribute('data-selectable', 'none')
   await expect.poll(() => recoveredImage.evaluate((image) => (image as HTMLImageElement).naturalWidth)).toBeGreaterThan(0)
 })

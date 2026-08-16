@@ -58,7 +58,7 @@ flowchart LR
 
 ## 图片
 
-![蓝紫渐变的 P0 验收封面](./media/images/cover.png)
+![蓝紫渐变的 P0 验收封面](./media/images/cover.png "P0 验收封面")
 
 ## 媒体与安全组件
 

@@ -26,11 +26,11 @@ import {
 } from '../registry'
 import { CodeScreenRenderer } from '../renderers/code/screen-renderer'
 import { KatexScreenRenderer } from '../renderers/katex/screen-renderer'
+import { ImageScreenRenderer } from '../renderers/image/screen-renderer'
 import { sanitizeDiscussionRead } from '../security'
 import { DocumentFallbackCard } from './fallback-card'
 import { RegisteredRendererLeaf } from './registered-renderer-leaf'
 import { RendererErrorBoundary } from './renderer-error-boundary'
-import { ResourceImage } from './resource-image'
 
 export type DocumentRendererProps = {
   readonly source: string
@@ -97,6 +97,7 @@ export async function DocumentRenderer({
       ) : prepared.document ? (
         <DocumentRootContent
           articleSlug={articleSlug}
+          assetManifest={prepared.document.assetManifest}
           developmentCrashComponentIds={developmentCrashComponentIds}
           discussionMathRenderer={discussionMathRenderer}
           diagnostics={prepared.diagnostics}
@@ -246,6 +247,7 @@ function DocumentNodeChildren({
 
 type RenderContext = {
   readonly articleSlug: string
+  readonly assetManifest: readonly unknown[]
   readonly developmentCrashComponentIds?: readonly string[]
   readonly discussionMathRenderer?: DiscussionMathRenderer
   readonly nodeDiagnostics: ReadonlyMap<string, readonly DocumentDiagnostic[]>
@@ -256,6 +258,30 @@ type RenderContext = {
 
 function renderNode(node: DocumentNode, context: RenderContext): ReactNode {
   const diagnostics = context.nodeDiagnostics.get(node.nodeId) ?? []
+  const advisory = diagnostics.find(
+    (diagnostic) => diagnostic.disposition === 'continue',
+  )
+  if (advisory && context.profile.diagnosticMode === 'inline-diagnostics') {
+    const remaining = new Map(context.nodeDiagnostics)
+    const remainingForNode = diagnostics.filter(
+      (diagnostic) => diagnostic !== advisory,
+    )
+    if (remainingForNode.length > 0) {
+      remaining.set(node.nodeId, remainingForNode)
+    } else {
+      remaining.delete(node.nodeId)
+    }
+    return (
+      <Fragment>
+        <DiagnosticNotice
+          diagnostic={advisory}
+          inline={isInlineNode(node)}
+          showDetails={context.showDetails}
+        />
+        {renderNode(node, { ...context, nodeDiagnostics: remaining })}
+      </Fragment>
+    )
+  }
   const forcedFallback = diagnostics.find((diagnostic) =>
     diagnostic.disposition === 'block-build' ||
     diagnostic.disposition === 'continue-with-fallback' ||
@@ -359,14 +385,7 @@ function renderNode(node: DocumentNode, context: RenderContext): ReactNode {
         </DocumentFallbackCard>
       )
     case 'image':
-      return (
-        <ResourceImage
-          key={node.src}
-          node={node}
-          showDetails={context.showDetails}
-          src={resolveImageSource(node.src, context.articleSlug)}
-        />
-      )
+      return <RegisteredImageRenderer context={context} node={node} />
     case 'registeredComponent':
       return <RegisteredComponent context={context} node={node} />
     case 'footnoteReference':
@@ -380,6 +399,34 @@ function renderNode(node: DocumentNode, context: RenderContext): ReactNode {
     case 'thematicBreak':
       return <hr data-block-id={node.blockId} />
   }
+}
+
+function DiagnosticNotice({
+  diagnostic,
+  inline,
+  showDetails,
+}: {
+  readonly diagnostic: DocumentDiagnostic
+  readonly inline: boolean
+  readonly showDetails: boolean
+}) {
+  const className =
+    'border border-dashed border-[var(--line)] bg-[var(--bg-elevated)] px-2 py-1 text-sm text-[var(--ink-muted)]'
+  const content = (
+    <>
+      {DOCUMENT_DIAGNOSTIC_DEFINITIONS[diagnostic.code].message}
+      {showDetails ? <span>（{diagnostic.code}：{diagnostic.message}）</span> : null}
+    </>
+  )
+  return inline ? (
+    <span className={className} data-document-diagnostic={diagnostic.code} role="status">
+      {content}
+    </span>
+  ) : (
+    <aside className={`${className} my-3 rounded-lg`} data-document-diagnostic={diagnostic.code} role="status">
+      {content}
+    </aside>
+  )
 }
 
 function RegisteredServerCodeRenderer({
@@ -406,6 +453,48 @@ function RegisteredServerCodeRenderer({
     )
   }
   return <CodeScreenRenderer node={node} />
+}
+
+function RegisteredImageRenderer({
+  context,
+  node,
+}: {
+  readonly context: RenderContext
+  readonly node: Extract<DocumentNode, { type: 'image' }>
+}) {
+  const definition = BUILTIN_RENDERER_REGISTRY.get('image')
+  const projection = definition?.renderScreen(node, {
+    profile: context.profile.name,
+  })
+  if (
+    !isRendererProjection(
+      projection,
+      'server-screen-projection',
+      'image',
+      node.nodeId,
+    )
+  ) {
+    return (
+      <DocumentFallbackCard
+        blockId={node.placement === 'block' ? node.blockId : undefined}
+        code="DOC-RENDER-002"
+        details={context.showDetails ? 'image renderer 的服务端投影无效。' : undefined}
+        message="这张图片暂时无法显示。"
+        nodeId={node.nodeId}
+        selectable="none"
+      >
+        {node.alt}
+      </DocumentFallbackCard>
+    )
+  }
+  return (
+    <ImageScreenRenderer
+      articleSlug={context.articleSlug}
+      assetManifest={context.assetManifest}
+      node={node}
+      showDetails={context.showDetails}
+    />
+  )
 }
 
 function isCodeServerProjection(value: unknown, nodeId: string): boolean {
@@ -670,14 +759,4 @@ function containsRange(
 
 function externalRel(url: string): string | undefined {
   return url.startsWith('https://') ? 'nofollow ugc noopener noreferrer' : undefined
-}
-
-function resolveImageSource(source: string, articleSlug: string): string {
-  if (!source.startsWith('./')) return source
-  const path = source
-    .slice(2)
-    .split('/')
-    .map((segment) => encodeURIComponent(segment))
-    .join('/')
-  return `/blog/${encodeURIComponent(articleSlug)}/${path}`
 }

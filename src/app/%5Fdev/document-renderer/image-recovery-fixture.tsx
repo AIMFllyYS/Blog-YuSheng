@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 
-import type { InlineImageNode } from '@/features/doc-engine'
+import type { BlockImageNode } from '@/features/doc-engine'
 import { ResourceImage } from '@/features/doc-engine/screen/resource-image'
 
 const SOURCE_RANGE = {
@@ -18,16 +18,22 @@ export function ImageRecoveryFixture() {
   )
   const node = {
     type: 'image',
-    placement: 'inline',
+    placement: 'block',
     nodeId: 'image-recovery-fixture',
+    blockId: 'block-image-recovery-fixture',
+    canonicalText: '恢复图片',
     src,
     alt: '恢复图片',
     sourceRange: SOURCE_RANGE,
     sourceText: '![恢复图片](fixture)',
-  } as const satisfies InlineImageNode
+  } as const satisfies BlockImageNode
   return (
     <section aria-label="图片恢复 fixture" className="mt-8">
-      <ResourceImage node={node} showDetails src={src} />
+      <ResourceImage
+        node={node}
+        showDetails
+        sources={{ fallback: src }}
+      />
       <button
         className="ml-3 border border-[var(--line)] px-3 py-2"
         onClick={() => setSrc(RECOVERED_IMAGE)}
