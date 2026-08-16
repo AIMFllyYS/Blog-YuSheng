@@ -93,9 +93,15 @@ describe('content asset manifest', () => {
     await expect(verifyStaticOutput(outputRoot)).resolves.toMatchObject({
       fileCount: manifest.length + 1,
     })
-    expect(await import('node:fs/promises').then((fs) => fs.stat(copied))).toMatchObject({
-      size: 888,
-    })
+    const sourceEmbed = path.join(
+      process.cwd(),
+      'content/posts/p0-kitchen-sink/embeds/mini-card/index.html',
+    )
+    const [copiedStat, sourceStat] = await Promise.all([
+      import('node:fs/promises').then((fs) => fs.stat(copied)),
+      import('node:fs/promises').then((fs) => fs.stat(sourceEmbed)),
+    ])
+    expect(copiedStat.size).toBe(sourceStat.size)
     const sanitizedSvg = await import('node:fs/promises').then((fs) =>
       fs.readFile(copiedSvg, 'utf8'),
     )

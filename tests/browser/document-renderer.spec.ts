@@ -12,7 +12,7 @@ test('DocumentRenderer 在真实浏览器隔离未知标签与 renderer 崩溃',
   await expect(page.getByText('未知标签后的内容仍然可见。')).toBeVisible()
   const missingScreenRenderer = page.locator('[data-document-fallback="DOC-RENDER-002"]')
   await expect(missingScreenRenderer).toBeVisible()
-  await expect(missingScreenRenderer).toContainText('组件的 Markdown 替代内容。')
+  await expect(missingScreenRenderer).toContainText('screen-fallback')
   const pendingImage = page.getByAltText('丢失图片')
   if (await pendingImage.count()) {
     await pendingImage.evaluate((image) => image.scrollIntoView())
@@ -44,7 +44,7 @@ test('DocumentRenderer 在真实浏览器隔离未知标签与 renderer 崩溃',
     page.getByText('Canvas 崩溃节点后的内容仍然正常显示。'),
   ).toBeVisible()
 
-  const blockedWeb = page.locator('[data-document-fallback="DOC-SECURITY-006"]')
+  const blockedWeb = page.locator('[data-web-embed="fallback"]')
   await expect(blockedWeb).toBeVisible()
   await expect(blockedWeb).toContainText('未获准网页的安全替代内容。')
   await expect(blockedWeb).toHaveAttribute('data-node-id', 'blocked-web')

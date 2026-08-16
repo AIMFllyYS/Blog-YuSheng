@@ -8,6 +8,7 @@ export const HTML_EMBED_IFRAME_POLICY = Object.freeze({
 } as const)
 
 export const EMBED_CAPABILITY_FRAGMENT_KEY = 'nonce' as const
+export const HTML_EMBED_READY_TIMEOUT_MS = 4_000
 export const WEB_EMBED_LOAD_TIMEOUT_MS = 4_000
 
 /** Entries must be manually reviewed eTLD+1 hostnames. P0 intentionally starts empty. */

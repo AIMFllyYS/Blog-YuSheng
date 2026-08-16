@@ -27,10 +27,16 @@ import {
 import { CodeScreenRenderer } from '../renderers/code/screen-renderer'
 import { KatexScreenRenderer } from '../renderers/katex/screen-renderer'
 import { ImageScreenRenderer } from '../renderers/image/screen-renderer'
-import { projectPackageMediaUrl } from '../renderers/media/asset-projection'
+import {
+  projectHtmlEmbedUrl,
+  projectPackageMediaUrl,
+} from '../renderers/media/asset-projection'
 import { MediaPlayer } from '../renderers/media/media-player'
 import { CanvasScreenRenderer } from '../renderers/canvas/screen-renderer'
 import { SvgScreenRenderer } from '../renderers/svg/screen-renderer'
+import { HtmlEmbedScreenRenderer } from '../renderers/html/screen-renderer'
+import { WebEmbedScreenRenderer } from '../renderers/web/screen-renderer'
+import { WebEmbedPreviewCard } from '../renderers/web/web-preview-card'
 import { MermaidScreenRenderer } from '../renderers/mermaid/screen-renderer'
 import { sanitizeDiscussionRead } from '../security'
 import { DocumentFallbackCard } from './fallback-card'
@@ -745,6 +751,24 @@ function RegisteredComponent({
       </RendererErrorBoundary>
     )
   }
+  if (node.name === 'html-embed' || node.name === 'web-embed') {
+    return (
+      <RendererErrorBoundary
+        alternative={alternative}
+        blockId={node.blockId}
+        nodeId={node.nodeId}
+        rendererName={node.name}
+        selectable="none"
+        showDetails={context.showDetails}
+      >
+        <RegisteredEmbedRenderer
+          alternative={alternative}
+          context={context}
+          node={node}
+        />
+      </RendererErrorBoundary>
+    )
+  }
   return (
     <RendererErrorBoundary
       alternative={alternative}
@@ -762,6 +786,72 @@ function RegisteredComponent({
         showDetails={context.showDetails}
       />
     </RendererErrorBoundary>
+  )
+}
+
+function RegisteredEmbedRenderer({
+  alternative,
+  context,
+  node,
+}: {
+  readonly alternative: ReactNode
+  readonly context: RenderContext
+  readonly node: RegisteredComponentNode
+}) {
+  const definition = BUILTIN_RENDERER_REGISTRY.get(node.name)
+  const projection = definition?.renderScreen(node, {
+    profile: context.profile.name,
+  })
+  if (
+    !isRendererProjection(
+      projection,
+      'browser-screen-projection',
+      node.name,
+      node.nodeId,
+    )
+  ) {
+    return (
+      <DocumentFallbackCard
+        blockId={node.blockId}
+        code="DOC-RENDER-002"
+        message="这个嵌入内容暂时无法显示。"
+        nodeId={node.nodeId}
+        selectable="none"
+      >
+        {alternative}
+      </DocumentFallbackCard>
+    )
+  }
+  const height =
+    typeof node.attributes.height === 'number' ? node.attributes.height : 320
+  const title = String(node.attributes.title)
+  if (node.name === 'html-embed') {
+    const src = projectHtmlEmbedUrl(
+      context.articleSlug,
+      node.nodeId,
+      node.componentId,
+      context.assetManifest,
+    )
+    return (
+      <HtmlEmbedScreenRenderer
+        key={src}
+        alternative={alternative}
+        height={height}
+        node={node}
+        src={src}
+        title={title}
+      />
+    )
+  }
+  return (
+    <WebEmbedScreenRenderer
+      key={String(node.attributes.src)}
+      alternative={alternative}
+      height={height}
+      node={node}
+      src={String(node.attributes.src)}
+      title={title}
+    />
   )
 }
 
@@ -898,6 +988,31 @@ function NodeDiagnosticFallback({
         {safeNodeText(node) || '此处内容不可用'}
         <span className="sr-only">（{diagnostic.code}，关联 ID：{node.nodeId}）</span>
       </span>
+    )
+  }
+  if (
+    diagnostic.code === 'DOC-SECURITY-006' &&
+    node.type === 'registeredComponent' &&
+    node.name === 'web-embed'
+  ) {
+    return (
+      <WebEmbedPreviewCard
+        node={node}
+        src={String(node.attributes.src)}
+        title={String(node.attributes.title)}
+      >
+        {node.children.length > 0 ? (
+          <DocumentNodeChildren
+            {...context}
+            inlineFallback={false}
+            nodes={node.children}
+            orphanDiagnostics={context.orphanDiagnostics}
+            parentRange={node.sourceRange}
+          />
+        ) : (
+          '该网页未进入受审 allowlist，请在新窗口中打开。'
+        )}
+      </WebEmbedPreviewCard>
     )
   }
   return (

@@ -22,6 +22,29 @@ export function projectPackageMediaUrl(
   )
 }
 
+export function projectHtmlEmbedUrl(
+  articleSlug: string,
+  nodeId: string,
+  componentId: string,
+  manifest: readonly unknown[],
+): string {
+  const matched = manifest.find((value) => {
+    if (!value || typeof value !== 'object') return false
+    const entry = value as Record<string, unknown>
+    return (
+      entry.articleSlug === articleSlug &&
+      entry.nodeId === nodeId &&
+      entry.nodeName === 'html-embed' &&
+      typeof entry.publicUrl === 'string'
+    )
+  }) as Record<string, unknown> | undefined
+  return encodePublicUrl(
+    typeof matched?.publicUrl === 'string'
+      ? matched.publicUrl
+      : `/embeds/${articleSlug}/${componentId}/`,
+  )
+}
+
 function normalizePackagePath(source: string): string {
   let relativePath = source.startsWith('./') ? source.slice(2) : source
   for (let index = 0; index < 8; index += 1) {

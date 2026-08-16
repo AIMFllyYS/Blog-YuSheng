@@ -17,5 +17,24 @@
       <h1>HTML Embed 已隔离</h1>
       <p>这段内容来自文章包内的独立小页，只用于验证 sandbox iframe 路径。</p>
     </main>
+    <script>
+      (() => {
+        const nonce = new URLSearchParams(location.hash.slice(1)).get('nonce')
+        if (!nonce) return
+        parent.postMessage(
+          { nonce: `${nonce}-invalid`, message: { type: 'ready' } },
+          '*',
+        )
+        parent.postMessage({ nonce, message: { type: 'ready' } }, '*')
+        const reportHeight = () => {
+          parent.postMessage(
+            { type: 'resize', height: document.documentElement.scrollHeight },
+            '*',
+          )
+        }
+        requestAnimationFrame(reportHeight)
+        new ResizeObserver(reportHeight).observe(document.documentElement)
+      })()
+    </script>
   </body>
 </html>

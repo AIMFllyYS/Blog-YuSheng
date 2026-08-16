@@ -175,15 +175,16 @@ describe('DocumentRenderer', () => {
       articleSlug: 'component-fixture',
       assetManifest: [{
         articleSlug: 'component-fixture',
-        outputPath: 'embeds/component-fixture/q/index.html',
+        outputPath: 'embeds/component-fixture/q1/index.html',
       }],
       profile: 'editor-preview',
-      source: '<html-embed id="q1" src="./embeds/q/index.html" title="示例">\n替代说明。\n</html-embed>',
+      source: '<html-embed id="q1" src="./embeds/q1/index.html" title="示例">\n替代说明。\n</html-embed>',
     })
     const html = renderToStaticMarkup(element)
 
-    expect(html).toContain('data-renderer-pending="html-embed"')
+    expect(html).toContain('data-html-embed="waiting"')
     expect(html).toContain('替代说明。')
+    expect(html).not.toContain('<iframe')
     expect(html).not.toContain('DOC-RENDER-001')
   })
 })

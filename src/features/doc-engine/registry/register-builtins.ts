@@ -9,6 +9,8 @@ import { VIDEO_RENDERER_DEFINITION } from '../renderers/video'
 import { AUDIO_RENDERER_DEFINITION } from '../renderers/audio'
 import { CANVAS_RENDERER_DEFINITION } from '../renderers/canvas'
 import { SVG_RENDERER_DEFINITION } from '../renderers/svg'
+import { HTML_RENDERER_DEFINITION } from '../renderers/html'
+import { WEB_RENDERER_DEFINITION } from '../renderers/web'
 import { RendererRegistry } from './renderer-registry'
 import type {
   RenderProfile,
@@ -28,12 +30,6 @@ const ARTICLE_PROFILES = [
 const safeBuiltins = new Set(['markdown', 'code', 'katex', 'mermaid'])
 
 const COMPONENT_SCHEMAS = {
-  'html-embed': z
-    .object({ id: z.string(), src: z.string(), title: z.string(), height: z.number().int().positive().optional() })
-    .strict(),
-  'web-embed': z
-    .object({ id: z.string(), src: z.string(), title: z.string(), height: z.number().int().positive().optional() })
-    .strict(),
   'choice-question': z.object({ id: z.string(), 'data-src': z.string() }).strict(),
   'fill-blank-question': z.object({ id: z.string(), 'data-src': z.string() }).strict(),
 } as const
@@ -103,19 +99,8 @@ const DEFINITIONS: readonly RendererDefinition[] = Object.freeze([
   AUDIO_RENDERER_DEFINITION,
   CANVAS_RENDERER_DEFINITION,
   SVG_RENDERER_DEFINITION,
-  createDefinition('html-embed', {
-    schema: COMPONENT_SCHEMAS['html-embed'],
-    trustLevel: 'sandboxed',
-    allowsScript: true,
-    assetAttributes: ['src'],
-    selectable: 'none',
-  }),
-  createDefinition('web-embed', {
-    schema: COMPONENT_SCHEMAS['web-embed'],
-    trustLevel: 'sandboxed',
-    allowsExternalResource: true,
-    selectable: 'none',
-  }),
+  HTML_RENDERER_DEFINITION,
+  WEB_RENDERER_DEFINITION,
   createDefinition('choice-question', {
     schema: COMPONENT_SCHEMAS['choice-question'],
     trustLevel: 'registered',

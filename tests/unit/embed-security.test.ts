@@ -5,6 +5,7 @@ import {
   EMBED_CAPABILITY_FRAGMENT_KEY,
   EMBED_MESSAGE_SCHEMA,
   HTML_EMBED_IFRAME_POLICY,
+  HTML_EMBED_READY_TIMEOUT_MS,
   WEB_EMBED_ETLD_PLUS_ONE_ALLOWLIST,
   WEB_EMBED_LOAD_TIMEOUT_MS,
   createEmbedCapabilityNonce,
@@ -25,6 +26,7 @@ describe('iframe security gate v1', () => {
       /allow-(?:forms|popups|downloads|top-navigation|modals|pointer-lock)/,
     )
     expect(EMBED_CAPABILITY_FRAGMENT_KEY).toBe('nonce')
+    expect(HTML_EMBED_READY_TIMEOUT_MS).toBe(4_000)
     expect(WEB_EMBED_LOAD_TIMEOUT_MS).toBe(4_000)
   })
 

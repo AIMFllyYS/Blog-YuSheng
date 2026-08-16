@@ -14,15 +14,11 @@ const UNKNOWN_RENDERER_SOURCE = `# DocumentRenderer 验收页
 
 资源失效 fixture：![丢失图片](./media/missing.png)
 
-<html-embed id="screen-fallback" src="./embeds/example/index.html" title="示例组件">
-组件的 Markdown 替代内容。
-</html-embed>
+<choice-question id="screen-fallback" data-src="./data/screen-question.json" />
 
 崩溃节点前的内容。
 
-<html-embed id="fixture-crash-node" src="./embeds/crash/index.html" title="崩溃组件">
-组件的文字替代内容。
-</html-embed>
+<choice-question id="fixture-crash-node" data-src="./data/crash-question.json" />
 
 崩溃节点后的内容仍然正常显示。
 
@@ -38,11 +34,11 @@ Canvas 崩溃节点后的内容仍然正常显示。
 const FIXTURE_MANIFEST = [
   {
     articleSlug: 'document-renderer-fixture',
-    outputPath: 'embeds/document-renderer-fixture/example/index.html',
+    outputPath: 'blog/document-renderer-fixture/data/screen-question.json',
   },
   {
     articleSlug: 'document-renderer-fixture',
-    outputPath: 'embeds/document-renderer-fixture/crash/index.html',
+    outputPath: 'blog/document-renderer-fixture/data/crash-question.json',
   },
   {
     articleSlug: 'document-renderer-fixture',

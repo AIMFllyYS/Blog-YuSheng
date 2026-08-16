@@ -100,6 +100,19 @@ function validateArticleComponent(
 ): readonly DocumentDiagnostic[] {
   if (node.name === 'web-embed') {
     const source = stringAttribute(node, 'src')
+    const safeSameSitePath =
+      source?.startsWith('/') === true &&
+      !source.startsWith('//') &&
+      validateArticleLinkUrl(source)
+    if (safeSameSitePath) {
+      return [
+        createDocumentDiagnostic('DOC-SECURITY-006', {
+          articleSlug: document.articleSlug,
+          nodeId: node.nodeId,
+          sourceRange: node.sourceRange,
+        }),
+      ]
+    }
     const validated = source ? validateDocumentUrl(source) : undefined
     if (source === undefined || !validated || validated.kind !== 'https') {
       return [articleError(document, node, `web-embed 地址无效：${source ?? ''}`)]
