@@ -109,7 +109,7 @@ const SHARED_VARIABLES = {
   '--dur-pop': '480ms',
   '--ease-damp': 'cubic-bezier(.22,.82,.28,1)',
   '--ease-pop': 'cubic-bezier(.34,1.22,.42,1)',
-  '--font-serif': '"Source Han Serif SC", "Noto Serif SC", serif',
+  '--font-serif': '"Noto Serif CJK", "Source Han Serif SC", "Noto Serif SC", serif',
   '--font-mono': '"JetBrains Mono", ui-monospace, SFMono-Regular, Consolas, monospace',
   '--w-left': '248px',
   '--w-right': '352px',

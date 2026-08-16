@@ -14,5 +14,11 @@ describe('reader prototype theme tokens', () => {
     expect(style['--scrollbar']).toBe(scrollbar)
     expect(style['--ease-damp']).toBe('cubic-bezier(.22,.82,.28,1)')
     expect(style['--z-drawer']).toBe('41')
+    expect(style['--font-serif']).toBe(
+      '"Noto Serif CJK", "Source Han Serif SC", "Noto Serif SC", serif',
+    )
+    expect(style['--font-mono']).toBe(
+      '"JetBrains Mono", ui-monospace, SFMono-Regular, Consolas, monospace',
+    )
   })
 })

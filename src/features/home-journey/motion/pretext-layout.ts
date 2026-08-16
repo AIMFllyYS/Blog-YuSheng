@@ -138,7 +138,7 @@ export async function createTypographyLayout(): Promise<TypographyLayout> {
   const narrativeSize = Math.min(36, Math.max(20, viewportWidth * 0.0245))
   const floatingSize = Math.min(24.8, Math.max(16, viewportWidth * 0.017))
   const fontFamily =
-    '"Source Han Serif SC", "Noto Serif SC", STSong, SimSun, serif'
+    '"Noto Serif CJK", "Source Han Serif SC", "Noto Serif SC", STSong, SimSun, serif'
 
   const [titleLayout, mottoLayout, narrativeLayout, floatingLayout] = await Promise.all([
     layoutGlyphHomes({
