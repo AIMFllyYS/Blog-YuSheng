@@ -12,6 +12,7 @@ import {
   ShareIcon,
   ThemeIcon,
 } from './navigation-icons'
+import { ExportMenu } from '@/features/export-service/export-menu'
 import { SettingsPanel } from './settings-panel'
 
 export type RopeNavigationProps = {
@@ -216,16 +217,13 @@ function ReaderExportPanel({ panelId }: { readonly panelId: string }) {
   return (
     <section
       aria-label="导出"
-      className="pointer-events-auto fixed z-[var(--z-overlay)] w-[min(22rem,calc(100vw-1.5rem))] origin-top rounded border border-[var(--line)] bg-[var(--bg-elevated)] p-4 text-[var(--ink)] shadow-[0_24px_60px_var(--shadow-color)] animate-[reader-pop_var(--dur-pop)_var(--ease-pop)_both]"
+      className="pointer-events-auto fixed z-[var(--z-overlay)] w-[min(22.5rem,calc(100vw-1.5rem))] origin-top rounded border border-[var(--line)] bg-[var(--bg-elevated)] p-4 text-[var(--ink)] shadow-[0_24px_60px_var(--shadow-color)] animate-[reader-pop_var(--dur-pop)_var(--ease-pop)_both]"
       id={panelId}
       ref={panelRef}
       role="dialog"
       style={position}
     >
-      <h2 className="text-base font-semibold tracking-[0.12em]">导出本文</h2>
-      <p className="mt-2 text-sm leading-6 text-[var(--ink-muted)]">
-        Markdown、TXT、DOCX 与 PDF 的真实生成链将在 M8 接入；这里先锁定全站统一菜单外壳，不伪造下载。
-      </p>
+      <ExportMenu />
     </section>
   )
 }

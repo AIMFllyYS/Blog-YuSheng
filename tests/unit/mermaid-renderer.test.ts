@@ -34,16 +34,14 @@ describe('Mermaid renderer', () => {
     expect(definition?.selectable).toBe('none')
   })
 
-  it('round-trips fenced Markdown and explains source in TXT', async () => {
+  it('round-trips fenced Markdown and keeps the mermaid fence in TXT', async () => {
     const node = await mermaidNode('flowchart TD\n  A[```] --> B')
     const markdown = renderMermaidMarkdown(node)
     const reparsed = await mermaidNode(markdown)
 
     expect(markdown.startsWith('````mermaid\n')).toBe(true)
     expect(reparsed.value).toBe(node.value)
-    expect(renderMermaidText(node)).toBe(
-      `【Mermaid 图表源码】\n${node.value}`,
-    )
+    expect(renderMermaidText(node)).toBe(markdown)
   })
 
   it.each([

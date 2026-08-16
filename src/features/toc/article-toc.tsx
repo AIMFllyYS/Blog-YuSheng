@@ -12,6 +12,7 @@ import {
 } from 'react'
 import type { DocumentOutline, OutlineItem } from '@/features/doc-engine/toc'
 import { createOutlineSkeletonMetrics } from './outline-skeleton'
+import { scrollReaderToHeading } from './scroll-reader-to-heading'
 import styles from './article-toc.module.css'
 
 type TocMode = 'list' | 'graph'
@@ -177,20 +178,7 @@ export function ArticleToc({ articleSlug, outline }: ArticleTocProps) {
   }
 
   const jumpTo = (slug: string) => {
-    const center = document.querySelector<HTMLElement>('[data-reader-center]')
-    const target = document.getElementById(slug)
-    if (!center || !target) return
-    window.scrollTo({ top: 0, behavior: 'auto' })
-    const centerTop = center.getBoundingClientRect().top
-    const targetTop = target.getBoundingClientRect().top
-    const top = center.scrollTop + targetTop - centerTop - 84
-    center.scrollTo({
-      top: Math.max(0, top),
-      behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
-    })
-    if (matchMedia('(max-width: 1024px)').matches) {
-      document.querySelector<HTMLButtonElement>('[data-reader-drawer-overlay]')?.click()
-    }
+    scrollReaderToHeading(slug)
   }
 
   const handleJumpKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {

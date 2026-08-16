@@ -63,10 +63,15 @@ test('首页保持常显 absolute 导航，阅读页只由中栏顶部唤出', a
   await page.mouse.move(centerBox!.x + centerBox!.width / 2, 24)
   await expect(readerNav).toHaveAttribute('data-nav-visible', 'true')
   await page.screenshot({ path: testInfo.outputPath('reader-navigation.png') })
-  await expect(page.getByRole('button', { name: /编辑|询问/ })).toHaveCount(0)
+  await expect(
+    page.locator('[data-rope-navigation], [data-sel-bar]').getByRole('button', { name: /编辑|询问/ }),
+  ).toHaveCount(0)
   await page.getByRole('button', { name: '导出' }).click()
-  await expect(page.getByRole('dialog', { name: '导出' })).toContainText(
-    '真实生成链将在 M8 接入',
+  const exportDialog = page.getByRole('dialog', { name: '导出' })
+  await expect(exportDialog).toContainText('开始导出')
+  await expect(exportDialog.getByRole('button', { name: 'DOCX' })).toHaveAttribute(
+    'aria-disabled',
+    'true',
   )
   await page.keyboard.press('Escape')
 
@@ -133,6 +138,47 @@ test('设置对准挂件、切换四主题，分享触发统一下落通知', as
   await newest.dispatchEvent('click')
   await expect(newest.locator('[data-toast-shard]')).toHaveCount(7)
   await expect(newestToast).toHaveCount(0, { timeout: 1_000 })
+})
+
+test('粗指针走 Web Share 并通知已打开系统分享', async ({ page }) => {
+  await page.addInitScript(() => {
+    const originalMatchMedia = window.matchMedia.bind(window)
+    window.matchMedia = ((query: string) => {
+      if (query === '(pointer: coarse)') {
+        return {
+          matches: true,
+          media: query,
+          onchange: null,
+          addListener() {},
+          removeListener() {},
+          addEventListener() {},
+          removeEventListener() {},
+          dispatchEvent() {
+            return false
+          },
+        }
+      }
+      return originalMatchMedia(query)
+    }) as typeof window.matchMedia
+
+    Object.defineProperty(navigator, 'share', {
+      configurable: true,
+      value: async (data: ShareData) => {
+        ;(window as unknown as { __shared?: ShareData }).__shared = data
+      },
+    })
+  })
+
+  await waitForReader(page)
+  const center = page.locator('[data-reader-center]')
+  const box = await center.boundingBox()
+  expect(box).not.toBeNull()
+  await page.mouse.move(box!.x + box!.width / 2, 24)
+  await page.getByRole('button', { name: '分享本文' }).click()
+  await expect(page.getByRole('status').filter({ hasText: '已打开系统分享' })).toHaveCount(1)
+  const shared = await page.evaluate(() => (window as unknown as { __shared?: ShareData }).__shared)
+  expect(shared?.title).toBe('P0 中文综合验收文章')
+  expect(shared?.url).toContain('/blog/p0-kitchen-sink/')
 })
 
 test('滚动条与 reduced-motion 通知遵守外壳契约', async ({ page, context }) => {

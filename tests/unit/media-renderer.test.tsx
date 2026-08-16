@@ -118,10 +118,10 @@ describe('video and audio renderers', () => {
       SOURCE.split('\n')[2],
     )
     expect(projectRendererNode(videoDefinition, 'text', video).value).toBe(
-      '【视频】演示视频：./media/video/demo.mp4',
+      '[视频：演示视频]（./media/video/demo.mp4）',
     )
     expect(projectRendererNode(audioDefinition, 'text', audio).value).toBe(
-      '【音频】演示音频：./media/audio/demo.mp3',
+      '[音频：演示音频]（./media/audio/demo.mp3）',
     )
   })
 

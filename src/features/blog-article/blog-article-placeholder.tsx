@@ -44,7 +44,9 @@ export async function BlogArticlePlaceholder({
           />
         }
         articleSlug={post.slug}
+        assetManifest={assetManifest}
         description={post.frontmatter.description}
+        document={compiled.document}
         discussionSeed={
           post.slug === 'p0-kitchen-sink'
             ? toMemoryDiscussionSeed(kitchenSinkAnnotations)

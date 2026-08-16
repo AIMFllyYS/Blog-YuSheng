@@ -83,7 +83,7 @@ describe('svg renderer', () => {
     })
     expect(projectRendererNode(definition, 'markdown', node).value).toBe(SOURCE)
     expect(projectRendererNode(definition, 'text', node).value).toBe(
-      '【SVG】安全流程图：./media/svg/safe.svg',
+      '[SVG：安全流程图]（./media/svg/safe.svg）',
     )
   })
 

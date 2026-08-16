@@ -82,6 +82,7 @@ export default async function TocDevelopmentPage() {
       }
       articleSlug="toc-browser-fixture"
       description={frontmatter.description}
+      document={compiled.document}
       outline={outline}
       publishedAt={frontmatter.publishedAt}
       selectionIndex={buildSelectionIndex(compiled.document)}

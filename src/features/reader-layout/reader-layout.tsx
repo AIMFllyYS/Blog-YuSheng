@@ -4,9 +4,11 @@ import { AnnotationHighlights } from '@/features/annotations/highlights'
 import { SelectionToolbar } from '@/features/annotations/selection'
 import { DiscussionRuntimeProvider } from '@/features/discussions/runtime'
 import type { MemoryDiscussionSeed } from '@/features/discussions/repository'
+import type { CompiledDocument } from '@/features/doc-engine/core'
 import type { SelectionDocumentIndex } from '@/features/doc-engine/selection'
 import type { DocumentOutline } from '@/features/doc-engine/toc'
-import { ArticleToc } from '@/features/toc'
+import { ExportRuntimeProvider } from '@/features/export-service/export-runtime'
+import { ArticleToc, HashDeepLink } from '@/features/toc'
 import { ReaderDivider } from './reader-divider'
 import { ReaderChrome } from './reader-chrome'
 import { ReaderLayoutInteractions } from './reader-layout-interactions'
@@ -16,8 +18,10 @@ import styles from './reader-layout.module.css'
 type ReaderLayoutProps = {
   readonly article: ReactNode
   readonly articleSlug: string
+  readonly assetManifest?: readonly unknown[]
   readonly description: string
   readonly discussionSeed?: MemoryDiscussionSeed
+  readonly document: CompiledDocument
   readonly outline: DocumentOutline
   readonly publishedAt: string
   readonly selectionIndex: SelectionDocumentIndex
@@ -48,8 +52,10 @@ function ReaderWave({ className }: { readonly className: string }) {
 export function ReaderLayout({
   article,
   articleSlug,
+  assetManifest = [],
   description,
   discussionSeed,
+  document,
   outline,
   publishedAt,
   selectionIndex,
@@ -57,6 +63,11 @@ export function ReaderLayout({
 }: ReaderLayoutProps) {
   return (
     <FallingToastProvider>
+      <ExportRuntimeProvider
+        articleSlug={articleSlug}
+        assetManifest={assetManifest}
+        document={document}
+      >
       <DiscussionRuntimeProvider
         articleSlug={articleSlug}
         seed={discussionSeed}
@@ -64,6 +75,7 @@ export function ReaderLayout({
       >
         <main className={styles.readerPage} data-reader-page>
         <ReaderChrome />
+        <HashDeepLink />
         <SelectionToolbar index={selectionIndex} />
         <section className={styles.shell} data-reader-shell>
           <aside
@@ -134,6 +146,7 @@ export function ReaderLayout({
         <ReaderLayoutInteractions />
         </main>
       </DiscussionRuntimeProvider>
+      </ExportRuntimeProvider>
     </FallingToastProvider>
   )
 }

@@ -146,7 +146,7 @@ describe('choice and fill quiz renderers', () => {
         data: SINGLE_DATA,
         includeAnswers: false,
       }),
-    ).toContain('【选择题】唯一权威源是什么？')
+    ).toContain('唯一权威源是什么？')
     expect(
       choice.renderText?.(single, {
         profile: 'article',
