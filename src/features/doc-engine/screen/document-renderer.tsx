@@ -27,6 +27,7 @@ import {
 import { CodeScreenRenderer } from '../renderers/code/screen-renderer'
 import { KatexScreenRenderer } from '../renderers/katex/screen-renderer'
 import { ImageScreenRenderer } from '../renderers/image/screen-renderer'
+import { MermaidScreenRenderer } from '../renderers/mermaid/screen-renderer'
 import { sanitizeDiscussionRead } from '../security'
 import { DocumentFallbackCard } from './fallback-card'
 import { RegisteredRendererLeaf } from './registered-renderer-leaf'
@@ -375,15 +376,7 @@ function renderNode(node: DocumentNode, context: RenderContext): ReactNode {
     case 'math':
       return <RegisteredKatexRenderer context={context} node={node} />
     case 'mermaid':
-      return (
-        <DocumentFallbackCard
-          code="DOC-RENDER-002"
-          message="这张 Mermaid 图暂未渲染，已保留图表源码。"
-          nodeId={node.nodeId}
-        >
-          <pre>{node.value}</pre>
-        </DocumentFallbackCard>
-      )
+      return <RegisteredMermaidRenderer context={context} node={node} />
     case 'image':
       return <RegisteredImageRenderer context={context} node={node} />
     case 'registeredComponent':
@@ -565,6 +558,47 @@ function RegisteredKatexRenderer({
     )
   }
   return <KatexScreenRenderer node={node} showDetails={context.showDetails} />
+}
+
+function RegisteredMermaidRenderer({
+  context,
+  node,
+}: {
+  readonly context: RenderContext
+  readonly node: Extract<DocumentNode, { type: 'mermaid' }>
+}) {
+  const definition = BUILTIN_RENDERER_REGISTRY.get('mermaid')
+  const projection = definition?.renderScreen(node, {
+    profile: context.profile.name,
+  })
+  if (
+    !isRendererProjection(
+      projection,
+      'browser-screen-projection',
+      'mermaid',
+      node.nodeId,
+    )
+  ) {
+    return (
+      <DocumentFallbackCard
+        blockId={node.blockId}
+        code="DOC-RENDER-002"
+        details={context.showDetails ? 'mermaid renderer 的浏览器投影无效。' : undefined}
+        message="这张 Mermaid 图暂时无法渲染，已保留图表源码。"
+        nodeId={node.nodeId}
+        selectable="none"
+      >
+        <pre>{node.value}</pre>
+      </DocumentFallbackCard>
+    )
+  }
+  return (
+    <MermaidScreenRenderer
+      key={node.value}
+      node={node}
+      showDetails={context.showDetails}
+    />
+  )
 }
 
 function isRendererProjection(

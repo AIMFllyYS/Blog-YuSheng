@@ -4,6 +4,7 @@ import type { DocumentNode } from '../core'
 import { CODE_RENDERER_DEFINITION } from '../renderers/code'
 import { KATEX_RENDERER_DEFINITION } from '../renderers/katex'
 import { IMAGE_RENDERER_DEFINITION } from '../renderers/image'
+import { MERMAID_RENDERER_DEFINITION } from '../renderers/mermaid'
 import { RendererRegistry } from './renderer-registry'
 import type {
   RenderProfile,
@@ -101,7 +102,7 @@ const DEFINITIONS: readonly RendererDefinition[] = Object.freeze([
   createDefinition('markdown'),
   CODE_RENDERER_DEFINITION,
   KATEX_RENDERER_DEFINITION,
-  createDefinition('mermaid', { selectable: 'none' }),
+  MERMAID_RENDERER_DEFINITION,
   IMAGE_RENDERER_DEFINITION,
   createDefinition('video-embed', {
     schema: COMPONENT_SCHEMAS['video-embed'],
