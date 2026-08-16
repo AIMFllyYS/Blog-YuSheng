@@ -2,14 +2,15 @@ import type { ReactNode } from 'react'
 
 type HangerProps = {
   children: ReactNode
+  className?: string
   id: string
   ropeLength?: string
 }
 
-export function Hanger({ children, id, ropeLength = '2.5rem' }: HangerProps) {
+export function Hanger({ children, className = '', id, ropeLength = '2.5rem' }: HangerProps) {
   return (
     <div
-      className="flex min-w-0 flex-col items-center"
+      className={`flex min-w-0 flex-col items-center ${className}`}
       data-home-hanger={id}
     >
       <span

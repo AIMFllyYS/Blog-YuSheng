@@ -1,7 +1,7 @@
 # 博客内容引擎与公开讨论功能规格
 
 > Created: 2026-08-15
-> Updated: 2026-08-15
+> Updated: 2026-08-17
 > Status: accepted baseline（已决策项可实施；阶段进入门见第十五节）
 >
 > 本规格定义博客文章从仓库 Markdown 到屏幕、评论/注释和多格式导出的统一契约。总体决策见 [博客整体架构设计](../designs/architecture-overview.md)，目录归属见 [项目结构与文件组织](../conventions/project-structure.md)。
@@ -445,11 +445,16 @@ type DiscussionExportScope =
 
 - `originalSource` 是 `index.md` 的**完整原文，含 frontmatter**，以 UTF-8 无 BOM、LF 换行保存；编译器只读不改。`body-only` 的下载物就是它逐字节原样输出，因此与源文件整文件一致（而不是去掉 frontmatter 后的片段）。
 - `body-only` 直接返回编译结果保留的不可变 `originalSource`，而不是试图从 IR 反向猜回空行、属性顺序和围栏格式；同时仍要求该 source 已通过同一 parser/IR 校验。
-- 其他模式在原文后追加审阅附录，不改写原句。
+- 其他模式在原文后追加审阅附录，不改写原句。正文与附录之间恰好一个空行。
 - 每个注释附录包含稳定目标、标题路径、精确引语和上下文；评论附录定位整篇文章。
 - 线程按注释/评论分组并保留嵌套回复。
-- 审阅附录格式应兼顾人类可读、AI 理解和机器重解析；最终标签 schema 在实现前锁定并写 fixture。
-- v1 下载物是单个 `.md`，保留文章包相对资源引用；它服务源码审阅和 AI 改文，不承诺离开文章包后资源自包含。完整文章包 ZIP 属于后续可选增强。
+- 审阅附录 v1 标签已锁定，黄金 fixture 见 `tests/fixtures/export/p0-kitchen-sink.body-with-annotations.md`：
+  - 起止标记：`<!-- blog-review-appendix:v1 -->` / `<!-- /blog-review-appendix:v1 -->`
+  - 定位围栏 info string：`blog-review-locator`，内容为 JSON（含 `exact` / `prefix` / `suffix` / `headingPath` / 块内 offset）
+  - 条目围栏 info string：`blog-review-entry`，内容为经 `discussion` profile 复验后的源码
+  - 围栏长度取 `max(3, 内容中最长连续反引号 + 1)`，用户源码无法越出围栏
+  - `startOffset` / `endOffset` 是块内 `canonicalText` 的 UTF-16 坐标，不能直接切 `index.md` 原文
+- v1 下载物是单个 `.md`，带注释时文件名为 `<slug>.review.md`；保留文章包相对资源引用；它服务源码审阅和 AI 改文，不承诺离开文章包后资源自包含。完整文章包 ZIP 属于后续可选增强。
 - 讨论附录不能原样拼接用户源码；必须重新经过 `discussion` profile，并由 Markdown exporter 转义/重建链接、HTML、自定义标签和围栏。
 
 ### 12.3 TXT
@@ -583,6 +588,6 @@ type DiscussionExportScope =
 以下细节可以在不改变领域协议的前提下后置微调：
 
 - 评论默认排序、注释同锚点聚合和失锚认领 UI；
-- 审阅附录最终可重解析标签的具体拼写，但必须先有黄金 fixture；
+- 审阅附录最终可重解析标签的具体拼写（v1 已锁定，见 §12.2）；
 - 在线编辑发布回仓库与 AI “询问”接口；
 - 完整文章包 ZIP、服务端超大导出等增强能力。

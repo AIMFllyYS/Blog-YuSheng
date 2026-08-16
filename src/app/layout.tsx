@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { CloudSerifFont } from '@/components/cloud-serif-font'
 import { DEFAULT_THEME, getJourneyStyle, getThemeStyle } from '@/lib/theme'
 import './globals.css'
 
@@ -19,7 +20,10 @@ export default function RootLayout({
       lang="zh-CN"
       style={{ ...getThemeStyle(DEFAULT_THEME), ...getJourneyStyle() }}
     >
-      <body className="antialiased">{children}</body>
+      <body className="antialiased">
+        <CloudSerifFont />
+        {children}
+      </body>
     </html>
   )
 }

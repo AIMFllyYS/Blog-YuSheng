@@ -3,10 +3,14 @@ import 'server-only'
 import { readFile, readdir, realpath, stat } from 'node:fs/promises'
 import path from 'node:path'
 import { ContentBuildError } from './content-error'
-import { collectTemporaryAssetReferences } from './collect-temporary-assets'
+import { collectAssetReferences } from './collect-asset-references'
 import { readAllPosts } from './discover-posts'
 import { validateArticleAssetPath } from './validate-assets'
 import type { FrontmatterDiagnostic, SourceRange } from './validate-frontmatter'
+import { getCanvasRendererRegistration } from '../../features/doc-engine/registry/canvas-renderer-registry'
+import { CHOICE_QUESTION_DATA_SCHEMA } from '../../features/doc-engine/renderers/quiz-choice/schema'
+import { FILL_BLANK_QUESTION_DATA_SCHEMA } from '../../features/doc-engine/renderers/quiz-fill/schema'
+import { sanitizeSvgSource } from './sanitize-svg'
 
 export const MAX_STATIC_FILE_BYTES = 25 * 1024 * 1024
 export const MAX_STATIC_FILE_COUNT = 20_000
@@ -21,6 +25,7 @@ export type AssetManifestEntry = {
   outputPath: string
   publicUrl: string
   bytes: number
+  transform?: 'sanitize-svg'
   derivedFrom?: string
   image?: {
     width: number
@@ -29,6 +34,7 @@ export type AssetManifestEntry = {
     derived: boolean
     quality?: number
   }
+  data?: unknown
   sourceRange: SourceRange
 }
 
@@ -39,7 +45,8 @@ export async function createAssetManifest(postsRoot?: string) {
   const outputOwners = new Map<string, string>()
 
   for (const post of posts) {
-    const collected = collectTemporaryAssetReferences(post)
+    const collected = await collectAssetReferences(post)
+    diagnostics.push(...collected.diagnostics)
     const seenIds = new Set<string>()
     for (const component of collected.componentIds) {
       if (seenIds.has(component.id)) {
@@ -63,6 +70,9 @@ export async function createAssetManifest(postsRoot?: string) {
         relativePath: reference.relativePath,
         source: post.source,
         sourceOffset: reference.sourceRange.start.offset,
+        sourceLength:
+          reference.sourceRange.end.offset -
+          reference.sourceRange.start.offset,
       })
       if (!validation.ok) {
         diagnostics.push(
@@ -106,6 +116,7 @@ export async function createAssetManifest(postsRoot?: string) {
         throw error
       }
       for (const sourcePath of files) {
+        let manifestData: unknown
         const file = await stat(sourcePath)
         if (!file.isFile()) {
           diagnostics.push(
@@ -143,6 +154,67 @@ export async function createAssetManifest(postsRoot?: string) {
           )
           continue
         }
+        if (reference.nodeName === 'svg-embed') {
+          const source = decodeStrictText(await readFile(sourcePath))
+          const sanitized = source ? sanitizeSvgSource(source) : undefined
+          if (!sanitized?.ok) {
+            diagnostics.push(
+              diagnostic(
+                post.slug,
+                'ASSET_SVG_UNSAFE',
+                `SVG 未通过构建期安全清洗：${sanitized?.reason ?? reference.relativePath}`,
+                reference.sourceRange,
+                reference.nodeId,
+              ),
+            )
+            continue
+          }
+        }
+        if (
+          reference.nodeName === 'canvas-render' &&
+          reference.attribute === 'data-src'
+        ) {
+          const registration = reference.componentRenderer
+            ? getCanvasRendererRegistration(reference.componentRenderer)
+            : undefined
+          const data = await readJsonValue(sourcePath)
+          if (!registration || !registration.validateData(data)) {
+            diagnostics.push(
+              diagnostic(
+                post.slug,
+                'ASSET_DATA_SCHEMA_INVALID',
+                `Canvas 数据未通过 renderer ${reference.componentRenderer ?? ''} 的 schema：${reference.relativePath}`,
+                reference.sourceRange,
+                reference.nodeId,
+              ),
+            )
+            continue
+          }
+        }
+        if (
+          (reference.nodeName === 'choice-question' ||
+            reference.nodeName === 'fill-blank-question') &&
+          reference.attribute === 'data-src'
+        ) {
+          const rawData = await readJsonValue(sourcePath)
+          const parsed =
+            reference.nodeName === 'choice-question'
+              ? CHOICE_QUESTION_DATA_SCHEMA.safeParse(rawData)
+              : FILL_BLANK_QUESTION_DATA_SCHEMA.safeParse(rawData)
+          if (!parsed.success) {
+            diagnostics.push(
+              diagnostic(
+                post.slug,
+                'ASSET_DATA_SCHEMA_INVALID',
+                `${reference.nodeName} 数据未通过构建期 schema：${reference.relativePath}`,
+                reference.sourceRange,
+                reference.nodeId,
+              ),
+            )
+            continue
+          }
+          manifestData = parsed.data
+        }
         const relativePath = reference.nodeName === 'html-embed'
           ? path.posix.join(path.posix.dirname(validation.relativePath), path.relative(path.dirname(validation.absolutePath), sourcePath).split(path.sep).join('/'))
           : validation.relativePath
@@ -179,6 +251,9 @@ export async function createAssetManifest(postsRoot?: string) {
           outputPath,
           publicUrl,
           bytes: file.size,
+          data: manifestData,
+          transform:
+            reference.nodeName === 'svg-embed' ? 'sanitize-svg' : undefined,
           sourceRange: reference.sourceRange,
         })
       }
@@ -262,11 +337,16 @@ async function collectEmbedFiles(
 }
 
 function deduplicateEntries(entries: AssetManifestEntry[]) {
-  return [
-    ...new Map(
-      entries.map((entry) => [entry.outputPath.toLowerCase(), entry]),
-    ).values(),
-  ].sort((a, b) => a.outputPath.localeCompare(b.outputPath, 'en'))
+  const deduplicated = new Map<string, AssetManifestEntry>()
+  for (const entry of entries) {
+    const key = entry.outputPath.toLowerCase()
+    const previous = deduplicated.get(key)
+    if (previous?.transform === 'sanitize-svg') continue
+    deduplicated.set(key, entry)
+  }
+  return [...deduplicated.values()].sort((a, b) =>
+    a.outputPath.localeCompare(b.outputPath, 'en'),
+  )
 }
 
 function diagnostic(
@@ -354,6 +434,16 @@ async function hasExpectedFileType(filePath: string) {
     return text !== undefined && text.length > 0 && !hasUnsafeTextControls(text)
   }
   return false
+}
+
+async function readJsonValue(filePath: string): Promise<unknown> {
+  const text = decodeStrictText(await readFile(filePath))
+  if (text === undefined) return undefined
+  try {
+    return JSON.parse(text) as unknown
+  } catch {
+    return undefined
+  }
 }
 
 function decodeStrictText(bytes: Buffer) {

@@ -1,0 +1,16 @@
+export const DISCUSSION_LIMITS = Object.freeze({
+  maxSourceLength: 10_000,
+  maxMermaidSourceLength: 5_000,
+  maxMermaidInstances: 3,
+  maxSafeCanvasInstances: 3,
+  maxFormulaInstances: 50,
+  maxContainerNestingDepth: 6,
+  maxTableRows: 50,
+  maxTableColumns: 20,
+  maxCodeBlockSourceLength: 8_000,
+  maxReplyDepth: 5,
+  pageSize: 50,
+  maxExportEntries: 500,
+  maxExportSourceBytes: 5 * 1024 * 1024,
+  maxDocumentNodes: 2_000,
+})
