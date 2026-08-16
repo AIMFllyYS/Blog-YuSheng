@@ -10,6 +10,8 @@ type RendererErrorBoundaryProps = {
   readonly showDetails: boolean
   readonly children: ReactNode
   readonly alternative?: ReactNode
+  readonly blockId?: string
+  readonly selectable?: 'none'
 }
 
 type RendererErrorBoundaryState = {
@@ -58,10 +60,12 @@ export class RendererErrorBoundary extends Component<
       : undefined
     return (
       <DocumentFallbackCard
+        blockId={this.props.blockId}
         code="DOC-RENDER-001"
         details={details}
         message="这个内容组件没有加载成功，其他内容仍可继续阅读。"
         nodeId={this.props.nodeId}
+        selectable={this.props.selectable}
       >
         {this.props.alternative}
       </DocumentFallbackCard>

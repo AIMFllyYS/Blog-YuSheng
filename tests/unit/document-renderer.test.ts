@@ -13,7 +13,7 @@ describe('DocumentRenderer', () => {
     const html = renderToStaticMarkup(element)
 
     expect(html).toContain('data-document-renderer="canonical"')
-    expect(html).toContain('<h1 id="标题">标题</h1>')
+    expect(html).toContain('<h1 data-block-id="标题" id="标题">标题</h1>')
     expect(html).toContain('<strong>强调</strong>')
     expect(html).toContain('rel="nofollow ugc noopener noreferrer"')
   })
@@ -109,6 +109,55 @@ describe('DocumentRenderer', () => {
     expect(html).not.toContain('<img')
   })
 
+  it('缺 alt 只产生编辑期原位 warning，图片仍正常渲染', async () => {
+    const assetManifest = [
+      {
+        articleSlug: 'missing-image-alt',
+        outputPath: 'blog/missing-image-alt/media/photo.png',
+        publicUrl: '/blog/missing-image-alt/media/photo.png',
+        image: {
+          width: 800,
+          height: 450,
+          format: 'png',
+          derived: false,
+        },
+      },
+    ] as const
+    const preview = await DocumentRenderer({
+      articleSlug: 'missing-image-alt',
+      assetManifest,
+      profile: 'editor-preview',
+      source: '![](./media/photo.png)',
+    })
+    const html = renderToStaticMarkup(preview)
+
+    expect(html).toContain('data-document-diagnostic="DOC-ASSET-005"')
+    expect(html).toContain('<img alt=""')
+    expect(html).not.toContain('data-document-fallback="DOC-ASSET-005"')
+
+    await expect(
+      DocumentRenderer({
+        articleSlug: 'missing-image-alt',
+        assetManifest,
+        profile: 'article',
+        source: '![](./media/photo.png)',
+      }),
+    ).resolves.toBeDefined()
+  })
+
+  it('空 alt 与缺资源并存时保留 warning 和阻断 fallback', async () => {
+    const preview = await DocumentRenderer({
+      articleSlug: 'missing-image-and-alt',
+      profile: 'editor-preview',
+      source: '![](./media/missing.png)',
+    })
+    const html = renderToStaticMarkup(preview)
+
+    expect(html).toContain('data-document-diagnostic="DOC-ASSET-005"')
+    expect(html).toContain('data-document-fallback="DOC-ASSET-002"')
+    expect(html).not.toContain('<img')
+  })
+
   it('discussion 读取期错误只输出安全卡，不渲染危险节点', async () => {
     const element = await DocumentRenderer({
       articleSlug: 'unsafe-discussion',
@@ -126,15 +175,16 @@ describe('DocumentRenderer', () => {
       articleSlug: 'component-fixture',
       assetManifest: [{
         articleSlug: 'component-fixture',
-        outputPath: 'embeds/component-fixture/q/index.html',
+        outputPath: 'embeds/component-fixture/q1/index.html',
       }],
       profile: 'editor-preview',
-      source: '<html-embed id="q1" src="./embeds/q/index.html" title="示例">\n替代说明。\n</html-embed>',
+      source: '<html-embed id="q1" src="./embeds/q1/index.html" title="示例">\n替代说明。\n</html-embed>',
     })
     const html = renderToStaticMarkup(element)
 
-    expect(html).toContain('data-renderer-pending="html-embed"')
+    expect(html).toContain('data-html-embed="waiting"')
     expect(html).toContain('替代说明。')
+    expect(html).not.toContain('<iframe')
     expect(html).not.toContain('DOC-RENDER-001')
   })
 })

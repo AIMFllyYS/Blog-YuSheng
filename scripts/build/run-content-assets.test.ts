@@ -1,4 +1,4 @@
-import { mkdir, rm } from 'node:fs/promises'
+import { mkdir, readFile, rm } from 'node:fs/promises'
 import path from 'node:path'
 import sharp from 'sharp'
 import { expect, test } from 'vitest'
@@ -26,6 +26,41 @@ test('builds the validated content asset manifest into out', async () => {
     expect(
       metadata.format === entry.image?.format ||
         (entry.image?.format === 'avif' && metadata.format === 'heif'),
+    ).toBe(true)
+  }
+  const articleHtml = await readFile(
+    path.join(
+      process.cwd(),
+      'out',
+      'blog',
+      'p0-kitchen-sink',
+      'index.html',
+    ),
+    'utf8',
+  )
+  const figure = articleHtml.match(
+    /<figure[^>]*data-image-renderer="responsive"[\s\S]*?<\/figure>/,
+  )?.[0]
+  expect(figure).toBeDefined()
+  expect(figure).toContain('<picture>')
+  expect(figure).toContain('type="image/avif"')
+  expect(figure).toContain('type="image/webp"')
+  expect(figure).toContain('width="1200"')
+  expect(figure).toContain('height="630"')
+  expect(figure).toContain('<figcaption')
+  expect(figure).toContain('P0 验收封面')
+  const urls = Array.from(
+    figure?.matchAll(/(?:src|srcSet)="([^"]+)"/g) ?? [],
+    (match) => match[1]!,
+  ).flatMap((value) =>
+    value.split(',').map((candidate) => candidate.trim().split(' ')[0]!),
+  )
+  expect(urls).toContain('/blog/p0-kitchen-sink/media/images/cover.png')
+  expect(urls.some((url) => url.endsWith('.avif'))).toBe(true)
+  expect(urls.some((url) => url.endsWith('.webp'))).toBe(true)
+  for (const publicUrl of urls) {
+    expect(
+      manifest.some((entry) => entry.publicUrl === publicUrl),
     ).toBe(true)
   }
   const isolatedOutput = path.join(

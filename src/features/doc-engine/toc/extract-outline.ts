@@ -22,6 +22,8 @@ export type OutlineItem = {
 }
 
 export type DocumentOutline = {
+  /** Visible grapheme count for the complete document, including pre-heading text. */
+  readonly characterCount: number
   /** Complete heading hierarchy for the conventional table of contents. */
   readonly items: readonly OutlineItem[]
   /** Primary article sections consumed by the graphical skeleton view. */
@@ -52,6 +54,7 @@ export function extractOutline(document: CompiledDocument): DocumentOutline {
   const headingStack: MutableOutlineItem[] = []
   let firstRootBlockNodeId: string | undefined
   let rootLevelH1Count = 0
+  let documentCharacterCount = 0
 
   visit(document.root)
 
@@ -72,6 +75,7 @@ export function extractOutline(document: CompiledDocument): DocumentOutline {
       : frozenItems
 
   return Object.freeze({
+    characterCount: documentCharacterCount,
     items: frozenItems,
     primarySections,
   })
@@ -91,6 +95,7 @@ export function extractOutline(document: CompiledDocument): DocumentOutline {
 
       if (isRootChild && node.depth === 1) rootLevelH1Count += 1
       const titleCount = countCharacters(node.canonicalText)
+      documentCharacterCount += titleCount
       for (const ancestor of headingStack) {
         if (ancestor.depth < node.depth) ancestor.characterCount += titleCount
       }
@@ -169,6 +174,7 @@ export function extractOutline(document: CompiledDocument): DocumentOutline {
 
   function addCharacters(value: string): void {
     const count = countCharacters(value)
+    documentCharacterCount += count
     for (const heading of headingStack) heading.characterCount += count
   }
 

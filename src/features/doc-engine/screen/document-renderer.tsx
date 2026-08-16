@@ -24,11 +24,27 @@ import {
   BUILTIN_RENDERER_REGISTRY,
   type RenderProfile,
 } from '../registry'
+import { CodeScreenRenderer } from '../renderers/code/screen-renderer'
+import { KatexScreenRenderer } from '../renderers/katex/screen-renderer'
+import { ImageScreenRenderer } from '../renderers/image/screen-renderer'
+import {
+  projectHtmlEmbedUrl,
+  projectPackageAssetData,
+  projectPackageMediaUrl,
+} from '../renderers/media/asset-projection'
+import { MediaPlayer } from '../renderers/media/media-player'
+import { CanvasScreenRenderer } from '../renderers/canvas/screen-renderer'
+import { SvgScreenRenderer } from '../renderers/svg/screen-renderer'
+import { HtmlEmbedScreenRenderer } from '../renderers/html/screen-renderer'
+import { WebEmbedScreenRenderer } from '../renderers/web/screen-renderer'
+import { WebEmbedPreviewCard } from '../renderers/web/web-preview-card'
+import { ChoiceQuestionScreenRenderer } from '../renderers/quiz-choice/screen-renderer'
+import { FillBlankQuestionScreenRenderer } from '../renderers/quiz-fill/screen-renderer'
+import { MermaidScreenRenderer } from '../renderers/mermaid/screen-renderer'
 import { sanitizeDiscussionRead } from '../security'
 import { DocumentFallbackCard } from './fallback-card'
 import { RegisteredRendererLeaf } from './registered-renderer-leaf'
 import { RendererErrorBoundary } from './renderer-error-boundary'
-import { ResourceImage } from './resource-image'
 
 export type DocumentRendererProps = {
   readonly source: string
@@ -39,7 +55,13 @@ export type DocumentRendererProps = {
   readonly className?: string
   /** @internal Only accepted by the editor-preview development fixture. */
   readonly developmentCrashComponentIds?: readonly string[]
+  /** @internal Supplied only by the browser-owned discussion entry point. */
+  readonly discussionMathRenderer?: DiscussionMathRenderer
 }
+
+export type DiscussionMathRenderer = (
+  node: Extract<DocumentNode, { type: 'math' }>,
+) => ReactNode
 
 type PreparedDocument = {
   readonly document?: CompiledDocument
@@ -54,6 +76,7 @@ export async function DocumentRenderer({
   assetManifest = [],
   className,
   developmentCrashComponentIds,
+  discussionMathRenderer,
 }: DocumentRendererProps) {
   if (
     developmentCrashComponentIds &&
@@ -88,7 +111,9 @@ export async function DocumentRenderer({
       ) : prepared.document ? (
         <DocumentRootContent
           articleSlug={articleSlug}
+          assetManifest={prepared.document.assetManifest}
           developmentCrashComponentIds={developmentCrashComponentIds}
+          discussionMathRenderer={discussionMathRenderer}
           diagnostics={prepared.diagnostics}
           nodeDiagnostics={nodeDiagnostics}
           nodes={prepared.document.root.children}
@@ -236,7 +261,9 @@ function DocumentNodeChildren({
 
 type RenderContext = {
   readonly articleSlug: string
+  readonly assetManifest: readonly unknown[]
   readonly developmentCrashComponentIds?: readonly string[]
+  readonly discussionMathRenderer?: DiscussionMathRenderer
   readonly nodeDiagnostics: ReadonlyMap<string, readonly DocumentDiagnostic[]>
   readonly orphanDiagnostics: readonly DocumentDiagnostic[]
   readonly profile: ScreenProfileDefinition
@@ -245,6 +272,30 @@ type RenderContext = {
 
 function renderNode(node: DocumentNode, context: RenderContext): ReactNode {
   const diagnostics = context.nodeDiagnostics.get(node.nodeId) ?? []
+  const advisory = diagnostics.find(
+    (diagnostic) => diagnostic.disposition === 'continue',
+  )
+  if (advisory && context.profile.diagnosticMode === 'inline-diagnostics') {
+    const remaining = new Map(context.nodeDiagnostics)
+    const remainingForNode = diagnostics.filter(
+      (diagnostic) => diagnostic !== advisory,
+    )
+    if (remainingForNode.length > 0) {
+      remaining.set(node.nodeId, remainingForNode)
+    } else {
+      remaining.delete(node.nodeId)
+    }
+    return (
+      <Fragment>
+        <DiagnosticNotice
+          diagnostic={advisory}
+          inline={isInlineNode(node)}
+          showDetails={context.showDetails}
+        />
+        {renderNode(node, { ...context, nodeDiagnostics: remaining })}
+      </Fragment>
+    )
+  }
   const forcedFallback = diagnostics.find((diagnostic) =>
     diagnostic.disposition === 'block-build' ||
     diagnostic.disposition === 'continue-with-fallback' ||
@@ -328,38 +379,19 @@ function renderNode(node: DocumentNode, context: RenderContext): ReactNode {
     case 'tableCell':
       return <TableCell context={context} node={node} />
     case 'inlineCode':
-      return <code>{node.value}</code>
+      return (
+        <code className="rounded-sm bg-[var(--bg-elevated)] px-1.5 py-0.5 text-[0.92em] text-[var(--accent)] [font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,'Liberation_Mono','Courier_New',monospace]">
+          {node.value}
+        </code>
+      )
     case 'code':
-      return (
-        <pre data-block-id={node.blockId} data-language={node.language}>
-          <code>{node.value}</code>
-        </pre>
-      )
+      return <RegisteredServerCodeRenderer context={context} node={node} />
     case 'math':
-      return node.display ? (
-        <pre data-block-id={node.blockId} data-math="display">{node.value}</pre>
-      ) : (
-        <code data-math="inline">{node.value}</code>
-      )
+      return <RegisteredKatexRenderer context={context} node={node} />
     case 'mermaid':
-      return (
-        <DocumentFallbackCard
-          code="DOC-RENDER-002"
-          message="这张 Mermaid 图暂未渲染，已保留图表源码。"
-          nodeId={node.nodeId}
-        >
-          <pre>{node.value}</pre>
-        </DocumentFallbackCard>
-      )
+      return <RegisteredMermaidRenderer context={context} node={node} />
     case 'image':
-      return (
-        <ResourceImage
-          key={node.src}
-          node={node}
-          showDetails={context.showDetails}
-          src={resolveImageSource(node.src, context.articleSlug)}
-        />
-      )
+      return <RegisteredImageRenderer context={context} node={node} />
     case 'registeredComponent':
       return <RegisteredComponent context={context} node={node} />
     case 'footnoteReference':
@@ -373,6 +405,231 @@ function renderNode(node: DocumentNode, context: RenderContext): ReactNode {
     case 'thematicBreak':
       return <hr data-block-id={node.blockId} />
   }
+}
+
+function DiagnosticNotice({
+  diagnostic,
+  inline,
+  showDetails,
+}: {
+  readonly diagnostic: DocumentDiagnostic
+  readonly inline: boolean
+  readonly showDetails: boolean
+}) {
+  const className =
+    'border border-dashed border-[var(--line)] bg-[var(--bg-elevated)] px-2 py-1 text-sm text-[var(--ink-muted)]'
+  const content = (
+    <>
+      {DOCUMENT_DIAGNOSTIC_DEFINITIONS[diagnostic.code].message}
+      {showDetails ? <span>（{diagnostic.code}：{diagnostic.message}）</span> : null}
+    </>
+  )
+  return inline ? (
+    <span className={className} data-document-diagnostic={diagnostic.code} role="status">
+      {content}
+    </span>
+  ) : (
+    <aside className={`${className} my-3 rounded-lg`} data-document-diagnostic={diagnostic.code} role="status">
+      {content}
+    </aside>
+  )
+}
+
+function RegisteredServerCodeRenderer({
+  context,
+  node,
+}: {
+  readonly context: RenderContext
+  readonly node: Extract<DocumentNode, { type: 'code' }>
+}) {
+  const definition = BUILTIN_RENDERER_REGISTRY.get('code')
+  const projection = definition?.renderScreen(node, {
+    profile: context.profile.name,
+  })
+  if (!isCodeServerProjection(projection, node.nodeId)) {
+    return (
+      <DocumentFallbackCard
+        code="DOC-RENDER-002"
+        details={context.showDetails ? 'code renderer 的服务端投影无效。' : undefined}
+        message="这段代码暂时无法高亮，已保留代码内容。"
+        nodeId={node.nodeId}
+      >
+        <pre>{node.value}</pre>
+      </DocumentFallbackCard>
+    )
+  }
+  return <CodeScreenRenderer node={node} />
+}
+
+function RegisteredImageRenderer({
+  context,
+  node,
+}: {
+  readonly context: RenderContext
+  readonly node: Extract<DocumentNode, { type: 'image' }>
+}) {
+  const definition = BUILTIN_RENDERER_REGISTRY.get('image')
+  const projection = definition?.renderScreen(node, {
+    profile: context.profile.name,
+  })
+  if (
+    !isRendererProjection(
+      projection,
+      'server-screen-projection',
+      'image',
+      node.nodeId,
+    )
+  ) {
+    return (
+      <DocumentFallbackCard
+        blockId={node.placement === 'block' ? node.blockId : undefined}
+        code="DOC-RENDER-002"
+        details={context.showDetails ? 'image renderer 的服务端投影无效。' : undefined}
+        message="这张图片暂时无法显示。"
+        nodeId={node.nodeId}
+        selectable="none"
+      >
+        {node.alt}
+      </DocumentFallbackCard>
+    )
+  }
+  return (
+    <ImageScreenRenderer
+      articleSlug={context.articleSlug}
+      assetManifest={context.assetManifest}
+      node={node}
+      showDetails={context.showDetails}
+    />
+  )
+}
+
+function isCodeServerProjection(value: unknown, nodeId: string): boolean {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    'kind' in value &&
+    value.kind === 'server-screen-projection' &&
+    'rendererName' in value &&
+    value.rendererName === 'code' &&
+    'nodeId' in value &&
+    value.nodeId === nodeId
+  )
+}
+
+function RegisteredKatexRenderer({
+  context,
+  node,
+}: {
+  readonly context: RenderContext
+  readonly node: Extract<DocumentNode, { type: 'math' }>
+}) {
+  const definition = BUILTIN_RENDERER_REGISTRY.get('katex')
+  const projection = definition?.renderScreen(node, {
+    profile: context.profile.name,
+  })
+  if (
+    isRendererProjection(
+      projection,
+      'browser-screen-projection',
+      'katex',
+      node.nodeId,
+    )
+  ) {
+    if (context.discussionMathRenderer) {
+      return context.discussionMathRenderer(node)
+    }
+    return (
+      <DocumentFallbackCard
+        blockId={node.display ? node.blockId : undefined}
+        code="DOC-RENDER-002"
+        message="讨论公式运行时尚未加载，已保留原始 TeX。"
+        nodeId={node.nodeId}
+        selectable="none"
+      >
+        <code>{node.value}</code>
+      </DocumentFallbackCard>
+    )
+  }
+  if (
+    !isRendererProjection(
+      projection,
+      'server-screen-projection',
+      'katex',
+      node.nodeId,
+    )
+  ) {
+    return (
+      <DocumentFallbackCard
+        blockId={node.display ? node.blockId : undefined}
+        code="DOC-RENDER-002"
+        message="这条公式暂时无法排版，已保留原始 TeX。"
+        nodeId={node.nodeId}
+        selectable="none"
+      >
+        <code>{node.value}</code>
+      </DocumentFallbackCard>
+    )
+  }
+  return <KatexScreenRenderer node={node} showDetails={context.showDetails} />
+}
+
+function RegisteredMermaidRenderer({
+  context,
+  node,
+}: {
+  readonly context: RenderContext
+  readonly node: Extract<DocumentNode, { type: 'mermaid' }>
+}) {
+  const definition = BUILTIN_RENDERER_REGISTRY.get('mermaid')
+  const projection = definition?.renderScreen(node, {
+    profile: context.profile.name,
+  })
+  if (
+    !isRendererProjection(
+      projection,
+      'browser-screen-projection',
+      'mermaid',
+      node.nodeId,
+    )
+  ) {
+    return (
+      <DocumentFallbackCard
+        blockId={node.blockId}
+        code="DOC-RENDER-002"
+        details={context.showDetails ? 'mermaid renderer 的浏览器投影无效。' : undefined}
+        message="这张 Mermaid 图暂时无法渲染，已保留图表源码。"
+        nodeId={node.nodeId}
+        selectable="none"
+      >
+        <pre>{node.value}</pre>
+      </DocumentFallbackCard>
+    )
+  }
+  return (
+    <MermaidScreenRenderer
+      key={node.value}
+      node={node}
+      showDetails={context.showDetails}
+    />
+  )
+}
+
+function isRendererProjection(
+  value: unknown,
+  kind: 'browser-screen-projection' | 'server-screen-projection',
+  rendererName: string,
+  nodeId: string,
+): boolean {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    'kind' in value &&
+    value.kind === kind &&
+    'rendererName' in value &&
+    value.rendererName === rendererName &&
+    'nodeId' in value &&
+    value.nodeId === nodeId
+  )
 }
 
 function ListItem({ node, children }: { readonly node: ListItemNode; readonly children: ReactNode }) {
@@ -393,12 +650,12 @@ function DocumentHeading({
   readonly node: Extract<BlockNode, { type: 'heading' }>
   readonly children: ReactNode
 }) {
-  if (node.depth === 1) return <h1 id={node.slug}>{children}</h1>
-  if (node.depth === 2) return <h2 id={node.slug}>{children}</h2>
-  if (node.depth === 3) return <h3 id={node.slug}>{children}</h3>
-  if (node.depth === 4) return <h4 id={node.slug}>{children}</h4>
-  if (node.depth === 5) return <h5 id={node.slug}>{children}</h5>
-  return <h6 id={node.slug}>{children}</h6>
+  if (node.depth === 1) return <h1 data-block-id={node.blockId} id={node.slug}>{children}</h1>
+  if (node.depth === 2) return <h2 data-block-id={node.blockId} id={node.slug}>{children}</h2>
+  if (node.depth === 3) return <h3 data-block-id={node.blockId} id={node.slug}>{children}</h3>
+  if (node.depth === 4) return <h4 data-block-id={node.blockId} id={node.slug}>{children}</h4>
+  if (node.depth === 5) return <h5 data-block-id={node.blockId} id={node.slug}>{children}</h5>
+  return <h6 data-block-id={node.blockId} id={node.slug}>{children}</h6>
 }
 
 function TableRow({ node, context }: { readonly node: TableRowNode; readonly context: RenderContext }) {
@@ -437,6 +694,101 @@ function RegisteredComponent({
       </DocumentFallbackCard>
     )
   }
+  if (node.name === 'video-embed' || node.name === 'audio-embed') {
+    return (
+      <RendererErrorBoundary
+        alternative={alternative}
+        nodeId={node.nodeId}
+        rendererName={node.name}
+        showDetails={context.showDetails}
+      >
+        <RegisteredMediaRenderer context={context} node={node} />
+      </RendererErrorBoundary>
+    )
+  }
+  if (node.name === 'canvas-render') {
+    const source =
+      typeof node.attributes['data-src'] === 'string'
+        ? node.attributes['data-src']
+        : undefined
+    return (
+      <RendererErrorBoundary
+        alternative={alternative}
+        blockId={node.blockId}
+        nodeId={node.nodeId}
+        rendererName={node.name}
+        selectable="none"
+        showDetails={context.showDetails}
+      >
+        <CanvasScreenRenderer
+          dataUrl={
+            source
+              ? projectPackageMediaUrl(
+                  source,
+                  context.articleSlug,
+                  context.assetManifest,
+                )
+              : undefined
+          }
+          developmentCrash={
+            context.developmentCrashComponentIds?.includes(node.componentId) ===
+            true
+          }
+          node={node}
+          showDetails={context.showDetails}
+        />
+      </RendererErrorBoundary>
+    )
+  }
+  if (node.name === 'svg-embed') {
+    return (
+      <RendererErrorBoundary
+        alternative={alternative}
+        blockId={node.blockId}
+        nodeId={node.nodeId}
+        rendererName={node.name}
+        selectable="none"
+        showDetails={context.showDetails}
+      >
+        <RegisteredSvgRenderer context={context} node={node} />
+      </RendererErrorBoundary>
+    )
+  }
+  if (node.name === 'html-embed' || node.name === 'web-embed') {
+    return (
+      <RendererErrorBoundary
+        alternative={alternative}
+        blockId={node.blockId}
+        nodeId={node.nodeId}
+        rendererName={node.name}
+        selectable="none"
+        showDetails={context.showDetails}
+      >
+        <RegisteredEmbedRenderer
+          alternative={alternative}
+          context={context}
+          node={node}
+        />
+      </RendererErrorBoundary>
+    )
+  }
+  if (
+    node.name === 'choice-question' ||
+    node.name === 'fill-blank-question'
+  ) {
+    return (
+      <RendererErrorBoundary
+        alternative={alternative}
+        blockId={node.blockId}
+        nodeId={node.nodeId}
+        rendererName={node.name}
+        selectable="none"
+        showDetails={context.showDetails}
+      >
+        <RegisteredQuizRenderer context={context} node={node} />
+      </RendererErrorBoundary>
+    )
+  }
   return (
     <RendererErrorBoundary
       alternative={alternative}
@@ -454,6 +806,220 @@ function RegisteredComponent({
         showDetails={context.showDetails}
       />
     </RendererErrorBoundary>
+  )
+}
+
+function RegisteredQuizRenderer({
+  context,
+  node,
+}: {
+  readonly context: RenderContext
+  readonly node: RegisteredComponentNode
+}) {
+  const definition = BUILTIN_RENDERER_REGISTRY.get(node.name)
+  const projection = definition?.renderScreen(node, {
+    profile: context.profile.name,
+  })
+  if (
+    !isRendererProjection(
+      projection,
+      'browser-screen-projection',
+      node.name,
+      node.nodeId,
+    )
+  ) {
+    return (
+      <DocumentFallbackCard
+        blockId={node.blockId}
+        code="DOC-RENDER-002"
+        message="这道自测题暂时无法显示。"
+        nodeId={node.nodeId}
+        selectable="none"
+      />
+    )
+  }
+  const source = String(node.attributes['data-src'])
+  const data = projectPackageAssetData(
+    source,
+    context.articleSlug,
+    node.name,
+    context.assetManifest,
+  )
+  return node.name === 'choice-question' ? (
+    <ChoiceQuestionScreenRenderer data={data} node={node} />
+  ) : (
+    <FillBlankQuestionScreenRenderer data={data} node={node} />
+  )
+}
+
+function RegisteredEmbedRenderer({
+  alternative,
+  context,
+  node,
+}: {
+  readonly alternative: ReactNode
+  readonly context: RenderContext
+  readonly node: RegisteredComponentNode
+}) {
+  const definition = BUILTIN_RENDERER_REGISTRY.get(node.name)
+  const projection = definition?.renderScreen(node, {
+    profile: context.profile.name,
+  })
+  if (
+    !isRendererProjection(
+      projection,
+      'browser-screen-projection',
+      node.name,
+      node.nodeId,
+    )
+  ) {
+    return (
+      <DocumentFallbackCard
+        blockId={node.blockId}
+        code="DOC-RENDER-002"
+        message="这个嵌入内容暂时无法显示。"
+        nodeId={node.nodeId}
+        selectable="none"
+      >
+        {alternative}
+      </DocumentFallbackCard>
+    )
+  }
+  const height =
+    typeof node.attributes.height === 'number' ? node.attributes.height : 320
+  const title = String(node.attributes.title)
+  if (node.name === 'html-embed') {
+    const src = projectHtmlEmbedUrl(
+      context.articleSlug,
+      node.nodeId,
+      node.componentId,
+      context.assetManifest,
+    )
+    return (
+      <HtmlEmbedScreenRenderer
+        key={src}
+        alternative={alternative}
+        height={height}
+        node={node}
+        src={src}
+        title={title}
+      />
+    )
+  }
+  return (
+    <WebEmbedScreenRenderer
+      key={String(node.attributes.src)}
+      alternative={alternative}
+      height={height}
+      node={node}
+      src={String(node.attributes.src)}
+      title={title}
+    />
+  )
+}
+
+function RegisteredSvgRenderer({
+  context,
+  node,
+}: {
+  readonly context: RenderContext
+  readonly node: RegisteredComponentNode
+}) {
+  const definition = BUILTIN_RENDERER_REGISTRY.get('svg-embed')
+  const projection = definition?.renderScreen(node, {
+    profile: context.profile.name,
+  })
+  if (
+    !isRendererProjection(
+      projection,
+      'server-screen-projection',
+      'svg-embed',
+      node.nodeId,
+    )
+  ) {
+    return (
+      <DocumentFallbackCard
+        blockId={node.blockId}
+        code="DOC-RENDER-002"
+        message="这张 SVG 暂时无法显示。"
+        nodeId={node.nodeId}
+        selectable="none"
+      >
+        {node.canonicalText}
+      </DocumentFallbackCard>
+    )
+  }
+  const src = projectPackageMediaUrl(
+    String(node.attributes.src),
+    context.articleSlug,
+    context.assetManifest,
+  )
+  return (
+    <SvgScreenRenderer
+      key={src}
+      node={node}
+      showDetails={context.showDetails}
+      src={src}
+      title={String(node.attributes.title)}
+    />
+  )
+}
+
+function RegisteredMediaRenderer({
+  context,
+  node,
+}: {
+  readonly context: RenderContext
+  readonly node: RegisteredComponentNode
+}) {
+  const definition = BUILTIN_RENDERER_REGISTRY.get(node.name)
+  const projection = definition?.renderScreen(node, {
+    profile: context.profile.name,
+  })
+  if (
+    !isRendererProjection(
+      projection,
+      'server-screen-projection',
+      node.name,
+      node.nodeId,
+    )
+  ) {
+    return (
+      <DocumentFallbackCard
+        blockId={node.blockId}
+        code="DOC-RENDER-002"
+        message="这个媒体组件暂时无法显示。"
+        nodeId={node.nodeId}
+        selectable="none"
+      >
+        {node.canonicalText}
+      </DocumentFallbackCard>
+    )
+  }
+  const src = String(node.attributes.src)
+  const poster =
+    typeof node.attributes.poster === 'string'
+      ? projectPackageMediaUrl(
+          node.attributes.poster,
+          context.articleSlug,
+          context.assetManifest,
+        )
+      : undefined
+  const mediaSrc = projectPackageMediaUrl(
+    src,
+    context.articleSlug,
+    context.assetManifest,
+  )
+  return (
+    <MediaPlayer
+      key={mediaSrc}
+      kind={node.name === 'video-embed' ? 'video' : 'audio'}
+      node={node}
+      poster={poster}
+      showDetails={context.showDetails}
+      src={mediaSrc}
+      title={String(node.attributes.title)}
+    />
   )
 }
 
@@ -478,6 +1044,7 @@ function NodeDiagnosticFallback({
         className="border-b border-dashed border-[var(--line)] text-[var(--ink-muted)]"
         data-document-fallback={diagnostic.code}
         data-node-id={node.nodeId}
+        data-selectable={node.type === 'math' ? 'none' : undefined}
         role="status"
         title={showDetails ? diagnostic.message : undefined}
       >
@@ -486,12 +1053,39 @@ function NodeDiagnosticFallback({
       </span>
     )
   }
+  if (
+    diagnostic.code === 'DOC-SECURITY-006' &&
+    node.type === 'registeredComponent' &&
+    node.name === 'web-embed'
+  ) {
+    return (
+      <WebEmbedPreviewCard
+        node={node}
+        src={String(node.attributes.src)}
+        title={String(node.attributes.title)}
+      >
+        {node.children.length > 0 ? (
+          <DocumentNodeChildren
+            {...context}
+            inlineFallback={false}
+            nodes={node.children}
+            orphanDiagnostics={context.orphanDiagnostics}
+            parentRange={node.sourceRange}
+          />
+        ) : (
+          '该网页未进入受审 allowlist，请在新窗口中打开。'
+        )}
+      </WebEmbedPreviewCard>
+    )
+  }
   return (
     <DocumentFallbackCard
+      blockId={node.type === 'math' && node.display ? node.blockId : undefined}
       code={diagnostic.code}
       details={showDetails ? diagnostic.message : undefined}
       message={message}
       nodeId={node.nodeId}
+      selectable={node.type === 'math' ? 'none' : undefined}
       sourceRange={showDetails ? diagnostic.sourceRange : undefined}
     >
       {node.type === 'registeredComponent' && node.children.length > 0
@@ -546,14 +1140,4 @@ function containsRange(
 
 function externalRel(url: string): string | undefined {
   return url.startsWith('https://') ? 'nofollow ugc noopener noreferrer' : undefined
-}
-
-function resolveImageSource(source: string, articleSlug: string): string {
-  if (!source.startsWith('./')) return source
-  const path = source
-    .slice(2)
-    .split('/')
-    .map((segment) => encodeURIComponent(segment))
-    .join('/')
-  return `/blog/${encodeURIComponent(articleSlug)}/${path}`
 }

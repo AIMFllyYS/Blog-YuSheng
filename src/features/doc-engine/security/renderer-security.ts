@@ -1,16 +1,9 @@
 import DOMPurify from 'dompurify'
 
+import { KATEX_SECURITY_POLICY } from './katex-policy'
 import { DISCUSSION_LIMITS } from './render-limits'
 
-export const KATEX_SECURITY_POLICY = Object.freeze({
-  trust: false,
-  strict: 'error',
-  maxExpand: 1_000,
-  maxNestingDepth: 64,
-  maxSize: 20,
-  maxSourceLength: 2_000,
-  allowUserMacros: false,
-} as const)
+export { KATEX_SECURITY_POLICY } from './katex-policy'
 
 export const MERMAID_SECURITY_POLICY = Object.freeze({
   securityLevel: 'strict',
@@ -19,6 +12,7 @@ export const MERMAID_SECURITY_POLICY = Object.freeze({
   maxOutputBytes: 500_000,
   maxAttributeLength: 32_000,
   maxTextLength: 32_000,
+  loadTimeoutMs: 10_000,
   renderTimeoutMs: 2_000,
   allowUserClick: false,
   allowExternalLinks: false,
@@ -43,8 +37,10 @@ export const DISCUSSION_WRITE_RATE_POLICY = Object.freeze({
 
 const USER_MACRO_PATTERN =
   /\\(?:def|gdef|edef|xdef|let|futurelet|newcommand|renewcommand|providecommand)\b/i
+const KATEX_TRUST_COMMAND_PATTERN =
+  /(?:^|[^\\])(?:\\\\)*\\(?:href|url|includegraphics|htmlClass|htmlId|htmlStyle|htmlData)\b/iu
 const UNSAFE_MERMAID_PATTERN =
-  /(?:^|\n)\s*(?:click\s+|%%\{|.*\bhref\b)|(?:javascript|data|vbscript):|https?:\/\//i
+  /(?:^|\n)\s*(?:click\s+|%%\{|.*\bhref\b)|(?:javascript|data|vbscript):|https?:\/\/|url\s*\(|\/\//i
 
 export function validateKatexSource(source: string): string | undefined {
   if (source.length > KATEX_SECURITY_POLICY.maxSourceLength) {
@@ -52,6 +48,9 @@ export function validateKatexSource(source: string): string | undefined {
   }
   if (!KATEX_SECURITY_POLICY.allowUserMacros && USER_MACRO_PATTERN.test(source)) {
     return '当前安全策略不允许用户定义 KaTeX 宏。'
+  }
+  if (!KATEX_SECURITY_POLICY.trust && KATEX_TRUST_COMMAND_PATTERN.test(source)) {
+    return '当前安全策略不允许 KaTeX 链接、外部资源或 HTML 命令。'
   }
   let nestingDepth = 0
   for (let index = 0; index < source.length; index += 1) {
@@ -409,7 +408,7 @@ function assertSafeMermaidSvgDocument(document: Document): SVGSVGElement {
       if (isXmlns && attribute.value !== SVG_NAMESPACE) {
         throw new Error('Mermaid SVG namespace 无效。')
       }
-      if (unsafeSvgAttributeValue(attribute.value)) {
+      if (!isXmlns && unsafeSvgAttributeValue(attribute.value)) {
         throw new Error(`Mermaid SVG 属性 ${attribute.name} 包含外部资源或 CSS 注入。`)
       }
       for (const reference of attribute.value.matchAll(
@@ -468,6 +467,8 @@ const SAFE_MERMAID_SVG_ATTRIBUTES = Object.freeze([
   'height',
   'x',
   'y',
+  'dx',
+  'dy',
   'x1',
   'x2',
   'y1',
@@ -494,7 +495,10 @@ const SAFE_MERMAID_SVG_ATTRIBUTES = Object.freeze([
   'dominant-baseline',
   'font-family',
   'font-size',
+  'font-style',
   'font-weight',
+  'letter-spacing',
+  'text-decoration',
   'marker-start',
   'marker-mid',
   'marker-end',
@@ -502,10 +506,13 @@ const SAFE_MERMAID_SVG_ATTRIBUTES = Object.freeze([
   'refY',
   'markerWidth',
   'markerHeight',
+  'markerUnits',
   'orient',
   'offset',
   'stop-color',
   'stop-opacity',
+  'gradientUnits',
+  'gradientTransform',
   'clip-path',
   'mask',
   'filter',

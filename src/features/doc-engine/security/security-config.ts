@@ -7,6 +7,10 @@ export const HTML_EMBED_IFRAME_POLICY = Object.freeze({
   loading: 'lazy',
 } as const)
 
+export const EMBED_CAPABILITY_FRAGMENT_KEY = 'nonce' as const
+export const HTML_EMBED_READY_TIMEOUT_MS = 4_000
+export const WEB_EMBED_LOAD_TIMEOUT_MS = 4_000
+
 /** Entries must be manually reviewed eTLD+1 hostnames. P0 intentionally starts empty. */
 export const WEB_EMBED_ETLD_PLUS_ONE_ALLOWLIST = Object.freeze<string[]>([])
 
@@ -36,34 +40,50 @@ export type EmbedMessageGate = {
   accept(event: EmbedMessageEvent): EmbedMessage | undefined
 }
 
+export type EmbedMessageRejection =
+  | 'source-mismatch'
+  | 'authentication-failed'
+  | 'schema-invalid'
+
 export function createEmbedMessageGate(
   expectedSource: unknown,
   capabilityNonce: string,
+  onReject: (reason: EmbedMessageRejection) => void,
 ): EmbedMessageGate {
   if (capabilityNonce.length < 16) {
     throw new Error('iframe capability nonce 长度不足')
   }
   let authenticated = false
+  let pendingNonce: string | undefined = capabilityNonce
   return {
     get authenticated() {
       return authenticated
     },
     accept(event) {
-      if (event.source !== expectedSource) return undefined
+      if (event.source !== expectedSource) {
+        onReject('source-mismatch')
+        return undefined
+      }
       if (!authenticated) {
         const envelope = EMBED_MESSAGE_ENVELOPE_SCHEMA.safeParse(event.data)
         if (
           !envelope.success ||
-          envelope.data.nonce !== capabilityNonce ||
+          envelope.data.nonce !== pendingNonce ||
           envelope.data.message.type !== 'ready'
         ) {
+          onReject('authentication-failed')
           return undefined
         }
         authenticated = true
+        pendingNonce = undefined
         return envelope.data.message
       }
       const message = EMBED_MESSAGE_SCHEMA.safeParse(event.data)
-      return message.success ? message.data : undefined
+      if (!message.success) {
+        onReject('schema-invalid')
+        return undefined
+      }
+      return message.data
     },
   }
 }
@@ -75,6 +95,17 @@ export function createEmbedCapabilityNonce(): string {
 }
 
 export function isWebEmbedAllowed(rawUrl: string): boolean {
+  return matchesReviewedWebEmbedAllowlist(
+    rawUrl,
+    WEB_EMBED_ETLD_PLUS_ONE_ALLOWLIST,
+  )
+}
+
+/** Pure policy evaluator for validating reviewed configuration fixtures. */
+export function matchesReviewedWebEmbedAllowlist(
+  rawUrl: string,
+  reviewedEtldPlusOneHosts: readonly string[],
+): boolean {
   let url: URL
   try {
     url = new URL(rawUrl)
@@ -90,5 +121,8 @@ export function isWebEmbedAllowed(rawUrl: string): boolean {
     return false
   }
   const hostname = url.hostname.toLowerCase().replace(/\.+$/, '')
-  return WEB_EMBED_ETLD_PLUS_ONE_ALLOWLIST.includes(hostname)
+  return reviewedEtldPlusOneHosts.some((entry) => {
+    const reviewedHostname = entry.toLowerCase().replace(/\.+$/, '')
+    return reviewedHostname === hostname
+  })
 }

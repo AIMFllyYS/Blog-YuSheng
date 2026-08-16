@@ -1,48 +1,98 @@
 import Link from 'next/link'
-import type { PostSummary } from '@/server/content'
+import type { BlogIndexEntry } from './create-blog-index-entries'
+import { BlogIndexChrome } from './blog-index-chrome'
+import styles from './blog-index.module.css'
 
-export function BlogIndex({ posts }: { posts: readonly PostSummary[] }) {
+const PUBLISHED_DATE_FORMATTER = new Intl.DateTimeFormat('zh-CN', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+  timeZone: 'Asia/Shanghai',
+})
+
+export function BlogIndex({ posts }: { posts: readonly BlogIndexEntry[] }) {
   return (
-    <main className="min-h-screen bg-[var(--bg)] px-5 py-16 text-[var(--ink)] md:px-10 md:py-24">
-      <div className="mx-auto max-w-4xl">
-        <Link
-          className="inline-flex min-h-11 items-center border-b border-[var(--line)] text-sm tracking-[0.16em] text-[var(--accent)] transition-colors duration-[var(--dur-fast)] hover:border-[var(--accent)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--accent)]"
-          href="/"
-          prefetch={false}
-        >
-          ← 返回众妙之门
-        </Link>
-
-        <header className="mt-16 border-y border-[var(--line)] py-12 md:py-16">
-          <p className="text-xs font-semibold tracking-[0.34em] text-[var(--accent)]">
-            卷一 · 长文
-          </p>
-          <h1 className="mt-5 [font-family:var(--font-serif)] text-5xl font-semibold tracking-[0.18em] md:text-7xl">
-            博客
-          </h1>
-          <p className="mt-6 max-w-2xl [font-family:var(--font-serif)] text-base leading-8 text-[var(--ink-muted)] md:text-lg">
-            这里将收录关于 AI、技术判断、创作方法与个人成长的长思考。
+    <main className={styles.page} data-blog-index>
+      <BlogIndexChrome />
+      <div className={styles.room}>
+        <header className={styles.header}>
+          <div>
+            <p className={styles.eyebrow}>羽升书房 · 长文卷藏</p>
+            <h1 className={styles.title}>博客</h1>
+          </div>
+          <p className={styles.intro}>
+            把 AI、技术判断、创作方法与个人成长，装订成可以慢慢翻阅的长思考。
           </p>
         </header>
 
-        <section aria-label="文章书架" className="mt-12 grid gap-6">
-          {posts.map(({ slug, frontmatter }) => (
-            <Link
-              className="border border-[var(--line)] bg-[var(--bg-elevated)] px-6 py-8 shadow-[0_18px_56px_var(--shadow-color)] transition-colors hover:border-[var(--accent)] md:px-10"
-              href={`/blog/${slug}/`}
-              key={slug}
-            >
-              <p className="text-xs tracking-[0.2em] text-[var(--ink-faint)]">
-                {frontmatter.publishedAt}
-              </p>
-              <h2 className="mt-4 [font-family:var(--font-serif)] text-2xl font-semibold">
-                {frontmatter.title}
-              </h2>
-              <p className="mt-4 text-sm leading-7 text-[var(--ink-muted)]">
-                {frontmatter.description}
-              </p>
-            </Link>
-          ))}
+        <section aria-label="文章书架">
+          <div className={styles.shelfHeading}>
+            <span className={styles.shelfLabel}>文章书架</span>
+            <span className={styles.shelfCount}>{posts.length} 卷在架</span>
+          </div>
+
+          {posts.length > 0 ? (
+            <>
+              <div className={styles.volumes}>
+                {posts.map(({ slug, frontmatter, readingMinutes }, index) => (
+                  <Link
+                    className={styles.volume}
+                    data-book-volume
+                    href={`/blog/${slug}/`}
+                    key={slug}
+                    prefetch={false}
+                  >
+                    <span className={styles.spine}>
+                      <span className={styles.volumeNumber}>卷 {index + 1}</span>
+                    </span>
+                    <div className={styles.volumeBody}>
+                      <span className={styles.meta}>
+                        <time
+                          className={styles.date}
+                          dateTime={frontmatter.publishedAt}
+                        >
+                          {PUBLISHED_DATE_FORMATTER.format(
+                            new Date(frontmatter.publishedAt),
+                          )}
+                        </time>
+                        <span className={styles.readingTime}>
+                          预计阅读 {readingMinutes} 分钟
+                        </span>
+                      </span>
+                      <h2 className={styles.articleTitle}>
+                        {frontmatter.title}
+                      </h2>
+                      <p className={styles.description}>
+                        {frontmatter.description}
+                      </p>
+                      {(frontmatter.tags?.length ?? 0) > 0 && (
+                        <ul className={styles.tags} aria-label="文章标签">
+                          {frontmatter.tags?.map((tag) => (
+                            <li className={styles.tag} key={tag}>
+                              {tag}
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                    <span aria-hidden="true" className={styles.enterMark}>↗</span>
+                  </Link>
+                ))}
+              </div>
+              <div aria-hidden="true" className={styles.shelfRail} />
+            </>
+          ) : (
+            <div className={styles.empty} data-blog-empty>
+              <div aria-hidden="true" className={styles.emptyBooks}>
+                <span className={styles.emptyBook} />
+                <span className={styles.emptyBook} />
+                <span className={styles.emptyBook} />
+              </div>
+              <p className={styles.emptyEyebrow}>空架待卷</p>
+              <h2 className={styles.emptyTitle}>第一篇文章正在落墨</h2>
+              <p className={styles.emptyText}>墨迹未干，过些时候再来翻阅。</p>
+            </div>
+          )}
         </section>
       </div>
     </main>

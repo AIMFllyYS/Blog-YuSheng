@@ -10,6 +10,7 @@ import type {
 import { hasCanvasRenderer } from '../registry/canvas-renderer-registry'
 import { isWebEmbedAllowed } from './security-config'
 import {
+  CANVAS_SECURITY_POLICY,
   validateCanvasRequest,
   validateKatexSource,
   validateMermaidSource,
@@ -21,6 +22,7 @@ export function validateArticleDocument(
   document: CompiledDocument,
 ): readonly DocumentDiagnostic[] {
   const diagnostics: DocumentDiagnostic[] = []
+  let canvasInstances = 0
   const stack: DocumentNode[] = [document.root]
   while (stack.length > 0) {
     const node = stack.pop()!
@@ -35,6 +37,31 @@ export function validateArticleDocument(
       !manifestContainsLocalAsset(document, node.src)
     ) {
       diagnostics.push(missingAssetError(document, node, node.src))
+    } else if (
+      node.type === 'image' &&
+      (!Number.isSafeInteger(node.width) ||
+        !Number.isSafeInteger(node.height) ||
+        (node.width ?? 0) <= 0 ||
+        (node.height ?? 0) <= 0)
+    ) {
+      diagnostics.push(
+        createDocumentDiagnostic('DOC-ASSET-006', {
+          articleSlug: document.articleSlug,
+          nodeId: node.nodeId,
+          sourceRange: node.sourceRange,
+          message: `图片必须由构建期资产清单提供可验证宽高：${node.src}`,
+        }),
+      )
+    }
+    if (node.type === 'image' && node.alt.trim().length === 0) {
+      diagnostics.push(
+        createDocumentDiagnostic('DOC-ASSET-005', {
+          articleSlug: document.articleSlug,
+          nodeId: node.nodeId,
+          sourceRange: node.sourceRange,
+          message: '图片缺少 alt 替代文本，请补充对图片内容或用途的简短说明。',
+        }),
+      )
     }
     if (node.type === 'math') {
       const failure = validateKatexSource(node.value)
@@ -45,9 +72,24 @@ export function validateArticleDocument(
       if (failure) diagnostics.push(articleError(document, node, failure))
     }
     if (node.type === 'registeredComponent') {
+      if (node.name === 'canvas-render') {
+        canvasInstances += 1
+        if (canvasInstances > CANVAS_SECURITY_POLICY.maxInstancesPerDocument) {
+          diagnostics.push(
+            articleError(
+              document,
+              node,
+              `单篇正文 Canvas 不得超过 ${CANVAS_SECURITY_POLICY.maxInstancesPerDocument} 个。`,
+            ),
+          )
+        }
+      }
       diagnostics.push(...validateArticleComponent(document, node))
     }
-    stack.push(...childrenOf(node))
+    const children = childrenOf(node)
+    for (let index = children.length - 1; index >= 0; index -= 1) {
+      stack.push(children[index])
+    }
   }
   return diagnostics
 }
@@ -58,6 +100,19 @@ function validateArticleComponent(
 ): readonly DocumentDiagnostic[] {
   if (node.name === 'web-embed') {
     const source = stringAttribute(node, 'src')
+    const safeSameSitePath =
+      source?.startsWith('/') === true &&
+      !source.startsWith('//') &&
+      validateArticleLinkUrl(source)
+    if (safeSameSitePath) {
+      return [
+        createDocumentDiagnostic('DOC-SECURITY-006', {
+          articleSlug: document.articleSlug,
+          nodeId: node.nodeId,
+          sourceRange: node.sourceRange,
+        }),
+      ]
+    }
     const validated = source ? validateDocumentUrl(source) : undefined
     if (source === undefined || !validated || validated.kind !== 'https') {
       return [articleError(document, node, `web-embed 地址无效：${source ?? ''}`)]

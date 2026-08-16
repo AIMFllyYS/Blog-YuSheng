@@ -19,11 +19,14 @@ export type RendererCompileContext = {
 export type RendererAsset = {
   readonly source: string
   readonly kind: 'local' | 'remote'
+  readonly attribute?: string
 }
 
 export type RendererProjectionContext = {
   readonly profile: RenderProfile
   readonly format?: ExportProjection
+  readonly data?: unknown
+  readonly includeAnswers?: boolean
 }
 
 export type RendererProjectionResult = {

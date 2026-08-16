@@ -29,7 +29,7 @@ describe('Markdown to Canonical IR compiler', () => {
     const nodes = flatten(document.root.children)
 
     expect(document.originalSource).toBe(post.source)
-    expect(document.originalSource.startsWith('---\n')).toBe(true)
+    expect(document.originalSource).toMatch(/^---\r?\n/)
     expect(document.documentFingerprint).toMatch(/^[a-f\d]{64}$/)
     expect(nodes.map((node) => node.type)).toEqual(
       expect.arrayContaining([
@@ -46,9 +46,13 @@ describe('Markdown to Canonical IR compiler', () => {
         'registeredComponent',
       ]),
     )
+    const registeredComponents = nodes.filter(
+      (node) => node.type === 'registeredComponent',
+    )
+    expect(registeredComponents).toHaveLength(9)
     expect(
-      nodes.filter((node) => node.type === 'registeredComponent'),
-    ).toHaveLength(8)
+      new Set(registeredComponents.map((node) => node.name)).size,
+    ).toBe(8)
     expect(nodes.find((node) => node.type === 'image')).toMatchObject({
       placement: 'block',
       width: 1200,

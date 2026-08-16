@@ -1,6 +1,6 @@
 import 'server-only'
 
-import { copyFile, mkdir, readdir, stat } from 'node:fs/promises'
+import { copyFile, mkdir, readFile, readdir, stat, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import { ContentBuildError } from './content-error'
 import {
@@ -11,6 +11,7 @@ import {
 } from './asset-manifest'
 import type { FrontmatterDiagnostic } from './validate-frontmatter'
 import { transformContentImages } from './transform-content-images'
+import { sanitizeSvgSource } from './sanitize-svg'
 
 export async function buildContentAssets(
   outputRoot = path.join(process.cwd(), 'out'),
@@ -43,7 +44,24 @@ export async function copyAssetManifest(
       ])
     }
     await mkdir(path.dirname(destination), { recursive: true })
-    await copyFile(entry.sourcePath, destination)
+    if (entry.transform === 'sanitize-svg') {
+      const source = new TextDecoder('utf-8', { fatal: true }).decode(
+        await readFile(entry.sourcePath),
+      )
+      const sanitized = sanitizeSvgSource(source)
+      if (!sanitized.ok) {
+        throw new ContentBuildError('SVG 静态资源安全清洗失败', [
+          manifestDiagnostic(
+            entry.articleSlug,
+            'ASSET_SVG_UNSAFE',
+            `SVG 未通过构建期安全清洗：${sanitized.reason}`,
+          ),
+        ])
+      }
+      await writeFile(destination, sanitized.value, 'utf8')
+    } else {
+      await copyFile(entry.sourcePath, destination)
+    }
   }
 }
 
