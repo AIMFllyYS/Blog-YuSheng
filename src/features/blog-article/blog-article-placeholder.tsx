@@ -3,6 +3,7 @@ import {
   compileArticleDocumentWithDiagnostics,
 } from '@/features/doc-engine/core'
 import { DocumentRenderer } from '@/features/doc-engine/screen/document-renderer'
+import { buildSelectionIndex } from '@/features/doc-engine/selection'
 import { extractOutline } from '@/features/doc-engine/toc'
 import { ReaderBootVeil, ReaderLayout } from '@/features/reader-layout'
 import type { AssetManifestEntry, Post } from '@/server/content'
@@ -25,6 +26,7 @@ export async function BlogArticlePlaceholder({
     throw new Error(`文章 ${post.slug} 未生成 Canonical Document。`)
   }
   const outline = extractOutline(compiled.document)
+  const selectionIndex = buildSelectionIndex(compiled.document)
   return (
     <>
       <ReaderBootVeil />
@@ -43,6 +45,7 @@ export async function BlogArticlePlaceholder({
         description={post.frontmatter.description}
         outline={outline}
         publishedAt={post.frontmatter.publishedAt}
+        selectionIndex={selectionIndex}
         title={post.frontmatter.title}
       />
     </>

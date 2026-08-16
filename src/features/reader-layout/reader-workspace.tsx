@@ -1,6 +1,11 @@
 'use client'
 
-import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from 'react'
+import { useCallback, useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from 'react'
+import {
+  ANNOTATE_SELECTION_EVENT,
+  isAnnotateSelectionDetail,
+  truncateQuote,
+} from '@/features/annotations/selection'
 import styles from './reader-layout.module.css'
 
 type WorkspacePane = 'comments' | 'annotations' | 'agent'
@@ -22,9 +27,15 @@ export function ReaderWorkspace({ articleTitle }: { readonly articleTitle: strin
   const [switching, setSwitching] = useState(false)
   const [draft, setDraft] = useState('')
   const [demoNotice, setDemoNotice] = useState('')
+  const [quote, setQuote] = useState<{
+    readonly exact: string
+    readonly headingPath: readonly string[]
+  }>()
   const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
   const selectedPaneRef = useRef<WorkspacePane>('annotations')
   const switchingRef = useRef(false)
+  const composerRef = useRef<HTMLTextAreaElement>(null)
+  const pendingComposerFocusRef = useRef(false)
 
   useEffect(() => {
     const stored = sessionStorage.getItem(PANE_STORAGE_KEY)
@@ -36,6 +47,12 @@ export function ReaderWorkspace({ articleTitle }: { readonly articleTitle: strin
     })
   }, [])
 
+  useEffect(() => {
+    if (pane !== 'annotations' || !pendingComposerFocusRef.current) return
+    pendingComposerFocusRef.current = false
+    composerRef.current?.focus()
+  }, [pane])
+
   useEffect(
     () => () => {
       if (timerRef.current) clearTimeout(timerRef.current)
@@ -45,7 +62,7 @@ export function ReaderWorkspace({ articleTitle }: { readonly articleTitle: strin
     [],
   )
 
-  const selectPane = (nextPane: WorkspacePane) => {
+  const selectPane = useCallback((nextPane: WorkspacePane) => {
     if (nextPane === selectedPaneRef.current || switchingRef.current) return false
     selectedPaneRef.current = nextPane
     setSelectedPane(nextPane)
@@ -74,7 +91,26 @@ export function ReaderWorkspace({ articleTitle }: { readonly articleTitle: strin
       document.body.classList.remove('reader-right-tabbing')
     }, TAB_DELAY_MS)
     return true
-  }
+  }, [])
+
+  useEffect(() => {
+    const onAnnotate = (event: Event) => {
+      if (!(event instanceof CustomEvent) || !isAnnotateSelectionDetail(event.detail)) {
+        return
+      }
+      setQuote({
+        exact: event.detail.exact,
+        headingPath: event.detail.headingPath,
+      })
+      pendingComposerFocusRef.current = true
+      selectPane('annotations')
+      if (selectedPaneRef.current === 'annotations' && !switchingRef.current) {
+        queueMicrotask(() => composerRef.current?.focus())
+      }
+    }
+    window.addEventListener(ANNOTATE_SELECTION_EVENT, onAnnotate)
+    return () => window.removeEventListener(ANNOTATE_SELECTION_EVENT, onAnnotate)
+  }, [selectPane])
 
   const handleTabKeyDown = (
     event: KeyboardEvent<HTMLButtonElement>,
@@ -177,11 +213,28 @@ export function ReaderWorkspace({ articleTitle }: { readonly articleTitle: strin
           id="workspace-pane-annotations"
           role="tabpanel"
         >
-          <WorkspaceStatus
-            detail="M6 会在此接入选区锚点、开发仓储和注释线程；正文正本不会被改写。"
-            eyebrow="选区级注释"
-            title="划词后，注释会出现在这里"
-          />
+          {quote ? (
+            <div className={styles.quoteChip} data-quote-chip>
+              <b>{quote.headingPath.join(' › ')}</b>
+              <span>{truncateQuote(quote.exact)}</span>
+            </div>
+          ) : (
+            <WorkspaceStatus
+              detail="M6 会在此接入选区锚点、开发仓储和注释线程；正文正本不会被改写。"
+              eyebrow="选区级注释"
+              title="划词后，注释会出现在这里"
+            />
+          )}
+          <div className={styles.annotationCompose}>
+            <textarea
+              className={styles.annotationComposer}
+              data-annotation-composer
+              placeholder="在正文中划词后点「注释」，选区会带到这里。"
+              ref={composerRef}
+              rows={3}
+            />
+            <p className={styles.annotationHint}>注释锚定在选区上，不写回正本</p>
+          </div>
         </section>
 
         <section

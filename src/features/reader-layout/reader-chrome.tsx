@@ -1,6 +1,5 @@
 'use client'
 
-import { FallingToastProvider } from '@/components/ui/falling-toast'
 import { RopeNavigation } from '@/features/navigation'
 import { useAudioPreference } from '@/lib/audio'
 import { useThemePreference } from '@/lib/theme'
@@ -22,9 +21,5 @@ function ReaderNavigation() {
 }
 
 export function ReaderChrome() {
-  return (
-    <FallingToastProvider>
-      <ReaderNavigation />
-    </FallingToastProvider>
-  )
+  return <ReaderNavigation />
 }
