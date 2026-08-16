@@ -12,6 +12,11 @@ export {
   copyAssetManifest,
   verifyStaticOutput,
 } from './build-content-assets'
+export {
+  IMAGE_VARIANT_WIDTHS,
+  MAX_IMAGE_VARIANT_BYTES,
+  transformContentImages,
+} from './transform-content-images'
 export { createBlogStaticParams } from './create-static-params'
 export { createPostMetadata } from './create-post-metadata'
 export {

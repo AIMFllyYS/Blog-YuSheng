@@ -15,10 +15,20 @@ export type AssetManifestEntry = {
   id: string
   articleSlug: string
   nodeId: string
+  nodeName: string
+  attribute: string
   sourcePath: string
   outputPath: string
   publicUrl: string
   bytes: number
+  derivedFrom?: string
+  image?: {
+    width: number
+    height: number
+    format: string
+    derived: boolean
+    quality?: number
+  }
   sourceRange: SourceRange
 }
 
@@ -163,6 +173,8 @@ export async function createAssetManifest(postsRoot?: string) {
           id: owner,
           articleSlug: post.slug,
           nodeId: reference.nodeId,
+          nodeName: reference.nodeName,
+          attribute: reference.attribute,
           sourcePath,
           outputPath,
           publicUrl,

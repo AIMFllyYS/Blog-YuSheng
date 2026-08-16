@@ -10,11 +10,13 @@ import {
   type AssetManifestEntry,
 } from './asset-manifest'
 import type { FrontmatterDiagnostic } from './validate-frontmatter'
+import { transformContentImages } from './transform-content-images'
 
 export async function buildContentAssets(
   outputRoot = path.join(process.cwd(), 'out'),
 ) {
-  const manifest = await createAssetManifest()
+  const sourceManifest = await createAssetManifest()
+  const manifest = await transformContentImages(sourceManifest)
   await copyAssetManifest(manifest, outputRoot)
   await verifyStaticOutput(outputRoot)
   return manifest
