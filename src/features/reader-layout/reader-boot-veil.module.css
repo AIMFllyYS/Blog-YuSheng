@@ -1,0 +1,182 @@
+.bootVeil {
+  position: fixed;
+  z-index: var(--z-boot);
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: var(--bg);
+  transition:
+    opacity 480ms ease-out,
+    visibility 480ms;
+}
+
+.bootVeilOut {
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.bootStamp {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* From Uiverse.io by Nawsome: curly-goose-54. */
+.loader {
+  --background: linear-gradient(
+    135deg,
+    var(--accent),
+    color-mix(in srgb, var(--accent) 58%, var(--ink))
+  );
+  --shadow: color-mix(in srgb, var(--accent) 28%, transparent);
+  --text: var(--ink-muted);
+  --page: color-mix(in srgb, var(--scroll-paper) 36%, transparent);
+  --page-fold: color-mix(in srgb, var(--scroll-paper) 52%, transparent);
+  --duration: 3s;
+  position: relative;
+  z-index: 1;
+  width: 200px;
+  height: 140px;
+}
+
+.loader::before,
+.loader::after {
+  --r: -6deg;
+  position: absolute;
+  top: 80%;
+  bottom: 8px;
+  width: 120px;
+  box-shadow: 0 16px 12px var(--shadow);
+  transform: rotate(var(--r));
+  content: "";
+}
+
+.loader::before {
+  left: 4px;
+}
+
+.loader::after {
+  --r: 6deg;
+  right: 4px;
+}
+
+.book {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  border-radius: 13px;
+  background-image: var(--background);
+  box-shadow: 0 4px 6px var(--shadow);
+  perspective: 600px;
+}
+
+.pages {
+  position: relative;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.page {
+  --r: 180deg;
+  --o: 0;
+  --c: var(--page);
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  color: var(--c);
+  opacity: var(--o);
+  transform: rotateY(var(--r));
+  transform-origin: 100% 50%;
+}
+
+.page:nth-child(2) {
+  --c: var(--page-fold);
+  animation: page-2 var(--duration) ease infinite;
+}
+
+.page:nth-child(3) {
+  --c: var(--page-fold);
+  animation: page-3 var(--duration) ease infinite;
+}
+
+.page:nth-child(4) {
+  --c: var(--page-fold);
+  animation: page-4 var(--duration) ease infinite;
+}
+
+.page:nth-child(5) {
+  --c: var(--page-fold);
+  animation: page-5 var(--duration) ease infinite;
+}
+
+.page:first-child {
+  --r: 0deg;
+  --o: 1;
+}
+
+.page:last-child {
+  --o: 1;
+}
+
+.page svg {
+  display: block;
+  width: 90px;
+  height: 120px;
+}
+
+.label {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  left: 0;
+  display: block;
+  margin-top: 20px;
+  color: var(--text);
+  text-align: center;
+}
+
+@keyframes page-2 {
+  0% { transform: rotateY(180deg); opacity: 0; }
+  20% { opacity: 1; }
+  35%, 100% { opacity: 0; }
+  50%, 100% { transform: rotateY(0deg); }
+}
+
+@keyframes page-3 {
+  15% { transform: rotateY(180deg); opacity: 0; }
+  35% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+  65%, 100% { transform: rotateY(0deg); }
+}
+
+@keyframes page-4 {
+  30% { transform: rotateY(180deg); opacity: 0; }
+  50% { opacity: 1; }
+  65%, 100% { opacity: 0; }
+  80%, 100% { transform: rotateY(0deg); }
+}
+
+@keyframes page-5 {
+  45% { transform: rotateY(180deg); opacity: 0; }
+  65% { opacity: 1; }
+  80%, 100% { opacity: 0; }
+  95%, 100% { transform: rotateY(0deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bootVeil {
+    transition-duration: 1ms;
+  }
+
+  .page:nth-child(n + 2):nth-child(-n + 5) {
+    animation: none;
+  }
+}

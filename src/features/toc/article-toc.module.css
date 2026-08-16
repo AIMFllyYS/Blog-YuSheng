@@ -1,0 +1,624 @@
+.toc {
+  position: relative;
+  display: flex;
+  height: 100%;
+  min-height: 100%;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.hangers {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  border: 0;
+  background: linear-gradient(to bottom, var(--bg-elevated) 72%, transparent);
+  padding: 0 10px 12px 18px;
+  transition:
+    padding var(--dur-base) var(--ease-damp),
+    background var(--dur-base) ease-out;
+}
+
+:global(body.reader-nav-visible) .hangers {
+  background: transparent;
+  padding-top: 8px;
+}
+
+.hanger {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.hanger::before {
+  width: 1px;
+  height: var(--rope, 22px);
+  background: var(--ink-muted);
+  content: '';
+  opacity: 0.75;
+  transition: height 320ms var(--ease-damp);
+}
+
+:global(body.reader-nav-visible) .hanger::before {
+  height: calc(var(--rope, 22px) + 56px);
+}
+
+.modeTag {
+  min-height: 36px;
+  border: 1px solid var(--line);
+  background: var(--scroll-paper);
+  box-shadow: 0 7px 16px var(--shadow-color);
+  clip-path: polygon(0 0, 100% 0, 100% 78%, 50% 100%, 0 78%);
+  color: var(--ink-muted);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  padding: 7px 14px;
+  transform: translateY(0);
+  transition:
+    transform 320ms var(--ease-damp),
+    background-color 320ms ease-out,
+    color 320ms ease-out,
+    border-color 320ms ease-out,
+    box-shadow 320ms ease-out;
+}
+
+.modeTag:hover,
+.modeTag:focus-visible {
+  border-color: var(--accent);
+  color: var(--accent);
+  outline: none;
+  transform: translateY(-3px);
+}
+
+.modeTag[aria-selected='true'] {
+  border-color: var(--accent);
+  background: var(--accent);
+  box-shadow: 0 10px 22px var(--shadow-color);
+  color: var(--bg-elevated);
+  transform: translateY(5px);
+}
+
+.body {
+  position: relative;
+  min-height: 0;
+  flex: 1;
+  overflow: hidden auto;
+  padding: 8px 10px 40px;
+  scrollbar-color: transparent transparent;
+  scrollbar-width: thin;
+}
+
+.body:hover {
+  scrollbar-color: var(--scrollbar) transparent;
+}
+
+.body::-webkit-scrollbar {
+  width: 10px;
+  background: transparent;
+}
+
+.body::-webkit-scrollbar-thumb {
+  border: 3px solid transparent;
+  border-radius: 999px;
+  background: transparent;
+  background-clip: content-box;
+}
+
+.body:hover::-webkit-scrollbar-thumb {
+  background: var(--scrollbar);
+  background-clip: content-box;
+}
+
+:global(body.reader-toc-graph) .body,
+:global(body.reader-toc-graph) .body:hover {
+  scrollbar-color: transparent transparent;
+  scrollbar-width: none;
+}
+
+:global(body.reader-toc-graph) .body::-webkit-scrollbar {
+  display: none;
+  width: 0;
+}
+
+.list,
+.children,
+.graphNodes {
+  margin: 0;
+  list-style: none;
+  padding: 0;
+}
+
+.list {
+  padding-right: 6px;
+}
+
+.treeItem {
+  position: relative;
+}
+
+.link {
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  border-left: 2px solid var(--line);
+  border-radius: 0 3px 3px 0;
+  color: var(--ink-muted);
+  font-size: 13px;
+  line-height: 1.6;
+  padding: 6px 10px 6px 14px;
+  text-align: left;
+  text-overflow: ellipsis;
+  transition: all var(--dur-fast) ease-out;
+  white-space: nowrap;
+}
+
+.link[data-depth='3'] {
+  color: var(--ink-faint);
+  font-size: 12.5px;
+  padding-left: 28px;
+}
+
+.link[data-depth='4'],
+.link[data-depth='5'],
+.link[data-depth='6'] {
+  color: var(--ink-faint);
+  font-size: 12px;
+  padding-left: 42px;
+}
+
+.link:hover,
+.link:focus-visible {
+  background: var(--bg);
+  color: var(--ink);
+  outline: none;
+}
+
+.link.active {
+  border-left-color: var(--accent);
+  background: var(--highlight);
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.fold {
+  position: absolute;
+  top: 7px;
+  left: -2px;
+  z-index: 1;
+  display: grid;
+  width: 16px;
+  height: 16px;
+  place-items: center;
+  color: var(--ink-faint);
+}
+
+.fold svg {
+  width: 9px;
+  height: 9px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  transition: transform var(--dur-fast) ease-out;
+}
+
+.fold[aria-expanded='false'] svg {
+  transform: rotate(-90deg);
+}
+
+.graph {
+  padding: 4px 4px 20px;
+}
+
+.graphCanvas {
+  position: relative;
+  min-height: calc(100dvh - 108px);
+  overflow: visible;
+  background: transparent;
+  padding: 12px 10px;
+}
+
+.graphViewport {
+  position: absolute;
+  right: 8px;
+  left: 8px;
+  height: 44px;
+  border: 1px dashed var(--accent);
+  border-radius: 6px;
+  background: var(--highlight);
+  opacity: 0.6;
+  pointer-events: none;
+  transition: top var(--dur-fast) linear;
+}
+
+.graphNodes {
+  position: relative;
+}
+
+.graphNodes::before {
+  position: absolute;
+  top: 12px;
+  bottom: 12px;
+  left: 6px;
+  width: 1px;
+  background: var(--line);
+  content: '';
+}
+
+.graphNodes > li {
+  position: relative;
+  padding-left: 18px;
+}
+
+.graphNodes > li::before {
+  position: absolute;
+  top: 18px;
+  left: 6px;
+  width: 12px;
+  height: 1px;
+  background: var(--line);
+  content: '';
+}
+
+.graphNode {
+  position: relative;
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+  margin: 4px 0;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: transparent;
+  padding: 7px 8px 8px;
+  text-align: left;
+  transition:
+    transform var(--dur-fast) ease-out,
+    background-color var(--dur-fast) ease-out;
+}
+
+.graphNode:hover,
+.graphNode:focus-visible,
+.graphNode.active {
+  border-color: var(--accent);
+  background: var(--highlight);
+  outline: none;
+}
+
+.graphNode:hover,
+.graphNode:focus-visible {
+  transform: translateX(2px);
+}
+
+.graphHead {
+  display: flex;
+  min-height: 14px;
+  align-items: center;
+  gap: 6px;
+}
+
+.dot {
+  width: 4px;
+  height: 4px;
+  flex: none;
+  border-radius: 999px;
+  background: var(--ink-faint);
+  opacity: 0.6;
+}
+
+.active .dot {
+  background: var(--accent);
+  opacity: 1;
+}
+
+.titleBar {
+  display: block;
+  width: var(--title-width, 48%);
+  height: 4px;
+  border-radius: 999px;
+  background: var(--ink-faint);
+  opacity: 0.4;
+}
+
+.active .titleBar {
+  background: var(--accent);
+  opacity: 0.72;
+}
+
+.graphBody {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding-left: 10px;
+}
+
+.graphBody i {
+  display: block;
+  height: 3px;
+  border-radius: 999px;
+  background: var(--ink-faint);
+  opacity: 0.26;
+}
+
+.active .graphBody i {
+  background: var(--accent);
+  opacity: 0.4;
+}
+
+.markers {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+}
+
+.markers span,
+.markers svg {
+  display: block;
+  width: 11px;
+  height: 11px;
+}
+
+.markers svg * {
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.2;
+}
+
+.customTag {
+  color: var(--accent);
+}
+
+.image {
+  color: var(--annotation);
+}
+
+.mindmap {
+  color: var(--comment);
+}
+
+.skeleton {
+  position: absolute;
+  z-index: 2;
+  inset: 8px 8px 24px;
+  display: flex;
+  visibility: hidden;
+  flex-direction: column;
+  gap: 11px;
+  background: var(--bg-elevated);
+  opacity: 0;
+  padding: 10px 8px;
+  pointer-events: none;
+  transition:
+    opacity 280ms ease-out,
+    visibility 280ms;
+}
+
+:global(body.reader-toc-graph) .skeleton {
+  background: var(--bg);
+}
+
+.skeleton i {
+  display: block;
+  height: 9px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--line), var(--highlight), var(--line));
+  background-size: 180% 100%;
+  animation: toc-skeleton 900ms linear infinite;
+}
+
+.skeleton.switching {
+  visibility: visible;
+  opacity: 1;
+}
+
+.graphDock {
+  position: sticky;
+  z-index: 4;
+  bottom: 12px;
+  left: 12px;
+  display: none;
+  width: min(228px, calc(100% - 24px));
+  margin-top: auto;
+  pointer-events: none;
+}
+
+:global(body.reader-toc-graph) .graphDock {
+  display: block;
+}
+
+.graphMark {
+  display: block;
+  width: 28px;
+  height: 40px;
+  margin: 0;
+  padding: 0;
+  color: var(--ink-muted);
+  filter: drop-shadow(0 7px 14px var(--shadow-color));
+  pointer-events: auto;
+  transition:
+    transform 320ms var(--ease-damp),
+    color 320ms ease-out;
+}
+
+.graphMark svg {
+  display: block;
+  width: 28px;
+  height: 40px;
+}
+
+.graphMark:hover,
+.graphMark:focus-visible,
+.legendOpen .graphMark {
+  color: var(--accent);
+  outline: none;
+  transform: translateY(-3px);
+}
+
+.markBody {
+  fill: var(--scroll-paper);
+  stroke: currentColor;
+  stroke-linejoin: round;
+  stroke-width: 1.15;
+}
+
+.markHole {
+  fill: var(--bg);
+  stroke: currentColor;
+  stroke-width: 1.1;
+}
+
+.markStitch {
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-width: 1;
+  opacity: 0.45;
+}
+
+.graphCard {
+  position: absolute;
+  bottom: 46px;
+  left: 0;
+  visibility: hidden;
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--scroll-paper) 76%, transparent);
+  box-shadow: 0 16px 36px var(--shadow-color);
+  opacity: 0;
+  padding: 18px 14px 14px;
+  pointer-events: none;
+  touch-action: none;
+  transform: translateY(16px) scale(0.9);
+  transform-origin: bottom left;
+  transition:
+    transform var(--dur-pop) var(--ease-pop),
+    opacity 360ms ease-out,
+    visibility var(--dur-pop);
+  user-select: none;
+  backdrop-filter: blur(12px) saturate(1.04);
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 16%, #000 100%);
+}
+
+.legendOpen .graphCard {
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
+  transform: none;
+}
+
+.graphCardGrip {
+  display: block;
+  width: 36px;
+  height: 3px;
+  margin: -8px auto 10px;
+  border-radius: 999px;
+  background: var(--line);
+}
+
+.legend {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  color: var(--ink-muted);
+  font-size: 11px;
+}
+
+.legend > span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legendViewport {
+  width: 14px;
+  height: 9px;
+  border: 1px dashed var(--accent);
+  border-radius: 2px;
+  background: var(--highlight);
+}
+
+.legendTitle {
+  width: 14px;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--ink-faint);
+  opacity: 0.45;
+}
+
+.legendRibs {
+  display: flex;
+  width: 14px;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.legendRibs i {
+  display: block;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--ink-faint);
+  opacity: 0.35;
+}
+
+.legendRibs i:nth-child(2) {
+  width: 72%;
+}
+
+.legendRibs i:nth-child(3) {
+  width: 54%;
+}
+
+.graphCard p {
+  margin: 10px 0 0;
+  color: var(--ink-faint);
+  font-size: 11px;
+  line-height: 1.75;
+}
+
+.tooltip {
+  position: fixed;
+  z-index: var(--z-overlay);
+  visibility: visible;
+  border-radius: 3px;
+  background: var(--ink);
+  color: var(--bg);
+  font-size: 11px;
+  line-height: 1.4;
+  opacity: 0.92;
+  padding: 4px 9px;
+  pointer-events: none;
+  transform: translateY(-50%);
+  white-space: nowrap;
+}
+
+@keyframes toc-skeleton {
+  to {
+    background-position: -180% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hanger::before,
+  .modeTag,
+  .graphViewport,
+  .graphNode,
+  .graphMark,
+  .graphCard,
+  .skeleton {
+    transition-duration: 1ms;
+  }
+
+  .skeleton i {
+    animation: none;
+  }
+}
