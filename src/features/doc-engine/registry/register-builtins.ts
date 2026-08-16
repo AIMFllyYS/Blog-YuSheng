@@ -7,6 +7,7 @@ import { IMAGE_RENDERER_DEFINITION } from '../renderers/image'
 import { MERMAID_RENDERER_DEFINITION } from '../renderers/mermaid'
 import { VIDEO_RENDERER_DEFINITION } from '../renderers/video'
 import { AUDIO_RENDERER_DEFINITION } from '../renderers/audio'
+import { CANVAS_RENDERER_DEFINITION } from '../renderers/canvas'
 import { RendererRegistry } from './renderer-registry'
 import type {
   RenderProfile,
@@ -26,15 +27,6 @@ const ARTICLE_PROFILES = [
 const safeBuiltins = new Set(['markdown', 'code', 'katex', 'mermaid'])
 
 const COMPONENT_SCHEMAS = {
-  'canvas-render': z
-    .object({
-      id: z.string(),
-      renderer: z.string(),
-      'data-src': z.string().optional(),
-      width: z.number().int().positive().optional(),
-      height: z.number().int().positive().optional(),
-    })
-    .strict(),
   'svg-embed': z
     .object({ id: z.string(), src: z.string(), title: z.string() })
     .strict(),
@@ -102,12 +94,7 @@ const DEFINITIONS: readonly RendererDefinition[] = Object.freeze([
   IMAGE_RENDERER_DEFINITION,
   VIDEO_RENDERER_DEFINITION,
   AUDIO_RENDERER_DEFINITION,
-  createDefinition('canvas-render', {
-    schema: COMPONENT_SCHEMAS['canvas-render'],
-    trustLevel: 'registered',
-    allowsScript: true,
-    selectable: 'none',
-  }),
+  CANVAS_RENDERER_DEFINITION,
   createDefinition('svg-embed', {
     schema: COMPONENT_SCHEMAS['svg-embed'],
     trustLevel: 'registered',

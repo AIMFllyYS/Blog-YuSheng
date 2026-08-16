@@ -1,7 +1,10 @@
 import { expect, test } from '@playwright/test'
 
 test('DocumentRenderer 在真实浏览器隔离未知标签与 renderer 崩溃', async ({ page }) => {
-  await page.route('**/blog/document-renderer-fixture/media/missing.png', (route) => route.abort())
+  await page.route(
+    /\/blog\/document-renderer-fixture\/media\/(?:missing|recovery-missing)\.png$/,
+    (route) => route.abort(),
+  )
   await page.goto('/_dev/document-renderer/')
 
   await expect(page.getByRole('heading', { name: 'DocumentRenderer 验收页' })).toBeVisible()
@@ -20,12 +23,26 @@ test('DocumentRenderer 在真实浏览器隔离未知标签与 renderer 崩溃',
   await expect(missingAsset).toBeVisible()
   await expect(missingAsset).toContainText('丢失图片')
 
-  const crashFallback = page.locator('[data-document-fallback="DOC-RENDER-001"]')
+  const crashFallback = page
+    .locator('[data-document-fallback="DOC-RENDER-001"]')
+    .filter({ hasText: 'fixture-crash-node' })
   await expect(crashFallback).toBeVisible()
   await expect(crashFallback).toContainText('fixture-crash-node')
   await expect(crashFallback).toContainText('用于验证节点级错误隔离的预期异常')
   await expect(page.getByText('崩溃节点前的内容。')).toBeVisible()
-  await expect(page.getByText('崩溃节点后的内容仍然正常显示。')).toBeVisible()
+  await expect(
+    page.getByText('崩溃节点后的内容仍然正常显示。', { exact: true }),
+  ).toBeVisible()
+  const canvasCrashFallback = page
+    .locator('[data-document-fallback="DOC-RENDER-001"]')
+    .filter({ hasText: 'fixture-canvas-crash' })
+  await expect(canvasCrashFallback).toBeVisible()
+  await expect(canvasCrashFallback).toContainText(
+    '用于验证 Canvas 节点级错误隔离的预期异常',
+  )
+  await expect(
+    page.getByText('Canvas 崩溃节点后的内容仍然正常显示。'),
+  ).toBeVisible()
 
   const blockedWeb = page.locator('[data-document-fallback="DOC-SECURITY-006"]')
   await expect(blockedWeb).toBeVisible()
@@ -41,6 +58,7 @@ test('DocumentRenderer 在真实浏览器隔离未知标签与 renderer 崩溃',
     .toBeLessThan(ordered.findIndex((text) => text.includes('未知标签后的内容仍然可见。')))
 
   const recovery = page.getByRole('region', { name: '图片恢复 fixture' })
+  await recovery.scrollIntoViewIfNeeded()
   const recoveryFallback = recovery.locator(
     '[data-document-fallback="DOC-ASSET-004"]',
   )

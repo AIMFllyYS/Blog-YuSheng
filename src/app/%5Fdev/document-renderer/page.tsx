@@ -26,6 +26,10 @@ const UNKNOWN_RENDERER_SOURCE = `# DocumentRenderer 验收页
 
 崩溃节点后的内容仍然正常显示。
 
+<canvas-render id="fixture-canvas-crash" renderer="function-plot" />
+
+Canvas 崩溃节点后的内容仍然正常显示。
+
 <web-embed id="blocked-web" src="https://example.com/embed" title="未获准网页">
 未获准网页的安全替代内容。
 </web-embed>
@@ -63,7 +67,11 @@ export default function DocumentRendererFixturePage() {
           articleSlug="document-renderer-fixture"
           assetManifest={FIXTURE_MANIFEST}
           className="space-y-5"
-          developmentCrashComponentIds={['fixture-crash-node', 'blocked-web']}
+          developmentCrashComponentIds={[
+            'fixture-crash-node',
+            'fixture-canvas-crash',
+            'blocked-web',
+          ]}
           profile="editor-preview"
           source={UNKNOWN_RENDERER_SOURCE}
         />

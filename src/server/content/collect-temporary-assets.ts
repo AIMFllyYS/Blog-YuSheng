@@ -32,6 +32,7 @@ export type TemporaryAssetReference = {
   attribute: string
   relativePath: string
   sourceRange: SourceRange
+  componentRenderer?: string
 }
 
 type MarkdownNode = {
@@ -200,6 +201,9 @@ function collectComponentHtml(
           asset.offset,
           asset.offset + asset.value.length,
         ),
+        ...(nodeName === 'canvas-render' && attributes.get('renderer')
+          ? { componentRenderer: attributes.get('renderer')!.value }
+          : {}),
       })
     }
   }

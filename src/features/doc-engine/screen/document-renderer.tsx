@@ -29,6 +29,7 @@ import { KatexScreenRenderer } from '../renderers/katex/screen-renderer'
 import { ImageScreenRenderer } from '../renderers/image/screen-renderer'
 import { projectPackageMediaUrl } from '../renderers/media/asset-projection'
 import { MediaPlayer } from '../renderers/media/media-player'
+import { CanvasScreenRenderer } from '../renderers/canvas/screen-renderer'
 import { MermaidScreenRenderer } from '../renderers/mermaid/screen-renderer'
 import { sanitizeDiscussionRead } from '../security'
 import { DocumentFallbackCard } from './fallback-card'
@@ -692,6 +693,40 @@ function RegisteredComponent({
         showDetails={context.showDetails}
       >
         <RegisteredMediaRenderer context={context} node={node} />
+      </RendererErrorBoundary>
+    )
+  }
+  if (node.name === 'canvas-render') {
+    const source =
+      typeof node.attributes['data-src'] === 'string'
+        ? node.attributes['data-src']
+        : undefined
+    return (
+      <RendererErrorBoundary
+        alternative={alternative}
+        blockId={node.blockId}
+        nodeId={node.nodeId}
+        rendererName={node.name}
+        selectable="none"
+        showDetails={context.showDetails}
+      >
+        <CanvasScreenRenderer
+          dataUrl={
+            source
+              ? projectPackageMediaUrl(
+                  source,
+                  context.articleSlug,
+                  context.assetManifest,
+                )
+              : undefined
+          }
+          developmentCrash={
+            context.developmentCrashComponentIds?.includes(node.componentId) ===
+            true
+          }
+          node={node}
+          showDetails={context.showDetails}
+        />
       </RendererErrorBoundary>
     )
   }

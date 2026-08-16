@@ -45,6 +45,28 @@ describe('content asset manifest', () => {
     expect(new Set(paths).size).toBe(paths.length)
   })
 
+  it('rejects canvas JSON that does not match its statically registered schema', async () => {
+    const postsRoot = await createPostsRoot()
+    await writeArticle(
+      postsRoot,
+      'bad-canvas-data',
+      '<canvas-render id="bad" renderer="function-plot" data-src="./data/plot.json" />',
+    )
+    const dataRoot = path.join(postsRoot, 'bad-canvas-data/data')
+    await mkdir(dataRoot, { recursive: true })
+    await writeFile(
+      path.join(dataRoot, 'plot.json'),
+      JSON.stringify({ expression: 'alert(1)', domain: [0, 1], range: [0, 1], samples: 20 }),
+      'utf8',
+    )
+
+    await expect(createAssetManifest(postsRoot)).rejects.toMatchObject({
+      diagnostics: [
+        expect.objectContaining({ code: 'ASSET_DATA_SCHEMA_INVALID' }),
+      ],
+    })
+  })
+
   it('copies only manifest entries to their controlled destinations', async () => {
     const manifest = await createAssetManifest()
     const outputRoot = await createTemporaryRoot('copy')

@@ -7,6 +7,7 @@ import { collectTemporaryAssetReferences } from './collect-temporary-assets'
 import { readAllPosts } from './discover-posts'
 import { validateArticleAssetPath } from './validate-assets'
 import type { FrontmatterDiagnostic, SourceRange } from './validate-frontmatter'
+import { getCanvasRendererRegistration } from '../../features/doc-engine/registry/canvas-renderer-registry'
 
 export const MAX_STATIC_FILE_BYTES = 25 * 1024 * 1024
 export const MAX_STATIC_FILE_COUNT = 20_000
@@ -142,6 +143,27 @@ export async function createAssetManifest(postsRoot?: string) {
             ),
           )
           continue
+        }
+        if (
+          reference.nodeName === 'canvas-render' &&
+          reference.attribute === 'data-src'
+        ) {
+          const registration = reference.componentRenderer
+            ? getCanvasRendererRegistration(reference.componentRenderer)
+            : undefined
+          const data = await readJsonValue(sourcePath)
+          if (!registration || !registration.validateData(data)) {
+            diagnostics.push(
+              diagnostic(
+                post.slug,
+                'ASSET_DATA_SCHEMA_INVALID',
+                `Canvas 数据未通过 renderer ${reference.componentRenderer ?? ''} 的 schema：${reference.relativePath}`,
+                reference.sourceRange,
+                reference.nodeId,
+              ),
+            )
+            continue
+          }
         }
         const relativePath = reference.nodeName === 'html-embed'
           ? path.posix.join(path.posix.dirname(validation.relativePath), path.relative(path.dirname(validation.absolutePath), sourcePath).split(path.sep).join('/'))
@@ -354,6 +376,16 @@ async function hasExpectedFileType(filePath: string) {
     return text !== undefined && text.length > 0 && !hasUnsafeTextControls(text)
   }
   return false
+}
+
+async function readJsonValue(filePath: string): Promise<unknown> {
+  const text = decodeStrictText(await readFile(filePath))
+  if (text === undefined) return undefined
+  try {
+    return JSON.parse(text) as unknown
+  } catch {
+    return undefined
+  }
 }
 
 function decodeStrictText(bytes: Buffer) {

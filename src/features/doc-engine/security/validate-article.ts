@@ -10,6 +10,7 @@ import type {
 import { hasCanvasRenderer } from '../registry/canvas-renderer-registry'
 import { isWebEmbedAllowed } from './security-config'
 import {
+  CANVAS_SECURITY_POLICY,
   validateCanvasRequest,
   validateKatexSource,
   validateMermaidSource,
@@ -21,6 +22,7 @@ export function validateArticleDocument(
   document: CompiledDocument,
 ): readonly DocumentDiagnostic[] {
   const diagnostics: DocumentDiagnostic[] = []
+  let canvasInstances = 0
   const stack: DocumentNode[] = [document.root]
   while (stack.length > 0) {
     const node = stack.pop()!
@@ -70,9 +72,24 @@ export function validateArticleDocument(
       if (failure) diagnostics.push(articleError(document, node, failure))
     }
     if (node.type === 'registeredComponent') {
+      if (node.name === 'canvas-render') {
+        canvasInstances += 1
+        if (canvasInstances > CANVAS_SECURITY_POLICY.maxInstancesPerDocument) {
+          diagnostics.push(
+            articleError(
+              document,
+              node,
+              `单篇正文 Canvas 不得超过 ${CANVAS_SECURITY_POLICY.maxInstancesPerDocument} 个。`,
+            ),
+          )
+        }
+      }
       diagnostics.push(...validateArticleComponent(document, node))
     }
-    stack.push(...childrenOf(node))
+    const children = childrenOf(node)
+    for (let index = children.length - 1; index >= 0; index -= 1) {
+      stack.push(children[index])
+    }
   }
   return diagnostics
 }
