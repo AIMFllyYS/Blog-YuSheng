@@ -16,6 +16,7 @@ import { SettingsPanel } from './settings-panel'
 
 export type RopeNavigationProps = {
   audioEnabled: boolean
+  brandHref?: string
   compact?: boolean
   onAudioEnabledChange: (enabled: boolean) => void
   onCycleTheme: () => void
@@ -29,6 +30,7 @@ const controlClassName =
 
 function HomeRopeNavigation({
   audioEnabled,
+  brandHref,
   compact = false,
   onAudioEnabledChange,
   onCycleTheme,
@@ -79,11 +81,27 @@ function HomeRopeNavigation({
         className={`mx-auto grid max-w-5xl items-start ${
           compact
             ? 'grid-cols-[minmax(5.5rem,1fr)_repeat(3,3.25rem)] gap-1'
-            : 'grid-cols-[minmax(7rem,1.2fr)_minmax(5rem,0.8fr)_repeat(3,3.5rem)] gap-2 md:gap-5'
+            : 'grid-cols-[minmax(7rem,1.2fr)_minmax(5rem,0.8fr)_repeat(3,3.5rem)] gap-2 max-[420px]:grid-cols-[4.5rem_4rem_repeat(3,2.75rem)] max-[420px]:gap-0 md:gap-5'
         }`}
       >
         <Hanger id="brand-scroll" ropeLength={compact ? '2.15rem' : '2.8rem'}>
-          <div className="relative min-h-11 min-w-[5.5rem] border-x border-[var(--line)] bg-[var(--scroll-paper)] px-3 py-2 text-center text-[var(--ink)] shadow-[0_9px_24px_var(--shadow-color)]">
+          {brandHref ? (
+            <Link
+              aria-label="回到首页"
+              className="relative block min-h-11 min-w-[5.5rem] border-x border-[var(--line)] bg-[var(--scroll-paper)] px-3 py-2 text-center text-[var(--ink)] shadow-[0_9px_24px_var(--shadow-color)] transition-colors duration-[var(--dur-fast)] hover:text-[var(--accent)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] max-[420px]:min-w-[4.5rem] max-[420px]:px-2"
+              href={brandHref}
+              prefetch={false}
+            >
+              <span
+                aria-hidden="true"
+                className="absolute -left-1.5 -right-1.5 -top-1 h-2 rounded-full border border-[var(--line)] bg-[var(--ink-muted)]"
+              />
+              <span className="[font-family:var(--font-serif)] text-base font-semibold tracking-[0.24em]">
+                羽升
+              </span>
+            </Link>
+          ) : (
+            <div className="relative min-h-11 min-w-[5.5rem] border-x border-[var(--line)] bg-[var(--scroll-paper)] px-3 py-2 text-center text-[var(--ink)] shadow-[0_9px_24px_var(--shadow-color)] max-[420px]:min-w-[4.5rem] max-[420px]:px-2">
             <span
               aria-hidden="true"
               className="absolute -left-1.5 -right-1.5 -top-1 h-2 rounded-full border border-[var(--line)] bg-[var(--ink-muted)]"
@@ -91,13 +109,14 @@ function HomeRopeNavigation({
             <span className="[font-family:var(--font-serif)] text-base font-semibold tracking-[0.24em]">
               羽升
             </span>
-          </div>
+            </div>
+          )}
         </Hanger>
 
         {!compact && (
           <Hanger id="blog-bookmark" ropeLength="3.85rem">
             <Link
-              className="flex min-h-11 min-w-20 items-center justify-center border border-[var(--line)] bg-[var(--accent)] px-4 py-2 [font-family:var(--font-serif)] text-sm font-semibold tracking-[0.18em] text-[var(--bg-elevated)] shadow-[0_9px_24px_var(--shadow-color)] transition-transform duration-[var(--dur-fast)] ease-out [clip-path:polygon(0_0,100%_0,100%_82%,50%_100%,0_82%)] hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]"
+              className="flex min-h-11 min-w-20 items-center justify-center border border-[var(--line)] bg-[var(--accent)] px-4 py-2 [font-family:var(--font-serif)] text-sm font-semibold tracking-[0.18em] text-[var(--bg-elevated)] shadow-[0_9px_24px_var(--shadow-color)] transition-transform duration-[var(--dur-fast)] ease-out [clip-path:polygon(0_0,100%_0,100%_82%,50%_100%,0_82%)] hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] max-[420px]:min-w-16 max-[420px]:px-2"
               href="/blog/"
               prefetch={false}
             >

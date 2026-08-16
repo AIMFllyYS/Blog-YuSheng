@@ -4,7 +4,7 @@ import { readdir } from 'node:fs/promises'
 import { CONTENT_POSTS_ROOT } from './content-paths'
 import { readPost, type Post } from './read-post'
 
-export type PostSummary = Pick<Post, 'slug' | 'frontmatter'>
+export type PostSummary = Pick<Post, 'slug' | 'frontmatter' | 'source'>
 
 export async function discoverPostSlugs(postsRoot = CONTENT_POSTS_ROOT) {
   const entries = await readdir(postsRoot, { withFileTypes: true })
@@ -24,10 +24,10 @@ export async function listPublishedPosts(postsRoot = CONTENT_POSTS_ROOT) {
   return posts
     .filter((post) => post.frontmatter.draft !== true)
     .sort((left, right) => {
-      const byDate = right.frontmatter.publishedAt.localeCompare(
-        left.frontmatter.publishedAt,
-      )
+      const byDate =
+        Date.parse(right.frontmatter.publishedAt) -
+        Date.parse(left.frontmatter.publishedAt)
       return byDate || left.slug.localeCompare(right.slug, 'en')
     })
-    .map(({ slug, frontmatter }) => ({ slug, frontmatter }))
+    .map(({ slug, frontmatter, source }) => ({ slug, frontmatter, source }))
 }
