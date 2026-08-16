@@ -137,10 +137,25 @@ test('窄屏将左右栏降级为带遮罩的抽屉', async ({ page }) => {
   await expect.poll(() => center.evaluate((element) => (element as HTMLElement).inert)).toBe(true)
   await expect.poll(() => right.evaluate((element) => (element as HTMLElement).inert)).toBe(true)
   await expect(overlay).toHaveCSS('pointer-events', 'auto')
-  await page.keyboard.press('Tab')
+  let reachedOverlay = false
+  for (let index = 0; index < 40; index += 1) {
+    await page.keyboard.press('Tab')
+    const focus = await page.evaluate(() => ({
+      inLeft: document.querySelector('[data-reader-column="left"]')?.contains(document.activeElement) === true,
+      onOverlay: document.activeElement?.hasAttribute('data-reader-drawer-overlay') === true,
+    }))
+    expect(focus.inLeft || focus.onOverlay).toBe(true)
+    if (focus.onOverlay) {
+      reachedOverlay = true
+      break
+    }
+  }
+  expect(reachedOverlay).toBe(true)
   await expect(overlay).toBeFocused()
   await page.keyboard.press('Tab')
-  await expect(left).toBeFocused()
+  await expect
+    .poll(() => left.evaluate((element) => element.contains(document.activeElement)))
+    .toBe(true)
   await page.keyboard.press('Escape')
   await expect(page.getByRole('button', { name: '打开文章目录' })).toBeFocused()
   await expect.poll(() => center.evaluate((element) => (element as HTMLElement).inert)).toBe(false)

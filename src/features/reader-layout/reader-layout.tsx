@@ -1,4 +1,6 @@
 import type { ReactNode } from 'react'
+import type { DocumentOutline } from '@/features/doc-engine/toc'
+import { ArticleToc } from '@/features/toc'
 import { ReaderDivider } from './reader-divider'
 import { ReaderChrome } from './reader-chrome'
 import { ReaderLayoutInteractions } from './reader-layout-interactions'
@@ -6,7 +8,9 @@ import styles from './reader-layout.module.css'
 
 type ReaderLayoutProps = {
   readonly article: ReactNode
+  readonly articleSlug: string
   readonly description: string
+  readonly outline: DocumentOutline
   readonly publishedAt: string
 }
 
@@ -31,7 +35,13 @@ function ReaderWave({ className }: { readonly className: string }) {
   )
 }
 
-export function ReaderLayout({ article, description, publishedAt }: ReaderLayoutProps) {
+export function ReaderLayout({
+  article,
+  articleSlug,
+  description,
+  outline,
+  publishedAt,
+}: ReaderLayoutProps) {
   return (
     <main className={styles.readerPage} data-reader-page>
       <ReaderChrome />
@@ -43,13 +53,7 @@ export function ReaderLayout({ article, description, publishedAt }: ReaderLayout
           id="reader-left-drawer"
           tabIndex={-1}
         >
-          <div className={styles.panelHeading}>
-            <span className={styles.hangingLabel}>目录</span>
-          </div>
-          <div className={styles.placeholderPanel}>
-            <p>文章目录</p>
-            <span>目录结构将在下一阶段由正文大纲生成。</span>
-          </div>
+          <ArticleToc articleSlug={articleSlug} outline={outline} />
         </aside>
 
         <ReaderDivider side="left" />

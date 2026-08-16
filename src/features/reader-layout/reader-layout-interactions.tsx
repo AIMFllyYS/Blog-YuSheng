@@ -149,7 +149,12 @@ export function ReaderLayoutInteractions() {
             'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
           ),
           overlay,
-        ].filter((element) => !element.inert)
+        ].filter(
+          (element) =>
+            !element.inert &&
+            !element.hidden &&
+            (element === overlay || element.offsetParent !== null),
+        )
         const first = focusable[0]
         const last = focusable.at(-1)
         if (event.shiftKey && document.activeElement === first) {

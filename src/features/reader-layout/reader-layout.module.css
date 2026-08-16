@@ -49,6 +49,26 @@
   display: flex;
   flex-direction: column;
   border-right: 1px solid var(--line);
+  overflow: hidden;
+  transition:
+    background-color var(--dur-base) ease-out,
+    border-color var(--dur-base) ease-out;
+}
+
+:global(body.reader-toc-graph) .leftColumn {
+  border-right-color: transparent;
+  background: transparent;
+  scrollbar-color: transparent transparent;
+  scrollbar-width: none;
+}
+
+:global(body.reader-toc-graph) .leftColumn::-webkit-scrollbar {
+  display: none;
+  width: 0;
+}
+
+:global(body.reader-toc-graph) .leftColumn + .divider::after {
+  opacity: 0;
 }
 
 .rightColumn {
@@ -73,19 +93,16 @@
   /* 中栏刻意不设置 overscroll-behavior: contain，让滚动自然交给页面页尾。 */
 }
 
-.centerColumn,
-.leftColumn {
+.centerColumn {
   scrollbar-color: transparent transparent;
   scrollbar-width: thin;
 }
 
-.centerColumn:hover,
-.leftColumn:hover {
+.centerColumn:hover {
   scrollbar-color: var(--scrollbar) transparent;
 }
 
-.centerColumn::-webkit-scrollbar,
-.leftColumn::-webkit-scrollbar {
+.centerColumn::-webkit-scrollbar {
   width: 10px;
   background: transparent;
 }
@@ -98,14 +115,12 @@
   background-clip: content-box;
 }
 
-.centerColumn:hover::-webkit-scrollbar-thumb,
-.leftColumn:hover::-webkit-scrollbar-thumb {
+.centerColumn:hover::-webkit-scrollbar-thumb {
   background: var(--scrollbar);
   background-clip: content-box;
 }
 
-.centerColumn:hover::-webkit-scrollbar-thumb:hover,
-.leftColumn:hover::-webkit-scrollbar-thumb:hover {
+.centerColumn:hover::-webkit-scrollbar-thumb:hover {
   background: var(--scrollbar-hover);
   background-clip: content-box;
 }
@@ -405,6 +420,7 @@
 
 @media (max-width: 1024px) {
   .shell {
+    z-index: auto;
     grid-template-columns: minmax(0, 1fr);
   }
 
