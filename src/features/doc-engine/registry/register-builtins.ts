@@ -5,6 +5,8 @@ import { CODE_RENDERER_DEFINITION } from '../renderers/code'
 import { KATEX_RENDERER_DEFINITION } from '../renderers/katex'
 import { IMAGE_RENDERER_DEFINITION } from '../renderers/image'
 import { MERMAID_RENDERER_DEFINITION } from '../renderers/mermaid'
+import { VIDEO_RENDERER_DEFINITION } from '../renderers/video'
+import { AUDIO_RENDERER_DEFINITION } from '../renderers/audio'
 import { RendererRegistry } from './renderer-registry'
 import type {
   RenderProfile,
@@ -24,12 +26,6 @@ const ARTICLE_PROFILES = [
 const safeBuiltins = new Set(['markdown', 'code', 'katex', 'mermaid'])
 
 const COMPONENT_SCHEMAS = {
-  'video-embed': z
-    .object({ id: z.string(), src: z.string(), title: z.string(), poster: z.string().optional() })
-    .strict(),
-  'audio-embed': z
-    .object({ id: z.string(), src: z.string(), title: z.string() })
-    .strict(),
   'canvas-render': z
     .object({
       id: z.string(),
@@ -104,16 +100,8 @@ const DEFINITIONS: readonly RendererDefinition[] = Object.freeze([
   KATEX_RENDERER_DEFINITION,
   MERMAID_RENDERER_DEFINITION,
   IMAGE_RENDERER_DEFINITION,
-  createDefinition('video-embed', {
-    schema: COMPONENT_SCHEMAS['video-embed'],
-    allowsExternalResource: true,
-    selectable: 'none',
-  }),
-  createDefinition('audio-embed', {
-    schema: COMPONENT_SCHEMAS['audio-embed'],
-    allowsExternalResource: true,
-    selectable: 'none',
-  }),
+  VIDEO_RENDERER_DEFINITION,
+  AUDIO_RENDERER_DEFINITION,
   createDefinition('canvas-render', {
     schema: COMPONENT_SCHEMAS['canvas-render'],
     trustLevel: 'registered',

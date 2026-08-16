@@ -27,6 +27,8 @@ import {
 import { CodeScreenRenderer } from '../renderers/code/screen-renderer'
 import { KatexScreenRenderer } from '../renderers/katex/screen-renderer'
 import { ImageScreenRenderer } from '../renderers/image/screen-renderer'
+import { projectPackageMediaUrl } from '../renderers/media/asset-projection'
+import { MediaPlayer } from '../renderers/media/media-player'
 import { MermaidScreenRenderer } from '../renderers/mermaid/screen-renderer'
 import { sanitizeDiscussionRead } from '../security'
 import { DocumentFallbackCard } from './fallback-card'
@@ -681,6 +683,18 @@ function RegisteredComponent({
       </DocumentFallbackCard>
     )
   }
+  if (node.name === 'video-embed' || node.name === 'audio-embed') {
+    return (
+      <RendererErrorBoundary
+        alternative={alternative}
+        nodeId={node.nodeId}
+        rendererName={node.name}
+        showDetails={context.showDetails}
+      >
+        <RegisteredMediaRenderer context={context} node={node} />
+      </RendererErrorBoundary>
+    )
+  }
   return (
     <RendererErrorBoundary
       alternative={alternative}
@@ -698,6 +712,64 @@ function RegisteredComponent({
         showDetails={context.showDetails}
       />
     </RendererErrorBoundary>
+  )
+}
+
+function RegisteredMediaRenderer({
+  context,
+  node,
+}: {
+  readonly context: RenderContext
+  readonly node: RegisteredComponentNode
+}) {
+  const definition = BUILTIN_RENDERER_REGISTRY.get(node.name)
+  const projection = definition?.renderScreen(node, {
+    profile: context.profile.name,
+  })
+  if (
+    !isRendererProjection(
+      projection,
+      'server-screen-projection',
+      node.name,
+      node.nodeId,
+    )
+  ) {
+    return (
+      <DocumentFallbackCard
+        blockId={node.blockId}
+        code="DOC-RENDER-002"
+        message="这个媒体组件暂时无法显示。"
+        nodeId={node.nodeId}
+        selectable="none"
+      >
+        {node.canonicalText}
+      </DocumentFallbackCard>
+    )
+  }
+  const src = String(node.attributes.src)
+  const poster =
+    typeof node.attributes.poster === 'string'
+      ? projectPackageMediaUrl(
+          node.attributes.poster,
+          context.articleSlug,
+          context.assetManifest,
+        )
+      : undefined
+  const mediaSrc = projectPackageMediaUrl(
+    src,
+    context.articleSlug,
+    context.assetManifest,
+  )
+  return (
+    <MediaPlayer
+      key={mediaSrc}
+      kind={node.name === 'video-embed' ? 'video' : 'audio'}
+      node={node}
+      poster={poster}
+      showDetails={context.showDetails}
+      src={mediaSrc}
+      title={String(node.attributes.title)}
+    />
   )
 }
 
