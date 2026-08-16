@@ -7,6 +7,8 @@ export type DocumentFallbackCardProps = {
   readonly sourceRange?: SourceRange
   readonly details?: string
   readonly children?: React.ReactNode
+  readonly selectable?: 'none'
+  readonly blockId?: string
 }
 
 export function DocumentFallbackCard({
@@ -16,6 +18,8 @@ export function DocumentFallbackCard({
   sourceRange,
   details,
   children,
+  selectable,
+  blockId,
 }: DocumentFallbackCardProps) {
   const associationId = nodeId ?? 'document'
   return (
@@ -23,7 +27,9 @@ export function DocumentFallbackCard({
       aria-label={`内容降级：${message}`}
       className="my-5 border border-dashed border-[var(--line)] bg-[var(--bg-elevated)] px-5 py-4 text-[var(--ink-muted)] shadow-[inset_3px_0_0_var(--accent)]"
       data-document-fallback={code}
+      data-block-id={blockId}
       data-node-id={associationId}
+      data-selectable={selectable}
       role="status"
     >
       <p className="m-0 text-sm leading-7">{message}</p>

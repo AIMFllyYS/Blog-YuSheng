@@ -100,9 +100,13 @@ export async function compileArticleDocumentWithDiagnostics(
   input: CompileDocumentInput,
 ): Promise<DocumentCompilationResult> {
   const result = await compileDocument(input)
+  const { validateArticleKatexDocument } = await import(
+    '../renderers/katex/validate-document'
+  )
   const diagnostics = [
     ...result.diagnostics,
     ...validateArticleDocument(result.document),
+    ...validateArticleKatexDocument(result.document),
   ]
   return { document: result.document, diagnostics }
 }

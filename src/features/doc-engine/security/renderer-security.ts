@@ -1,16 +1,9 @@
 import DOMPurify from 'dompurify'
 
+import { KATEX_SECURITY_POLICY } from './katex-policy'
 import { DISCUSSION_LIMITS } from './render-limits'
 
-export const KATEX_SECURITY_POLICY = Object.freeze({
-  trust: false,
-  strict: 'error',
-  maxExpand: 1_000,
-  maxNestingDepth: 64,
-  maxSize: 20,
-  maxSourceLength: 2_000,
-  allowUserMacros: false,
-} as const)
+export { KATEX_SECURITY_POLICY } from './katex-policy'
 
 export const MERMAID_SECURITY_POLICY = Object.freeze({
   securityLevel: 'strict',
@@ -43,6 +36,8 @@ export const DISCUSSION_WRITE_RATE_POLICY = Object.freeze({
 
 const USER_MACRO_PATTERN =
   /\\(?:def|gdef|edef|xdef|let|futurelet|newcommand|renewcommand|providecommand)\b/i
+const KATEX_TRUST_COMMAND_PATTERN =
+  /(?:^|[^\\])(?:\\\\)*\\(?:href|url|includegraphics|htmlClass|htmlId|htmlStyle|htmlData)\b/iu
 const UNSAFE_MERMAID_PATTERN =
   /(?:^|\n)\s*(?:click\s+|%%\{|.*\bhref\b)|(?:javascript|data|vbscript):|https?:\/\//i
 
@@ -52,6 +47,9 @@ export function validateKatexSource(source: string): string | undefined {
   }
   if (!KATEX_SECURITY_POLICY.allowUserMacros && USER_MACRO_PATTERN.test(source)) {
     return '当前安全策略不允许用户定义 KaTeX 宏。'
+  }
+  if (!KATEX_SECURITY_POLICY.trust && KATEX_TRUST_COMMAND_PATTERN.test(source)) {
+    return '当前安全策略不允许 KaTeX 链接、外部资源或 HTML 命令。'
   }
   let nestingDepth = 0
   for (let index = 0; index < source.length; index += 1) {

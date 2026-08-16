@@ -2,6 +2,7 @@ import { z } from 'zod'
 
 import type { DocumentNode } from '../core'
 import { CODE_RENDERER_DEFINITION } from '../renderers/code'
+import { KATEX_RENDERER_DEFINITION } from '../renderers/katex'
 import { RendererRegistry } from './renderer-registry'
 import type {
   RenderProfile,
@@ -98,7 +99,7 @@ function createDefinition(
 const DEFINITIONS: readonly RendererDefinition[] = Object.freeze([
   createDefinition('markdown'),
   CODE_RENDERER_DEFINITION,
-  createDefinition('katex'),
+  KATEX_RENDERER_DEFINITION,
   createDefinition('mermaid', { selectable: 'none' }),
   createDefinition('image', { allowsExternalResource: true, selectable: 'whole-node' }),
   createDefinition('video-embed', {

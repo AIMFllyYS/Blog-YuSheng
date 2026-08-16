@@ -10,6 +10,9 @@ export default defineConfig({
     },
   },
   test: {
-    include: ['scripts/build/run-content-assets.test.ts'],
+    include: [
+      'scripts/build/run-content-assets.test.ts',
+      'scripts/build/verify-katex-static-render.test.tsx',
+    ],
   },
 })

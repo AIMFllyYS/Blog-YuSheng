@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { BlogArticlePlaceholder } from '@/features/blog-article'
 import {
   createBlogStaticParams,
+  createAssetManifest,
   createPostMetadata,
   readPost,
 } from '@/server/content'
@@ -21,5 +22,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function BlogArticlePage({ params }: Props) {
   const { slug } = await params
-  return <BlogArticlePlaceholder post={await readPost(slug)} />
+  const [post, assetManifest] = await Promise.all([
+    readPost(slug),
+    createAssetManifest(),
+  ])
+  return <BlogArticlePlaceholder assetManifest={assetManifest} post={post} />
 }

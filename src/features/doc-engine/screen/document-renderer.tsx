@@ -25,6 +25,7 @@ import {
   type RenderProfile,
 } from '../registry'
 import { CodeScreenRenderer } from '../renderers/code/screen-renderer'
+import { KatexScreenRenderer } from '../renderers/katex/screen-renderer'
 import { sanitizeDiscussionRead } from '../security'
 import { DocumentFallbackCard } from './fallback-card'
 import { RegisteredRendererLeaf } from './registered-renderer-leaf'
@@ -40,7 +41,13 @@ export type DocumentRendererProps = {
   readonly className?: string
   /** @internal Only accepted by the editor-preview development fixture. */
   readonly developmentCrashComponentIds?: readonly string[]
+  /** @internal Supplied only by the browser-owned discussion entry point. */
+  readonly discussionMathRenderer?: DiscussionMathRenderer
 }
+
+export type DiscussionMathRenderer = (
+  node: Extract<DocumentNode, { type: 'math' }>,
+) => ReactNode
 
 type PreparedDocument = {
   readonly document?: CompiledDocument
@@ -55,6 +62,7 @@ export async function DocumentRenderer({
   assetManifest = [],
   className,
   developmentCrashComponentIds,
+  discussionMathRenderer,
 }: DocumentRendererProps) {
   if (
     developmentCrashComponentIds &&
@@ -90,6 +98,7 @@ export async function DocumentRenderer({
         <DocumentRootContent
           articleSlug={articleSlug}
           developmentCrashComponentIds={developmentCrashComponentIds}
+          discussionMathRenderer={discussionMathRenderer}
           diagnostics={prepared.diagnostics}
           nodeDiagnostics={nodeDiagnostics}
           nodes={prepared.document.root.children}
@@ -238,6 +247,7 @@ function DocumentNodeChildren({
 type RenderContext = {
   readonly articleSlug: string
   readonly developmentCrashComponentIds?: readonly string[]
+  readonly discussionMathRenderer?: DiscussionMathRenderer
   readonly nodeDiagnostics: ReadonlyMap<string, readonly DocumentDiagnostic[]>
   readonly orphanDiagnostics: readonly DocumentDiagnostic[]
   readonly profile: ScreenProfileDefinition
@@ -337,11 +347,7 @@ function renderNode(node: DocumentNode, context: RenderContext): ReactNode {
     case 'code':
       return <RegisteredServerCodeRenderer context={context} node={node} />
     case 'math':
-      return node.display ? (
-        <pre data-block-id={node.blockId} data-math="display">{node.value}</pre>
-      ) : (
-        <code data-math="inline">{node.value}</code>
-      )
+      return <RegisteredKatexRenderer context={context} node={node} />
     case 'mermaid':
       return (
         <DocumentFallbackCard
@@ -410,6 +416,81 @@ function isCodeServerProjection(value: unknown, nodeId: string): boolean {
     value.kind === 'server-screen-projection' &&
     'rendererName' in value &&
     value.rendererName === 'code' &&
+    'nodeId' in value &&
+    value.nodeId === nodeId
+  )
+}
+
+function RegisteredKatexRenderer({
+  context,
+  node,
+}: {
+  readonly context: RenderContext
+  readonly node: Extract<DocumentNode, { type: 'math' }>
+}) {
+  const definition = BUILTIN_RENDERER_REGISTRY.get('katex')
+  const projection = definition?.renderScreen(node, {
+    profile: context.profile.name,
+  })
+  if (
+    isRendererProjection(
+      projection,
+      'browser-screen-projection',
+      'katex',
+      node.nodeId,
+    )
+  ) {
+    if (context.discussionMathRenderer) {
+      return context.discussionMathRenderer(node)
+    }
+    return (
+      <DocumentFallbackCard
+        blockId={node.display ? node.blockId : undefined}
+        code="DOC-RENDER-002"
+        message="讨论公式运行时尚未加载，已保留原始 TeX。"
+        nodeId={node.nodeId}
+        selectable="none"
+      >
+        <code>{node.value}</code>
+      </DocumentFallbackCard>
+    )
+  }
+  if (
+    !isRendererProjection(
+      projection,
+      'server-screen-projection',
+      'katex',
+      node.nodeId,
+    )
+  ) {
+    return (
+      <DocumentFallbackCard
+        blockId={node.display ? node.blockId : undefined}
+        code="DOC-RENDER-002"
+        message="这条公式暂时无法排版，已保留原始 TeX。"
+        nodeId={node.nodeId}
+        selectable="none"
+      >
+        <code>{node.value}</code>
+      </DocumentFallbackCard>
+    )
+  }
+  return <KatexScreenRenderer node={node} showDetails={context.showDetails} />
+}
+
+function isRendererProjection(
+  value: unknown,
+  kind: 'browser-screen-projection' | 'server-screen-projection',
+  rendererName: string,
+  nodeId: string,
+): boolean {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    'kind' in value &&
+    value.kind === kind &&
+    'rendererName' in value &&
+    value.rendererName === rendererName &&
     'nodeId' in value &&
     value.nodeId === nodeId
   )
@@ -518,6 +599,7 @@ function NodeDiagnosticFallback({
         className="border-b border-dashed border-[var(--line)] text-[var(--ink-muted)]"
         data-document-fallback={diagnostic.code}
         data-node-id={node.nodeId}
+        data-selectable={node.type === 'math' ? 'none' : undefined}
         role="status"
         title={showDetails ? diagnostic.message : undefined}
       >
@@ -528,10 +610,12 @@ function NodeDiagnosticFallback({
   }
   return (
     <DocumentFallbackCard
+      blockId={node.type === 'math' && node.display ? node.blockId : undefined}
       code={diagnostic.code}
       details={showDetails ? diagnostic.message : undefined}
       message={message}
       nodeId={node.nodeId}
+      selectable={node.type === 'math' ? 'none' : undefined}
       sourceRange={showDetails ? diagnostic.sourceRange : undefined}
     >
       {node.type === 'registeredComponent' && node.children.length > 0

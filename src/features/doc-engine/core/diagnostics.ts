@@ -115,6 +115,12 @@ export const DOCUMENT_DIAGNOSTIC_DEFINITIONS = {
     phase: 'runtime',
     disposition: 'safe-fallback',
   },
+  'DOC-RENDER-003': {
+    severity: 'warning',
+    message: '公式无法安全排版，已显示原始 TeX。',
+    phase: 'article-build',
+    disposition: 'continue-with-fallback',
+  },
 } as const
 
 export type DocumentDiagnosticCode =
