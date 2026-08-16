@@ -1,0 +1,204 @@
+import { mkdir, rm, writeFile } from 'node:fs/promises'
+import path from 'node:path'
+import { afterEach, describe, expect, it } from 'vitest'
+import {
+  ContentBuildError,
+  createBlogStaticParams,
+  createPostMetadata,
+  discoverPostSlugs,
+  listPublishedPosts,
+  readPost,
+  validateArticleAssetPath,
+} from '../../src/server/content'
+
+const temporaryRoots: string[] = []
+
+afterEach(async () => {
+  await Promise.all(
+    temporaryRoots.splice(0).map((root) => rm(root, { recursive: true })),
+  )
+})
+
+describe('build-time content repository', () => {
+  it('discovers and reads the official article package', async () => {
+    const slugs = await discoverPostSlugs()
+    const post = await readPost('p0-kitchen-sink')
+
+    expect(slugs).toEqual(['p0-kitchen-sink'])
+    expect(post.frontmatter.title).toBe('P0 中文综合验收文章')
+    expect(post.body).toContain('<web-embed')
+    expect(post.packageRoot).toMatch(/content[\\/]posts[\\/]p0-kitchen-sink$/)
+  })
+
+  it('sorts published posts and excludes valid drafts from params', async () => {
+    const root = await createPostsRoot()
+    await writePost(root, 'older-post', validSource('旧文章', '2026-01-01T00:00:00+08:00'))
+    await writePost(root, 'newer-post', validSource('新文章', '2026-02-01T00:00:00+08:00'))
+    await writePost(
+      root,
+      'hidden-draft',
+      validSource('草稿', '2026-03-01T00:00:00+08:00', true),
+    )
+
+    expect(await discoverPostSlugs(root)).toEqual([
+      'hidden-draft',
+      'newer-post',
+      'older-post',
+    ])
+    expect((await listPublishedPosts(root)).map((post) => post.slug)).toEqual([
+      'newer-post',
+      'older-post',
+    ])
+    expect(await createBlogStaticParams(root)).toEqual([
+      { slug: 'newer-post' },
+      { slug: 'older-post' },
+    ])
+  })
+
+  it('still validates malformed drafts before filtering them', async () => {
+    const root = await createPostsRoot()
+    await writePost(
+      root,
+      'broken-draft',
+      `---\nschemaVersion: 1\ndescription: 不能跳过校验\npublishedAt: 2026-03-01T00:00:00+08:00\ndraft: true\n---\n`,
+    )
+
+    await expect(listPublishedPosts(root)).rejects.toMatchObject({
+      name: 'ContentBuildError',
+      diagnostics: expect.arrayContaining([
+        expect.objectContaining({ code: 'FRONTMATTER_REQUIRED_FIELD_MISSING' }),
+      ]),
+    })
+  })
+
+  it('rejects traversal with a deterministic source location', async () => {
+    const source = '![越界](../../outside.png)'
+    const relativePath = '../../outside.png'
+    const result = await validateArticleAssetPath({
+      articleRoot: path.join(process.cwd(), 'content/posts/p0-kitchen-sink'),
+      articleSlug: 'p0-kitchen-sink',
+      relativePath,
+      source,
+      sourceOffset: source.indexOf(relativePath),
+    })
+
+    expect(result).toEqual({
+      ok: false,
+      diagnostics: [
+        expect.objectContaining({
+          code: 'ARTICLE_ASSET_PATH_INVALID',
+          articleSlug: 'p0-kitchen-sink',
+          sourceRange: {
+            start: { line: 1, column: 7, offset: 6 },
+            end: { line: 1, column: 24, offset: 23 },
+          },
+        }),
+      ],
+    })
+  })
+
+  it('resolves real package assets and rejects encoded traversal', async () => {
+    const articleRoot = path.join(
+      process.cwd(),
+      'content/posts/p0-kitchen-sink',
+    )
+    const safe = await validateArticleAssetPath({
+      articleRoot,
+      articleSlug: 'p0-kitchen-sink',
+      relativePath: 'media/images/cover.png',
+      source: 'media/images/cover.png',
+      sourceOffset: 0,
+    })
+    const encoded = await validateArticleAssetPath({
+      articleRoot,
+      articleSlug: 'p0-kitchen-sink',
+      relativePath: '%25252e%25252e/outside.png',
+      source: '%25252e%25252e/outside.png',
+      sourceOffset: 0,
+    })
+
+    expect(safe).toMatchObject({
+      ok: true,
+      relativePath: 'media/images/cover.png',
+    })
+    expect(encoded).toMatchObject({
+      ok: false,
+      diagnostics: [
+        expect.objectContaining({ code: 'ARTICLE_ASSET_PATH_INVALID' }),
+      ],
+    })
+  })
+
+  it('reports a stable diagnostic when index.md cannot be read', async () => {
+    const root = await createPostsRoot()
+    await mkdir(path.join(root, 'empty-package'))
+
+    await expect(readPost('empty-package', root)).rejects.toEqual(
+      expect.objectContaining<Partial<ContentBuildError>>({
+        name: 'ContentBuildError',
+        diagnostics: [
+          expect.objectContaining({ code: 'ARTICLE_INDEX_READ_FAILED' }),
+        ],
+      }),
+    )
+  })
+
+  it('rejects an unsafe slug before resolving a filesystem path', async () => {
+    await expect(readPost('../p0-kitchen-sink')).rejects.toMatchObject({
+      name: 'ContentBuildError',
+      diagnostics: [expect.objectContaining({ code: 'ARTICLE_SLUG_INVALID' })],
+    })
+  })
+
+  it('creates a same-site cover URL only with a configured HTTPS origin', async () => {
+    const metadata = await createPostMetadata(
+      'p0-kitchen-sink',
+      'https://blog.example.com',
+    )
+    expect(metadata.openGraph?.images).toEqual([
+      'https://blog.example.com/blog/p0-kitchen-sink/media/images/cover.png',
+    ])
+    for (const unsafeOrigin of [
+      'http://localhost:9981',
+      'https://localhost',
+      'https://preview.localhost',
+      'https://localhost.',
+      'https://preview.localhost.',
+      'https://127.9.8.7',
+      'https://[::1]',
+      'https://[::ffff:127.0.0.1]',
+      'https://user:secret@example.com',
+      'https://example.com/?preview=1',
+      'https://example.com/#preview',
+    ]) {
+      await expect(
+        createPostMetadata('p0-kitchen-sink', unsafeOrigin),
+      ).rejects.toThrow('SITE_ORIGIN 必须是公开且仅含 origin 的 HTTPS URL')
+    }
+  })
+})
+
+async function createPostsRoot() {
+  const root = path.join(
+    process.cwd(),
+    '.tmp',
+    `content-discovery-${crypto.randomUUID()}`,
+  )
+  temporaryRoots.push(root)
+  await mkdir(root, { recursive: true })
+  return root
+}
+
+async function writePost(root: string, slug: string, source: string) {
+  const packageRoot = path.join(root, slug)
+  await mkdir(packageRoot, { recursive: true })
+  await writeFile(path.join(packageRoot, 'index.md'), source, 'utf8')
+}
+
+function validSource(
+  title: string,
+  publishedAt: string,
+  draft = false,
+) {
+  return `---\nschemaVersion: 1\ntitle: ${title}\ndescription: 测试文章\npublishedAt: ${publishedAt}\ndraft: ${draft}\n---\n\n正文\n`
+}

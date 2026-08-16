@@ -68,6 +68,10 @@ type LocatedFrontmatter = {
   bodyStartOffset: number
   blockRange: SourceRange
   fieldRanges: ReadonlyMap<string, SourceRange>
+    }
+
+export function isValidArticleSlug(articleSlug: string) {
+  return SLUG_PATTERN.test(articleSlug)
 }
 
 export function validateFrontmatter(
@@ -304,7 +308,7 @@ function validateArticleSlug(
   source: string,
   articleSlug: string,
 ): FrontmatterDiagnostic | undefined {
-  if (SLUG_PATTERN.test(articleSlug)) {
+  if (isValidArticleSlug(articleSlug)) {
     return undefined
   }
 
