@@ -13,7 +13,7 @@ describe('DocumentRenderer', () => {
     const html = renderToStaticMarkup(element)
 
     expect(html).toContain('data-document-renderer="canonical"')
-    expect(html).toContain('<h1 id="标题">标题</h1>')
+    expect(html).toContain('<h1 data-block-id="标题" id="标题">标题</h1>')
     expect(html).toContain('<strong>强调</strong>')
     expect(html).toContain('rel="nofollow ugc noopener noreferrer"')
   })

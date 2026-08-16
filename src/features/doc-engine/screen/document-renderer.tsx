@@ -650,12 +650,12 @@ function DocumentHeading({
   readonly node: Extract<BlockNode, { type: 'heading' }>
   readonly children: ReactNode
 }) {
-  if (node.depth === 1) return <h1 id={node.slug}>{children}</h1>
-  if (node.depth === 2) return <h2 id={node.slug}>{children}</h2>
-  if (node.depth === 3) return <h3 id={node.slug}>{children}</h3>
-  if (node.depth === 4) return <h4 id={node.slug}>{children}</h4>
-  if (node.depth === 5) return <h5 id={node.slug}>{children}</h5>
-  return <h6 id={node.slug}>{children}</h6>
+  if (node.depth === 1) return <h1 data-block-id={node.blockId} id={node.slug}>{children}</h1>
+  if (node.depth === 2) return <h2 data-block-id={node.blockId} id={node.slug}>{children}</h2>
+  if (node.depth === 3) return <h3 data-block-id={node.blockId} id={node.slug}>{children}</h3>
+  if (node.depth === 4) return <h4 data-block-id={node.blockId} id={node.slug}>{children}</h4>
+  if (node.depth === 5) return <h5 data-block-id={node.blockId} id={node.slug}>{children}</h5>
+  return <h6 data-block-id={node.blockId} id={node.slug}>{children}</h6>
 }
 
 function TableRow({ node, context }: { readonly node: TableRowNode; readonly context: RenderContext }) {
