@@ -63,10 +63,13 @@ test('首页保持常显 absolute 导航，阅读页只由中栏顶部唤出', a
   await page.mouse.move(centerBox!.x + centerBox!.width / 2, 24)
   await expect(readerNav).toHaveAttribute('data-nav-visible', 'true')
   await page.screenshot({ path: testInfo.outputPath('reader-navigation.png') })
-  await expect(page.getByRole('button', { name: /编辑|询问/ })).toHaveCount(0)
+  await expect(
+    page.locator('[data-rope-navigation], [data-sel-bar]').getByRole('button', { name: /编辑|询问/ }),
+  ).toHaveCount(0)
   await page.getByRole('button', { name: '导出' }).click()
+  await expect(page.getByRole('dialog', { name: '导出' })).toContainText('开始导出')
   await expect(page.getByRole('dialog', { name: '导出' })).toContainText(
-    '真实生成链将在 M8 接入',
+    '随后续版本开放',
   )
   await page.keyboard.press('Escape')
 

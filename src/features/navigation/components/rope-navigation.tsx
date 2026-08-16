@@ -12,6 +12,7 @@ import {
   ShareIcon,
   ThemeIcon,
 } from './navigation-icons'
+import { ExportMenu } from '@/features/export-service/export-menu'
 import { SettingsPanel } from './settings-panel'
 
 export type RopeNavigationProps = {
@@ -222,10 +223,7 @@ function ReaderExportPanel({ panelId }: { readonly panelId: string }) {
       role="dialog"
       style={position}
     >
-      <h2 className="text-base font-semibold tracking-[0.12em]">导出本文</h2>
-      <p className="mt-2 text-sm leading-6 text-[var(--ink-muted)]">
-        Markdown、TXT、DOCX 与 PDF 的真实生成链将在 M8 接入；这里先锁定全站统一菜单外壳，不伪造下载。
-      </p>
+      <ExportMenu />
     </section>
   )
 }
