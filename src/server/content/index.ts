@@ -1,6 +1,17 @@
 import 'server-only'
 
 export { ContentBuildError } from './content-error'
+export {
+  createAssetManifest,
+  MAX_STATIC_FILE_BYTES,
+  MAX_STATIC_FILE_COUNT,
+  type AssetManifestEntry,
+} from './asset-manifest'
+export {
+  buildContentAssets,
+  copyAssetManifest,
+  verifyStaticOutput,
+} from './build-content-assets'
 export { createBlogStaticParams } from './create-static-params'
 export { createPostMetadata } from './create-post-metadata'
 export {

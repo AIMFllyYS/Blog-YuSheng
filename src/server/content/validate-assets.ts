@@ -68,7 +68,7 @@ export async function validateArticleAssetPath({
   return {
     ok: true,
     absolutePath: realAsset,
-    relativePath: decoded.split('/').join(path.posix.sep),
+    relativePath: path.posix.normalize(decoded),
   }
 }
 

@@ -49,6 +49,7 @@ export type FrontmatterDiagnostic = {
   severity: 'error'
   message: string
   articleSlug: string
+  nodeId?: string
   field?: string
   sourceRange: SourceRange
 }
@@ -68,7 +69,7 @@ type LocatedFrontmatter = {
   bodyStartOffset: number
   blockRange: SourceRange
   fieldRanges: ReadonlyMap<string, SourceRange>
-    }
+}
 
 export function isValidArticleSlug(articleSlug: string) {
   return SLUG_PATTERN.test(articleSlug)
