@@ -8,7 +8,7 @@ import type { CompiledDocument } from '@/features/doc-engine/core'
 import type { SelectionDocumentIndex } from '@/features/doc-engine/selection'
 import type { DocumentOutline } from '@/features/doc-engine/toc'
 import { ExportRuntimeProvider } from '@/features/export-service/export-runtime'
-import { ArticleToc } from '@/features/toc'
+import { ArticleToc, HashDeepLink } from '@/features/toc'
 import { ReaderDivider } from './reader-divider'
 import { ReaderChrome } from './reader-chrome'
 import { ReaderLayoutInteractions } from './reader-layout-interactions'
@@ -75,6 +75,7 @@ export function ReaderLayout({
       >
         <main className={styles.readerPage} data-reader-page>
         <ReaderChrome />
+        <HashDeepLink />
         <SelectionToolbar index={selectionIndex} />
         <section className={styles.shell} data-reader-shell>
           <aside

@@ -138,6 +138,47 @@ test('设置对准挂件、切换四主题，分享触发统一下落通知', as
   await expect(newestToast).toHaveCount(0, { timeout: 1_000 })
 })
 
+test('粗指针走 Web Share 并通知已打开系统分享', async ({ page }) => {
+  await page.addInitScript(() => {
+    const originalMatchMedia = window.matchMedia.bind(window)
+    window.matchMedia = ((query: string) => {
+      if (query === '(pointer: coarse)') {
+        return {
+          matches: true,
+          media: query,
+          onchange: null,
+          addListener() {},
+          removeListener() {},
+          addEventListener() {},
+          removeEventListener() {},
+          dispatchEvent() {
+            return false
+          },
+        }
+      }
+      return originalMatchMedia(query)
+    }) as typeof window.matchMedia
+
+    Object.defineProperty(navigator, 'share', {
+      configurable: true,
+      value: async (data: ShareData) => {
+        ;(window as unknown as { __shared?: ShareData }).__shared = data
+      },
+    })
+  })
+
+  await waitForReader(page)
+  const center = page.locator('[data-reader-center]')
+  const box = await center.boundingBox()
+  expect(box).not.toBeNull()
+  await page.mouse.move(box!.x + box!.width / 2, 24)
+  await page.getByRole('button', { name: '分享本文' }).click()
+  await expect(page.getByRole('status').filter({ hasText: '已打开系统分享' })).toHaveCount(1)
+  const shared = await page.evaluate(() => (window as unknown as { __shared?: ShareData }).__shared)
+  expect(shared?.title).toBe('P0 中文综合验收文章')
+  expect(shared?.url).toContain('/blog/p0-kitchen-sink/')
+})
+
 test('滚动条与 reduced-motion 通知遵守外壳契约', async ({ page, context }) => {
   await context.grantPermissions(['clipboard-read', 'clipboard-write'])
   await page.emulateMedia({ reducedMotion: 'reduce' })
