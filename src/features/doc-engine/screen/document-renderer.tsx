@@ -24,6 +24,7 @@ import {
   BUILTIN_RENDERER_REGISTRY,
   type RenderProfile,
 } from '../registry'
+import { CodeScreenRenderer } from '../renderers/code/screen-renderer'
 import { sanitizeDiscussionRead } from '../security'
 import { DocumentFallbackCard } from './fallback-card'
 import { RegisteredRendererLeaf } from './registered-renderer-leaf'
@@ -328,13 +329,13 @@ function renderNode(node: DocumentNode, context: RenderContext): ReactNode {
     case 'tableCell':
       return <TableCell context={context} node={node} />
     case 'inlineCode':
-      return <code>{node.value}</code>
-    case 'code':
       return (
-        <pre data-block-id={node.blockId} data-language={node.language}>
-          <code>{node.value}</code>
-        </pre>
+        <code className="rounded-sm bg-[var(--bg-elevated)] px-1.5 py-0.5 text-[0.92em] text-[var(--accent)] [font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,'Liberation_Mono','Courier_New',monospace]">
+          {node.value}
+        </code>
       )
+    case 'code':
+      return <RegisteredServerCodeRenderer context={context} node={node} />
     case 'math':
       return node.display ? (
         <pre data-block-id={node.blockId} data-math="display">{node.value}</pre>
@@ -373,6 +374,45 @@ function renderNode(node: DocumentNode, context: RenderContext): ReactNode {
     case 'thematicBreak':
       return <hr data-block-id={node.blockId} />
   }
+}
+
+function RegisteredServerCodeRenderer({
+  context,
+  node,
+}: {
+  readonly context: RenderContext
+  readonly node: Extract<DocumentNode, { type: 'code' }>
+}) {
+  const definition = BUILTIN_RENDERER_REGISTRY.get('code')
+  const projection = definition?.renderScreen(node, {
+    profile: context.profile.name,
+  })
+  if (!isCodeServerProjection(projection, node.nodeId)) {
+    return (
+      <DocumentFallbackCard
+        code="DOC-RENDER-002"
+        details={context.showDetails ? 'code renderer 的服务端投影无效。' : undefined}
+        message="这段代码暂时无法高亮，已保留代码内容。"
+        nodeId={node.nodeId}
+      >
+        <pre>{node.value}</pre>
+      </DocumentFallbackCard>
+    )
+  }
+  return <CodeScreenRenderer node={node} />
+}
+
+function isCodeServerProjection(value: unknown, nodeId: string): boolean {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    'kind' in value &&
+    value.kind === 'server-screen-projection' &&
+    'rendererName' in value &&
+    value.rendererName === 'code' &&
+    'nodeId' in value &&
+    value.nodeId === nodeId
+  )
 }
 
 function ListItem({ node, children }: { readonly node: ListItemNode; readonly children: ReactNode }) {

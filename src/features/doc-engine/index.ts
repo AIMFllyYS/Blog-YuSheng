@@ -1,6 +1,7 @@
 export * from './core'
 export * from './profiles'
 export * from './registry'
+export * from './renderers'
 export * from './security'
 export * from './screen'
 export * from './toc'

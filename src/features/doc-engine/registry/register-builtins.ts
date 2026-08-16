@@ -1,6 +1,7 @@
 import { z } from 'zod'
 
 import type { DocumentNode } from '../core'
+import { CODE_RENDERER_DEFINITION } from '../renderers/code'
 import { RendererRegistry } from './renderer-registry'
 import type {
   RenderProfile,
@@ -96,7 +97,7 @@ function createDefinition(
 
 const DEFINITIONS: readonly RendererDefinition[] = Object.freeze([
   createDefinition('markdown'),
-  createDefinition('code'),
+  CODE_RENDERER_DEFINITION,
   createDefinition('katex'),
   createDefinition('mermaid', { selectable: 'none' }),
   createDefinition('image', { allowsExternalResource: true, selectable: 'whole-node' }),
