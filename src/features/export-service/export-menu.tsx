@@ -2,7 +2,10 @@
 
 import { useRef, useState } from 'react'
 import { useFallingToast } from '@/components/ui/falling-toast'
+import { sortAnnotationViews } from '@/features/annotations/sort-annotation-threads'
+import { useDiscussionRuntime } from '@/features/discussions/runtime'
 import type { DiscussionExportScope, ExportFormat } from './export-document'
+import type { ReviewAppendixModel } from './markdown/review-appendix'
 import { useExportRuntime } from './export-runtime'
 
 const FORMATS = [
@@ -17,21 +20,30 @@ const FORMATS = [
 }[]
 
 const SCOPES = [
-  { id: 'body-only', label: '纯正文', available: true },
-  { id: 'body-with-annotations', label: '正文+注释', available: false },
-  { id: 'body-with-comments', label: '正文+评论', available: false },
-  { id: 'body-with-all-discussions', label: '全部', available: false },
+  { id: 'body-only', label: '纯正文' },
+  { id: 'body-with-annotations', label: '正文+注释' },
+  { id: 'body-with-comments', label: '正文+评论' },
+  { id: 'body-with-all-discussions', label: '全部' },
 ] as const satisfies readonly {
   readonly id: DiscussionExportScope
   readonly label: string
-  readonly available: boolean
 }[]
+
+function isScopeAvailable(
+  scope: DiscussionExportScope,
+  format: ExportFormat,
+): boolean {
+  if (scope === 'body-only') return true
+  if (scope === 'body-with-annotations') return format === 'markdown'
+  return false
+}
 
 const chipClassName =
   'min-h-9 rounded-full border border-[var(--line)] bg-transparent px-3 py-1.5 text-xs text-[var(--ink-muted)] transition-[border-color,color,background-color] duration-[var(--dur-fast)] ease-out hover:border-[var(--accent)] hover:text-[var(--accent)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] aria-pressed:border-[var(--accent)] aria-pressed:bg-[var(--highlight)] aria-pressed:text-[var(--accent)] aria-disabled:text-[var(--ink-faint)] aria-disabled:hover:border-[var(--line)] aria-disabled:hover:text-[var(--ink-faint)]'
 
 export function ExportMenu() {
   const runtime = useExportRuntime()
+  const discussion = useDiscussionRuntime()
   const { notify } = useFallingToast()
   const [format, setFormat] = useState<ExportFormat>('markdown')
   const [scope, setScope] = useState<DiscussionExportScope>('body-only')
@@ -41,11 +53,11 @@ export function ExportMenu() {
   const cancelledRef = useRef(false)
 
   const selectedFormat = FORMATS.find((item) => item.id === format)
-  const selectedScope = SCOPES.find((item) => item.id === scope)
-  const available = Boolean(selectedFormat?.available && selectedScope?.available)
+  const selectedScopeAvailable = isScopeAvailable(scope, format)
+  const available = Boolean(selectedFormat?.available && selectedScopeAvailable)
   const unavailableHint = !selectedFormat?.available
     ? `${selectedFormat?.label ?? ''} 导出随后续版本开放`.trim()
-    : !selectedScope?.available
+    : !selectedScopeAvailable
       ? '该内容范围随后续版本开放'
       : ''
 
@@ -59,16 +71,39 @@ export function ExportMenu() {
     setProgress(24)
     setStatus(available ? '正在导出…' : unavailableHint)
     try {
-      const [{ assembleExport }, { downloadBlob }] = await Promise.all([
+      const [{ assembleExport }, { downloadBlob }, prepare] = await Promise.all([
         import('./assemble-export'),
         import('@/lib/download'),
+        scope === 'body-with-annotations'
+          ? import('./markdown/prepare-review-appendix')
+          : Promise.resolve(undefined),
       ])
       if (cancelledRef.current) return
+      setProgress(48)
+      const snapshotAt = new Date().toISOString()
+      let appendix: ReviewAppendixModel | undefined
+      if (prepare) {
+        const listed = await discussion.repo.listAnnotationThreads(runtime.articleSlug)
+        const prepared = await prepare.prepareReviewAppendix({
+          articleSlug: runtime.document.articleSlug,
+          documentFingerprint: runtime.document.documentFingerprint,
+          snapshotAt,
+          threads: sortAnnotationViews(listed, discussion.selectionIndex),
+        })
+        if (cancelledRef.current) return
+        if (!prepared.ok) {
+          setStatus(prepared.message)
+          return
+        }
+        appendix = prepared.model
+      }
       setProgress(72)
       const result = assembleExport({
+        appendix,
         assetManifest: runtime.assetManifest,
         document: runtime.document,
         format,
+        generatedAt: snapshotAt,
         scope,
       })
       if (cancelledRef.current) return
@@ -120,13 +155,14 @@ export function ExportMenu() {
       <div className="mt-2 mb-3 flex flex-wrap gap-2" data-export-scopes>
         {SCOPES.map((item) => (
           <button
-            aria-disabled={!item.available}
+            aria-disabled={!isScopeAvailable(item.id, format)}
             aria-pressed={scope === item.id}
             className={chipClassName}
             key={item.id}
             onClick={() => {
+              const open = isScopeAvailable(item.id, format)
               setScope(item.id)
-              setStatus(item.available ? '' : '该内容范围随后续版本开放')
+              setStatus(open ? '' : '该内容范围随后续版本开放')
             }}
             type="button"
           >
@@ -158,7 +194,7 @@ export function ExportMenu() {
       </div>
 
       <p className="m-0 text-[11px] leading-[1.7] text-[var(--ink-faint)]">
-        讨论快照随后续版本开放。点击后直接生成文件下载，不会调用打印对话框。
+        注释快照按点击时固定。评论快照随后续版本开放。点击后直接生成文件下载，不会调用打印对话框。
       </p>
       {status ? (
         <p className="mt-2 text-[11px] leading-[1.7] text-[var(--ink-muted)]" role="status">
