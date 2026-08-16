@@ -21,4 +21,14 @@ export {
   type DiscussionThread,
 } from './discussion-thread'
 export { canCreateDiscussion, canDeleteEntry, canEditEntry } from './discussion-permissions'
-export { DISCUSSION_WRITES_OPEN } from './discussion-write-gate'
+export {
+  DISCUSSION_WRITES_OPEN,
+  areDiscussionWritesOpen,
+} from './discussion-write-gate'
+export {
+  LOCAL_AUTHOR_MODE_EVENT,
+  LOCAL_AUTHOR_MODE_KEY,
+  readLocalAuthorMode,
+  subscribeLocalAuthorMode,
+  writeLocalAuthorMode,
+} from './local-author-mode'
