@@ -72,6 +72,36 @@ describe('assemble body-only Markdown from original source', () => {
     expect(document.originalSource).toBe(post.source)
   })
 
+  it('appends a review appendix for markdown annotations without rewriting the body', async () => {
+    const { document } = await compileKitchenSink()
+    const originalSource = document.originalSource
+    const appendix = {
+      schemaVersion: 1 as const,
+      articleSlug: 'p0-kitchen-sink',
+      documentFingerprint: document.documentFingerprint,
+      snapshotAt: '2026-08-17T00:00:00.000Z',
+      threads: [] as const,
+    }
+
+    const result = assembleExport({
+      appendix,
+      document,
+      format: 'markdown',
+      generatedAt: '2026-08-17T00:00:00.000Z',
+      scope: 'body-with-annotations',
+    })
+
+    expect(result.ok).toBe(true)
+    if (!result.ok) return
+    expect(result.document.scope).toBe('body-with-annotations')
+    expect(result.document.appendix).toEqual(appendix)
+    expect(result.artifact.filename).toBe('p0-kitchen-sink.review.md')
+    const text = new TextDecoder().decode(result.artifact.bytes)
+    expect(text.startsWith(originalSource)).toBe(true)
+    expect(text.slice(originalSource.length)).toMatch(/^\n<!-- blog-review-appendix:v1 -->/)
+    expect(document.originalSource).toBe(originalSource)
+  })
+
   it('rejects discussion scopes and DOCX/PDF with explicit diagnostics', async () => {
     const { document } = await compileKitchenSink()
     const originalSource = document.originalSource
@@ -87,6 +117,13 @@ describe('assemble body-only Markdown from original source', () => {
       reason: 'unsupported-scope',
       message: '该内容范围随后续版本开放',
     })
+    expect(
+      assembleExport({
+        document,
+        format: 'text',
+        scope: 'body-with-annotations',
+      }),
+    ).toMatchObject({ ok: false, reason: 'unsupported-scope' })
     expect(
       assembleExport({
         document,
