@@ -29,6 +29,7 @@ import { KatexScreenRenderer } from '../renderers/katex/screen-renderer'
 import { ImageScreenRenderer } from '../renderers/image/screen-renderer'
 import {
   projectHtmlEmbedUrl,
+  projectPackageAssetData,
   projectPackageMediaUrl,
 } from '../renderers/media/asset-projection'
 import { MediaPlayer } from '../renderers/media/media-player'
@@ -37,6 +38,8 @@ import { SvgScreenRenderer } from '../renderers/svg/screen-renderer'
 import { HtmlEmbedScreenRenderer } from '../renderers/html/screen-renderer'
 import { WebEmbedScreenRenderer } from '../renderers/web/screen-renderer'
 import { WebEmbedPreviewCard } from '../renderers/web/web-preview-card'
+import { ChoiceQuestionScreenRenderer } from '../renderers/quiz-choice/screen-renderer'
+import { FillBlankQuestionScreenRenderer } from '../renderers/quiz-fill/screen-renderer'
 import { MermaidScreenRenderer } from '../renderers/mermaid/screen-renderer'
 import { sanitizeDiscussionRead } from '../security'
 import { DocumentFallbackCard } from './fallback-card'
@@ -769,6 +772,23 @@ function RegisteredComponent({
       </RendererErrorBoundary>
     )
   }
+  if (
+    node.name === 'choice-question' ||
+    node.name === 'fill-blank-question'
+  ) {
+    return (
+      <RendererErrorBoundary
+        alternative={alternative}
+        blockId={node.blockId}
+        nodeId={node.nodeId}
+        rendererName={node.name}
+        selectable="none"
+        showDetails={context.showDetails}
+      >
+        <RegisteredQuizRenderer context={context} node={node} />
+      </RendererErrorBoundary>
+    )
+  }
   return (
     <RendererErrorBoundary
       alternative={alternative}
@@ -786,6 +806,49 @@ function RegisteredComponent({
         showDetails={context.showDetails}
       />
     </RendererErrorBoundary>
+  )
+}
+
+function RegisteredQuizRenderer({
+  context,
+  node,
+}: {
+  readonly context: RenderContext
+  readonly node: RegisteredComponentNode
+}) {
+  const definition = BUILTIN_RENDERER_REGISTRY.get(node.name)
+  const projection = definition?.renderScreen(node, {
+    profile: context.profile.name,
+  })
+  if (
+    !isRendererProjection(
+      projection,
+      'browser-screen-projection',
+      node.name,
+      node.nodeId,
+    )
+  ) {
+    return (
+      <DocumentFallbackCard
+        blockId={node.blockId}
+        code="DOC-RENDER-002"
+        message="这道自测题暂时无法显示。"
+        nodeId={node.nodeId}
+        selectable="none"
+      />
+    )
+  }
+  const source = String(node.attributes['data-src'])
+  const data = projectPackageAssetData(
+    source,
+    context.articleSlug,
+    node.name,
+    context.assetManifest,
+  )
+  return node.name === 'choice-question' ? (
+    <ChoiceQuestionScreenRenderer data={data} node={node} />
+  ) : (
+    <FillBlankQuestionScreenRenderer data={data} node={node} />
   )
 }
 

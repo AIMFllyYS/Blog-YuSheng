@@ -8,6 +8,8 @@ import { readAllPosts } from './discover-posts'
 import { validateArticleAssetPath } from './validate-assets'
 import type { FrontmatterDiagnostic, SourceRange } from './validate-frontmatter'
 import { getCanvasRendererRegistration } from '../../features/doc-engine/registry/canvas-renderer-registry'
+import { CHOICE_QUESTION_DATA_SCHEMA } from '../../features/doc-engine/renderers/quiz-choice/schema'
+import { FILL_BLANK_QUESTION_DATA_SCHEMA } from '../../features/doc-engine/renderers/quiz-fill/schema'
 import { sanitizeSvgSource } from './sanitize-svg'
 
 export const MAX_STATIC_FILE_BYTES = 25 * 1024 * 1024
@@ -32,6 +34,7 @@ export type AssetManifestEntry = {
     derived: boolean
     quality?: number
   }
+  data?: unknown
   sourceRange: SourceRange
 }
 
@@ -113,6 +116,7 @@ export async function createAssetManifest(postsRoot?: string) {
         throw error
       }
       for (const sourcePath of files) {
+        let manifestData: unknown
         const file = await stat(sourcePath)
         if (!file.isFile()) {
           diagnostics.push(
@@ -187,6 +191,30 @@ export async function createAssetManifest(postsRoot?: string) {
             continue
           }
         }
+        if (
+          (reference.nodeName === 'choice-question' ||
+            reference.nodeName === 'fill-blank-question') &&
+          reference.attribute === 'data-src'
+        ) {
+          const rawData = await readJsonValue(sourcePath)
+          const parsed =
+            reference.nodeName === 'choice-question'
+              ? CHOICE_QUESTION_DATA_SCHEMA.safeParse(rawData)
+              : FILL_BLANK_QUESTION_DATA_SCHEMA.safeParse(rawData)
+          if (!parsed.success) {
+            diagnostics.push(
+              diagnostic(
+                post.slug,
+                'ASSET_DATA_SCHEMA_INVALID',
+                `${reference.nodeName} 数据未通过构建期 schema：${reference.relativePath}`,
+                reference.sourceRange,
+                reference.nodeId,
+              ),
+            )
+            continue
+          }
+          manifestData = parsed.data
+        }
         const relativePath = reference.nodeName === 'html-embed'
           ? path.posix.join(path.posix.dirname(validation.relativePath), path.relative(path.dirname(validation.absolutePath), sourcePath).split(path.sep).join('/'))
           : validation.relativePath
@@ -223,6 +251,7 @@ export async function createAssetManifest(postsRoot?: string) {
           outputPath,
           publicUrl,
           bytes: file.size,
+          data: manifestData,
           transform:
             reference.nodeName === 'svg-embed' ? 'sanitize-svg' : undefined,
           sourceRange: reference.sourceRange,

@@ -32,6 +32,18 @@ describe('content asset manifest', () => {
     )
     expect(paths).toContain('blog/p0-kitchen-sink/media/video/demo.mp4')
     expect(paths).toContain('blog/p0-kitchen-sink/data/function-plot.json')
+    expect(paths).toContain('blog/p0-kitchen-sink/data/choice-question.json')
+    expect(paths).toContain(
+      'blog/p0-kitchen-sink/data/choice-question-multiple.json',
+    )
+    expect(paths).toContain('blog/p0-kitchen-sink/data/fill-blank-question.json')
+    expect(
+      manifest.find(
+        (entry) =>
+          entry.outputPath ===
+          'blog/p0-kitchen-sink/data/choice-question.json',
+      )?.data,
+    ).toMatchObject({ prompt: '正式文章的唯一权威源是什么？' })
     expect(
       manifest.find(
         (entry) =>
@@ -70,6 +82,68 @@ describe('content asset manifest', () => {
     await expect(createAssetManifest(postsRoot)).rejects.toMatchObject({
       diagnostics: [
         expect.objectContaining({ code: 'ASSET_DATA_SCHEMA_INVALID' }),
+      ],
+    })
+  })
+
+  it.each([
+    {
+      slug: 'bad-choice-data',
+      tag: '<choice-question id="bad" data-src="./data/question.json" />',
+      data: {
+        prompt: '缺少解析',
+        options: [
+          { id: 'a', label: 'A' },
+          { id: 'b', label: 'B' },
+        ],
+        answer: 'a',
+      },
+    },
+    {
+      slug: 'bad-fill-data',
+      tag: '<fill-blank-question id="bad" data-src="./data/question.json" />',
+      data: { prompt: '缺少答案', explanation: '不完整' },
+    },
+    {
+      slug: 'blank-normalized-fill-data',
+      tag: '<fill-blank-question id="bad" data-src="./data/question.json" />',
+      data: {
+        prompt: '空答案',
+        answers: ['   '],
+        trimWhitespace: true,
+        caseSensitive: true,
+        explanation: '规范化后为空。',
+      },
+    },
+    {
+      slug: 'duplicate-normalized-fill-data',
+      tag: '<fill-blank-question id="bad" data-src="./data/question.json" />',
+      data: {
+        prompt: '重复答案',
+        answers: ['YES', ' yes '],
+        trimWhitespace: true,
+        caseSensitive: false,
+        explanation: '规范化后重复。',
+      },
+    },
+  ])('rejects build-time quiz schema failures for $slug', async (fixture) => {
+    const postsRoot = await createPostsRoot()
+    await writeArticle(postsRoot, fixture.slug, fixture.tag)
+    const dataRoot = path.join(postsRoot, fixture.slug, 'data')
+    await mkdir(dataRoot, { recursive: true })
+    await writeFile(
+      path.join(dataRoot, 'question.json'),
+      JSON.stringify(fixture.data),
+      'utf8',
+    )
+
+    await expect(createAssetManifest(postsRoot)).rejects.toMatchObject({
+      diagnostics: [
+        expect.objectContaining({
+          code: 'ASSET_DATA_SCHEMA_INVALID',
+          nodeId: 'bad',
+          sourceRange: expect.any(Object),
+        }),
       ],
     })
   })

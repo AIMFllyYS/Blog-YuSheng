@@ -82,6 +82,8 @@ flowchart LR
 
 <choice-question id="choice-basics" data-src="./data/choice-question.json" />
 
+<choice-question id="choice-multiple" data-src="./data/choice-question-multiple.json" />
+
 <fill-blank-question id="fill-basics" data-src="./data/fill-blank-question.json" />
 
 ## 结束

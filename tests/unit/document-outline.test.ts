@@ -220,7 +220,7 @@ describe('Canonical IR outline extraction', () => {
           "title": "媒体与安全组件",
         },
         {
-          "characterCount": 34,
+          "characterCount": 49,
           "embeds": {
             "customTag": true,
             "image": false,

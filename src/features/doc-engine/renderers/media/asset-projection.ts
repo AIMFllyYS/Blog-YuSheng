@@ -45,6 +45,27 @@ export function projectHtmlEmbedUrl(
   )
 }
 
+export function projectPackageAssetData(
+  source: string,
+  articleSlug: string,
+  nodeName: string,
+  manifest: readonly unknown[],
+): unknown {
+  const relativePath = normalizePackagePath(source)
+  const expectedOutputPath = `blog/${articleSlug}/${relativePath}`
+  const matched = manifest.find((value) => {
+    if (!value || typeof value !== 'object') return false
+    const entry = value as Record<string, unknown>
+    return (
+      entry.articleSlug === articleSlug &&
+      entry.nodeName === nodeName &&
+      entry.outputPath === expectedOutputPath &&
+      'data' in entry
+    )
+  }) as Record<string, unknown> | undefined
+  return matched?.data
+}
+
 function normalizePackagePath(source: string): string {
   let relativePath = source.startsWith('./') ? source.slice(2) : source
   for (let index = 0; index < 8; index += 1) {

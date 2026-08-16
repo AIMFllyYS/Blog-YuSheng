@@ -25,6 +25,8 @@ export type RendererAsset = {
 export type RendererProjectionContext = {
   readonly profile: RenderProfile
   readonly format?: ExportProjection
+  readonly data?: unknown
+  readonly includeAnswers?: boolean
 }
 
 export type RendererProjectionResult = {

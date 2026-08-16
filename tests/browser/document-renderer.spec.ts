@@ -10,9 +10,6 @@ test('DocumentRenderer 在真实浏览器隔离未知标签与 renderer 崩溃',
   await expect(page.getByRole('heading', { name: 'DocumentRenderer 验收页' })).toBeVisible()
   await expect(page.locator('[data-document-fallback="DOC-REGISTRY-001"]')).toBeVisible()
   await expect(page.getByText('未知标签后的内容仍然可见。')).toBeVisible()
-  const missingScreenRenderer = page.locator('[data-document-fallback="DOC-RENDER-002"]')
-  await expect(missingScreenRenderer).toBeVisible()
-  await expect(missingScreenRenderer).toContainText('screen-fallback')
   const pendingImage = page.getByAltText('丢失图片')
   if (await pendingImage.count()) {
     await pendingImage.evaluate((image) => image.scrollIntoView())
@@ -23,16 +20,6 @@ test('DocumentRenderer 在真实浏览器隔离未知标签与 renderer 崩溃',
   await expect(missingAsset).toBeVisible()
   await expect(missingAsset).toContainText('丢失图片')
 
-  const crashFallback = page
-    .locator('[data-document-fallback="DOC-RENDER-001"]')
-    .filter({ hasText: 'fixture-crash-node' })
-  await expect(crashFallback).toBeVisible()
-  await expect(crashFallback).toContainText('fixture-crash-node')
-  await expect(crashFallback).toContainText('用于验证节点级错误隔离的预期异常')
-  await expect(page.getByText('崩溃节点前的内容。')).toBeVisible()
-  await expect(
-    page.getByText('崩溃节点后的内容仍然正常显示。', { exact: true }),
-  ).toBeVisible()
   const canvasCrashFallback = page
     .locator('[data-document-fallback="DOC-RENDER-001"]')
     .filter({ hasText: 'fixture-canvas-crash' })

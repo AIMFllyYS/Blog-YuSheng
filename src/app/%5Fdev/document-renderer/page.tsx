@@ -14,14 +14,6 @@ const UNKNOWN_RENDERER_SOURCE = `# DocumentRenderer 验收页
 
 资源失效 fixture：![丢失图片](./media/missing.png)
 
-<choice-question id="screen-fallback" data-src="./data/screen-question.json" />
-
-崩溃节点前的内容。
-
-<choice-question id="fixture-crash-node" data-src="./data/crash-question.json" />
-
-崩溃节点后的内容仍然正常显示。
-
 <canvas-render id="fixture-canvas-crash" renderer="function-plot" />
 
 Canvas 崩溃节点后的内容仍然正常显示。
@@ -32,14 +24,6 @@ Canvas 崩溃节点后的内容仍然正常显示。
 `
 
 const FIXTURE_MANIFEST = [
-  {
-    articleSlug: 'document-renderer-fixture',
-    outputPath: 'blog/document-renderer-fixture/data/screen-question.json',
-  },
-  {
-    articleSlug: 'document-renderer-fixture',
-    outputPath: 'blog/document-renderer-fixture/data/crash-question.json',
-  },
   {
     articleSlug: 'document-renderer-fixture',
     outputPath: 'blog/document-renderer-fixture/media/missing.png',
@@ -64,7 +48,6 @@ export default function DocumentRendererFixturePage() {
           assetManifest={FIXTURE_MANIFEST}
           className="space-y-5"
           developmentCrashComponentIds={[
-            'fixture-crash-node',
             'fixture-canvas-crash',
             'blocked-web',
           ]}

@@ -1,5 +1,3 @@
-import { z } from 'zod'
-
 import type { DocumentNode } from '../core'
 import { CODE_RENDERER_DEFINITION } from '../renderers/code'
 import { KATEX_RENDERER_DEFINITION } from '../renderers/katex'
@@ -11,6 +9,8 @@ import { CANVAS_RENDERER_DEFINITION } from '../renderers/canvas'
 import { SVG_RENDERER_DEFINITION } from '../renderers/svg'
 import { HTML_RENDERER_DEFINITION } from '../renderers/html'
 import { WEB_RENDERER_DEFINITION } from '../renderers/web'
+import { CHOICE_QUESTION_RENDERER_DEFINITION } from '../renderers/quiz-choice'
+import { FILL_BLANK_QUESTION_RENDERER_DEFINITION } from '../renderers/quiz-fill'
 import { RendererRegistry } from './renderer-registry'
 import type {
   RenderProfile,
@@ -29,10 +29,7 @@ const ARTICLE_PROFILES = [
 
 const safeBuiltins = new Set(['markdown', 'code', 'katex', 'mermaid'])
 
-const COMPONENT_SCHEMAS = {
-  'choice-question': z.object({ id: z.string(), 'data-src': z.string() }).strict(),
-  'fill-blank-question': z.object({ id: z.string(), 'data-src': z.string() }).strict(),
-} as const
+import { z } from 'zod'
 
 const EMPTY_SCHEMA = z.object({}).strict()
 
@@ -101,18 +98,8 @@ const DEFINITIONS: readonly RendererDefinition[] = Object.freeze([
   SVG_RENDERER_DEFINITION,
   HTML_RENDERER_DEFINITION,
   WEB_RENDERER_DEFINITION,
-  createDefinition('choice-question', {
-    schema: COMPONENT_SCHEMAS['choice-question'],
-    trustLevel: 'registered',
-    assetAttributes: ['data-src'],
-    selectable: 'none',
-  }),
-  createDefinition('fill-blank-question', {
-    schema: COMPONENT_SCHEMAS['fill-blank-question'],
-    trustLevel: 'registered',
-    assetAttributes: ['data-src'],
-    selectable: 'none',
-  }),
+  CHOICE_QUESTION_RENDERER_DEFINITION,
+  FILL_BLANK_QUESTION_RENDERER_DEFINITION,
 ])
 
 export const BUILTIN_RENDERER_REGISTRY = new RendererRegistry(DEFINITIONS)
