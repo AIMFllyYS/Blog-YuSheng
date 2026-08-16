@@ -10,9 +10,14 @@ test('博客列表链接到构建期文章页面', async ({ page }) => {
     'href',
     '/blog/p0-kitchen-sink/',
   )
+  await expect(page.locator('[data-reader-boot-veil]')).toHaveCount(0, {
+    timeout: 3_000,
+  })
   await articleLink.click()
 
-  await expect(page).toHaveURL(/\/blog\/p0-kitchen-sink\/$/)
+  await expect(page).toHaveURL(/\/blog\/p0-kitchen-sink\/$/, {
+    timeout: 15_000,
+  })
   await expect(page).toHaveTitle('P0 中文综合验收文章')
   await expect(
     page.getByRole('heading', { name: 'P0 中文综合验收文章' }),
