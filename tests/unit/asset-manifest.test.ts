@@ -767,7 +767,7 @@ describe('content asset manifest', () => {
     await writeArticle(
       postsRoot,
       'linked-embed',
-      '<html-embed id="demo" src="./embeds/demo/index.html" title="链接" />',
+      '<html-embed id="demo" src="./embeds/demo/index.html" title="链接">\n无法加载时显示静态说明。\n</html-embed>',
     )
     const embedRoot = path.join(postsRoot, 'linked-embed/embeds/demo')
     await mkdir(embedRoot, { recursive: true })
