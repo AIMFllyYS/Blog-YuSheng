@@ -29,7 +29,7 @@ describe('Markdown to Canonical IR compiler', () => {
     const nodes = flatten(document.root.children)
 
     expect(document.originalSource).toBe(post.source)
-    expect(document.originalSource.startsWith('---\n')).toBe(true)
+    expect(document.originalSource).toMatch(/^---\r?\n/)
     expect(document.documentFingerprint).toMatch(/^[a-f\d]{64}$/)
     expect(nodes.map((node) => node.type)).toEqual(
       expect.arrayContaining([
