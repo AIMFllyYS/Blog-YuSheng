@@ -191,9 +191,9 @@ fallback / security / accessibility / allowed profiles
 | Canvas | 注册键映射仓库内受审查代码，参数/数据外置 | v1 禁止；以后仅集中安全清单 | 组件提供 PNG/SVG 快照 |
 | SVG | 构建期清洗后以独立资源/`img` 加载，不内联父 DOM | 禁止 | 复用同一安全投影，优先矢量 |
 | 本地 HTML | 只允许 `<html-embed>` 引用 `embeds/`；sandbox iframe 可运行脚本但不授予同源能力 | 禁止 | 截图或降级卡片 |
-| 站内网页 | 专用嵌入页或构建期 `srcdoc` | 禁止 | 标题 + 域名 + 打开链接 |
-| 自有外部页面 | iframe + 最小权限 | 禁止 | 标题 + 域名 + 打开链接 |
-| 第三方网页 | 尽力 iframe，必须处理对方拒绝嵌入 | 禁止 | 标题 + 域名 + 打开链接 |
+| 站内网页 | P0 一律降级；不放开全站 `DENY`，也不使用会让相对资源按父页解析的 `srcdoc` | 禁止 | 标题 + 域名 + 打开链接 |
+| 自有外部页面 | `web-embed` 集中 allowlist；P0 空名单即降级 | 禁止 | 标题 + 域名 + 打开链接 |
+| 第三方网页 | `web-embed` 集中 allowlist；未命中或 4 秒内未加载即降级 | 禁止 | 标题 + 域名 + 打开链接 |
 
 导出不抓取远端预览图：规格 12.4 禁止服务端代抓作者提供的任意 URL，静态站也没有运行时可抓。
 
@@ -204,9 +204,9 @@ iframe 的默认 sandbox 仅含 `allow-scripts`；表单、弹窗、下载、顶
 - **不引入独立子域**。`output: 'export'` + EdgeOne Pages 没有运行时，独立源需要第二套 DNS/证书/站点。隔离性由 sandbox **不含 `allow-same-origin`** 提供的 opaque origin 承担；独立子域后置到 P1。
 - 因为是 opaque origin，`event.origin` 恒为 `"null"`，`postMessage` 校验必须落在 `event.source` 比对 + 一次性 capability nonce + 严格消息 schema 上。
 - **嵌入页公开 URL 固定为单一前缀 `/embeds/<slug>/<embed-id>/`**，不落在 `/blog/<slug>/` 之下。原因是 EdgeOne `edgeone.json` 的 `source` 最多只能含一个 `*`，`/blog/*/embeds/*` 非法，而 `/blog/*` 会连带放开整站文章页的点击劫持保护。
-- 全局 `X-Frame-Options: DENY` 保留；`/embeds/*` 用**同 key 覆盖**为 `SAMEORIGIN` 并补 `Content-Security-Policy: frame-ancestors 'self'`。EdgeOne 的 header `value` 长度下限是 1，无法用空值删除已有响应头，所以只能覆盖不能撤销。
+- 全局 `X-Frame-Options: DENY` 保留；`/embeds/*` 用**同 key 覆盖**为 `SAMEORIGIN` 并补 `Content-Security-Policy: frame-ancestors 'self'; sandbox allow-scripts`。`frame-ancestors` 只允许本站父页面，文档级 `sandbox` 也约束顶层直接访问；EdgeOne 的 header `value` 长度下限是 1，无法用空值删除已有响应头，所以只能覆盖不能撤销。
 - `web-embed` 走集中 allowlist；未命中或远端拒绝嵌入时降级为预览卡片（标题 + 域名 + 打开链接）。
-- 顶层直接访问 `/embeds/.../index.html` 时，作者 HTML 运行在主站源上。P0 无登录态与本站 cookie，风险可接受；引入登录（P1）前必须改为独立子域或补文档级 CSP `sandbox`。
+- 顶层直接访问 `/embeds/.../index.html` 时同样受文档级 CSP `sandbox allow-scripts` 约束，不能借顶层导航绕过 iframe sandbox。独立子域仍后置到 P1。
 
 “允许脚本运行”不等于“允许读取博客登录态和父页面 DOM”。沙箱内容与父页面通信时只能使用有来源校验和消息 schema 的 `postMessage` 协议。
 
