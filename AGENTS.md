@@ -173,6 +173,7 @@ public/          静态资源（不放 >25MB 文件）
 
 ### docs/ops/ — 运维指南
 
+- [write-blog.md](docs/ops/write-blog.md) — 作者写作指南（文章包、frontmatter、正文语法、素材目录、预览与发布）
 - [deploy-edgeone.md](docs/ops/deploy-edgeone.md) — EdgeOne Pages 部署配置规范（字段规范、buildCommand 踩坑记录、cloudFunctions 迁移、检查清单、故障排查）
 
 <!-- BEGIN:nextjs-agent-rules -->
