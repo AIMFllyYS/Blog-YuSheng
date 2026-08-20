@@ -45,7 +45,7 @@ export const SettingsPanel = forwardRef<HTMLButtonElement, SettingsPanelProps>(
               小憩设置
             </p>
             <p className="mt-1 text-xs leading-5 text-[var(--ink-muted)]">
-              纸色与音效仅本次访问。本地作者模式会写入本机。
+              纸色与音效会记在这台浏览器里。本地作者模式同样写入本机。
             </p>
           </div>
           <button

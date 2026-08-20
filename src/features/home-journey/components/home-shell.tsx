@@ -2,7 +2,6 @@
 
 import Link from 'next/link'
 import { RopeNavigation } from '@/features/navigation'
-import { getJourneyStyle, getThemeStyle, useThemePreference } from '@/lib/theme'
 import { HOME_DESTINATIONS, JOURNEY_CONTENT } from '../content'
 
 export type HomeShellProps = {
@@ -70,15 +69,17 @@ function DestinationEntry({
 }
 
 export function HomeShell({ mode }: HomeShellProps) {
-  const { theme } = useThemePreference()
-
   return (
     <section
-      className="relative min-h-[100svh] overflow-hidden bg-[var(--journey-bg)] px-4 pb-16 pt-44 text-[var(--journey-paper)] transition-colors duration-[var(--dur-slow)] ease-out md:px-8 md:pt-52"
+      className="relative min-h-[100svh] bg-[var(--journey-bg)] px-4 pb-16 pt-44 text-[var(--journey-paper)] transition-colors duration-[var(--dur-slow)] ease-out md:px-8 md:pt-52"
       data-journey-mode={mode}
       data-testid="home-shell"
-      style={{ ...getThemeStyle(theme), ...getJourneyStyle(), ...backdropStyle }}
     >
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 overflow-hidden"
+        style={backdropStyle}
+      />
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-x-[8%] top-24 h-px bg-[var(--journey-line)] opacity-60"

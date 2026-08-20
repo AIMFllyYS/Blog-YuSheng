@@ -27,6 +27,31 @@ test('桌面首页与书架绳上挂三个板块，没有关于我', async ({ pa
   await expect(homeNav.getByText('关于我')).toHaveCount(0)
   await expect(homeNav.locator('[data-tip]').first()).toBeVisible()
 
+  const brand = await homeNav.locator('[data-rope-hanger="brand"]').boundingBox()
+  const works = await homeNav.locator('[data-rope-hanger="works"]').boundingBox()
+  const settings = await homeNav
+    .locator('[data-rope-hanger="settings"]')
+    .boundingBox()
+  expect(brand).not.toBeNull()
+  expect(works).not.toBeNull()
+  expect(settings).not.toBeNull()
+  expect(brand!.x).toBeLessThan(works!.x)
+  expect(works!.x).toBeLessThan(settings!.x)
+  expect(settings!.x - (works!.x + works!.width)).toBeGreaterThan(24)
+
+  const blogTip = homeNav.getByRole('link', { name: '博客' })
+  await blogTip.hover()
+  await expect
+    .poll(async () =>
+      blogTip.evaluate((element) => getComputedStyle(element, ':after').opacity),
+    )
+    .toBe('1')
+  expect(
+    await blogTip.evaluate((element) =>
+      getComputedStyle(element, ':after').content.includes('文章列表'),
+    ),
+  ).toBe(true)
+
   await page.goto('/blog/')
   await expect(page.locator('[data-reader-boot-veil]')).toHaveCount(0, {
     timeout: 3_000,
@@ -79,4 +104,20 @@ test('文章页隐藏随笔和作品集，保留导出', async ({ page }) => {
   await expect(navigation.getByRole('link', { name: '随笔' })).toHaveCount(0)
   await expect(navigation.getByRole('link', { name: '作品集' })).toHaveCount(0)
   await expect(page.getByRole('button', { name: '导出' })).toBeVisible()
+})
+
+test('从首页点博客只出现翻书遮罩，没有转圈圈', async ({ page }) => {
+  await page.goto('/')
+  await skipJourneyIfPresent(page)
+  await rope(page).getByRole('link', { name: '博客' }).click()
+  await expect(page.locator('.animate-spin')).toHaveCount(0)
+  const veil = page.locator('[data-reader-boot-veil]')
+  const heading = page.getByRole('heading', { name: '博客', level: 1 })
+  await expect(veil.or(heading).first()).toBeVisible({ timeout: 10_000 })
+  if ((await veil.count()) > 0) {
+    await expect(page.locator('[data-reader-book-loader]')).toBeVisible()
+    await expect(page.locator('[data-reader-boot-stamp]')).toHaveCount(1)
+  }
+  await expect(heading).toBeVisible({ timeout: 10_000 })
+  await expect(page.locator('.animate-spin')).toHaveCount(0)
 })

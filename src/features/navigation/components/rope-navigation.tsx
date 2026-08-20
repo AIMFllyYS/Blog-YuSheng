@@ -182,6 +182,7 @@ function CharmFace({
         className={className}
         data-tip={slot.tip}
         onClick={onCycleTheme}
+        suppressHydrationWarning
         type="button"
       >
         <ThemeIcon />
@@ -508,11 +509,13 @@ export function RopeNavigation({ compact = false }: RopeNavigationProps) {
       </div>
     ) : (
       <div
-        className={`mx-auto flex max-w-5xl items-start ${
+        className={`mx-auto flex max-w-5xl items-start overflow-visible ${
           compact ? 'gap-1' : 'gap-2 max-[420px]:gap-0 md:gap-5'
         }`}
       >
-        <SlotRow {...rowProps} slots={slots} />
+        <SlotRow {...rowProps} slots={leftSlots} />
+        <span className="pointer-events-none min-w-2 flex-1" />
+        <SlotRow {...rowProps} slots={rightSlots} />
       </div>
     )
 
@@ -534,7 +537,7 @@ export function RopeNavigation({ compact = false }: RopeNavigationProps) {
                   ? 'translate-y-0 opacity-100'
                   : '-translate-y-3.5 opacity-0'
               }`
-            : 'absolute inset-x-0 top-0 z-[var(--z-nav)] px-2 md:px-6'
+            : 'absolute inset-x-0 top-0 z-[var(--z-nav)] overflow-visible px-2 md:px-6'
         }
         data-nav-visible={profile === 'article' ? String(visible) : undefined}
         data-rope-navigation

@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { CloudSerifFont } from '@/components/cloud-serif-font'
-import { DEFAULT_THEME, getJourneyStyle, getThemeStyle } from '@/lib/theme'
+import { getDocumentThemeCss, getThemeBootScript } from '@/lib/theme'
 import { AppProviders } from './app-providers'
 import './globals.css'
 
@@ -16,11 +16,11 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html
-      data-theme={DEFAULT_THEME}
-      lang="zh-CN"
-      style={{ ...getThemeStyle(DEFAULT_THEME), ...getJourneyStyle() }}
-    >
+    <html lang="zh-CN" suppressHydrationWarning>
+      <head>
+        <style dangerouslySetInnerHTML={{ __html: getDocumentThemeCss() }} />
+        <script dangerouslySetInnerHTML={{ __html: getThemeBootScript() }} />
+      </head>
       <body className="antialiased">
         <CloudSerifFont />
         <AppProviders>{children}</AppProviders>

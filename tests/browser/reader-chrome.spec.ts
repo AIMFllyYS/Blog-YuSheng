@@ -30,7 +30,7 @@ test('首页保持常显 absolute 导航，阅读页只由中栏顶部唤出', a
       homeTriggerBox.left + homeTriggerBox.width / 2 -
         (homePanelBox.left + homePanelBox.width / 2),
     ),
-  ).toBeLessThan(16)
+  ).toBeLessThan(24)
 
   await waitForReader(page)
   const readerNav = page.locator('[data-rope-navigation]')

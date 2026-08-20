@@ -41,8 +41,10 @@
 │   │   ├── not-found.tsx
 │   │   ├── globals.css
 │   │   ├── blog/
+│   │   │   ├── layout.tsx                # 博客段硬刷新首屏遮罩
 │   │   │   ├── page.tsx                  # /blog/ 文章列表
 │   │   │   └── [slug]/
+│   │   │       ├── loading.tsx           # 书架进入文章时的书册遮罩
 │   │   │       └── page.tsx              # /blog/<slug>/；generateStaticParams 全量静态化
 │   │   ├── notes/                        # /notes/ 随笔；现为可替换的建设中页
 │   │   ├── works/                        # /works/ 作品集；现为可替换的建设中页
@@ -144,6 +146,7 @@
 │   │   │   ├── annotation-list.tsx
 │   │   │   └── annotation-composer.tsx
 │   │   │
+│   │   ├── boot/                          # 全站唯一进页遮罩：翻书 + 全屏水印
 │   │   ├── reader-layout/                 # 三栏/抽屉、面板收展、分栏拉动
 │   │   ├── toc/                           # 左目录树与图形骨架缩略模式
 │   │   ├── blog-index/                    # /blog/ 列表页书架形态

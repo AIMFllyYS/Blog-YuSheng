@@ -15,7 +15,7 @@ export function Hanger({
 }: HangerProps) {
   return (
     <div
-      className={`flex min-w-0 flex-col items-center ${className}`}
+      className={`flex min-w-0 flex-col items-center overflow-visible ${className}`}
       data-home-hanger={id}
       data-rope-hanger={id}
     >
