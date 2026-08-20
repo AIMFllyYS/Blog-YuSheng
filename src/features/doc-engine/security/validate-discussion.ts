@@ -5,9 +5,10 @@ import {
   type DocumentNode,
 } from '../core'
 import { DISCUSSION_PROFILE } from '../profiles'
-import { BUILTIN_RENDERER_REGISTRY } from '../registry'
+import { BUILTIN_RENDERER_REGISTRY } from '../registry/register-builtins'
 import { DISCUSSION_LIMITS } from './render-limits'
-import { validateKatexSource, validateMermaidSource } from './renderer-security'
+import { validateKatexSource } from './katex-policy'
+import { validateMermaidSource } from './mermaid-policy'
 import { validateNodeRenderer } from './validate-component-use'
 import { validateDocumentUrl } from './validate-url'
 

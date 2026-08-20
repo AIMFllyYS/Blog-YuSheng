@@ -9,12 +9,9 @@ import type {
 } from '../core/document-types'
 import { hasCanvasRenderer } from '../registry/canvas-renderer-registry'
 import { isWebEmbedAllowed } from './security-config'
-import {
-  CANVAS_SECURITY_POLICY,
-  validateCanvasRequest,
-  validateKatexSource,
-  validateMermaidSource,
-} from './renderer-security'
+import { CANVAS_SECURITY_POLICY, validateCanvasRequest } from './canvas-policy'
+import { validateKatexSource } from './katex-policy'
+import { validateMermaidSource } from './mermaid-policy'
 import { validateArticleLinkUrl, validateDocumentUrl } from './validate-url'
 import { validatePackageRelativePath } from './validate-package-path'
 

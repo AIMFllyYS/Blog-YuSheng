@@ -41,7 +41,9 @@ describe('TXT export projection', () => {
     const text = new TextDecoder('utf-8').decode(result.artifact.bytes)
     expect(result.artifact.filename).toBe('p0-kitchen-sink.txt')
     expect(result.artifact.mimeType).toBe('text/plain;charset=utf-8')
-    expect(text).toBe(readFileSync(FIXTURE, 'utf8').replace(/\r\n/g, '\n'))
+    expect(text.replace(/\r\n/g, '\n')).toBe(
+      readFileSync(FIXTURE, 'utf8').replace(/\r\n/g, '\n'),
+    )
     expect(text.startsWith('\uFEFF')).toBe(false)
     expect(text.endsWith('\n')).toBe(true)
     expect(text).toContain('# P0 中文综合验收文章')

@@ -12,7 +12,7 @@
 ## 现有文档
 
 - [blog-content-engine.md](./blog-content-engine.md) — 博客内容协议、Canonical IR、renderer registry/profile、评论与注释、划词锚定、安全富文本、Markdown/TXT/DOCX/PDF 导出规格与执行位置/性能预算
-- `auth-and-discussions.md`（P2 开工前新增）— 邮箱认证、阿里云邮件接口、作者白名单、Supabase 表/RLS/RPC、anchor manifest 与限流规格
+- [auth-and-discussions.md](./auth-and-discussions.md) — P1 进入门：弹窗邮箱登录、作者白名单、本地 Docker 与 Supabase 兼容的表/RLS/RPC、anchor manifest 受信校验、限流与错误码（DOCX/PDF 不在本文）
 
 ## 文档结构模板
 

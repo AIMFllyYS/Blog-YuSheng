@@ -1,6 +1,6 @@
 import type { DocumentNode, RegisteredComponentNode } from '../../core'
 import type { RendererDefinition } from '../../registry/renderer-definition'
-import { CANVAS_SECURITY_POLICY } from '../../security/renderer-security'
+import { CANVAS_SECURITY_POLICY } from '../../security/canvas-policy'
 import { CANVAS_RENDER_SCHEMA } from './schema'
 
 export const CANVAS_RENDERER_DEFINITION: RendererDefinition = Object.freeze({

@@ -115,7 +115,7 @@
 │   │   │   │   ├── discussion-entry.ts
 │   │   │   │   ├── discussion-thread.ts
 │   │   │   │   ├── discussion-permissions.ts
-│   │   │   │   └── auth-port.ts           # P1 假身份 / P2 真实身份共用端口
+│   │   │   │   └── auth-port.ts           # P0 假身份 / P1 真实身份共用端口
 │   │   │   ├── repository/
 │   │   │   │   ├── discussion-repository.ts
 │   │   │   │   ├── memory-discussion-repository.ts
@@ -181,7 +181,7 @@
 │   ├── updates/                           # 版本变更
 │   ├── specs/                             # 内容协议、功能/API/安全规格
 │   │   ├── blog-content-engine.md         # 内容引擎、讨论、锚定与导出契约
-│   │   └── auth-and-discussions.md        # P2 开工前新增：认证、邮件、表/RLS/RPC
+│   │   └── auth-and-discussions.md        # P1 进入门：认证、白名单、表/RLS/RPC
 │   ├── audits/                            # 性能、安全、架构审计
 │   ├── ops/                               # 本地运行与 EdgeOne 运维
 │   ├── issues/                            # 已知问题与技术债

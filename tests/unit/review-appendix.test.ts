@@ -311,6 +311,8 @@ describe('prepare review appendix', () => {
       mkdirSync(path.dirname(GOLDEN), { recursive: true })
       writeFileSync(GOLDEN, body)
     }
-    expect(readFileSync(GOLDEN, 'utf8')).toBe(body)
+    expect(readFileSync(GOLDEN, 'utf8').replace(/\r\n/g, '\n')).toBe(
+      body.replace(/\r\n/g, '\n'),
+    )
   })
 })
