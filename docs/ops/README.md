@@ -10,8 +10,14 @@
 - 环境配置指南（Node 版本管理、pnpm 配置、IDE 设置）
 - 故障排查指南（常见问题与解决方案）
 
+## 现有文档
+
+- [write-blog.md](./write-blog.md) — 作者写作指南（文章包位置、frontmatter、正文语法、素材目录、预览与发布）
+- [deploy-edgeone.md](./deploy-edgeone.md) — EdgeOne Pages 部署配置规范
+
 ## 文件命名
 
+- `write-blog.md` — 博客写作指南
 - `local-setup.md` — 本地环境搭建
 - `deploy-edgeone.md` — EdgeOne 部署指南
 - `env-config.md` — 环境变量配置
