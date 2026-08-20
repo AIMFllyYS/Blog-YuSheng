@@ -1,5 +1,4 @@
 import type { ReactNode } from 'react'
-import { FallingToastProvider } from '@/components/ui/falling-toast'
 import { AnnotationHighlights } from '@/features/annotations/highlights'
 import { SelectionToolbar } from '@/features/annotations/selection'
 import { DiscussionRuntimeProvider } from '@/features/discussions/runtime'
@@ -62,12 +61,11 @@ export function ReaderLayout({
   title,
 }: ReaderLayoutProps) {
   return (
-    <FallingToastProvider>
-      <ExportRuntimeProvider
-        articleSlug={articleSlug}
-        assetManifest={assetManifest}
-        document={document}
-      >
+    <ExportRuntimeProvider
+      articleSlug={articleSlug}
+      assetManifest={assetManifest}
+      document={document}
+    >
       <DiscussionRuntimeProvider
         articleSlug={articleSlug}
         seed={discussionSeed}
@@ -146,7 +144,6 @@ export function ReaderLayout({
         <ReaderLayoutInteractions />
         </main>
       </DiscussionRuntimeProvider>
-      </ExportRuntimeProvider>
-    </FallingToastProvider>
+    </ExportRuntimeProvider>
   )
 }

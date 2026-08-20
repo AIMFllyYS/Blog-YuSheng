@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest'
-import { getThemeStyle } from '../../src/lib/theme/tokens'
+import {
+  THEME_STORAGE_KEY,
+  getDocumentThemeCss,
+  getThemeBootScript,
+  getThemeStyle,
+} from '../../src/lib/theme/tokens'
 
 describe('reader prototype theme tokens', () => {
   it.each([
@@ -20,5 +25,22 @@ describe('reader prototype theme tokens', () => {
     expect(style['--font-mono']).toBe(
       '"JetBrains Mono", ui-monospace, SFMono-Regular, Consolas, monospace',
     )
+  })
+
+  it('puts paper colors on :root and every theme on html[data-theme]', () => {
+    const css = getDocumentThemeCss()
+    expect(css).toContain(':root{')
+    expect(css).toContain('--bg:#f2e9d6')
+    expect(css).toContain('--journey-void:#050813')
+    expect(css).toContain('html[data-theme="paper"]')
+    expect(css).toContain('html[data-theme="mist"]{--bg:#e6edf1')
+    expect(css).toContain('html[data-theme="night"]')
+  })
+
+  it('boot script reads the shared storage key before paint', () => {
+    const script = getThemeBootScript()
+    expect(script).toContain(THEME_STORAGE_KEY)
+    expect(script).toContain('localStorage.getItem')
+    expect(script).toContain('data-theme')
   })
 })

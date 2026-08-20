@@ -21,7 +21,7 @@ export const HOME_DESTINATIONS = [
     eyebrow: '卷二 · 片语',
     description: '日常灵光、生活侧记与尚未长成文章的念头。',
     href: '/notes/',
-    available: false,
+    available: true,
   },
   {
     id: 'works',
@@ -29,7 +29,7 @@ export const HOME_DESTINATIONS = [
     eyebrow: '卷三 · 造物',
     description: '把想法做成真实可见、可触达、可继续生长的作品。',
     href: '/works/',
-    available: false,
+    available: true,
   },
   {
     id: 'about',

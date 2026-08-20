@@ -12,6 +12,8 @@ test('博客列表链接到构建期文章页面', async ({ page }) => {
   await expect(page.getByRole('list', { name: '文章标签' })).toContainText('内容引擎')
   await expect(page.getByRole('navigation', { name: '绳挂主导航' })).toContainText('羽升')
   await expect(page.getByRole('navigation', { name: '绳挂主导航' })).toContainText('博客')
+  await expect(page.getByRole('navigation', { name: '绳挂主导航' })).toContainText('随笔')
+  await expect(page.getByRole('navigation', { name: '绳挂主导航' })).toContainText('作品集')
   await expect(page.getByRole('link', { name: '回到首页' })).toHaveAttribute('href', '/')
   await expect(page.getByRole('button', { name: /切换主题/ })).toBeVisible()
   await expect(page.getByRole('button', { name: /音效偏好/ })).toBeVisible()
@@ -47,7 +49,7 @@ test('博客列表链接到构建期文章页面', async ({ page }) => {
   await expect(page.locator('meta[property="og:image"]')).toHaveCount(0)
 })
 
-test('博客书架在窄屏保留完整首页挂件且不横向溢出', async ({ page }) => {
+test('博客书架在窄屏不挂三个板块且不横向溢出', async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 720 })
   await page.goto('/blog/')
   await expect(page.locator('[data-reader-boot-veil]')).toHaveCount(0, {
@@ -56,7 +58,9 @@ test('博客书架在窄屏保留完整首页挂件且不横向溢出', async ({
 
   const navigation = page.getByRole('navigation', { name: '绳挂主导航' })
   await expect(navigation.getByText('羽升')).toBeVisible()
-  await expect(navigation.getByText('博客')).toBeVisible()
+  await expect(navigation.getByRole('link', { name: '博客' })).toBeHidden()
+  await expect(navigation.getByRole('link', { name: '随笔' })).toBeHidden()
+  await expect(navigation.getByRole('link', { name: '作品集' })).toBeHidden()
   await expect(navigation.getByRole('button', { name: /切换主题/ })).toBeVisible()
   await expect(navigation.getByRole('button', { name: /音效偏好/ })).toBeVisible()
   await expect(navigation.getByRole('button', { name: '打开设置' })).toBeVisible()

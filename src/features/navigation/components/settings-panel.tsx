@@ -1,6 +1,7 @@
-import { forwardRef, useLayoutEffect, useRef, useState } from 'react'
+import { forwardRef, useRef } from 'react'
 import { useLocalAuthorMode } from '@/features/discussions/domain/use-local-author-mode'
 import { THEMES, type ThemeName } from '@/lib/theme'
+import { usePopoverPosition } from '../use-popover-position'
 import { CloseIcon } from './navigation-icons'
 
 type SettingsPanelProps = {
@@ -25,39 +26,9 @@ export const SettingsPanel = forwardRef<HTMLButtonElement, SettingsPanelProps>(
     firstThemeRef,
   ) {
     const panelRef = useRef<HTMLElement>(null)
-    const [position, setPosition] = useState({ left: 12, top: 96 })
+    const position = usePopoverPosition(panelId, panelRef)
     const { enabled: localAuthorMode, setEnabled: setLocalAuthorMode } =
       useLocalAuthorMode()
-
-    useLayoutEffect(() => {
-      const place = () => {
-        const panel = panelRef.current
-        if (!panel) return
-        const anchorElement = document.querySelector<HTMLElement>(
-          `[aria-controls="${CSS.escape(panelId)}"]`,
-        )
-        if (!anchorElement) return
-        const anchorRect = anchorElement.getBoundingClientRect()
-        const width = panel.offsetWidth
-        const height = panel.offsetHeight
-        const left = Math.max(
-          12,
-          Math.min(
-            anchorRect.left + anchorRect.width / 2 - width / 2,
-            window.innerWidth - width - 12,
-          ),
-        )
-        const preferredTop = anchorRect.bottom + 10
-        const top =
-          preferredTop + height > window.innerHeight - 12
-            ? Math.max(12, anchorRect.top - height - 10)
-            : preferredTop
-        setPosition({ left, top })
-      }
-      place()
-      window.addEventListener('resize', place)
-      return () => window.removeEventListener('resize', place)
-    }, [panelId])
 
     return (
       <section
@@ -74,7 +45,7 @@ export const SettingsPanel = forwardRef<HTMLButtonElement, SettingsPanelProps>(
               小憩设置
             </p>
             <p className="mt-1 text-xs leading-5 text-[var(--ink-muted)]">
-              纸色与音效仅本次访问。本地作者模式会写入本机。
+              纸色与音效会记在这台浏览器里。本地作者模式同样写入本机。
             </p>
           </div>
           <button
