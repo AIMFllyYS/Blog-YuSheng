@@ -57,7 +57,7 @@ body.reader-is-booting {
 
 [data-tip]::after {
   position: absolute;
-  z-index: 1;
+  z-index: 2;
   top: calc(100% + 11px);
   left: 50%;
   padding: 5px 10px;
@@ -79,13 +79,37 @@ body.reader-is-booting {
   white-space: nowrap;
 }
 
+[data-tip]::before {
+  position: absolute;
+  z-index: 3;
+  top: calc(100% + 5px);
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  margin-left: -4px;
+  border-top: 1px solid var(--line);
+  border-left: 1px solid var(--line);
+  background: var(--scroll-paper);
+  content: "";
+  opacity: 0;
+  pointer-events: none;
+  transform: rotate(45deg);
+  transition: opacity var(--dur-fast) ease-out;
+}
+
 [data-tip]:hover::after,
 [data-tip]:focus-visible::after {
   opacity: 1;
   transform: translateX(-50%) translateY(0) rotate(-1deg);
 }
 
-[data-tip][aria-expanded="true"]::after {
+[data-tip]:hover::before,
+[data-tip]:focus-visible::before {
+  opacity: 1;
+}
+
+[data-tip][aria-expanded="true"]::after,
+[data-tip][aria-expanded="true"]::before {
   opacity: 0;
 }
 

@@ -1,5 +1,5 @@
 import { RouteLoading } from '@/features/boot'
 
-export default function Loading() {
+export default function BlogArticleLoading() {
   return <RouteLoading />
 }
