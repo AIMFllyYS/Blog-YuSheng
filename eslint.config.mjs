@@ -1,6 +1,9 @@
 import next from 'eslint-config-next'
 
 const eslintConfig = [
+  {
+    ignores: ['.tmp/**', 'out/**', '.next/**', '.edgeone/**'],
+  },
   ...next,
   {
     rules: {

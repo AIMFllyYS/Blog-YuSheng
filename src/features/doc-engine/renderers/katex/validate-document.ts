@@ -6,7 +6,7 @@ import type {
   CompiledDocument,
   DocumentNode,
 } from '../../core/document-types'
-import { validateKatexSource } from '../../security/renderer-security'
+import { validateKatexSource } from '../../security/katex-policy'
 import { renderKatexToHtml } from './katex-engine'
 
 export function validateArticleKatexDocument(

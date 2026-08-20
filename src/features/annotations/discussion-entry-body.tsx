@@ -2,13 +2,12 @@
 
 import { useEffect, useState } from 'react'
 
-import { sanitizeDiscussionRead } from '@/features/doc-engine/security/sanitize-discussion'
-
 /**
  * Client-safe discussion body. `DiscussionDocumentRenderer` is a Server
  * Component that statically imports server-only article renderers, so cards
  * reuse the same `sanitizeDiscussionRead` path it uses to prepare discussion
- * documents, then paint the sanitized HTML.
+ * documents, then paint the sanitized HTML. The parser is loaded only when a
+ * card actually mounts so it stays out of the reading-page first-screen graph.
  */
 export function DiscussionEntryBody({
   entryId,
@@ -21,9 +20,14 @@ export function DiscussionEntryBody({
 
   useEffect(() => {
     let cancelled = false
-    void sanitizeDiscussionRead({ entryId, source }).then((result) => {
-      if (!cancelled) setHtml(result.sanitizedHtml)
-    })
+    void import('@/features/doc-engine/security/sanitize-discussion').then(
+      ({ sanitizeDiscussionRead }) => {
+        if (cancelled) return undefined
+        return sanitizeDiscussionRead({ entryId, source }).then((result) => {
+          if (!cancelled) setHtml(result.sanitizedHtml)
+        })
+      },
+    )
     return () => {
       cancelled = true
     }

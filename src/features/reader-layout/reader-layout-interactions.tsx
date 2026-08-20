@@ -238,11 +238,14 @@ export function ReaderLayoutInteractions() {
 
     syncArticleEnd()
     measureFooter()
+    const articleResize = new ResizeObserver(syncArticleEnd)
+    articleResize.observe(center)
     center.addEventListener('scroll', syncArticleEnd, { passive: true })
     window.addEventListener('scroll', measureFooter, { passive: true })
     window.addEventListener('resize', handleResize, { passive: true })
 
     return () => {
+      articleResize.disconnect()
       center.removeEventListener('scroll', syncArticleEnd)
       window.removeEventListener('scroll', measureFooter)
       window.removeEventListener('resize', handleResize)

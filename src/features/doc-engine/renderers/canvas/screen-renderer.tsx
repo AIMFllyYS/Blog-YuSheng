@@ -7,7 +7,7 @@ import { getCanvasRendererRegistration } from '../../registry/canvas-renderer-re
 import {
   CANVAS_SECURITY_POLICY,
   validateCanvasRequest,
-} from '../../security/renderer-security'
+} from '../../security/canvas-policy'
 import { DocumentFallbackCard } from '../../screen/fallback-card'
 type State =
   | { readonly status: 'waiting' | 'loading' }

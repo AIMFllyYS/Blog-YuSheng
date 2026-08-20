@@ -166,6 +166,7 @@ public/          静态资源（不放 >25MB 文件）
 ### docs/specs/ — 技术规格
 
 - [blog-content-engine.md](docs/specs/blog-content-engine.md) — 内容协议、Canonical IR、renderer/profile、安全讨论、划词锚定、多格式导出契约与执行位置/性能预算
+- [auth-and-discussions.md](docs/specs/auth-and-discussions.md) — P1 进入门：邮箱登录弹窗、作者白名单、RLS/RPC、anchor manifest、限流（无 Next 运行时）
 
 ### docs/plans/ — 工程计划
 

@@ -6,7 +6,7 @@ import type { RegisteredComponentNode } from '../../core'
 import {
   HTML_EMBED_IFRAME_POLICY,
   WEB_EMBED_LOAD_TIMEOUT_MS,
-} from '../../security'
+} from '../../security/embed-iframe-policy'
 import { WebEmbedPreviewCard } from './web-preview-card'
 import { useEmbedVisibility } from '../use-embed-visibility'
 

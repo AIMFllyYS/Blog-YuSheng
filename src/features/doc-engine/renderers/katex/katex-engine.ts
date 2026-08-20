@@ -3,7 +3,7 @@ import katex from 'katex'
 import {
   KATEX_SECURITY_POLICY,
   validateKatexSource,
-} from '../../security/renderer-security'
+} from '../../security/katex-policy'
 
 export type KatexRenderResult =
   | { readonly ok: true; readonly html: string }

@@ -16,7 +16,7 @@ import {
   HTML_EMBED_IFRAME_POLICY,
   createEmbedCapabilityNonce,
   createEmbedMessageGate,
-} from '../../security'
+} from '../../security/embed-iframe-policy'
 import { DocumentFallbackCard } from '../../screen/fallback-card'
 import { useEmbedVisibility } from '../use-embed-visibility'
 
