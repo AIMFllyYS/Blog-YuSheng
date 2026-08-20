@@ -44,8 +44,8 @@
 │   │   │   ├── page.tsx                  # /blog/ 文章列表
 │   │   │   └── [slug]/
 │   │   │       └── page.tsx              # /blog/<slug>/；generateStaticParams 全量静态化
-│   │   ├── notes/                        # 未来预留，不提前实现空页面
-│   │   ├── works/                        # 未来预留
+│   │   ├── notes/                        # /notes/ 随笔；现为可替换的建设中页
+│   │   ├── works/                        # /works/ 作品集；现为可替换的建设中页
 │   │   ├── about/                        # 未来预留
 │   │   └── _dev/                         # 隔离调试页；production 必须 notFound()
 │   │
@@ -147,6 +147,8 @@
 │   │   ├── reader-layout/                 # 三栏/抽屉、面板收展、分栏拉动
 │   │   ├── toc/                           # 左目录树与图形骨架缩略模式
 │   │   ├── blog-index/                    # /blog/ 列表页书架形态
+│   │   ├── notes/                         # /notes/ 随笔入口（现为建设中页，整页可替换）
+│   │   ├── works/                         # /works/ 作品集入口（现为建设中页，整页可替换）
 │   │   ├── navigation/                    # 绳挂导航与阅读页顶部动作
 │   │   ├── settings/                      # 主题、音效
 │   │   ├── home-journey/                  # 首页叙事；不依赖 doc-engine

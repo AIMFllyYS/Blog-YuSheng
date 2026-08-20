@@ -2,7 +2,6 @@
 
 import Link from 'next/link'
 import { RopeNavigation } from '@/features/navigation'
-import { useAudioPreference } from '@/lib/audio'
 import { getJourneyStyle, getThemeStyle, useThemePreference } from '@/lib/theme'
 import { HOME_DESTINATIONS, JOURNEY_CONTENT } from '../content'
 
@@ -71,8 +70,7 @@ function DestinationEntry({
 }
 
 export function HomeShell({ mode }: HomeShellProps) {
-  const { theme, setTheme, cycleTheme } = useThemePreference()
-  const { audioEnabled, setAudioEnabled } = useAudioPreference()
+  const { theme } = useThemePreference()
 
   return (
     <section
@@ -85,13 +83,7 @@ export function HomeShell({ mode }: HomeShellProps) {
         aria-hidden="true"
         className="pointer-events-none absolute inset-x-[8%] top-24 h-px bg-[var(--journey-line)] opacity-60"
       />
-      <RopeNavigation
-        audioEnabled={audioEnabled}
-        onAudioEnabledChange={setAudioEnabled}
-        onCycleTheme={cycleTheme}
-        onThemeChange={setTheme}
-        theme={theme}
-      />
+      <RopeNavigation />
 
       <div className="relative mx-auto max-w-6xl">
         <header className="grid gap-8 border-b border-[var(--journey-line)] pb-10 md:grid-cols-[minmax(0,1fr)_minmax(16rem,0.55fr)] md:items-end">

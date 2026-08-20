@@ -2,7 +2,6 @@
 
 import Link from 'next/link'
 import { RopeNavigation } from '@/features/navigation'
-import { useAudioPreference } from '@/lib/audio'
 import { getThemeStyle, useThemePreference } from '@/lib/theme'
 import { HOME_DESTINATIONS, JOURNEY_CONTENT } from '../content'
 
@@ -66,8 +65,7 @@ function MobileDestination({
 }
 
 export function MobileHome() {
-  const { theme, setTheme, cycleTheme } = useThemePreference()
-  const { audioEnabled, setAudioEnabled } = useAudioPreference()
+  const { theme } = useThemePreference()
 
   return (
     <main
@@ -76,14 +74,7 @@ export function MobileHome() {
       data-testid="mobile-home"
       style={getThemeStyle(theme)}
     >
-      <RopeNavigation
-        audioEnabled={audioEnabled}
-        compact
-        onAudioEnabledChange={setAudioEnabled}
-        onCycleTheme={cycleTheme}
-        onThemeChange={setTheme}
-        theme={theme}
-      />
+      <RopeNavigation compact />
 
       <div
         aria-hidden="true"

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { CloudSerifFont } from '@/components/cloud-serif-font'
 import { DEFAULT_THEME, getJourneyStyle, getThemeStyle } from '@/lib/theme'
+import { AppProviders } from './app-providers'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -22,7 +23,7 @@ export default function RootLayout({
     >
       <body className="antialiased">
         <CloudSerifFont />
-        {children}
+        <AppProviders>{children}</AppProviders>
       </body>
     </html>
   )

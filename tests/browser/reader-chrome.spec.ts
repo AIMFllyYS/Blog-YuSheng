@@ -16,7 +16,7 @@ test('首页保持常显 absolute 导航，阅读页只由中栏顶部唤出', a
   await expect(homeNav).toHaveCSS('opacity', '1')
   const skip = page.getByRole('button', { name: /跳过/ })
   if (await skip.isVisible()) await skip.click()
-  const homeSettings = page.locator('[data-home-hanger="settings-charm"] button')
+  const homeSettings = page.locator('[data-rope-hanger="settings"] button')
   await expect(homeSettings).toBeVisible()
   await homeSettings.click()
   const homePanel = page.getByRole('dialog', { name: '显示与声音设置' })
@@ -222,7 +222,7 @@ test('矮视口设置面板不出屏，320px 阅读挂件互不重叠', async ({
 
   await page.setViewportSize({ width: 320, height: 568 })
   await page.mouse.move(160, 24)
-  const visibleControls = page.locator('[data-rope-navigation] [data-home-hanger]')
+  const visibleControls = page.locator('[data-rope-navigation] [data-rope-hanger]')
   const boxes = await visibleControls.evaluateAll((elements) =>
     elements
       .filter((element) => getComputedStyle(element).display !== 'none')

@@ -7,11 +7,17 @@ type HangerProps = {
   ropeLength?: string
 }
 
-export function Hanger({ children, className = '', id, ropeLength = '2.5rem' }: HangerProps) {
+export function Hanger({
+  children,
+  className = '',
+  id,
+  ropeLength = '2.5rem',
+}: HangerProps) {
   return (
     <div
       className={`flex min-w-0 flex-col items-center ${className}`}
       data-home-hanger={id}
+      data-rope-hanger={id}
     >
       <span
         aria-hidden="true"
