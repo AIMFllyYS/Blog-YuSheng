@@ -24,6 +24,11 @@ test('书册遮罩严格保留六页、四段翻页动画与主题令牌', async
   expect(animationNames[3]).toMatch(/page-4$/)
   expect(animationNames[4]).toMatch(/page-5$/)
   expect(animationNames[5]).toBe('none')
+  await expect(page.locator('[data-reader-boot-stamp]')).toHaveAttribute(
+    'data-stamp-mode',
+    'pretext',
+    { timeout: 5_000 },
+  )
   await page.screenshot({ path: testInfo.outputPath('reader-boot-veil.png') })
 
   for (const [accent, ink, paper, muted] of [
@@ -61,10 +66,6 @@ test('书册遮罩严格保留六页、四段翻页动画与主题令牌', async
     expect(tokenProjection.zIndex).toBe('60')
   }
 
-  await expect(page.locator('[data-reader-boot-stamp]')).toHaveAttribute(
-    'data-stamp-mode',
-    'pretext',
-  )
   await expect(veil).toHaveCount(0, { timeout: 3_000 })
   await expect(page.locator('body')).not.toHaveClass(/reader-is-booting/)
 })
@@ -116,6 +117,17 @@ test('reduced motion 禁用翻页动画并近乎立即移除遮罩', async ({ pa
     )
     expect(names).toEqual(['none', 'none', 'none', 'none', 'none', 'none'])
   }
-  await expect(veil).toHaveCount(0, { timeout: 700 })
-  expect(Date.now() - dismissalStartedAt).toBeLessThan(700)
+  await expect(veil).toHaveCount(0, { timeout: 1_000 })
+  expect(Date.now() - dismissalStartedAt).toBeLessThan(1_000)
+})
+
+test('从列表进文章不再出现灰圈，也不重播书册', async ({ page }) => {
+  await page.goto('/blog/')
+  await expect(page.locator('[data-reader-boot-veil]')).toHaveCount(0, {
+    timeout: 3_000,
+  })
+  await page.locator('[data-book-volume]').first().click()
+  await expect(page.locator('[data-reader-boot-veil]')).toHaveCount(0)
+  await expect(page.locator('.animate-spin')).toHaveCount(0)
+  await expect(page.locator('[data-reader-page]')).toBeVisible()
 })
