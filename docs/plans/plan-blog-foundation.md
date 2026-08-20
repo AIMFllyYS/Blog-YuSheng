@@ -99,6 +99,7 @@ M5 阅读页与全站外壳（可与 M2–M4 并行开工，接入时依赖 M2/M
 - `/blog/` 列表页书架形态；标题锚点与深链。
 - **云字体接入**（见计划原则 6；含 `frontend-design.md` 字体节修订落地）。
 - 全部形态以 [blog-reader-prototype.html](../designs/blog-reader-prototype.html) 为准，硬编码色值映射到 token。
+- 落地后的治理收口（一套主题、一套书册遮罩、一套外壳）见 GitHub #67，不在本模块清单内重开从零落地。
 
 #### M6 划词与注释机制（前端闭环）
 

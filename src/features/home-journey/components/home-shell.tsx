@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { RopeNavigation } from '@/features/navigation'
 import { useAudioPreference } from '@/lib/audio'
-import { getJourneyStyle, getThemeStyle, useThemePreference } from '@/lib/theme'
+import { useThemePreference } from '@/lib/theme'
 import { HOME_DESTINATIONS, JOURNEY_CONTENT } from '../content'
 
 export type HomeShellProps = {
@@ -79,7 +79,7 @@ export function HomeShell({ mode }: HomeShellProps) {
       className="relative min-h-[100svh] overflow-hidden bg-[var(--journey-bg)] px-4 pb-16 pt-44 text-[var(--journey-paper)] transition-colors duration-[var(--dur-slow)] ease-out md:px-8 md:pt-52"
       data-journey-mode={mode}
       data-testid="home-shell"
-      style={{ ...getThemeStyle(theme), ...getJourneyStyle(), ...backdropStyle }}
+      style={backdropStyle}
     >
       <div
         aria-hidden="true"

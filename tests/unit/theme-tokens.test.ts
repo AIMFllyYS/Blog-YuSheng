@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest'
-import { getThemeStyle } from '../../src/lib/theme/tokens'
+import {
+  getDocumentThemeCss,
+  getThemeBootScript,
+  getThemeStyle,
+  THEME_STORAGE_KEY,
+} from '../../src/lib/theme/tokens'
 
 describe('reader prototype theme tokens', () => {
   it.each([
@@ -20,5 +25,22 @@ describe('reader prototype theme tokens', () => {
     expect(style['--font-mono']).toBe(
       '"JetBrains Mono", ui-monospace, SFMono-Regular, Consolas, monospace',
     )
+  })
+
+  it('emits html[data-theme] color tables from the same token source', () => {
+    const css = getDocumentThemeCss()
+    expect(css).toContain('html[data-theme="paper"]{')
+    expect(css).toContain('html[data-theme="mist"]{')
+    expect(css).toContain('--bg:#e6edf1')
+    expect(css).toContain('--accent:#2f7d95')
+    expect(css).toContain('--journey-void:#050813')
+    expect(css).toContain('--ease-damp:cubic-bezier(.22,.82,.28,1)')
+  })
+
+  it('boots only by writing a stored data-theme onto html', () => {
+    const script = getThemeBootScript()
+    expect(script).toContain(THEME_STORAGE_KEY)
+    expect(script).toContain('setAttribute("data-theme",t)')
+    expect(script).not.toContain('setProperty')
   })
 })

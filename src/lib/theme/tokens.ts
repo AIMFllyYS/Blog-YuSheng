@@ -144,6 +144,31 @@ export const JOURNEY_VARIABLES = {
 
 export type CssVariableStyle = CSSProperties & Record<`--${string}`, string>
 
+export const THEME_STORAGE_KEY = 'blog-yusheng:theme:v1'
+
+export function isThemeName(value: string): value is ThemeName {
+  return THEMES.some((item) => item.id === value)
+}
+
+function cssDeclarations(vars: Record<string, string>): string {
+  return Object.entries(vars)
+    .map(([name, value]) => `${name}:${value}`)
+    .join(';')
+}
+
+export function getDocumentThemeCss(): string {
+  const root = cssDeclarations({ ...SHARED_VARIABLES, ...JOURNEY_VARIABLES })
+  const themes = THEMES.map(({ id }) => {
+    return `html[data-theme="${id}"]{${cssDeclarations(THEME_COLORS[id])}}`
+  }).join('')
+  return `:root{${root}}${themes}`
+}
+
+export function getThemeBootScript(): string {
+  const ids = THEMES.map((item) => item.id)
+  return `(function(){try{var t=localStorage.getItem(${JSON.stringify(THEME_STORAGE_KEY)});if(${JSON.stringify(ids)}.indexOf(t)<0)return;document.documentElement.setAttribute("data-theme",t);}catch(e){}})();`
+}
+
 export function getThemeStyle(theme: ThemeName): CssVariableStyle {
   return { ...SHARED_VARIABLES, ...THEME_COLORS[theme] }
 }
