@@ -236,11 +236,10 @@ export async function createAssetManifest(postsRoot?: string) {
         }
         outputOwners.set(outputPath.toLowerCase(), sourceIdentity)
         if (post.frontmatter.draft === true) continue
-        const publicUrl =
-          reference.nodeName === 'html-embed' &&
-          sourcePath === validation.absolutePath
-            ? `/${path.posix.dirname(outputPath)}/`
-            : `/${outputPath}`
+        // Explicit file URLs keep dev, `pnpm preview` and EdgeOne identical:
+        // Next dev serves `public/` by exact file match and never resolves a
+        // directory index, so a `/embeds/<slug>/<id>/` form would 404 locally.
+        const publicUrl = `/${outputPath}`
         entries.push({
           id: owner,
           articleSlug: post.slug,

@@ -28,6 +28,10 @@ export function projectHtmlEmbedUrl(
   componentId: string,
   manifest: readonly unknown[],
 ): string {
+  // An embed package contributes every file under its directory to the
+  // manifest, all sharing this nodeId, so match the entry file exactly.
+  // `HTML_EMBED_SCHEMA` pins the entry to `./embeds/<id>/index.html`.
+  const expectedOutputPath = `embeds/${articleSlug}/${componentId}/index.html`
   const matched = manifest.find((value) => {
     if (!value || typeof value !== 'object') return false
     const entry = value as Record<string, unknown>
@@ -35,13 +39,14 @@ export function projectHtmlEmbedUrl(
       entry.articleSlug === articleSlug &&
       entry.nodeId === nodeId &&
       entry.nodeName === 'html-embed' &&
+      entry.outputPath === expectedOutputPath &&
       typeof entry.publicUrl === 'string'
     )
   }) as Record<string, unknown> | undefined
   return encodePublicUrl(
     typeof matched?.publicUrl === 'string'
       ? matched.publicUrl
-      : `/embeds/${articleSlug}/${componentId}/`,
+      : `/${expectedOutputPath}`,
   )
 }
 

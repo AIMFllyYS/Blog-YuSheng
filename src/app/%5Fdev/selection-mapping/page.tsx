@@ -8,14 +8,13 @@ import {
 } from '@/features/doc-engine/core'
 import { DocumentRenderer } from '@/features/doc-engine'
 import { buildSelectionIndex } from '@/features/doc-engine/selection'
-import { createAssetManifest, readPost, transformContentImages } from '@/server/content'
+import { getRenderAssetManifest, readPost } from '@/server/content'
 
 export default async function SelectionMappingFixturePage() {
   if (process.env.NODE_ENV === 'production') notFound()
 
   const post = await readPost('p0-kitchen-sink')
-  const assetManifest = await transformContentImages(
-    await createAssetManifest(),
+  const assetManifest = await getRenderAssetManifest(
     path.join(process.cwd(), '.tmp', 'compiler-image-cache'),
   )
   const compiled = await compileArticleDocumentWithDiagnostics({

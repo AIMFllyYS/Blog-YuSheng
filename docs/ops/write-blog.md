@@ -281,6 +281,8 @@ pnpm dev
 
 浏览器打开 `http://localhost:9981/blog/` 看列表，或 `http://localhost:9981/blog/<slug>/` 看正文。改 `index.md` 后刷新即可。
 
+图片、视频、音频、SVG 与文章包内的 HTML 小页在 `pnpm dev` 下**可以直接看到真实效果**，不需要先构建：渲染文章页时会把这一篇用到的资产镜像到 `public/blog/`、`public/media/`、`public/embeds/<slug>/`，换图换视频后刷新即可生效。这三个目录是生成物，已被 gitignore，也会在每次 `pnpm build` 前自动清掉，不要手改、也不要往里放东西。
+
 想验证「线上那套静态产物」：
 
 ```powershell

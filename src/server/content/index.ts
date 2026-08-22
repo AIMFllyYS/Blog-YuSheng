@@ -12,6 +12,8 @@ export {
   copyAssetManifest,
   verifyStaticOutput,
 } from './build-content-assets'
+export { mirrorAssetsForDev } from './dev-asset-mirror'
+export { getRenderAssetManifest } from './get-render-asset-manifest'
 export {
   IMAGE_VARIANT_WIDTHS,
   MAX_IMAGE_VARIANT_BYTES,

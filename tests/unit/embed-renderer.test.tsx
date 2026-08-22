@@ -6,6 +6,7 @@ import {
   DocumentRenderer,
   HTML_EMBED_SCHEMA,
   WEB_EMBED_SCHEMA,
+  projectHtmlEmbedUrl,
 } from '../../src/features/doc-engine'
 
 describe('HTML and web embed renderers', () => {
@@ -18,7 +19,7 @@ describe('HTML and web embed renderers', () => {
           nodeId: 'local',
           nodeName: 'html-embed',
           outputPath: 'embeds/embed-fixture/local/index.html',
-          publicUrl: '/embeds/embed-fixture/local/',
+          publicUrl: '/embeds/embed-fixture/local/index.html',
         },
       ],
       profile: 'editor-preview',
@@ -91,5 +92,33 @@ describe('HTML and web embed renderers', () => {
       trustLevel: 'sandboxed',
       allowsExternalResource: true,
     })
+  })
+
+  it('resolves the embed entry file even when the package ships sibling assets', () => {
+    // Every file under the embed directory lands in the manifest sharing one
+    // nodeId, and the manifest is sorted by outputPath, so `app.css` precedes
+    // `index.html`. The projection must still return the entry document.
+    const manifest = [
+      {
+        articleSlug: 'embed-fixture',
+        nodeId: 'local',
+        nodeName: 'html-embed',
+        outputPath: 'embeds/embed-fixture/local/app.css',
+        publicUrl: '/embeds/embed-fixture/local/app.css',
+      },
+      {
+        articleSlug: 'embed-fixture',
+        nodeId: 'local',
+        nodeName: 'html-embed',
+        outputPath: 'embeds/embed-fixture/local/index.html',
+        publicUrl: '/embeds/embed-fixture/local/index.html',
+      },
+    ]
+    expect(
+      projectHtmlEmbedUrl('embed-fixture', 'local', 'local', manifest),
+    ).toBe('/embeds/embed-fixture/local/index.html')
+    expect(projectHtmlEmbedUrl('embed-fixture', 'local', 'local', [])).toBe(
+      '/embeds/embed-fixture/local/index.html',
+    )
   })
 })

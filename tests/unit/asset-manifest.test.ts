@@ -60,7 +60,7 @@ describe('content asset manifest', () => {
           entry.outputPath ===
           'embeds/p0-kitchen-sink/mini-card/index.html',
       )?.publicUrl,
-    ).toBe('/embeds/p0-kitchen-sink/mini-card/')
+    ).toBe('/embeds/p0-kitchen-sink/mini-card/index.html')
     expect(new Set(paths).size).toBe(paths.length)
   })
 

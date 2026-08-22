@@ -63,6 +63,24 @@ test('builds the validated content asset manifest into out', async () => {
       manifest.some((entry) => entry.publicUrl === publicUrl),
     ).toBe(true)
   }
+  // The html-embed entry is served as an explicit file URL, so guard the exact
+  // path the renderer projects instead of trusting host directory indexes.
+  const embedOutputPath = 'embeds/p0-kitchen-sink/mini-card/index.html'
+  expect(
+    manifest.find((entry) => entry.outputPath === embedOutputPath)?.publicUrl,
+  ).toBe(`/${embedOutputPath}`)
+  const [emittedEmbed, sourceEmbed] = await Promise.all([
+    readFile(path.join(process.cwd(), 'out', embedOutputPath), 'utf8'),
+    readFile(
+      path.join(
+        process.cwd(),
+        'content/posts/p0-kitchen-sink/embeds/mini-card/index.html',
+      ),
+      'utf8',
+    ),
+  ])
+  expect(emittedEmbed).toBe(sourceEmbed)
+
   const isolatedOutput = path.join(
     process.cwd(),
     '.tmp',
