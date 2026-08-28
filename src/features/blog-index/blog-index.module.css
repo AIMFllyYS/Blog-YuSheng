@@ -594,63 +594,76 @@
   text-align: center;
 }
 
-/* 悬浮书签：从书脊上方下落，展示章节完整标题（书签剪影 + 挂绳） */
+/* 悬浮题签：竖式签条从书顶滑出，像夹在书里的书签露出的一截 */
 .bookmarkTip {
   position: absolute;
   z-index: 30;
-  animation: bookmark-drop 0.5s var(--ease-damp) both;
+  animation: bookmark-drop 0.55s var(--ease-damp) both;
   pointer-events: none;
-  transform: translate(-50%, calc(-100% - 14px));
+  transform: translate(-50%, calc(-100% + 6px));
+  transform-origin: 50% 100%;
 }
 
-/* 挂绳：书签上方一条细线，像从书架上垂下来的书签 */
-.bookmarkTip::before {
-  position: absolute;
-  top: -14px;
-  left: 50%;
-  width: 1px;
-  height: 14px;
-  background: var(--ink-faint);
-  content: '';
-  opacity: 0.65;
-}
-
+/* 签条纸：双层细框（线装书题签式样），随主题 token 变色 */
 .bookmarkTipBody {
-  display: flex;
-  max-width: 12rem;
-  flex-direction: column;
-  padding: 0.6rem 0.85rem 0.9rem;
-  gap: 0.3rem;
-  background: var(--scroll-paper);
-  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% calc(100% - 8px), 0 100%);
-  filter: drop-shadow(0 6px 14px var(--shadow-color));
+  padding: 3px;
+  border: 1px solid color-mix(in srgb, var(--ink) 55%, transparent);
+  background: var(--bg-elevated);
+  box-shadow: 0 8px 18px var(--shadow-color);
 }
 
+.bookmarkTipFrame {
+  display: flex;
+  max-height: 11.5rem;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.65rem 0.45rem 0.55rem;
+  border: 1px solid color-mix(in srgb, var(--ink) 30%, transparent);
+  gap: 0.5rem;
+}
+
+/* 竖排标题，下端对齐签条 */
 .bookmarkTipTitle {
+  max-height: 8.5rem;
   color: var(--ink);
   font-family: var(--font-serif), serif;
-  font-size: 0.92rem;
+  font-size: 0.85rem;
   font-weight: 650;
-  letter-spacing: 0.06em;
-  line-height: 1.5;
+  letter-spacing: 0.28em;
+  line-height: 1;
+  overflow: hidden;
+  text-orientation: upright;
+  writing-mode: vertical-rl;
 }
 
-.bookmarkTipMeta {
-  color: var(--ink-faint);
-  font-size: 0.68rem;
-  letter-spacing: 0.12em;
-  white-space: nowrap;
+/* 朱砂小印：篇章序号 */
+.bookmarkTipSeal {
+  display: grid;
+  width: 15px;
+  height: 15px;
+  border-radius: 2px;
+  background: #9e2b22;
+  color: #f7f1e3;
+  font-family: var(--font-serif), serif;
+  font-size: 0.6rem;
+  place-items: center;
 }
 
+/* 从书顶滑出 + 一次轻摆安定（transform-origin 在签条底端，像夹在书里摆动） */
 @keyframes bookmark-drop {
-  from {
+  0% {
     opacity: 0;
-    transform: translate(-50%, calc(-100% - 26px));
+    transform: translate(-50%, calc(-100% - 14px)) rotate(2.5deg);
   }
 
-  to {
+  55% {
     opacity: 1;
-    transform: translate(-50%, calc(-100% - 14px));
+    transform: translate(-50%, calc(-100% + 6px)) rotate(-1.4deg);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate(-50%, calc(-100% + 6px)) rotate(0deg);
   }
 }
 
