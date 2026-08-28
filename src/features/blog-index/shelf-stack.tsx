@@ -44,7 +44,7 @@ type BookmarkTip = {
   readonly left: number
   readonly top: number
   readonly title: string
-  readonly meta: string
+  readonly index: number
 }
 
 /** 单本「方向书」：左窄书脊 + 右侧书页，点击后书页绕左书脊平转 174°，露出文章书脊架 */
@@ -112,7 +112,7 @@ function Tome({ book, open, onToggle }: TomeProps) {
     ? CHAPTER_DATE_FORMATTER.format(new Date(latest.frontmatter.publishedAt))
     : null
 
-  // 悬浮书脊 → 下落书签提示完整标题（渲染在 tome 层，逃逸滚动容器的 overflow 裁剪）
+  // 悬浮书脊 → 竖式题签从书顶滑出，展示章节完整标题（渲染在 tome 层，逃逸滚动容器的 overflow 裁剪）
   const showTip = useCallback(
     (anchor: HTMLElement, chapterIndex: number) => {
       const root = rootRef.current
@@ -120,7 +120,7 @@ function Tome({ book, open, onToggle }: TomeProps) {
       if (!root || !chapter) return
       const rect = anchor.getBoundingClientRect()
       const rootRect = root.getBoundingClientRect()
-      const half = 96 // 书签最大半宽，钳制不越出书册
+      const half = 24 // 题签半宽，钳制不越出书册
       setTip({
         left: Math.min(
           Math.max(rect.left - rootRect.left + rect.width / 2, half),
@@ -128,9 +128,7 @@ function Tome({ book, open, onToggle }: TomeProps) {
         ),
         top: rect.top - rootRect.top,
         title: chapter.frontmatter.title,
-        meta: `${CHAPTER_DATE_FORMATTER.format(
-          new Date(chapter.frontmatter.publishedAt),
-        )} · 第${chapterIndex + 1}篇`,
+        index: chapterIndex,
       })
     },
     [book.chapters],
@@ -141,7 +139,14 @@ function Tome({ book, open, onToggle }: TomeProps) {
     <div
       className={`${styles.tome} ${open ? styles.tomeOpen : ''}`}
       data-book-slug={book.slug}
-      onClick={() => onToggle(open ? null : book.slug)}
+      onClick={(event) => {
+        // 命中文章书脊（<a>）时只放行导航：不合拢、不推 hash，
+        // 避免 handleToggle 的 pushState 与 Next 路由跳转竞争把 URL 推回 /blog/
+        if (event.target instanceof Element && event.target.closest('a')) {
+          return
+        }
+        onToggle(open ? null : book.slug)
+      }}
       ref={rootRef}
       style={
         {
@@ -251,7 +256,7 @@ function Tome({ book, open, onToggle }: TomeProps) {
         </div>
       </div>
 
-      {/* 悬浮书签：下落展示章节完整标题（pointer-events 关闭，不影响点击） */}
+      {/* 悬浮题签：竖式签条从书顶滑出，展示章节完整标题（pointer-events 关闭，不影响点击） */}
       {open && tip && (
         <div
           className={styles.bookmarkTip}
@@ -259,8 +264,10 @@ function Tome({ book, open, onToggle }: TomeProps) {
           style={{ left: `${tip.left}px`, top: `${tip.top}px` }}
         >
           <div className={styles.bookmarkTipBody}>
-            <span className={styles.bookmarkTipTitle}>{tip.title}</span>
-            <span className={styles.bookmarkTipMeta}>{tip.meta}</span>
+            <div className={styles.bookmarkTipFrame}>
+              <span className={styles.bookmarkTipTitle}>{tip.title}</span>
+              <span className={styles.bookmarkTipSeal}>{tip.index + 1}</span>
+            </div>
           </div>
         </div>
       )}
