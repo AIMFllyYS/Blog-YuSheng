@@ -18,6 +18,7 @@ const frontmatterSchema = z
     publishedAt: z.string(),
     updatedAt: z.string().optional(),
     cover: z.string().optional(),
+    section: z.string().optional(),
     tags: z.array(z.string().trim().min(1)).optional(),
     draft: z.boolean().optional(),
   })
@@ -266,6 +267,21 @@ function collectDiagnostics(
           'cover 必须是文章包内的安全相对路径',
           'cover',
           rangeFor('cover'),
+        ),
+      )
+    }
+  }
+
+  if (Object.hasOwn(raw, 'section')) {
+    if (typeof raw.section !== 'string' || !SLUG_PATTERN.test(raw.section)) {
+      diagnostics.push(
+        createDiagnostic(
+          source,
+          articleSlug,
+          'FRONTMATTER_SECTION_INVALID',
+          'section 必须是已注册板块的 kebab-case slug',
+          'section',
+          rangeFor('section'),
         ),
       )
     }
