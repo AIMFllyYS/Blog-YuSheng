@@ -88,6 +88,7 @@ title: 文章标题
 description: 列表页和微信/社交预览用的摘要，写完整的一句话
 publishedAt: 2026-08-18T15:00:00+08:00
 updatedAt: 2026-08-18T16:20:00+08:00
+section: tech-thinking
 cover: ./media/images/cover.png
 tags:
   - 架构
@@ -103,9 +104,12 @@ draft: false
 | `description` | 是 | 非空。列表摘要 + OG 预览文案 |
 | `publishedAt` | 是 | 带时区的 ISO 8601。国内用 `+08:00`，不要写 `2026-08-18` 这种缺时间的日期 |
 | `updatedAt` | 否 | 同样必须带时区。改过正文再填 |
+| `section` | 否 | 板块 slug，必须已在 `content/sections.yml` 注册，否则构建报错。决定文章收进 `/blog/` 书架上的哪本书；不填则归入末尾的「散页」 |
 | `cover` | 否 | 文章包内相对路径，推荐 `./media/images/cover.png`。用于列表/分享预览 |
-| `tags` | 否 | 非空字符串数组。会出现在 `/blog/` 书架上 |
+| `tags` | 否 | 非空字符串数组。目前预留给未来的标签筛选 |
 | `draft` | 否 | 布尔值。`true` 不上架；省略或 `false` 表示正式文章 |
+
+新增一个板块（一本书）：在 `content/sections.yml` 的 `sections:` 下加一条，写好 `slug`（kebab-case）、`title`（书脊上的竖排书名）、`order`（书架排位，小的靠左）、`summary`（一册简介）。书脊厚度按该册全部文章的总字数自动决定，文章越多书越厚，不需要手调。
 
 日期合法例子：
 
