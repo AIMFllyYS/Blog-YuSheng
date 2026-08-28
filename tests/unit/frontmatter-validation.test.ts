@@ -102,6 +102,12 @@ describe('frontmatter v1 validation', () => {
       field: 'cover',
       line: 6,
     },
+    {
+      fixture: 'bad-section.md',
+      code: 'FRONTMATTER_SECTION_INVALID',
+      field: 'section',
+      line: 6,
+    },
   ])('returns deterministic diagnostics for $fixture', async (expected) => {
     const result = validateFrontmatter(
       await fixture(expected.fixture),

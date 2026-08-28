@@ -3,6 +3,11 @@ import 'server-only'
 import { readdir } from 'node:fs/promises'
 import { CONTENT_POSTS_ROOT } from './content-paths'
 import { readPost, type Post } from './read-post'
+import {
+  assertKnownSections,
+  listSections,
+  sectionsPathForPostsRoot,
+} from './read-sections'
 
 export type PostSummary = Pick<Post, 'slug' | 'frontmatter' | 'source'>
 
@@ -16,7 +21,12 @@ export async function discoverPostSlugs(postsRoot = CONTENT_POSTS_ROOT) {
 
 export async function readAllPosts(postsRoot = CONTENT_POSTS_ROOT) {
   const slugs = await discoverPostSlugs(postsRoot)
-  return Promise.all(slugs.map((slug) => readPost(slug, postsRoot)))
+  const posts = await Promise.all(
+    slugs.map((slug) => readPost(slug, postsRoot)),
+  )
+  const sections = await listSections(sectionsPathForPostsRoot(postsRoot))
+  assertKnownSections(posts, sections)
+  return posts
 }
 
 export async function listPublishedPosts(postsRoot = CONTENT_POSTS_ROOT) {

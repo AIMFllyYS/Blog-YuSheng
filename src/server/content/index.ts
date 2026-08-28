@@ -32,6 +32,12 @@ export {
 } from './discover-posts'
 export { readPost, type Post } from './read-post'
 export {
+  assertKnownSections,
+  listSections,
+  sectionsPathForPostsRoot,
+  type SectionDefinition,
+} from './read-sections'
+export {
   decodeSafeRelativePath,
   validateArticleAssetPath,
   type AssetPathValidationResult,
