@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>智能体循环</title>
+    <style>
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: "Source Han Serif SC", "Noto Serif SC", "Songti SC", serif;
+        background: #f4ead3;
+        color: #2c2416;
+      }
+      main {
+        padding: .9rem .95rem 1rem;
+      }
+      header {
+        margin: 0 0 .75rem;
+      }
+      header strong {
+        display: block;
+        font-size: 1.02rem;
+        font-weight: 600;
+      }
+      header span {
+        display: block;
+        margin-top: .25rem;
+        font-size: .78rem;
+        color: #7a6a4e;
+      }
+      ol {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        gap: .45rem;
+      }
+      li {
+        display: grid;
+        grid-template-columns: 2.1rem 1fr;
+        gap: .65rem;
+        align-items: start;
+        background: #fbf6ea;
+        border: 1px solid #d8c9a4;
+        border-radius: .65rem;
+        padding: .55rem .7rem .6rem;
+      }
+      b {
+        font-size: .72rem;
+        letter-spacing: .08em;
+        color: #7a4a28;
+        padding-top: .12rem;
+      }
+      h2 {
+        margin: 0 0 .15rem;
+        font-size: .92rem;
+        font-weight: 600;
+      }
+      p {
+        margin: 0;
+        font-size: .78rem;
+        line-height: 1.55;
+        color: #4a3f2e;
+      }
+      footer {
+        margin-top: .7rem;
+        padding: .55rem .7rem;
+        border: 1px dashed #d8c9a4;
+        border-radius: .55rem;
+        font-size: .78rem;
+        color: #7a4a28;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <strong>一次智能体循环</strong>
+        <span>输入到停止：提示词、工具标签、解析、再拼上下文。</span>
+      </header>
+      <ol>
+        <li>
+          <b>01</b>
+          <div>
+            <h2>输入</h2>
+            <p>系统提示词加上用户需求。You are a helpful assistant，已经在规定往后怎么说话。</p>
+          </div>
+        </li>
+        <li>
+          <b>02</b>
+          <div>
+            <h2>输出工具标签</h2>
+            <p>模型若要搜索、写文件或加载 Skill，就吐出 tool=search 这类标签，然后停住。</p>
+          </div>
+        </li>
+        <li>
+          <b>03</b>
+          <div>
+            <h2>解析并唤起</h2>
+            <p>网站或代码读到标签，去跑对应工具：命令行、写盘、拉 Skill 正文。</p>
+          </div>
+        </li>
+        <li>
+          <b>04</b>
+          <div>
+            <h2>再拼上下文</h2>
+            <p>把刚才的思考、工具结果、Skill 内容拼成新的一轮输入，再交给模型。</p>
+          </div>
+        </li>
+        <li>
+          <b>05</b>
+          <div>
+            <h2>状态机收束</h2>
+            <p>还有工具就继续；没有工具就对用户说话并停止。Hook 可以在节点上自动做 recap。</p>
+          </div>
+        </li>
+      </ol>
+      <footer>整套编排叫 harness。ReAct 只是：调用一次，看结果，再逼近一次。</footer>
+    </main>
+    <script>
+      (() => {
+        const nonce = new URLSearchParams(location.hash.slice(1)).get('nonce')
+        if (nonce) parent.postMessage({ nonce, message: { type: 'ready' } }, '*')
+        const reportHeight = () => {
+          parent.postMessage(
+            { type: 'resize', height: document.documentElement.scrollHeight },
+            '*',
+          )
+        }
+        requestAnimationFrame(reportHeight)
+        new ResizeObserver(reportHeight).observe(document.documentElement)
+      })()
+    </script>
+  </body>
+</html>

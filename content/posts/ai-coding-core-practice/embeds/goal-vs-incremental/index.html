@@ -1,0 +1,118 @@
+!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>目标模式与渐进模式</title>
+    <style>
+      :root { color-scheme: light; }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: "Source Han Serif SC", "Noto Serif SC", "Songti SC", serif;
+        background: #f4ead3;
+        color: #2c2416;
+      }
+      main {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: .7rem;
+        padding: .9rem;
+      }
+      article {
+        background: #fbf6ea;
+        border: 1px solid #d8c9a4;
+        border-radius: .7rem;
+        padding: .75rem .8rem .85rem;
+      }
+      article.bad { border-top: 3px solid #a83c1f; }
+      article.good { border-top: 3px solid #0e6f6e; }
+      span {
+        display: block;
+        font-size: .68rem;
+        letter-spacing: .12em;
+        margin-bottom: .35rem;
+      }
+      .bad span { color: #a83c1f; }
+      .good span { color: #0a4f4f; }
+      h2 {
+        margin: 0 0 .45rem;
+        font-size: .95rem;
+        font-weight: 600;
+      }
+      ol {
+        list-style: none;
+        margin: 0 0 .55rem;
+        padding: 0;
+        border-left: 2px solid #d8c9a4;
+      }
+      li {
+        position: relative;
+        padding: .08rem 0 .55rem .95rem;
+        font-size: .78rem;
+        color: #4a3f2e;
+      }
+      li:last-child { padding-bottom: 0; }
+      li::before {
+        content: "";
+        position: absolute;
+        left: -.38rem;
+        top: .38rem;
+        width: .55rem;
+        height: .55rem;
+        border-radius: 50%;
+      }
+      .bad li::before { background: #a83c1f; }
+      .good li::before { background: #0e6f6e; }
+      .good li:last-child::before { background: #c97a24; }
+      p {
+        margin: 0;
+        font-size: .76rem;
+        line-height: 1.5;
+        color: #4a3f2e;
+      }
+      @media (max-width: 560px) {
+        main { grid-template-columns: 1fr; }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <article class="bad">
+        <span>目标模式失控</span>
+        <h2>芝诺乌龟式拆分</h2>
+        <ol>
+          <li>先拆成 3 步</li>
+          <li>做到一半，再拆 2 步</li>
+          <li>再拆……永远觉得还差一点</li>
+        </ol>
+        <p>前期步子迈太大，会堆技术债。干了两天却没有任何像样的进展，就是失控信号。</p>
+      </article>
+      <article class="good">
+        <span>渐进模式</span>
+        <h2>小步，验收，再继续</h2>
+        <ol>
+          <li>一个简单功能</li>
+          <li>验收通过</li>
+          <li>再做一个</li>
+          <li>到达可交付的终点</li>
+        </ol>
+        <p>目标模式可以用，前提是先把模糊需求转译成清晰的工程语言，并且分块验收。</p>
+      </article>
+    </main>
+    <script>
+      (() => {
+        const nonce = new URLSearchParams(location.hash.slice(1)).get('nonce')
+        if (nonce) parent.postMessage({ nonce, message: { type: 'ready' } }, '*')
+        const reportHeight = () => {
+          parent.postMessage(
+            { type: 'resize', height: document.documentElement.scrollHeight },
+            '*',
+          )
+        }
+        requestAnimationFrame(reportHeight)
+        new ResizeObserver(reportHeight).observe(document.documentElement)
+      })()
+    </script>
+  </body>
+</html>

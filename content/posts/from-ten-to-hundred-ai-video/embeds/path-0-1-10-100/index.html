@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>从 0 到 100 的三段路</title>
+    <style>
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: "Source Han Serif SC", "Noto Serif SC", "Songti SC", serif;
+        background: #f4ead3;
+        color: #2c2416;
+      }
+      main { padding: .9rem .95rem 1.05rem; }
+      p.kicker {
+        margin: 0 0 .2rem;
+        font-size: .68rem;
+        letter-spacing: .16em;
+        color: #7a6a4e;
+      }
+      h1 {
+        margin: 0 0 .75rem;
+        font-size: 1.02rem;
+        font-weight: 600;
+      }
+      .steps {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1.15fr;
+        gap: .55rem;
+        align-items: end;
+      }
+      article {
+        border: 1px solid #d8c9a4;
+        background: #fbf6ea;
+        padding: .7rem .7rem .75rem;
+      }
+      article.tall { min-height: 8.2rem; }
+      article.mid { min-height: 6.6rem; }
+      article.low { min-height: 5rem; }
+      article.goal {
+        background: #2c2416;
+        border-color: #2c2416;
+        color: #f4ead3;
+      }
+      strong {
+        display: block;
+        font-size: 1rem;
+        margin-bottom: .3rem;
+      }
+      p {
+        margin: 0;
+        font-size: .78rem;
+        line-height: 1.5;
+      }
+      article.goal p { color: #d8c9a4; }
+      .stop {
+        margin-top: .45rem;
+        font-size: .72rem;
+        color: #7a4a28;
+        font-weight: 600;
+      }
+      article.goal .stop { color: #e8d5b8; }
+      .bars {
+        display: flex;
+        gap: .18rem;
+        margin-top: .55rem;
+        height: .28rem;
+      }
+      .bars i { flex: 1; }
+      figcaption {
+        margin: .65rem 0 0;
+        font-size: .7rem;
+        color: #7a6a4e;
+      }
+      @media (max-width: 560px) {
+        .steps { grid-template-columns: 1fr; }
+        article.tall, article.mid, article.low { min-height: 0; }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <p class="kicker">THREE STAGES · THREE SKILLS</p>
+      <h1>三段完全不同的路</h1>
+      <div class="steps">
+        <article class="low">
+          <strong>0 → 1</strong>
+          <p>会用工具：能生成画面。</p>
+          <p class="stop">靠教程 · 模仿</p>
+        </article>
+        <article class="mid">
+          <strong>1 → 10</strong>
+          <p>打通工作流：脚本、生成、配音、字幕能串成一条完整片。</p>
+          <p class="stop">← 大多数人停在这里 · 靠工具与流程</p>
+        </article>
+        <article class="tall goal">
+          <strong>10 → 100</strong>
+          <p>注入影视语言：表演、美术、色彩、镜头、剪辑、声音。</p>
+          <p class="stop">靠专业知识 · 打穿</p>
+          <div class="bars" aria-hidden="true">
+            <i style="background:#7a4a28"></i>
+            <i style="background:#a8790a"></i>
+            <i style="background:#8a4a6a"></i>
+            <i style="background:#5a4a28"></i>
+            <i style="background:#6a5a38"></i>
+            <i style="background:#4a5a38"></i>
+          </div>
+        </article>
+      </div>
+      <figcaption>图 0-1 · 这本手册只负责第三段。前两段的教程已经足够多。</figcaption>
+    </main>
+    <script>
+      (() => {
+        const nonce = new URLSearchParams(location.hash.slice(1)).get('nonce')
+        if (nonce) parent.postMessage({ nonce, message: { type: 'ready' } }, '*')
+        const reportHeight = () => {
+          parent.postMessage(
+            { type: 'resize', height: document.documentElement.scrollHeight },
+            '*',
+          )
+        }
+        requestAnimationFrame(reportHeight)
+        new ResizeObserver(reportHeight).observe(document.documentElement)
+      })()
+    </script>
+  </body>
+</html>
