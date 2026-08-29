@@ -4,6 +4,8 @@ import { z } from 'zod'
 import { VFile } from 'vfile'
 import { matter } from 'vfile-matter'
 
+import { isAuthorHostedImageUrl } from '../../features/doc-engine/security/embed-iframe-policy'
+
 const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
 const FRONTMATTER_PATTERN =
   /^---(?:\r?\n|\r)(?:([\s\S]*?)(?:\r?\n|\r))?---(?:\r?\n|\r|$)/
@@ -258,13 +260,13 @@ function collectDiagnostics(
   )
 
   if (Object.hasOwn(raw, 'cover')) {
-    if (typeof raw.cover !== 'string' || !isPackageRelativePath(raw.cover)) {
+    if (typeof raw.cover !== 'string' || !isAllowedCover(raw.cover)) {
       diagnostics.push(
         createDiagnostic(
           source,
           articleSlug,
           'FRONTMATTER_COVER_PATH_INVALID',
-          'cover 必须是文章包内的安全相对路径',
+          'cover 必须是文章包内的安全相对路径，或作者托管域名上的 HTTPS 图片',
           'cover',
           rangeFor('cover'),
         ),
@@ -417,6 +419,10 @@ function isZonedIso8601(value: string): boolean {
     offsetMinute <= 59 &&
     Number.isFinite(Date.parse(value))
   )
+}
+
+function isAllowedCover(value: string): boolean {
+  return isPackageRelativePath(value) || isAuthorHostedImageUrl(value)
 }
 
 function isPackageRelativePath(value: string): boolean {

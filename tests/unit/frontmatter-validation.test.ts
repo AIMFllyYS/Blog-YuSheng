@@ -65,6 +65,46 @@ describe('frontmatter v1 validation', () => {
     }
   })
 
+  it('accepts an author-hosted HTTPS cover', () => {
+    const result = validateFrontmatter(
+      `---
+schemaVersion: 1
+title: 远程封面
+description: 封面走作者托管域名
+publishedAt: 2026-08-30T21:00:00+08:00
+cover: https://husteread.com/storage/public/files/blog/demo/cover.webp
+---
+`,
+      'remote-cover-post',
+    )
+
+    expect(result.ok).toBe(true)
+    if (result.ok) {
+      expect(result.value.cover).toBe(
+        'https://husteread.com/storage/public/files/blog/demo/cover.webp',
+      )
+    }
+  })
+
+  it('rejects an unlisted HTTPS cover', () => {
+    const result = validateFrontmatter(
+      `---
+schemaVersion: 1
+title: 外部封面
+description: 未审过的图床
+publishedAt: 2026-08-30T21:00:00+08:00
+cover: https://example.com/cover.png
+---
+`,
+      'bad-remote-cover',
+    )
+
+    expect(result).toMatchObject({
+      ok: false,
+      diagnostics: [{ code: 'FRONTMATTER_COVER_PATH_INVALID' }],
+    })
+  })
+
   it('accepts draft true without weakening the schema', async () => {
     const result = validateFrontmatter(
       await fixture('valid-draft.md'),

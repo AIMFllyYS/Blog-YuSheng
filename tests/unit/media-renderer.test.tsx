@@ -56,6 +56,40 @@ describe('video and audio renderers', () => {
     ])
   })
 
+  it('passes through author-hosted HTTPS media without rewriting the URL', async () => {
+    const remoteSrc =
+      'https://husteread.com/storage/public/files/blog/demo/clip.mp4'
+    const remotePoster =
+      'https://husteread.com/storage/public/files/blog/demo/poster.webp'
+    const remote = await compileDocument({
+      articleSlug: ARTICLE_SLUG,
+      assetManifest: [],
+      frontmatter: {},
+      source: `<video-embed id="remote-video" src="${remoteSrc}" title="远程视频" poster="${remotePoster}" />`,
+    })
+    const video = remote.document.root.children[0]
+    if (video?.type !== 'registeredComponent' || video.name !== 'video-embed') {
+      throw new Error('fixture 未编译为远程视频')
+    }
+    expect(BUILTIN_RENDERER_REGISTRY.get('video-embed')?.collectAssets(video)).toEqual([
+      { source: remoteSrc, kind: 'remote', attribute: 'src' },
+      { source: remotePoster, kind: 'remote', attribute: 'poster' },
+    ])
+    expect(projectPackageMediaUrl(remoteSrc, ARTICLE_SLUG, [])).toBe(remoteSrc)
+    expect(projectPackageMediaUrl(remotePoster, ARTICLE_SLUG, [])).toBe(
+      remotePoster,
+    )
+    const compiled = await compileArticleDocumentWithDiagnostics({
+      articleSlug: ARTICLE_SLUG,
+      assetManifest: [],
+      frontmatter: {},
+      source: `<video-embed id="remote-video" src="${remoteSrc}" title="远程视频" poster="${remotePoster}" />`,
+    })
+    expect(
+      compiled.diagnostics.filter((item) => item.buildBlocking),
+    ).toEqual([])
+  })
+
   it('renders native controls without autoplay and keeps whole-node selection', async () => {
     const [video, audio] = await mediaNodes()
     const videoHtml = renderToStaticMarkup(

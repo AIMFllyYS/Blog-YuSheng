@@ -192,7 +192,7 @@ fallback / security / accessibility / allowed profiles
 | SVG | 构建期清洗后以独立资源/`img` 加载，不内联父 DOM | 禁止 | 复用同一安全投影，优先矢量 |
 | 本地 HTML | 只允许 `<html-embed>` 引用 `embeds/`；sandbox iframe 可运行脚本但不授予同源能力 | 禁止 | 截图或降级卡片 |
 | 站内网页 | P0 一律降级；不放开全站 `DENY`，也不使用会让相对资源按父页解析的 `srcdoc` | 禁止 | 标题 + 域名 + 打开链接 |
-| 自有外部页面 | `web-embed` 集中 allowlist；P0 空名单即降级 | 禁止 | 标题 + 域名 + 打开链接 |
+| 自有外部页面 | `web-embed` 集中 allowlist（审过的 eTLD+1，含子域）；未命中或对端拒嵌则降级 | 禁止 | 标题 + 域名 + 打开链接 |
 | 第三方网页 | `web-embed` 集中 allowlist；未命中或 4 秒内未加载即降级 | 禁止 | 标题 + 域名 + 打开链接 |
 
 导出不抓取远端预览图：规格 12.4 禁止服务端代抓作者提供的任意 URL，静态站也没有运行时可抓。

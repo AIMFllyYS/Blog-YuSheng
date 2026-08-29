@@ -134,7 +134,7 @@ describe('renderer registry and screen profiles', () => {
 })
 
 describe('central security configuration', () => {
-  it('locks the accepted iframe policy and starts with an empty web allowlist', () => {
+  it('locks the accepted iframe policy and keeps a frozen reviewed web allowlist', () => {
     expect(HTML_EMBED_IFRAME_POLICY).toEqual({
       sandbox: 'allow-scripts',
       referrerPolicy: 'no-referrer',
@@ -142,10 +142,11 @@ describe('central security configuration', () => {
       loading: 'lazy',
     })
     expect(HTML_EMBED_IFRAME_POLICY.sandbox).not.toContain('allow-same-origin')
-    expect(WEB_EMBED_ETLD_PLUS_ONE_ALLOWLIST.length).toBe(0)
+    expect(WEB_EMBED_ETLD_PLUS_ONE_ALLOWLIST.length).toBeGreaterThan(0)
     expect(isWebEmbedAllowed('https://example.com/embed')).toBe(false)
     expect(isWebEmbedAllowed('http://example.com/embed')).toBe(false)
     expect(isWebEmbedAllowed('https://sub.example.com/embed')).toBe(false)
+    expect(isWebEmbedAllowed('https://read.husteread.com/')).toBe(true)
   })
 
   it('authenticates postMessage by source and one-time nonce before accepting the strict schema', () => {
@@ -461,7 +462,7 @@ fallback
     ])
   })
 
-  it('emits an explicit fallback warning for an HTTPS web embed outside the empty allowlist', async () => {
+  it('emits an explicit fallback warning for an HTTPS web embed outside the reviewed allowlist', async () => {
     const source = `<web-embed id="preview" src="https://example.com/embed" title="preview">
 fallback
 </web-embed>`

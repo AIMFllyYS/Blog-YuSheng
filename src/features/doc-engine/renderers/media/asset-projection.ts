@@ -3,6 +3,7 @@ export function projectPackageMediaUrl(
   articleSlug: string,
   manifest: readonly unknown[],
 ): string {
+  if (source.startsWith('https://')) return source
   const relativePath = normalizePackagePath(source)
   const expectedOutputPath = `blog/${articleSlug}/${relativePath}`
   const matched = manifest.find((value) => {

@@ -137,7 +137,7 @@ draft: false
 | `publishedAt` | 是 | 带时区的 ISO 8601。国内用 `+08:00`，不要写 `2026-08-18` 这种缺时间的日期 |
 | `updatedAt` | 否 | 同样必须带时区。改过正文再填 |
 | `section` | 否（正式文应当填） | **大方向** slug，必须已在 `content/sections.yml` 注册，否则构建报 `FRONTMATTER_SECTION_UNKNOWN`。决定这本小博客收进哪本方向书；不填则归入末尾「散页」。不要写 `chapter` / `category` / `series` |
-| `cover` | 否 | 文章包内相对路径，推荐 `./media/images/cover.png`。用于列表/分享预览 |
+| `cover` | 否 | 文章包内相对路径（推荐 `./media/images/cover.png`），或作者托管名单上的 HTTPS 图片。用于列表/分享预览 |
 | `tags` | 否 | 非空字符串数组。1 到多个，可自定；省略该字段表示没有标签，不要写空数组。出现在目录树章行，以及书库里悬停小书脊后的书签旁边。优先用 [post-tags.md](./post-tags.md) 里的词，没有合适的就自创，再回去补一行。备忘文档不参与校验，写错词也不会让构建失败。单标签建议不超过约 12 个汉字 |
 | `draft` | 否 | 布尔值。`true` 不上架；省略或 `false` 表示正式文章 |
 
@@ -150,7 +150,7 @@ draft: false
 
 不合法：`2026-08-18`、`2026/08/18 15:00`、`August 18, 2026`。
 
-`cover` 不合法的写法：`/media/images/cover.png`、`C:\pics\cover.png`、`../other-post/cover.png`、`https://...`。
+`cover` 不合法的写法：`/media/images/cover.png`、`C:\pics\cover.png`、`../other-post/cover.png`、未在作者托管名单上的 `https://...`。
 
 ### 2.2 正文能写什么
 
@@ -182,7 +182,7 @@ draft: false
 
 | 标签 | 必填属性 | 可选 | 资源必须放在 |
 |---|---|---|---|
-| `<video-embed>` | `id`, `src`, `title` | `poster` | `src` → `media/**.mp4`；`poster` → 图片 |
+| `<video-embed>` | `id`, `src`, `title` | `poster` | `src` → `media/**.mp4` 或作者托管 HTTPS `.mp4`；`poster` → 本地图片或作者托管 HTTPS 图片 |
 | `<audio-embed>` | `id`, `src`, `title` | — | `src` → `media/**.mp3` |
 | `<svg-embed>` | `id`, `src`, `title` | — | `src` → `media/svg/*.svg` |
 | `<canvas-render>` | `id`, `renderer` | `data-src`, `width`, `height` | `data-src` → `data/*.json`；`renderer` 目前只有 `function-plot` |
@@ -215,7 +215,26 @@ draft: false
 
 `html-embed` 的 `id` 和文件夹名必须一致：`id="mini-card"` 对应 `embeds/mini-card/index.html`。公开地址是 `/embeds/<slug>/mini-card/`，不在 `/blog/<slug>/` 下面。这是安全门约束，不要改。
 
-`web-embed` 不会把别人的网页下载进仓库，只保存链接。P0 白名单很严，不确定就不要用，或先在本地看它会不会变成降级卡。
+`web-embed` 不会把别人的网页下载进仓库，只保存链接。`src` 的主机名必须命中审过的 **eTLD+1（主域）**：`husteread.com` 覆盖 `read.husteread.com`，不必逐条登记子域。未命中、或对端禁止 iframe（GitHub、Google 等）时显示「网页预览」卡（标题 + 域名 + 打开链接），构建不失败。
+
+### 2.3.1 网页嵌入与作者托管媒体的白名单
+
+名单在 `src/features/doc-engine/security/embed-iframe-policy.ts`：
+
+- **自有主域**（iframe **和** 远程图片/视频/音频）：`husteread.com`、`husteread.icu`、`1037solo.com`、`1037solo.cn`、`yusheng.email`
+- **仅 iframe**：另有若干已审第三方主域；不要把它们当图床
+
+新增一篇里要**真 iframe** 的网址，或要把图/视频放在对象存储而不是文章包时：在**同一次提交**把该 URL 的可注册主域写入对应数组。不要登记 `com`、`github.io`、`co.uk` 这类公共后缀。构建期**不会**扫描正文自动写入。
+
+图和视频两种放法：
+
+| | 文章包本地 | 作者托管 HTTPS |
+|---|---|---|
+| 写法 | `./media/images/foo.webp`、`<video-embed src="./media/video/foo.mp4">` | `https://husteread.com/storage/public/files/blog/<slug>/foo.webp` |
+| 构建 | 原图 ≤ 300 KB，派生 AVIF/WebP | 不进 git、不跑图片流水线；主域必须在自有名单，扩展名 `.png/.jpg/.jpeg/.webp/.svg` 或视频 `.mp4` |
+| 推荐路径 | 见第 3 节 | `https://husteread.com/storage/public/files/blog/<slug>/<filename>` |
+
+`cover` 也可以是上述 HTTPS 图片。文件尚未传到对象存储时，阅读页会先显示资源降级卡，上传后刷新即出。html-embed 仍必须是文章包内 `embeds/<id>/index.html`，不能换成外链。
 
 ### 2.4 问答题 JSON
 
@@ -266,9 +285,9 @@ draft: false
 
 | 你手里的东西 | 放到 | 正文里怎么引用 |
 |---|---|---|
-| 封面、插图、海报 | `media/images/` | `![说明](./media/images/foo.png)` 或 frontmatter `cover` |
+| 封面、插图、海报 | `media/images/` 或作者托管 HTTPS | `![说明](./media/images/foo.png)` / `![说明](https://husteread.com/storage/public/files/blog/<slug>/foo.webp)` 或 frontmatter `cover` |
 | 独立 SVG 图 | `media/svg/` | `<svg-embed src="./media/svg/foo.svg" ... />` |
-| 视频 | `media/video/` | `<video-embed src="./media/video/foo.mp4" ... />`，只接受 `.mp4` |
+| 视频 | `media/video/` 或作者托管 HTTPS `.mp4` | `<video-embed src="./media/video/foo.mp4" ... />` 或同样标签的 HTTPS `src` |
 | 音频 | `media/audio/` | `<audio-embed src="./media/audio/foo.mp3" ... />`，只接受 `.mp3` |
 | 题目 / 图表数据 | `data/` | 标签的 `data-src="./data/foo.json"` |
 | 可交互 HTML 小页 | `embeds/<id>/index.html` | `<html-embed id="<id>" src="./embeds/<id>/index.html" ...>` |
