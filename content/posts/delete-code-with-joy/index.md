@@ -3,10 +3,10 @@ schemaVersion: 1
 title: 删代码的快乐
 description: 代码不是资产，是负债；功能才是资产。
 publishedAt: 2025-07-06T18:20:00+08:00
-section: tech-thinking
 tags:
   - 重构
   - 简洁
+draft: true
 ---
 
 静态生成和服务端渲染不是信仰之争，是一道算术题：内容多久变一次，访客有多少，首屏预算多少。我的内容几小时甚至几天才变一次，静态导出就是那个又便宜又快的答案。

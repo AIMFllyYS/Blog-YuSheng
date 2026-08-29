@@ -3,10 +3,10 @@ schemaVersion: 1
 title: 循证医学读书笔记
 description: 证据金字塔的排序，是一部人类对抗偏见的斗争史。
 publishedAt: 2025-05-03T08:35:00+08:00
-section: medical-thinking
 tags:
   - 循证
   - 读书
+draft: true
 ---
 
 我逐渐把健康决策分成两类：可逆的小决定，凭习惯和常识快速做；不可逆的大决定，找证据、找第二诊疗意见、给自己留冷静期。分类本身，就过滤掉了大部分焦虑。

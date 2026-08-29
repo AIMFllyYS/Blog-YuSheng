@@ -3,10 +3,10 @@ schemaVersion: 1
 title: 品味是最后的护城河
 description: 生成廉价之后，判断变得昂贵。
 publishedAt: 2025-10-31T19:40:00+08:00
-section: ai-thinking
 tags:
   - AI
   - 判断力
+draft: true
 ---
 
 我观察到身边分化成两群人：一群人用 AI 来偷懒，产出越来越多、自己越来越空；另一群人用 AI 来较劲，把省下的时间全部投到更难的问题上。同样的工具，两种人生。

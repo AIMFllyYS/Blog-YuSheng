@@ -3,10 +3,10 @@ schemaVersion: 1
 title: AI 时代的注意力保卫战
 description: 守住注意力不是自律问题，是生存问题。
 publishedAt: 2025-09-05T08:15:00+08:00
-section: ai-thinking
 tags:
   - 注意力
   - AI
+draft: true
 ---
 
 知识库的意义没有被 AI 削弱，反而被放大了。AI 可以回答任何问题，但它不知道你为什么关心这个问题。你的笔记里藏着你的问题史，那是任何通用模型都替代不了的上下文。

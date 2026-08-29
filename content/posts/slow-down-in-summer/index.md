@@ -3,10 +3,10 @@ schemaVersion: 1
 title: 夏天允许自己慢一点
 description: 在所有人都加速的季节里，我决定理直气壮地浪费一个下午。
 publishedAt: 2025-08-09T15:30:00+08:00
-section: personal-reflections
 tags:
   - 生活
   - 节奏
+draft: true
 ---
 
 我开始理解父母当年的很多决定。不是因为他们突然变对了，而是我终于站到了他们当年的位置上，看到了他们看到的地形。理解往往迟到，但它从来不会缺席。

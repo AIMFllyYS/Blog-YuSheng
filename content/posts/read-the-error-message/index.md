@@ -3,10 +3,10 @@ schemaVersion: 1
 title: 先读报错信息
 description: 报错栈的第三行往往就写着答案，但人总是先慌了。
 publishedAt: 2025-05-17T10:45:00+08:00
-section: tech-thinking
 tags:
   - 调试
   - 基本功
+draft: true
 ---
 
 代码评审最好的状态，是评审者能说出这里为什么这样做，而不是这里应该这样做。前者是理解，后者是姿态。团队里前者越多，代码越长寿。

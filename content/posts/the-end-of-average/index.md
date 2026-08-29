@@ -3,10 +3,10 @@ schemaVersion: 1
 title: 平均主义的终结
 description: 当机器承包了还不错，人被逼着回答：你是谁。
 publishedAt: 2026-04-30T17:30:00+08:00
-section: ai-thinking
 tags:
   - AI
   - 职业
+draft: true
 ---
 
 我做过一个实验：一周之内，凡是先问 AI 再思考的问题，记下来；凡是先自己想再问 AI 的，也记下来。对比两组的质量，差距大得让我沉默。思考这件事，外包顺序很重要。

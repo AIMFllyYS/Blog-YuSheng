@@ -3,10 +3,10 @@ schemaVersion: 1
 title: 不戴耳机走路
 description: 把耳朵还给街道之后，城市开始对我说话。
 publishedAt: 2025-04-19T17:20:00+08:00
-section: personal-reflections
 tags:
   - 生活
   - 注意力
+draft: true
 ---
 
 告别这件事，从来不会提前打招呼。去年整理旧物，翻出大学时的课堂笔记，纸张已经泛黄，字迹幼稚得可笑。我忽然意识到，那个在笔记本上认真抄写板书的年轻人，已经和我隔了整整一个时代。

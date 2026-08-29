@@ -3,10 +3,10 @@ schemaVersion: 1
 title: 孤独与独处之间
 description: 孤独是想连接而不得，独处是心甘情愿地与自己相处。
 publishedAt: 2025-06-30T22:05:00+08:00
-section: personal-reflections
 tags:
   - 独处
   - 成长
+draft: true
 ---
 
 告别这件事，从来不会提前打招呼。去年整理旧物，翻出大学时的课堂笔记，纸张已经泛黄，字迹幼稚得可笑。我忽然意识到，那个在笔记本上认真抄写板书的年轻人，已经和我隔了整整一个时代。

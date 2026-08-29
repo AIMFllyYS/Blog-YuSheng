@@ -3,10 +3,10 @@ schemaVersion: 1
 title: 一次失败教我的事
 description: 失败逼我回答那个一直回避的问题：我是真的热爱，还是只爱成功后的自己。
 publishedAt: 2025-09-21T20:45:00+08:00
-section: personal-reflections
 tags:
   - 失败
   - 成长
+draft: true
 ---
 
 独处和孤独是两回事。孤独是想要连接而不得，独处是主动选择与自己相处。学会独处之后，我反而更珍惜和别人在一起的时光，因为那都是心甘情愿的相遇，而不是慌不择路的逃离。

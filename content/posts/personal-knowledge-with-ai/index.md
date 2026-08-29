@@ -3,10 +3,10 @@ schemaVersion: 1
 title: 有 AI 之后还需要个人知识库吗
 description: 模型不知道你为什么关心这个问题，你的笔记知道。
 publishedAt: 2026-02-21T15:55:00+08:00
-section: ai-thinking
 tags:
   - 知识库
   - AI
+draft: true
 ---
 
 提问的能力正在悄悄升值。当获取答案的成本趋近于零，稀缺的就变成了知道该问什么。这很像搜索引擎刚出现的年代，只是这一次，赌注更大，分化也更快。

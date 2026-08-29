@@ -3,10 +3,10 @@ schemaVersion: 1
 title: AI 是镜子不是神谕
 description: 它给我的每个答案，都照出我提问的质量。
 publishedAt: 2025-04-02T10:20:00+08:00
-section: ai-thinking
 tags:
   - AI
   - 提问
+draft: true
 ---
 
 技术从来不是中立的，但它也从来不是命运。印刷术没有让所有人变成作家，相机没有让所有人变成摄影师。AI 也一样，它放大的从来都是人本来的样子。

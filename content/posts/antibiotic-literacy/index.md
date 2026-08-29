@@ -3,10 +3,10 @@ schemaVersion: 1
 title: 抗生素素养
 description: 每一次不必要的使用，都是在为整个社会的耐药未来投票。
 publishedAt: 2026-03-07T10:05:00+08:00
-section: medical-thinking
 tags:
   - 用药
   - 常识
+draft: true
 ---
 
 我逐渐把健康决策分成两类：可逆的小决定，凭习惯和常识快速做；不可逆的大决定，找证据、找第二诊疗意见、给自己留冷静期。分类本身，就过滤掉了大部分焦虑。

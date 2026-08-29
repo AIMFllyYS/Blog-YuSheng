@@ -3,9 +3,9 @@ schemaVersion: 1
 title: 写给自己的信
 description: 给五年前的自己回了一封信，顺便原谅了几件事。
 publishedAt: 2025-05-25T21:10:00+08:00
-section: personal-reflections
 tags:
   - 自我对话
+draft: true
 ---
 
 三十岁生日那天我没有许愿，而是做了一次清点：哪些关系值得继续投入，哪些执念可以就此放手，哪些能力是我真正的立足之本。清点完才发现，真正重要的东西一只手就数得过来。

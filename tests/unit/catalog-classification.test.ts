@@ -6,10 +6,15 @@ import {
 import { listPublishedPosts, listSections } from '../../src/server/content'
 
 /** Keep in lockstep with docs/ops/write-blog.md §1.4 散页名单. */
-const DOCUMENTED_LOOSE_SLUGS = [
-  'hello-world-again',
-  'p0-kitchen-sink',
-  'site-changelog-2026',
+const DOCUMENTED_LOOSE_SLUGS = ['p0-kitchen-sink'] as const
+
+const LIVE_SECTION_SLUGS = [
+  'fullstack-learning',
+  'ai-mflly-notes',
+  'yu-reflections',
+  'yu-reviews',
+  'yu-essays',
+  'other',
 ] as const
 
 describe('live catalog classification', () => {
@@ -20,10 +25,7 @@ describe('live catalog classification', () => {
     ])
 
     expect(sections.map((section) => section.slug)).toEqual([
-      'personal-reflections',
-      'ai-thinking',
-      'tech-thinking',
-      'medical-thinking',
+      ...LIVE_SECTION_SLUGS,
     ])
 
     const loosePublished = posts
@@ -44,7 +46,15 @@ describe('live catalog classification', () => {
 
     expect(books.length).toBeGreaterThan(0)
     expect(books.every((book) => book.chapters.length > 0)).toBe(true)
-    expect(books.some((book) => book.slug === 'medical-thinking')).toBe(true)
+    expect(
+      books
+        .filter((book) => book.slug !== UNCATEGORIZED_BOOK_SLUG)
+        .map((book) => book.slug),
+    ).toEqual(
+      LIVE_SECTION_SLUGS.filter((slug) =>
+        posts.some((post) => post.frontmatter.section === slug),
+      ),
+    )
 
     const known = new Set(sections.map((section) => section.slug))
     const seen = new Set<string>()
