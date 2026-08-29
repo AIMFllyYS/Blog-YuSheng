@@ -4,9 +4,11 @@ import Link from 'next/link'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import styles from './blog-index.module.css'
 import {
+  bookmarkTagOverflow,
   formatChapterDate,
   hashString,
   readCatalogHash,
+  uniqueTags,
 } from './catalog-helpers'
 import type { ShelfBook } from './create-shelf-books'
 
@@ -35,6 +37,38 @@ type BookmarkTip = {
   readonly top: number
   readonly title: string
   readonly index: number
+  readonly tags: readonly string[]
+}
+
+function BookmarkTipView({ tip }: { readonly tip: BookmarkTip }) {
+  const { extra, visible } = bookmarkTagOverflow(tip.tags)
+
+  return (
+    <div
+      className={styles.bookmarkTip}
+      role="tooltip"
+      style={{ left: `${tip.left}px`, top: `${tip.top}px` }}
+    >
+      <div className={styles.bookmarkTipBody}>
+        <div className={styles.bookmarkTipFrame}>
+          <span className={styles.bookmarkTipTitle}>{tip.title}</span>
+          <span className={styles.bookmarkTipSeal}>{tip.index + 1}</span>
+        </div>
+      </div>
+      {visible.length > 0 ? (
+        <ul className={styles.bookmarkTipTags} data-bookmark-tags>
+          {visible.map((tag) => (
+            <li className={styles.bookmarkTipTag} key={tag}>
+              {tag}
+            </li>
+          ))}
+          {extra > 0 ? (
+            <li className={styles.bookmarkTipTag}>+{extra}</li>
+          ) : null}
+        </ul>
+      ) : null}
+    </div>
+  )
 }
 
 /** 单本「方向书」：左窄书脊 + 右侧书页，点击后书页绕左书脊平转 174°，露出文章书脊架 */
@@ -101,6 +135,9 @@ function Tome({ book, open, onToggle }: TomeProps) {
   const dateLabel = latest
     ? formatChapterDate(latest.frontmatter.publishedAt)
     : null
+  const coverTags = uniqueTags(
+    book.chapters.flatMap((entry) => entry.frontmatter.tags ?? []),
+  ).slice(0, 3)
 
   // 悬浮书脊 → 竖式题签从书顶滑出，展示章节完整标题（渲染在 tome 层，逃逸滚动容器的 overflow 裁剪）
   const showTip = useCallback(
@@ -119,6 +156,7 @@ function Tome({ book, open, onToggle }: TomeProps) {
         top: rect.top - rootRect.top,
         title: chapter.frontmatter.title,
         index: chapterIndex,
+        tags: uniqueTags(chapter.frontmatter.tags),
       })
     },
     [book.chapters],
@@ -166,21 +204,15 @@ function Tome({ book, open, onToggle }: TomeProps) {
                   <h2 className={styles.titleBig}>{book.title}</h2>
                   {book.summary && <p className={styles.desc}>{book.summary}</p>}
                 </div>
-                <div className={styles.tags}>
-                  {Array.from(
-                    new Set(
-                      book.chapters.flatMap(
-                        (entry) => entry.frontmatter.tags ?? [],
-                      ),
-                    ),
-                  )
-                    .slice(0, 3)
-                    .map((tag) => (
+                {coverTags.length > 0 ? (
+                  <div className={styles.tags}>
+                    {coverTags.map((tag) => (
                       <span className={styles.tag} key={tag}>
                         {tag}
                       </span>
                     ))}
-                </div>
+                  </div>
+                ) : null}
               </div>
               <div className={styles.arrow}>↗</div>
             </div>
@@ -249,18 +281,7 @@ function Tome({ book, open, onToggle }: TomeProps) {
 
       {/* 悬浮题签：竖式签条从书顶滑出，展示章节完整标题（pointer-events 关闭，不影响点击） */}
       {open && tip && (
-        <div
-          className={styles.bookmarkTip}
-          role="tooltip"
-          style={{ left: `${tip.left}px`, top: `${tip.top}px` }}
-        >
-          <div className={styles.bookmarkTipBody}>
-            <div className={styles.bookmarkTipFrame}>
-              <span className={styles.bookmarkTipTitle}>{tip.title}</span>
-              <span className={styles.bookmarkTipSeal}>{tip.index + 1}</span>
-            </div>
-          </div>
-        </div>
+        <BookmarkTipView tip={tip} />
       )}
     </div>
   )

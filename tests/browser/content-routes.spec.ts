@@ -29,6 +29,13 @@ async function openKitchenSinkFromCatalog(page: Page) {
     'true',
   )
   await expect(articleLink).toBeVisible()
+  await expect(articleLink.locator('[data-chapter-tags]')).toContainText('P0')
+  await expect(articleLink.locator('[data-chapter-tags]')).toContainText(
+    '内容引擎',
+  )
+  await expect(articleLink.locator('[data-chapter-tags]')).toContainText(
+    '中文验收',
+  )
   return articleLink
 }
 
@@ -97,4 +104,34 @@ test('博客书架在窄屏走目录树且不横向溢出', async ({ page }) => 
     viewportWidth: window.innerWidth,
   }))
   expect(geometry.documentWidth).toBeLessThanOrEqual(geometry.viewportWidth)
+
+  const looseGroup = page.locator('#uncategorized')
+  await looseGroup.getByRole('button').click()
+  await expect(looseGroup.locator('[data-chapter-tags]')).toContainText('P0')
+})
+
+test('书库悬停小书脊时书签旁显示标签', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 800 })
+  await page.goto('/blog/')
+  await waitForCatalog(page)
+
+  const shelf = page.locator('[data-catalog-shelf]')
+  if (!(await shelf.isVisible())) {
+    test.skip(true, '当前视口走目录树，不渲染书库')
+  }
+
+  const tome = page.locator('[data-book-slug="uncategorized"]')
+  await tome.click()
+  const spine = tome.locator(`a[href="${KITCHEN_SINK_HREF}"]`)
+  await expect(spine).toBeVisible()
+  await spine.dispatchEvent('mouseover')
+  const tooltip = page.getByRole('tooltip')
+  await expect(tooltip).toBeVisible()
+  await expect(tooltip.locator('[data-bookmark-tags]')).toContainText('P0')
+  await expect(tooltip.locator('[data-bookmark-tags]')).toContainText('内容引擎')
+
+  await spine.evaluate((element) => {
+    if (element instanceof HTMLAnchorElement) element.click()
+  })
+  await expect(page).toHaveURL(/\/blog\/p0-kitchen-sink\/$/)
 })
