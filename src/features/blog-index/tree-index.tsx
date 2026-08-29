@@ -6,6 +6,7 @@ import styles from './blog-index.module.css'
 import {
   formatChapterDate,
   readCatalogHash,
+  uniqueTags,
   writeCatalogHash,
 } from './catalog-helpers'
 import type { ShelfBook } from './create-shelf-books'
@@ -69,32 +70,44 @@ function TreeGroup({ book }: { readonly book: ShelfBook }) {
       <div className={styles.treeGroupBody} data-open={open} ref={bodyRef}>
         <div className={styles.treeGroupInner}>
           <ol className={styles.chapters}>
-            {book.chapters.map((entry, index) => (
-              <li key={entry.slug}>
-                <Link
-                  className={styles.chapter}
-                  href={`/blog/${entry.slug}/`}
-                  prefetch={false}
-                  tabIndex={open ? undefined : -1}
-                >
-                  <span className={styles.chapterIndex}>第{index + 1}章</span>
-                  <span className={styles.chapterBody}>
-                    <span className={styles.chapterTitle}>
-                      {entry.frontmatter.title}
+            {book.chapters.map((entry, index) => {
+              const tags = uniqueTags(entry.frontmatter.tags)
+              return (
+                <li key={entry.slug}>
+                  <Link
+                    className={styles.chapter}
+                    href={`/blog/${entry.slug}/`}
+                    prefetch={false}
+                    tabIndex={open ? undefined : -1}
+                  >
+                    <span className={styles.chapterIndex}>第{index + 1}章</span>
+                    <span className={styles.chapterBody}>
+                      <span className={styles.chapterTitle}>
+                        {entry.frontmatter.title}
+                      </span>
+                      {tags.length > 0 ? (
+                        <span className={styles.chapterTags} data-chapter-tags>
+                          {tags.map((tag) => (
+                            <span className={styles.tag} key={tag}>
+                              {tag}
+                            </span>
+                          ))}
+                        </span>
+                      ) : null}
+                      <span className={styles.chapterDescription}>
+                        {entry.frontmatter.description}
+                      </span>
                     </span>
-                    <span className={styles.chapterDescription}>
-                      {entry.frontmatter.description}
+                    <span className={styles.chapterMeta}>
+                      <time dateTime={entry.frontmatter.publishedAt}>
+                        {formatChapterDate(entry.frontmatter.publishedAt)}
+                      </time>
+                      <span>约 {entry.readingMinutes} 分钟</span>
                     </span>
-                  </span>
-                  <span className={styles.chapterMeta}>
-                    <time dateTime={entry.frontmatter.publishedAt}>
-                      {formatChapterDate(entry.frontmatter.publishedAt)}
-                    </time>
-                    <span>约 {entry.readingMinutes} 分钟</span>
-                  </span>
-                </Link>
-              </li>
-            ))}
+                  </Link>
+                </li>
+              )
+            })}
           </ol>
         </div>
       </div>

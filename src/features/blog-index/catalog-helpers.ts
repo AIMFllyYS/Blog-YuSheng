@@ -18,6 +18,39 @@ export function formatChapterDate(iso: string): string {
   return CHAPTER_DATE_FORMATTER.format(new Date(iso))
 }
 
+/** First-seen unique tags; empty input yields an empty list. */
+export function uniqueTags(
+  tags: readonly string[] | undefined,
+): readonly string[] {
+  if (!tags || tags.length === 0) {
+    return []
+  }
+
+  const seen = new Set<string>()
+  const result: string[] = []
+  for (const tag of tags) {
+    if (seen.has(tag)) continue
+    seen.add(tag)
+    result.push(tag)
+  }
+  return result
+}
+
+export const BOOKMARK_TAG_LIMIT = 4
+
+export function bookmarkTagOverflow(
+  tags: readonly string[] | undefined,
+): { readonly visible: readonly string[]; readonly extra: number } {
+  const unique = uniqueTags(tags)
+  if (unique.length <= BOOKMARK_TAG_LIMIT) {
+    return { visible: unique, extra: 0 }
+  }
+  return {
+    visible: unique.slice(0, BOOKMARK_TAG_LIMIT),
+    extra: unique.length - BOOKMARK_TAG_LIMIT,
+  }
+}
+
 export function readCatalogHash(): string {
   return decodeURIComponent(window.location.hash.replace(/^#/, ''))
 }
