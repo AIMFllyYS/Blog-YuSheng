@@ -191,9 +191,9 @@ fallback / security / accessibility / allowed profiles
 | Canvas | 注册键映射仓库内受审查代码，参数/数据外置 | v1 禁止；以后仅集中安全清单 | 组件提供 PNG/SVG 快照 |
 | SVG | 构建期清洗后以独立资源/`img` 加载，不内联父 DOM | 禁止 | 复用同一安全投影，优先矢量 |
 | 本地 HTML | 只允许 `<html-embed>` 引用 `embeds/`；sandbox iframe 可运行脚本但不授予同源能力 | 禁止 | 截图或降级卡片 |
-| 站内网页 | P0 一律降级；不放开全站 `DENY`，也不使用会让相对资源按父页解析的 `srcdoc` | 禁止 | 标题 + 域名 + 打开链接 |
-| 自有外部页面 | `web-embed` 集中 allowlist；P0 空名单即降级 | 禁止 | 标题 + 域名 + 打开链接 |
-| 第三方网页 | `web-embed` 集中 allowlist；未命中或 4 秒内未加载即降级 | 禁止 | 标题 + 域名 + 打开链接 |
+| 站内网页 | P0 一律降级；不放开全站 `DENY`，也不使用会让相对资源按父页解析的 `srcdoc` | 禁止 | 标题 + 域名 + 右上角「打开」 |
+| 自有外部页面 | `web-embed` 集中 allowlist（审过的 eTLD+1，含子域）；未命中或对端拒嵌则降级 | 禁止 | 标题 + 域名 + 右上角「打开」 |
+| 第三方网页 | `web-embed` 集中 allowlist；未命中或 4 秒内未加载即降级 | 禁止 | 标题 + 域名 + 右上角「打开」 |
 
 导出不抓取远端预览图：规格 12.4 禁止服务端代抓作者提供的任意 URL，静态站也没有运行时可抓。
 
@@ -203,9 +203,9 @@ iframe 的默认 sandbox 仅含 `allow-scripts`；表单、弹窗、下载、顶
 
 - **不引入独立子域**。`output: 'export'` + EdgeOne Pages 没有运行时，独立源需要第二套 DNS/证书/站点。隔离性由 sandbox **不含 `allow-same-origin`** 提供的 opaque origin 承担；独立子域后置到 P1。
 - 因为是 opaque origin，`event.origin` 恒为 `"null"`，`postMessage` 校验必须落在 `event.source` 比对 + 一次性 capability nonce + 严格消息 schema 上。
-- **嵌入页公开 URL 固定为单一前缀 `/embeds/<slug>/<embed-id>/`**，不落在 `/blog/<slug>/` 之下。原因是 EdgeOne `edgeone.json` 的 `source` 最多只能含一个 `*`，`/blog/*/embeds/*` 非法，而 `/blog/*` 会连带放开整站文章页的点击劫持保护。
+- **嵌入页公开 URL 固定为单一前缀 `/embeds/<slug>/<embed-id>/`**（iframe 实际指向该目录下的 `index.html`），不落在 `/blog/<slug>/` 之下。原因是 EdgeOne `edgeone.json` 的 `source` 最多只能含一个 `*`，`/blog/*/embeds/*` 非法，而 `/blog/*` 会连带放开整站文章页的点击劫持保护。开发服务器只把带扩展名的静态文件当资源，所以阅读页不能把目录斜杠当成 iframe `src`。
 - 全局 `X-Frame-Options: DENY` 保留；`/embeds/*` 用**同 key 覆盖**为 `SAMEORIGIN` 并补 `Content-Security-Policy: frame-ancestors 'self'; sandbox allow-scripts`。`frame-ancestors` 只允许本站父页面，文档级 `sandbox` 也约束顶层直接访问；EdgeOne 的 header `value` 长度下限是 1，无法用空值删除已有响应头，所以只能覆盖不能撤销。
-- `web-embed` 走集中 allowlist；未命中或远端拒绝嵌入时降级为预览卡片（标题 + 域名 + 打开链接）。
+- `web-embed` 走集中 allowlist；未命中或远端拒绝嵌入时降级为预览卡片（标题 + 域名 + 右上角「打开」）。`html-embed` / `web-embed` 卡片标题栏右上角的「打开」一律新标签页跳到对应 URL。
 - 顶层直接访问 `/embeds/.../index.html` 时同样受文档级 CSP `sandbox allow-scripts` 约束，不能借顶层导航绕过 iframe sandbox。独立子域仍后置到 P1。
 
 “允许脚本运行”不等于“允许读取博客登录态和父页面 DOM”。沙箱内容与父页面通信时只能使用有来源校验和消息 schema 的 `postMessage` 协议。
@@ -341,6 +341,20 @@ Pretext 服务两处，都不进正文包：首页活字用它算字符位置（
 - 默认关闭；设置面板的「本地作者模式」打开后才出现可写 UI（生产构建上 `DISCUSSION_WRITES_OPEN` 仍代表公开写入，保持关闭）。
 - 数据只存在本机；清除站点数据会丢失。导出的 `.review.md` 才是可带走的持久产物。
 - D1 不因此修改。Supabase 公开写入仍归 P1，落地时不存在「本地这批要不要同步上去」的糊涂账。
+
+### D23 `/blog/` 目录 3D 书库：纯 CSS 3D 复刻原型 09，目录树兜底 ✅
+
+目录页的信息架构是两级：板块（大方向）→ 文章。视觉对应为：每个板块一本横向「方向书」（左窄书脊 + 右侧大书页），垂直堆叠；点击后书页绕左书脊平转 174° 翻开，露出该板块的文章书脊架（竖排书脊、参差高度、金带封头、横向滚动、悬浮整本抽出并下落书签展示完整标题）。技术路线曾引入 Three.js via R3F 做真 3D，因翻页形态与光影始终无法 1:1 还原原型 09，最终回退为**纯 CSS 3D**（`shelf-stack.tsx`：perspective + preserve-3d + rotateY），理由：
+
+- 验收标准是「与原型 09 一模一样」，原型本身就是 CSS 3D 实现，CSS 移植是 1:1 的最短路径；
+- 不依赖 WebGL，无 chunk 懒载负担，所有主题 token 天然随 CSS 变量切换；
+- 交互全部原生复刻：一次只展开一册、点空白/其他方向/Esc 收合、滚轮转横向、两端渐隐提示、hash 深链（`#<section-slug>`）。
+
+边界与降级：
+
+- 降级路径是目录树视图（`tree-index.tsx`，手风琴）：`prefers-reduced-motion`、窄屏（<768px）、粗指针设备自动落入；用户可经右上角「视图」按钮手动切换，`localStorage` 记忆选择。
+- 文档级收合监听不依赖 `stopPropagation`（React 根委托下不可靠），改为 document 侧 `closest('[data-book-slug]')` 命中判断。
+- 阅读页 chrome 保持原型 1:1，3D 不泄漏；外壳与阻尼动效仍归 D21。
 
 ## 模块边界总览 ✅
 

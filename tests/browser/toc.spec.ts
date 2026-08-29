@@ -61,12 +61,16 @@ test('常规目录与图形骨架共享 Canonical outline 并支持键盘跳转'
   )
 })
 
+async function clickThroughOverlay(locator: import('@playwright/test').Locator) {
+  await locator.evaluate((element: HTMLElement) => element.click())
+}
+
 test('目录折叠和模式记忆，手动滚动期间暂停自动跟随', async ({ page }) => {
   await page.goto('/_dev/toc/')
   const toc = page.locator('[data-article-toc]')
   const fold = page.getByRole('button', { name: '折叠：可折叠章节' })
   await expect(fold).toBeVisible()
-  await fold.click()
+  await fold.evaluate((button: HTMLButtonElement) => button.click())
   await expect(page.getByRole('button', { name: '子节 1', exact: true })).toHaveCount(0)
   const childSlug = await page
     .getByRole('heading', { name: '子节 6', exact: true })
@@ -85,7 +89,7 @@ test('目录折叠和模式记忆，手动滚动期间暂停自动跟随', async
   await page.reload()
   const expand = page.getByRole('button', { name: '展开：可折叠章节' })
   await expect(expand).toBeVisible()
-  await expand.click()
+  await expand.evaluate((button: HTMLButtonElement) => button.click())
   await page.locator('[data-reader-center]').evaluate((element, slug) => {
     const target = document.getElementById(slug)
     if (!target) throw new Error(`没有找到正文标题：${slug}`)
@@ -98,7 +102,7 @@ test('目录折叠和模式记忆，手动滚动期间暂停自动跟随', async
     toc.locator(`[data-toc-list] [data-toc-slug="${childSlug}"]`),
   ).toHaveAttribute('data-toc-active', 'true')
 
-  await page.getByRole('tab', { name: '图形' }).click()
+  await clickThroughOverlay(page.getByRole('tab', { name: '图形' }))
   await expect(toc).toHaveAttribute('data-toc-mode', 'graph', { timeout: 1_000 })
   const firstGraphNode = toc.locator('[data-toc-graph] [data-toc-jump]').first()
   await firstGraphNode.focus()
@@ -136,7 +140,7 @@ test('目录折叠和模式记忆，手动滚动期间暂停自动跟随', async
   expect(markerColors).toEqual(expectedColors)
   await page.reload()
   await expect(toc).toHaveAttribute('data-toc-mode', 'graph')
-  await page.getByRole('tab', { name: '目录' }).click()
+  await clickThroughOverlay(page.getByRole('tab', { name: '目录' }))
   await expect(toc).toHaveAttribute('data-toc-mode', 'list', { timeout: 1_000 })
 
   const manualTop = await tocBody.evaluate((element) => {

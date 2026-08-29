@@ -49,6 +49,7 @@ export function ArticleToc({ articleSlug, outline }: ArticleTocProps) {
     left: number
     top: number
   }>()
+  const foldTouchedRef = useRef(false)
   const switchTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
   const followPausedUntilRef = useRef(0)
   const listRef = useRef<HTMLUListElement>(null)
@@ -77,7 +78,8 @@ export function ArticleToc({ articleSlug, outline }: ArticleTocProps) {
         setMode('graph')
         setSelectedMode('graph')
       }
-      setFolded(restoredFolded ?? new Set())
+      if (foldTouchedRef.current) return
+      if (restoredFolded) setFolded(restoredFolded)
     })
     return () => {
       active = false
@@ -168,6 +170,7 @@ export function ArticleToc({ articleSlug, outline }: ArticleTocProps) {
   }
 
   const toggleFold = (slug: string) => {
+    foldTouchedRef.current = true
     setFolded((current) => {
       const next = new Set(current)
       if (next.has(slug)) next.delete(slug)

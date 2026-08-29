@@ -83,7 +83,8 @@ public/          静态资源（不放 >25MB 文件）
 - **PDF 必须直接下载** — 禁止使用 `window.print()` 或系统打印对话框代替 PDF 导出
 - **默认构建期完成，推不动才进浏览器** — 公式渲染、图片尺寸/格式转换在构建期；Mermaid、嵌入、讨论解析、导出在浏览器且必须按需加载；阅读首屏与讨论/导出/3D 分开计量，预算见 [blog-content-engine.md 13.1–13.3](docs/specs/blog-content-engine.md)
 - **中文字体按 `unicode-range` 切片** — 不按"站内已用字"整体裁剪（讨论区字符集构建期不可知）
-- **博客页 1:1 对标原型** — `/blog/` 与 `/blog/<slug>/` 的布局、交互与视觉以 [blog-reader-prototype.html](docs/designs/blog-reader-prototype.html) 为准，不得另起一套外观；文字说明见 [blog-reader-design.md](docs/designs/blog-reader-design.md)，token 仍走 [frontend-design.md](docs/conventions/frontend-design.md)
+- **阅读页 1:1 对标原型** — `/blog/<slug>/` 的布局、交互与视觉以 [blog-reader-prototype.html](docs/designs/blog-reader-prototype.html) 为准，不得另起一套外观；文字说明见 [blog-reader-design.md](docs/designs/blog-reader-design.md)，token 仍走 [frontend-design.md](docs/conventions/frontend-design.md)
+- **目录页 3D 书库走纯 CSS 3D** — `/blog/` 目录用 `src/features/blog-index/shelf-stack.tsx` 1:1 复刻原型 09（横向方向书堆叠、绕左书脊 rotateY(-174deg) 翻页、文章书脊架、悬浮抽出）；不用 Three.js（真 3D 无法 1:1 还原原型，架构 D23）。降级路径是目录树视图（`tree-index.tsx`）：移动端/粗指针/reduced-motion 自动降级，用户可经右上角「视图」按钮手动切换（localStorage 记忆）。3D 不泄漏到阅读页 chrome
 - **全站共用外壳与阻尼动效** — 绳挂导航、下落便签通知、弹窗、抽屉、滚动条以同一份原型为模板，其它路由只换内容；UI 动效是阻尼、慢、`--ease-damp`。大块栏/页尾禁止弹簧回弹；导出/设置/弹窗用 `--ease-pop` 放大并只回弹一次；Tab 切换走短骨架懒载。细则见 frontend-design 第三节 / 四之四，架构 D21
 
 > 完整代码风格规范见 [docs/conventions/code-style.md](docs/conventions/code-style.md)。
@@ -166,6 +167,7 @@ public/          静态资源（不放 >25MB 文件）
 ### docs/specs/ — 技术规格
 
 - [blog-content-engine.md](docs/specs/blog-content-engine.md) — 内容协议、Canonical IR、renderer/profile、安全讨论、划词锚定、多格式导出契约与执行位置/性能预算
+- [auth-and-discussions.md](docs/specs/auth-and-discussions.md) — P1 进入门：邮箱登录弹窗、作者白名单、RLS/RPC、anchor manifest、限流（无 Next 运行时）
 
 ### docs/plans/ — 工程计划
 
@@ -173,6 +175,7 @@ public/          静态资源（不放 >25MB 文件）
 
 ### docs/ops/ — 运维指南
 
+- [write-blog.md](docs/ops/write-blog.md) — 作者写作指南（文章包、frontmatter、正文语法、素材目录、预览与发布）
 - [deploy-edgeone.md](docs/ops/deploy-edgeone.md) — EdgeOne Pages 部署配置规范（字段规范、buildCommand 踩坑记录、cloudFunctions 迁移、检查清单、故障排查）
 
 <!-- BEGIN:nextjs-agent-rules -->

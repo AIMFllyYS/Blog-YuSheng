@@ -23,6 +23,13 @@ export async function buildContentAssets(
   return manifest
 }
 
+export async function mirrorPublishedAssetsForDev(
+  manifest: readonly AssetManifestEntry[],
+) {
+  if (process.env.NODE_ENV !== 'development') return
+  await copyAssetManifest(manifest, path.join(process.cwd(), 'public'))
+}
+
 export async function copyAssetManifest(
   manifest: readonly AssetManifestEntry[],
   outputRoot: string,

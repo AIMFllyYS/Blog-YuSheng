@@ -1,108 +1,23 @@
 import DOMPurify from 'dompurify'
 
-import { KATEX_SECURITY_POLICY } from './katex-policy'
+import { MERMAID_SECURITY_POLICY } from './mermaid-policy'
 import { DISCUSSION_LIMITS } from './render-limits'
 
-export { KATEX_SECURITY_POLICY } from './katex-policy'
-
-export const MERMAID_SECURITY_POLICY = Object.freeze({
-  securityLevel: 'strict',
-  maxTextSize: DISCUSSION_LIMITS.maxMermaidSourceLength,
-  maxOutputNodes: 2_000,
-  maxOutputBytes: 500_000,
-  maxAttributeLength: 32_000,
-  maxTextLength: 32_000,
-  loadTimeoutMs: 10_000,
-  renderTimeoutMs: 2_000,
-  allowUserClick: false,
-  allowExternalLinks: false,
-  htmlLabels: false,
-  sanitizeGeneratedSvg: true,
-  delivery: 'blob-image',
-} as const)
-
-export const CANVAS_SECURITY_POLICY = Object.freeze({
-  maxWidth: 2_048,
-  maxHeight: 2_048,
-  maxPixels: 4_194_304,
-  maxExecutionTimeMs: 2_000,
-  maxInstancesPerDocument: DISCUSSION_LIMITS.maxSafeCanvasInstances,
-} as const)
+export { KATEX_SECURITY_POLICY, validateKatexSource } from './katex-policy'
+export {
+  MERMAID_SECURITY_POLICY,
+  validateMermaidSource,
+} from './mermaid-policy'
+export {
+  CANVAS_SECURITY_POLICY,
+  validateCanvasRequest,
+} from './canvas-policy'
 
 export const DISCUSSION_WRITE_RATE_POLICY = Object.freeze({
   windowMs: 60_000,
   maxWritesPerAccount: 10,
   maxWritesPerArticle: 50,
 } as const)
-
-const USER_MACRO_PATTERN =
-  /\\(?:def|gdef|edef|xdef|let|futurelet|newcommand|renewcommand|providecommand)\b/i
-const KATEX_TRUST_COMMAND_PATTERN =
-  /(?:^|[^\\])(?:\\\\)*\\(?:href|url|includegraphics|htmlClass|htmlId|htmlStyle|htmlData)\b/iu
-const UNSAFE_MERMAID_PATTERN =
-  /(?:^|\n)\s*(?:click\s+|%%\{|.*\bhref\b)|(?:javascript|data|vbscript):|https?:\/\/|url\s*\(|\/\//i
-
-export function validateKatexSource(source: string): string | undefined {
-  if (source.length > KATEX_SECURITY_POLICY.maxSourceLength) {
-    return `单条公式不得超过 ${KATEX_SECURITY_POLICY.maxSourceLength} 字符。`
-  }
-  if (!KATEX_SECURITY_POLICY.allowUserMacros && USER_MACRO_PATTERN.test(source)) {
-    return '当前安全策略不允许用户定义 KaTeX 宏。'
-  }
-  if (!KATEX_SECURITY_POLICY.trust && KATEX_TRUST_COMMAND_PATTERN.test(source)) {
-    return '当前安全策略不允许 KaTeX 链接、外部资源或 HTML 命令。'
-  }
-  let nestingDepth = 0
-  for (let index = 0; index < source.length; index += 1) {
-    if (source[index] === '\\') {
-      index += 1
-      continue
-    }
-    if (source[index] === '{') nestingDepth += 1
-    if (source[index] === '}') nestingDepth = Math.max(0, nestingDepth - 1)
-    if (nestingDepth > KATEX_SECURITY_POLICY.maxNestingDepth) {
-      return `KaTeX 嵌套不得超过 ${KATEX_SECURITY_POLICY.maxNestingDepth} 层。`
-    }
-  }
-  return undefined
-}
-
-export function validateMermaidSource(source: string): string | undefined {
-  if (source.length > MERMAID_SECURITY_POLICY.maxTextSize) {
-    return `单条 Mermaid 源码不得超过 ${MERMAID_SECURITY_POLICY.maxTextSize} 字符。`
-  }
-  if (UNSAFE_MERMAID_PATTERN.test(source)) {
-    return '当前 Mermaid 安全策略禁止配置覆盖、点击脚本和任意链接。'
-  }
-  return undefined
-}
-
-export function validateCanvasRequest(input: {
-  readonly width: number
-  readonly height: number
-  readonly executionTimeMs?: number
-}): string | undefined {
-  if (
-    !Number.isSafeInteger(input.width) ||
-    !Number.isSafeInteger(input.height) ||
-    input.width <= 0 ||
-    input.height <= 0 ||
-    input.width > CANVAS_SECURITY_POLICY.maxWidth ||
-    input.height > CANVAS_SECURITY_POLICY.maxHeight ||
-    input.width * input.height > CANVAS_SECURITY_POLICY.maxPixels
-  ) {
-    return 'Canvas 尺寸超过集中安全预算。'
-  }
-  if (
-    input.executionTimeMs !== undefined &&
-    (!Number.isFinite(input.executionTimeMs) ||
-      input.executionTimeMs < 0 ||
-      input.executionTimeMs > CANVAS_SECURITY_POLICY.maxExecutionTimeMs)
-  ) {
-    return 'Canvas 执行时间超过集中安全预算。'
-  }
-  return undefined
-}
 
 export function validateDiscussionOperationLimits(input: {
   readonly replyDepth?: number

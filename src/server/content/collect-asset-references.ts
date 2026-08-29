@@ -28,7 +28,7 @@ export async function collectAssetReferences(post: Post) {
   }> = []
   const diagnostics: FrontmatterDiagnostic[] = []
 
-  if (post.frontmatter.cover) {
+  if (post.frontmatter.cover && !isExternalUrl(post.frontmatter.cover)) {
     const cover = post.frontmatter.cover
     const offset = locateFrontmatterValue(post.source, 'cover', cover)
     references.push({

@@ -1,7 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from 'react'
-import { AnnotationPanel } from '@/features/annotations/annotation-panel'
+import { useCallback, useEffect, useRef, useState, type ComponentType, type FormEvent, type KeyboardEvent } from 'react'
 import { SHOW_ANNOTATIONS_PANE_EVENT } from '@/features/annotations/annotation-events'
 import {
   ANNOTATE_SELECTION_EVENT,
@@ -201,7 +200,7 @@ export function ReaderWorkspace({ articleTitle }: { readonly articleTitle: strin
           id="workspace-pane-annotations"
           role="tabpanel"
         >
-          <AnnotationPanel />
+          <AnnotationPanelSlot />
         </section>
 
         <section
@@ -264,6 +263,27 @@ export function ReaderWorkspace({ articleTitle }: { readonly articleTitle: strin
       <WorkspaceSkeleton pane={selectedPane} switching={switching} />
     </div>
   )
+}
+
+function AnnotationPanelSlot() {
+  const [Panel, setPanel] = useState<ComponentType | undefined>()
+  useEffect(() => {
+    let cancelled = false
+    void import('@/features/annotations/annotation-panel').then((module) => {
+      if (!cancelled) setPanel(() => module.AnnotationPanel)
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [])
+  if (!Panel) {
+    return (
+      <div role="status">
+        注释加载中
+      </div>
+    )
+  }
+  return <Panel />
 }
 
 function WorkspaceStatus({

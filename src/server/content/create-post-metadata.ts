@@ -1,6 +1,7 @@
 import 'server-only'
 
 import type { Metadata } from 'next'
+import { isAuthorHostedImageUrl } from '../../features/doc-engine/security/embed-iframe-policy'
 import { readPost } from './read-post'
 
 export async function createPostMetadata(
@@ -8,9 +9,7 @@ export async function createPostMetadata(
   siteOrigin = process.env.SITE_ORIGIN,
 ): Promise<Metadata> {
   const { frontmatter } = await readPost(slug)
-  const cover = frontmatter.cover && siteOrigin
-    ? createSocialCoverUrl(siteOrigin, slug, frontmatter.cover)
-    : undefined
+  const cover = resolveSocialCover(frontmatter.cover, slug, siteOrigin)
 
   return {
     title: frontmatter.title,
@@ -21,6 +20,17 @@ export async function createPostMetadata(
       images: cover ? [cover] : undefined,
     },
   }
+}
+
+function resolveSocialCover(
+  cover: string | undefined,
+  slug: string,
+  siteOrigin: string | undefined,
+) {
+  if (!cover) return undefined
+  if (isAuthorHostedImageUrl(cover)) return cover
+  if (!siteOrigin) return undefined
+  return createSocialCoverUrl(siteOrigin, slug, cover)
 }
 
 function createSocialCoverUrl(

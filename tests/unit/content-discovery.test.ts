@@ -24,7 +24,7 @@ describe('build-time content repository', () => {
     const slugs = await discoverPostSlugs()
     const post = await readPost('p0-kitchen-sink')
 
-    expect(slugs).toEqual(['p0-kitchen-sink'])
+    expect(slugs).toContain('p0-kitchen-sink')
     expect(post.frontmatter.title).toBe('P0 中文综合验收文章')
     expect(post.body).toContain('<web-embed')
     expect(post.packageRoot).toMatch(/content[\\/]posts[\\/]p0-kitchen-sink$/)
@@ -88,6 +88,53 @@ describe('build-time content repository', () => {
         expect.objectContaining({ code: 'FRONTMATTER_REQUIRED_FIELD_MISSING' }),
       ]),
     })
+  })
+
+  it('rejects posts whose section is not registered in sections.yml', async () => {
+    const root = await createPostsRoot()
+    await writeSections(root, 'ai-thinking')
+    await writePost(
+      root,
+      'lost-post',
+      validSource('迷路文章', '2026-01-01T00:00:00+08:00', false, 'nowhere'),
+    )
+    await writePost(
+      root,
+      'known-post',
+      validSource('在册文章', '2026-02-01T00:00:00+08:00', false, 'ai-thinking'),
+    )
+
+    await expect(listPublishedPosts(root)).rejects.toMatchObject({
+      name: 'ContentBuildError',
+      diagnostics: [
+        expect.objectContaining({
+          code: 'FRONTMATTER_SECTION_UNKNOWN',
+          articleSlug: 'lost-post',
+        }),
+      ],
+    })
+  })
+
+  it('accepts registered sections and sectionless posts side by side', async () => {
+    const root = await createPostsRoot()
+    await writeSections(root, 'ai-thinking')
+    await writePost(
+      root,
+      'known-post',
+      validSource('在册文章', '2026-01-01T00:00:00+08:00', false, 'ai-thinking'),
+    )
+    await writePost(
+      root,
+      'loose-post',
+      validSource('散页文章', '2026-02-01T00:00:00+08:00'),
+    )
+
+    const posts = await listPublishedPosts(root)
+    expect(posts.map((post) => post.slug)).toEqual([
+      'loose-post',
+      'known-post',
+    ])
+    expect(posts[1]?.frontmatter.section).toBe('ai-thinking')
   })
 
   it('rejects traversal with a deterministic source location', async () => {
@@ -204,8 +251,9 @@ async function createPostsRoot() {
     `content-discovery-${crypto.randomUUID()}`,
   )
   temporaryRoots.push(root)
-  await mkdir(root, { recursive: true })
-  return root
+  const postsRoot = path.join(root, 'posts')
+  await mkdir(postsRoot, { recursive: true })
+  return postsRoot
 }
 
 async function writePost(root: string, slug: string, source: string) {
@@ -214,10 +262,23 @@ async function writePost(root: string, slug: string, source: string) {
   await writeFile(path.join(packageRoot, 'index.md'), source, 'utf8')
 }
 
+async function writeSections(root: string, ...slugs: string[]) {
+  const items = slugs
+    .map((slug) => `  - slug: ${slug}\n    title: ${slug}\n    order: 10`)
+    .join('\n')
+  await writeFile(
+    path.join(path.dirname(root), 'sections.yml'),
+    `sections:\n${items}\n`,
+    'utf8',
+  )
+}
+
 function validSource(
   title: string,
   publishedAt: string,
   draft = false,
+  section?: string,
 ) {
-  return `---\nschemaVersion: 1\ntitle: ${title}\ndescription: 测试文章\npublishedAt: ${publishedAt}\ndraft: ${draft}\n---\n\n正文\n`
+  const sectionLine = section ? `section: ${section}\n` : ''
+  return `---\nschemaVersion: 1\ntitle: ${title}\ndescription: 测试文章\npublishedAt: ${publishedAt}\n${sectionLine}draft: ${draft}\n---\n\n正文\n`
 }

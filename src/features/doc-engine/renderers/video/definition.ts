@@ -20,8 +20,8 @@ export const VIDEO_RENDERER_DEFINITION: RendererDefinition = Object.freeze({
     const src = stringAttribute(node, 'src')
     const poster = stringAttribute(node, 'poster')
     return Object.freeze([
-      ...(src ? [{ source: src, kind: 'local' as const, attribute: 'src' }] : []),
-      ...(poster ? [{ source: poster, kind: 'local' as const, attribute: 'poster' }] : []),
+      ...(src ? [mediaAsset(src, 'src')] : []),
+      ...(poster ? [mediaAsset(poster, 'poster')] : []),
     ])
   },
   renderScreen: (node) => projection(node, 'video-embed'),
@@ -77,4 +77,12 @@ function stringAttribute(
 ): string | undefined {
   const value = node.attributes[name]
   return typeof value === 'string' ? value : undefined
+}
+
+function mediaAsset(source: string, attribute: string) {
+  return {
+    source,
+    kind: source.startsWith('https:') ? ('remote' as const) : ('local' as const),
+    attribute,
+  }
 }

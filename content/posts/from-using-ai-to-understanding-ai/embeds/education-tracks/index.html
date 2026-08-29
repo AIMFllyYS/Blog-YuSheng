@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>两条课程轨道</title>
+    <style>
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: "Source Han Serif SC", "Noto Serif SC", "Songti SC", serif;
+        background: #f4ead3;
+        color: #2c2416;
+      }
+      main {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: .75rem;
+        padding: .95rem;
+      }
+      article {
+        background: #fbf6ea;
+        border: 1px solid #d8c9a4;
+        border-radius: .75rem;
+        padding: .9rem .95rem 1rem;
+      }
+      em {
+        display: block;
+        font-style: normal;
+        font-size: .72rem;
+        letter-spacing: .12em;
+        color: #7a4a28;
+        margin-bottom: .4rem;
+      }
+      h2 {
+        margin: 0 0 .5rem;
+        font-size: 1.05rem;
+      }
+      ul {
+        margin: 0;
+        padding-left: 1.1rem;
+        font-size: .84rem;
+        line-height: 1.65;
+        color: #4a3f2e;
+      }
+      @media (max-width: 520px) {
+        main { grid-template-columns: 1fr; }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <article>
+        <em>面向非计算机专业</em>
+        <h2>AI 编程实践课</h2>
+        <ul>
+          <li>用 AI 赋能本学科：统计图、LaTeX、记账、课程网站</li>
+          <li>先交付、再理解边界</li>
+          <li>目标是让一群人带上同一把杠杆</li>
+        </ul>
+      </article>
+      <article>
+        <em>面向计科 / 网安</em>
+        <h2>对标 CS146S</h2>
+        <ul>
+          <li>反对纯 Vibe Coding，开发者管 Agent</li>
+          <li>上下文工程、安全、构建与运维整条生命周期</li>
+          <li>让专业人士更专业，而不是被工具摊薄</li>
+        </ul>
+      </article>
+    </main>
+    <script>
+      (() => {
+        const nonce = new URLSearchParams(location.hash.slice(1)).get('nonce')
+        if (nonce) parent.postMessage({ nonce, message: { type: 'ready' } }, '*')
+        const reportHeight = () => {
+          parent.postMessage(
+            { type: 'resize', height: document.documentElement.scrollHeight },
+            '*',
+          )
+        }
+        requestAnimationFrame(reportHeight)
+        new ResizeObserver(reportHeight).observe(document.documentElement)
+      })()
+    </script>
+  </body>
+</html>

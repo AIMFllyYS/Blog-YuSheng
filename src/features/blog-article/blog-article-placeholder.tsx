@@ -35,7 +35,6 @@ export async function BlogArticlePlaceholder({
         <DocumentRenderer
           articleSlug={post.slug}
           assetManifest={assetManifest}
-          className="leading-8 text-[var(--ink-muted)]"
           frontmatter={post.frontmatter}
           profile="article"
           source={post.source}

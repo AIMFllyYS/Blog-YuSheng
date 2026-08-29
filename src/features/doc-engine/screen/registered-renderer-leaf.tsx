@@ -3,7 +3,8 @@
 import { isValidElement, useSyncExternalStore, type ReactNode } from 'react'
 
 import type { RegisteredComponentNode } from '../core'
-import { BUILTIN_RENDERER_REGISTRY, type RenderProfile } from '../registry'
+import { BUILTIN_RENDERER_REGISTRY } from '../registry/register-builtins'
+import type { RenderProfile } from '../registry/renderer-definition'
 import { DocumentFallbackCard } from './fallback-card'
 
 type RegisteredRendererLeafProps = {

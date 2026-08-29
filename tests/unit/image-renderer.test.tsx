@@ -98,11 +98,39 @@ describe('image renderer', () => {
     })
   })
 
+  it('allows author-hosted HTTPS images without local raster dimensions', async () => {
+    const source =
+      '![远程封面](https://husteread.com/storage/public/files/blog/demo/cover.webp)'
+    const result = await compileArticleDocumentWithDiagnostics({
+      articleSlug: ARTICLE_SLUG,
+      assetManifest: [],
+      frontmatter: {},
+      source,
+    })
+    expect(result.diagnostics.filter((item) => item.buildBlocking)).toEqual([])
+    const node = result.document.root.children[0]
+    expect(node).toMatchObject({
+      type: 'image',
+      src: 'https://husteread.com/storage/public/files/blog/demo/cover.webp',
+    })
+    expect(
+      projectResponsiveImageSources(
+        node as BlockImageNode,
+        ARTICLE_SLUG,
+        [],
+      ),
+    ).toEqual({
+      fallback:
+        'https://husteread.com/storage/public/files/blog/demo/cover.webp',
+    })
+  })
+
   it.each([
     [
-      'HTTPS remote image',
+      'unlisted HTTPS remote image',
       '![远程图](https://example.com/photo.png)',
       [],
+      'DOC-SECURITY-005',
     ],
     [
       'local SVG without raster dimensions',
@@ -114,8 +142,9 @@ describe('image renderer', () => {
           publicUrl: `/blog/${ARTICLE_SLUG}/media/icon.svg`,
         },
       ],
+      'DOC-ASSET-006',
     ],
-  ])('blocks %s when no verified dimensions exist', async (_name, source, manifest) => {
+  ])('blocks %s', async (_name, source, manifest, code) => {
     const result = await compileArticleDocumentWithDiagnostics({
       articleSlug: ARTICLE_SLUG,
       assetManifest: manifest,
@@ -125,7 +154,7 @@ describe('image renderer', () => {
 
     expect(result.diagnostics).toContainEqual(
       expect.objectContaining({
-        code: 'DOC-ASSET-006',
+        code,
         buildBlocking: true,
         sourceRange: expect.any(Object),
       }),

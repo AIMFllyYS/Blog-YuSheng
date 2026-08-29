@@ -7,7 +7,7 @@ import { getCanvasRendererRegistration } from '../../registry/canvas-renderer-re
 import {
   CANVAS_SECURITY_POLICY,
   validateCanvasRequest,
-} from '../../security/renderer-security'
+} from '../../security/canvas-policy'
 import { DocumentFallbackCard } from '../../screen/fallback-card'
 type State =
   | { readonly status: 'waiting' | 'loading' }
@@ -16,11 +16,13 @@ type State =
 
 export function CanvasScreenRenderer({
   node,
+  data: initialData,
   dataUrl,
   showDetails,
   developmentCrash,
 }: {
   readonly node: RegisteredComponentNode
+  readonly data?: unknown
   readonly dataUrl?: string
   readonly showDetails: boolean
   readonly developmentCrash?: boolean
@@ -65,12 +67,17 @@ export function CanvasScreenRenderer({
     queueMicrotask(() => {
       if (!controller.signal.aborted) setState({ status: 'loading' })
     })
-    const dataPromise = dataUrl
-      ? fetch(dataUrl, { signal: controller.signal }).then(async (response) => {
-          if (!response.ok) throw new Error('Canvas 数据资源加载失败。')
-          return response.json() as Promise<unknown>
-        })
-      : Promise.resolve(defaultData())
+    const dataPromise =
+      initialData !== undefined
+        ? Promise.resolve(initialData)
+        : dataUrl
+          ? fetch(dataUrl, { signal: controller.signal }).then(
+              async (response) => {
+                if (!response.ok) throw new Error('Canvas 数据资源加载失败。')
+                return response.json() as Promise<unknown>
+              },
+            )
+          : Promise.resolve(defaultData())
     void Promise.all([registration.load(), dataPromise])
       .then(([, raw]) => {
         if (controller.signal.aborted) return
@@ -86,7 +93,7 @@ export function CanvasScreenRenderer({
         })
       })
     return () => controller.abort()
-  }, [dataUrl, height, rendererKey, visible, width])
+  }, [dataUrl, height, initialData, rendererKey, visible, width])
 
   useEffect(() => {
     if (state.status !== 'ready' || !canvasRef.current) return

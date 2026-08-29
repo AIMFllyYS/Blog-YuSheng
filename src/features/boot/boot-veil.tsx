@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import { BookLoader } from './book-loader'
 import { startBootStamp } from './boot-stamp'
 import styles from './boot-veil.module.css'
@@ -99,12 +99,25 @@ export function BootVeil() {
   )
 }
 
+function subscribeBootVeil() {
+  return () => {}
+}
+
+function getBootVeilSnapshot() {
+  if (Date.now() - lastRouteBootAt < ROUTE_BOOT_GRACE_MS) return false
+  return document.readyState !== 'complete'
+}
+
+function getBootVeilServerSnapshot() {
+  return true
+}
+
 export function BlogFirstPaintBoot() {
-  const [show] = useState(() => {
-    if (typeof window === 'undefined') return true
-    if (Date.now() - lastRouteBootAt < ROUTE_BOOT_GRACE_MS) return false
-    return document.readyState !== 'complete'
-  })
+  const show = useSyncExternalStore(
+    subscribeBootVeil,
+    getBootVeilSnapshot,
+    getBootVeilServerSnapshot,
+  )
 
   if (!show) return null
   return <BootVeil />

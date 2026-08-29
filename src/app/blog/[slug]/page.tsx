@@ -4,6 +4,7 @@ import {
   createBlogStaticParams,
   createAssetManifest,
   createPostMetadata,
+  mirrorPublishedAssetsForDev,
   readPost,
   transformContentImages,
 } from '@/server/content'
@@ -28,5 +29,8 @@ export default async function BlogArticlePage({ params }: Props) {
     createAssetManifest(),
   ])
   const assetManifest = await transformContentImages(sourceAssetManifest)
+  await mirrorPublishedAssetsForDev(
+    assetManifest.filter((entry) => entry.articleSlug === slug),
+  )
   return <BlogArticlePlaceholder assetManifest={assetManifest} post={post} />
 }

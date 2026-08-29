@@ -6,7 +6,8 @@ import type { RegisteredComponentNode } from '../../core'
 import {
   HTML_EMBED_IFRAME_POLICY,
   WEB_EMBED_LOAD_TIMEOUT_MS,
-} from '../../security'
+} from '../../security/embed-iframe-policy'
+import { EmbedOpenLink } from '../embed-open-link'
 import { WebEmbedPreviewCard } from './web-preview-card'
 import { useEmbedVisibility } from '../use-embed-visibility'
 
@@ -50,8 +51,9 @@ export function WebEmbedScreenRenderer({
       data-web-embed={visible ? (loaded ? 'loaded' : 'pending') : 'waiting'}
       ref={containerRef}
     >
-      <figcaption className="border-b border-[var(--line)] px-4 py-2.5 text-sm">
-        {title}
+      <figcaption className="flex items-center justify-between gap-3 border-b border-[var(--line)] px-4 py-2.5 text-sm">
+        <span className="min-w-0 flex-1 truncate">{title}</span>
+        <EmbedOpenLink href={src} />
       </figcaption>
       {visible ? (
         <iframe

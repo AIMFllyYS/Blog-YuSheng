@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>医工交叉两条路</title>
+    <style>
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: "Source Han Serif SC", "Noto Serif SC", "Songti SC", serif;
+        background: #f4ead3;
+        color: #2c2416;
+      }
+      main {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: .75rem;
+        padding: .95rem;
+      }
+      article {
+        background: #fbf6ea;
+        border: 1px solid #d8c9a4;
+        border-radius: .75rem;
+        padding: .9rem .95rem 1rem;
+      }
+      em {
+        display: block;
+        font-style: normal;
+        font-size: .72rem;
+        letter-spacing: .12em;
+        color: #7a4a28;
+        margin-bottom: .4rem;
+      }
+      h2 {
+        margin: 0 0 .5rem;
+        font-size: 1.05rem;
+      }
+      p {
+        margin: 0;
+        font-size: .84rem;
+        line-height: 1.6;
+        color: #4a3f2e;
+      }
+      @media (max-width: 520px) {
+        main { grid-template-columns: 1fr; }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <article>
+        <em>方向一 · 软件与智能体</em>
+        <h2>把医学流程做成平台</h2>
+        <p>看病、学习、实训、就业串成多智能体协同。考验的是全栈与 Agent 架构，例如「颐路同行」这类贯通数据的产品。</p>
+      </article>
+      <article>
+        <em>方向二 · 模型与场景</em>
+        <h2>为特定医学问题做杠杆</h2>
+        <p>蛋白质结构、医学影像读片：在窄场景上训练或微调。更贴近 AI 的本质，也更依赖跨领域的专业判断。</p>
+      </article>
+    </main>
+    <script>
+      (() => {
+        const nonce = new URLSearchParams(location.hash.slice(1)).get('nonce')
+        if (nonce) parent.postMessage({ nonce, message: { type: 'ready' } }, '*')
+        const reportHeight = () => {
+          parent.postMessage(
+            { type: 'resize', height: document.documentElement.scrollHeight },
+            '*',
+          )
+        }
+        requestAnimationFrame(reportHeight)
+        new ResizeObserver(reportHeight).observe(document.documentElement)
+      })()
+    </script>
+  </body>
+</html>

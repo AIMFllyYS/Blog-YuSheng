@@ -2,7 +2,7 @@ import { z } from 'zod'
 
 import type { DocumentNode, MermaidNode } from '../../core'
 import type { RendererDefinition } from '../../registry/renderer-definition'
-import { MERMAID_SECURITY_POLICY } from '../../security/renderer-security'
+import { MERMAID_SECURITY_POLICY } from '../../security/mermaid-policy'
 import { renderMermaidMarkdown } from './markdown-export'
 import { renderMermaidText } from './text-export'
 

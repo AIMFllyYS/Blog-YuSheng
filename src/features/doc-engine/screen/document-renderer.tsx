@@ -33,17 +33,19 @@ import {
   projectPackageMediaUrl,
 } from '../renderers/media/asset-projection'
 import { MediaPlayer } from '../renderers/media/media-player'
-import { CanvasScreenRenderer } from '../renderers/canvas/screen-renderer'
 import { SvgScreenRenderer } from '../renderers/svg/screen-renderer'
 import { HtmlEmbedScreenRenderer } from '../renderers/html/screen-renderer'
 import { WebEmbedScreenRenderer } from '../renderers/web/screen-renderer'
 import { WebEmbedPreviewCard } from '../renderers/web/web-preview-card'
-import { ChoiceQuestionScreenRenderer } from '../renderers/quiz-choice/screen-renderer'
-import { FillBlankQuestionScreenRenderer } from '../renderers/quiz-fill/screen-renderer'
-import { MermaidScreenRenderer } from '../renderers/mermaid/screen-renderer'
-import { sanitizeDiscussionRead } from '../security'
+import { sanitizeDiscussionRead } from '../security/sanitize-discussion'
 import { DocumentFallbackCard } from './fallback-card'
-import { RegisteredRendererLeaf } from './registered-renderer-leaf'
+import {
+  LazyCanvasScreenRenderer,
+  LazyChoiceQuestionScreenRenderer,
+  LazyFillBlankQuestionScreenRenderer,
+  LazyMermaidScreenRenderer,
+  LazyRegisteredRendererLeaf,
+} from './lazy-article-leaves'
 import { RendererErrorBoundary } from './renderer-error-boundary'
 
 export type DocumentRendererProps = {
@@ -606,7 +608,7 @@ function RegisteredMermaidRenderer({
     )
   }
   return (
-    <MermaidScreenRenderer
+    <LazyMermaidScreenRenderer
       key={node.value}
       node={node}
       showDetails={context.showDetails}
@@ -720,7 +722,17 @@ function RegisteredComponent({
         selectable="none"
         showDetails={context.showDetails}
       >
-        <CanvasScreenRenderer
+        <LazyCanvasScreenRenderer
+          data={
+            source
+              ? projectPackageAssetData(
+                  source,
+                  context.articleSlug,
+                  node.name,
+                  context.assetManifest,
+                )
+              : undefined
+          }
           dataUrl={
             source
               ? projectPackageMediaUrl(
@@ -796,7 +808,7 @@ function RegisteredComponent({
       rendererName={node.name}
       showDetails={context.showDetails}
     >
-      <RegisteredRendererLeaf
+      <LazyRegisteredRendererLeaf
         alternative={alternative}
         developmentCrash={
           context.developmentCrashComponentIds?.includes(node.componentId) === true
@@ -846,9 +858,9 @@ function RegisteredQuizRenderer({
     context.assetManifest,
   )
   return node.name === 'choice-question' ? (
-    <ChoiceQuestionScreenRenderer data={data} node={node} />
+    <LazyChoiceQuestionScreenRenderer data={data} node={node} />
   ) : (
-    <FillBlankQuestionScreenRenderer data={data} node={node} />
+    <LazyFillBlankQuestionScreenRenderer data={data} node={node} />
   )
 }
 

@@ -6,10 +6,16 @@ import {
   EMBED_MESSAGE_SCHEMA,
   HTML_EMBED_IFRAME_POLICY,
   HTML_EMBED_READY_TIMEOUT_MS,
+  AUTHOR_HOSTED_ETLD_PLUS_ONE_ALLOWLIST,
   WEB_EMBED_ETLD_PLUS_ONE_ALLOWLIST,
+  WEB_EMBED_EXTRA_ETLD_PLUS_ONE_ALLOWLIST,
   WEB_EMBED_LOAD_TIMEOUT_MS,
   createEmbedCapabilityNonce,
   createEmbedMessageGate,
+  isAuthorHostedImageUrl,
+  isAuthorHostedVideoUrl,
+  isRegistrableEtldPlusOne,
+  isWebEmbedAllowed,
   matchesReviewedWebEmbedAllowlist,
 } from '../../src/features/doc-engine'
 
@@ -30,10 +36,34 @@ describe('iframe security gate v1', () => {
     expect(WEB_EMBED_LOAD_TIMEOUT_MS).toBe(4_000)
   })
 
-  it('starts empty and matches only reviewed exact eTLD+1 hosts over HTTPS', () => {
-    expect(WEB_EMBED_ETLD_PLUS_ONE_ALLOWLIST).toEqual([])
+  it('matches reviewed eTLD+1 hosts and their subdomains over HTTPS', () => {
+    expect(AUTHOR_HOSTED_ETLD_PLUS_ONE_ALLOWLIST).toEqual([
+      'husteread.com',
+      'husteread.icu',
+      '1037solo.com',
+      '1037solo.cn',
+      'yusheng.email',
+    ])
+    expect(WEB_EMBED_EXTRA_ETLD_PLUS_ONE_ALLOWLIST).toEqual([
+      'harvey.ai',
+      'themodernsoftware.dev',
+      'datalearner.com',
+    ])
+    expect(WEB_EMBED_ETLD_PLUS_ONE_ALLOWLIST).toEqual([
+      ...AUTHOR_HOSTED_ETLD_PLUS_ONE_ALLOWLIST,
+      ...WEB_EMBED_EXTRA_ETLD_PLUS_ONE_ALLOWLIST,
+    ])
+    expect(isWebEmbedAllowed('https://read.husteread.com/')).toBe(true)
+    expect(isWebEmbedAllowed('https://platform.1037solo.com/')).toBe(true)
+    expect(isWebEmbedAllowed('https://www.harvey.ai/blog/post')).toBe(true)
+    expect(isWebEmbedAllowed('https://example.com/embed')).toBe(false)
     expect(
       matchesReviewedWebEmbedAllowlist('https://example.com/embed', [
+        'example.com',
+      ]),
+    ).toBe(true)
+    expect(
+      matchesReviewedWebEmbedAllowlist('https://sub.example.com/embed', [
         'example.com',
       ]),
     ).toBe(true)
@@ -43,14 +73,35 @@ describe('iframe security gate v1', () => {
       ]),
     ).toBe(false)
     expect(
-      matchesReviewedWebEmbedAllowlist('https://sub.example.com/embed', [
+      matchesReviewedWebEmbedAllowlist('https://example.com.evil.test/', [
         'example.com',
       ]),
     ).toBe(false)
     expect(
-      matchesReviewedWebEmbedAllowlist('https://example.com.evil.test/', [
-        'example.com',
+      matchesReviewedWebEmbedAllowlist('https://evilhusteread.com/', [
+        'husteread.com',
       ]),
+    ).toBe(false)
+    expect(
+      matchesReviewedWebEmbedAllowlist('https://example.com/embed', ['com']),
+    ).toBe(false)
+    expect(isRegistrableEtldPlusOne('com')).toBe(false)
+    expect(isRegistrableEtldPlusOne('husteread.com')).toBe(true)
+    expect(
+      isAuthorHostedImageUrl(
+        'https://husteread.com/storage/public/files/blog/demo/cover.webp',
+      ),
+    ).toBe(true)
+    expect(
+      isAuthorHostedVideoUrl(
+        'https://husteread.com/storage/public/files/blog/demo/clip.mp4',
+      ),
+    ).toBe(true)
+    expect(
+      isAuthorHostedImageUrl('https://www.harvey.ai/cover.webp'),
+    ).toBe(false)
+    expect(
+      isAuthorHostedImageUrl('https://example.com/photo.png'),
     ).toBe(false)
   })
 

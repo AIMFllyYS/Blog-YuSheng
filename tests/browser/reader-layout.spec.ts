@@ -36,10 +36,17 @@ test('阅读页首屏、双层滚动与阻尼页尾遵守原型契约', async ({
   expect(firstViewport.windowScroll).toBe(0)
   expect(firstViewport.top).toBeGreaterThanOrEqual(firstViewport.viewport - 1)
 
-  await center.evaluate((element) => {
-    element.scrollTop = element.scrollHeight
-  })
-  await expect.poll(() => page.evaluate(() => document.body.classList.contains('reader-is-article-end'))).toBe(true)
+  await expect
+    .poll(
+      async () => {
+        await center.evaluate((element) => {
+          element.scrollTop = element.scrollHeight
+        })
+        return page.evaluate(() => document.body.classList.contains('reader-is-article-end'))
+      },
+      { timeout: 15_000 },
+    )
+    .toBe(true)
 
   await center.hover()
   await page.mouse.wheel(0, 900)

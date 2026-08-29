@@ -15,27 +15,21 @@ import { reconnectTextAnchor } from '@/features/annotations/anchors'
 import { sortAnnotationViews } from '@/features/annotations/sort-annotation-threads'
 import type { SelectionDocumentIndex } from '@/features/doc-engine/selection'
 
-import {
-  createClosedAuthPort,
-  createFakeAuthPort,
-  type AuthPort,
-  type DiscussionUser,
-} from '../domain/auth-port'
+import { type AuthPort, type DiscussionUser } from '../domain/auth-port'
 import {
   DISCUSSION_WRITES_OPEN,
   areDiscussionWritesOpen,
 } from '../domain/discussion-write-gate'
-import { readLocalAuthorMode } from '../domain/local-author-mode'
 import { useLocalAuthorMode } from '../domain/use-local-author-mode'
 import type {
   AnnotationThreadView,
   DiscussionRepository,
 } from '../repository/discussion-repository'
-import { createLocalStorageDiscussionRepository } from '../repository/local-storage-discussion-repository'
+import type { MemoryDiscussionSeed } from '../repository/memory-discussion-repository'
 import {
-  createMemoryDiscussionRepository,
-  type MemoryDiscussionSeed,
-} from '../repository/memory-discussion-repository'
+  createDefaultAuthPort,
+  createDefaultSessionRepository,
+} from './resolve-runtime-ports'
 
 export type DiscussionRuntimeValue = {
   readonly user: DiscussionUser | null
@@ -70,29 +64,13 @@ function serverHydrated(): false {
   return false
 }
 
-function createAuthPort(localAuthorMode: boolean): AuthPort {
-  if (localAuthorMode) {
-    const port = createFakeAuthPort('author')
-    port.setRole('author')
-    return port
-  }
-  return DISCUSSION_WRITES_OPEN ? createFakeAuthPort('member') : createClosedAuthPort()
-}
-
-function createSessionRepository(
-  articleSlug: string,
-  hydrated: boolean,
-  seed?: MemoryDiscussionSeed,
-): DiscussionRepository {
-  const getWritesOpen = () => DISCUSSION_WRITES_OPEN || readLocalAuthorMode()
-  if (!hydrated) {
-    return createMemoryDiscussionRepository({ writesOpen: getWritesOpen })
-  }
-  return createLocalStorageDiscussionRepository({
-    articleSlug,
-    seed: process.env.NODE_ENV !== 'production' ? seed : undefined,
-    getWritesOpen,
-  })
+export type DiscussionRuntimeProviderProps = {
+  readonly articleSlug: string
+  readonly children: ReactNode
+  readonly seed?: MemoryDiscussionSeed
+  readonly selectionIndex: SelectionDocumentIndex
+  readonly auth?: AuthPort
+  readonly repo?: DiscussionRepository
 }
 
 export function DiscussionRuntimeProvider({
@@ -100,12 +78,9 @@ export function DiscussionRuntimeProvider({
   children,
   seed,
   selectionIndex,
-}: {
-  readonly articleSlug: string
-  readonly children: ReactNode
-  readonly seed?: MemoryDiscussionSeed
-  readonly selectionIndex: SelectionDocumentIndex
-}) {
+  auth: injectedAuth,
+  repo: injectedRepo,
+}: DiscussionRuntimeProviderProps) {
   const { enabled: localAuthorMode } = useLocalAuthorMode()
   const writesOpen = areDiscussionWritesOpen(localAuthorMode)
   const hydrated = useSyncExternalStore(
@@ -113,13 +88,22 @@ export function DiscussionRuntimeProvider({
     clientHydrated,
     serverHydrated,
   )
-  const auth = useMemo(() => createAuthPort(localAuthorMode), [localAuthorMode])
-  const repo = useMemo(
-    () => createSessionRepository(articleSlug, hydrated, seed),
-    [articleSlug, hydrated, seed],
+  const auth = useMemo(
+    () => injectedAuth ?? createDefaultAuthPort(localAuthorMode),
+    [injectedAuth, localAuthorMode],
   )
-  const [user, setUser] = useState<DiscussionUser | null>(
-    DISCUSSION_WRITES_OPEN ? SSR_MEMBER : null,
+  const repo = useMemo(
+    () =>
+      injectedRepo ??
+      createDefaultSessionRepository(articleSlug, hydrated, seed),
+    [articleSlug, hydrated, injectedRepo, seed],
+  )
+  const [user, setUser] = useState<DiscussionUser | null>(() =>
+    injectedAuth
+      ? injectedAuth.getCurrentUser()
+      : DISCUSSION_WRITES_OPEN
+        ? SSR_MEMBER
+        : null,
   )
   const [threads, setThreads] = useState<readonly AnnotationThreadView[]>([])
   const [revision, setRevision] = useState(0)

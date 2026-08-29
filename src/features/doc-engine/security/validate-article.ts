@@ -8,13 +8,16 @@ import type {
   RegisteredComponentNode,
 } from '../core/document-types'
 import { hasCanvasRenderer } from '../registry/canvas-renderer-registry'
-import { isWebEmbedAllowed } from './security-config'
 import {
-  CANVAS_SECURITY_POLICY,
-  validateCanvasRequest,
-  validateKatexSource,
-  validateMermaidSource,
-} from './renderer-security'
+  isAuthorHostedAudioUrl,
+  isAuthorHostedImageUrl,
+  isAuthorHostedVideoUrl,
+  isHttpsAbsoluteUrl,
+  isWebEmbedAllowed,
+} from './security-config'
+import { CANVAS_SECURITY_POLICY, validateCanvasRequest } from './canvas-policy'
+import { validateKatexSource } from './katex-policy'
+import { validateMermaidSource } from './mermaid-policy'
 import { validateArticleLinkUrl, validateDocumentUrl } from './validate-url'
 import { validatePackageRelativePath } from './validate-package-path'
 
@@ -39,6 +42,7 @@ export function validateArticleDocument(
       diagnostics.push(missingAssetError(document, node, node.src))
     } else if (
       node.type === 'image' &&
+      node.src.startsWith('./') &&
       (!Number.isSafeInteger(node.width) ||
         !Number.isSafeInteger(node.height) ||
         (node.width ?? 0) <= 0 ||
@@ -129,8 +133,12 @@ function validateArticleComponent(
     return []
   }
 
+  const remoteMediaFailure = validateRemoteMediaAttribute(document, node)
+  if (remoteMediaFailure) return [remoteMediaFailure]
+
   const pathAttributes = componentPathAttributes(node)
   for (const [name, value] of pathAttributes) {
+    if (isHttpsAbsoluteUrl(value)) continue
     if (!validatePackageRelativePath(value)) {
       return [articleError(document, node, `${node.name} 的 ${name} 路径无效：${value}`)]
     }
@@ -170,7 +178,30 @@ function componentPathAttributes(
 
 function validImageSource(source: string): boolean {
   if (source.startsWith('./')) return validatePackageRelativePath(source)
-  return validateDocumentUrl(source)?.kind === 'https'
+  return isAuthorHostedImageUrl(source)
+}
+
+function validateRemoteMediaAttribute(
+  document: CompiledDocument,
+  node: RegisteredComponentNode,
+): DocumentDiagnostic | undefined {
+  if (node.name === 'video-embed') {
+    const source = stringAttribute(node, 'src')
+    const poster = stringAttribute(node, 'poster')
+    if (source && isHttpsAbsoluteUrl(source) && !isAuthorHostedVideoUrl(source)) {
+      return articleError(document, node, `video-embed 远程地址未通过作者托管名单：${source}`)
+    }
+    if (poster && isHttpsAbsoluteUrl(poster) && !isAuthorHostedImageUrl(poster)) {
+      return articleError(document, node, `video-embed poster 远程地址未通过作者托管名单：${poster}`)
+    }
+  }
+  if (node.name === 'audio-embed') {
+    const source = stringAttribute(node, 'src')
+    if (source && isHttpsAbsoluteUrl(source) && !isAuthorHostedAudioUrl(source)) {
+      return articleError(document, node, `audio-embed 远程地址未通过作者托管名单：${source}`)
+    }
+  }
+  return undefined
 }
 
 function stringAttribute(

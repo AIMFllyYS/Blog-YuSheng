@@ -1,5 +1,4 @@
 export { IMAGE_RENDERER_DEFINITION } from './definition'
-export { ImageScreenRenderer } from './screen-renderer'
 export {
   projectResponsiveImageSources,
   type ResponsiveImageSources,

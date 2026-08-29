@@ -1,5 +1,4 @@
 import { DISCUSSION_LIMITS } from '../../doc-engine/security/render-limits'
-import { validateDiscussionWrite } from '../../doc-engine/security/sanitize-discussion'
 
 import {
   canCreateDiscussion,
@@ -106,6 +105,9 @@ export function createMemoryDiscussionRepository(options?: {
   }
 
   const acceptSource = async (entryId: string, source: string) => {
+    const { validateDiscussionWrite } = await import(
+      '../../doc-engine/security/sanitize-discussion'
+    )
     const result = await validateDiscussionWrite({ entryId, source })
     if (!result.accepted) {
       return fail<never>(
