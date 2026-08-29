@@ -3,10 +3,10 @@ schemaVersion: 1
 title: 读《被讨厌的勇气》
 description: 自由就是被别人讨厌，这句话我用了三个月才敢点头。
 publishedAt: 2025-11-02T19:00:00+08:00
-section: personal-reflections
 tags:
   - 读书
   - 心理
+draft: true
 ---
 
 跑步教会我的第一件事不是坚持，而是诚实。配速骗不了人，心率骗不了人，你昨晚睡了几个小时、这周有没有偷懒，身体全都记得。身体是这世上最耿直的账本。

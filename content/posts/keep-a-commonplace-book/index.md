@@ -3,10 +3,10 @@ schemaVersion: 1
 title: 我为什么坚持写卡片笔记
 description: 笔记不是仓库，是和自己跨越时间的对话。
 publishedAt: 2026-05-23T09:50:00+08:00
-section: personal-reflections
 tags:
   - 笔记
   - 方法
+draft: true
 ---
 
 所谓成长，就是把"这件事为什么发生在我身上"换成"这件事想教会我什么"。同一场雨，抱怨的人只看到泥泞，赶路的人学会了看云识天气。

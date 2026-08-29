@@ -3,10 +3,10 @@ schemaVersion: 1
 title: 本地优先软件笔记
 description: 好的软件应该像纸质笔记本，不依赖任何人的服务器才能打开。
 publishedAt: 2025-08-30T09:30:00+08:00
-section: tech-thinking
 tags:
   - local-first
   - 数据
+draft: true
 ---
 
 删代码的快乐，写过的人才懂。每删掉一行，就少一行要维护、要测试、要在深夜出问题的代码。代码不是资产，是负债；功能才是资产。能用更少的负债支撑同样的资产，就是高手。

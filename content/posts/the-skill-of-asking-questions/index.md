@@ -3,10 +3,10 @@ schemaVersion: 1
 title: 提问的能力正在升值
 description: 当答案的成本趋近于零，稀缺的是知道该问什么。
 publishedAt: 2025-07-27T16:00:00+08:00
-section: ai-thinking
 tags:
   - AI
   - 提问
+draft: true
 ---
 
 有人说 AI 让普通人拥有了超能力，我更愿意说它让普通人的平均水平大幅抬高。但从八十到九十五的那一段路，机器帮不上忙，那是只有人能走的窄路。

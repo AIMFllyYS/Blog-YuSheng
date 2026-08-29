@@ -3,10 +3,10 @@ schemaVersion: 1
 title: 和机器说话的人类处境
 description: 人的低效、跑题和言外之意，恰恰是交流之所以活着的部分。
 publishedAt: 2026-06-28T21:05:00+08:00
-section: ai-thinking
 tags:
   - AI
   - 交流
+draft: true
 ---
 
 知识库的意义没有被 AI 削弱，反而被放大了。AI 可以回答任何问题，但它不知道你为什么关心这个问题。你的笔记里藏着你的问题史，那是任何通用模型都替代不了的上下文。

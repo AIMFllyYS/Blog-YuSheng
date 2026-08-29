@@ -3,10 +3,10 @@ schemaVersion: 1
 title: 外婆的厨房
 description: 盐用手掂，火候用耳朵听，那是几十年重复之后长在手上的讲究。
 publishedAt: 2026-01-25T11:40:00+08:00
-section: personal-reflections
 tags:
   - 家人
   - 记忆
+draft: true
 ---
 
 所谓成长，就是把"这件事为什么发生在我身上"换成"这件事想教会我什么"。同一场雨，抱怨的人只看到泥泞，赶路的人学会了看云识天气。

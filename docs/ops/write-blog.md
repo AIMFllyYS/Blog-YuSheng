@@ -82,23 +82,24 @@ content/posts/<slug>/
 | **小博客** | 文章包 `content/posts/<slug>/`（正本是 `index.md`） | 方向书里的一根文章书脊，或目录树里的一行 |
 | **章节** | 该小博客在所属方向书里的次序：先按 `publishedAt` **升序**（最早的是第一章），同日再按 slug | 「第 N 篇 / 第 N 章」。**没有**单独的 `chapter` 字段，不要手写章节号 |
 
-当前四个大方向（以 `content/sections.yml` 为准，`order` 小的在上）：
+当前六个大方向（以 `content/sections.yml` 为准，`order` 小的在上）：
 
 | slug（写入 `section`） | 书名 | 写什么 |
 |---|---|---|
-| `personal-reflections` | 个人感悟 | 生活、成长与自我对话 |
-| `ai-thinking` | AI 时代思考 | 人工智能如何改变工作、创作与思考 |
-| `tech-thinking` | 技术思考 | 架构判断、工程方法与工具选择 |
-| `medical-thinking` | 医学思考 | 医学知识、健康决策与循证笔记 |
+| `fullstack-learning` | 全栈小白学习记 | 从零学前端与全栈：UI、交互、Agent、架构与 Prompt |
+| `ai-mflly-notes` | AI-MFlly散记 | AI 创作与工具实践：写代码、生图、写作、视频、音乐，以及这个时代 |
+| `yu-reflections` | 羽の反思 | 对做过的选择、关系和自我的回头看 |
+| `yu-reviews` | 羽の复盘 | 一次具体事件或项目之后的拆解 |
+| `yu-essays` | 羽の随笔 | 不绑主题的短文与观察 |
+| `other` | 其他 | 对不上前面五本、但仍是正式小博客的篇目 |
 
-**散页**：frontmatter **不写** `section` 的已发布文章，会单独成册排在书架**最后**，书名是「散页」。未知的 `section` 值（写了但没在注册表里）会让构建失败，不会偷偷进散页。
+**「其他」不是「散页」。** 正式杂文要写 `section: other`，有文才上架。frontmatter **不写** `section` 的已发布文章，会单独成册排在书架**最后**，书名是「散页」。未知的 `section` 值（写了但没在注册表里）会让构建失败，不会偷偷进散页或「其他」。
 
 现在留在散页、并且应当留着的只有：
 
 - `p0-kitchen-sink` — 内容引擎黄金验收文，不是按主题写的正式方向文
-- `hello-world-again`、`site-changelog-2026` — 站点开篇 / 施工笔记，归不进上面四个主题方向
 
-新的正式文章**必须**选一个大方向。只有验收夹具或无法归类的站点笔记才走散页。
+新的正式文章**必须**选一个大方向（包括「其他」）。只有验收夹具才走散页。常用标签词见 [post-tags.md](./post-tags.md)（纯备忘，不参与构建）。
 
 新增大方向：在 `content/sections.yml` 的 `sections:` 下加一条，写好 `slug`（kebab-case）、`title`（方向书书名）、`order`（整数，小的靠上）、`summary`（一册简介）、可选 `color`（`#rrggbb`）。空的大方向不会出现在书架上，有第一篇小博客归入后才会上架。书脊样式由目录页自己画，**不要**按字数手调厚度，也没有 `widthRem` 这类作者字段。
 
@@ -119,11 +120,11 @@ title: 文章标题
 description: 列表页和微信/社交预览用的摘要，写完整的一句话
 publishedAt: 2026-08-18T15:00:00+08:00
 updatedAt: 2026-08-18T16:20:00+08:00
-section: tech-thinking
+section: fullstack-learning
 cover: ./media/images/cover.png
 tags:
-  - 架构
-  - 部署
+  - 架构设计
+  - Prompt
 draft: false
 ---
 ```
@@ -137,7 +138,7 @@ draft: false
 | `updatedAt` | 否 | 同样必须带时区。改过正文再填 |
 | `section` | 否（正式文应当填） | **大方向** slug，必须已在 `content/sections.yml` 注册，否则构建报 `FRONTMATTER_SECTION_UNKNOWN`。决定这本小博客收进哪本方向书；不填则归入末尾「散页」。不要写 `chapter` / `category` / `series` |
 | `cover` | 否 | 文章包内相对路径，推荐 `./media/images/cover.png`。用于列表/分享预览 |
-| `tags` | 否 | 非空字符串数组。目前预留给未来的标签筛选 |
+| `tags` | 否 | 非空字符串数组。1 到多个，可自定；省略该字段表示没有标签，不要写空数组。出现在目录树章行，以及书库里悬停小书脊后的书签旁边。优先用 [post-tags.md](./post-tags.md) 里的词，没有合适的就自创，再回去补一行。备忘文档不参与校验，写错词也不会让构建失败。单标签建议不超过约 12 个汉字 |
 | `draft` | 否 | 布尔值。`true` 不上架；省略或 `false` 表示正式文章 |
 
 新增一个大方向：见 [1.4](#14-目录怎么归类大方向--章节--小博客)。不要为了「让书变厚」去改正文或发明字段。
@@ -358,9 +359,9 @@ pnpm preview
 
 一次新增 = 选大方向 + 建小博客包。章节顺序不用填。
 
-1. **选大方向**（或先登记新方向）。打开 `content/sections.yml`，从现有四个 slug 里挑一个写入 `section`。没有合适的才在注册表里加一条新板块，然后用那个新 slug。不要把正式文留在散页。
+1. **选大方向**（或先登记新方向）。打开 `content/sections.yml`，从现有六个 slug 里挑一个写入 `section`。对不上前五本就用 `other`。不要把正式文留在散页。
 2. **想好小博客 slug**，例如 `edgeone-ssg-notes`。这就是文件夹名，也是 `/blog/edgeone-ssg-notes/`。
-3. **建文章包** `content/posts/edgeone-ssg-notes/index.md`，填好 frontmatter，**一定要有 `section`**。
+3. **建文章包** `content/posts/edgeone-ssg-notes/index.md`，填好 frontmatter，**一定要有 `section`**。打 1 到多个 `tags`，优先用 [post-tags.md](./post-tags.md) 里的词。
 4. 需要图就建 `media/images/`，把压到 300 KB 以内的原图放进去，正文用 `./media/images/...` 引用。
 5. 需要视频 / 音频 / 题目，按第 3 节放进对应目录，再用自定义标签引用。
 6. `pnpm dev`，先打开 `http://localhost:9981/blog/`：对应方向书应出现在架上（空方向本来不上架；这是该方向的第一篇时，会新出现一本）。点开那本书（或在目录树里展开那一册），章节按 `publishedAt` 从早到晚排。再打开 `/blog/edgeone-ssg-notes/` 看正文。
@@ -374,9 +375,9 @@ schemaVersion: 1
 title: 为什么静态导出适合这篇博客
 description: 用一篇短文说明 SSG、EdgeOne 与仓库正本之间的关系。
 publishedAt: 2026-08-18T15:00:00+08:00
-section: tech-thinking
+section: fullstack-learning
 tags:
-  - 部署
+  - 架构设计
 draft: false
 ---
 
@@ -387,9 +388,9 @@ draft: false
 
 发布后在 `/blog/` 上的位置：
 
-- 大方向 = `tech-thinking` 那本「技术思考」
+- 大方向 = `fullstack-learning` 那本「全栈小白学习记」
 - 小博客 = `content/posts/edgeone-ssg-notes/`
-- 章节 = 按这篇的 `publishedAt` 插进「技术思考」已有文章里；比它早的在前，比它晚的在后
+- 章节 = 按这篇的 `publishedAt` 插进「全栈小白学习记」已有文章里；比它早的在前，比它晚的在后
 
 ---
 
@@ -417,7 +418,8 @@ draft: false
 ## 8. 和这份指南配套的文件
 
 - 黄金样例：[content/posts/p0-kitchen-sink/](../../content/posts/p0-kitchen-sink/)（验收文，可对照格式，不必当自己的第一篇正式文章来改；它故意留在散页）
-- 板块注册表：[content/sections.yml](../../content/sections.yml)（四个大方向的权威源）
+- 板块注册表：[content/sections.yml](../../content/sections.yml)（六个大方向的权威源）
+- 标签备忘：[post-tags.md](./post-tags.md)（只记录常用词，不参与构建）
 - 内容协议：[blog-content-engine.md](../specs/blog-content-engine.md) 第四节
 - 目录与 `embeds/` URL：[project-structure.md](../conventions/project-structure.md)
 - 网址与分享：[routing.md](../conventions/routing.md)

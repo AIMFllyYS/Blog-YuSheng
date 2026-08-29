@@ -3,10 +3,10 @@ schemaVersion: 1
 title: 当 AI 替我写初稿
 description: 初稿可以交给机器，但定稿必须长出自己的骨头。
 publishedAt: 2025-06-11T14:35:00+08:00
-section: ai-thinking
 tags:
   - AI
   - 写作
+draft: true
 ---
 
 有人说 AI 让普通人拥有了超能力，我更愿意说它让普通人的平均水平大幅抬高。但从八十到九十五的那一段路，机器帮不上忙，那是只有人能走的窄路。

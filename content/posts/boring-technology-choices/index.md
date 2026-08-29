@@ -3,9 +3,9 @@ schemaVersion: 1
 title: 选择无聊的技术
 description: 新奇是消费的快感，无聊才是生产的朋友。
 publishedAt: 2025-03-22T13:10:00+08:00
-section: tech-thinking
 tags:
   - 技术选型
+draft: true
 ---
 
 大部分调试时间其实都浪费在没读报错信息上。报错栈的第三行往往就写着答案，但人总是先慌了，然后开始乱试。读错误信息，是工程师最被低估的基本功。

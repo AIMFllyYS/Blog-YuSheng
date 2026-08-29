@@ -3,10 +3,10 @@ schemaVersion: 1
 title: 抽象的代价
 description: 三行重复代码远比一个错误的抽象便宜。
 publishedAt: 2026-02-14T16:40:00+08:00
-section: tech-thinking
 tags:
   - 抽象
   - 设计
+draft: true
 ---
 
 每一次以后再说的技术债，都在暗处复利计息。我不是反对欠债，我是反对不记账的债。欠了就写进清单，排上日程，利息才不会偷偷吃掉整个团队。

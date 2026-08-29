@@ -3,10 +3,10 @@ schemaVersion: 1
 title: 慢性病教会我的事
 description: 这门课没有毕业那天，但认真上课的人日子会过得宽一些。
 publishedAt: 2026-06-13T19:45:00+08:00
-section: medical-thinking
 tags:
   - 慢病
   - 心态
+draft: true
 ---
 
 看到研究表明四个字时，我现在的第一反应是问三个问题：研究对象是谁，样本量多大，是相对风险还是绝对风险。这三个问题能过滤掉市面上大半的健康焦虑。

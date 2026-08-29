@@ -3,10 +3,10 @@ schemaVersion: 1
 title: 三十岁前的清点
 description: 清点关系、执念与立足之本，真正重要的东西一只手就数得过来。
 publishedAt: 2026-03-15T20:15:00+08:00
-section: personal-reflections
 tags:
   - 三十
   - 清点
+draft: true
 ---
 
 告别这件事，从来不会提前打招呼。去年整理旧物，翻出大学时的课堂笔记，纸张已经泛黄，字迹幼稚得可笑。我忽然意识到，那个在笔记本上认真抄写板书的年轻人，已经和我隔了整整一个时代。

@@ -25,13 +25,23 @@ const VALID_REGISTRY = `sections:
 `
 
 describe('sections registry', () => {
-  it('lists the four live 大方向 in registry order', async () => {
+  it('lists the six live 大方向 in registry order', async () => {
     const sections = await listSections()
     expect(sections.map((section) => section.slug)).toEqual([
-      'personal-reflections',
-      'ai-thinking',
-      'tech-thinking',
-      'medical-thinking',
+      'fullstack-learning',
+      'ai-mflly-notes',
+      'yu-reflections',
+      'yu-reviews',
+      'yu-essays',
+      'other',
+    ])
+    expect(sections.map((section) => section.title)).toEqual([
+      '全栈小白学习记',
+      'AI-MFlly散记',
+      '羽の反思',
+      '羽の复盘',
+      '羽の随笔',
+      '其他',
     ])
   })
 

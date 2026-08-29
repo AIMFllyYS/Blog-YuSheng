@@ -3,10 +3,10 @@ schemaVersion: 1
 title: 长大就是不断告别
 description: 翻出泛黄笔记的那个下午，我和一个时代的自己告了别。
 publishedAt: 2025-12-14T16:25:00+08:00
-section: personal-reflections
 tags:
   - 告别
   - 时间
+draft: true
 ---
 
 外婆的厨房永远有一股酱油和柴火混合的香气。她做饭从不用菜谱，盐是用手掂的，火候是用耳朵听的。我后来明白，那不是不讲究，那是几十年重复之后长在手上的讲究。

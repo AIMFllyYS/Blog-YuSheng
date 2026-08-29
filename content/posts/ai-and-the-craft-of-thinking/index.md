@@ -3,10 +3,10 @@ schemaVersion: 1
 title: AI 与思考的手艺
 description: 思考这件事，外包的顺序很重要。
 publishedAt: 2026-01-09T11:25:00+08:00
-section: ai-thinking
 tags:
   - AI
   - 思考
+draft: true
 ---
 
 当生成变得廉价，判断就变得昂贵。AI 一天能写一百个方案，但选哪个、为什么选、选错了谁负责——这一串问题没有捷径。品味和担当，是最后的护城河。

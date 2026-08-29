@@ -3,10 +3,10 @@ schemaVersion: 1
 title: 睡眠是一种可以训练的能力
 description: 固定起床时间比固定入睡时间更重要，晨光是最便宜的校准器。
 publishedAt: 2025-08-16T07:00:00+08:00
-section: medical-thinking
 tags:
   - 睡眠
   - 健康
+draft: true
 ---
 
 看到研究表明四个字时，我现在的第一反应是问三个问题：研究对象是谁，样本量多大，是相对风险还是绝对风险。这三个问题能过滤掉市面上大半的健康焦虑。

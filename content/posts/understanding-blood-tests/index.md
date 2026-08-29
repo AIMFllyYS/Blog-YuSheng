@@ -3,10 +3,10 @@ schemaVersion: 1
 title: 看懂体检报告上的血常规
 description: 大多数箭头不值得惊慌，趋势比单次结果重要。
 publishedAt: 2025-11-22T13:25:00+08:00
-section: medical-thinking
 tags:
   - 体检
   - 检验
+draft: true
 ---
 
 体检的意义不在于查出多少问题，而在于建立自己的基线。今年和去年的对比，远比单次结果离参考值有多远更重要。健康管理的第一课，是把一次考试换成长期趋势。

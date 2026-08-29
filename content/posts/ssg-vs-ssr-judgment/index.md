@@ -3,10 +3,10 @@ schemaVersion: 1
 title: SSG 与 SSR 的判断题
 description: 不是信仰之争，是内容更新频率与首屏预算的算术题。
 publishedAt: 2026-07-05T11:15:00+08:00
-section: tech-thinking
 tags:
   - 架构
   - SSG
+draft: true
 ---
 
 副业项目最大的敌人不是没时间，而是贪大。把范围砍到能在两个周末内交付，你就战胜了百分之九十的同类项目。完成比完美重要，上线比重构重要。
