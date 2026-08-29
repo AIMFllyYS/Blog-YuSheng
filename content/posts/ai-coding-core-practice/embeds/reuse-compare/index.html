@@ -1,0 +1,103 @@
+!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>手写与组件库</title>
+    <style>
+      :root { color-scheme: light; }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: "Source Han Serif SC", "Noto Serif SC", "Songti SC", serif;
+        background: #f4ead3;
+        color: #2c2416;
+      }
+      main {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: .7rem;
+        padding: .9rem;
+      }
+      article {
+        background: #fbf6ea;
+        border: 1px solid #d8c9a4;
+        border-radius: .7rem;
+        padding: .75rem .8rem .9rem;
+        display: flex;
+        flex-direction: column;
+      }
+      article.bad { border-top: 3px solid #a83c1f; }
+      article.good { border-top: 3px solid #0e6f6e; }
+      span {
+        display: block;
+        font-size: .68rem;
+        letter-spacing: .14em;
+        margin-bottom: .3rem;
+      }
+      .bad span { color: #a83c1f; }
+      .good span { color: #0a4f4f; }
+      h2 {
+        margin: 0 0 .45rem;
+        font-size: .95rem;
+      }
+      .bar {
+        margin: .15rem 0 .55rem;
+        border-radius: .35rem;
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: #fff;
+      }
+      .bad .bar {
+        height: 6.4rem;
+        background: #a83c1f;
+      }
+      .good .bar {
+        height: 2.1rem;
+        background: #0e6f6e;
+      }
+      p {
+        margin: 0;
+        font-size: .76rem;
+        line-height: 1.55;
+        color: #4a3f2e;
+      }
+      @media (max-width: 560px) {
+        main { grid-template-columns: 1fr; }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <article class="bad">
+        <span>从零手写</span>
+        <h2>每个功能重写 N 遍</h2>
+        <div class="bar">5〜7 万行</div>
+        <p>Markdown、插图、思维导图、评论、登录、协作……每加一项都让 AI 重新写。十个页面各写一份，细节还对不齐。</p>
+      </article>
+      <article class="good">
+        <span>引入组件库 / SDK</span>
+        <h2>一次接入，处处复用</h2>
+        <div class="bar">几百行</div>
+        <p>富文本渲染、评论、登录鉴权几乎都有现成库。以后新增一篇文章，往往只需新建一个放内容的文件夹。</p>
+      </article>
+    </main>
+    <script>
+      (() => {
+        const nonce = new URLSearchParams(location.hash.slice(1)).get('nonce')
+        if (nonce) parent.postMessage({ nonce, message: { type: 'ready' } }, '*')
+        const reportHeight = () => {
+          parent.postMessage(
+            { type: 'resize', height: document.documentElement.scrollHeight },
+            '*',
+          )
+        }
+        requestAnimationFrame(reportHeight)
+        new ResizeObserver(reportHeight).observe(document.documentElement)
+      })()
+    </script>
+  </body>
+</html>
