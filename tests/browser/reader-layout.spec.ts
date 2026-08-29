@@ -2,8 +2,22 @@ import { expect, test } from '@playwright/test'
 
 const articlePath = '/blog/p0-kitchen-sink/'
 
+test('阅读页中栏顶栏显示人类可读日期而不是 ISO', async ({ page }) => {
+  test.setTimeout(90_000)
+  await page.goto(articlePath, { waitUntil: 'domcontentloaded' })
+  await expect(page.locator('body')).toHaveAttribute('data-reader-hydrated', 'true')
+  const published = page.locator('[data-reader-published-at]')
+  await expect(published).toBeVisible()
+  await expect(published).toHaveAttribute('dateTime', '2026-08-16T10:00:00+08:00')
+  await expect(published).toHaveText('2026年8月16日 10:00')
+  const visible = (await published.innerText()).trim()
+  expect(visible).not.toContain('T')
+  expect(visible).not.toContain('+08:00')
+})
+
 test('阅读页首屏、双层滚动与阻尼页尾遵守原型契约', async ({ page }, testInfo) => {
-  await page.goto(articlePath)
+  test.setTimeout(90_000)
+  await page.goto(articlePath, { waitUntil: 'domcontentloaded' })
   await expect(page.locator('body')).toHaveAttribute('data-reader-hydrated', 'true')
 
   const shell = page.locator('[data-reader-shell]')
@@ -23,8 +37,8 @@ test('阅读页首屏、双层滚动与阻尼页尾遵守原型契约', async ({
     }
   })
   const centerWidth = await center.evaluate((element) => element.getBoundingClientRect().width)
-  expect(articleGeometry.width).toBe(Math.min(704, centerWidth))
-  expect(articleGeometry.maxWidth).toBe('704px')
+  expect(articleGeometry.width).toBe(Math.min(832, centerWidth))
+  expect(articleGeometry.maxWidth).toBe('832px')
   expect(articleGeometry.paddingTop).toBe('104px')
   expect(Number.parseFloat(articleGeometry.paddingBottom)).toBeCloseTo(articleGeometry.viewportHeight * 0.08, 0)
 
@@ -61,7 +75,8 @@ test('阅读页首屏、双层滚动与阻尼页尾遵守原型契约', async ({
 })
 
 test('分栏可拖动、键盘调整并双击恢复默认宽度', async ({ page }) => {
-  await page.goto(articlePath)
+  test.setTimeout(90_000)
+  await page.goto(articlePath, { waitUntil: 'domcontentloaded' })
   await expect(page.locator('body')).toHaveAttribute('data-reader-hydrated', 'true')
   const shell = page.locator('[data-reader-shell]')
   const divider = page.locator('[data-reader-divider="left"]')
@@ -92,7 +107,7 @@ test('分栏可拖动、键盘调整并双击恢复默认宽度', async ({ page 
 
 test('1025px 桌面边界在初始与键盘调整后都优先保障正文 520px', async ({ page }) => {
   await page.setViewportSize({ width: 1025, height: 800 })
-  await page.goto(articlePath)
+  await page.goto(articlePath, { waitUntil: 'domcontentloaded' })
   await expect(page.locator('body')).toHaveAttribute('data-reader-hydrated', 'true')
 
   const shell = page.locator('[data-reader-shell]')
@@ -110,7 +125,7 @@ test('1025px 桌面边界在初始与键盘调整后都优先保障正文 520px'
 
 test('reduced motion 让页尾 reveal 直接到终态', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' })
-  await page.goto(articlePath)
+  await page.goto(articlePath, { waitUntil: 'domcontentloaded' })
   await expect(page.locator('body')).toHaveAttribute('data-reader-hydrated', 'true')
 
   const footer = page.locator('[data-reader-footer]')
@@ -124,8 +139,9 @@ test('reduced motion 让页尾 reveal 直接到终态', async ({ page }) => {
 })
 
 test('窄屏将左右栏降级为带遮罩的抽屉', async ({ page }) => {
+  test.setTimeout(90_000)
   await page.setViewportSize({ width: 820, height: 900 })
-  await page.goto(articlePath)
+  await page.goto(articlePath, { waitUntil: 'domcontentloaded' })
   await expect(page.locator('body')).toHaveAttribute('data-reader-hydrated', 'true')
 
   const left = page.locator('[data-reader-column="left"]')

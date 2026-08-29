@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>生产管线与知识注入点</title>
+    <style>
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: "Source Han Serif SC", "Noto Serif SC", "Songti SC", serif;
+        background: #f4ead3;
+        color: #2c2416;
+      }
+      main { padding: .85rem .9rem 1rem; }
+      p.kicker {
+        margin: 0 0 .2rem;
+        font-size: .66rem;
+        letter-spacing: .16em;
+        color: #7a6a4e;
+      }
+      h1 {
+        margin: 0 0 .55rem;
+        font-size: 1.02rem;
+        font-weight: 600;
+      }
+      ol.flow {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: .4rem;
+      }
+      ol.flow li {
+        background: #2c2416;
+        color: #f4ead3;
+        padding: .5rem .55rem .55rem;
+        min-height: 3.4rem;
+      }
+      ol.flow strong {
+        display: block;
+        font-size: .8rem;
+      }
+      ol.flow span {
+        display: block;
+        margin-top: .15rem;
+        font-size: .66rem;
+        color: #d8c9a4;
+      }
+      .inject {
+        margin-top: .55rem;
+        background: #fbf6ea;
+        border: 1px solid #d8c9a4;
+        padding: .55rem .65rem .65rem;
+      }
+      .inject h2 {
+        margin: 0 0 .35rem;
+        font-size: .78rem;
+        letter-spacing: .08em;
+        color: #7a4a28;
+      }
+      .inject p {
+        margin: 0 0 .28rem;
+        font-size: .72rem;
+        line-height: 1.45;
+        color: #4a3f2e;
+      }
+      .inject p:last-child { margin-bottom: 0; }
+      figcaption {
+        margin: .5rem 0 0;
+        font-size: .7rem;
+        color: #7a6a4e;
+      }
+      @media (max-width: 560px) {
+        ol.flow { grid-template-columns: 1fr 1fr; }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <p class="kicker">PIPELINE × KNOWLEDGE</p>
+      <h1>六维知识注入生产管线</h1>
+      <ol class="flow">
+        <li><strong>① 剧本</strong><span>故事 · 台词 · 潜台词</span></li>
+        <li><strong>② 分镜表</strong><span>全书知识的落盘处</span></li>
+        <li><strong>③ 首帧 / 参考图</strong><span>构图与美术定稿</span></li>
+        <li><strong>④ 视频生成</strong><span>运镜 · 表演驱动</span></li>
+        <li><strong>⑤ 配音 TTS</strong><span>声音表演</span></li>
+        <li><strong>⑥ 剪辑合成</strong><span>组接 · 节奏</span></li>
+        <li><strong>⑦ 调色</strong><span>一级 → 二级</span></li>
+        <li><strong>⑧ 声音设计</strong><span>三层音效 · 混音</span></li>
+        <li><strong>⑨ 成片</strong><span>字幕 · 发布</span></li>
+      </ol>
+      <div class="inject">
+        <h2>各节点的知识注入</h2>
+        <p><strong>① 剧本</strong> ← 表演即信息 1.1 · 让 AI 体验角色 1.6</p>
+        <p><strong>② 分镜表</strong> ← 全书汇聚点：每行 = 景别 4.1 + 构图 4.2 + 运镜 4.3 + 光线 2.2 + 色调 3.3 + 表演通道 CH1 + 音效预埋 6.2</p>
+        <p><strong>③ 首帧</strong> ← 场景小传 2.1 · 一致性锚点 2.3.2 · 构图 4.2 · 配色 3.2</p>
+        <p><strong>④ 生成</strong> ← 运镜词表 4.3 · 焦段 4.6 · 表演描述 1.2–1.4 · 方位锁定 4.5</p>
+        <p><strong>⑤ 配音</strong> ← 声音表演五参数 1.5 · 空间混响 6.3</p>
+        <p><strong>⑥ 剪辑</strong> ← 六大要素 5.1 · 硬切三门派 5.2 · J/L cut 5.3 · 蒙太奇 5.4 · 节奏 5.5 · 卡点 5.6 · 基元 5.7</p>
+        <p><strong>⑦ 调色</strong> ← 一级 3.5.1 → 二级 3.5.2 · 色彩弧线 3.3　<strong>⑧ 声音</strong> ← 三层 6.2 · BGM 进出点 6.1 · 静默 6.4 · 声画对位 6.5</p>
+        <p>未来趋势：AI 可能把 ④–⑧ 逐步融合。融合掉的是工序，不是知识——知识只是换了个注入口。</p>
+      </div>
+      <figcaption>图 9-1 · 分镜表是枢纽：六章知识在那里变成一张表，表的每一行变成一个镜头。</figcaption>
+    </main>
+    <script>
+      (() => {
+        const nonce = new URLSearchParams(location.hash.slice(1)).get('nonce')
+        if (nonce) parent.postMessage({ nonce, message: { type: 'ready' } }, '*')
+        const reportHeight = () => {
+          parent.postMessage(
+            { type: 'resize', height: document.documentElement.scrollHeight },
+            '*',
+          )
+        }
+        requestAnimationFrame(reportHeight)
+        new ResizeObserver(reportHeight).observe(document.documentElement)
+      })()
+    </script>
+  </body>
+</html>

@@ -4,6 +4,7 @@ import {
   UNCATEGORIZED_BOOK_SLUG,
 } from '../../src/features/blog-index/create-shelf-books'
 import { listPublishedPosts, listSections } from '../../src/server/content'
+import { IMPORTED_SLUGS } from '../imported-slugs'
 
 /** Keep in lockstep with docs/ops/write-blog.md §1.4 散页名单. */
 const DOCUMENTED_LOOSE_SLUGS = ['p0-kitchen-sink'] as const
@@ -86,5 +87,24 @@ describe('live catalog classification', () => {
     }
 
     expect([...seen].sort()).toEqual(posts.map((post) => post.slug).sort())
+  })
+
+  it('publishes every imported Downloads post into a registered 大方向', async () => {
+    const posts = await listPublishedPosts()
+    const bySlug = new Map(posts.map((post) => [post.slug, post]))
+
+    for (const slug of IMPORTED_SLUGS) {
+      const post = bySlug.get(slug)
+      expect(post, slug).toBeDefined()
+      if (!post) continue
+      expect(post.frontmatter.draft).not.toBe(true)
+      expect(post.frontmatter.title.length).toBeGreaterThan(0)
+      expect(post.frontmatter.description.length).toBeGreaterThan(0)
+      expect(post.frontmatter.publishedAt).toMatch(
+        /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(Z|[+-]\d{2}:\d{2})$/,
+      )
+      expect(post.frontmatter.section).toBeDefined()
+      expect(LIVE_SECTION_SLUGS).toContain(post.frontmatter.section)
+    }
   })
 })

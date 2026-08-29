@@ -1,0 +1,111 @@
+!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>三种前端，两种分数</title>
+    <style>
+      :root { color-scheme: light; }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: "Source Han Serif SC", "Noto Serif SC", "Songti SC", serif;
+        background: #f4ead3;
+        color: #2c2416;
+      }
+      main {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: .7rem;
+        padding: .9rem;
+      }
+      article {
+        background: #fbf6ea;
+        border: 1px solid #d8c9a4;
+        border-radius: .7rem;
+        padding: .75rem .8rem .85rem;
+        min-height: 8.2rem;
+      }
+      article.bad { border-top: 3px solid #a83c1f; }
+      article.good { border-top: 3px solid #0e6f6e; }
+      span {
+        display: block;
+        font-size: .68rem;
+        letter-spacing: .14em;
+        margin-bottom: .35rem;
+      }
+      .bad span { color: #a83c1f; }
+      .good span { color: #0a4f4f; }
+      .pick span, .c span { color: #7a4a28; }
+      h2 {
+        margin: 0 0 .35rem;
+        font-size: .95rem;
+        font-weight: 600;
+      }
+      .bad h2 { color: #a83c1f; }
+      .good h2 { color: #0a4f4f; }
+      p {
+        margin: 0 0 .45rem;
+        font-size: .78rem;
+        line-height: 1.55;
+        color: #4a3f2e;
+      }
+      ul {
+        margin: 0;
+        padding-left: 1.05rem;
+        font-size: .74rem;
+        line-height: 1.55;
+        color: #4a3f2e;
+      }
+      @media (max-width: 560px) {
+        main { grid-template-columns: 1fr; }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <article class="bad">
+        <span>案例 A · 花哨但难用</span>
+        <h2>UI 高，UX 低</h2>
+        <p>视觉很炫，但要点三四步才能开始跟 AI 对话。体验感会被直接 knock down。</p>
+        <ul>
+          <li>分数写在脸上</li>
+          <li>留存在路径里丢掉</li>
+        </ul>
+      </article>
+      <article class="good">
+        <span>案例 B · 朴素但顺手</span>
+        <h2>UI 一般，UX 高</h2>
+        <p>界面只是「看得过去」，但一句话就能直接开始对话。留存往往更好。</p>
+        <ul>
+          <li>好看是加分项</li>
+          <li>顺手才是及格线</li>
+        </ul>
+      </article>
+      <article class="c">
+        <span>案例 C · 通用商务风</span>
+        <h2>熟悉，所以不需要学</h2>
+        <p>仿照微信、QQ 或 ChatGPT 这类交互范式：前端未必惊艳，但足够正式，几乎没有学习成本。</p>
+      </article>
+      <article class="pick">
+        <span>怎么选</span>
+        <h2>通用而不出错</h2>
+        <p>面向大众、追求快速上手时，「通用而不出错」往往比「独特但陌生」更容易被接受。</p>
+      </article>
+    </main>
+    <script>
+      (() => {
+        const nonce = new URLSearchParams(location.hash.slice(1)).get('nonce')
+        if (nonce) parent.postMessage({ nonce, message: { type: 'ready' } }, '*')
+        const reportHeight = () => {
+          parent.postMessage(
+            { type: 'resize', height: document.documentElement.scrollHeight },
+            '*',
+          )
+        }
+        requestAnimationFrame(reportHeight)
+        new ResizeObserver(reportHeight).observe(document.documentElement)
+      })()
+    </script>
+  </body>
+</html>

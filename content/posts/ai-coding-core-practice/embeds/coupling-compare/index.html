@@ -1,0 +1,135 @@
+!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>高耦合与低耦合</title>
+    <style>
+      :root { color-scheme: light; }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: "Source Han Serif SC", "Noto Serif SC", "Songti SC", serif;
+        background: #f4ead3;
+        color: #2c2416;
+      }
+      main {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: .7rem;
+        padding: .9rem;
+      }
+      article {
+        background: #fbf6ea;
+        border: 1px solid #d8c9a4;
+        border-radius: .7rem;
+        padding: .75rem .8rem .85rem;
+      }
+      article.bad { border-top: 3px solid #a83c1f; }
+      article.good { border-top: 3px solid #0e6f6e; }
+      span {
+        display: block;
+        font-size: .68rem;
+        letter-spacing: .14em;
+        margin-bottom: .35rem;
+      }
+      .bad span { color: #a83c1f; }
+      .good span { color: #0a4f4f; }
+      h2 {
+        margin: 0 0 .4rem;
+        font-size: .98rem;
+        font-weight: 600;
+      }
+      .bad h2 { color: #a83c1f; }
+      .good h2 { color: #0a4f4f; }
+      p {
+        margin: 0 0 .55rem;
+        font-size: .78rem;
+        line-height: 1.55;
+        color: #4a3f2e;
+      }
+      .nodes {
+        display: flex;
+        flex-wrap: wrap;
+        gap: .4rem;
+        margin-bottom: .55rem;
+      }
+      .nodes b {
+        font-weight: 600;
+        font-size: .74rem;
+        padding: .28rem .55rem;
+        border-radius: .4rem;
+      }
+      .bad .nodes b {
+        background: #f7e6de;
+        color: #a83c1f;
+        outline: 1px dashed #a83c1f;
+      }
+      .good .nodes {
+        display: grid;
+        grid-template-columns: 1fr;
+      }
+      .good .nodes b {
+        background: #dcebe9;
+        color: #0a4f4f;
+        border: 1px solid #0e6f6e;
+      }
+      ul {
+        margin: 0;
+        padding-left: 1.05rem;
+        font-size: .74rem;
+        line-height: 1.55;
+        color: #4a3f2e;
+      }
+      @media (max-width: 560px) {
+        main { grid-template-columns: 1fr; }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <article class="bad">
+        <span>高耦合 · 意大利面条</span>
+        <h2>改一处，全线牵连</h2>
+        <p>A、B、C 三个功能被堆在同一个地方。改动其中一个，另外两个也可能跟着崩。</p>
+        <div class="nodes">
+          <b>A 功能</b>
+          <b>B 功能</b>
+          <b>C 功能</b>
+        </div>
+        <ul>
+          <li>可维护性很低</li>
+          <li>定位「改动会牵连什么」非常费劲</li>
+        </ul>
+      </article>
+      <article class="good">
+        <span>低耦合 · 模块化</span>
+        <h2>各自独立，改动可控</h2>
+        <p>三个功能分别放在独立文件里，AI 能清楚知道哪部分代码对应哪个功能。</p>
+        <div class="nodes">
+          <b>A 功能 · 单独文件</b>
+          <b>B 功能 · 单独文件</b>
+          <b>C 功能 · 单独文件</b>
+        </div>
+        <ul>
+          <li>高复用、少冗余、职责单一</li>
+          <li>单文件不宜过长</li>
+        </ul>
+      </article>
+    </main>
+    <script>
+      (() => {
+        const nonce = new URLSearchParams(location.hash.slice(1)).get('nonce')
+        if (nonce) parent.postMessage({ nonce, message: { type: 'ready' } }, '*')
+        const reportHeight = () => {
+          parent.postMessage(
+            { type: 'resize', height: document.documentElement.scrollHeight },
+            '*',
+          )
+        }
+        requestAnimationFrame(reportHeight)
+        new ResizeObserver(reportHeight).observe(document.documentElement)
+      })()
+    </script>
+  </body>
+</html>
