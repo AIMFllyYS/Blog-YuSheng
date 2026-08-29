@@ -1,4 +1,4 @@
---
+---
 schemaVersion: 1
 title: AI 编程核心能力体系与工程实践
 description: 树成林技术组内部分享下册：从能跑的 demo 到能长期维护的系统，讲耦合、任务拆分、复用与部署常识。
