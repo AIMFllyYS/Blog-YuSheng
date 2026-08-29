@@ -190,6 +190,7 @@ export async function createAssetManifest(postsRoot?: string) {
             )
             continue
           }
+          manifestData = data
         }
         if (
           (reference.nodeName === 'choice-question' ||
@@ -236,11 +237,7 @@ export async function createAssetManifest(postsRoot?: string) {
         }
         outputOwners.set(outputPath.toLowerCase(), sourceIdentity)
         if (post.frontmatter.draft === true) continue
-        const publicUrl =
-          reference.nodeName === 'html-embed' &&
-          sourcePath === validation.absolutePath
-            ? `/${path.posix.dirname(outputPath)}/`
-            : `/${outputPath}`
+        const publicUrl = `/${outputPath}`
         entries.push({
           id: owner,
           articleSlug: post.slug,

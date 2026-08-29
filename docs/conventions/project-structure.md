@@ -276,7 +276,7 @@ content/posts/<slug>/
 
 #### `embeds/` 的公开 URL 契约（安全门约束，不可改）
 
-`content/posts/<slug>/embeds/<embed-id>/**` 必须落位到 **`out/embeds/<slug>/<embed-id>/**`**，即公开 URL 是 `/embeds/<slug>/<embed-id>/`，**不放在 `/blog/<slug>/` 之下**。
+`content/posts/<slug>/embeds/<embed-id>/**` 必须落位到 **`out/embeds/<slug>/<embed-id>/**`**，即公开 URL 是 `/embeds/<slug>/<embed-id>/index.html`，**不放在 `/blog/<slug>/` 之下**。
 
 这不是审美选择：`edgeone.json` 的 `source` 最多只能含一个 `*`，所以 `/blog/*/embeds/*` 是非法规则；若退化成 `/blog/*`，`X-Frame-Options` 的例外会连带放开整站文章页的点击劫持保护。只有单一前缀 `/embeds/*` 能写出既生效又不过宽的响应头规则。详见架构 D7「v1 安全门（方案 A）」与 [deploy-edgeone.md](../ops/deploy-edgeone.md)。
 

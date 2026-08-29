@@ -42,7 +42,7 @@ export function projectHtmlEmbedUrl(
   return encodePublicUrl(
     typeof matched?.publicUrl === 'string'
       ? matched.publicUrl
-      : `/embeds/${articleSlug}/${componentId}/`,
+      : `/embeds/${articleSlug}/${componentId}/index.html`,
   )
 }
 

@@ -10,6 +10,7 @@ export {
 export {
   buildContentAssets,
   copyAssetManifest,
+  mirrorPublishedAssetsForDev,
   verifyStaticOutput,
 } from './build-content-assets'
 export {

@@ -33,6 +33,7 @@ const loadRegisteredLeaf = () =>
 
 type CanvasProps = {
   readonly node: RegisteredComponentNode
+  readonly data?: unknown
   readonly dataUrl?: string
   readonly showDetails: boolean
   readonly developmentCrash?: boolean

@@ -13,7 +13,7 @@ test('local HTML uses the locked sandbox gate and unlisted web stays a preview',
     'utf8',
   )
   let localRequests = 0
-  await page.route('**/embeds/p0-kitchen-sink/mini-card/', (route) => {
+  await page.route('**/embeds/p0-kitchen-sink/mini-card/**', (route) => {
     localRequests += 1
     return route.fulfill({
       body: fixture,
@@ -39,11 +39,17 @@ test('local HTML uses the locked sandbox gate and unlisted web stays a preview',
   await expect(iframe).toHaveAttribute('title', '文章包内 HTML 小页')
   await expect(iframe).toHaveAttribute(
     'src',
-    /\/embeds\/p0-kitchen-sink\/mini-card\/#nonce=[a-f0-9]{48}$/,
+    /\/embeds\/p0-kitchen-sink\/mini-card\/index\.html#nonce=[a-f0-9]{48}$/,
   )
   await expect(local).toHaveAttribute('data-embed-ready', 'true')
   await expect(local).toHaveAttribute('data-message-rejections', '1')
   await expect(iframe.contentFrame().getByText('HTML Embed 已隔离')).toBeVisible()
+  const openLocal = local.getByRole('link', { name: '打开' })
+  await expect(openLocal).toHaveAttribute(
+    'href',
+    '/embeds/p0-kitchen-sink/mini-card/index.html',
+  )
+  await expect(openLocal).toHaveAttribute('target', '_blank')
   expect(localRequests).toBe(1)
 
   const webFallback = page.locator('[data-web-embed="fallback"]')
@@ -53,9 +59,13 @@ test('local HTML uses the locked sandbox gate and unlisted web stays a preview',
     '该 URL 不在 allowlist，P0 必须显示降级卡片而不是 iframe。',
   )
   await expect(webFallback.locator('iframe')).toHaveCount(0)
-  await expect(webFallback.getByRole('link', { name: '打开链接' })).toHaveAttribute(
+  await expect(webFallback.getByRole('link', { name: '打开' })).toHaveAttribute(
     'href',
     'https://unlisted.invalid/embed',
+  )
+  await expect(webFallback.getByRole('link', { name: '打开' })).toHaveAttribute(
+    'target',
+    '_blank',
   )
 })
 
@@ -90,7 +100,7 @@ test('an allowed web iframe that never loads becomes a terminal preview after fo
 test('a local HTML resource failure restores the author fallback and removes the iframe', async ({
   page,
 }) => {
-  await page.route('**/embeds/p0-kitchen-sink/mini-card/', (route) =>
+  await page.route('**/embeds/p0-kitchen-sink/mini-card/**', (route) =>
     route.abort(),
   )
   await page.goto('/blog/p0-kitchen-sink/')
@@ -107,7 +117,7 @@ test('a local HTML resource failure restores the author fallback and removes the
 test('a loaded local HTML page without an authenticated ready message times out near four seconds', async ({
   page,
 }) => {
-  await page.route('**/embeds/p0-kitchen-sink/mini-card/', (route) =>
+  await page.route('**/embeds/p0-kitchen-sink/mini-card/**', (route) =>
     route.fulfill({
       body: '<!doctype html><title>no ready message</title>',
       contentType: 'text/html; charset=utf-8',

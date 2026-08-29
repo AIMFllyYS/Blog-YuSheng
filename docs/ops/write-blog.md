@@ -213,9 +213,9 @@ draft: false
 <fill-blank-question id="fill-basics" data-src="./data/fill-blank-question.json" />
 ```
 
-`html-embed` 的 `id` 和文件夹名必须一致：`id="mini-card"` 对应 `embeds/mini-card/index.html`。公开地址是 `/embeds/<slug>/mini-card/`，不在 `/blog/<slug>/` 下面。这是安全门约束，不要改。
+`html-embed` 的 `id` 和文件夹名必须一致：`id="mini-card"` 对应 `embeds/mini-card/index.html`。公开地址是 `/embeds/<slug>/mini-card/index.html`，不在 `/blog/<slug>/` 下面。这是安全门约束，不要改。开发服务器只把带扩展名的静态文件当资源；不要把地址写成目录斜杠。
 
-`web-embed` 不会把别人的网页下载进仓库，只保存链接。`src` 的主机名必须命中审过的 **eTLD+1（主域）**：`husteread.com` 覆盖 `read.husteread.com`，不必逐条登记子域。未命中、或对端禁止 iframe（GitHub、Google 等）时显示「网页预览」卡（标题 + 域名 + 打开链接），构建不失败。
+`web-embed` 不会把别人的网页下载进仓库，只保存链接。`src` 的主机名必须命中审过的 **eTLD+1（主域）**：`husteread.com` 覆盖 `read.husteread.com`，不必逐条登记子域。未命中、或对端禁止 iframe（GitHub、Google 等）时显示「网页预览」卡（标题 + 域名 + 右上角「打开」），构建不失败。阅读页上 `html-embed` / `web-embed` 卡片右上角的「打开」会新标签页打开该 URL。
 
 ### 2.3.1 网页嵌入与作者托管媒体的白名单
 
