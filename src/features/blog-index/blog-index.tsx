@@ -1,4 +1,4 @@
-import { BlogIndexChrome } from './blog-index-chrome'
+import { RopeNavigation } from '@/features/navigation'
 import styles from './blog-index.module.css'
 import { BlogIndexView } from './blog-index-view'
 import type { ShelfBook } from './create-shelf-books'
@@ -12,7 +12,7 @@ export function BlogIndex({
 }) {
   return (
     <main className={styles.page} data-blog-index>
-      <BlogIndexChrome />
+      <RopeNavigation />
       <div className={styles.room}>
         <header className={styles.header}>
           <div>

@@ -12,7 +12,7 @@
 
 ## 现有文档
 
-- [write-blog.md](./write-blog.md) — 作者写作指南（文章包位置、frontmatter、正文语法、素材目录、预览与发布）
+- [write-blog.md](./write-blog.md) — 作者写作指南与新增博客 SOP（先选**大方向**，再建**小博客**包；**章节**按发布时间排。含 `content/sections.yml` 现有四个方向、散页规则、frontmatter、正文语法、素材目录、预览与发布）
 - [deploy-edgeone.md](./deploy-edgeone.md) — EdgeOne Pages 部署配置规范
 
 ## 文件命名

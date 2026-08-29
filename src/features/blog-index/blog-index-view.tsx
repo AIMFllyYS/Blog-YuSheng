@@ -61,16 +61,16 @@ export function BlogIndexView({
   }
 
   return (
-    <section aria-label="文章书架">
+    <section aria-label="文章书架" data-catalog-view={view}>
       <div className={styles.shelfHeading}>
         <span className={styles.shelfLabel}>文章书架</span>
         <span className={styles.shelfCount}>
           {books.length} 个方向 · {totalPosts} 卷在架
         </span>
-        {!fallback && (
+        {!fallback && view !== 'pending' && (
           <span className={styles.viewToggle} role="group" aria-label="视图切换">
             <button
-              aria-pressed={view !== 'tree'}
+              aria-pressed={view === 'shelf'}
               className={styles.viewButton}
               onClick={() => switchView('shelf')}
               type="button"
@@ -95,9 +95,9 @@ export function BlogIndexView({
 
       {view === 'tree' ? (
         <TreeIndex books={books} />
-      ) : (
+      ) : view === 'shelf' ? (
         <ShelfStack books={books} />
-      )}
+      ) : null}
     </section>
   )
 }

@@ -10,6 +10,7 @@ const SECTIONS: readonly SectionDefinition[] = [
   { slug: 'personal-reflections', title: '个人感悟', order: 10 },
   { slug: 'ai-thinking', title: 'AI 时代思考', order: 20 },
   { slug: 'tech-thinking', title: '技术思考', order: 30 },
+  { slug: 'medical-thinking', title: '医学思考', order: 40 },
 ]
 
 function entry(
@@ -57,6 +58,21 @@ describe('shelf books grouping', () => {
     expect(aiBook?.totalReadingMinutes).toBe(5)
   })
 
+  it('breaks chapter ties by slug when publishedAt is equal', () => {
+    const books = createShelfBooks(
+      [
+        entry('zeta', '2026-01-01T00:00:00+08:00', 100, 'ai-thinking'),
+        entry('alpha', '2026-01-01T00:00:00+08:00', 100, 'ai-thinking'),
+      ],
+      SECTIONS,
+    )
+
+    expect(books[0]?.chapters.map((chapter) => chapter.slug)).toEqual([
+      'alpha',
+      'zeta',
+    ])
+  })
+
   it('keeps sectionless entries in a trailing uncategorized book', () => {
     const books = createShelfBooks(
       [
@@ -71,6 +87,9 @@ describe('shelf books grouping', () => {
       UNCATEGORIZED_BOOK_SLUG,
     ])
     expect(books[1]?.title).toBe('散页')
+    expect(books[1]?.chapters.map((chapter) => chapter.slug)).toEqual([
+      'loose-post',
+    ])
   })
 
   it('omits registered sections that have no chapters yet', () => {
@@ -82,34 +101,14 @@ describe('shelf books grouping', () => {
     expect(books.map((book) => book.slug)).toEqual(['ai-thinking'])
   })
 
-  it('maps spine width linearly to total characters between 3rem and 6.5rem', () => {
+  it('does not attach unused spine-dimension fields', () => {
     const books = createShelfBooks(
-      [
-        entry('thin-post', '2026-01-01T00:00:00+08:00', 200, 'personal-reflections'),
-        entry('thick-post', '2026-01-02T00:00:00+08:00', 4200, 'ai-thinking'),
-        entry('mid-post', '2026-01-03T00:00:00+08:00', 2200, 'tech-thinking'),
-      ],
+      [entry('ai-post', '2026-01-01T00:00:00+08:00', 800, 'ai-thinking')],
       SECTIONS,
     )
 
-    const [thin, thick, mid] = books
-    expect(thin?.widthRem).toBe(3)
-    expect(thick?.widthRem).toBe(6.5)
-    expect(mid?.widthRem).toBeCloseTo(4.75, 5)
-    for (const book of books) {
-      expect(book.heightRem).toBeGreaterThanOrEqual(16)
-      expect(book.heightRem).toBeLessThan(18)
-    }
-  })
-
-  it('gives a single book a neutral mid width', () => {
-    const books = createShelfBooks(
-      [entry('only-post', '2026-01-01T00:00:00+08:00', 900)],
-      SECTIONS,
-    )
-
-    expect(books).toHaveLength(1)
-    expect(books[0]?.widthRem).toBe(4.75)
+    expect(books[0]).not.toHaveProperty('widthRem')
+    expect(books[0]).not.toHaveProperty('heightRem')
   })
 
   it('returns an empty shelf when there are no posts at all', () => {

@@ -3,14 +3,12 @@
 import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
 import styles from './blog-index.module.css'
+import {
+  formatChapterDate,
+  readCatalogHash,
+  writeCatalogHash,
+} from './catalog-helpers'
 import type { ShelfBook } from './create-shelf-books'
-
-const CHAPTER_DATE_FORMATTER = new Intl.DateTimeFormat('zh-CN', {
-  day: 'numeric',
-  month: 'long',
-  timeZone: 'Asia/Shanghai',
-  year: 'numeric',
-})
 
 /** 单册分组：组头可折叠（手风琴语义，多册可同时展开） */
 function TreeGroup({ book }: { readonly book: ShelfBook }) {
@@ -20,7 +18,7 @@ function TreeGroup({ book }: { readonly book: ShelfBook }) {
   // hash 深链：#<section-slug> 时本册默认展开并滚入视野
   useEffect(() => {
     const syncFromHash = () => {
-      const slug = decodeURIComponent(window.location.hash.replace(/^#/, ''))
+      const slug = readCatalogHash()
       if (slug === book.slug) {
         setOpen(true)
         bodyRef.current?.closest('section')?.scrollIntoView({
@@ -34,12 +32,24 @@ function TreeGroup({ book }: { readonly book: ShelfBook }) {
     return () => window.removeEventListener('hashchange', syncFromHash)
   }, [book.slug])
 
+  const toggle = () => {
+    const next = !open
+    setOpen(next)
+    if (next) {
+      writeCatalogHash(book.slug)
+      return
+    }
+    if (readCatalogHash() === book.slug) {
+      writeCatalogHash(null)
+    }
+  }
+
   return (
     <section aria-label={book.title} className={styles.treeGroup} id={book.slug}>
       <button
         aria-expanded={open}
         className={styles.treeGroupHeader}
-        onClick={() => setOpen((current) => !current)}
+        onClick={toggle}
         type="button"
       >
         <div className={styles.treeGroupLead}>
@@ -78,9 +88,7 @@ function TreeGroup({ book }: { readonly book: ShelfBook }) {
                   </span>
                   <span className={styles.chapterMeta}>
                     <time dateTime={entry.frontmatter.publishedAt}>
-                      {CHAPTER_DATE_FORMATTER.format(
-                        new Date(entry.frontmatter.publishedAt),
-                      )}
+                      {formatChapterDate(entry.frontmatter.publishedAt)}
                     </time>
                     <span>约 {entry.readingMinutes} 分钟</span>
                   </span>
