@@ -279,7 +279,7 @@ function collectDiagnostics(
           source,
           articleSlug,
           'FRONTMATTER_SECTION_INVALID',
-          'section 必须是已注册板块的 kebab-case slug',
+          'section 必须是 kebab-case slug，且须在 content/sections.yml 注册',
           'section',
           rangeFor('section'),
         ),

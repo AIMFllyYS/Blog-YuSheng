@@ -1,12 +1,8 @@
 import type { SectionDefinition } from '../../server/content/read-sections'
+import { hashString } from './catalog-helpers'
 import type { BlogIndexEntry } from './create-blog-index-entries'
 
 export const UNCATEGORIZED_BOOK_SLUG = 'uncategorized'
-
-const MIN_BOOK_WIDTH_REM = 3
-const MAX_BOOK_WIDTH_REM = 6.5
-const BASE_BOOK_HEIGHT_REM = 16
-const BOOK_HEIGHT_STEP_REM = 0.35
 
 /** 内容兜底色：板块未配置 color 时按 slug 哈希确定性取色（宣纸古籍色系） */
 const FALLBACK_BOOK_COLORS = [
@@ -28,17 +24,14 @@ export type ShelfBook = {
   readonly chapters: readonly BlogIndexEntry[]
   readonly totalCharacters: number
   readonly totalReadingMinutes: number
-  /** 书脊宽度：按全书总字数在架内线性映射，写得越多书越厚 */
-  readonly widthRem: number
-  /** 书高：按 slug 确定性微差，让书架像真书架一样参差 */
-  readonly heightRem: number
   /** 方向主色：优先注册表 color，缺省时 slug 哈希兜底取色 */
   readonly color: string
 }
 
 /**
  * 把平铺的文章条目按板块聚成「书」：章节按发布时间升序（第一章最早），
- * 书按注册表 order 排列，未归栏的散页永远在最后；没有文章的板块不上架。
+ * 同日再按 slug；书按注册表 order 排列，未归栏的散页永远在最后；
+ * 没有文章的板块不上架。
  */
 export function createShelfBooks(
   entries: readonly BlogIndexEntry[],
@@ -84,7 +77,7 @@ export function createShelfBooks(
     )
   }
 
-  return Object.freeze(applySpineDimensions(books))
+  return Object.freeze(books)
 }
 
 function buildBook(
@@ -109,49 +102,19 @@ function buildBook(
     0,
   )
 
-  return {
+  return Object.freeze({
     slug,
     title,
     summary,
     chapters: Object.freeze(sorted),
     totalCharacters,
     totalReadingMinutes,
-    widthRem: MIN_BOOK_WIDTH_REM,
-    heightRem: bookHeightRem(slug),
     color,
-  }
+  })
 }
 
 function fallbackBookColor(slug: string): string {
-  let hash = 0
-  for (const char of slug) {
-    hash = (hash * 31 + char.charCodeAt(0)) % 997
-  }
-  return FALLBACK_BOOK_COLORS[hash % FALLBACK_BOOK_COLORS.length]
-}
-
-function applySpineDimensions(
-  books: readonly ShelfBook[],
-): readonly ShelfBook[] {
-  const totals = books.map((book) => book.totalCharacters)
-  const min = Math.min(...totals)
-  const max = Math.max(...totals)
-
-  return books.map((book) => ({
-    ...book,
-    widthRem:
-      max === min
-        ? (MIN_BOOK_WIDTH_REM + MAX_BOOK_WIDTH_REM) / 2
-        : MIN_BOOK_WIDTH_REM +
-          ((book.totalCharacters - min) / (max - min)) *
-            (MAX_BOOK_WIDTH_REM - MIN_BOOK_WIDTH_REM),
-  }))
-}
-
-function bookHeightRem(slug: string): number {
-  let hash = 0
-  for (const char of slug) {
-    hash = (hash * 31 + char.charCodeAt(0)) % 997
-  }
-  return BASE_BOOK_HEIGHT_REM + (hash % 5) * BOOK_HEIGHT_STEP_REM
+  return FALLBACK_BOOK_COLORS[
+    hashString(slug, 997) % FALLBACK_BOOK_COLORS.length
+  ]
 }

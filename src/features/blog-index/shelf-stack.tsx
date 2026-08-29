@@ -3,22 +3,12 @@
 import Link from 'next/link'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import styles from './blog-index.module.css'
+import {
+  formatChapterDate,
+  hashString,
+  readCatalogHash,
+} from './catalog-helpers'
 import type { ShelfBook } from './create-shelf-books'
-
-const CHAPTER_DATE_FORMATTER = new Intl.DateTimeFormat('zh-CN', {
-  day: 'numeric',
-  month: 'long',
-  timeZone: 'Asia/Shanghai',
-  year: 'numeric',
-})
-
-function hash(input: string): number {
-  let value = 0
-  for (const char of input) {
-    value = (value * 31 + char.charCodeAt(0)) % 1000
-  }
-  return value
-}
 
 /** 按原型 09：hex 向明/暗偏移（percent -1..1） */
 function shade(hex: string, percent: number): string {
@@ -109,7 +99,7 @@ function Tome({ book, open, onToggle }: TomeProps) {
 
   const latest = book.chapters.at(-1)
   const dateLabel = latest
-    ? CHAPTER_DATE_FORMATTER.format(new Date(latest.frontmatter.publishedAt))
+    ? formatChapterDate(latest.frontmatter.publishedAt)
     : null
 
   // 悬浮书脊 → 竖式题签从书顶滑出，展示章节完整标题（渲染在 tome 层，逃逸滚动容器的 overflow 裁剪）
@@ -137,6 +127,7 @@ function Tome({ book, open, onToggle }: TomeProps) {
 
   return (
     <div
+      aria-expanded={open}
       className={`${styles.tome} ${open ? styles.tomeOpen : ''}`}
       data-book-slug={book.slug}
       onClick={(event) => {
@@ -205,10 +196,10 @@ function Tome({ book, open, onToggle }: TomeProps) {
                 {book.chapters.map((chapter, index) => {
                   const tint = shade(
                     book.color,
-                    ((hash(chapter.slug) % 30) - 15) / 100,
+                    ((hashString(chapter.slug) % 30) - 15) / 100,
                   )
                   const darker = shade(tint, -0.16)
-                  const height = 200 + (hash(chapter.slug) % 4) * 7
+                  const height = 200 + (hashString(chapter.slug) % 4) * 7
                   return (
                     <Link
                       className={`${styles.articleSpine} ${
@@ -309,7 +300,7 @@ export function ShelfStack({ books }: { books: readonly ShelfBook[] }) {
   // hash 深链：#<section-slug> 直达对应册
   useEffect(() => {
     const syncFromHash = () => {
-      const slug = decodeURIComponent(window.location.hash.replace(/^#/, ''))
+      const slug = readCatalogHash()
       setOpenSlug(books.some((book) => book.slug === slug) ? slug : null)
     }
     syncFromHash()
@@ -317,28 +308,25 @@ export function ShelfStack({ books }: { books: readonly ShelfBook[] }) {
     return () => window.removeEventListener('hashchange', syncFromHash)
   }, [books])
 
-  const handleToggle = useCallback(
-    (slug: string | null) => {
-      setOpenSlug((current) => {
-        const next = slug === null || current === slug ? null : slug
-        // updater 必须是纯函数：pushState 挪到 effect 里执行一次
-        queueMicrotask(() => {
-          window.history.pushState(
-            null,
-            '',
-            next
-              ? `#${encodeURIComponent(next)}`
-              : window.location.pathname + window.location.search,
-          )
-        })
-        return next
+  const handleToggle = useCallback((slug: string | null) => {
+    setOpenSlug((current) => {
+      const next = slug === null || current === slug ? null : slug
+      // updater 必须是纯函数：pushState 挪到 effect 里执行一次
+      queueMicrotask(() => {
+        window.history.pushState(
+          null,
+          '',
+          next
+            ? `#${encodeURIComponent(next)}`
+            : window.location.pathname + window.location.search,
+        )
       })
-    },
-    [],
-  )
+      return next
+    })
+  }, [])
 
   return (
-    <div className={styles.stack}>
+    <div className={styles.stack} data-catalog-shelf>
       {books.map((book) => (
         <Tome
           book={book}

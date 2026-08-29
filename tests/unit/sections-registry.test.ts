@@ -25,6 +25,16 @@ const VALID_REGISTRY = `sections:
 `
 
 describe('sections registry', () => {
+  it('lists the four live 大方向 in registry order', async () => {
+    const sections = await listSections()
+    expect(sections.map((section) => section.slug)).toEqual([
+      'personal-reflections',
+      'ai-thinking',
+      'tech-thinking',
+      'medical-thinking',
+    ])
+  })
+
   it('returns an empty list when the registry file does not exist', async () => {
     const dir = await createTempDir()
     await expect(
