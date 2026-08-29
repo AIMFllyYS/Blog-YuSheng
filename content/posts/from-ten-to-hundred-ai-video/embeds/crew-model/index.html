@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>一人剧组模型</title>
+    <style>
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: "Source Han Serif SC", "Noto Serif SC", "Songti SC", serif;
+        background: #f4ead3;
+        color: #2c2416;
+      }
+      main { padding: .85rem .9rem 1rem; }
+      p.kicker {
+        margin: 0 0 .2rem;
+        font-size: .68rem;
+        letter-spacing: .16em;
+        color: #7a6a4e;
+      }
+      h1 {
+        margin: 0 0 .55rem;
+        font-size: 1.02rem;
+        font-weight: 600;
+      }
+      .board {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        gap: .5rem .65rem;
+        align-items: center;
+      }
+      .col {
+        display: grid;
+        gap: .45rem;
+      }
+      article {
+        background: #fbf6ea;
+        border: 1px solid #d8c9a4;
+        border-radius: .4rem;
+        padding: .55rem .65rem .6rem;
+      }
+      article header {
+        display: flex;
+        align-items: baseline;
+        gap: .4rem;
+        margin-bottom: .25rem;
+      }
+      b {
+        width: .42rem;
+        height: .42rem;
+        border-radius: .08rem;
+        flex: 0 0 auto;
+      }
+      h2 {
+        margin: 0;
+        font-size: .82rem;
+        font-weight: 600;
+      }
+      p {
+        margin: 0;
+        font-size: .72rem;
+        line-height: 1.45;
+        color: #4a3f2e;
+      }
+      .sym {
+        font-size: .66rem;
+        color: #7a6a4e;
+        margin-top: .2rem;
+      }
+      .director {
+        width: 7.2rem;
+        height: 7.2rem;
+        border-radius: 50%;
+        background: #2c2416;
+        color: #f4ead3;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: .6rem;
+      }
+      .director strong {
+        font-size: 1.05rem;
+      }
+      .director span {
+        display: block;
+        margin-top: .2rem;
+        font-size: .68rem;
+        color: #d8c9a4;
+      }
+      figcaption {
+        margin: .6rem 0 0;
+        font-size: .7rem;
+        color: #7a6a4e;
+      }
+      @media (max-width: 640px) {
+        .board { grid-template-columns: 1fr; }
+        .director { width: 100%; height: auto; border-radius: .5rem; padding: .8rem; }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <p class="kicker">THE CREW MODEL</p>
+      <h1>一个人，就是一整个剧组</h1>
+      <div class="board">
+        <div class="col">
+          <article>
+            <header><b style="background:#7a4a28"></b><h2>表演指导 · CH 01</h2></header>
+            <p>动作、表情、视线、语气是否在传递正确的信息。</p>
+            <p class="sym">空缺症状：人物「演得假」</p>
+          </article>
+          <article>
+            <header><b style="background:#5a4a28"></b><h2>摄影指导 · CH 04</h2></header>
+            <p>景别、构图、运镜、轴线——把画面升级为镜头。</p>
+            <p class="sym">空缺症状：一镜到底、景别单一</p>
+          </article>
+        </div>
+        <div class="director">
+          <strong>导演</strong>
+          <span>你 + AI</span>
+          <span>统筹六个维度</span>
+        </div>
+        <div class="col">
+          <article>
+            <header><b style="background:#a8790a"></b><h2>美术指导 · CH 02</h2></header>
+            <p>场景、光线、服化道，在生成前就设计好画面。</p>
+            <p class="sym">空缺症状：画面平庸没氛围</p>
+          </article>
+          <article>
+            <header><b style="background:#6a5a38"></b><h2>剪辑师 · CH 05</h2></header>
+            <p>镜头如何组接成叙事，节奏与情绪如何被「剪」出来。</p>
+            <p class="sym">空缺症状：素材硬拼、没有节奏</p>
+          </article>
+        </div>
+      </div>
+      <div class="board" style="margin-top:.45rem; grid-template-columns:1fr 1fr;">
+        <article>
+          <header><b style="background:#8a4a6a"></b><h2>调色师 · CH 03</h2></header>
+          <p>色彩基调、配色关系、跨镜头色彩一致与后期调色。</p>
+          <p class="sym">空缺症状：镜头之间「不像一部片」</p>
+        </article>
+        <article>
+          <header><b style="background:#4a5a38"></b><h2>声音设计师 · CH 06</h2></header>
+          <p>BGM、音效、人声、静默——用耳朵完成另一半真实感。</p>
+          <p class="sym">空缺症状：全片一首 BGM 铺到底</p>
+        </article>
+      </div>
+      <figcaption>图 0-2 · 六个工位 = 六章。空着的工位，就是你和 100 分之间的差距。</figcaption>
+    </main>
+    <script>
+      (() => {
+        const nonce = new URLSearchParams(location.hash.slice(1)).get('nonce')
+        if (nonce) parent.postMessage({ nonce, message: { type: 'ready' } }, '*')
+        const reportHeight = () => {
+          parent.postMessage(
+            { type: 'resize', height: document.documentElement.scrollHeight },
+            '*',
+          )
+        }
+        requestAnimationFrame(reportHeight)
+        new ResizeObserver(reportHeight).observe(document.documentElement)
+      })()
+    </script>
+  </body>
+</html>
