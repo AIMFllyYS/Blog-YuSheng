@@ -8,6 +8,7 @@ import type { SelectionDocumentIndex } from '@/features/doc-engine/selection'
 import type { DocumentOutline } from '@/features/doc-engine/toc'
 import { ExportRuntimeProvider } from '@/features/export-service/export-runtime'
 import { ArticleToc, HashDeepLink } from '@/features/toc'
+import { formatReaderPublishedAt } from './format-reader-published-at'
 import { ReaderDivider } from './reader-divider'
 import { ReaderChrome } from './reader-chrome'
 import { ReaderLayoutInteractions } from './reader-layout-interactions'
@@ -94,7 +95,9 @@ export function ReaderLayout({
           >
             <div className={styles.article} data-reader-article>
               <header className={styles.articleMeta}>
-                <span>{publishedAt}</span>
+                <time data-reader-published-at dateTime={publishedAt}>
+                  {formatReaderPublishedAt(publishedAt)}
+                </time>
                 <p>{description}</p>
               </header>
               {article}
