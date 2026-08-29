@@ -18,6 +18,7 @@ import {
   createEmbedMessageGate,
 } from '../../security/embed-iframe-policy'
 import { DocumentFallbackCard } from '../../screen/fallback-card'
+import { EmbedOpenLink } from '../embed-open-link'
 import { useEmbedVisibility } from '../use-embed-visibility'
 
 export function HtmlEmbedScreenRenderer({
@@ -95,6 +96,9 @@ export function HtmlEmbedScreenRenderer({
         nodeId={node.nodeId}
         selectable="none"
       >
+        <div className="mb-3 flex justify-end">
+          <EmbedOpenLink href={src} />
+        </div>
         <div data-html-embed="fallback">
           {alternative || '无法加载交互小页，已显示安全降级内容。'}
         </div>
@@ -114,9 +118,12 @@ export function HtmlEmbedScreenRenderer({
       ref={containerRef}
     >
       <figcaption className="flex items-center justify-between gap-3 border-b border-[var(--line)] px-4 py-2.5 text-sm">
-        <span>{title}</span>
-        <span className="rounded-full border border-[var(--line)] px-2 py-0.5 text-xs text-[var(--ink-muted)]">
-          沙箱运行
+        <span className="min-w-0 flex-1 truncate">{title}</span>
+        <span className="flex shrink-0 items-center gap-2">
+          <span className="rounded-full border border-[var(--line)] px-2 py-0.5 text-xs text-[var(--ink-muted)]">
+            沙箱运行
+          </span>
+          <EmbedOpenLink href={src} />
         </span>
       </figcaption>
       {nonce && visible ? (

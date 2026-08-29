@@ -3,13 +3,21 @@ import { z } from 'zod'
 import type { EmbedMessage } from './embed-iframe-policy'
 
 export {
+  AUTHOR_HOSTED_ETLD_PLUS_ONE_ALLOWLIST,
   EMBED_CAPABILITY_FRAGMENT_KEY,
   HTML_EMBED_IFRAME_POLICY,
   HTML_EMBED_READY_TIMEOUT_MS,
   WEB_EMBED_ETLD_PLUS_ONE_ALLOWLIST,
+  WEB_EMBED_EXTRA_ETLD_PLUS_ONE_ALLOWLIST,
   WEB_EMBED_LOAD_TIMEOUT_MS,
   createEmbedCapabilityNonce,
   createEmbedMessageGate,
+  isAuthorHostedAudioUrl,
+  isAuthorHostedImageUrl,
+  isAuthorHostedMediaUrl,
+  isAuthorHostedVideoUrl,
+  isHttpsAbsoluteUrl,
+  isRegistrableEtldPlusOne,
   isWebEmbedAllowed,
   matchesReviewedWebEmbedAllowlist,
   type EmbedMessage,

@@ -60,8 +60,30 @@ describe('content asset manifest', () => {
           entry.outputPath ===
           'embeds/p0-kitchen-sink/mini-card/index.html',
       )?.publicUrl,
-    ).toBe('/embeds/p0-kitchen-sink/mini-card/')
+    ).toBe('/embeds/p0-kitchen-sink/mini-card/index.html')
     expect(new Set(paths).size).toBe(paths.length)
+    expect(paths).toContain(
+      'embeds/from-using-ai-to-understanding-ai/practice-timeline/index.html',
+    )
+    expect(
+      manifest.find(
+        (entry) =>
+          entry.outputPath ===
+          'embeds/from-using-ai-to-understanding-ai/practice-timeline/index.html',
+      )?.publicUrl,
+    ).toBe(
+      '/embeds/from-using-ai-to-understanding-ai/practice-timeline/index.html',
+    )
+    expect(paths).toContain(
+      'blog/from-using-ai-to-understanding-ai/data/complexity.json',
+    )
+    expect(
+      manifest.find(
+        (entry) =>
+          entry.outputPath ===
+          'blog/from-using-ai-to-understanding-ai/data/complexity.json',
+      )?.data,
+    ).toMatchObject({ expression: 'x^2' })
   })
 
   it('rejects canvas JSON that does not match its statically registered schema', async () => {

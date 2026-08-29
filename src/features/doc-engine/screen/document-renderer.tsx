@@ -723,6 +723,16 @@ function RegisteredComponent({
         showDetails={context.showDetails}
       >
         <LazyCanvasScreenRenderer
+          data={
+            source
+              ? projectPackageAssetData(
+                  source,
+                  context.articleSlug,
+                  node.name,
+                  context.assetManifest,
+                )
+              : undefined
+          }
           dataUrl={
             source
               ? projectPackageMediaUrl(

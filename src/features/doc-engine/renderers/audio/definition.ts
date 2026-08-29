@@ -22,7 +22,13 @@ export const AUDIO_RENDERER_DEFINITION: RendererDefinition = Object.freeze({
         : undefined
     return src
       ? Object.freeze([
-          { source: src, kind: 'local' as const, attribute: 'src' },
+          {
+            source: src,
+            kind: src.startsWith('https:')
+              ? ('remote' as const)
+              : ('local' as const),
+            attribute: 'src',
+          },
         ])
       : []
   },

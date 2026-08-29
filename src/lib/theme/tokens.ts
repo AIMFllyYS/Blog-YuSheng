@@ -113,7 +113,7 @@ const SHARED_VARIABLES = {
   '--font-mono': '"JetBrains Mono", ui-monospace, SFMono-Regular, Consolas, monospace',
   '--w-left': '248px',
   '--w-right': '352px',
-  '--read-measure': '44rem',
+  '--read-measure': '52rem',
   '--z-base': '0',
   '--z-panel': '10',
   '--z-floating': '20',

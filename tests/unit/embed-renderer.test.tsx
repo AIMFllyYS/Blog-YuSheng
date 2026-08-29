@@ -18,7 +18,7 @@ describe('HTML and web embed renderers', () => {
           nodeId: 'local',
           nodeName: 'html-embed',
           outputPath: 'embeds/embed-fixture/local/index.html',
-          publicUrl: '/embeds/embed-fixture/local/',
+          publicUrl: '/embeds/embed-fixture/local/index.html',
         },
       ],
       profile: 'editor-preview',
@@ -29,6 +29,9 @@ describe('HTML and web embed renderers', () => {
     expect(html).toContain('data-html-embed="waiting"')
     expect(html).toContain('沙箱运行')
     expect(html).toContain('安全替代内容。')
+    expect(html).toContain('data-embed-open')
+    expect(html).toContain('href="/embeds/embed-fixture/local/index.html"')
+    expect(html).toContain('target="_blank"')
     expect(html).not.toContain('<iframe')
   })
 
@@ -45,6 +48,8 @@ describe('HTML and web embed renderers', () => {
     expect(html).toContain('example.com')
     expect(html).toContain('作者提供的降级说明。')
     expect(html).toContain('href="https://example.com/embed"')
+    expect(html).toContain('data-embed-open')
+    expect(html).toContain('target="_blank"')
     expect(html).not.toContain('<iframe')
   })
 
@@ -60,6 +65,7 @@ describe('HTML and web embed renderers', () => {
     expect(html).toContain('站内文章')
     expect(html).toContain('本站')
     expect(html).toContain('href="/blog/other/"')
+    expect(html).toContain('data-embed-open')
     expect(html).not.toContain('<iframe')
     expect(html).not.toContain('srcdoc')
   })
