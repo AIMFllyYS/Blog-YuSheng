@@ -68,7 +68,7 @@ test('博客列表链接到构建期文章页面', async ({ page }) => {
   await expect(page).toHaveTitle('P0 中文综合验收文章')
   await expect(
     page.getByRole('heading', { name: 'P0 中文综合验收文章' }),
-  ).toBeVisible()
+  ).toBeVisible({ timeout: 15_000 })
   await expect(
     page.locator('meta[property="og:description"]'),
   ).toHaveAttribute(

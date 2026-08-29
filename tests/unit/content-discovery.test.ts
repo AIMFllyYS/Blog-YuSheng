@@ -10,6 +10,7 @@ import {
   readPost,
   validateArticleAssetPath,
 } from '../../src/server/content'
+import { IMPORTED_SLUGS } from '../imported-slugs'
 
 const temporaryRoots: string[] = []
 
@@ -28,6 +29,21 @@ describe('build-time content repository', () => {
     expect(post.frontmatter.title).toBe('P0 中文综合验收文章')
     expect(post.body).toContain('<web-embed')
     expect(post.packageRoot).toMatch(/content[\\/]posts[\\/]p0-kitchen-sink$/)
+  })
+
+  it('discovers every imported official post as published', async () => {
+    const [slugs, published] = await Promise.all([
+      discoverPostSlugs(),
+      listPublishedPosts(),
+    ])
+    const publishedSlugs = new Set(published.map((post) => post.slug))
+    for (const slug of IMPORTED_SLUGS) {
+      expect(slugs).toContain(slug)
+      expect(publishedSlugs.has(slug)).toBe(true)
+      const post = await readPost(slug)
+      expect(post.frontmatter.draft).not.toBe(true)
+      expect(post.frontmatter.section).toBeDefined()
+    }
   })
 
   it('sorts published posts and excludes valid drafts from params', async () => {
