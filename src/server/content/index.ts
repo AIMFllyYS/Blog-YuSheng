@@ -47,4 +47,8 @@ export {
   validateArticleAssetPath,
   type AssetPathValidationResult,
 } from './validate-assets'
+export {
+  validateHtmlEmbedProtocol,
+  type HtmlEmbedProtocolValidation,
+} from './html-embed-protocol'
 export { sanitizeSvgSource, type SanitizedSvgResult } from './sanitize-svg'

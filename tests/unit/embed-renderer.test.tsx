@@ -17,6 +17,13 @@ describe('HTML and web embed renderers', () => {
           articleSlug: 'embed-fixture',
           nodeId: 'local',
           nodeName: 'html-embed',
+          outputPath: 'embeds/embed-fixture/local/app.js',
+          publicUrl: '/embeds/embed-fixture/local/app.js',
+        },
+        {
+          articleSlug: 'embed-fixture',
+          nodeId: 'local',
+          nodeName: 'html-embed',
           outputPath: 'embeds/embed-fixture/local/index.html',
           publicUrl: '/embeds/embed-fixture/local/index.html',
         },

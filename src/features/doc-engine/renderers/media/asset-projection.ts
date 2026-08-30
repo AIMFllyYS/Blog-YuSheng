@@ -32,10 +32,14 @@ export function projectHtmlEmbedUrl(
   const matched = manifest.find((value) => {
     if (!value || typeof value !== 'object') return false
     const entry = value as Record<string, unknown>
+    // An HTML embed manifest also contains its CSS/JS/data siblings. Only
+    // the entry document may be used as the iframe source.
     return (
       entry.articleSlug === articleSlug &&
       entry.nodeId === nodeId &&
       entry.nodeName === 'html-embed' &&
+      typeof entry.outputPath === 'string' &&
+      entry.outputPath.endsWith('/index.html') &&
       typeof entry.publicUrl === 'string'
     )
   }) as Record<string, unknown> | undefined

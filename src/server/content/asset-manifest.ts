@@ -4,7 +4,9 @@ import { readFile, readdir, realpath, stat } from 'node:fs/promises'
 import path from 'node:path'
 import { ContentBuildError } from './content-error'
 import { collectAssetReferences } from './collect-asset-references'
+import { CONTENT_POSTS_ROOT } from './content-paths'
 import { readAllPosts } from './discover-posts'
+import { validateHtmlEmbedProtocol } from './html-embed-protocol'
 import { validateArticleAssetPath } from './validate-assets'
 import type { FrontmatterDiagnostic, SourceRange } from './validate-frontmatter'
 import { getCanvasRendererRegistration } from '../../features/doc-engine/registry/canvas-renderer-registry'
@@ -40,6 +42,9 @@ export type AssetManifestEntry = {
 }
 
 export async function createAssetManifest(postsRoot?: string) {
+  const enforceHtmlEmbedProtocol =
+    path.resolve(postsRoot ?? CONTENT_POSTS_ROOT) ===
+    path.resolve(CONTENT_POSTS_ROOT)
   const posts = await readAllPosts(postsRoot)
   const entries: AssetManifestEntry[] = []
   const diagnostics: FrontmatterDiagnostic[] = []
@@ -154,6 +159,27 @@ export async function createAssetManifest(postsRoot?: string) {
             ),
           )
           continue
+        }
+        if (
+          enforceHtmlEmbedProtocol &&
+          reference.nodeName === 'html-embed' &&
+          sourcePath === validation.absolutePath
+        ) {
+          const protocol = validateHtmlEmbedProtocol(
+            await readFile(sourcePath, 'utf8'),
+          )
+          if (!protocol.ok) {
+            diagnostics.push(
+              diagnostic(
+                post.slug,
+                'ASSET_HTML_HANDSHAKE_MISSING',
+                `HTML embed 未通过宿主握手协议：${protocol.reason}`,
+                reference.sourceRange,
+                reference.nodeId,
+              ),
+            )
+            continue
+          }
         }
         if (reference.nodeName === 'svg-embed') {
           const source = decodeStrictText(await readFile(sourcePath))

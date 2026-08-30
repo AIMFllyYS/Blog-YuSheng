@@ -249,6 +249,8 @@ AI 是<text-mark tone="thesis" effect="fluorescent">杠杆</text-mark>。
 
 `web-embed` 不会把别人的网页下载进仓库，只保存链接。`src` 的主机名必须命中审过的 **eTLD+1（主域）**：`husteread.com` 覆盖 `read.husteread.com`，不必逐条登记子域。未命中、或对端禁止 iframe（GitHub、Google 等）时显示「网页预览」卡（标题 + 域名 + 右上角「打开」），构建不失败。阅读页上 `html-embed` / `web-embed` 卡片右上角的「打开」会新标签页打开该 URL。
 
+本地 `html-embed` 还必须完成宿主的 nonce 握手，否则页面可能先显示几秒再落到安全降级卡。把协议桥接脚本放在 embed 的 `</body>` 前；构建会自动检查 `nonce`、`ready` 和 `resize` 三项，缺一项就阻止发布。完整脚本和排查步骤见 [html-embed-handshake.md](./html-embed-handshake.md)。
+
 ### 2.3.1 网页嵌入与作者托管媒体的白名单
 
 名单在 `src/features/doc-engine/security/embed-iframe-policy.ts`：

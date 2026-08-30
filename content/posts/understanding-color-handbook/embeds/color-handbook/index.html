@@ -1165,5 +1165,21 @@ table.dense td { padding: 1.1mm 2mm; }
   }, { passive: true });
 })();
 </script>
+<!-- blog-yusheng:html-embed-handshake v1 -->
+<script>
+  (() => {
+    const nonce = new URLSearchParams(location.hash.slice(1)).get('nonce')
+    if (!nonce || window.parent === window) return
+    window.parent.postMessage({ nonce, message: { type: 'ready' } }, '*')
+    const reportHeight = () => {
+      window.parent.postMessage(
+        { type: 'resize', height: document.documentElement.scrollHeight },
+        '*',
+      )
+    }
+    requestAnimationFrame(reportHeight)
+    new ResizeObserver(reportHeight).observe(document.documentElement)
+  })()
+</script>
 </body>
 </html>
