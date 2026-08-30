@@ -1,8 +1,10 @@
 'use client'
 
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 import styles from './blog-index.module.css'
+import { prefetchBlogArticle } from './prefetch-article'
 import {
   formatChapterDate,
   readCatalogHash,
@@ -13,8 +15,18 @@ import type { ShelfBook } from './create-shelf-books'
 
 /** 单册分组：组头可折叠（手风琴语义，多册可同时展开） */
 function TreeGroup({ book }: { readonly book: ShelfBook }) {
+  const router = useRouter()
   const [open, setOpen] = useState(false)
   const bodyRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!open) return
+    const first = book.chapters[0]
+    if (!first) return
+    prefetchBlogArticle((href) => {
+      void router.prefetch(href)
+    }, first.slug)
+  }, [book.chapters, open, router])
 
   // hash 深链：#<section-slug> 时本册默认展开并滚入视野
   useEffect(() => {
@@ -77,6 +89,16 @@ function TreeGroup({ book }: { readonly book: ShelfBook }) {
                   <Link
                     className={styles.chapter}
                     href={`/blog/${entry.slug}/`}
+                    onFocus={() =>
+                      prefetchBlogArticle((href) => {
+                        void router.prefetch(href)
+                      }, entry.slug)
+                    }
+                    onMouseEnter={() =>
+                      prefetchBlogArticle((href) => {
+                        void router.prefetch(href)
+                      }, entry.slug)
+                    }
                     prefetch={false}
                     tabIndex={open ? undefined : -1}
                   >

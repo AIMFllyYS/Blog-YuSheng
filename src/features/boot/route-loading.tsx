@@ -7,7 +7,7 @@ function subscribe() {
   return () => {}
 }
 
-function getSnapshot() {
+function getClientSnapshot() {
   return true
 }
 
@@ -16,7 +16,11 @@ function getServerSnapshot() {
 }
 
 export function RouteLoading() {
-  const show = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot)
+  const show = useSyncExternalStore(
+    subscribe,
+    getClientSnapshot,
+    getServerSnapshot,
+  )
   if (!show) return null
-  return <BootVeil />
+  return <BootVeil persist />
 }

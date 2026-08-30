@@ -2,7 +2,7 @@ import type { CompiledDocument } from '../../doc-engine/core'
 import type { ExportArtifact } from '../export-document'
 
 export function assembleBodyOnlyMarkdown(
-  document: CompiledDocument,
+  document: Pick<CompiledDocument, 'articleSlug' | 'originalSource'>,
 ): ExportArtifact {
   return Object.freeze({
     filename: `${document.articleSlug}.md`,

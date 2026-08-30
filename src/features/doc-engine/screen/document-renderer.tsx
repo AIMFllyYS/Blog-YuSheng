@@ -58,7 +58,8 @@ import {
 import { RendererErrorBoundary } from './renderer-error-boundary'
 
 export type DocumentRendererProps = {
-  readonly source: string
+  readonly source?: string
+  readonly document?: CompiledDocument
   readonly profile: RenderProfile
   readonly articleSlug: string
   readonly frontmatter?: unknown
@@ -81,6 +82,7 @@ type PreparedDocument = {
 
 export async function DocumentRenderer({
   source,
+  document,
   profile,
   articleSlug,
   frontmatter = {},
@@ -97,6 +99,7 @@ export async function DocumentRenderer({
   }
   const prepared = await prepareDocument({
     source,
+    document,
     profile,
     articleSlug,
     frontmatter,
@@ -141,6 +144,12 @@ export async function DocumentRenderer({
 async function prepareDocument(
   props: Omit<DocumentRendererProps, 'className'>,
 ): Promise<PreparedDocument> {
+  if (props.document) {
+    return { document: props.document, diagnostics: [] }
+  }
+  if (typeof props.source !== 'string') {
+    throw new Error('DocumentRenderer 需要 source 或已编译文档。')
+  }
   const input = {
     source: props.source,
     articleSlug: props.articleSlug,
@@ -523,7 +532,7 @@ function RegisteredImageRenderer({
     <ImageScreenRenderer
       articleSlug={context.articleSlug}
       assetManifest={context.assetManifest}
-      node={node}
+      node={projectClientLeafNode(node)}
       showDetails={context.showDetails}
     />
   )
@@ -634,7 +643,7 @@ function RegisteredMermaidRenderer({
   return (
     <LazyMermaidScreenRenderer
       key={node.value}
-      node={node}
+      node={projectClientLeafNode(node)}
       showDetails={context.showDetails}
     />
   )
@@ -775,7 +784,7 @@ function RegisteredComponent({
             context.developmentCrashComponentIds?.includes(node.componentId) ===
             true
           }
-          node={node}
+          node={projectClientLeafNode(node)}
           showDetails={context.showDetails}
         />
       </RendererErrorBoundary>
@@ -855,7 +864,7 @@ function RegisteredComponent({
         developmentCrash={
           context.developmentCrashComponentIds?.includes(node.componentId) === true
         }
-        node={node}
+        node={projectClientLeafNode(node)}
         profile={context.profile.name}
         showDetails={context.showDetails}
       />
@@ -900,9 +909,15 @@ function RegisteredQuizRenderer({
     context.assetManifest,
   )
   return node.name === 'choice-question' ? (
-    <LazyChoiceQuestionScreenRenderer data={data} node={node} />
+    <LazyChoiceQuestionScreenRenderer
+      data={data}
+      node={projectClientLeafNode(node)}
+    />
   ) : (
-    <LazyFillBlankQuestionScreenRenderer data={data} node={node} />
+    <LazyFillBlankQuestionScreenRenderer
+      data={data}
+      node={projectClientLeafNode(node)}
+    />
   )
 }
 
@@ -954,7 +969,7 @@ function RegisteredEmbedRenderer({
         key={src}
         alternative={alternative}
         height={height}
-        node={node}
+        node={projectClientLeafNode(node)}
         src={src}
         title={title}
       />
@@ -965,7 +980,7 @@ function RegisteredEmbedRenderer({
       key={String(node.attributes.src)}
       alternative={alternative}
       height={height}
-      node={node}
+      node={projectClientLeafNode(node)}
       src={String(node.attributes.src)}
       title={title}
     />
@@ -1011,7 +1026,7 @@ function RegisteredSvgRenderer({
   return (
     <SvgScreenRenderer
       key={src}
-      node={node}
+      node={projectClientLeafNode(node)}
       showDetails={context.showDetails}
       src={src}
       title={String(node.attributes.title)}
@@ -1068,7 +1083,7 @@ function RegisteredMediaRenderer({
     <MediaPlayer
       key={mediaSrc}
       kind={node.name === 'video-embed' ? 'video' : 'audio'}
-      node={node}
+      node={projectClientLeafNode(node)}
       poster={poster}
       showDetails={context.showDetails}
       src={mediaSrc}
@@ -1243,6 +1258,16 @@ function readArticlePalette(
     if (parsed.ok) return parsed.palette
   }
   return undefined
+}
+
+function projectClientLeafNode<T extends { readonly sourceText?: string }>(
+  node: T,
+): T {
+  const { sourceText: _sourceText, ...rest } = node
+  if ('children' in rest && Array.isArray(rest.children)) {
+    return { ...(rest as T), children: [] }
+  }
+  return rest as T
 }
 
 function isInlineNode(node: DocumentNode): boolean {

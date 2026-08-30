@@ -12,12 +12,14 @@ const MAX_BOOT_MS = 2_400
 const ROUTE_BOOT_GRACE_MS = 2_500
 
 let lastRouteBootAt = 0
+let playFirstPaint = true
 
 function markRouteBoot() {
   lastRouteBootAt = Date.now()
+  playFirstPaint = false
 }
 
-export function BootVeil() {
+export function BootVeil({ persist = false }: { readonly persist?: boolean }) {
   const rootRef = useRef<HTMLDivElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [isLeaving, setIsLeaving] = useState(false)
@@ -36,8 +38,15 @@ export function BootVeil() {
       }
     }
 
-    markRouteBoot()
+    if (persist) markRouteBoot()
     document.body.classList.add('reader-is-booting')
+    if (persist) {
+      return () => {
+        stopStamp?.()
+        document.body.classList.remove('reader-is-booting')
+      }
+    }
+
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     let dismissTimer: ReturnType<typeof setTimeout> | undefined
     let removeTimer: ReturnType<typeof setTimeout> | undefined
@@ -46,6 +55,7 @@ export function BootVeil() {
     const leave = () => {
       if (settled) return
       settled = true
+      playFirstPaint = false
       if (dismissTimer) clearTimeout(dismissTimer)
       setIsLeaving(true)
       document.body.classList.remove('reader-is-booting')
@@ -73,7 +83,7 @@ export function BootVeil() {
       stopStamp?.()
       document.body.classList.remove('reader-is-booting')
     }
-  }, [])
+  }, [persist])
 
   if (!isMounted) return null
 
@@ -83,6 +93,7 @@ export function BootVeil() {
       aria-label="页面载入中"
       aria-live="polite"
       className={`${styles.bootVeil} ${isLeaving ? styles.bootVeilOut : ''}`}
+      data-boot-persist={persist ? 'true' : undefined}
       data-boot-veil
       data-reader-boot-veil
       ref={rootRef}
@@ -105,7 +116,7 @@ function subscribeBootVeil() {
 
 function getBootVeilSnapshot() {
   if (Date.now() - lastRouteBootAt < ROUTE_BOOT_GRACE_MS) return false
-  return document.readyState !== 'complete'
+  return playFirstPaint
 }
 
 function getBootVeilServerSnapshot() {

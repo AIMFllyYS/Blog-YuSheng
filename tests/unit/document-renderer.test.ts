@@ -1,9 +1,32 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 
-import { DocumentRenderer } from '../../src/features/doc-engine'
+import { compileDocument, DocumentRenderer } from '../../src/features/doc-engine'
 
 describe('DocumentRenderer', () => {
+  it('article profile 可直接渲染已编译文档而不再接收 source', async () => {
+    const source = '# 只编译一次\n\n段落。'
+    const { document } = await compileDocument({
+      articleSlug: 'once-fixture',
+      frontmatter: {},
+      source,
+    })
+    const fromDocument = await DocumentRenderer({
+      articleSlug: 'once-fixture',
+      document,
+      profile: 'article',
+    })
+    const fromSource = await DocumentRenderer({
+      articleSlug: 'once-fixture',
+      profile: 'article',
+      source,
+    })
+    expect(renderToStaticMarkup(fromDocument)).toBe(
+      renderToStaticMarkup(fromSource),
+    )
+    expect(renderToStaticMarkup(fromDocument)).toContain('只编译一次')
+  })
+
   it('从统一 Canonical IR 输出语义结构', async () => {
     const element = await DocumentRenderer({
       articleSlug: 'screen-fixture',
