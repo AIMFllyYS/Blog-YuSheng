@@ -9,6 +9,9 @@ test('writes a read-only anchor manifest beside every generated article', async 
   expect(written).toContain(
     path.join('blog', 'p0-kitchen-sink', 'anchor-manifest.json'),
   )
+  expect(written).toContain(
+    path.join('blog', 'p0-kitchen-sink', 'export-source.json'),
+  )
 
   const manifestPath = path.join(
     process.cwd(),
@@ -37,4 +40,22 @@ test('writes a read-only anchor manifest beside every generated article', async 
   expect(heading?.mode).toBe('text')
   expect(heading?.canonicalText).toBe('Markdown 与 GFM')
   expect(parsed.blocks.some((block) => block.mode === 'whole-block')).toBe(true)
+
+  const exportPath = path.join(
+    process.cwd(),
+    'out',
+    'blog',
+    'p0-kitchen-sink',
+    'export-source.json',
+  )
+  const exportSource = JSON.parse(await readFile(exportPath, 'utf8')) as {
+    schemaVersion: number
+    articleSlug: string
+    originalSource: string
+    plainText: string
+  }
+  expect(exportSource.schemaVersion).toBe(1)
+  expect(exportSource.articleSlug).toBe('p0-kitchen-sink')
+  expect(exportSource.originalSource).toContain('schemaVersion: 1')
+  expect(exportSource.plainText.length).toBeGreaterThan(20)
 })

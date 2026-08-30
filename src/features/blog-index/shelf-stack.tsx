@@ -1,8 +1,10 @@
 'use client'
 
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import styles from './blog-index.module.css'
+import { prefetchBlogArticle } from './prefetch-article'
 import {
   bookmarkTagOverflow,
   formatChapterDate,
@@ -73,12 +75,21 @@ function BookmarkTipView({ tip }: { readonly tip: BookmarkTip }) {
 
 /** 单本「方向书」：左窄书脊 + 右侧书页，点击后书页绕左书脊平转 174°，露出文章书脊架 */
 function Tome({ book, open, onToggle }: TomeProps) {
+  const router = useRouter()
   const [entered, setEntered] = useState(false)
   const [wasOpen, setWasOpen] = useState(open)
   const [tip, setTip] = useState<BookmarkTip | null>(null)
   const rootRef = useRef<HTMLDivElement>(null)
   const spinesRef = useRef<HTMLDivElement>(null)
   const maskRef = useRef<HTMLDivElement>(null)
+  const prefetchChapter = useCallback(
+    (slug: string) => {
+      prefetchBlogArticle((href) => {
+        void router.prefetch(href)
+      }, slug)
+    },
+    [router],
+  )
 
   // 收合时重置入场态（render 期调整 state，避免 effect 级联渲染）
   if (open !== wasOpen) {
@@ -89,9 +100,11 @@ function Tome({ book, open, onToggle }: TomeProps) {
   // 翻开后逐本入场（原型：380ms 起、每本间隔 55ms）
   useEffect(() => {
     if (!open) return
+    const first = book.chapters[0]
+    if (first) prefetchChapter(first.slug)
     const timer = window.setTimeout(() => setEntered(true), 380)
     return () => window.clearTimeout(timer)
-  }, [open])
+  }, [book.chapters, open, prefetchChapter])
 
   // 横向滚动两端渐隐提示
   const updateFades = useCallback(() => {
@@ -240,10 +253,14 @@ function Tome({ book, open, onToggle }: TomeProps) {
                       href={`/blog/${chapter.slug}/`}
                       key={chapter.slug}
                       onBlur={hideTip}
-                      onFocus={(event) => showTip(event.currentTarget, index)}
-                      onMouseEnter={(event) =>
+                      onFocus={(event) => {
+                        prefetchChapter(chapter.slug)
                         showTip(event.currentTarget, index)
-                      }
+                      }}
+                      onMouseEnter={(event) => {
+                        prefetchChapter(chapter.slug)
+                        showTip(event.currentTarget, index)
+                      }}
                       onMouseLeave={hideTip}
                       prefetch={false}
                       style={{

@@ -14,6 +14,14 @@ describe('route loading uses the book boot, not a gray spinner', () => {
     expect(source).toContain('RouteLoading')
   })
 
+  it('route loading persists the book veil until Next.js replaces it', () => {
+    const route = readFileSync('src/features/boot/route-loading.tsx', 'utf8')
+    const veil = readFileSync('src/features/boot/boot-veil.tsx', 'utf8')
+    expect(route).toContain('persist')
+    expect(route).toContain('BootVeil')
+    expect(veil).toContain('if (persist)')
+  })
+
   it('does not remount a second veil inside blog pages', () => {
     const layout = readFileSync('src/app/blog/layout.tsx', 'utf8')
     const listPage = readFileSync('src/app/blog/page.tsx', 'utf8')
@@ -26,5 +34,7 @@ describe('route loading uses the book boot, not a gray spinner', () => {
     expect(listPage).not.toContain('ReaderBootVeil')
     expect(article).not.toContain('BootVeil')
     expect(article).not.toContain('ReaderBootVeil')
+    expect(article).not.toContain('source={post.source}')
+    expect(article).toContain('document={compiled.document}')
   })
 })

@@ -278,7 +278,8 @@
 
 外观仍 **1:1 对标** [blog-reader-prototype.html](../designs/blog-reader-prototype.html)。本文只锁原则。
 
-- 进入 `/blog/` 与 `/blog/<slug>/` 时先盖一层全屏书册遮罩，再揭开页面。客户端路由跳转走根 `loading.tsx` 的同一张脸，禁止再出现转圈圈。书册 HTML/CSS **严格**跟 Uiverse Nawsome 原作（`.loader`、六页、只翻 2–5 页）；只把 `--background` / `--shadow` / `--page` / `--page-fold` / `--text` 映射到当前主题 token，禁止原作蓝紫，也禁止改动画结构。
+- 进入 `/blog/` 与 `/blog/<slug>/` 时先盖一层全屏书册遮罩，再揭开页面。客户端路由跳转走根 / 文章 `loading.tsx` 的同一张脸，禁止再出现转圈圈。书册 HTML/CSS **严格**跟 Uiverse Nawsome 原作（`.loader`、六页、只翻 2–5 页）；只把 `--background` / `--shadow` / `--page` / `--page-fold` / `--text` 映射到当前主题 token，禁止原作蓝紫，也禁止改动画结构。
+- **仪式遮罩和路由 loading 不是同一套退出条件。** 直达页面的进页仪式可以按设计时长揭开已经在静态 HTML 里的正文。客户端路由的书册是 `loading.tsx` fallback，必须保持到 Next.js 用目标页替换它；禁止根据 `document.readyState` 或 2.4 秒定时器自行 `return null`。动画播完后停在静态书册，不能把主区域卸成空白。
 - 遮罩四周可用 Pretext Two（`prepareWithSegments` + `layoutNextLineRange`）量「羽升」后按视口中心铺格，绕开书册，极浅并带软光；不进正文包。单页 HTML 用 `esm.sh` 钉版本，禁止 `unpkg` 拉 TypeScript 入口。
 - 这层遮罩是路由进入一次；主题切换、打开右栏、导出等页内操作不再重放。
 - 右栏展开/收起用 `--dur-reveal` + `--ease-damp` 缓出：先出与当前页签同构的骨架，栏宽到位后再淡入真内容。骨架条用百分比宽度，跟着栏一起适配。不要弹跳。

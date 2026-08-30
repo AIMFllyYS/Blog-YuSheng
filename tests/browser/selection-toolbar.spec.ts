@@ -28,6 +28,9 @@ async function waitForReader(page: Page) {
     expect(response?.ok() ?? false).toBe(true)
     await expect(page.locator('[data-reader-boot-veil]')).toHaveCount(0, { timeout: 3_000 })
     await expect(page.locator('[data-reader-article]')).toBeVisible({ timeout: 8_000 })
+    await expect(page.locator('[data-selection-index-ready="true"]')).toHaveCount(1, {
+      timeout: 8_000,
+    })
   }).toPass({ timeout: 30_000 })
 }
 

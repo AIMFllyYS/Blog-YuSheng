@@ -43,6 +43,10 @@ export async function selectTextRange(
 }
 
 export async function revealSelectionToolbar(page: Page) {
+  await expect(page.locator('[data-selection-index-ready="true"]')).toHaveCount(
+    1,
+    { timeout: 8_000 },
+  )
   await page.evaluate(() => {
     document.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }))
   })

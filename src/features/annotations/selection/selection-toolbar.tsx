@@ -3,19 +3,13 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 
 import { useFallingToast } from '@/components/ui/falling-toast'
-import type {
-  SelectionDocumentIndex,
-  SelectionMappingResult,
-} from '@/features/doc-engine/selection'
+import { useDiscussionRuntime } from '@/features/discussions/runtime'
+import type { SelectionMappingResult } from '@/features/doc-engine/selection'
 
 import { ANNOTATE_SELECTION_EVENT } from './annotate-selection-event'
 import { mapBrowserSelection } from './dom-selection'
 import { computeSelBarPosition } from './sel-bar-position'
 import styles from './selection-toolbar.module.css'
-
-type SelectionToolbarProps = {
-  readonly index: SelectionDocumentIndex
-}
 
 type ToolbarSession = {
   readonly mapping: SelectionMappingResult
@@ -30,7 +24,8 @@ type SelBarRangeSnapshot = {
   readonly width: number
 }
 
-export function SelectionToolbar({ index }: SelectionToolbarProps) {
+export function SelectionToolbar() {
+  const { selectionIndex: index } = useDiscussionRuntime()
   const { notify } = useFallingToast()
   const barRef = useRef<HTMLDivElement>(null)
   const sessionRef = useRef<ToolbarSession | undefined>(undefined)

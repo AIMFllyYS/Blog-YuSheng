@@ -16,13 +16,20 @@ import {
 import { assembleUnsupportedPdf } from './pdf/unsupported'
 import { assembleBodyOnlyText } from './text/project-text'
 
+export type AssembleExportDocument = Pick<
+  CompiledDocument,
+  'articleSlug' | 'originalSource'
+> &
+  Partial<Pick<CompiledDocument, 'assetManifest' | 'root'>>
+
 export type AssembleExportInput = {
-  readonly document: CompiledDocument
+  readonly document: AssembleExportDocument
   readonly format: ExportFormat
   readonly scope: DiscussionExportScope
   readonly assetManifest?: readonly unknown[]
   readonly generatedAt?: string
   readonly appendix?: ReviewAppendixModel
+  readonly plainText?: string
 }
 
 export function assembleExport(input: AssembleExportInput): AssembleExportResult {
@@ -79,6 +86,26 @@ export function assembleExport(input: AssembleExportInput): AssembleExportResult
     })
   }
 
+  if (input.plainText !== undefined) {
+    return Object.freeze({
+      ok: true,
+      document: exportDocument,
+      artifact: {
+        filename: `${input.document.articleSlug}.txt`,
+        mimeType: 'text/plain;charset=utf-8',
+        bytes: new TextEncoder().encode(input.plainText),
+      },
+    })
+  }
+
+  if (!isCompiledExportDocument(input.document)) {
+    return Object.freeze({
+      ok: false,
+      reason: 'unsupported-scope',
+      message: '纯文本导出缺少正文投影',
+    })
+  }
+
   return Object.freeze({
     ok: true,
     document: exportDocument,
@@ -87,4 +114,10 @@ export function assembleExport(input: AssembleExportInput): AssembleExportResult
       input.assetManifest ?? input.document.assetManifest,
     ),
   })
+}
+
+function isCompiledExportDocument(
+  document: AssembleExportDocument,
+): document is CompiledDocument {
+  return document.root !== undefined
 }

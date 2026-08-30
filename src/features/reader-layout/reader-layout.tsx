@@ -3,7 +3,6 @@ import { AnnotationHighlights } from '@/features/annotations/highlights'
 import { SelectionToolbar } from '@/features/annotations/selection'
 import { DiscussionRuntimeProvider } from '@/features/discussions/runtime'
 import type { MemoryDiscussionSeed } from '@/features/discussions/repository'
-import type { CompiledDocument } from '@/features/doc-engine/core'
 import type { SelectionDocumentIndex } from '@/features/doc-engine/selection'
 import type { DocumentOutline } from '@/features/doc-engine/toc'
 import { ExportRuntimeProvider } from '@/features/export-service/export-runtime'
@@ -18,13 +17,11 @@ import styles from './reader-layout.module.css'
 type ReaderLayoutProps = {
   readonly article: ReactNode
   readonly articleSlug: string
-  readonly assetManifest?: readonly unknown[]
   readonly description: string
   readonly discussionSeed?: MemoryDiscussionSeed
-  readonly document: CompiledDocument
   readonly outline: DocumentOutline
   readonly publishedAt: string
-  readonly selectionIndex: SelectionDocumentIndex
+  readonly selectionIndex?: SelectionDocumentIndex
   readonly title: string
 }
 
@@ -52,21 +49,15 @@ function ReaderWave({ className }: { readonly className: string }) {
 export function ReaderLayout({
   article,
   articleSlug,
-  assetManifest = [],
   description,
   discussionSeed,
-  document,
   outline,
   publishedAt,
   selectionIndex,
   title,
 }: ReaderLayoutProps) {
   return (
-    <ExportRuntimeProvider
-      articleSlug={articleSlug}
-      assetManifest={assetManifest}
-      document={document}
-    >
+    <ExportRuntimeProvider articleSlug={articleSlug}>
       <DiscussionRuntimeProvider
         articleSlug={articleSlug}
         seed={discussionSeed}
@@ -75,7 +66,7 @@ export function ReaderLayout({
         <main className={styles.readerPage} data-reader-page>
         <ReaderChrome />
         <HashDeepLink />
-        <SelectionToolbar index={selectionIndex} />
+        <SelectionToolbar />
         <section className={styles.shell} data-reader-shell>
           <aside
             className={`${styles.column} ${styles.leftColumn}`}

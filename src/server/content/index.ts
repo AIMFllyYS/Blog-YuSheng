@@ -21,7 +21,10 @@ export {
 export { createBlogStaticParams } from './create-static-params'
 export {
   createAnchorManifest,
+  createExportSource,
+  mirrorArticleSidecarsForDev,
   writeAnchorManifests,
+  writeArticleSidecarFiles,
   type AnchorManifest,
 } from './create-anchor-manifest'
 export { createPostMetadata } from './create-post-metadata'
