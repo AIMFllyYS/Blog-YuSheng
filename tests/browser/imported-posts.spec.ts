@@ -101,7 +101,7 @@ test('imported transcript post shows date and filled article', async ({
   await expect(published).toBeVisible()
   await expect(published).toHaveText('2026年7月28日')
   await expect(
-    page.getByRole('heading', { name: '7 月 28 日：把 AI 编程的信息差说清楚' }),
+    page.getByRole('heading', { name: '26-7-28 复盘 · AI方向如是状态' }),
   ).toBeVisible()
   const article = page.locator('[data-reader-article]')
   const text = (await article.innerText()).trim()
@@ -112,4 +112,71 @@ test('imported transcript post shows date and filled article', async ({
     path: path.join(SHOT_DIR, 'shot-july-28-ai-frontier-review.png'),
     fullPage: true,
   })
+})
+
+test('title archive keeps the first subtitle and the personal-finance date', async ({
+  page,
+}) => {
+  test.setTimeout(90_000)
+  await page.goto('/blog/when-we-talk-about-ai-coding/', {
+    waitUntil: 'domcontentloaded',
+  })
+  await expect(page.locator('body')).toHaveAttribute(
+    'data-reader-hydrated',
+    'true',
+  )
+  await expect(
+    page.getByRole('heading', { name: 'AI编程范式笔记·羽升手记01-v0.3' }),
+  ).toBeVisible()
+  await expect(
+    page.locator('[data-reader-article]').getByText(
+      '当我们在聊 AI 编程的时候，我们到底在聊什么',
+      { exact: true },
+    ),
+  ).toBeVisible()
+
+  await page.goto('/blog/personal-finance-and-ai-dev/', {
+    waitUntil: 'domcontentloaded',
+  })
+  await expect(page.locator('body')).toHaveAttribute(
+    'data-reader-hydrated',
+    'true',
+  )
+  await expect(page.locator('[data-reader-published-at]')).toHaveText(
+    '2026年8月26日',
+  )
+  await expect(
+    page.getByRole('heading', { name: '26-8-26 个人财务复盘' }),
+  ).toBeVisible()
+})
+
+test('reclassified imported posts appear in their target books', async ({
+  page,
+}) => {
+  test.setTimeout(90_000)
+  await page.goto('/blog/', { waitUntil: 'domcontentloaded' })
+  await expect(page.locator('[data-reader-boot-veil]')).toHaveCount(0, {
+    timeout: 8_000,
+  })
+  await expect(page.locator('[data-blog-index]')).toBeVisible()
+  const tree = page.locator('[data-blog-tree]')
+  if (!(await tree.isVisible())) {
+    await page.getByRole('button', { name: '目录' }).click()
+  }
+  await expect(tree).toBeVisible()
+
+  const expectedByBook = new Map([
+    [
+      'fullstack-learning',
+      ['agent-principles-and-trends'],
+    ],
+    ['yu-reviews', ['ai-deep-learning-plan', 'personal-finance-and-ai-dev', 'med-student-coding-and-health']],
+  ])
+  for (const [bookSlug, postSlugs] of expectedByBook) {
+    const book = page.locator(`[data-blog-tree] section#${bookSlug}`)
+    await book.getByRole('button').click()
+    for (const postSlug of postSlugs) {
+      await expect(book.locator(`a[href="/blog/${postSlug}/"]`)).toBeVisible()
+    }
+  }
 })
