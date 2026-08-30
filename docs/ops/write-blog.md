@@ -178,6 +178,8 @@ draft: false
 
 ### 2.3 自定义标签（媒体、问答、嵌入）
 
+正文能上色、能区分结论/警示/对比的写法，完整速查见 **[article-design-language.md](./article-design-language.md)**（`tone` / `swatch` / `color`、`<text-mark>`、`<aside-note>` 等）。下面是总表。
+
 标签名小写 kebab-case；每篇里 `id` 必须唯一；作者偏好写成**单行**。没在表里的属性一律拒绝。
 
 | 标签 | 必填属性 | 可选 | 资源必须放在 |
@@ -458,6 +460,7 @@ draft: false
 - 黄金样例：[content/posts/p0-kitchen-sink/](../../content/posts/p0-kitchen-sink/)（验收文，可对照格式，不必当自己的第一篇正式文章来改；它故意留在散页）
 - 板块注册表：[content/sections.yml](../../content/sections.yml)（六个大方向的权威源）
 - 标签备忘：[post-tags.md](./post-tags.md)（只记录常用词，不参与构建）
+- 正文组件与颜色：[article-design-language.md](./article-design-language.md)
 - 内容协议：[blog-content-engine.md](../specs/blog-content-engine.md) 第四节
 - 目录与 `embeds/` URL：[project-structure.md](../conventions/project-structure.md)
 - 网址与分享：[routing.md](../conventions/routing.md)
