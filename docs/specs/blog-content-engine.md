@@ -1,7 +1,7 @@
 # 博客内容引擎与公开讨论功能规格
 
 > Created: 2026-08-15
-> Updated: 2026-08-17
+> Updated: 2026-08-30
 > Status: accepted baseline（已决策项可实施；阶段进入门见第十五节）
 >
 > 本规格定义博客文章从仓库 Markdown 到屏幕、评论/注释和多格式导出的统一契约。总体决策见 [博客整体架构设计](../designs/architecture-overview.md)，目录归属见 [项目结构与文件组织](../conventions/project-structure.md)。
@@ -153,6 +153,8 @@ type CompiledDocument = {
 ```
 
 规范节点至少覆盖：root、heading、paragraph、text、emphasis、strong、link、list、quote、table、inlineCode、code、math、mermaid、image 和 registeredComponent。
+
+`sourceText` 只给构建期锚定、诊断和导出投影使用，发送到浏览器之前必须剥离。阅读首屏只投影渲染所需节点，不把 `originalSource`、`sourceMap` 或全站 `assetManifest` 当作客户端 props。
 
 ### 5.2 稳定 ID
 
@@ -494,6 +496,9 @@ type DiscussionExportScope =
 | 能力 | 执行位置 | 理由 |
 |---|---|---|
 | Markdown/GFM/代码编译 | 构建期 | 正文在构建时定稿，客户端不承担解析成本 |
+| Canonical IR 的阅读投影 | 构建期生成静态 HTML / 瘦 RSC | 屏幕只消费已编译节点树的渲染结果；完整 IR 不是阅读首屏契约 |
+| 导出源码 sidecar | 浏览器，点击导出后加载 | `originalSource` 与纯文本投影是导出输入，不是阅读首屏输入 |
+| 划词索引 | 浏览器，hydration 后加载 `anchor-manifest.json` | DOM 已有 `data-block-id`；完整索引按需取，不进阅读 RSC |
 | KaTeX 公式 | 构建期渲染为 HTML | 纯 JS 可在 Node 完成；文章页不加载公式运行时 |
 | Mermaid 图表 | 浏览器，视口内懒加载 | 布局测量需真实浏览器；构建期方案需无头浏览器，技术验证通过前不采用 |
 | 图片响应式与格式转换 | 构建期 | 见 13.3 |
@@ -503,9 +508,13 @@ type DiscussionExportScope =
 | DOCX / PDF 导出 | 浏览器 Web Worker | 主线程执行会冻结页面并使取消按钮失效 |
 
 - 同一套 parser/Canonical IR/registry 在两个位置执行：`article` 路径在构建机器上运行，`discussion` 路径在浏览器中运行。共享实现是为了规则一致，不代表两侧成本相同。
+- **阅读首屏的客户端投影不是完整 Canonical IR。** `CompiledDocument`、`originalSource`、逐节点 `sourceText`、`sourceMap` 和全站 `assetManifest` 不得穿过 `'use client'` 边界进入 `/blog/<slug>/` 的 RSC / HTML。同一篇文章只编译一次；`DocumentRenderer` 的 article profile 必须消费已编译文档，不得再收一份 `source` 重编。
+- 文章页只携带当前 slug 的资产。导出源码写到 `out/blog/<slug>/export-source.json`，划词索引沿用 `anchor-manifest.json`，两者都在用户真正用到导出或划词时再取。
 - 文章未使用某 renderer 时不得下载其运行时。
 - 未打开的讨论面板不加载解析器、公式运行时或讨论数据。
 - 导出运行时及其中文字体不进入阅读首屏包。
+- 客户端路由的书册遮罩是 loading fallback，必须保持到目标段替换它；不得用 `document.readyState` 或固定时长把遮罩卸成空页。首次直达的进页仪式可以按设计时长揭开已经在 HTML 里的正文。
+- 文章链接禁止对全部在架条目做视口预取。预取只按意图：展开的方向书/目录组、悬停或键盘聚焦。
 
 ### 13.2 性能预算
 
@@ -514,6 +523,9 @@ type DiscussionExportScope =
 | 预算项 | 上限（压缩后） | 说明 |
 |---|---:|---|
 | 文章页首屏 JavaScript | 200 KB | React + Next 基线约 170 KB，自有代码余量约 30 KB |
+| 文章页客户端导航 RSC（`__PAGE__.txt` gzip） | 300 KB | 以体积最大的正式文章为准；不含 `export-source.json` 与 `anchor-manifest.json` |
+| 文章页静态 HTML gzip | 400 KB | 直达或刷新；同样不含上述 sidecar |
+| 文章页 `__PAGE__.txt` 中的完整源码字段 | 0 | 不得出现 `originalSource` 或逐节点 `sourceText` 载荷 |
 | 文章页首屏字体 | 300 KB | 首屏可见字符命中的切片总量 |
 | 单张文章图片 | 300 KB | 构建期转换后实际投放的变体 |
 | 讨论面板打开后追加 | 300 KB | 解析器 + sanitizer + KaTeX |
@@ -526,7 +538,8 @@ type DiscussionExportScope =
 测量口径（不写死就没法复现，也没法判定是否超标）：
 
 - **「压缩后」= gzip 后字节数**，不是磁盘大小，也不是 bundle analyzer 的 parsed 列。
-- **测量对象是中文综合验收文章的 `/blog/<slug>/`**，因为它命中的 renderer 最多，是最坏情况。
+- **测量对象是中文综合验收文章的 `/blog/<slug>/`**，因为它命中的 renderer 最多，是最坏情况。RSC / HTML 预算另以体积最大的正式文章为准（当前为 `developer-vocabulary-handbook`），不得只用 `p0-kitchen-sink` 充当最坏情况。
+- RSC 扫描路径：`out/blog/<slug>/__next.blog/$d$slug/__PAGE__.txt` 与 `out/blog/<slug>/index.html`。gzip 用 Node `zlib.gzipSync`。
 - `ANALYZE` 是**约定而非现成能力**：`next.config.ts` 需要接入 `@next/bundle-analyzer` 分支，依赖与配置改动都要单独授权。未接入前只能记录「未测」，不得用 `out/` 目录大小假装完成。
 - **字体不进 `out/`**（走云字体 CDN，见 13.3），所以字体预算只能用浏览器 DevTools/HAR 量实际下载的切片，扫 `out/` 会得到 0。
 - 实测超标时，优化与「更新本表」都属于产品决策，必须由人确认，不能由执行方自行改预算。
@@ -579,7 +592,8 @@ type DiscussionExportScope =
 - PDF/DOCX 点击直接下载；
 - `pnpm lint`、`pnpm tsc --noEmit`、`pnpm build` 通过；
 - `out/` 单文件与文件数量满足 EdgeOne 限制；
-- 首屏体积经实测并记录，且在 13.2 性能预算内；
+- 首屏体积经实测并记录，且在 13.2 性能预算内（含最大正式文章的 RSC / HTML，不只是 kitchen-sink 的 JS gzip）；
+- 从目录客户端进入长文时，正文出现前必须仍有目录、书册加载态或正文，主区域不得变空；
 - 无 U+FFFD、无损坏中文、无失效文档链接。
 
 ## 十五、阶段进入门与可后置微调

@@ -14,6 +14,7 @@ export default defineConfig({
       'scripts/build/run-content-assets.test.ts',
       'scripts/build/verify-katex-static-render.test.tsx',
       'scripts/build/write-anchor-manifests.test.ts',
+      'scripts/build/verify-article-payload.test.ts',
     ],
   },
 })

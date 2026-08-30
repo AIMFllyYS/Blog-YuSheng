@@ -29,8 +29,7 @@ export default async function BlogArticlePage({ params }: Props) {
     createAssetManifest(),
   ])
   const assetManifest = await transformContentImages(sourceAssetManifest)
-  await mirrorPublishedAssetsForDev(
-    assetManifest.filter((entry) => entry.articleSlug === slug),
-  )
-  return <BlogArticlePlaceholder assetManifest={assetManifest} post={post} />
+  const articleAssets = assetManifest.filter((entry) => entry.articleSlug === slug)
+  await mirrorPublishedAssetsForDev(articleAssets)
+  return <BlogArticlePlaceholder assetManifest={articleAssets} post={post} />
 }

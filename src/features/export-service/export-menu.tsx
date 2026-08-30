@@ -7,6 +7,7 @@ import { useDiscussionRuntime } from '@/features/discussions/runtime'
 import type { DiscussionExportScope, ExportFormat } from './export-document'
 import type { ReviewAppendixModel } from './markdown/review-appendix'
 import { useExportRuntime } from './export-runtime'
+import { loadArticleExportSource } from './export-source'
 
 const FORMATS = [
   { id: 'markdown', label: 'Markdown', available: true },
@@ -79,14 +80,16 @@ export function ExportMenu() {
           : Promise.resolve(undefined),
       ])
       if (cancelledRef.current) return
+      const source = await loadArticleExportSource(runtime.articleSlug)
+      if (cancelledRef.current) return
       setProgress(48)
       const snapshotAt = new Date().toISOString()
       let appendix: ReviewAppendixModel | undefined
       if (prepare) {
         const listed = await discussion.repo.listAnnotationThreads(runtime.articleSlug)
         const prepared = await prepare.prepareReviewAppendix({
-          articleSlug: runtime.document.articleSlug,
-          documentFingerprint: runtime.document.documentFingerprint,
+          articleSlug: source.articleSlug,
+          documentFingerprint: source.documentFingerprint,
           snapshotAt,
           threads: sortAnnotationViews(listed, discussion.selectionIndex),
         })
@@ -100,10 +103,13 @@ export function ExportMenu() {
       setProgress(72)
       const result = assembleExport({
         appendix,
-        assetManifest: runtime.assetManifest,
-        document: runtime.document,
+        document: {
+          articleSlug: source.articleSlug,
+          originalSource: source.originalSource,
+        },
         format,
         generatedAt: snapshotAt,
+        plainText: source.plainText,
         scope,
       })
       if (cancelledRef.current) return
@@ -120,6 +126,8 @@ export function ExportMenu() {
       )
       notify(format === 'markdown' ? '已导出 Markdown' : '已导出 TXT')
       setStatus('')
+    } catch (error) {
+      setStatus(error instanceof Error ? error.message : '导出失败')
     } finally {
       setBusy(false)
       setProgress(0)

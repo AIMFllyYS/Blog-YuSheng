@@ -3,7 +3,7 @@ import type { ExportArtifact } from '../export-document'
 import { encodeUtf8 } from './body-only'
 
 export function assembleMarkdownWithAppendix(
-  document: CompiledDocument,
+  document: Pick<CompiledDocument, 'articleSlug' | 'originalSource'>,
   appendixText: string,
 ): ExportArtifact {
   const body = document.originalSource

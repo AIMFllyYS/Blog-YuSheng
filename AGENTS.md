@@ -82,6 +82,9 @@ public/          静态资源（不放 >25MB 文件）
 - **讨论内容是永久不可信输入** — 只走 `discussion` profile，禁用原始 HTML、任意 JS/CSS/iframe/动态 import，并在最终渲染前 sanitize
 - **PDF 必须直接下载** — 禁止使用 `window.print()` 或系统打印对话框代替 PDF 导出
 - **默认构建期完成，推不动才进浏览器** — 公式渲染、图片尺寸/格式转换在构建期；Mermaid、嵌入、讨论解析、导出在浏览器且必须按需加载；阅读首屏与讨论/导出/3D 分开计量，预算见 [blog-content-engine.md 13.1–13.3](docs/specs/blog-content-engine.md)
+- **阅读 RSC 不得携带完整 Canonical IR** — 完整 `CompiledDocument` / `originalSource` / 逐节点 `sourceText` / 全站 asset manifest 不准进阅读首屏客户端边界；同一篇文章只编译一次；导出源码与划词索引走 sidecar
+- **路由书册不得先于正文消失** — `loading.tsx` 的书册是 fallback，保持到目标页替换它；禁止用 `readyState` 或定时器把主区域卸成空白
+- **文章禁止视口批量预取** — 链接默认 `prefetch={false}`；只在展开的书/组、悬停或聚焦时 `router.prefetch`
 - **中文字体按 `unicode-range` 切片** — 不按"站内已用字"整体裁剪（讨论区字符集构建期不可知）
 - **阅读页 1:1 对标原型** — `/blog/<slug>/` 的布局、交互与视觉以 [blog-reader-prototype.html](docs/designs/blog-reader-prototype.html) 为准，不得另起一套外观；文字说明见 [blog-reader-design.md](docs/designs/blog-reader-design.md)，token 仍走 [frontend-design.md](docs/conventions/frontend-design.md)
 - **目录页 3D 书库走纯 CSS 3D** — `/blog/` 目录用 `src/features/blog-index/shelf-stack.tsx` 1:1 复刻原型 09（横向方向书堆叠、绕左书脊 rotateY(-174deg) 翻页、文章书脊架、悬浮抽出）；不用 Three.js（真 3D 无法 1:1 还原原型，架构 D23）。降级路径是目录树视图（`tree-index.tsx`）：移动端/粗指针/reduced-motion 自动降级，用户可经右上角「视图」按钮手动切换（localStorage 记忆）。3D 不泄漏到阅读页 chrome

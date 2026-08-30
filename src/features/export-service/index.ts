@@ -1,7 +1,15 @@
 export {
   assembleExport,
+  type AssembleExportDocument,
   type AssembleExportInput,
 } from './assemble-export'
+export {
+  ARTICLE_EXPORT_SOURCE_SCHEMA_VERSION,
+  articleExportSourceUrl,
+  isArticleExportSource,
+  loadArticleExportSource,
+  type ArticleExportSource,
+} from './export-source'
 export {
   EXPORT_DOCUMENT_SCHEMA_VERSION,
   freezeExportDocument,
