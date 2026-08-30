@@ -82,18 +82,21 @@ content/posts/<slug>/
 | **小博客** | 文章包 `content/posts/<slug>/`（正本是 `index.md`） | 方向书里的一根文章书脊，或目录树里的一行 |
 | **章节** | 该小博客在所属方向书里的次序：先按 `publishedAt` **升序**（最早的是第一章），同日再按 slug | 「第 N 篇 / 第 N 章」。**没有**单独的 `chapter` 字段，不要手写章节号 |
 
-当前六个大方向（以 `content/sections.yml` 为准，`order` 小的在上）：
+当前七个大方向（以 `content/sections.yml` 为准，`order` 小的在上）：
 
 | slug（写入 `section`） | 书名 | 写什么 |
 |---|---|---|
 | `fullstack-learning` | 全栈小白学习记 | 从零学前端与全栈：UI、交互、Agent、架构与 Prompt |
 | `ai-mflly-notes` | AI-MFlly散记 | AI 创作与工具实践：写代码、生图、写作、视频、音乐，以及这个时代 |
-| `yu-reflections` | 羽の反思 | 对做过的选择、关系和自我的回头看 |
-| `yu-reviews` | 羽の复盘 | 一次具体事件或项目之后的拆解 |
+| `yu-studies` | 羽の参学 | 与 AI 交谈沉淀下来的概念、方法论和对话经验 |
+| `yu-reflections` | 羽の思索 | 主动思考：事后想通的、忽然冒出来的，以及就某一方向写下的看法 |
+| `yu-reviews` | 羽の复盘 | 按日或按月记下状态和变更，偏定时观测 |
 | `yu-essays` | 羽の随笔 | 不绑主题的短文与观察 |
-| `other` | 其他 | 对不上前面五本、但仍是正式小博客的篇目 |
+| `other` | 其他 | 对不上前面六本、但仍是正式小博客的篇目 |
 
-**「其他」不是「散页」。** 正式杂文要写 `section: other`，有文才上架。frontmatter **不写** `section` 的已发布文章，会单独成册排在书架**最后**，书名是「散页」。未知的 `section` 值（写了但没在注册表里）会让构建失败，不会偷偷进散页或「其他」。
+**思索和复盘不要混。** 思索是围着一个念头或一个方向自己想；复盘是流水账式的状态记录。跟 AI 聊完整理出来的词表、方法、经验进参学，不进散记也不进思索。
+
+**「其他」不是「散页」。** 正式杂文要写 `section: other`，有文才上架。schema 允许 frontmatter 省略 `section`，但当前站点发布政策只保留 `p0-kitchen-sink` 这篇黄金验收文进入末尾「散页」；其它已发布文章省略 `section` 会以 `PUBLISHED_POST_SECTION_REQUIRED` 阻止构建。未知的 `section` 值（写了但没在注册表里）会以 `FRONTMATTER_SECTION_UNKNOWN` 让构建失败，不会偷偷进散页或「其他」。
 
 现在留在散页、并且应当留着的只有：
 
@@ -136,7 +139,7 @@ draft: false
 | `description` | 是 | 非空。列表摘要 + OG 预览文案 |
 | `publishedAt` | 是 | 带时区的 ISO 8601。国内用 `+08:00`，不要写 `2026-08-18` 这种缺时间的日期 |
 | `updatedAt` | 否 | 同样必须带时区。改过正文再填 |
-| `section` | 否（正式文应当填） | **大方向** slug，必须已在 `content/sections.yml` 注册，否则构建报 `FRONTMATTER_SECTION_UNKNOWN`。决定这本小博客收进哪本方向书；不填则归入末尾「散页」。不要写 `chapter` / `category` / `series` |
+| `section` | 否（正式文必须填；仅 `p0-kitchen-sink` 可省略） | **大方向** slug，必须已在 `content/sections.yml` 注册，否则构建报 `FRONTMATTER_SECTION_UNKNOWN`。决定这本小博客收进哪本方向书；唯一允许省略的正式文是黄金验收文 `p0-kitchen-sink`，其它正式文省略会报 `PUBLISHED_POST_SECTION_REQUIRED`。不要写 `chapter` / `category` / `series` |
 | `cover` | 否 | 文章包内相对路径（推荐 `./media/images/cover.png`），或作者托管名单上的 HTTPS 图片。用于列表/分享预览 |
 | `tags` | 否 | 非空字符串数组。1 到多个，可自定；省略该字段表示没有标签，不要写空数组。出现在目录树章行，以及书库里悬停小书脊后的书签旁边。优先用 [post-tags.md](./post-tags.md) 里的词，没有合适的就自创，再回去补一行。备忘文档不参与校验，写错词也不会让构建失败。单标签建议不超过约 12 个汉字 |
 | `draft` | 否 | 布尔值。`true` 不上架；省略或 `false` 表示正式文章 |
@@ -399,7 +402,7 @@ pnpm preview
 
 一次新增 = 选大方向 + 建小博客包。章节顺序不用填。
 
-1. **选大方向**（或先登记新方向）。打开 `content/sections.yml`，从现有六个 slug 里挑一个写入 `section`。对不上前五本就用 `other`。不要把正式文留在散页。
+1. **选大方向**（或先登记新方向）。打开 `content/sections.yml`，从现有 slug 里挑一个写入 `section`。对不上前六本就用 `other`。不要把正式文留在散页。
 2. **想好小博客 slug**，例如 `edgeone-ssg-notes`。这就是文件夹名，也是 `/blog/edgeone-ssg-notes/`。
 3. **建文章包** `content/posts/edgeone-ssg-notes/index.md`，填好 frontmatter，**一定要有 `section`**。打 1 到多个 `tags`，优先用 [post-tags.md](./post-tags.md) 里的词。
 4. 需要图就建 `media/images/`，把压到 300 KB 以内的原图放进去，正文用 `./media/images/...` 引用。
@@ -458,7 +461,7 @@ draft: false
 ## 8. 和这份指南配套的文件
 
 - 黄金样例：[content/posts/p0-kitchen-sink/](../../content/posts/p0-kitchen-sink/)（验收文，可对照格式，不必当自己的第一篇正式文章来改；它故意留在散页）
-- 板块注册表：[content/sections.yml](../../content/sections.yml)（六个大方向的权威源）
+- 板块注册表：[content/sections.yml](../../content/sections.yml)（七个大方向的权威源）
 - 标签备忘：[post-tags.md](./post-tags.md)（只记录常用词，不参与构建）
 - 正文组件与颜色：[article-design-language.md](./article-design-language.md)
 - 内容协议：[blog-content-engine.md](../specs/blog-content-engine.md) 第四节

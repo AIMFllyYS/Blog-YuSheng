@@ -2,7 +2,10 @@
 
 import { useEffect, useState } from 'react'
 import styles from './blog-index.module.css'
-import type { ShelfBook } from './create-shelf-books'
+import {
+  UNCATEGORIZED_BOOK_SLUG,
+  type ShelfBook,
+} from './create-shelf-books'
 import { ShelfStack } from './shelf-stack'
 import { TreeIndex } from './tree-index'
 
@@ -60,12 +63,16 @@ export function BlogIndexView({
     window.localStorage.setItem(VIEW_STORAGE_KEY, next)
   }
 
+  const directionCount = books.filter(
+    (book) => book.slug !== UNCATEGORIZED_BOOK_SLUG,
+  ).length
+
   return (
     <section aria-label="文章书架" data-catalog-view={view}>
       <div className={styles.shelfHeading}>
         <span className={styles.shelfLabel}>文章书架</span>
         <span className={styles.shelfCount}>
-          {books.length} 个方向 · {totalPosts} 卷在架
+          {directionCount} 个方向 · {totalPosts} 卷在架
         </span>
         {!fallback && view !== 'pending' && (
           <span className={styles.viewToggle} role="group" aria-label="视图切换">

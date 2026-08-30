@@ -67,8 +67,8 @@ content/posts/<slug>/
 - slug 为小写英文 kebab-case，与 `/blog/<slug>/` 一致。
 - 相对资源路径必须限制在当前文章包内，拒绝路径穿越。
 - 构建只复制被允许且通过验证的文章资源。
-- frontmatter v1 必填 `schemaVersion: 1`、`title`、`description`、`publishedAt`；可选 `updatedAt`、`cover`、`section`、`tags`、`draft`。slug 只来自目录名，不写入 frontmatter。
-- `section` 是板块 slug，必须命中 `content/sections.yml` 注册表（slug / 标题 / order / summary），未注册构建报错；省略则归入「散页」。书架按板块聚册、按 order 排书，文章在册内按 `publishedAt` 升序成章。
+- frontmatter v1 必填 `schemaVersion: 1`、`title`、`description`、`publishedAt`；可选 `updatedAt`、`cover`、`section`、`tags`、`draft`。slug 只来自目录名，不写入 frontmatter。`section` 在 schema 层保持可选，以便草稿和内容引擎黄金验收夹具表达“尚未归类”的状态。
+- `section` 是板块 slug，必须命中 `content/sections.yml` 注册表（slug / 标题 / order / summary），未注册构建报错；当前站点发布政策要求每篇非草稿正式文章填写合法 `section`，仅 `p0-kitchen-sink` 可省略并归入「散页」。其它已发布的 sectionless 文章触发 `PUBLISHED_POST_SECTION_REQUIRED`，不会静默上架。书架按板块聚册、按 order 排书，文章在册内按 `publishedAt` 升序成章。
 - 日期使用带时区的 ISO 8601；`cover` 是文章包内相对路径，或作者托管名单上的 HTTPS 图片；未知字段默认报错，新增字段必须升级 schema 或明确向后兼容。
 
 ### 4.2 内置语法

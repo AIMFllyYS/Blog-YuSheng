@@ -10,15 +10,17 @@ test('catalog lists imported 大方向 chapters', async ({ page }) => {
     timeout: 8_000,
   })
   await expect(page.locator('[data-blog-index]')).toBeVisible()
-  await expect(page.getByText(/\d+ 个方向 · \d+ 卷在架/)).toBeVisible()
+  await expect(page.getByText('7 个方向 · 31 卷在架', { exact: true })).toBeVisible()
   await expect(
     page.getByRole('heading', { name: '全栈小白学习记' }),
   ).toBeVisible()
   await expect(page.getByRole('heading', { name: 'AI-MFlly散记' })).toBeVisible()
-  await expect(page.getByRole('heading', { name: '羽の反思' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: '羽の参学' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: '羽の思索' })).toBeVisible()
   await expect(page.getByRole('heading', { name: '羽の复盘' })).toBeVisible()
   await expect(page.getByRole('heading', { name: '羽の随笔' })).toBeVisible()
   await expect(page.getByRole('heading', { name: '其他' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: '散页' })).toBeVisible()
   await expect(
     page.locator('a[href="/blog/from-ten-to-hundred-ai-video/"]'),
   ).toBeVisible()
@@ -29,6 +31,23 @@ test('catalog lists imported 大方向 chapters', async ({ page }) => {
     path: path.join(SHOT_DIR, 'shot-catalog.png'),
     fullPage: true,
   })
+})
+
+test('legacy yu-reflections hash opens the renamed 羽の思索 book', async ({
+  page,
+}) => {
+  test.setTimeout(90_000)
+  await page.goto('/blog/#yu-reflections', { waitUntil: 'domcontentloaded' })
+  await expect(page.locator('[data-reader-boot-veil]')).toHaveCount(0, {
+    timeout: 8_000,
+  })
+  await expect(page.locator('[data-blog-index]')).toBeVisible()
+  const reflections = page.locator('[data-book-slug="yu-reflections"]')
+  await expect(reflections).toBeVisible()
+  await expect(reflections).toHaveAttribute('aria-expanded', 'true')
+  await expect(
+    page.getByRole('heading', { name: '羽の思索' }),
+  ).toBeVisible()
 })
 
 test('imported HTML visual post shows date and filled article', async ({
