@@ -49,6 +49,20 @@ describe('live catalog classification', () => {
     expect(books.length).toBeGreaterThan(0)
     expect(books.every((book) => book.chapters.length > 0)).toBe(true)
     expect(
+      Object.fromEntries(
+        books.map((book) => [book.slug, book.chapters.length]),
+      ),
+    ).toEqual({
+      'fullstack-learning': 3,
+      'ai-mflly-notes': 3,
+      'yu-studies': 2,
+      'yu-reflections': 2,
+      'yu-reviews': 4,
+      'yu-essays': 12,
+      other: 4,
+      [UNCATEGORIZED_BOOK_SLUG]: 1,
+    })
+    expect(
       books
         .filter((book) => book.slug !== UNCATEGORIZED_BOOK_SLUG)
         .map((book) => book.slug),
@@ -110,6 +124,27 @@ describe('live catalog classification', () => {
 
     expect(bySlug.get('developer-vocabulary-handbook')?.frontmatter.section).toBe(
       'yu-studies',
+    )
+  })
+
+  it('keeps the final four-post reclassification and the July review stable', async () => {
+    const posts = await listPublishedPosts()
+    const bySlug = new Map(posts.map((post) => [post.slug, post]))
+
+    expect(bySlug.get('when-energy-runs-low')?.frontmatter.section).toBe(
+      'yu-reviews',
+    )
+    expect(bySlug.get('september-ninth-new-self')?.frontmatter.section).toBe(
+      'yu-reviews',
+    )
+    expect(bySlug.get('agent-principles-and-trends')?.frontmatter.section).toBe(
+      'yu-studies',
+    )
+    expect(bySlug.get('med-student-coding-and-health')?.frontmatter.section).toBe(
+      'yu-essays',
+    )
+    expect(bySlug.get('july-28-ai-frontier-review')?.frontmatter.section).toBe(
+      'yu-reviews',
     )
   })
 })

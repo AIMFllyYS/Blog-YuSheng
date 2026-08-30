@@ -3,7 +3,7 @@ schemaVersion: 1
 title: 智能体并不神秘：提示词、工具、状态机
 description: 一次口播整理：Agent 就是提示词工程加工具调用，Skills、MCP、ReAct 和 harness 都可以还原成输入输出。
 publishedAt: 2026-08-30T00:59:45+08:00
-section: ai-mflly-notes
+section: yu-studies
 tags:
   - Agent
   - AI

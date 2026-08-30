@@ -17,16 +17,16 @@
 | `2026年思政课社会实践报告_….docx` | `hui-lao-zhi-zhi-practice` | other | 2026-08-30T00:00:00+08:00 | 报告, 医学, 教育, AI | mermaid | 去掉电话与学号 |
 | `自我认知与职业生涯规划课报告.txt` | `career-planning-course-report` | other | 2026-05-29T00:00:00+08:00 | 报告, 人生, AI | mermaid | 大一下 |
 | `AI时代教育变革与课程体系建设思考_….txt` | `education-in-the-ai-era` | other | 2026-08-30T00:53:31+08:00 | 教育, AI, 报告 | mermaid | 录音润色 |
-| `AI智能体技术原理与行业趋势分享_….txt` | `agent-principles-and-trends` | ai-mflly-notes | 2026-08-30T00:59:45+08:00 | Agent, AI | mermaid + html-embed | 录音润色 |
+| `AI智能体技术原理与行业趋势分享_….txt` | `agent-principles-and-trends` | yu-studies | 2026-08-30T00:59:45+08:00 | Agent, AI | mermaid + html-embed | 录音润色；后改挂「羽の参学」 |
 | `Ai深度学习计划.txt` | `ai-deep-learning-plan` | ai-mflly-notes | 2025-12-09T00:00:00+08:00 | AI时代, AI | mermaid | 录音润色 |
 | `博客素材816。.txt` | `open-models-and-watermarks` | ai-mflly-notes | 2026-08-15T00:00:00+08:00 | AI时代 | mermaid | #0815 |
 | `10月份总结.txt` | `october-busy-and-growth` | yu-reviews | 2025-11-02T00:00:00+08:00 | 日常, 社团, 人生 | html-embed | 写于25-11-2 |
 | `7-28日总结反思_….txt` | `july-28-ai-frontier-review` | yu-reviews | 2026-07-28T00:00:00+08:00 | AI, 全栈开发, 人生 | mermaid | 录音润色；导出时钟不覆盖专项日 |
-| `20250804突然的小反思.txt` | `when-energy-runs-low` | yu-reflections | 2025-08-04T00:00:00+08:00 | 日常, 人生 | — | 录音润色 |
+| `20250804突然的小反思.txt` | `when-energy-runs-low` | yu-reviews | 2025-08-04T00:00:00+08:00 | 日常, 人生 | — | 录音润色；后改挂「羽の复盘」 |
 | `个人财务基础分析与反思.txt` | `personal-finance-and-ai-dev` | yu-reflections | 2026-07-26T00:00:00+08:00 | 生活, AI | mermaid | 源无专项日；取暑假复盘窗口 |
-| `医学生转码血泪史 ┃ 注意身体.txt` | `med-student-coding-and-health` | yu-reflections | 2026-02-19T00:00:00+08:00 | 医学, 生活 | — | |
+| `医学生转码血泪史 ┃ 注意身体.txt` | `med-student-coding-and-health` | yu-essays | 2026-02-19T00:00:00+08:00 | 医学, 生活 | — | 后改挂「羽の随笔」 |
 | `浅涉谈爱情.txt` | `on-love-a-first-pass` | yu-reflections | 2025-10-20T00:00:00+08:00 | 人生 | — | |
-| `备忘录文档_202608300114.docx` | `september-ninth-new-self` | yu-reflections | 2025-09-09T00:00:00+08:00 | 人生 | mermaid | 非录音稿重复 |
+| `备忘录文档_202608300114.docx` | `september-ninth-new-self` | yu-reviews | 2025-09-09T00:00:00+08:00 | 人生 | mermaid | 非录音稿重复；后改挂「羽の复盘」 |
 | `修为规则.txt` | `cultivation-rules-of-feixing` | yu-essays | 2025-07-07T00:00:00+08:00 | 科幻 | mermaid | 设定草稿 |
 | `兴许对于一位刚刚接触剪辑的人而言.txt` | `editing-quantity-to-quality` | yu-essays | 2026-02-06T00:00:00+08:00 | 人生 | mermaid | |
 | `军训有感（极速版）.txt` | `military-training-notes` | yu-essays | 2025-09-04T00:00:00+08:00 | 日常, 人生 | — | |

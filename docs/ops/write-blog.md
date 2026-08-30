@@ -96,7 +96,7 @@ content/posts/<slug>/
 
 **思索和复盘不要混。** 思索是围着一个念头或一个方向自己想；复盘是流水账式的状态记录。跟 AI 聊完整理出来的词表、方法、经验进参学，不进散记也不进思索。
 
-**「其他」不是「散页」。** 正式杂文要写 `section: other`，有文才上架。frontmatter **不写** `section` 的已发布文章，会单独成册排在书架**最后**，书名是「散页」。未知的 `section` 值（写了但没在注册表里）会让构建失败，不会偷偷进散页或「其他」。
+**「其他」不是「散页」。** 正式杂文要写 `section: other`，有文才上架。schema 允许 frontmatter 省略 `section`，但当前站点发布政策只保留 `p0-kitchen-sink` 这篇黄金验收文进入末尾「散页」；其它已发布文章省略 `section` 会以 `PUBLISHED_POST_SECTION_REQUIRED` 阻止构建。未知的 `section` 值（写了但没在注册表里）会以 `FRONTMATTER_SECTION_UNKNOWN` 让构建失败，不会偷偷进散页或「其他」。
 
 现在留在散页、并且应当留着的只有：
 
@@ -139,7 +139,7 @@ draft: false
 | `description` | 是 | 非空。列表摘要 + OG 预览文案 |
 | `publishedAt` | 是 | 带时区的 ISO 8601。国内用 `+08:00`，不要写 `2026-08-18` 这种缺时间的日期 |
 | `updatedAt` | 否 | 同样必须带时区。改过正文再填 |
-| `section` | 否（正式文应当填） | **大方向** slug，必须已在 `content/sections.yml` 注册，否则构建报 `FRONTMATTER_SECTION_UNKNOWN`。决定这本小博客收进哪本方向书；不填则归入末尾「散页」。不要写 `chapter` / `category` / `series` |
+| `section` | 否（正式文必须填；仅 `p0-kitchen-sink` 可省略） | **大方向** slug，必须已在 `content/sections.yml` 注册，否则构建报 `FRONTMATTER_SECTION_UNKNOWN`。决定这本小博客收进哪本方向书；唯一允许省略的正式文是黄金验收文 `p0-kitchen-sink`，其它正式文省略会报 `PUBLISHED_POST_SECTION_REQUIRED`。不要写 `chapter` / `category` / `series` |
 | `cover` | 否 | 文章包内相对路径（推荐 `./media/images/cover.png`），或作者托管名单上的 HTTPS 图片。用于列表/分享预览 |
 | `tags` | 否 | 非空字符串数组。1 到多个，可自定；省略该字段表示没有标签，不要写空数组。出现在目录树章行，以及书库里悬停小书脊后的书签旁边。优先用 [post-tags.md](./post-tags.md) 里的词，没有合适的就自创，再回去补一行。备忘文档不参与校验，写错词也不会让构建失败。单标签建议不超过约 12 个汉字 |
 | `draft` | 否 | 布尔值。`true` 不上架；省略或 `false` 表示正式文章 |

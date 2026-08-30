@@ -3,6 +3,10 @@ import 'server-only'
 import { readFile } from 'node:fs/promises'
 import path from 'node:path'
 import { z } from 'zod'
+import {
+  ALLOWED_PUBLISHED_UNCATEGORIZED_SLUGS,
+  UNCATEGORIZED_BOOK_SLUG,
+} from '../../lib/blog-catalog-constants'
 import { ContentBuildError } from './content-error'
 import { CONTENT_SECTIONS_PATH } from './content-paths'
 import { parseYamlDocument } from './parse-yaml'
@@ -74,7 +78,17 @@ export async function listSections(
   }
 
   const seen = new Set<string>()
+  const seenOrders = new Set<number>()
+  const seenColors = new Set<string>()
   for (const section of parsed.data.sections) {
+    if (section.slug === UNCATEGORIZED_BOOK_SLUG) {
+      throw new ContentBuildError('板块注册表使用了保留 slug', [
+        registryDiagnostic(
+          'SECTIONS_REGISTRY_RESERVED_SLUG',
+          `板块 slug ${UNCATEGORIZED_BOOK_SLUG} 是散页内部保留值，不能注册`,
+        ),
+      ])
+    }
     if (seen.has(section.slug)) {
       throw new ContentBuildError('板块注册表存在重复 slug', [
         registryDiagnostic(
@@ -84,6 +98,29 @@ export async function listSections(
       ])
     }
     seen.add(section.slug)
+
+    if (seenOrders.has(section.order)) {
+      throw new ContentBuildError('板块注册表存在重复 order', [
+        registryDiagnostic(
+          'SECTIONS_REGISTRY_DUPLICATE_ORDER',
+          `板块 order ${section.order} 重复注册`,
+        ),
+      ])
+    }
+    seenOrders.add(section.order)
+
+    if (section.color) {
+      const normalizedColor = section.color.toLowerCase()
+      if (seenColors.has(normalizedColor)) {
+        throw new ContentBuildError('板块注册表存在重复 color', [
+          registryDiagnostic(
+            'SECTIONS_REGISTRY_DUPLICATE_COLOR',
+            `板块 color ${section.color} 重复注册`,
+          ),
+        ])
+      }
+      seenColors.add(normalizedColor)
+    }
   }
 
   return Object.freeze(
@@ -129,6 +166,42 @@ export function assertKnownSections(
 
   if (diagnostics.length > 0) {
     throw new ContentBuildError('存在未注册的文章板块', diagnostics)
+  }
+}
+
+/** 正式文章必须选方向；仅保留黄金验收文作为有意的散页。 */
+export function assertPublishedSections(
+  posts: ReadonlyArray<{
+    slug: string
+    frontmatter: { section?: string; draft?: boolean }
+  }>,
+): void {
+  const diagnostics: FrontmatterDiagnostic[] = []
+
+  for (const post of posts) {
+    if (
+      post.frontmatter.draft !== true &&
+      post.frontmatter.section === undefined &&
+      !ALLOWED_PUBLISHED_UNCATEGORIZED_SLUGS.some(
+        (slug) => slug === post.slug,
+      )
+    ) {
+      diagnostics.push({
+        code: 'PUBLISHED_POST_SECTION_REQUIRED',
+        severity: 'error',
+        message: `正式文章必须填写 section；仅允许 ${UNCATEGORIZED_BOOK_SLUG} 白名单文章省略`,
+        articleSlug: post.slug,
+        field: 'section',
+        sourceRange: {
+          start: { line: 1, column: 1, offset: 0 },
+          end: { line: 1, column: 1, offset: 0 },
+        },
+      })
+    }
+  }
+
+  if (diagnostics.length > 0) {
+    throw new ContentBuildError('存在未归类的正式文章', diagnostics)
   }
 }
 

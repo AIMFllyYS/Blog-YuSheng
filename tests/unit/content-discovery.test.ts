@@ -48,8 +48,17 @@ describe('build-time content repository', () => {
 
   it('sorts published posts and excludes valid drafts from params', async () => {
     const root = await createPostsRoot()
-    await writePost(root, 'older-post', validSource('旧文章', '2026-01-01T00:00:00+08:00'))
-    await writePost(root, 'newer-post', validSource('新文章', '2026-02-01T00:00:00+08:00'))
+    await writeSections(root, 'ai-thinking')
+    await writePost(
+      root,
+      'older-post',
+      validSource('旧文章', '2026-01-01T00:00:00+08:00', false, 'ai-thinking'),
+    )
+    await writePost(
+      root,
+      'newer-post',
+      validSource('新文章', '2026-02-01T00:00:00+08:00', false, 'ai-thinking'),
+    )
     await writePost(
       root,
       'hidden-draft',
@@ -73,15 +82,21 @@ describe('build-time content repository', () => {
 
   it('sorts mixed timezone offsets by their actual instant', async () => {
     const root = await createPostsRoot()
+    await writeSections(root, 'ai-thinking')
     await writePost(
       root,
       'local-new-year',
-      validSource('本地跨年', '2026-01-01T00:30:00+08:00'),
+      validSource(
+        '本地跨年',
+        '2026-01-01T00:30:00+08:00',
+        false,
+        'ai-thinking',
+      ),
     )
     await writePost(
       root,
       'utc-later',
-      validSource('实际更新', '2025-12-31T23:00:00Z'),
+      validSource('实际更新', '2025-12-31T23:00:00Z', false, 'ai-thinking'),
     )
 
     expect((await listPublishedPosts(root)).map((post) => post.slug)).toEqual([
@@ -131,7 +146,7 @@ describe('build-time content repository', () => {
     })
   })
 
-  it('accepts registered sections and sectionless posts side by side', async () => {
+  it('allows the sole published acceptance article to remain sectionless', async () => {
     const root = await createPostsRoot()
     await writeSections(root, 'ai-thinking')
     await writePost(
@@ -141,16 +156,37 @@ describe('build-time content repository', () => {
     )
     await writePost(
       root,
-      'loose-post',
+      'p0-kitchen-sink',
       validSource('散页文章', '2026-02-01T00:00:00+08:00'),
     )
 
     const posts = await listPublishedPosts(root)
     expect(posts.map((post) => post.slug)).toEqual([
-      'loose-post',
+      'p0-kitchen-sink',
       'known-post',
     ])
     expect(posts[1]?.frontmatter.section).toBe('ai-thinking')
+  })
+
+  it('rejects other published sectionless posts with a deterministic code', async () => {
+    const root = await createPostsRoot()
+    await writeSections(root, 'ai-thinking')
+    await writePost(
+      root,
+      'loose-post',
+      validSource('散页文章', '2026-02-01T00:00:00+08:00'),
+    )
+
+    await expect(listPublishedPosts(root)).rejects.toMatchObject({
+      name: 'ContentBuildError',
+      diagnostics: [
+        expect.objectContaining({
+          code: 'PUBLISHED_POST_SECTION_REQUIRED',
+          articleSlug: 'loose-post',
+          field: 'section',
+        }),
+      ],
+    })
   })
 
   it('rejects traversal with a deterministic source location', async () => {
