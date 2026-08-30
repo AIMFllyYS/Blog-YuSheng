@@ -53,12 +53,12 @@ describe('live catalog classification', () => {
         books.map((book) => [book.slug, book.chapters.length]),
       ),
     ).toEqual({
-      'fullstack-learning': 3,
-      'ai-mflly-notes': 3,
-      'yu-studies': 2,
-      'yu-reflections': 2,
-      'yu-reviews': 4,
-      'yu-essays': 12,
+      'fullstack-learning': 4,
+      'ai-mflly-notes': 2,
+      'yu-studies': 1,
+      'yu-reflections': 1,
+      'yu-reviews': 7,
+      'yu-essays': 11,
       other: 4,
       [UNCATEGORIZED_BOOK_SLUG]: 1,
     })
@@ -127,24 +127,53 @@ describe('live catalog classification', () => {
     )
   })
 
-  it('keeps the final four-post reclassification and the July review stable', async () => {
+  it('keeps the final reclassification and the July review stable', async () => {
     const posts = await listPublishedPosts()
     const bySlug = new Map(posts.map((post) => [post.slug, post]))
 
-    expect(bySlug.get('when-energy-runs-low')?.frontmatter.section).toBe(
-      'yu-reviews',
-    )
-    expect(bySlug.get('september-ninth-new-self')?.frontmatter.section).toBe(
+    expect(bySlug.get('ai-deep-learning-plan')?.frontmatter.section).toBe(
       'yu-reviews',
     )
     expect(bySlug.get('agent-principles-and-trends')?.frontmatter.section).toBe(
-      'yu-studies',
+      'fullstack-learning',
+    )
+    expect(bySlug.get('personal-finance-and-ai-dev')?.frontmatter.section).toBe(
+      'yu-reviews',
     )
     expect(bySlug.get('med-student-coding-and-health')?.frontmatter.section).toBe(
-      'yu-essays',
+      'yu-reviews',
     )
+    expect(bySlug.get('when-energy-runs-low')?.frontmatter.section).toBe('yu-reviews')
+    expect(bySlug.get('september-ninth-new-self')?.frontmatter.section).toBe('yu-reviews')
     expect(bySlug.get('july-28-ai-frontier-review')?.frontmatter.section).toBe(
       'yu-reviews',
+    )
+  })
+
+  it('locks the requested title archive and personal-finance date', async () => {
+    const posts = await listPublishedPosts()
+    const bySlug = new Map(posts.map((post) => [post.slug, post]))
+    const expected = {
+      'when-we-talk-about-ai-coding': 'AI编程范式笔记·羽升手记01-v0.3',
+      'ai-deep-learning-plan': '25-12-9 AI 深度学习计划',
+      'open-models-and-watermarks': '26-8-15 复盘 · 开源模型廉价智能和水印',
+      'agent-principles-and-trends': 'Agent的简单理解',
+      'personal-finance-and-ai-dev': '26-8-26 个人财务复盘',
+      'when-energy-runs-low': '25-8-4 复盘 · 能量低的那天',
+      'september-ninth-new-self': '25-9-9 复盘 · 九月九日新的自己',
+      'october-busy-and-growth': '25年10月复盘 · 认知、忙碌、成长',
+      'july-28-ai-frontier-review': '26-7-28 复盘 · AI方向如是状态',
+      'editing-quantity-to-quality': '剪辑&质变与量变的简单理解',
+      'med-student-coding-and-health': '26-2-19 复盘 · 医学生转码血泪史｜注意身体',
+    } as const
+    for (const [slug, title] of Object.entries(expected)) {
+      expect(bySlug.get(slug)?.frontmatter.title, slug).toBe(title)
+    }
+    expect(bySlug.get('personal-finance-and-ai-dev')?.frontmatter.publishedAt).toBe(
+      '2026-08-26T00:00:00+08:00',
+    )
+    expect(bySlug.get('july-28-ai-frontier-review')?.frontmatter.publishedAt).toBe(
+      '2026-07-28T00:00:00+08:00',
     )
   })
 })

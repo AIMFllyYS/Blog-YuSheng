@@ -46,6 +46,15 @@ describe('build-time content repository', () => {
     }
   })
 
+  it('keeps every published frontmatter title in sync with the first body heading', async () => {
+    const posts = await listPublishedPosts()
+    for (const post of posts) {
+      const fullPost = await readPost(post.slug)
+      const heading = fullPost.body.match(/^#\s+(.+)$/m)?.[1]?.trim()
+      expect(heading, `${post.slug} first H1`).toBe(post.frontmatter.title)
+    }
+  })
+
   it('sorts published posts and excludes valid drafts from params', async () => {
     const root = await createPostsRoot()
     await writeSections(root, 'ai-thinking')
