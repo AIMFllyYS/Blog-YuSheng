@@ -39,7 +39,7 @@
 - schema 层仍允许省略 `section`，但发布层只允许 `p0-kitchen-sink` 作为正式散页；其它已发布无 `section` 文章报 `PUBLISHED_POST_SECTION_REQUIRED`。草稿无 `section` 仍可读取且不上架。
 - 书库方向数排除散页，散页固定色改为 `#5f625d`，注册方向「其他」继续使用 `#7d7468`。
 
-最终发布归属数量锁定为：全栈学习 3、AI 散记 3、参学 2、思索 2、复盘 4、随笔 12、其他 4、散页 1，共 31 卷在架；目录抬头为 `7 个方向 · 31 卷在架`。
+目录审查阶段的注册表与散页决策保持不变；在本发布窗口的内容收尾之后，最终发布归属数量锁定为：全栈学习 4、AI 散记 2、参学 1、思索 1、复盘 7、随笔 11、其他 4、散页 1，共 31 卷在架；目录抬头仍为 `7 个方向 · 31 卷在架`。
 
 | 审查项 | 级别 | 已解决/由测试锁定 |
 |---|---|---|---|
@@ -83,12 +83,12 @@
 
 | slug | 书名 | 已发布篇数 | 边界 | 该不该独立 |
 |---|---|---:|---|---|
-| `fullstack-learning` | 全栈小白学习记 | 3 | 从零学前端 / 全栈 | 是 |
-| `ai-mflly-notes` | AI-MFlly散记 | 3 | AI 工具与创作实践 | 是 |
-| `yu-studies` | 羽の参学 | 2 | 从对话里沉淀的词表 / 方法 / 问法 | 是；不能并进散记 |
-| `yu-reflections` | 羽の思索 | 2 | 围着一个念头自己想 | 是 |
-| `yu-reviews` | 羽の复盘 | 4 | 按日 / 月记状态，不围绕论点 | 是；与思索拆开是作者硬要求 |
-| `yu-essays` | 羽の随笔 | 12 | 不绑主题的短文 | 是 |
+| `fullstack-learning` | 全栈小白学习记 | 4 | 从零学前端 / 全栈 | 是 |
+| `ai-mflly-notes` | AI-MFlly散记 | 2 | AI 工具与创作实践 | 是 |
+| `yu-studies` | 羽の参学 | 1 | 从对话里沉淀的词表 / 方法 / 问法 | 是；不能并进散记 |
+| `yu-reflections` | 羽の思索 | 1 | 围着一个念头自己想 | 是 |
+| `yu-reviews` | 羽の复盘 | 7 | 按日 / 月记状态，不围绕论点 | 是；与思索拆开是作者硬要求 |
+| `yu-essays` | 羽の随笔 | 11 | 不绑主题的短文 | 是 |
 | `other` | 其他 | 4 | 对不上前六本的**正式**小博客（课报等） | 是 |
 | `uncategorized`（非注册表） | 散页 | 1 | 没填 `section` 的系统桶 | 必须留在注册表外 |
 
@@ -158,12 +158,12 @@ schema 仍允许省略，以保留草稿和黄金验收夹具能力；`listPubli
 
 | 板块 | slug 列表 |
 |---|---|
-| fullstack-learning | `ai-coding-core-practice`, `ai-coding-engineering-mindset`, `when-we-talk-about-ai-coding` |
-| ai-mflly-notes | `ai-deep-learning-plan`, `open-models-and-watermarks`, `from-ten-to-hundred-ai-video` |
-| yu-studies | `developer-vocabulary-handbook`, `agent-principles-and-trends` |
-| yu-reflections | `on-love-a-first-pass`, `personal-finance-and-ai-dev` |
-| yu-reviews | `october-busy-and-growth`, `july-28-ai-frontier-review`, `when-energy-runs-low`, `september-ninth-new-self` |
-| yu-essays | `absorption-as-digestion`, `cultivation-rules-of-feixing`, `after-watching-malice`, `graduation-and-one-inch-time`, `return-to-the-essence`, `military-training-notes`, `let-ai-invade-science-fiction`, `stories-with-the-woods`, `self-intro-in-transition`, `editing-quantity-to-quality`, `visiting-the-ancestors`, `med-student-coding-and-health` |
+| fullstack-learning | `agent-principles-and-trends`, `ai-coding-core-practice`, `ai-coding-engineering-mindset`, `when-we-talk-about-ai-coding` |
+| ai-mflly-notes | `open-models-and-watermarks`, `from-ten-to-hundred-ai-video` |
+| yu-studies | `developer-vocabulary-handbook` |
+| yu-reflections | `on-love-a-first-pass` |
+| yu-reviews | `ai-deep-learning-plan`, `october-busy-and-growth`, `july-28-ai-frontier-review`, `when-energy-runs-low`, `september-ninth-new-self`, `personal-finance-and-ai-dev`, `med-student-coding-and-health` |
+| yu-essays | `absorption-as-digestion`, `cultivation-rules-of-feixing`, `after-watching-malice`, `graduation-and-one-inch-time`, `return-to-the-essence`, `military-training-notes`, `let-ai-invade-science-fiction`, `stories-with-the-woods`, `self-intro-in-transition`, `editing-quantity-to-quality`, `visiting-the-ancestors` |
 | other | `career-planning-course-report`, `from-using-ai-to-understanding-ai`, `education-in-the-ai-era`, `hui-lao-zhi-zhi-practice` |
 | 散页 | `p0-kitchen-sink` |
 
@@ -211,3 +211,46 @@ schema 仍允许省略，以保留草稿和黄金验收夹具能力；`listPubli
 | `out` 文件数 / 单文件大小检查 | 468 个文件；0 个文件超过 25 MB |
 
 构建和浏览器测试只产生本地构建缓存与截图，不纳入目录 commit；`.trae/` 始终未 staging。
+
+---
+
+## 后续内容保真与标题归档附录（issue #112）
+
+本附录记录目录收尾之后的独立内容 feature：`feat/content-fidelity-title-closeout` 从最新 `dev` 切出，目录注册表、散页护栏、`ShelfBook` 接口和文章 URL 均不变。审查阶段确认无运行时 P0；本次只处理用户指定的 11 篇标题 / 日期 / 挂栏，以及 29 篇导入文章的正文来源保真。
+
+### 最终标题与挂栏
+
+| slug | 最终标题 | section | publishedAt |
+|---|---|---|---|
+| `when-we-talk-about-ai-coding` | `AI编程范式笔记·羽升手记01-v0.3`（下一行引用块保留旧标题） | `fullstack-learning` | 2026-07-13 |
+| `ai-deep-learning-plan` | `25-12-9 AI 深度学习计划` | `yu-reviews` | 2025-12-09 |
+| `open-models-and-watermarks` | `26-8-15 复盘 · 开源模型廉价智能和水印` | `ai-mflly-notes` | 2026-08-15 |
+| `agent-principles-and-trends` | `Agent的简单理解` | `fullstack-learning` | 原值 |
+| `personal-finance-and-ai-dev` | `26-8-26 个人财务复盘` | `yu-reviews` | 2026-08-26 |
+| `when-energy-runs-low` | `25-8-4 复盘 · 能量低的那天` | `yu-reviews` | 2025-08-04 |
+| `september-ninth-new-self` | `25-9-9 复盘 · 九月九日新的自己` | `yu-reviews` | 2025-09-09 |
+| `october-busy-and-growth` | `25年10月复盘 · 认知、忙碌、成长` | `yu-reviews` | 仍为 2025-11-02 |
+| `july-28-ai-frontier-review` | `26-7-28 复盘 · AI方向如是状态` | `yu-reviews`（保留） | 2026-07-28 |
+| `editing-quantity-to-quality` | `剪辑&质变与量变的简单理解` | `yu-essays` | 2026-02-06 |
+| `med-student-coding-and-health` | `26-2-19 复盘 · 医学生转码血泪史｜注意身体` | `yu-reviews` | 2026-02-19 |
+
+正文恢复规则是“轻度保真整理”：素材目录只读，不复制 PDF / DOCX / TXT 原件；保留原始第一人称、观点、事实、时间线、情绪和有意重复，只去除说话人标签、时间戳、明显 ASR 噪音和 `以上内容由AI生成，仅供参考` 尾注，并按话题重新分段。思政报告继续保留电话、学号隐私删改。不得用 AI 概括、扩写、润色成另一种说法或改变人称。第 1 篇不增加 `subtitle` 字段，旧标题仅作为正文引用块。
+
+仓库内的 `tests/imported-source-expectations.ts` 为全部 29 篇记录源文件、slug、最终元数据和 1–2 个原文锚点；`tests/unit/imported-content-protocol.test.ts` 遍历这些条目，防止未来只更新测试而不恢复正文。最终数量为全栈学习 4、AI 散记 2、参学 1、思索 1、复盘 7、随笔 11、其他 4、散页 1，共 31 卷在架；旧 `yu-reflections` hash 和 `july-28-ai-frontier-review` 的复盘归属均锁定。
+
+### 内容收尾验证记录
+
+内容收尾分支已完成针对性验证；下表记录的是本次分支的最终结果：
+
+| 命令 | 结果 |
+|---|---|
+| `pnpm vitest run tests/unit/catalog-classification.test.ts tests/unit/content-discovery.test.ts tests/unit/imported-content-protocol.test.ts tests/unit/frontmatter-validation.test.ts` | exit 0；4 个文件、38 个测试通过 |
+| `pnpm lint` | exit 0 |
+| `pnpm tsc --noEmit` | exit 0 |
+| `pnpm test` | exit 0；46 个文件、370 个测试通过，3 个 Windows 能力相关用例跳过 |
+| `pnpm build` | exit 0；Next 静态导出 50/50、postbuild 3/3 通过 |
+| `pnpm test:browser -- tests/browser/imported-posts.spec.ts tests/browser/content-routes.spec.ts --workers=1` | exit 0；10/10 通过；标题、板块、旧 hash、正文首标题与路由 smoke 全部通过 |
+| `pnpm test:browser -- --workers=1` | 70/81 通过；11 个失败均为既有基线用例（注释权限、Canvas 网络契约、字体/首屏时序、hash 偏移、local drafts、reader reload、主题持久化），未涉及本次内容改动；改动相关用例全部通过 |
+| `out` 文件数 / 单文件大小检查 | 477 个文件；0 个文件超过 25 MB |
+
+全量浏览器的 11 个基线失败不通过跳过或修改测试处理；合入门禁以本次变更相关的 10/10 定向套件、静态检查、全量单测和构建为准，并在 PR 中保留全量失败名称和日志链接，便于后续单独修复。

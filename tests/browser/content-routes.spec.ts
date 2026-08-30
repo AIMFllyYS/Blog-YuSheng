@@ -135,3 +135,21 @@ test('书库悬停小书脊时书签旁显示标签', async ({ page }) => {
   })
   await expect(page).toHaveURL(/\/blog\/p0-kitchen-sink\/$/)
 })
+
+test('标题归档后的文章路由仍可直接打开', async ({ page }) => {
+  test.setTimeout(90_000)
+  const renamedRoutes = [
+    ['ai-deep-learning-plan', '25-12-9 AI 深度学习计划'],
+    ['agent-principles-and-trends', 'Agent的简单理解'],
+    ['med-student-coding-and-health', '26-2-19 复盘 · 医学生转码血泪史｜注意身体'],
+  ] as const
+
+  for (const [slug, title] of renamedRoutes) {
+    await page.goto(`/blog/${slug}/`, { waitUntil: 'domcontentloaded' })
+    await expect(page.locator('body')).toHaveAttribute(
+      'data-reader-hydrated',
+      'true',
+    )
+    await expect(page.getByRole('heading', { name: title })).toBeVisible()
+  }
+})
