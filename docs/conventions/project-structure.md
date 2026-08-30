@@ -92,7 +92,13 @@
 │   │   │   │   ├── html/
 │   │   │   │   ├── web/
 │   │   │   │   ├── quiz-choice/
-│   │   │   │   └── quiz-fill/
+│   │   │   │   ├── quiz-fill/
+│   │   │   │   ├── text-mark/
+│   │   │   │   ├── aside-note/
+│   │   │   │   ├── compare-block/
+│   │   │   │   ├── timeline-block/
+│   │   │   │   └── inset-card/
+│   │   │   ├── mark-style/               # tone/swatch/color 与 effect 共享解析
 │   │   │   ├── screen/
 │   │   │   │   └── document-renderer.tsx # profile 驱动的统一屏幕入口
 │   │   │   ├── selection/

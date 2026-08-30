@@ -2,6 +2,34 @@ import { expect, test } from '@playwright/test'
 
 const articlePath = '/blog/p0-kitchen-sink/'
 
+test('阅读页恢复有序和无序列表标记', async ({ page }) => {
+  test.setTimeout(90_000)
+  await page.goto(articlePath, { waitUntil: 'domcontentloaded' })
+  await expect(page.locator('body')).toHaveAttribute('data-reader-hydrated', 'true')
+  const sink = await page.locator('[data-reader-article]').evaluate((article) => {
+    const task = article.querySelector('ul:has(> li > input[type="checkbox"])')
+    return {
+      task: task ? getComputedStyle(task).listStyleType : null,
+      th: article.querySelectorAll('table th').length,
+    }
+  })
+  expect(sink.task).toBe('none')
+  expect(sink.th).toBeGreaterThan(0)
+
+  await page.goto('/blog/from-ten-to-hundred-ai-video/', { waitUntil: 'domcontentloaded' })
+  await expect(page.locator('body')).toHaveAttribute('data-reader-hydrated', 'true')
+  const lists = await page.locator('[data-reader-article]').evaluate((article) => {
+    const ul = article.querySelector('ul:not(:has(> li > input[type="checkbox"]))')
+    const ol = article.querySelector('ol')
+    return {
+      ul: ul ? getComputedStyle(ul).listStyleType : null,
+      ol: ol ? getComputedStyle(ol).listStyleType : null,
+    }
+  })
+  expect(lists.ul).toBe('disc')
+  expect(lists.ol).toBe('decimal')
+})
+
 test('阅读页中栏顶栏显示人类可读日期而不是 ISO', async ({ page }) => {
   test.setTimeout(90_000)
   await page.goto(articlePath, { waitUntil: 'domcontentloaded' })

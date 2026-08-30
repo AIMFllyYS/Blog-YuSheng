@@ -190,6 +190,25 @@ draft: false
 | `<web-embed>` | `id`, `src`, `title` | `height` | `src` 是外链，且必须命中站点允许的 URL 策略；未允许会显示降级卡，不会偷偷 iframe |
 | `<choice-question>` | `id`, `data-src` | — | `data-src` → `data/*.json` |
 | `<fill-blank-question>` | `id`, `data-src` | — | 同上 |
+| `<text-mark>` | `tone` 或 `swatch` 或 `color` | `id`, `effect`, `color-night` | 包在句子里；`tone` 跟主题；`swatch` 要有 `data/palette.json`；`color` 只接受 `#RGB`/`#RRGGBB` |
+| `<aside-note>` | `id`, `kind` | `title`, `swatch`, `tone` | `kind`：`callout` / `warn` / `addon` / `quote` |
+| `<compare-block>` + `<compare-side>` | 外层 `id`；侧 `role` | `title` | 恰好两列；`role`：`good`/`bad`/`a`/`b` |
+| `<timeline-block>` | `id` | `title`, `tone`, `swatch` | 里面写一个 Markdown 列表 |
+| `<inset-card>` | `id`, `title` | `eyebrow`, `kicker`, `swatch`, `tone` | 带色条的卡片 |
+
+结论、警示、对比、时间线用上面这些标签，**不要**做成不会动的 `html-embed` 海报。`html-embed` 只留给读者能搜、能拨、能点的交互小页。
+
+`text-mark` / `aside-note` 等写法：
+
+```markdown
+AI 是<text-mark tone="thesis" effect="fluorescent">杠杆</text-mark>。
+
+<aside-note id="breadth-thesis" kind="callout" title="先说结论">
+问题不是钻得不够深，是广度没有基本认知。
+</aside-note>
+```
+
+`effect` 只能是 `fluorescent` / `wash` / `pill` / `kbd` / `dim`。禁止 `style=`、`class=`、任意 CSS。文章自己的六维色写在 `data/palette.json`，用 `swatch="act"` 引用。
 
 写法示例：
 

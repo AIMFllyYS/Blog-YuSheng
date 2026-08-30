@@ -27,6 +27,17 @@ type SemanticColorToken =
   | '--shadow-color'
   | '--scrollbar'
   | '--scrollbar-hover'
+  | '--tone-thesis'
+  | '--tone-thesis-wash'
+  | '--tone-warn'
+  | '--tone-warn-wash'
+  | '--tone-good'
+  | '--tone-good-wash'
+  | '--tone-bad'
+  | '--tone-bad-wash'
+  | '--tone-note'
+  | '--tone-note-wash'
+  | '--tone-muted'
 
 type ThemeColorSet = Record<SemanticColorToken, string>
 
@@ -47,6 +58,17 @@ const THEME_COLORS: Record<ThemeName, ThemeColorSet> = {
     '--shadow-color': 'rgba(90, 70, 40, 0.16)',
     '--scrollbar': 'rgba(90, 70, 40, 0.22)',
     '--scrollbar-hover': 'rgba(90, 70, 40, 0.4)',
+    '--tone-thesis': '#a9762f',
+    '--tone-thesis-wash': '#f4e6cc',
+    '--tone-warn': '#a83c1f',
+    '--tone-warn-wash': '#f7e6de',
+    '--tone-good': '#0e6f6e',
+    '--tone-good-wash': '#dcebe9',
+    '--tone-bad': '#a83c1f',
+    '--tone-bad-wash': '#f7e6de',
+    '--tone-note': '#c97a24',
+    '--tone-note-wash': '#f4e3c8',
+    '--tone-muted': '#6b6055',
   },
   mist: {
     '--bg': '#e6edf1',
@@ -64,6 +86,17 @@ const THEME_COLORS: Record<ThemeName, ThemeColorSet> = {
     '--shadow-color': 'rgba(30, 60, 75, 0.14)',
     '--scrollbar': 'rgba(30, 60, 75, 0.2)',
     '--scrollbar-hover': 'rgba(30, 60, 75, 0.36)',
+    '--tone-thesis': '#2f7d95',
+    '--tone-thesis-wash': '#d7ebf1',
+    '--tone-warn': '#b4544a',
+    '--tone-warn-wash': '#f3e0dd',
+    '--tone-good': '#2a7a72',
+    '--tone-good-wash': '#d6ebe8',
+    '--tone-bad': '#b4544a',
+    '--tone-bad-wash': '#f3e0dd',
+    '--tone-note': '#c97a24',
+    '--tone-note-wash': '#f4e3c8',
+    '--tone-muted': '#5a6b76',
   },
   snow: {
     '--bg': '#f6f6f4',
@@ -81,6 +114,17 @@ const THEME_COLORS: Record<ThemeName, ThemeColorSet> = {
     '--shadow-color': 'rgba(20, 25, 35, 0.1)',
     '--scrollbar': 'rgba(20, 25, 35, 0.16)',
     '--scrollbar-hover': 'rgba(20, 25, 35, 0.32)',
+    '--tone-thesis': '#3a6ea5',
+    '--tone-thesis-wash': '#e4eef8',
+    '--tone-warn': '#b4544a',
+    '--tone-warn-wash': '#f3e0dd',
+    '--tone-good': '#2a7a72',
+    '--tone-good-wash': '#d6ebe8',
+    '--tone-bad': '#b4544a',
+    '--tone-bad-wash': '#f3e0dd',
+    '--tone-note': '#c97a24',
+    '--tone-note-wash': '#f4e3c8',
+    '--tone-muted': '#5f6367',
   },
   night: {
     '--bg': '#101012',
@@ -98,6 +142,17 @@ const THEME_COLORS: Record<ThemeName, ThemeColorSet> = {
     '--shadow-color': 'rgba(0, 0, 0, 0.55)',
     '--scrollbar': 'rgba(232, 228, 220, 0.16)',
     '--scrollbar-hover': 'rgba(232, 228, 220, 0.32)',
+    '--tone-thesis': '#d9a94a',
+    '--tone-thesis-wash': '#3a3018',
+    '--tone-warn': '#e07060',
+    '--tone-warn-wash': '#3a1f1b',
+    '--tone-good': '#7fd8c8',
+    '--tone-good-wash': '#1a2f2c',
+    '--tone-bad': '#e07060',
+    '--tone-bad-wash': '#3a1f1b',
+    '--tone-note': '#e0b84a',
+    '--tone-note-wash': '#3a3018',
+    '--tone-muted': '#a09a90',
   },
 }
 

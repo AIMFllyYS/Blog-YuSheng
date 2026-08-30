@@ -45,7 +45,20 @@
 --author-badge    /* 作者身份徽标 */
 --scroll-paper    /* 卷轴/纸张材质类组件的专用底色 */
 --shadow-color    /* 阴影基色（night 主题下阴影策略不同） */
+--tone-thesis     /* 正文设计：论点/结论 */
+--tone-thesis-wash
+--tone-warn       /* 警示 */
+--tone-warn-wash
+--tone-good       /* 正向对比 */
+--tone-good-wash
+--tone-bad        /* 负向对比 */
+--tone-bad-wash
+--tone-note       /* 旁注/补充 */
+--tone-note-wash
+--tone-muted      /* 弱化标注 */
 ```
+
+`--tone-*` 只给正文设计语言（`<text-mark>` / `<aside-note>` 等），不要拿去给导航或划词。作者一次性 `#RRGGBB` 经校验后写到元素的 `--mark-color`，组件 CSS 仍只认变量。`--highlight` 仍是读者划词，不是作者强调。
 
 命名规则：**语义命名，不用色值命名**（`--accent` 而非 `--gold-500`），换主题只改变量值。token 清单随开发滚动扩充，扩充时更新本文档。
 

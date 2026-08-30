@@ -11,6 +11,7 @@ import {
 
 const NODE = {
   type: 'registeredComponent',
+  placement: 'block',
   name: 'canvas-render',
   nodeId: 'plot',
   componentId: 'plot',

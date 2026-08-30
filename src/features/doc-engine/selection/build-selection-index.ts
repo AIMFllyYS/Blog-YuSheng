@@ -85,8 +85,14 @@ function collectBlocks(
         return
       case 'mermaid':
       case 'image':
-      case 'registeredComponent':
       case 'thematicBreak':
+        blocks.push(entryOf(node, 'none', headingPath))
+        return
+      case 'registeredComponent':
+        if (node.selectable === 'text-range') {
+          collectBlocks(node.children, blocks, headingStack)
+          return
+        }
         blocks.push(entryOf(node, 'none', headingPath))
         return
     }
