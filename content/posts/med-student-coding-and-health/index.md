@@ -3,7 +3,7 @@ schemaVersion: 1
 title: 医学生转码血泪史｜注意身体
 description: 腰肌劳损、颈椎、耳鸣和在代码前睡着：入驻小红书后的第一篇自我介绍，核心只有一句——健康永远是第一。
 publishedAt: 2026-02-19T00:00:00+08:00
-section: yu-reflections
+section: yu-essays
 tags:
   - 医学
   - 生活

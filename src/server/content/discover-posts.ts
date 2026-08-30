@@ -5,6 +5,7 @@ import { CONTENT_POSTS_ROOT } from './content-paths'
 import { readPost, type Post } from './read-post'
 import {
   assertKnownSections,
+  assertPublishedSections,
   listSections,
   sectionsPathForPostsRoot,
 } from './read-sections'
@@ -31,6 +32,7 @@ export async function readAllPosts(postsRoot = CONTENT_POSTS_ROOT) {
 
 export async function listPublishedPosts(postsRoot = CONTENT_POSTS_ROOT) {
   const posts = await readAllPosts(postsRoot)
+  assertPublishedSections(posts)
   return posts
     .filter((post) => post.frontmatter.draft !== true)
     .sort((left, right) => {

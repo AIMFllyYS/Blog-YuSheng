@@ -152,6 +152,24 @@ describe('shelf books grouping', () => {
     )
 
     expect(books[0]?.slug).toBe(UNCATEGORIZED_BOOK_SLUG)
-    expect(books[0]?.color).toMatch(/^#[0-9a-f]{6}$/)
+    expect(books[0]?.color).toBe('#5f625d')
+  })
+
+  it('keeps the registered other color distinct from the uncategorized color', () => {
+    const books = createShelfBooks(
+      [
+        entry('formal-misc', '2026-01-01T00:00:00+08:00', 300, 'other'),
+        entry('loose-post', '2026-02-01T00:00:00+08:00', 300),
+      ],
+      [{ slug: 'other', title: '其他', order: 60, color: '#7d7468' }],
+    )
+
+    expect(books.map((book) => book.slug)).toEqual([
+      'other',
+      UNCATEGORIZED_BOOK_SLUG,
+    ])
+    expect(books[0]?.color).toBe('#7d7468')
+    expect(books[1]?.color).toBe('#5f625d')
+    expect(books[0]?.color).not.toBe(books[1]?.color)
   })
 })

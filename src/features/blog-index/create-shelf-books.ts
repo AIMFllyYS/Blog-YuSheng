@@ -1,8 +1,9 @@
 import type { SectionDefinition } from '../../server/content/read-sections'
+import { UNCATEGORIZED_BOOK_SLUG } from '../../lib/blog-catalog-constants'
 import { hashString } from './catalog-helpers'
 import type { BlogIndexEntry } from './create-blog-index-entries'
 
-export const UNCATEGORIZED_BOOK_SLUG = 'uncategorized'
+export { UNCATEGORIZED_BOOK_SLUG } from '../../lib/blog-catalog-constants'
 
 /** 内容兜底色：板块未配置 color 时按 slug 哈希确定性取色（宣纸古籍色系） */
 const FALLBACK_BOOK_COLORS = [
@@ -15,7 +16,7 @@ const FALLBACK_BOOK_COLORS = [
 ] as const
 
 /** 散页（未归栏文章）固定素色 */
-const UNCATEGORIZED_BOOK_COLOR = '#7d7468'
+const UNCATEGORIZED_BOOK_COLOR = '#5f625d'
 
 export type ShelfBook = {
   readonly slug: string

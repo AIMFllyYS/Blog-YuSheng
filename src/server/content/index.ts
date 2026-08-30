@@ -34,6 +34,7 @@ export {
 export { readPost, type Post } from './read-post'
 export {
   assertKnownSections,
+  assertPublishedSections,
   listSections,
   sectionsPathForPostsRoot,
   type SectionDefinition,

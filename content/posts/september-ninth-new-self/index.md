@@ -3,7 +3,7 @@ schemaVersion: 1
 title: 九月九日，新的自己
 description: 写于 2025 年 9 月 9 日。开学后的教训五条，以及把人生管道收成基因工程理想、剪辑摄影热爱、每日复利、少内耗。
 publishedAt: 2025-09-09T00:00:00+08:00
-section: yu-reflections
+section: yu-reviews
 tags:
   - 人生
 draft: false
