@@ -12,7 +12,7 @@
 
 ## 现有文档
 
-- [write-blog.md](./write-blog.md) — 作者写作指南与新增博客 SOP（先选**大方向**，再建**小博客**包；**章节**按发布时间排。含 `content/sections.yml` 现有六个方向、「其他」与散页的区别、frontmatter、正文语法、素材目录、预览与发布）
+- [write-blog.md](./write-blog.md) — 作者写作指南与新增博客 SOP（先选**大方向**，再建**小博客**包；**章节**按发布时间排。含 `content/sections.yml` 现有方向、「其他」与散页的区别、frontmatter、正文语法、素材目录、预览与发布）
 - [post-tags.md](./post-tags.md) — 文章标签备忘（只记录常用词，不参与构建或校验）
 - [deploy-edgeone.md](./deploy-edgeone.md) — EdgeOne Pages 部署配置规范
 

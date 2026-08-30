@@ -9,7 +9,7 @@
 | 源文件 | slug | 大方向 | publishedAt | 标签 | 媒体 | 备注 |
 |---|---|---|---|---|---|---|
 | `26-7-13从十到一百·AI视频影视语言注入指南.html` | `from-ten-to-hundred-ai-video` | ai-mflly-notes | 2026-07-13T00:00:00+08:00 | AI视频 | html-embed + svg | 印刷页拆成正文 + 组件 |
-| `26-7-19开发词汇手册 (1).html` | `developer-vocabulary-handbook` | fullstack-learning | 2026-07-19T00:00:00+08:00 | 架构设计, Prompt, Agent | html-embed + 表 | 不整页塞 iframe |
+| `26-7-19开发词汇手册 (1).html` | `developer-vocabulary-handbook` | yu-studies | 2026-07-19T00:00:00+08:00 | 架构设计, Prompt, Agent | html-embed + 表 | 后改挂「羽の参学」 |
 | `AI编程方向概览/…上册.html` | `ai-coding-engineering-mindset` | fullstack-learning | 2026-07-29T00:00:00+08:00 | Agent, 架构设计 | html-embed | 7-28 口述次日分享的整理 |
 | `AI编程方向概览/…下册.html` | `ai-coding-core-practice` | fullstack-learning | 2026-07-30T00:00:00+08:00 | Agent, 架构设计 | html-embed | 同上 |
 | `AI编程方向概览/style.css` | — | — | — | — | — | 样式内联进 embed，不单独成文 |

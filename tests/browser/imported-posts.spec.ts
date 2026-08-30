@@ -15,7 +15,8 @@ test('catalog lists imported 大方向 chapters', async ({ page }) => {
     page.getByRole('heading', { name: '全栈小白学习记' }),
   ).toBeVisible()
   await expect(page.getByRole('heading', { name: 'AI-MFlly散记' })).toBeVisible()
-  await expect(page.getByRole('heading', { name: '羽の反思' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: '羽の参学' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: '羽の思索' })).toBeVisible()
   await expect(page.getByRole('heading', { name: '羽の复盘' })).toBeVisible()
   await expect(page.getByRole('heading', { name: '羽の随笔' })).toBeVisible()
   await expect(page.getByRole('heading', { name: '其他' })).toBeVisible()

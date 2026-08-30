@@ -12,6 +12,7 @@ const DOCUMENTED_LOOSE_SLUGS = ['p0-kitchen-sink'] as const
 const LIVE_SECTION_SLUGS = [
   'fullstack-learning',
   'ai-mflly-notes',
+  'yu-studies',
   'yu-reflections',
   'yu-reviews',
   'yu-essays',
@@ -106,5 +107,9 @@ describe('live catalog classification', () => {
       expect(post.frontmatter.section).toBeDefined()
       expect(LIVE_SECTION_SLUGS).toContain(post.frontmatter.section)
     }
+
+    expect(bySlug.get('developer-vocabulary-handbook')?.frontmatter.section).toBe(
+      'yu-studies',
+    )
   })
 })
