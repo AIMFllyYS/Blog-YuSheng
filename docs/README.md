@@ -31,6 +31,7 @@
 - [前端设计规范](./conventions/frontend-design.md) — token、阻尼动效语言、全站共用外壳清单
 - [完整目标目录树](./conventions/project-structure.md) — 模块、文件和依赖方向
 - [内容引擎功能规格](./specs/blog-content-engine.md) — 内容协议、注册表、安全、评论/注释与导出契约
+- [正文设计语言速查](./ops/article-design-language.md) — 作者可用的自定义标签与颜色
 - [P0–P3 工程计划](./plans/plan-blog-foundation.md) — 实施顺序与阶段验收
 
 ## 状态语义

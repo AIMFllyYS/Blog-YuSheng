@@ -6,7 +6,7 @@ const CATALOG_SURFACE = '[data-catalog-shelf], [data-blog-tree]'
 async function waitForCatalog(page: Page) {
   await expect(page.locator('[data-blog-index]')).toBeVisible()
   await expect(page.getByRole('heading', { name: '博客', level: 1 })).toBeVisible()
-  await expect(page.getByText(/\d+ 个方向 · \d+ 卷在架/)).toBeVisible()
+  await expect(page.getByText('7 个方向 · 31 卷在架', { exact: true })).toBeVisible()
   await expect(page.locator('[data-book-volume]')).toHaveCount(0)
   await expect(page.locator(CATALOG_SURFACE).first()).toBeVisible()
 }

@@ -3,7 +3,7 @@ schemaVersion: 1
 title: 能量低的那天
 description: 2025 年 8 月 4 日一条语音转文字：月计划泡汤、下午的困倦、小说的多巴胺，以及想把相机变成习惯而不是意志力。
 publishedAt: 2025-08-04T00:00:00+08:00
-section: yu-reflections
+section: yu-reviews
 tags:
   - 日常
   - 人生

@@ -3,7 +3,7 @@ schemaVersion: 1
 title: 开发词汇手册
 description: 写给非科班同学的软件与 AI 时代黑话地图：九个专题，先搞懂它叫什么、干什么用，再去跟 AI 和工程师说话。
 publishedAt: 2026-07-19T00:00:00+08:00
-section: fullstack-learning
+section: yu-studies
 tags:
   - 架构设计
   - Prompt

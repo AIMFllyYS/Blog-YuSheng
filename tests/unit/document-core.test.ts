@@ -26,8 +26,8 @@ const SOURCE_RANGE: SourceRange = {
 
 describe('Canonical Document IR protocol', () => {
   it('locks component children and component source positions at the type boundary', () => {
-    expectTypeOf<RegisteredComponentNode['children'][number]>().toMatchTypeOf<BlockNode>()
-    expectTypeOf<RegisteredComponentNode['children'][number]>().not.toMatchTypeOf<RootNode>()
+    expectTypeOf<Extract<RegisteredComponentNode, { placement: 'block' }>['children'][number]>().toMatchTypeOf<BlockNode>()
+    expectTypeOf<Extract<RegisteredComponentNode, { placement: 'block' }>['children'][number]>().not.toMatchTypeOf<RootNode>()
     expectTypeOf<Parameters<StableIdAllocator['allocateComponent']>[1]>().toEqualTypeOf<SourceRange>()
   })
 

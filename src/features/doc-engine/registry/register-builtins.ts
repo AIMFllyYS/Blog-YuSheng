@@ -11,6 +11,14 @@ import { HTML_RENDERER_DEFINITION } from '../renderers/html/definition'
 import { WEB_RENDERER_DEFINITION } from '../renderers/web/definition'
 import { CHOICE_QUESTION_RENDERER_DEFINITION } from '../renderers/quiz-choice/definition'
 import { FILL_BLANK_QUESTION_RENDERER_DEFINITION } from '../renderers/quiz-fill/definition'
+import { TEXT_MARK_RENDERER_DEFINITION } from '../renderers/text-mark/definition'
+import { ASIDE_NOTE_RENDERER_DEFINITION } from '../renderers/aside-note/definition'
+import {
+  COMPARE_BLOCK_RENDERER_DEFINITION,
+  COMPARE_SIDE_RENDERER_DEFINITION,
+} from '../renderers/compare-block/definition'
+import { TIMELINE_BLOCK_RENDERER_DEFINITION } from '../renderers/timeline-block/definition'
+import { INSET_CARD_RENDERER_DEFINITION } from '../renderers/inset-card/definition'
 import { RendererRegistry } from './renderer-registry'
 import type {
   RenderProfile,
@@ -100,6 +108,12 @@ const DEFINITIONS: readonly RendererDefinition[] = Object.freeze([
   WEB_RENDERER_DEFINITION,
   CHOICE_QUESTION_RENDERER_DEFINITION,
   FILL_BLANK_QUESTION_RENDERER_DEFINITION,
+  TEXT_MARK_RENDERER_DEFINITION,
+  ASIDE_NOTE_RENDERER_DEFINITION,
+  COMPARE_BLOCK_RENDERER_DEFINITION,
+  COMPARE_SIDE_RENDERER_DEFINITION,
+  TIMELINE_BLOCK_RENDERER_DEFINITION,
+  INSET_CARD_RENDERER_DEFINITION,
 ])
 
 export const BUILTIN_RENDERER_REGISTRY = new RendererRegistry(DEFINITIONS)

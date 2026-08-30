@@ -37,6 +37,15 @@ import { SvgScreenRenderer } from '../renderers/svg/screen-renderer'
 import { HtmlEmbedScreenRenderer } from '../renderers/html/screen-renderer'
 import { WebEmbedScreenRenderer } from '../renderers/web/screen-renderer'
 import { WebEmbedPreviewCard } from '../renderers/web/web-preview-card'
+import { parseArticlePalette, type ArticlePalette } from '../mark-style'
+import { TextMarkScreenRenderer } from '../renderers/text-mark/screen-renderer'
+import { AsideNoteScreenRenderer } from '../renderers/aside-note/screen-renderer'
+import {
+  CompareBlockScreenRenderer,
+  CompareSideScreenRenderer,
+} from '../renderers/compare-block/screen-renderer'
+import { TimelineBlockScreenRenderer } from '../renderers/timeline-block/screen-renderer'
+import { InsetCardScreenRenderer } from '../renderers/inset-card/screen-renderer'
 import { sanitizeDiscussionRead } from '../security/sanitize-discussion'
 import { DocumentFallbackCard } from './fallback-card'
 import {
@@ -119,6 +128,7 @@ export async function DocumentRenderer({
           diagnostics={prepared.diagnostics}
           nodeDiagnostics={nodeDiagnostics}
           nodes={prepared.document.root.children}
+          palette={readArticlePalette(articleSlug, prepared.document.assetManifest)}
           profile={profileDefinition}
           rootRange={prepared.document.root.sourceRange}
           showDetails={showDetails}
@@ -268,6 +278,7 @@ type RenderContext = {
   readonly discussionMathRenderer?: DiscussionMathRenderer
   readonly nodeDiagnostics: ReadonlyMap<string, readonly DocumentDiagnostic[]>
   readonly orphanDiagnostics: readonly DocumentDiagnostic[]
+  readonly palette?: ArticlePalette
   readonly profile: ScreenProfileDefinition
   readonly showDetails: boolean
 }
@@ -370,12 +381,25 @@ function renderNode(node: DocumentNode, context: RenderContext): ReactNode {
       return <ListItem node={node}>{children(node.children)}</ListItem>
     case 'quote':
       return <blockquote data-block-id={node.blockId}>{children(node.children)}</blockquote>
-    case 'table':
+    case 'table': {
+      const [headerRow, ...bodyRows] = node.children
       return (
         <div className="overflow-x-auto" data-block-id={node.blockId}>
-          <table><tbody>{children(node.children)}</tbody></table>
+          <table>
+            {headerRow ? (
+              <thead>
+                <TableRow context={context} node={headerRow} />
+              </thead>
+            ) : null}
+            <tbody>
+              {bodyRows.map((row) => (
+                <TableRow context={context} key={row.nodeId} node={row} />
+              ))}
+            </tbody>
+          </table>
         </div>
       )
+    }
     case 'tableRow':
       return <TableRow context={context} node={node} />
     case 'tableCell':
@@ -665,7 +689,12 @@ function TableRow({ node, context }: { readonly node: TableRowNode; readonly con
 }
 
 function TableCell({ node, context }: { readonly node: TableCellNode; readonly context: RenderContext }) {
-  return <td data-block-id={node.blockId}><DocumentNodeChildren {...context} inlineFallback nodes={node.children} orphanDiagnostics={context.orphanDiagnostics} parentRange={node.sourceRange} /></td>
+  const Tag = node.header ? 'th' : 'td'
+  return (
+    <Tag data-block-id={node.blockId} scope={node.header ? 'col' : undefined}>
+      <DocumentNodeChildren {...context} inlineFallback nodes={node.children} orphanDiagnostics={context.orphanDiagnostics} parentRange={node.sourceRange} />
+    </Tag>
+  )
 }
 
 function RegisteredComponent({
@@ -781,6 +810,19 @@ function RegisteredComponent({
           context={context}
           node={node}
         />
+      </RendererErrorBoundary>
+    )
+  }
+  if (isDesignLanguageComponent(node.name)) {
+    return (
+      <RendererErrorBoundary
+        alternative={alternative}
+        blockId={node.placement === 'block' ? node.blockId : undefined}
+        nodeId={node.nodeId}
+        rendererName={node.name}
+        showDetails={context.showDetails}
+      >
+        <DesignLanguageRenderer context={context} node={node} />
       </RendererErrorBoundary>
     )
   }
@@ -1120,6 +1162,89 @@ function diagnosticsByNodeId(
   return grouped
 }
 
+function DesignLanguageRenderer({
+  context,
+  node,
+}: {
+  readonly context: RenderContext
+  readonly node: RegisteredComponentNode
+}) {
+  const children = (
+    <DocumentNodeChildren
+      {...context}
+      inlineFallback={node.placement === 'inline'}
+      nodes={node.children}
+      orphanDiagnostics={context.orphanDiagnostics}
+      parentRange={node.sourceRange}
+    />
+  )
+  if (node.name === 'text-mark') {
+    return (
+      <TextMarkScreenRenderer node={node} palette={context.palette}>
+        {children}
+      </TextMarkScreenRenderer>
+    )
+  }
+  if (node.placement !== 'block') return children
+  if (node.name === 'aside-note') {
+    return (
+      <AsideNoteScreenRenderer node={node} palette={context.palette}>
+        {children}
+      </AsideNoteScreenRenderer>
+    )
+  }
+  if (node.name === 'compare-block') {
+    return <CompareBlockScreenRenderer node={node}>{children}</CompareBlockScreenRenderer>
+  }
+  if (node.name === 'compare-side') {
+    return <CompareSideScreenRenderer node={node}>{children}</CompareSideScreenRenderer>
+  }
+  if (node.name === 'timeline-block') {
+    return (
+      <TimelineBlockScreenRenderer node={node} palette={context.palette}>
+        {children}
+      </TimelineBlockScreenRenderer>
+    )
+  }
+  if (node.name === 'inset-card') {
+    return (
+      <InsetCardScreenRenderer node={node} palette={context.palette}>
+        {children}
+      </InsetCardScreenRenderer>
+    )
+  }
+  return children
+}
+
+function isDesignLanguageComponent(name: string): boolean {
+  return (
+    name === 'text-mark' ||
+    name === 'aside-note' ||
+    name === 'compare-block' ||
+    name === 'compare-side' ||
+    name === 'timeline-block' ||
+    name === 'inset-card'
+  )
+}
+
+function readArticlePalette(
+  articleSlug: string,
+  manifest: readonly unknown[],
+): ArticlePalette | undefined {
+  for (const nodeName of ['text-mark', 'aside-note', 'inset-card', 'timeline-block']) {
+    const data = projectPackageAssetData(
+      './data/palette.json',
+      articleSlug,
+      nodeName,
+      manifest,
+    )
+    if (data === undefined) continue
+    const parsed = parseArticlePalette(data)
+    if (parsed.ok) return parsed.palette
+  }
+  return undefined
+}
+
 function isInlineNode(node: DocumentNode): boolean {
   return [
     'text',
@@ -1129,7 +1254,10 @@ function isInlineNode(node: DocumentNode): boolean {
     'link',
     'inlineCode',
     'footnoteReference',
-  ].includes(node.type) || (node.type === 'math' && !node.display) || (node.type === 'image' && node.placement === 'inline')
+  ].includes(node.type) ||
+    (node.type === 'math' && !node.display) ||
+    (node.type === 'image' && node.placement === 'inline') ||
+    (node.type === 'registeredComponent' && node.placement === 'inline')
 }
 
 function safeNodeText(node: DocumentNode): string {

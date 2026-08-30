@@ -10,6 +10,7 @@ import type { FrontmatterDiagnostic, SourceRange } from './validate-frontmatter'
 import { getCanvasRendererRegistration } from '../../features/doc-engine/registry/canvas-renderer-registry'
 import { CHOICE_QUESTION_DATA_SCHEMA } from '../../features/doc-engine/renderers/quiz-choice/schema'
 import { FILL_BLANK_QUESTION_DATA_SCHEMA } from '../../features/doc-engine/renderers/quiz-fill/schema'
+import { ARTICLE_PALETTE_SCHEMA } from '../../features/doc-engine/mark-style'
 import { sanitizeSvgSource } from './sanitize-svg'
 
 export const MAX_STATIC_FILE_BYTES = 25 * 1024 * 1024
@@ -208,6 +209,25 @@ export async function createAssetManifest(postsRoot?: string) {
                 post.slug,
                 'ASSET_DATA_SCHEMA_INVALID',
                 `${reference.nodeName} 数据未通过构建期 schema：${reference.relativePath}`,
+                reference.sourceRange,
+                reference.nodeId,
+              ),
+            )
+            continue
+          }
+          manifestData = parsed.data
+        }
+        if (
+          reference.attribute === 'swatch' &&
+          validation.relativePath.replace(/^\.\//, '') === 'data/palette.json'
+        ) {
+          const parsed = ARTICLE_PALETTE_SCHEMA.safeParse(await readJsonValue(sourcePath))
+          if (!parsed.success) {
+            diagnostics.push(
+              diagnostic(
+                post.slug,
+                'ASSET_DATA_SCHEMA_INVALID',
+                `文章色板未通过 schema：${reference.relativePath}`,
                 reference.sourceRange,
                 reference.nodeId,
               ),
