@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Grok CLI 周账 · token</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="head">
+      <p class="mark">Grok CLI · grok-4.6 · UTC+13</p>
+      <h1>这一周用了多少 token</h1>
+      <p class="when" id="when"></p>
+    </header>
+
+    <p class="plain" id="plain"></p>
+
+    <section class="hero" aria-label="额度对比">
+      <div class="track" aria-hidden="true">
+        <i id="used-bar"></i>
+        <span class="track-used">已用 22%</span>
+        <span class="track-rest">还剩 78%</span>
+      </div>
+      <div class="tri" id="tri"></div>
+      <p class="hero-note" id="hero-note"></p>
+    </section>
+
+    <section class="sheet">
+      <h2>先把一个误会拿掉</h2>
+      <p id="mistake"></p>
+      <div class="cmp" id="cmp"></div>
+    </section>
+
+    <section class="sheet">
+      <h2>缓存是怎么算的，输入输出比是多少</h2>
+      <p id="cache-plain"></p>
+      <div class="mix" id="mix"></div>
+      <p class="foot" id="future"></p>
+    </section>
+
+    <section class="sheet">
+      <h2>换算成 API 大概多少钱</h2>
+      <p id="api-plain"></p>
+      <div class="tri small" id="api-tri"></div>
+    </section>
+
+    <nav class="jump">
+      <button type="button" data-go="talks">每场对话</button>
+      <button type="button" data-go="shots">每一次推理</button>
+      <button type="button" data-go="files">原始文件</button>
+    </nav>
+
+    <section class="sheet" id="talks">
+      <h2>本周 42 场对话</h2>
+      <p class="foot">点一行看路径和工具。覆盖 full = 这场的循环几乎都有 tokenizer 账。</p>
+      <div class="tools">
+        <input id="q" type="search" placeholder="搜标题或 id" />
+      </div>
+      <div class="scroll">
+        <table id="talks-table"></table>
+      </div>
+      <div id="talk-card" class="talk-card" hidden></div>
+    </section>
+
+    <section class="sheet" id="shots">
+      <h2>879 次有账推理</h2>
+      <p class="foot">每一次工具循环都会把当时整窗再送一遍，所以单次 prompt 常常十几万到三十几万。</p>
+      <div class="tools">
+        <input id="sid" type="search" placeholder="按 session id 滤" />
+        <select id="tier">
+          <option value="">短窗+长窗</option>
+          <option value="short">不到 20 万</option>
+          <option value="long">满 20 万（整单翻倍）</option>
+        </select>
+        <span id="shot-n" class="foot"></span>
+      </div>
+      <div class="scroll tall">
+        <table id="shots-table"></table>
+      </div>
+    </section>
+
+    <section class="sheet" id="files">
+      <h2>数字从哪来</h2>
+      <ul class="files" id="file-list"></ul>
+    </section>
+
+    <footer class="end">只读扫描本机 ~/.grok · 不含密钥</footer>
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

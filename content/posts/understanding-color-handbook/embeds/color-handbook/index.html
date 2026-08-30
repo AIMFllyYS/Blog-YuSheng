@@ -1,0 +1,1169 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>看懂颜色 · 从小白到能用的色彩课</title>
+<style>
+@page { size: A4; margin: 0; background: #F7F7F5; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { background: #F7F7F5; }
+body {
+  font-family: "Noto Sans CJK SC", "Source Han Sans SC", "Microsoft YaHei", "PingFang SC", sans-serif;
+  color: #1A1A1C; font-size: 9.8pt; line-height: 1.62;
+}
+.serif { font-family: "Noto Serif CJK SC", "Source Han Serif SC", "STSong", "SimSun", serif; }
+.mono { font-family: "Cascadia Code", "JetBrains Mono", Consolas, monospace; }
+
+.page {
+  width: 210mm; min-height: 296.4mm; padding: 14mm 15mm 19mm;
+  position: relative; page-break-after: always; overflow: hidden;
+  background: #F7F7F5;
+}
+.page:last-child { page-break-after: auto; }
+.foot {
+  position: absolute; bottom: 7mm; left: 15mm; right: 15mm;
+  display: flex; justify-content: space-between;
+  font-size: 8pt; color: #9A9A9E; letter-spacing: .05em;
+  border-top: .4pt solid #DDDDD8; padding-top: 2mm;
+}
+
+/* 章节色 token */
+.c1 { --ac: #0E7490; --acsoft: #E4F3F7; }
+.c2 { --ac: #7C3AED; --acsoft: #F0E9FC; }
+.c3 { --ac: #EA580C; --acsoft: #FCEEE3; }
+.c4 { --ac: #16A34A; --acsoft: #E6F5EB; }
+.c5 { --ac: #475569; --acsoft: #ECEFF3; }
+.c6 { --ac: #DC2626; --acsoft: #FBEAEA; }
+.c7 { --ac: #007AFF; --acsoft: #E6F1FE; }
+.c0 { --ac: #B45309; --acsoft: #F7EFE2; }
+.ca { --ac: #6B7280; --acsoft: #EFF0F2; }
+
+/* 章节扉页 */
+.chapnum { font-size: 44pt; font-weight: 700; color: var(--ac); line-height: 1; opacity: .9; }
+.chapkick { font-size: 9pt; letter-spacing: .35em; color: var(--ac); font-weight: 700; margin-bottom: 3mm; }
+.chaptitle { font-size: 21pt; font-weight: 700; margin: 1.5mm 0 4mm; line-height: 1.3; }
+.thesis {
+  border-left: 3pt solid var(--ac); background: var(--acsoft);
+  padding: 3mm 5mm; font-size: 10.5pt; font-weight: 600; margin: 4mm 0 5mm;
+  line-height: 1.6;
+}
+.ramp { display: flex; height: 5mm; border-radius: 1.5mm; overflow: hidden; margin: 5mm 0 0; }
+.ramp div { flex: 1; }
+
+/* 小节标题 */
+h2.sec {
+  font-size: 13pt; font-weight: 700; margin: 5mm 0 2.2mm;
+  padding-left: 3mm; border-left: 3pt solid var(--ac); line-height: 1.4;
+}
+h3.sub { font-size: 10.8pt; font-weight: 700; margin: 3.2mm 0 1.2mm; color: #1A1A1C; }
+p { margin: 0 0 2.1mm; text-align: justify; }
+p.lead { font-size: 10.8pt; font-weight: 600; color: #333336; }
+strong { color: #000; }
+.en { color: #6B7280; font-size: 9pt; }
+
+/* 术语框 */
+.term {
+  background: var(--acsoft); border-radius: 2mm; padding: 2.8mm 4mm; margin: 2.8mm 0;
+  font-size: 8.8pt; line-height: 1.6;
+}
+.term .tlabel { font-weight: 700; color: var(--ac); font-size: 8pt; letter-spacing: .15em; display: block; margin-bottom: .8mm; }
+
+/* 引文 */
+.pull {
+  border-left: 3pt solid var(--ac); margin: 3.5mm 0; padding: 1.5mm 0 1.5mm 5mm;
+  font-size: 11.5pt; font-weight: 700; line-height: 1.55;
+}
+.pull .src { display: block; font-size: 8.5pt; font-weight: 400; color: #6B7280; margin-top: 1.2mm; }
+
+/* 卡片 */
+.cardgrid { display: flex; flex-wrap: wrap; gap: 3mm; margin: 3mm 0; }
+.card {
+  flex: 1 1 40%; background: #FFFFFF; border: .5pt solid #E3E3DE; border-radius: 2.5mm;
+  padding: 3mm 4mm; font-size: 9pt; line-height: 1.55;
+}
+.card .ctab { height: 1.6mm; border-radius: 1mm; background: var(--ac); margin: -3mm -4mm 2.5mm; }
+.card .eyebrow { font-size: 7.8pt; letter-spacing: .18em; color: var(--ac); font-weight: 700; }
+.card h4 { font-size: 10pt; margin: .8mm 0 1.2mm; }
+
+/* 数据表 */
+table.data { width: 100%; border-collapse: collapse; margin: 2.8mm 0; font-size: 8.6pt; line-height: 1.45; }
+table.data th {
+  background: var(--ac); color: #fff; text-align: left; padding: 1.6mm 2mm; font-weight: 600;
+}
+table.data td { padding: 1.4mm 2mm; border-bottom: .5pt solid #E3E3DE; vertical-align: top; }
+table.data tr:nth-child(even) td { background: #FFFFFF; }
+
+/* 色卡 */
+.swrow { display: flex; gap: 2.2mm; margin: 2.5mm 0; flex-wrap: wrap; }
+.sw { flex: 1 1 0; min-width: 19mm; border-radius: 2mm; overflow: hidden; border: .5pt solid #E0E0DB; background: #fff; }
+.sw .chip { height: 10mm; }
+.sw .lab { padding: 1.2mm 1.8mm 1.8mm; font-size: 7.5pt; line-height: 1.4; color: #444; }
+.sw .lab b { display: block; font-size: 8pt; color: #1A1A1C; }
+.sw .lab .mono { font-size: 7.2pt; }
+
+/* 图框 */
+.fig { border: .6pt solid #D8D8D3; border-radius: 2.5mm; padding: 3mm; margin: 3mm 0; background: #fff; }
+.fig .cap { font-size: 8pt; color: #6B7280; margin-top: 2mm; text-align: center; }
+
+/* 列表 */
+ul.dash { margin: .8mm 0 2.2mm 5mm; }
+ul.dash li { margin-bottom: 1.2mm; padding-left: 1mm; }
+ol.num { margin: .8mm 0 2.2mm 6mm; }
+ol.num li { margin-bottom: 1.2mm; }
+
+/* 对比演示块 */
+.demorow { display: flex; gap: 3.5mm; margin: 2.5mm 0; }
+.demo { flex: 1; border-radius: 2mm; padding: 4mm 3.5mm; text-align: center; border: .5pt solid #E0E0DB; }
+.demo .dtext { font-size: 9.5pt; font-weight: 600; }
+.demo .dlab { font-size: 7.8pt; color: #777; margin-top: 1.2mm; }
+
+/* 封面 */
+.cover { display: flex; flex-direction: column; justify-content: space-between; }
+.cover .spectrum { height: 34mm; border-radius: 2.5mm; margin: 10mm 0 0;
+  background: linear-gradient(90deg,#FF3B30 0%,#FF9500 17%,#FFCC00 33%,#34C759 50%,#00C7BE 66%,#007AFF 83%,#AF52DE 100%); }
+.cover h1 { font-size: 40pt; font-weight: 700; line-height: 1.25; margin-top: 12mm; }
+.cover .sub { font-size: 14pt; color: #55555A; margin-top: 4mm; }
+.cover .meta { font-size: 9.5pt; color: #8A8A8F; line-height: 2; }
+.cover .meta b { color: #55555A; }
+
+/* 目录 */
+.toctitle { font-size: 20pt; font-weight: 700; margin-bottom: 8mm; }
+.tocitem { display: flex; margin-bottom: 4.2mm; }
+.tocitem .no { flex: 0 0 12mm; font-weight: 700; font-size: 12pt; }
+.tocitem .body { flex: 1; border-bottom: .5pt dotted #C9C9C4; padding-bottom: 1.5mm; }
+.tocitem .tt { font-weight: 700; font-size: 11pt; }
+.tocitem .th { font-size: 9pt; color: #6B7280; margin-top: .5mm; }
+/* 附录密集表 */
+table.dense { font-size: 8.2pt; }
+table.dense td { padding: 1.1mm 2mm; }
+
+.avoid { page-break-inside: avoid; }
+
+/* ================= 网页端（屏幕）适配层 =================
+   以上为打印样式（生成 PDF 用），以下为屏幕覆盖样式。
+   打印时屏幕组件全部隐藏，PDF 输出不受影响。 */
+@media screen {
+  html { scroll-behavior: smooth; }
+  body { background: #E8E8E4; }
+  .page {
+    width: 100%; min-height: 0; max-width: 880px;
+    margin: 0 auto 20px; padding: 8mm 6mm 10mm;
+    page-break-after: auto; overflow: visible;
+    border-radius: 16px; box-shadow: 0 2px 16px rgba(20,20,30,.07);
+  }
+  .page.cover { min-height: 68vh; margin-top: 20px; }
+  .foot { display: none; }
+  .tocitem { cursor: pointer; border-radius: 2mm; padding: 1mm 1.5mm; margin-left: -1.5mm; }
+  .tocitem:hover { background: rgba(0,0,0,.045); }
+
+  #progress { position: fixed; top: 0; left: 0; height: 3px; width: 0;
+    background: linear-gradient(90deg,#FF3B30,#FF9500,#34C759,#007AFF,#AF52DE); z-index: 99; }
+  #topbar { position: fixed; top: 0; left: 0; right: 0; height: 48px; display: none;
+    align-items: center; justify-content: space-between; padding: 0 14px;
+    background: rgba(247,247,245,.88); backdrop-filter: blur(12px);
+    border-bottom: .5px solid #D8D8D3; z-index: 90; font-size: 14px; font-weight: 700; }
+  #topbar button { border: .5px solid #C9C9C4; background: #fff; border-radius: 8px;
+    padding: 5px 12px; font-size: 13px; cursor: pointer; }
+
+  #rail { position: fixed; top: 50%; right: max(20px, calc(50% - 660px));
+    transform: translateY(-50%); width: 224px; z-index: 80; display: none;
+    max-height: 86vh; overflow-y: auto; scrollbar-width: none; }
+  #rail::-webkit-scrollbar { display: none; }
+  .ritem { display: flex; align-items: baseline; gap: 8px; padding: 4.5px 9px;
+    border-radius: 9px; color: #6B7280; cursor: pointer; line-height: 1.45; font-size: 12.5px; }
+  .ritem:hover { background: rgba(0,0,0,.05); }
+  .ritem.active { background: #fff; color: #1A1A1C; font-weight: 700;
+    box-shadow: 0 1px 8px rgba(0,0,0,.09); }
+  .rdot { flex: 0 0 8px; height: 8px; border-radius: 50%; background: var(--c); align-self: center; }
+  .rno { font-weight: 700; font-size: 11px; color: var(--c); }
+  .rsub { padding: 2.5px 9px 2.5px 31px; font-size: 11px; color: #9A9A9E;
+    cursor: pointer; border-radius: 7px; line-height: 1.4; }
+  .rsub:hover { color: #555; background: rgba(0,0,0,.04); }
+  .rsub.active { color: #1A1A1C; font-weight: 600; }
+  @media (min-width: 1280px) { #rail { display: block; } }
+  @media (max-width: 1279.5px) { #topbar { display: flex; } body { padding-top: 48px; } .page.cover { margin-top: 0; border-radius: 0 0 16px 16px; } }
+
+  #drawer { position: fixed; top: 0; right: 0; bottom: 0; width: min(300px, 84vw);
+    background: #F7F7F5; z-index: 95; transform: translateX(105%);
+    transition: transform .25s ease; box-shadow: -4px 0 24px rgba(0,0,0,.12);
+    padding: 18px; overflow-y: auto; }
+  #drawer.open { transform: none; }
+  #drawer h5 { font-size: 13px; color: #9A9A9E; letter-spacing: .2em; margin: 4px 9px 10px; }
+  #drawerMask { position: fixed; inset: 0; background: rgba(0,0,0,.3); z-index: 94; display: none; }
+  #drawerMask.open { display: block; }
+  #toTop { position: fixed; right: 18px; bottom: 18px; width: 42px; height: 42px;
+    border-radius: 50%; border: none; background: #1A1A1C; color: #fff; font-size: 16px;
+    cursor: pointer; opacity: 0; pointer-events: none; transition: opacity .2s; z-index: 85; }
+  #toTop.show { opacity: .85; pointer-events: auto; }
+
+  @media (max-width: 640px) {
+    .page { padding: 7mm 5mm; border-radius: 12px; margin-bottom: 14px; }
+    .card { flex: 1 1 100%; }
+    .demorow { flex-direction: column; }
+    .chapnum { font-size: 36pt; }
+    .chaptitle { font-size: 18pt; }
+  }
+}
+@media print {
+  #progress, #topbar, #rail, #drawer, #drawerMask, #toTop { display: none !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============ 封面 ============ -->
+<div class="page cover">
+  <div>
+    <div class="spectrum"></div>
+    <h1 class="serif">看懂颜色</h1>
+    <div class="sub serif">从小白到能用的色彩课 —— 屏幕、设计与影像的配色底层逻辑</div>
+  </div>
+  <div class="meta">
+    <b>文档类型</b>　系统知识手册（大白话讲解 × 专业术语对照）<br>
+    <b>覆盖范围</b>　色域与显示 · 颜色模型 · 配色理论 · UI 规则与无障碍 · 系统配色 · 影像调色 · 实战诊断<br>
+    <b>参考来源</b>　UI/UX 大师课讲义 · W3C WCAG 2.x · Apple HIG · Material Design 3 · CIE/ISO/ITU 标准<br>
+    <b>日期</b>　2026-08-30　　<b>版本</b>　v1.0
+  </div>
+</div>
+
+<!-- ============ 目录 ============ -->
+<div class="page c0">
+  <div class="toctitle serif">目录</div>
+  <div class="toc">
+    <div class="tocitem"><div class="no" style="color:#B45309">00</div><div class="body"><div class="tt">开篇：为什么"差不多"的两个颜色放在一起会难受</div><div class="th">从一个真实的翻车界面说起——全册的主线问题</div></div></div>
+    <div class="tocitem"><div class="no" style="color:#0E7490">01</div><div class="body"><div class="tt">屏幕里的颜色：色域与显示基础</div><div class="th">光与色、加色减色、sRGB/P3/Adobe RGB 色域谱系、色深、Gamma、白点、色彩管理、OLED 与 LCD</div></div></div>
+    <div class="tocitem"><div class="no" style="color:#7C3AED">02</div><div class="body"><div class="tt">描述颜色的语言：色相、饱和度、明度与颜色模型</div><div class="th">色彩三属性、RGB/HEX、HSL 与 HSV、CIELAB 与 OKLCH、孟塞尔系统、对比度的数学、视觉错觉</div></div></div>
+    <div class="tocitem"><div class="no" style="color:#EA580C">03</div><div class="body"><div class="tt">配色的底层逻辑：原色、补色与经典搭配公式</div><div class="th">三套三原色、补色与视觉振动、五种经典配色公式、冷暖色调、60-30-10 法则、色彩心理学、语义色</div></div></div>
+    <div class="tocitem"><div class="no" style="color:#16A34A">04</div><div class="body"><div class="tt">UI 里的颜色规则：大师六条规则、对比度与无障碍</div><div class="th">大师课色彩六规则、WCAG 对比度标准、色盲与色弱、无障碍检查工具</div></div></div>
+    <div class="tocitem"><div class="no" style="color:#475569">05</div><div class="body"><div class="tt">好系统怎么配色：苹果与谷歌的灰阶分层与拟态用色</div><div class="th">Apple HIG 语义色、Material You 色调板、玻璃拟态、深色模式、灰阶分层系统</div></div></div>
+    <div class="tocitem"><div class="no" style="color:#DC2626">06</div><div class="body"><div class="tt">屏幕之外：摄影、影视与 AI 视频的冷暖配色</div><div class="th">色温与白平衡、橙青对比、调色流程、三点布光、AI 视频色调提示词、品牌色、照片取色、跨媒介一致性</div></div></div>
+    <div class="tocitem"><div class="no" style="color:#007AFF">07</div><div class="body"><div class="tt">实战诊断：玄览"我的"页配色拆解与整改方案</div><div class="th">对比度实测数据、三个病因、整改色板与 token 建议表</div></div></div>
+    <div class="tocitem"><div class="no" style="color:#6B7280">附</div><div class="body"><div class="tt">附录：色彩术语速查表 + 工具清单</div><div class="th">全册术语中英对照一表速查；对比度 / 色盲模拟 / 配色生成工具</div></div></div>
+  </div>
+  <div class="foot"><span>看懂颜色 · 从小白到能用的色彩课</span><span>目录</span></div>
+</div>
+<!-- ============ 开篇 ============ -->
+<div class="page c0">
+  <div class="chapkick">CHAPTER 00 · 开篇</div>
+  <div class="chapnum serif">00</div>
+  <div class="chaptitle serif">为什么"差不多"的两个颜色<br>放在一起会难受</div>
+  <div class="thesis">颜色从来不是孤立存在的——它只在"和别的颜色的关系"里成立。看懂这本手册，就是学会看懂关系。</div>
+
+  <p class="lead">先从一个真实的翻车现场说起。</p>
+  <p>有一个 Android 应用，设计师想做"苹果式纯净风"：背景用玉白色，卡片用很浅的灰，图标用清透的浅蓝，主文字黑色、备注文字灰色——每一个单拿出来都很"正常"，都是大厂规范里出现过的颜色。但真机上看起来完全不是那么回事：</p>
+  <ul class="dash">
+    <li><strong>备注文字几乎看不清。</strong>灰色备注叠在浅灰卡片上，像用淡墨写在毛边纸上，要多看一眼才能辨认。</li>
+    <li><strong>卡片看起来"脏"。</strong>明明是精心选的浅灰，在屏幕上却泛着一种说不清的粉肉色，和玉白背景之间有一种廉价的错位感。</li>
+    <li><strong>蓝色图标格外刺眼。</strong>浅蓝图标压在暖调灰卡上，冷和暖互相打架，看久了眼睛累。</li>
+  </ul>
+  <p>问题出在哪？<strong>出在"关系"，而不是"单个颜色"。</strong>这个界面的每一个颜色单看都不算错，但它们之间的三组关系全错了：<em>亮度关系</em>（备注灰和卡片底的亮度差太小）、<em>色温关系</em>（冷蓝图标和暖灰卡片互相排斥）、<em>层级关系</em>（卡片和背景几乎分不出谁是谁）。</p>
+
+  <div class="pull">你在生活里很少"单看"一种颜色，你看到的永远是颜色的组合。组合里的规则，就是这本手册的全部内容。<span class="src">—— 全册主线</span></div>
+
+  <p>这本手册会带你从<strong>最底层</strong>走起：先搞清楚屏幕是怎么"造"出颜色的（第 1 章），再学会用语言精确描述一个颜色（第 2 章），然后学搭配的经典公式（第 3 章）、UI 行业的硬规则（第 4 章）、苹果谷歌这些顶级系统是怎么做的（第 5 章）。之后我们走出屏幕，看看摄影、电影和 AI 视频里的冷暖配色（第 6 章）。最后，带着全部装备回到开头这个翻车现场，把它的配色问题一条条拆开、量化、修复（第 7 章）。</p>
+  <p>每一章的讲法都一样：<strong>先用大白话把道理讲透，再用"行话怎么说"的术语框告诉你专业名词</strong>——读完你既懂了原理，也学会了和设计师、工程师对话的语言。</p>
+
+  <div class="term">
+    <span class="tlabel">行话怎么说 · 先认识三个全册高频词</span>
+    <strong>色相（Hue）</strong>：颜色是"什么色"——红还是蓝。<strong>饱和度（Saturation）</strong>：颜色有多"鲜"——艳还是灰。<strong>明度（Lightness / Value）</strong>：颜色有多"亮"——浅还是深。任何一个颜色都能用这三个数定位，第 2 章会把它讲成肌肉记忆。
+  </div>
+
+  <div class="foot"><span>看懂颜色 · 从小白到能用的色彩课</span><span>00 · 开篇</span></div>
+</div>
+
+<!-- ============ 第 1 章 扉页+光与色+加色减色 ============ -->
+<div class="page c1">
+  <div class="chapkick">CHAPTER 01 · 显示基础</div>
+  <div class="chapnum serif">01</div>
+  <div class="chaptitle serif">屏幕里的颜色：<br>色域与显示基础</div>
+  <div class="thesis">屏幕上的颜色不是"涂"上去的，是"灯"点出来的——理解这一点，你才能理解为什么同一张图在不同设备上颜色不同。</div>
+  <div class="ramp">
+    <div style="background:#083344"></div><div style="background:#0E7490"></div><div style="background:#22D3EE"></div><div style="background:#A5F3FC"></div><div style="background:#ECFEFF"></div>
+  </div>
+
+  <h2 class="sec">1.1 颜色是光的"剩饭"</h2>
+  <p>先建立一个最底层的认知：<strong>颜色不是物体自带的属性</strong>。阳光（白光）其实是一桌"自助餐"，里面什么波段都有；一个红苹果之所以红，是因为它把绿、蓝波段的光"吃掉"（吸收）了，只把红波段"剩下"（反射）给你。你看到的颜色，是光被物体挑挑拣拣之后的"剩饭"。</p>
+  <p>这也解释了一个常见现象：同一件衣服，在商场的暖光灯下和家里的白光灯下颜色不一样。衣服没变，是"自助餐"的菜单变了。科学家管这种现象叫<strong>同色异谱</strong>——两种光谱成分完全不同的光，看起来颜色一样。</p>
+  <p>人眼能接管的波段大约只有 <strong>380–780 纳米</strong>，这叫可见光谱。你眼睛里有三种视锥细胞，分别对长波（红）、中波（绿）、短波（蓝）敏感——全世界所有关于颜色的工程标准，都建立在这"三个传感器"之上。</p>
+  <div class="term">
+    <span class="tlabel">行话怎么说</span>
+    <strong>可见光谱（Visible Spectrum）</strong>：约 380–780nm。<strong>视锥细胞（Cone Cells）</strong>：L/M/S 三种，分别感红、绿、蓝。<strong>同色异谱（Metamerism）</strong>：光谱不同、观感相同。"衣服在店里和家里不一样色"就是它。
+  </div>
+
+  <h2 class="sec">1.2 加色与减色：开灯 vs 盖滤镜</h2>
+  <p>世界上有两种"造颜色"的方式，逻辑正好相反：</p>
+  <p><strong>屏幕是"黑屋子里开灯"（加色）。</strong>每个像素里有红、绿、蓝三盏小灯，越开越亮，三盏全开就是白色。这叫<strong>加色模型 RGB</strong>——红绿蓝光越加越亮。</p>
+  <p><strong>印刷是"白纸上盖滤镜"（减色）。</strong>白纸本来反射所有光；青、品红、黄三色油墨各自"吃掉"一部分光，叠得越多越暗。理论上三色全叠应该是黑色，但现实中的油墨不纯，只能得到一坨浑浊的深棕——所以印刷必须再加一个真正的黑版 <strong>K</strong>，凑成 <strong>CMYK</strong>。这叫<strong>减色模型</strong>。</p>
+  <div class="term">
+    <span class="tlabel">行话怎么说</span>
+    <strong>加色模型（Additive Color Model, RGB）</strong>：光的三原色红绿蓝，全亮为白。<strong>减色模型（Subtractive Color Model, CMYK）</strong>：油墨三原色青品红黄 + 黑版（Key）。<strong>K = Key Plate</strong>，取末字母避免和蓝（Blue）混淆。
+  </div>
+  <p>这直接回答了"为什么印刷品总比屏幕暗、没屏幕艳"：屏幕是<strong>自发光</strong>，亮度自己说了算（典型 200–1000+ nit）；印刷品只是"环境光的搬运工"，最亮也只能亮过那张白纸。而且 CMYK 油墨能调出的颜色范围比屏幕小——屏幕上那种电光蓝、荧光橙，油墨根本印不出来。所以同一个品牌蓝，屏幕值和印刷值必须分开管理（第 6 章细讲）。</p>
+
+  <div class="foot"><span>看懂颜色 · 从小白到能用的色彩课</span><span>01 · 屏幕里的颜色</span></div>
+</div>
+
+<!-- ============ 1.3 色域 ============ -->
+<div class="page c1">
+  <h2 class="sec">1.3 色域：你的屏幕有一盒多大的蜡笔</h2>
+  <p class="lead">先纠正一个流传很广的说法："差的显示器是 RGB，好一点是 sRGB，更全是 Adobe RGB。"——这句话把概念搞混了。<strong>RGB 不是一档色域，而是"用红绿蓝三盏灯混色"这套方法本身</strong>；sRGB、Adobe RGB、DCI-P3、Rec.2020 全都是这套方法下面的具体"颜色全集"。真正区分显示器高低的词叫<strong>色域</strong>。</p>
+  <p>色域就是一台设备能调出的颜色全集，像一盒蜡笔：sRGB 是 12 色基础装，DCI-P3 是 16 色学生装，Adobe RGB 是专为画风景配的 20 色装（青绿色多），Rec.2020 是 48 色豪华装，ProPhoto RGB 则是连你眼睛都看不见的颜色都塞进去的仓库装。</p>
+
+  <table class="data avoid">
+    <tr><th>色彩空间</th><th>约占人眼可见色</th><th>制定者 / 标准</th><th>干什么用</th></tr>
+    <tr><td><b>sRGB</b></td><td>≈ 35%</td><td>HP + 微软 1996 · IEC 61966-2-1</td><td>互联网与办公的默认"普通话"</td></tr>
+    <tr><td><b>DCI-P3</b></td><td>≈ 41–45%</td><td>SMPTE RP 431-2</td><td>数字影院；手机/笔记本广色域主流</td></tr>
+    <tr><td><b>Adobe RGB</b></td><td>≈ 50%</td><td>Adobe 公司 1998</td><td>摄影后期、印刷流程（偏青绿）</td></tr>
+    <tr><td><b>Rec.2020</b></td><td>≈ 75%</td><td>ITU-R BT.2020（2012）</td><td>4K/8K 电视与 HDR 的"目标容器"</td></tr>
+    <tr><td><b>ProPhoto RGB</b></td><td>≈ 90%</td><td>柯达 · ISO 22028-2</td><td>RAW 后期工作空间（必须配 16bit）</td></tr>
+  </table>
+
+  <p>两个值得记住的细节：其一，<strong>Adobe RGB 和 DCI-P3 总面积接近但"口味"不同</strong>——Adobe RGB 偏青绿（为了对准印刷油墨），P3 偏红橙（为了对准电影和肤色）。其二，<strong>Rec.2020 目前没有任何消费级显示器能完整覆盖</strong>，它是"未来的目标"，不是今天的现实。</p>
+
+  <div class="fig avoid">
+    <svg viewBox="0 0 400 210" width="76%" style="display:block;margin:0 auto" xmlns="http://www.w3.org/2000/svg">
+      <path d="M 60 190 Q 30 120 70 55 Q 130 -10 230 15 Q 330 40 380 130 L 340 190 Z" fill="#E4F3F7" stroke="#0E7490" stroke-width="1.5"/>
+      <text x="200" y="105" text-anchor="middle" font-size="11" fill="#0E7490">人眼可见的全部颜色（马蹄图）</text>
+      <polygon points="140,170 200,40 300,170" fill="none" stroke="#EA580C" stroke-width="2"/>
+      <text x="300" y="185" text-anchor="middle" font-size="10" fill="#EA580C">Rec.2020</text>
+      <polygon points="160,170 210,75 285,170" fill="none" stroke="#7C3AED" stroke-width="2"/>
+      <text x="160" y="185" text-anchor="middle" font-size="10" fill="#7C3AED">P3 / Adobe RGB</text>
+      <polygon points="185,168 225,105 268,168" fill="none" stroke="#DC2626" stroke-width="2"/>
+      <text x="226" y="145" text-anchor="middle" font-size="10" fill="#DC2626">sRGB</text>
+    </svg>
+    <div class="cap">图 1.1 — CIE 1931 色度图（马蹄图）示意：马蹄内是人眼能见的所有颜色；任何三色显示器只能盖住一个三角形，三角形越大色域越广（示意图，非精确坐标）。</div>
+  </div>
+
+  <p>这张"马蹄图"是 1931 年国际照明委员会把人眼能见的所有颜色画成的一张地图。读法很简单：<strong>越靠边缘越鲜艳，越靠中心越接近白</strong>；底部那条直边是自然界不存在的"紫线"（红蓝混合的品红系）。任何显示器的红绿蓝三盏灯，在图上只能连出一个三角形——所以<em>没有任何三色显示器能显示你眼睛能看到的全部颜色</em>，这是物理决定的，不是技术不行。</p>
+  <div class="term">
+    <span class="tlabel">行话怎么说</span>
+    <strong>色域（Color Gamut）</strong>：设备能表现的颜色范围。<strong>色彩空间（Color Space）</strong>：一套具体的颜色定义（原色点 + 白点 + 伽马）。<strong>CIE 1931 色度图（Chromaticity Diagram）</strong>：人眼可见色的"世界地图"。<strong>Display P3</strong>：苹果版 P3——P3 的原色 + D65 白点 + sRGB 曲线，iPhone 7 起全线采用。
+  </div>
+
+  <div class="foot"><span>看懂颜色 · 从小白到能用的色彩课</span><span>01 · 屏幕里的颜色</span></div>
+</div>
+
+<!-- ============ 1.4 色深 Gamma 白点 ICC OLED Android ============ -->
+<div class="page c1">
+  <h2 class="sec">1.4 色深、Gamma 与白点：三个"看不见但天天影响你"的参数</h2>
+  <h3 class="sub">色深：从黑到白切多少刀</h3>
+  <p>色深决定每种原色能分多少级。<strong>8bit</strong> 每通道 256 级，三通道组合出约 <strong>1677 万色</strong>；<strong>10bit</strong> 每通道 1024 级，约 <strong>10.7 亿色</strong>。级数不够时，天空、日落这类平滑渐变会被切成一道道"台阶"，这叫<strong>色带</strong>。口诀：色域越大越需要高位深——ProPhoto RGB 用 8bit 必然色带，必须 16bit。廉价面板的"8 抖 10"（8bit+FRC）是靠快速闪烁骗眼睛，仔细看有噪点。</p>
+  <h3 class="sub">Gamma：暗部优先的"存储策略"</h3>
+  <p>人眼对暗处变化敏感、对亮处迟钝。所以存图时刻意把暗部提亮存，屏幕显示时再按一条幂曲线（约 <strong>2.2</strong>）压回去——一存一放刚好还原，还把有限的位数优先分给了暗部。这套机制源于 CRT 时代的物理特性，今天的 LCD/OLED 是主动模拟它以保持兼容。sRGB 实际用的是一条分段曲线（暗部直线 + 2.4 次幂），整体等效 ≈2.2。</p>
+  <h3 class="sub">白点与色温："白"到底多暖多冷</h3>
+  <p>"白"不是绝对的。屏幕行业约定俗成的标准白是 <strong>D65（约 6500K）</strong>，模拟正午日光；印刷看样用更暖的 <strong>D50（约 5000K）</strong>。色温越低越暖黄、越高越冷蓝——很多手机出厂默认 7000–9000K 的"冷屏"，看着通透其实偏蓝刺眼；"护眼模式"本质就是降色温。</p>
+  <div class="term">
+    <span class="tlabel">行话怎么说</span>
+    <strong>色深 / 位深（Bit Depth）</strong>；<strong>色带（Banding）</strong>：渐变的台阶断层。<strong>Gamma 校正（Gamma Encoding）</strong>：按幂曲线编解码亮度。<strong>白点（White Point）</strong>与<strong>相关色温（CCT，单位 K）</strong>；<strong>D65 / D50</strong>：屏幕与印刷的两个标准光源。
+  </div>
+
+  <h2 class="sec">1.5 色彩管理：为什么同一张图换个设备就变脸</h2>
+  <p>每台相机、屏幕、打印机"说颜色的方言"都不一样。<strong>ICC profile</strong> 就是每台设备的"方言翻译表"：文件先被翻译成一种与设备无关的"国际清算货币"（CIELAB/XYZ），再翻译成目标设备的方言。同图不同色通常有三个原因：设备色域不同（超出的颜色被硬切或压缩）、文件内嵌的 profile 被忽略（老 App 一律当 sRGB 解析，广色域照片直接变灰变淡）、设备没校准（出厂偏色或老化）。专业显示器的"出厂校色报告"里那个 <strong>ΔE</strong>（色差）数值，ΔE&lt;2 才算专业可用。</p>
+
+  <h2 class="sec">1.6 OLED 与 LCD：黑得下去 vs 亮得均匀</h2>
+  <p>LCD 像"永远关不干净的百叶窗 + 常亮大灯"：背光一直在，黑色是液晶努力挡光的结果，所以黑得发灰，对比度约 1000:1。OLED 每个像素自己发光，显示黑色时直接断电——黑位接近 0 nit，对比度理论无限大，侧看颜色也更稳，旗舰普遍覆盖 100% DCI-P3。代价是烧屏风险、低亮度常用 PWM 调光。<strong>开篇那个"卡片泛粉肉色"的观感，就常发生在 OLED 屏上</strong>——近白浅灰在不同面板、不同亮度下的实际呈色会有轻微漂移。</p>
+
+  <h2 class="sec">1.7 手机广色域：App 得"举手申请"</h2>
+  <p>2017 年（Android 8.0）之后，好手机的屏幕都能显示比 sRGB 更艳的颜色，但 Android 的逻辑是"怕翻译出错，默认只许说普通话"：App 想用广色域，必须在代码里声明 <span class="mono">colorMode="wideColorGamut"</span>；照片 App 解码 P3 图片时还要保留色彩空间信息，否则系统按 sRGB 处理，<strong>P3 照片在未适配的 App 里会明显发灰发暗</strong>。iOS 则是系统级自动转换，开发者基本无感。另外，手机"鲜艳/自适应"显示模式普遍过饱和，"自然/原彩"模式才是准的——同一张图在不同手机上颜色不同，常常不是面板差异，而是显示模式差异。</p>
+  <div class="term">
+    <span class="tlabel">行话怎么说</span>
+    <strong>ICC 特性文件（ICC Profile，ISO 15076-1）</strong>；<strong>ΔE（Delta E）</strong>：色差数值。<strong>广色域（Wide Color Gamut, WCG）</strong>；Android API：<span class="mono">isScreenWideColorGamut()</span>、<span class="mono">COLOR_MODE_WIDE_COLOR_GAMUT</span>。
+  </div>
+
+  <div class="foot"><span>看懂颜色 · 从小白到能用的色彩课</span><span>01 · 屏幕里的颜色</span></div>
+</div>
+<!-- ============ 第 2 章 扉页+三属性 ============ -->
+<div class="page c2">
+  <div class="chapkick">CHAPTER 02 · 颜色模型</div>
+  <div class="chapnum serif">02</div>
+  <div class="chaptitle serif">描述颜色的语言：<br>色相、饱和度、明度与颜色模型</div>
+  <div class="thesis">任何一个颜色，都能用三个数精确定位：它是什么色、有多鲜、有多亮。学会这套语言，"好看一点"就变成了可执行的指令。</div>
+  <div class="ramp">
+    <div style="background:#2E1065"></div><div style="background:#7C3AED"></div><div style="background:#A78BFA"></div><div style="background:#DDD6FE"></div><div style="background:#F5F3FF"></div>
+  </div>
+
+  <h2 class="sec">2.1 色彩三属性：一杯果汁的比喻</h2>
+  <p>把颜色想成一杯果汁：<strong>色相</strong>是"什么水果"（橙汁还是蓝莓汁），<strong>饱和度</strong>是"兑了多少水"（越兑越淡、越接近白开水的灰），<strong>明度</strong>是"在多亮的灯下看它"（从漆黑到刺眼）。这三个维度互相独立——可以有"很艳的暗蓝"，也可以有"灰扑扑的浅色"。</p>
+  <p>色相在色轮上用角度表示：<strong>0°=红、60°=黄、120°=绿、180°=青、240°=蓝、300°=品红</strong>，转一圈 360° 回到红。记住这六个锚点，以后看到 HSL 数值就能心算出色相。</p>
+  <div class="term">
+    <span class="tlabel">行话怎么说 · 三属性在不同体系里的名字</span>
+    <strong>色相 Hue</strong> 各处同名。<strong>饱和度 Saturation</strong>（HSL/HSV 用语，"相对"纯度）vs <strong>彩度 Chroma</strong>（孟塞尔/OKLCH 用语，"绝对"鲜艳度）。<strong>明度</strong>：孟塞尔叫 <strong>Value</strong>（0–10），HSL 叫 <strong>Lightness</strong>（0–100%），HSV/HSB 叫 <strong>Value/Brightness</strong>，CIELAB 叫 <strong>L*</strong>（0–100）——名字像，公式各不相同。
+  </div>
+
+  <h2 class="sec">2.2 最容易混的四组词</h2>
+  <table class="data avoid">
+    <tr><th>易混词</th><th>区别一句话</th></tr>
+    <tr><td><b>色温 vs 色调</b></td><td>色温是光源的物理参数（单位 K，可测量）；色调是画面整体的色彩倾向（主观感受）。</td></tr>
+    <tr><td><b>饱和度 vs 明度</b></td><td>饱和度管浓淡（离灰多远），明度管明暗（离黑白多近）。</td></tr>
+    <tr><td><b>灰度 vs 灰阶</b></td><td>灰度是"只有明暗没有颜色"的图像模式；灰阶是黑到白的楼梯级数（8bit = 256 级）。</td></tr>
+    <tr><td><b>色彩 vs 颜色</b></td><td>基本同义："颜色"是口语词，"色彩"偏学术与艺术语境（色彩学、色彩管理）。</td></tr>
+  </table>
+
+  <h2 class="sec">2.3 浓淡三兄弟：Tint、Shade、Tone</h2>
+  <p>调色时有三种"稀释"纯色的方式，名字必须分清：<strong>Tint（加白）</strong>——粉红是红的 tint，明度升、饱和降；<strong>Shade（加黑）</strong>——藏青是蓝的 shade，明度降；<strong>Tone（加灰）</strong>——米色、肤色大多是 tone，饱和降、明度大致不变。设计系统里一整套"50 到 900"的品牌色阶，本质就是 tint 与 shade 的梯度。</p>
+  <div class="term">
+    <span class="tlabel">行话怎么说</span>
+    <strong>Tint / Shade / Tone</strong>：纯色 + 白 / + 黑 / + 灰。注意英文 <strong>tone</strong> 一词多义：颜料语境是"加灰"，摄影语境是"影调/明暗层次"，中文都常译"色调"，看上下文分辨。
+  </div>
+
+  <div class="foot"><span>看懂颜色 · 从小白到能用的色彩课</span><span>02 · 描述颜色的语言</span></div>
+</div>
+
+<!-- ============ 2.4 RGB/HEX + HSL/HSV ============ -->
+<div class="page c2">
+  <h2 class="sec">2.4 RGB 与 HEX：颜色的"门牌号"</h2>
+  <p>屏幕上的每个颜色都是红绿蓝三盏小灯各自的亮度值（0–255）。<strong>HEX 码</strong>只是把这三个数用十六进制缩写成一个"快递单号"：<span class="mono">#RRGGBB</span>，两两一组。换算口诀：两位十六进制 <span class="mono">XY = X×16 + Y</span>（A=10 … F=15）。所以 <span class="mono">#FF0000</span> 是纯红、<span class="mono">#808080</span> 是中灰；<span class="mono">#3B82F6</span> = rgb(59,130,246)，一种常见的蓝。每位成双时可简写成 3 位（<span class="mono">#F00</span>）；8 位写法 <span class="mono">#RRGGBBAA</span> 末尾两位是透明度。HEX 和 rgb() 完全等价，只是进制不同，且默认锚定 sRGB。</p>
+
+  <h2 class="sec">2.5 HSL 与 HSV：像说话一样选颜色</h2>
+  <p>RGB 的问题是"不像人话"——你能脱口而出 <span class="mono">rgb(87,121,203)</span> 是什么色吗？HSL 和 HSV 把颜色重新装进"色轮 + 明暗轴"的立体模型里，让"来个深一点的蓝"成为一步操作。两者的<strong>色相 H 完全一致</strong>，区别全在中间那条明暗轴：</p>
+  <div class="cardgrid avoid">
+    <div class="card"><div class="ctab"></div><span class="eyebrow">HSL · 双圆锥</span>
+      <h4>黑 — 纯色 — 白 三点共线</h4>
+      L = 0% 一定是黑，L = 100% 一定是白，<b>L = 50% + S = 100% 才是最纯的颜色</b>。CSS 爱用它：做"变亮一点/变暗一点"的派生色（hover 态、色阶梯度）只需动 L 一个数。
+    </div>
+    <div class="card"><div class="ctab"></div><span class="eyebrow">HSV / HSB · 单圆锥</span>
+      <h4>顶点朝下是黑，顶面边缘最纯</h4>
+      <b>V = 100% + S = 100% 才是最纯的颜色</b>；要白必须 S = 0。Photoshop 等设计软件爱用它：横轴加白、纵轴加黑，符合画家调颜料的直觉。
+    </div>
+  </div>
+  <div class="term">
+    <span class="tlabel">行话怎么说</span>
+    <strong>HSL</strong>（Hue, Saturation, Lightness）；<strong>HSV / HSB</strong>（Hue, Saturation, Value / Brightness——两者完全相同，只是改名）。换算关系：HSV 的 V = max(R,G,B)；HSL 的 L = (max + min) / 2。记忆锚点：同一个 <span class="mono">hsl(74,100%,50%)</span> = <span class="mono">hsv(74,100%,100%)</span>。
+  </div>
+
+  <h3 class="sub">HSL 曲线：调色时拖哪条、改什么</h3>
+  <p>Lightroom 的 HSL 面板给 8 个色相区间（红橙黄绿浅绿蓝紫洋红）各配三组滑块：<strong>色相</strong>滑块 = 把这个颜色"换"成邻近色（橙→黄）；<strong>饱和度</strong>滑块 = 这个颜色的浓淡；<strong>明亮度</strong>滑块 = 这个颜色的明暗。视频调色（达芬奇）里的 HSL 限定曲线同理：<strong>Hue vs Hue</strong> 改"它是什么色"（蓝天改青）、<strong>Hue vs Sat</strong> 改"它有多浓"（只让红唇更艳）、<strong>Hue vs Lum</strong> 改"它有多亮"（只压暗天空）。它们共同的精髓是：<strong>只动你选中的那个颜色，其他颜色原封不动</strong>——这是"局部调色"的基本功。</p>
+
+  <div class="fig avoid">
+    <svg viewBox="0 0 400 120" width="100%" xmlns="http://www.w3.org/2000/svg">
+      <rect x="20" y="20" width="360" height="26" rx="4" fill="url(#huebar)"/>
+      <defs><linearGradient id="huebar" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#FF0000"/><stop offset="0.167" stop-color="#FFFF00"/>
+        <stop offset="0.333" stop-color="#00FF00"/><stop offset="0.5" stop-color="#00FFFF"/>
+        <stop offset="0.667" stop-color="#0000FF"/><stop offset="0.833" stop-color="#FF00FF"/>
+        <stop offset="1" stop-color="#FF0000"/>
+      </linearGradient></defs>
+      <text x="20" y="62" font-size="10" fill="#333">0° 红</text>
+      <text x="80" y="62" font-size="10" fill="#333">60° 黄</text>
+      <text x="140" y="62" font-size="10" fill="#333">120° 绿</text>
+      <text x="200" y="62" font-size="10" fill="#333">180° 青</text>
+      <text x="260" y="62" font-size="10" fill="#333">240° 蓝</text>
+      <text x="320" y="62" font-size="10" fill="#333">300° 品红</text>
+      <text x="20" y="95" font-size="11" fill="#7C3AED">色相（Hue）= 色轮角度：六个锚点记住，HSL 数值心算可知颜色</text>
+    </svg>
+    <div class="cap">图 2.1 — 色相环展开成 0–360° 的连续谱：红 0°、黄 60°、绿 120°、青 180°、蓝 240°、品红 300°。</div>
+  </div>
+
+  <div class="foot"><span>看懂颜色 · 从小白到能用的色彩课</span><span>02 · 描述颜色的语言</span></div>
+</div>
+
+<!-- ============ 2.6 LAB/OKLCH + 孟塞尔 ============ -->
+<div class="page c2">
+  <h2 class="sec">2.6 一条三代进化线：HSL → CIELAB → OKLCH</h2>
+  <p class="lead">HSL 有一个隐蔽的硬伤：<strong>它对"亮度"的定义不照顾人眼</strong>。</p>
+  <p>HSL 的 L 是 RGB 通道的几何中点，完全不考虑人眼对绿光最敏感、对蓝光最不敏感。于是 <span class="mono">hsl(60,100%,50%)</span>（纯黄）和 <span class="mono">hsl(240,100%,50%)</span>（纯蓝）数值上 L 都是 50%，<strong>看起来黄却亮得多</strong>。后果很实际：同 L 值的跨色相配色"看着不齐"，做色阶梯度时忽深忽浅，渐变中间还容易发脏。</p>
+
+  <div class="demorow avoid">
+    <div class="demo" style="background:#FFFF00"><span class="dtext" style="color:#333">L = 50%</span><div class="dlab">纯黄 hsl(60,100%,50%) · 看着很亮</div></div>
+    <div class="demo" style="background:#0000FF"><span class="dtext" style="color:#fff">L = 50%</span><div class="dlab" style="color:#cdd">纯蓝 hsl(240,100%,50%) · 看着很暗</div></div>
+  </div>
+
+  <p><strong>第二代 CIELAB（1976）</strong>就是来解决这件事的：它按"人眼看起来差多少"重新编号，数值差多少、眼睛看到的差别就（大约）是多少——这叫<strong>感知均匀</strong>。它的三根轴：<strong>L*</strong> 只管明暗（0 纯黑到 100 纯白），<strong>a*</strong> 是绿↔红对立轴，<strong>b*</strong> 是蓝↔黄对立轴。它的极坐标形式 <strong>LCH</strong>（明度 + 彩度 + 色相角）对设计师更友好。两色之间的"距离"叫 <strong>ΔE（色差）</strong>：ΔE&lt;1 基本不可辨，1–2.3 是"恰可察觉"，&gt;5 一眼即知。但 CIELAB 在高饱和区（尤其蓝色）仍不够均匀，转换也笨重。</p>
+  <p><strong>第三代 OKLCH（2020，Björn Ottosson 提出）</strong>是"又准又好用"的修正版：L 真正等于"眼睛觉得的亮度"——同 L 的不同色相看起来真的同样亮；改色相、改彩度都不会偷偷改变明暗。于是设计系统的 50–950 色阶可以"每档看起来差的量一样"地机械生成，渐变不再穿过脏中间色，深浅色模式和 hover 态都能用"加减 L"推导。<strong>Tailwind CSS v4（2025）已把默认调色板整体迁到 OKLCH</strong>，主流浏览器 2022–2023 年起全部支持，它正在变成设计系统的事实标准。</p>
+  <div class="term">
+    <span class="tlabel">行话怎么说</span>
+    <strong>感知均匀（Perceptually Uniform）</strong>：数值距离 ≈ 视觉差异。<strong>CIELAB / L*a*b*</strong>（1976）与其极坐标形式 <strong>LCH</strong>。<strong>ΔE（Delta E）</strong>：色差。<strong>Oklab / OKLCH</strong>（2020）：新一代感知均匀空间，CSS 写法 <span class="mono">oklch(0.7 0.15 150)</span>。
+  </div>
+
+  <h2 class="sec">2.7 孟塞尔：一百多年前的"颜色公寓楼"</h2>
+  <p>这条进化线的祖师爷是 1905 年美术教师孟塞尔建立的系统——史上第一个把颜色拆成三个"感知等距"维度的体系：<strong>H 色相</strong>（红黄绿蓝紫 5 主色 + 5 间色，共 100 级色环）、<strong>V 明度</strong>（0 纯黑到 10 纯白共 11 级等距灰）、<strong>C 彩度</strong>（从中性轴向外辐射，越往外越艳）。标注法 <span class="mono">H V/C</span>，比如 <span class="mono">5R 4/14</span> = 正红、明度 4、彩度 14，大致是朱红。它像一座公寓楼：楼层是明度、门朝向是色相、离电梯的距离是彩度。楼不是规整的圆柱——纯黄在高明度处最艳、纯蓝在低明度处最艳，所以楼体歪歪扭扭——这正是"感知优先于几何"的证据。至今 USDA 还用它给土壤颜色定级。</p>
+
+  <div class="foot"><span>看懂颜色 · 从小白到能用的色彩课</span><span>02 · 描述颜色的语言</span></div>
+</div>
+
+<!-- ============ 2.8 对比度数学 + 错觉 + 色阶 ============ -->
+<div class="page c2">
+  <h2 class="sec">2.8 对比度的数学：把"清不清楚"变成一道算术题</h2>
+  <p>"字和背景差不差"其实可以精确计算，无障碍标准 WCAG 就是这么定义的，一共四步：</p>
+  <ol class="num">
+    <li>把 R、G、B 各通道从 0–255 归一化到 0–1。</li>
+    <li>逐通道<strong>线性化</strong>（去掉 Gamma）：小于等于 0.03928 的直接除以 12.92；否则算 <span class="mono">((c+0.055)/1.055)^2.4</span>。</li>
+    <li>算<strong>相对亮度</strong>：<span class="mono">L = 0.2126×R + 0.7152×G + 0.0722×B</span>。三个系数就是人眼敏感度——<strong>对绿最敏感、对蓝最不敏感</strong>（纯绿 L≈0.72，纯蓝 L≈0.07，这就是"黑底纯蓝字只有约 2.4:1、必然不及格"的原因）。</li>
+    <li>算<strong>对比度</strong>：<span class="mono">(L亮 + 0.05) / (L暗 + 0.05)</span>。量表从 <strong>1:1</strong>（两色相同，完全读不出）到 <strong>21:1</strong>（纯白 vs 纯黑，理论最大值）。</li>
+  </ol>
+  <p>注意一个反直觉点：<strong>这套公式只看亮度差、不看色相差</strong>。蓝底橙字"看着撞色"，如果亮度接近，比值照样不及格——"刺眼"和"清楚"是两回事，前者是饱和度冲突，后者是亮度差。第 7 章的实战诊断会用它给真实界面"称体重"。</p>
+  <div class="term">
+    <span class="tlabel">行话怎么说</span>
+    <strong>相对亮度（Relative Luminance）</strong>；<strong>对比度比值（Contrast Ratio）</strong>；<strong>线性化 / 伽马展开（Linearization）</strong>。达标线先记两个：正文 AA 级 <strong>4.5:1</strong>、AAA 级 <strong>7:1</strong>（第 4 章给完整表）。
+  </div>
+
+  <h2 class="sec">2.9 眼睛会骗人：三个必须知道的视觉错觉</h2>
+  <p><strong>同时对比</strong>：同一块中灰，放白底上显深、放黑底上显浅；放红底上微微泛绿、放蓝底上微微泛黄——颜色总被推向周围色的补色方向。开篇那个"灰卡泛粉肉色"的观感，一半功劳要记在它头上。<strong>马赫带</strong>：明暗交界处，亮侧会出现一条"更亮的亮边"、暗侧一条"更暗的暗边"——像素里根本不存在，是视觉系统在边界处的"锐化过冲"。<strong>色彩恒常性</strong>：白纸在暖黄灯下和蓝天下你都觉得是白的——大脑自动"扣除光源色"，和相机的白平衡是同一个思路；线索不足时它就翻车，2015 年刷屏的"蓝黑裙/白金裙"就是著名事故现场。三者的共同启示：<strong>视觉系统测的从来不是绝对光量，而是相对差异</strong>——所以设计里永远要在真实上下文中评估颜色，而不是盯着拾色器。</p>
+  <div class="term">
+    <span class="tlabel">行话怎么说</span>
+    <strong>同时对比（Simultaneous Contrast）</strong>，1839 年 Chevreul 系统记录；<strong>马赫带（Mach Bands）</strong>；<strong>色彩恒常性（Color Constancy）</strong>。底层机制：视网膜<strong>侧抑制（Lateral Inhibition）</strong>与<strong>对立过程理论（Opponent-Process Theory）</strong>——视觉按红-绿、蓝-黄、明-暗三对对立通道处理信号。
+  </div>
+
+  <h2 class="sec">2.10 色阶与曲线：照片明暗的两把扳手</h2>
+  <p><strong>直方图</strong>是照片的"明暗体检报告"：横轴亮度 0–255、纵轴像素数量。山峰偏左 = 曝光不足，偏右 = 过曝，全挤在中间 = 画面灰蒙蒙（该黑不黑、该白不白）。<strong>色阶（Levels）</strong>三个滑块：黑场右移 ="比它暗的全部判纯黑"、白场左移 = "比它亮的全部判纯白"、灰场滑块只拨中间调；两端一起内收就是"除霾增通透"。<strong>曲线（Curves）</strong>更精细：X 轴原亮度、Y 轴新亮度，<strong>S 形曲线</strong>（抬高光、压阴影）= 加对比度，是"通透感"的第一扳手；切到单个 R/G/B 通道调曲线就是调颜色——蓝通道右下压 = 加黄减蓝，金秋色调就这么来的。这组工具会在第 6 章的影视调色里再次出现。</p>
+
+  <div class="foot"><span>看懂颜色 · 从小白到能用的色彩课</span><span>02 · 描述颜色的语言</span></div>
+</div>
+<!-- ============ 第 3 章 扉页+三原色 ============ -->
+<div class="page c3">
+  <div class="chapkick">CHAPTER 03 · 配色理论</div>
+  <div class="chapnum serif">03</div>
+  <div class="chaptitle serif">配色的底层逻辑：<br>原色、补色与经典搭配公式</div>
+  <div class="thesis">不会配色，就从色轮上按"几何图形"取色——挨着取、对着取、隔 120° 取，都是前人验证过不容易翻车的套路。</div>
+  <div class="ramp">
+    <div style="background:#7C2D12"></div><div style="background:#EA580C"></div><div style="background:#FB923C"></div><div style="background:#FED7AA"></div><div style="background:#FFF7ED"></div>
+  </div>
+
+  <h2 class="sec">3.1 为什么有三套"三原色"</h2>
+  <p>"原色"就是<strong>没法用别的颜色调出来、但能调出其他所有颜色</strong>的底料。之所以有三套，是因为混色的媒介不同：</p>
+  <table class="data avoid">
+    <tr><th>体系</th><th>三原色</th><th>混合方式</th><th>两两混合得</th><th>全部混合得</th><th>用在哪</th></tr>
+    <tr><td><b>RYB</b></td><td>红、黄、蓝</td><td>减色</td><td>橙、绿、紫</td><td>浑浊棕</td><td>绘画、美术课</td></tr>
+    <tr><td><b>RGB</b></td><td>红、绿、蓝</td><td>加色</td><td>黄、青、品红</td><td><b>白色</b></td><td>屏幕、相机</td></tr>
+    <tr><td><b>CMY(K)</b></td><td>青、品红、黄</td><td>减色</td><td>红、绿、蓝</td><td>理论黑（实际浑浊，加黑版 K）</td><td>印刷</td></tr>
+  </table>
+  <p>美术课教的红黄蓝（RYB）其实是历史经验模型；生理学上最准的是 RGB——你眼睛里就只有感红、感绿、感蓝三种视锥细胞；工艺上最准的是 CMY——青、品红、黄分别精确吸收红、绿、蓝光，混色最干净，所以专业印刷用它。三套体系之间有个漂亮的对称：<strong>RGB 两两相加点出 CMY，CMY 两两相叠印出 RGB</strong>。</p>
+  <p>原色两两混合得到<strong>间色</strong>（橙、绿、紫），原色再和相邻间色混合得到<strong>复色</strong>（红橙、黄绿、蓝紫……），1 套原色 + 3 间色 + 6 复色就组成了经典的 <strong>12 色轮</strong>——接下来所有配色公式，都是在这个轮子上画几何图形。</p>
+  <div class="term">
+    <span class="tlabel">行话怎么说</span>
+    <strong>原色（Primary Colors）</strong>、<strong>间色（Secondary Colors）</strong>、<strong>复色（Tertiary Colors）</strong>；<strong>色轮（Color Wheel）</strong>；<strong>RYB / RGB / CMYK</strong> 三套原色体系。
+  </div>
+
+  <div class="foot"><span>看懂颜色 · 从小白到能用的色彩课</span><span>03 · 配色的底层逻辑</span></div>
+</div>
+
+<!-- ============ 3.2 补色 + 3.3 配色公式 ============ -->
+<div class="page c3">
+  <h2 class="sec">3.2 补色：最锋利的刀，用不好先割自己</h2>
+  <p>色轮上正对门（相差 180°）的两个颜色互为<strong>补色</strong>：红–绿、蓝–橙、黄–紫。它们放一起对比最强、互相把对方衬得更艳——这是礼物；但如果两块面积一样大、又同样鲜艳同样亮，眼睛的"红-绿""蓝-黄"两对拮抗通道会互相打架，边界看起来<strong>发抖、闪烁</strong>，看几秒就累——这叫<strong>视觉振动</strong>，是"刺眼"的主要来源。</p>
+  <div class="demorow avoid">
+    <div class="demo" style="background:#00CC00"><span class="dtext" style="color:#FF0000">红字压绿底</span><div class="dlab" style="color:#efe">错误示范：视觉振动，无法阅读</div></div>
+    <div class="demo" style="background:#16181D"><span class="dtext" style="color:#E50914">暗底 + 小面积红</span><div class="dlab" style="color:#99a">正确示范：一大一小、拉开明度（Netflix 式）</div></div>
+  </div>
+  <p>补色的正确用法三条纪律：<strong>① 一大一小</strong>——一色当主背景，补色只做小面积点缀；<strong>② 拉开差距</strong>——拉开明度差或降低一方饱和度，振动立刻消失；<strong>③ 别拿补色写正文</strong>——补色文字叠补色背景是阅读灾难，而且对约 8% 的红绿色盲男性来说那是一团同样的棕色（第 4 章细讲）。还要记住第 2 章的结论："看起来很跳"≠对比度合格——高饱和蓝橙的明度可能几乎相等，过不了 WCAG。</p>
+  <div class="term">
+    <span class="tlabel">行话怎么说</span>
+    <strong>补色（Complementary Colors）</strong>；<strong>视觉振动（Visual Vibration）</strong>；<strong>对立过程理论（Opponent-Process Theory）</strong>：视觉按红-绿 / 蓝-黄 / 明-暗三对对立通道处理信号——补色刺眼的生理学根源。
+  </div>
+
+  <h2 class="sec">3.3 五种经典配色公式</h2>
+  <table class="data avoid">
+    <tr><th>公式</th><th>色轮取法</th><th>效果</th><th>适用场景</th></tr>
+    <tr><td><b>单色系</b><br><span class="en">Monochromatic</span></td><td>同一色相，只变明度/饱和度</td><td>最统一、最不容易错，但容易平淡</td><td>极简风、品牌色阶、背景系统</td></tr>
+    <tr><td><b>类似色</b><br><span class="en">Analogous</span></td><td>相邻 ±30°–60°（如红橙黄）</td><td>和谐、平静、低对比</td><td>自然主题、渐变、放松感界面</td></tr>
+    <tr><td><b>三角色</b><br><span class="en">Triadic</span></td><td>均布 120°（如红黄蓝）</td><td>活泼、平衡、有张力</td><td>儿童产品、创意品牌</td></tr>
+    <tr><td><b>分裂补色</b><br><span class="en">Split-Complementary</span></td><td>基色 + 其补色两侧（约 150°/210°）</td><td>有对比但不尖锐，新手友好</td><td>想要亮点又怕补色太冲</td></tr>
+    <tr><td><b>四角色</b><br><span class="en">Tetradic</span></td><td>两对补色（矩形/方形）</td><td>最丰富也最容易乱</td><td>复杂画面，必须一主三辅</td></tr>
+  </table>
+  <p>所有公式共享一条总纪律：<strong>选一色为主色，其余做配角</strong>。配色翻车的第一原因不是"选错色"，而是"等量比"——几种颜色面积差不多，画面就没有主人。</p>
+
+  <div class="foot"><span>看懂颜色 · 从小白到能用的色彩课</span><span>03 · 配色的底层逻辑</span></div>
+</div>
+
+<!-- ============ 3.4 冷暖 + 3.5 60-30-10 ============ -->
+<div class="page c3">
+  <h2 class="sec">3.4 冷暖色调：不要钱的立体感</h2>
+  <p>红橙黄让人想到火和太阳，叫<strong>暖色</strong>；蓝绿紫让人想到水、天空和阴影，叫<strong>冷色</strong>；绿和紫是中间地带（偏黄则暖、偏蓝则冷）。冷暖有一个超实用的空间属性：<strong>暖色看起来往前扑，冷色看起来往后退</strong>——不用任何阴影，就能在平面里做出前后层次。冷灰蓝界面 + 一个暖橙色按钮，按钮仿佛"浮"在界面之上，这是 UI 里最常用的免费立体感。风景画把远山画得更蓝更灰（大气透视），用的是同一条规律。</p>
+  <p>两个进阶要点：冷暖是<strong>相对</strong>的——同一个橙，在紫旁边显暖，在更红的橙旁边显冷；混合冷暖比全暖全冷更"有空气感"，做法是确立一个温度主导、再用相反温度小面积点缀。这条规律是第 6 章"橙青对比"的电影语言的地基。</p>
+  <div class="term">
+    <span class="tlabel">行话怎么说</span>
+    <strong>暖色 / 冷色（Warm / Cool Colors）</strong>；<strong>前进与后退（Advancing / Receding）</strong>；<strong>大气透视（Atmospheric Perspective）</strong>：物体越远越偏蓝、饱和度越低、对比越弱。
+  </div>
+
+  <h2 class="sec">3.5 60-30-10 法则：到处都是重点 = 没有重点</h2>
+  <div class="fig avoid">
+    <svg viewBox="0 0 400 64" width="100%" xmlns="http://www.w3.org/2000/svg">
+      <rect x="10" y="12" width="228" height="30" rx="4" fill="#E8E8E4"/>
+      <rect x="238" y="12" width="114" height="30" rx="0" fill="#9AA5B1"/>
+      <rect x="352" y="12" width="38" height="30" rx="4" fill="#EA580C"/>
+      <text x="124" y="32" text-anchor="middle" font-size="11" fill="#555">60% 主色（背景，安静低饱和）</text>
+      <text x="295" y="32" text-anchor="middle" font-size="11" fill="#fff">30% 辅色</text>
+      <text x="371" y="32" text-anchor="middle" font-size="10" fill="#fff">10%</text>
+      <text x="352" y="58" font-size="10" fill="#EA580C">10% 强调色（按钮、链接，醒目因为它少）</text>
+    </svg>
+    <div class="cap">图 3.1 — 60-30-10 法则：比例指"视觉权重"而非精确面积——高饱和小色块可抵低饱和大色块。</div>
+  </div>
+  <p>一个画面里：<strong>60% 给主色</strong>（背景、大表面，宜低饱和浅色，安安静静）、<strong>30% 给辅助色</strong>（卡片、导航等次级区域）、<strong>10% 给强调色</strong>（按钮、链接、CTA，可以艳可以跳）。强调色之所以醒目，恰恰因为它少。当你觉得界面"乱、抓不住重点"时，修复方法通常是<strong>增加中性色面积</strong>，而不是换强调色。常见变体：更克制的 70-20-10，或双强调的 60-20-20。</p>
+  <div class="term">
+    <span class="tlabel">行话怎么说</span>
+    <strong>主色（Dominant Color）</strong>、<strong>辅助色（Secondary Color）</strong>、<strong>强调色（Accent Color）</strong>；<strong>视觉权重（Visual Weight）</strong>：颜色"看起来有多重"，由面积 × 饱和度 × 对比共同决定。
+  </div>
+
+  <div class="foot"><span>看懂颜色 · 从小白到能用的色彩课</span><span>03 · 配色的底层逻辑</span></div>
+</div>
+
+<!-- ============ 3.6 色彩心理 + 语义色 ============ -->
+<div class="page c3">
+  <h2 class="sec">3.6 色彩心理学：颜色是会"说话"的</h2>
+  <p>研究估计，消费者对产品的第一印象有 <strong>62%–90%</strong> 来自颜色；一致用色可把品牌识别度提升约 80%。每种颜色都在对用户"喊话"：</p>
+  <table class="data avoid">
+    <tr><th>颜色</th><th>常见语义</th><th>典型行业 / 品牌</th></tr>
+    <tr><td><b style="color:#DC2626">红</b></td><td>热情、紧迫、食欲、危险</td><td>餐饮电商娱乐 · 可口可乐、京东、Netflix</td></tr>
+    <tr><td><b style="color:#EA580C">橙</b></td><td>友好、活力、亲和</td><td>电商母婴创意 · 淘宝、Fanta</td></tr>
+    <tr><td><b style="color:#CA8A04">黄</b></td><td>乐观、醒目、警示</td><td>快餐儿童交通 · 麦当劳、IKEA</td></tr>
+    <tr><td><b style="color:#16A34A">绿</b></td><td>自然、健康、安全、成功</td><td>健康环保金融 · 星巴克、微信</td></tr>
+    <tr><td><b style="color:#007AFF">蓝</b></td><td>信任、专业、冷静</td><td>科技金融医疗 · 支付宝、IBM</td></tr>
+    <tr><td><b style="color:#7C3AED">紫</b></td><td>奢华、神秘、创意</td><td>美妆高端艺术 · Cadbury</td></tr>
+    <tr><td><b>黑</b></td><td>高端、权威、力量</td><td>奢侈品科技 · Chanel、Apple</td></tr>
+    <tr><td><b>白</b></td><td>简洁、纯洁、现代</td><td>科技医疗极简 · Apple、MUJI</td></tr>
+    <tr><td><b style="color:#6B7280">灰</b></td><td>中性、克制、专业（过量显沉闷）</td><td>工业、企业级产品</td></tr>
+  </table>
+  <p>但记住大师课的提醒：这些对应"有时七成，有时八成"，<strong>是倾向不是定律</strong>。还有一条硬约束——<strong>文化差异</strong>：红在中国是喜庆、在西方是警告；白在西方是婚礼、在中日韩传统语境可关联丧事；绿在美国是金钱，"戴绿帽"却是中文特有的负面联想。产品出海前必须重新审色。</p>
+
+  <h2 class="sec">3.7 UI 语义色：别和用户全世界练出的肌肉记忆作对</h2>
+  <p>全球用户已经形成了条件反射：<strong>绿 = 成功、黄（琥珀）= 警告、红 = 出错、蓝 = 提示信息</strong>。跟着惯例走，用户不用学；另起炉灶，用户就得猜——而"让用户猜"正是 UI 设计的第一大忌。工程上的标准做法是给每个语义色建一整套色阶（浅色底、主色、深色字），保证"浅底 + 深字"和"深底 + 白字"两种用法都够对比。</p>
+  <div class="swrow avoid">
+    <div class="sw"><div class="chip" style="background:#34C759"></div><div class="lab"><b>成功 Success</b><span class="mono">#34C759</span> iOS systemGreen</div></div>
+    <div class="sw"><div class="chip" style="background:#FF9500"></div><div class="lab"><b>警告 Warning</b><span class="mono">#FF9500</span> iOS systemOrange</div></div>
+    <div class="sw"><div class="chip" style="background:#FF3B30"></div><div class="lab"><b>错误 Error</b><span class="mono">#FF3B30</span> iOS systemRed</div></div>
+    <div class="sw"><div class="chip" style="background:#007AFF"></div><div class="lab"><b>信息 Info</b><span class="mono">#007AFF</span> iOS systemBlue</div></div>
+  </div>
+  <p>三条纪律：<strong>① 一色一职</strong>——品牌蓝既然表示"可点击"，就别再拿去装饰普通文字；<strong>② 颜色必须配图标或文字</strong>（✓ ! ✕ i），不能只靠颜色传达状态（无障碍硬规则，下一章详述）；<strong>③ 关键状态色要锁定</strong>，不参与"从壁纸取色"这类动态变化——你希望"删除"按钮永远是你认识的那个红。</p>
+  <div class="term">
+    <span class="tlabel">行话怎么说</span>
+    <strong>色彩心理学（Color Psychology）</strong>；<strong>语义色（Semantic Colors）</strong>：成功 / 警告 / 错误 / 信息（Success / Warning / Error / Info）；<strong>设计令牌（Design Tokens）</strong>：把颜色决策命名成可复用的变量。
+  </div>
+
+  <div class="foot"><span>看懂颜色 · 从小白到能用的色彩课</span><span>03 · 配色的底层逻辑</span></div>
+</div>
+<!-- ============ 第 4 章 扉页+大师六规则 ============ -->
+<div class="page c4">
+  <div class="chapkick">CHAPTER 04 · UI 规则与无障碍</div>
+  <div class="chapnum serif">04</div>
+  <div class="chaptitle serif">UI 里的颜色规则：<br>大师六条规则、对比度与无障碍</div>
+  <div class="thesis">到最后，每一种颜色都必须挣到自己的位置。选颜色要严，放颜色进来要狠——限制是好事。</div>
+  <div class="ramp">
+    <div style="background:#14532D"></div><div style="background:#16A34A"></div><div style="background:#4ADE80"></div><div style="background:#BBF7D0"></div><div style="background:#F0FDF4"></div>
+  </div>
+
+  <h2 class="sec">4.1 大师的色彩六规则（UI/UX 大师课 · 原文精要）</h2>
+  <p>以下六条来自一位世界级 UI/UX 设计师的课程讲义，"来自多年经验，我会很严"是他的原话。注意它们和前三章的知识完全咬合——你会不断看到老熟人。</p>
+
+  <div class="cardgrid">
+    <div class="card avoid"><div class="ctab"></div><span class="eyebrow">规则 01</span><h4>避开刺眼的颜色</h4>
+      任何情况下都不要让刺眼的颜色进来。你唯一被允许用的是<b>成熟的颜色</b>——沉稳，不扎眼。过曝的绿、刺眼的浅蓝、喊叫的红，看几秒眼睛就累。哪怕只是页面上一个很小的元素，也不许用。"没有借口，没有通融。"<br><span class="en">loud colors → mature colors</span>
+    </div>
+    <div class="card avoid"><div class="ctab"></div><span class="eyebrow">规则 02</span><h4>探索色谱</h4>
+      你决定用蓝——世界上有数不清的蓝，同一种颜色的不同版本说着完全不同的语言。把整条色谱走到底再定夺。工具很简单：去搜 "brown color palette" 这类色板找启发，<b>颜色代码没有版权</b>。<br><span class="en">explore the spectrum · color palette</span>
+    </div>
+    <div class="card avoid"><div class="ctab"></div><span class="eyebrow">规则 03</span><h4>限制数量</h4>
+      限制，在设计里常常是好事。项目里的<b>主色（强调色）最多两到三种</b>。很多有经验的设计师会争，但这是多年经验换来的。他的教育品牌就靠"深蓝 + 白"两种强调色运转——简单到不能再简单，却是一套很好的组合。<br><span class="en">accent colors ≤ 2–3</span>
+    </div>
+    <div class="card avoid"><div class="ctab"></div><span class="eyebrow">规则 04</span><h4>保持一致</h4>
+      把色板调到<b>所有</b>视觉上去：按钮同类同色、与品牌主标志呼应；插画也选色板里那一档（如 unDraw 可一键换色）。同一种颜色在所有画面里扮演同一个角色——一致性本身就是设计工具，它抬高简洁，也抬高清晰。<br><span class="en">consistency</span>
+    </div>
+    <div class="card avoid"><div class="ctab"></div><span class="eyebrow">规则 05</span><h4>对比平衡</h4>
+      要用对比，不要色彩爆炸。好对比：浅红底上压一块更饱和的红——同色系但差得够远。坏对比：字难读、看着费劲。认真把不同颜色叠在一起试，<b>把对比做平衡</b>是颜色上非常要紧的规则。<br><span class="en">contrast, not color explosion</span>
+    </div>
+    <div class="card avoid"><div class="ctab"></div><span class="eyebrow">规则 06</span><h4>感受你的颜色</h4>
+      你自己必须先感受到你的设计，因为最终用户多半会感到同样的东西。对着色板问自己：换作你，会点吗？会买吗？会信任吗？还是会离开？坐在那里，看你的选择。<br><span class="en">feel your colors</span>
+    </div>
+  </div>
+
+  <div class="pull">到最后，每一种颜色都必须挣到自己的位置。<span class="src">—— UI/UX 大师课 · 色彩章结语（原文）</span></div>
+
+  <div class="foot"><span>看懂颜色 · 从小白到能用的色彩课</span><span>04 · UI 里的颜色规则</span></div>
+</div>
+
+<!-- ============ 4.2 大师课补充 + WCAG ============ -->
+<div class="page c4">
+  <h2 class="sec">4.2 大师课的另一条颜色规则：颜色是"可理解性"的工具</h2>
+  <p>大师课在讲"可理解性"时给颜色补了一条定位：<strong>对比在可理解性上非常有用——相当暗的底，相当亮的字，两者都是成熟的颜色，你不会看累；同时因为对比，它们可理解。</strong>前景色和背景色差得够远，你能轻松读完，也不会读错。这把第 2 章的对比度数学和本章规则 05 缝在了一起：<em>颜色不是装饰，是让用户"读得懂"的功能件</em>。</p>
+
+  <h2 class="sec">4.3 WCAG 对比度标准：写进法规的数值线</h2>
+  <p>WCAG（Web 内容无障碍指南）把"读得清"变成了有法律效力的硬指标。第 2 章讲过比值怎么算，这里是达标线：</p>
+  <table class="data avoid">
+    <tr><th>标准条目</th><th>级别</th><th>对象</th><th>要求</th></tr>
+    <tr><td>SC 1.4.3 对比度（最低）</td><td><b>AA</b></td><td>正文文字</td><td><b>≥ 4.5:1</b></td></tr>
+    <tr><td>SC 1.4.3</td><td>AA</td><td>大文本（≥18pt 或 14pt 粗体）</td><td>≥ 3:1</td></tr>
+    <tr><td>SC 1.4.6 对比度（增强）</td><td><b>AAA</b></td><td>正文文字</td><td><b>≥ 7:1</b></td></tr>
+    <tr><td>SC 1.4.11 非文本对比</td><td>AA</td><td>图标、控件边框、焦点指示</td><td><b>≥ 3:1</b></td></tr>
+    <tr><td>SC 1.4.1 颜色的使用</td><td>A</td><td>一切信息传达</td><td>不得单独依赖颜色</td></tr>
+  </table>
+  <p>几个最常见的翻车误区，条条见血：</p>
+  <ul class="dash">
+    <li><strong>白底灰字到底能多灰？</strong>至少 <span class="mono">#767676</span> 才过 AA（约 4.54:1）；到处在用的 <span class="mono">#999999</span> 只有约 2.85:1，<strong>不合格</strong>。输入框占位符也算文本。</li>
+    <li><strong>比值是硬阈值，不能四舍五入</strong>——2.999:1 不算过 3:1。</li>
+    <li><strong>细描边会被抗锯齿"冲淡"</strong>，实际观感低于计算值，宁可超标准一点。</li>
+    <li><strong>"备注就该是灰色"是有前提的</strong>：浅灰备注只有在白色（或近白）底上才可能达标；一旦叠在灰色卡片上，底色拉低了亮度差，同样的灰立刻跌破及格线——这正是开篇翻车现场的第一病因，第 7 章用实测数据复盘。</li>
+  </ul>
+  <div class="term">
+    <span class="tlabel">行话怎么说</span>
+    <strong>WCAG（Web Content Accessibility Guidelines）</strong>；<strong>SC（Success Criterion，成功标准）</strong>；<strong>AA / AAA 级</strong>；<strong>大文本（Large Text）</strong>：≥18pt（约 24px）常规或 ≥14pt（约 18.66px）粗体；<strong>非文本对比（Non-text Contrast）</strong>。
+  </div>
+
+  <div class="foot"><span>看懂颜色 · 从小白到能用的色彩课</span><span>04 · UI 里的颜色规则</span></div>
+</div>
+
+<!-- ============ 4.4 色盲 + 工具 ============ -->
+<div class="page c4">
+  <h2 class="sec">4.4 色盲与色弱：每 12 个男性里约有 1 个分不清红绿</h2>
+  <p>红绿色觉异常在北欧裔人群中约占<strong>男性 8%（1/12）、女性 0.5%</strong>，全球约 3 亿人。成因是 X 连锁隐性遗传——感知红绿的视锥细胞基因在 X 染色体上，所以男性远多于女性。分型上：<strong>绿色弱</strong>最常见（约 5% 男性），红/绿色盲各约 1–1.5%，红绿类合计占全部先天病例的 99%；蓝黄色盲罕见（约 0.008%），全色盲约 1/30000。</p>
+  <p>对设计师来说，这意味着：<strong>"用红色标错误、绿色标成功"这种设计，对 3 亿人来说等于没标。</strong>对策四条：</p>
+  <ol class="num">
+    <li><strong>绝不单独依赖颜色</strong>：状态 = 颜色 + 图标/文字/图案（WCAG 1.4.1 的 A 级硬要求）。</li>
+    <li><strong>明度差优先于色相差</strong>：拉开亮度的两个色，几乎对所有色觉异常者都可分辨。</li>
+    <li><strong>避开高危组合</strong>：红/绿、绿/棕、蓝/紫；安全方向是<strong>蓝–橙轴</strong>。</li>
+    <li><strong>图表 ≤8 个分类</strong>，用图案、虚线、直接标注代替纯颜色图例。</li>
+  </ol>
+
+  <h3 class="sub">一套经过全部三类色盲验证的安全色板：Okabe-Ito</h3>
+  <div class="swrow avoid">
+    <div class="sw"><div class="chip" style="background:#E69F00"></div><div class="lab"><b>橙</b><span class="mono">#E69F00</span></div></div>
+    <div class="sw"><div class="chip" style="background:#56B4E9"></div><div class="lab"><b>天蓝</b><span class="mono">#56B4E9</span></div></div>
+    <div class="sw"><div class="chip" style="background:#009E73"></div><div class="lab"><b>蓝绿</b><span class="mono">#009E73</span></div></div>
+    <div class="sw"><div class="chip" style="background:#F0E442"></div><div class="lab"><b>黄</b><span class="mono">#F0E442</span></div></div>
+    <div class="sw"><div class="chip" style="background:#0072B2"></div><div class="lab"><b>蓝</b><span class="mono">#0072B2</span></div></div>
+    <div class="sw"><div class="chip" style="background:#D55E00"></div><div class="lab"><b>朱红</b><span class="mono">#D55E00</span></div></div>
+    <div class="sw"><div class="chip" style="background:#CC79A7"></div><div class="lab"><b>红紫</b><span class="mono">#CC79A7</span></div></div>
+    <div class="sw"><div class="chip" style="background:#000000"></div><div class="lab"><b>黑</b><span class="mono">#000000</span></div></div>
+  </div>
+  <p>做数据图表、状态标记时，从这套色板里取色，可以同时对红绿色盲、蓝黄色盲人群保持可区分——它是学术图表界的"默认安全配置"。</p>
+
+  <h2 class="sec">4.5 无障碍自查的最小流程</h2>
+  <p>设计交付前跑一遍这三步，能挡住九成配色事故：<strong>①</strong> 用 WebAIM Contrast Checker 把所有"文字/背景""图标/背景"组合算一遍对比度；<strong>②</strong> 用 Chrome DevTools（Rendering → Emulate vision deficiencies）或 Coblis 过一遍红绿色盲、蓝黄色盲、全色盲模拟；<strong>③</strong> 切灰度模式检查"去色之后信息是否依然成立"。Android 开发者选项里有"模拟颜色空间"，iOS 在设置→辅助功能→色彩滤镜，真机就能验。</p>
+  <div class="term">
+    <span class="tlabel">行话怎么说</span>
+    <strong>色觉缺陷（Color Vision Deficiency, CVD）</strong>；<strong>红色盲/绿色盲（Protanopia / Deuteranopia）</strong>；<strong>蓝色盲（Tritanopia）</strong>；<strong>全色盲（Achromatopsia）</strong>；<strong>冗余编码（Redundant Encoding）</strong>：颜色之外再加一种信息通道；<strong>Okabe-Ito 调色板</strong>：经 CVD 验证的 8 色安全色板。
+  </div>
+
+  <div class="foot"><span>看懂颜色 · 从小白到能用的色彩课</span><span>04 · UI 里的颜色规则</span></div>
+</div>
+<!-- ============ 第 5 章 扉页 + Apple HIG ============ -->
+<div class="page c5">
+  <div class="chapkick">CHAPTER 05 · 系统配色</div>
+  <div class="chapnum serif">05</div>
+  <div class="chaptitle serif">好系统怎么配色：<br>苹果与谷歌的灰阶分层与拟态用色</div>
+  <div class="thesis">顶级系统的用色思路是"颜色为内容让路"——界面大面积保持中性，颜色只点在关键处，且每个颜色都是会自适应的"语义角色"。</div>
+  <div class="ramp">
+    <div style="background:#0F172A"></div><div style="background:#475569"></div><div style="background:#94A3B8"></div><div style="background:#CBD5E1"></div><div style="background:#F1F5F9"></div>
+  </div>
+
+  <h2 class="sec">5.1 Apple HIG：颜色不是色值，是"角色"</h2>
+  <p>苹果设计的三条总原则：<strong>清晰、谦抑、纵深</strong>——UI 不与内容争艳，层级靠分层与动效表达。落到颜色上，最重要的思想是<strong>语义色</strong>：你不说"这里用 <span class="mono">#000000</span>"，你说"这里用 label（主文本）"——系统在浅色模式给黑、深色模式给白、"增强对比"辅助模式下自动加深。<strong>颜色是角色，不是色值。</strong></p>
+  <p>文本层级就是一个现成的范本：主文本 label、次要文本 secondaryLabel（底色的 60% 透明度）、三级文本 tertiaryLabel（30%）——注意，苹果是用<strong>同一颜色的透明度阶梯</strong>而非不同的灰色值来表达层级，这样在任何背景色上都自动成立。背景分层同理：systemBackground（浅白/深黑）→ secondarySystemBackground（浅 <span class="mono">#F2F2F7</span> / 深 <span class="mono">#1C1C1E</span>）→ tertiary（深 <span class="mono">#2C2C2E</span>），层级完全靠底色阶梯说话，不用阴影描边。</p>
+  <p>强调色同样是"角色"：systemBlue 在浅色模式是 <span class="mono">#007AFF</span>、深色模式自动换成更亮的 <span class="mono">#0A84FF</span>——深底上提亮，才能保证同样的可读性。苹果的官方提醒还包括：自定义颜色必须提供浅色、深色、增强对比三个变体；同一颜色不兼多义；不只靠颜色传信。</p>
+  <div class="term">
+    <span class="tlabel">行话怎么说</span>
+    <strong>语义色（Semantic Colors）</strong>；<strong>动态系统色（Dynamic System Colors）</strong>；<strong>材质（Materials）与鲜亮度（Vibrancy）</strong>：半透明毛玻璃层之上的前景色与背景动态混合，保证任何壁纸下都可读；2025 年 <strong>Liquid Glass（液态玻璃）</strong>把这套思路扩展为全局设计语言。
+  </div>
+
+  <h2 class="sec">5.2 Material You：配色流水线</h2>
+  <p>谷歌 Material Design 3 把配色做成了算法流水线：给一个种子色（甚至从你的壁纸里取），自动生成 <strong>tone 0（黑）到 100（白）</strong> 的明度阶梯，界面元素按"角色"领颜色。浅色主题主色用 tone 40，深色主题自动换 tone 80——深底上自动变浅变亮。</p>
+  <p>它的角色命名是一套自解释语法：<span class="mono">on-*</span> 是配对文字色（onPrimary 配 primary）、<span class="mono">*Container</span> 是容器填充、<span class="mono">on*Container</span> 配容器上的文字——<strong>按配对使用，无障碍对比自动合格</strong>。层级则靠 <span class="mono">surfaceContainerLowest → Low → 默认 → High → Highest</span> 五档明度阶梯表达，不再依赖阴影。动态取色时，语义色（错误红等）可锁定不参与变化。</p>
+
+  <div class="foot"><span>看懂颜色 · 从小白到能用的色彩课</span><span>05 · 好系统怎么配色</span></div>
+</div>
+
+<!-- ============ 5.3 灰阶分层 + 5.4 玻璃拟态 ============ -->
+<div class="page c5">
+  <h2 class="sec">5.3 灰阶分层：苹果的灰为什么"不脏"</h2>
+  <p>苹果的 <span class="mono">#F2F2F7</span>、<span class="mono">#E5E5EA</span> 不是随手选的灰，而是一把刻度均匀的尺子——背景、卡片、分隔线各占一格，层级靠一格一格的明度差说话：</p>
+  <div class="swrow avoid">
+    <div class="sw"><div class="chip" style="background:#8E8E93"></div><div class="lab"><b>systemGray</b><span class="mono">#8E8E93</span></div></div>
+    <div class="sw"><div class="chip" style="background:#AEAEB2"></div><div class="lab"><b>Gray 2</b><span class="mono">#AEAEB2</span></div></div>
+    <div class="sw"><div class="chip" style="background:#C7C7CC"></div><div class="lab"><b>Gray 3</b><span class="mono">#C7C7CC</span></div></div>
+    <div class="sw"><div class="chip" style="background:#D1D1D6"></div><div class="lab"><b>Gray 4</b><span class="mono">#D1D1D6</span></div></div>
+    <div class="sw"><div class="chip" style="background:#E5E5EA"></div><div class="lab"><b>Gray 5</b><span class="mono">#E5E5EA</span></div></div>
+    <div class="sw"><div class="chip" style="background:#F2F2F7"></div><div class="lab"><b>Gray 6</b><span class="mono">#F2F2F7</span></div></div>
+  </div>
+  <p>两个内行细节：其一，<strong>好设计的灰很少是纯灰</strong>——iOS 灰的蓝分量略高（142,142,<strong>147</strong>），带一丝冷感；暖灰（偏黄红）亲和、冷灰（偏蓝）科技。实用公式：纯灰 <span class="mono">hsl(0,0%,L)</span>、暖灰约 <span class="mono">hsl(30,5%,L)</span>、冷灰约 <span class="mono">hsl(220,8%,L)</span>。<strong>灰的冷暖必须和主色统一，否则就显"脏"</strong>——这是开篇翻车现场的第二病因的伏笔。其二，正文黑常用 <span class="mono">#1A1A1A</span> 级别而非纯黑，长读更舒适，对比仍有 15:1 以上。</p>
+
+  <h2 class="sec">5.4 玻璃拟态：为什么半透明卡片优于实色灰卡</h2>
+  <p>玻璃拟态就是"磨砂玻璃卡片"：卡片半透明、背后内容被模糊，你能隐约看见后面的颜色和光，于是<em>立刻知道"这层浮在那层上面"</em>。配方四要素：</p>
+  <ol class="num">
+    <li><strong>背景模糊</strong>（blur 12px 以上，移动端按性能预算收敛）；</li>
+    <li><strong>半透明底色</strong>：白或黑，透明度约 10–40%；</li>
+    <li><strong>细边高亮</strong>：1px 白色描边、透明度约 20–30%，模拟玻璃边缘的反光；</li>
+    <li><strong>柔和阴影 + 大圆角</strong>。</li>
+  </ol>
+  <p>对比实色灰卡，它赢在三处：<strong>保留上下文</strong>（空间层级一目了然）、<strong>让背景色彩渗透进来</strong>（画面是"活"的）、<strong>视觉重量轻</strong>。实色卡则像一堵墙，切断层级、增加沉重感，而且灰卡色值换一个背景就要重调。两个注意：背景必须有色彩或内容（纯白底上模糊无意义）；半透明底上的文字对比度要实测。这条脉络从 Windows Vista Aero（2007）→ iOS 7 vibrancy（2013）→ Windows 11 Mica（2021）→ Liquid Glass（2025）一路演化而来，也是开篇那个应用的设计规范里<em>本就写明</em>的方向——实色粉灰卡恰恰是对自己规范的违背。</p>
+  <div class="term">
+    <span class="tlabel">行话怎么说</span>
+    <strong>玻璃拟态（Glassmorphism）</strong>；<strong>背景模糊（Background Blur / backdrop-filter）</strong>；<strong>半透明（Translucency）</strong>。典型 CSS：<span class="mono">background: rgba(255,255,255,.15); backdrop-filter: blur(12px);</span>
+  </div>
+
+  <div class="foot"><span>看懂颜色 · 从小白到能用的色彩课</span><span>05 · 好系统怎么配色</span></div>
+</div>
+
+<!-- ============ 5.5 深色模式 ============ -->
+<div class="page c5">
+  <h2 class="sec">5.5 深色模式：不是"把白的换成黑的"</h2>
+  <p>苹果 WWDC 的原话：<strong>把深色模式想象成把灯光调暗，而不是把世界里外翻转。</strong>四条核心原则：</p>
+  <div class="cardgrid">
+    <div class="card avoid"><div class="ctab"></div><span class="eyebrow">原则 1</span><h4>不用纯黑 #000000</h4>
+      Material 推荐基础背景 <span class="mono">#121212</span>。纯黑三大问题：纯白文字 21:1 对比过强导致<b>光晕</b>与眼疲劳；OLED 像素完全熄灭再点亮产生滚动<b>拖影</b>；黑色上无法再压阴影，层级无从表达。
+    </div>
+    <div class="card avoid"><div class="ctab"></div><span class="eyebrow">原则 2</span><h4>层级 = 越高层越亮</h4>
+      深色下阴影看不见了，改用明度表达海拔：背景 <span class="mono">#121212</span> → 卡片 <span class="mono">#1E1E1E</span> → 弹层 <span class="mono">#2C2C2C</span> → 最高层 <span class="mono">#383838</span>（Material 的做法是在基色上叠 4%/8%/12%/16% 白色覆盖层）。
+    </div>
+    <div class="card avoid"><div class="ctab"></div><span class="eyebrow">原则 3</span><h4>降低饱和度 20–40%</h4>
+      高饱和色在深底上会"闪"、产生视觉振动，还难过 4.5:1。深色模式的品牌色应"柔"而非"霓虹"——iOS 的 systemBlue 从 <span class="mono">#007AFF</span> 换成 <span class="mono">#0A84FF</span> 就是这个逻辑。
+    </div>
+    <div class="card avoid"><div class="ctab"></div><span class="eyebrow">原则 4</span><h4>文字层级用透明度，不用灰色值</h4>
+      Material：高强调白 87%、中强调 60%、禁用 38%；苹果 secondaryLabel 同理。同一颜色的透明度阶梯在任何深底上都成立，而固定灰色值换个底就翻车——和第 4 章"备注灰失效"是同一枚硬币的两面。
+    </div>
+  </div>
+  <p>最后一条工程纪律：<strong>浅色深色各做一套色板，不做机械反色。</strong>反色会把"精心拉开的明度关系"整个颠倒——亮部变暗部，层级全乱。</p>
+  <div class="term">
+    <span class="tlabel">行话怎么说</span>
+    <strong>深色模式（Dark Mode）</strong>；<strong>海拔（Elevation）</strong>；<strong>光晕（Halation）</strong>：高对比白字在黑底上的"发光肿胀"感；<strong>OLED 拖影（Smearing）</strong>；<strong>表面覆盖（Surface Overlay）</strong>。
+  </div>
+
+  <div class="foot"><span>看懂颜色 · 从小白到能用的色彩课</span><span>05 · 好系统怎么配色</span></div>
+</div>
+<!-- ============ 第 6 章 扉页 + 色温白平衡 + 橙青 ============ -->
+<div class="page c6">
+  <div class="chapkick">CHAPTER 06 · 影像色彩</div>
+  <div class="chapnum serif">06</div>
+  <div class="chaptitle serif">屏幕之外：<br>摄影、影视与 AI 视频的冷暖配色</div>
+  <div class="thesis">电影画面不是随便好看，是用色轮上的位置关系设计的——把背景压成青色，橙色的肤色就自动"跳"出画面。</div>
+  <div class="ramp">
+    <div style="background:#0C4A6E"></div><div style="background:#0369A1"></div><div style="background:#7DD3FC"></div><div style="background:#FDBA74"></div><div style="background:#EA580C"></div>
+  </div>
+
+  <h2 class="sec">6.1 色温与白平衡：相机不会"脑补"</h2>
+  <p>第 2 章讲过，大脑会自动把白纸看成白色（色彩恒常性）。相机不会——它只会老实记录光本来的颜色。<strong>白平衡</strong>就是你告诉相机"现在的光是什么色"，让它做反向补偿，把白的东西拍回白色。</p>
+  <p>色温用开尔文（K）刻度，典型值：烛火约 <strong>1900K</strong>、白炽灯 <strong>2700–3200K</strong>、正午日光 <strong>5500K</strong>、阴天 <strong>6000–7000K</strong>、阴影下可达 <strong>7000–9000K</strong>。最反直觉的一点：<strong>数值和体感相反——低 K 暖、高 K 冷</strong>。因为 K 值描述的是"黑体被烧到多少度发出这种光"：温度低烧出红橙光（烛火），温度极高才烧出蓝光（蓝色恒星）。相机白平衡口诀：<strong>相机 K 值 = 环境 K 值 → 还原正常；相机 K 值偏高 → 画面偏暖；偏低 → 偏冷</strong>。拍 RAW 格式，白平衡只是元数据，后期可以无损调整。</p>
+  <div class="term">
+    <span class="tlabel">行话怎么说</span>
+    <strong>色温（Color Temperature，单位 K）</strong>；<strong>白平衡（White Balance, WB）</strong>；<strong>黑体辐射（Black-body Radiation）</strong>：色温刻度的物理来源；<strong>显色指数（CRI）</strong>：1–100，光源还原真实色彩的能力。
+  </div>
+
+  <div class="foot"><span>看懂颜色 · 从小白到能用的色彩课</span><span>06 · 屏幕之外</span></div>
+</div>
+
+<!-- ============ 6.2 橙青 ============ -->
+<div class="page c6">
+  <h2 class="sec">6.2 橙青对比：好莱坞的万能公式</h2>
+  <p>为什么好莱坞大片清一色"橙色的脸 + 青色的背景"？因为<strong>所有人的肤色都落在色轮的橙色区间</strong>，而橙与青几乎正对（补色）。于是"阴影推青 + 肤色保橙"能在 2D 屏幕制造 3D 纵深感——回忆第 3 章：暖色前进、冷色后退。这套手法在数字调色出现前就被摄影师使用，维米尔的油画同理；2007 年《变形金刚》普及了它的激进版，《疯狂的麦克斯：狂暴之路》把它推到极端（沙漠橙 + 钴蓝天）。</p>
+  <div class="fig avoid">
+    <svg viewBox="0 0 400 190" width="100%" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="200" cy="90" r="70" fill="none" stroke="#D8D8D3" stroke-width="1"/>
+      <circle cx="200" cy="90" r="70" fill="none"/>
+      <circle cx="270" cy="90" r="16" fill="#F4A261"/>
+      <text x="270" y="94" text-anchor="middle" font-size="9" fill="#5a3">橙 · 肤色</text>
+      <circle cx="130" cy="90" r="16" fill="#2A9D8F"/>
+      <text x="130" y="94" text-anchor="middle" font-size="9" fill="#fff">青 · 背景</text>
+      <line x1="146" y1="90" x2="254" y2="90" stroke="#DC2626" stroke-width="1.5" stroke-dasharray="4 3"/>
+      <text x="200" y="82" text-anchor="middle" font-size="9" fill="#DC2626">色轮相距 180°（补色）</text>
+      <text x="200" y="178" text-anchor="middle" font-size="10" fill="#666">阴影推青 + 肤色保橙 = 人脸自动"跳"出画面</text>
+    </svg>
+    <div class="cap">图 6.1 — 橙青对比（Teal and Orange）的色轮原理：肤色天然在橙区，背景压青即得免费纵深感。</div>
+  </div>
+  <p>其他经典套路也值得存进弹药库：《天使爱美丽》选择性强化<strong>红与绿</strong>把巴黎拍成童话；王家卫式<strong>暖黄红 + 夜景霓虹</strong>；《黑客帝国》的绿色单色（虚拟世界）；《英雄》按章节切换红/蓝/白/绿，颜色直接当叙事者。使用橙青的三条实操纪律：<strong>LUT 不透明度降到 50–70%</strong>（"自信调色"和"教程调色"的分水岭）；<strong>只把阴影推青，别动中间调</strong>；<strong>肤色保护</strong>——环境随便推，人必须像人。</p>
+
+  <div class="foot"><span>看懂颜色 · 从小白到能用的色彩课</span><span>06 · 屏幕之外</span></div>
+</div>
+
+<!-- ============ 6.3 调色流程 + 用光 ============ -->
+<div class="page c6">
+  <h2 class="sec">6.3 调色流程：先"修"，后"调"</h2>
+  <p>专业调色分两步。<strong>第一步校色（Color Correction）是技术活</strong>：把白平衡、曝光、对比调正确，让所有镜头看起来像同一天拍的——对应四个主色轮 <strong>Lift / Gamma / Gain</strong>（分别管阴影 / 中间调 / 高光）。<strong>第二步分级（Color Grading）是创作活</strong>：加风格加情绪，用 HSL 限定器（第 2 章那组曲线）做局部手术——只调肤色、只压天空。</p>
+  <p>两个高频名词：<strong>Log</strong> 是相机用对数曲线把大动态范围"压扁"记录下来的灰蒙蒙素材——画面发灰但细节全在，是"生肉"；<strong>LUT（查找表）</strong>是"输入颜色 → 输出颜色"的现成对照表，是"菜谱"。行业共识的操作顺序：<strong>白平衡 → 曝光对比 → 一级校色 → 二级调色 → 最后才低强度叠风格 LUT</strong>。跳过校色直接套 LUT，是新手最常见也最显眼的错误——菜谱救不了没洗的菜。</p>
+  <div class="term">
+    <span class="tlabel">行话怎么说</span>
+    <strong>色彩校正 vs 色彩分级（Color Correction vs Color Grading）</strong>；<strong>一级校色 / 二级调色（Primary / Secondary）</strong>；<strong>Log（对数曲线）</strong>；<strong>Rec.709</strong>：高清视频通用交付色彩空间；<strong>LUT（Look-Up Table）</strong>：分技术 LUT（Log→Rec.709 还原）、创意 LUT（风格）、输出 LUT（交付适配）。
+  </div>
+
+  <h2 class="sec">6.4 摄影用光：灯是在给画面"上色"</h2>
+  <p><strong>三点布光</strong>定结构：主光（Key，相机侧 45°、高于眼睛 45°）定基调；辅光（Fill，强度约主光的 30–50%）柔化阴影；轮廓光（Back/Rim，50–100%）把人从背景里"剥"出来。<strong>色片（Gel）</strong>定颜色：CTO 橙片把日光色温的灯降到钨丝灯色，CTB 蓝片反向提升——混合光源场景的救场法宝；创意上，蓝片模拟月光、橙红片制造暖意，《银翼杀手 2049》的橙色拉斯维加斯就是大型橙色色片 + 烟雾做出来的。</p>
+  <p>两个免费黄金时段：<strong>黄金时刻</strong>（日出日落前后约 1 小时，色温偏暖 3000–4000K，人像绝配）；<strong>蓝调时刻</strong>（日落后约 20–40 分钟，天空是通透的深蓝、城市灯光初起）——"拍夜景要在天刚黑时拍"说的就是它，天全黑后天空就是一块死黑。</p>
+  <div class="term">
+    <span class="tlabel">行话怎么说</span>
+    <strong>三点布光（Three-Point Lighting）</strong>：主光 / 辅光 / 轮廓光（Key / Fill / Back Light）；<strong>光比（Lighting Ratio）</strong>；<strong>色片（Gel）</strong>与 <strong>CTO / CTB</strong> 校色温片；<strong>黄金时刻 / 蓝调时刻（Golden Hour / Blue Hour）</strong>。
+  </div>
+
+  <div class="foot"><span>看懂颜色 · 从小白到能用的色彩课</span><span>06 · 屏幕之外</span></div>
+</div>
+
+<!-- ============ 6.5 AI 视频 + 品牌色 + 取色 + 跨媒介 ============ -->
+<div class="page c6">
+  <h2 class="sec">6.5 AI 视频配色：模型听得懂行话，听不懂"好看一点"</h2>
+  <p>AI 视频模型是按真实胶片和电影画面训练出来的，所以<strong>报"胶片名 + 调色术语"比堆形容词可靠得多</strong>。写"暖色调"是废话；写 <span class="mono">teal-and-orange grade, lifted blacks, desaturated midtones, CineStill 800T</span> 才是指令。常用胶片词：<strong>Kodak Portra 400</strong>（暖肤色、柔和，人像怀旧）、<strong>CineStill 800T</strong>（钨丝灯平衡 + 高光红色光晕，夜景/赛博朋克/王家卫感）、<strong>Kodak Vision3 500T</strong>（电影级剧情片感）、<strong>Fuji Pro 400H</strong>（冷调"日系"）。调色词：<strong>lifted blacks</strong>（抬黑位，胶片感）、<strong>muted film tones</strong>（低饱和胶片色调）、<strong>film grain</strong>（颗粒）。提示词公式：<strong>[主体+动作] → [镜头] → [光线氛围] → [胶片+调色] → [画幅]</strong>，每个词只干一件事；一条生成只押一种风格，混写必浑浊。（注：此领域快速演进，以 2025–2026 年主流模型实测为准。）</p>
+
+  <h2 class="sec">6.6 品牌色：视觉身份证</h2>
+  <p>蒂芙尼蓝盒子不用看 logo 就知道是 Tiffany——它 1998 年注册了商标，由 Pantone 专门定制"1837 蓝"。可口可乐的设计系统白纸黑字写着 <em>"We own red"</em>。品牌色板的推导路径：<strong>取 LOGO 主色 → 按色轮关系选 1–3 个辅助色（邻近求和谐 / 互补求张力）→ 配黑白灰中性色打底 → 按 60-30-10 分配用量 → 写进品牌规范</strong>。最大错误是"选太多颜色"——主色 ≤2 个的品牌被认出的速度快 2–3 倍。</p>
+
+  <h2 class="sec">6.7 从照片提取色板：物以类聚</h2>
+  <p>照片有上百万像素色，提取色板就是"聚类"——把相近的颜色归成几堆、每堆选代表。主流算法：<strong>中位切分（Median Cut）</strong>最快最稳定，<strong>K-Means</strong> 质量最高但慢，工程上常用"中位切分打底 + K-Means 精修"。注意：<strong>主色 ≠ 平均色</strong>——红蓝各半的图平均出来是图里根本不存在的脏紫色。Android 官方的 <strong>Palette API</strong> 更进一步：不只给一堆颜色，还按饱和度、亮度、像素占比三个维度打分，直接告诉你哪个适合当<strong>鲜艳主色（Vibrant）</strong>、哪个适合当<strong>柔和底色（Muted）</strong>，甚至附带压在该色上可读的文字色。照片壁纸自动取主题色，靠的就是这套机制。</p>
+
+  <h2 class="sec">6.8 跨媒介一致性：一个色号走不了天下</h2>
+  <p>同一个品牌蓝，屏幕上是"发光调色"、印刷是"油墨吸光"、视频是"广播标准"——三套规则互不相通，屏幕上的电光蓝油墨根本印不出来。所以专业品牌为每种媒介各存一份色值：<strong>HEX（网页）+ RGB（屏幕）+ CMYK（印刷）+ Pantone 编号（专色/包装）</strong>，表格化写进 VI 手册。目标是"<strong>情绪冲击与识别度一致，而不是测量值一致</strong>"——像素级完全匹配在物理上不可能。屏幕端统一嵌 sRGB profile；印刷前软打样 + 超色域警告；绝不能错的品牌色（蒂芙尼蓝级别）上 Pantone 专色。</p>
+  <div class="term">
+    <span class="tlabel">行话怎么说</span>
+    <strong>颜色量化（Color Quantization）</strong>；<strong>K-Means / 中位切分（Median Cut）</strong>；<strong>Android Palette API 的六种色样（Swatch）</strong>：Light/Dark Vibrant + Light/Dark Muted + Vibrant + Muted；<strong>Pantone 专色（PMS Spot Color）</strong>；<strong>软打样（Soft Proofing）</strong>。
+  </div>
+
+  <div class="foot"><span>看懂颜色 · 从小白到能用的色彩课</span><span>06 · 屏幕之外</span></div>
+</div>
+<!-- ============ 第 7 章 扉页 + 实测 ============ -->
+<div class="page c7">
+  <div class="chapkick">CHAPTER 07 · 实战诊断</div>
+  <div class="chapnum serif">07</div>
+  <div class="chaptitle serif">实战诊断：<br>玄览"我的"页配色拆解与整改方案</div>
+  <div class="thesis">带着前六章的装备回到开篇的翻车现场——不看感觉，看数据。三组关系三处病，对症下药。</div>
+  <div class="ramp">
+    <div style="background:#003A75"></div><div style="background:#007AFF"></div><div style="background:#66A9FF"></div><div style="background:#C2DEFF"></div><div style="background:#EBF3FF"></div>
+  </div>
+
+  <h2 class="sec">7.1 案情回顾与实测数据</h2>
+  <p>涉事界面（玄览"我的"页）的色值取自其设计系统源码：背景纯白 <span class="mono">#FFFFFF</span>，卡片 <span class="mono">#F7F7FA</span>（surfaceContainerLow），主文字 <span class="mono">#1C1C1E</span>，备注文字 <span class="mono">#6E6E73</span>（onSurfaceVariant），图标 <span class="mono">#007AFF</span>。用第 2 章的 WCAG 公式逐一"称体重"：</p>
+  <table class="data avoid">
+    <tr><th>组合</th><th>实测对比度</th><th>参照线</th><th>判定</th></tr>
+    <tr><td>主文字 <span class="mono">#1C1C1E</span> on 卡片</td><td><b>15.91:1</b></td><td>AA 4.5:1</td><td>优秀 ✅</td></tr>
+    <tr><td>备注灰 <span class="mono">#6E6E73</span> on 白底</td><td><b>5.07:1</b></td><td>AA 4.5:1</td><td>合格 ✅</td></tr>
+    <tr><td>备注灰 <span class="mono">#6E6E73</span> on 卡片</td><td><b>4.74:1</b></td><td>AA 4.5:1</td><td><b>踩线 ⚠️</b></td></tr>
+    <tr><td>图标蓝 <span class="mono">#007AFF</span> on 卡片</td><td><b>3.76:1</b></td><td>非文本 3:1</td><td>过线但紧张 ⚠️</td></tr>
+    <tr><td>卡片 <span class="mono">#F7F7FA</span> vs 白底</td><td><b>1.07:1</b></td><td>层级靠感知</td><td><b>几乎不可分辨 ❌</b></td></tr>
+  </table>
+
+  <h2 class="sec">7.2 三个病因</h2>
+  <div class="cardgrid">
+    <div class="card avoid"><div class="ctab"></div><span class="eyebrow">病因 1 · 亮度关系</span><h4>备注灰"踩线式合格"</h4>
+      4.74:1 只是数学上刚过 AA——那是"理想白底实验室"里的成绩。真机上还要打三折：OLED 低亮度呈色漂移（1.6 节）、抗锯齿把小字号笔画"冲淡"（4.3 节）、户外亮度压缩。有效对比度跌破 4.5:1，备注字就成了"淡墨写在毛边纸上"。<b>教训：达标线要留余量，踩线等于不及格。</b>
+    </div>
+    <div class="card avoid"><div class="ctab"></div><span class="eyebrow">病因 2 · 色温关系</span><h4>冷蓝图标 × 暖感灰卡 = 打架</h4>
+      <span class="mono">#F7F7FA</span> 的蓝分量仅比红绿高 3，理论上偏冷；但在 OLED 屏与纯白背景的"同时对比"（2.9 节）下，人眼实际感知为泛粉肉色的暖灰。高饱和冷蓝图标压上去，冷暖互斥 + 饱和度反差，产生第 3 章讲的<b>视觉振动</b>——这就是"看久了眼睛累"的来源。
+    </div>
+    <div class="card avoid"><div class="ctab"></div><span class="eyebrow">病因 3 · 层级关系</span><h4>卡片与背景"粘"在一起</h4>
+      卡片与白底仅 1.07:1——边界几乎全靠猜。苹果的做法是<b>反转层级</b>：背景用 Gray 6（<span class="mono">#F2F2F7</span>）、<b>卡片用纯白</b>（iOS 设置页即如此），分层差立刻拉开且永不显脏。而本设计在白底上放浅灰卡，方向反了，灰卡在白底"同时对比"下只会更显脏。
+    </div>
+    <div class="card avoid"><div class="ctab"></div><span class="eyebrow">病因 0 · 理念层面</span><h4>背离了自己的设计规范</h4>
+      该项目文档本就写明"苹果式拟态、半透明/透明卡片、iOS 玻璃质感"（5.4 节）。实色高灰度粉卡恰恰是对自家规范的违背——<b>不是规范不对，是执行没跟上</b>。
+    </div>
+  </div>
+
+  <div class="foot"><span>看懂颜色 · 从小白到能用的色彩课</span><span>07 · 实战诊断</span></div>
+</div>
+
+<!-- ============ 7.3 整改方案 ============ -->
+<div class="page c7">
+  <h2 class="sec">7.3 整改方案：四步到位</h2>
+  <ol class="num">
+    <li><strong>反转背景-卡片层级</strong>：背景改为 <span class="mono">#F2F2F7</span>（iOS Gray 6），卡片用纯白 <span class="mono">#FFFFFF</span>。分层差从 1.07:1 变成清晰的"灰底托白卡"，且不引入任何新色相。</li>
+    <li><strong>备注文字加深</strong>：<span class="mono">#6E6E73</span> → <span class="mono">#48484A</span>（卡片上对比度 4.74:1 → <strong>8.53:1</strong>，超 AA 近一倍余量）；或改用 iOS 式语义色 <span class="mono">#3C3C43</span>（10.23:1）。</li>
+    <li><strong>统一灰的冷暖</strong>：全站中性色统一带轻微冷感（与品牌蓝同温区），公式 <span class="mono">hsl(220, 5–8%, L)</span>——消除"粉肉色"观感的根。</li>
+    <li><strong>中期向玻璃拟态演进</strong>：卡片改为半透明白（透明度约 60–75%）+ 背景模糊 + 1px 白色细边，回归项目既定设计规范（性能预算按"全屏至多一处实时模糊"执行）。</li>
+  </ol>
+
+  <h3 class="sub">整改 token 建议表（浅色模式）</h3>
+  <table class="data avoid">
+    <tr><th>Token</th><th>现状</th><th>建议</th><th>效果</th></tr>
+    <tr><td>background</td><td><span class="mono">#FFFFFF</span></td><td><span class="mono">#F2F2F7</span></td><td>灰底托白卡，层级反转</td></tr>
+    <tr><td>surfaceContainerLow（卡片）</td><td><span class="mono">#F7F7FA</span></td><td><span class="mono">#FFFFFF</span></td><td>卡片干净，不再泛粉</td></tr>
+    <tr><td>onSurfaceVariant（备注）</td><td><span class="mono">#6E6E73</span> · 4.74:1</td><td><span class="mono">#48484A</span> · 8.53:1</td><td>备注清晰，余量充足</td></tr>
+    <tr><td>outlineVariant（分隔线）</td><td><span class="mono">#E5E5EA</span></td><td>维持</td><td>本就合规</td></tr>
+    <tr><td>primary（图标/按钮）</td><td><span class="mono">#007AFF</span></td><td>维持</td><td>白卡上 4.02:1，且冷暖统一后不再打架</td></tr>
+  </table>
+
+  <h3 class="sub">前后对照</h3>
+  <div class="demorow avoid">
+    <div class="demo" style="background:#FFFFFF">
+      <div style="background:#F7F7FA;border-radius:2mm;padding:3mm">
+        <span class="dtext" style="color:#1C1C1E;font-size:9pt">外观与主题</span><br>
+        <span style="color:#6E6E73;font-size:8pt">纯白/纯黑/跟随系统/照片壁纸</span>
+      </div>
+      <div class="dlab">整改前：白底 + 浅灰卡 + 踩线灰备注（1.07:1 分层 / 4.74:1 备注）</div>
+    </div>
+    <div class="demo" style="background:#F2F2F7">
+      <div style="background:#FFFFFF;border-radius:2mm;padding:3mm;border:.5pt solid #ECECF1">
+        <span class="dtext" style="color:#1C1C1E;font-size:9pt">外观与主题</span><br>
+        <span style="color:#48484A;font-size:8pt">纯白/纯黑/跟随系统/照片壁纸</span>
+      </div>
+      <div class="dlab">整改后：灰底 + 白卡 + 加深备注（层级清晰 / 8.53:1 备注）</div>
+    </div>
+  </div>
+
+  <div class="pull">颜色的问题，从来不是哪个颜色"丑"，而是哪段关系"错"。把关系修对，原来的颜色大多可以继续用。<span class="src">—— 本章结论</span></div>
+
+  <div class="foot"><span>看懂颜色 · 从小白到能用的色彩课</span><span>07 · 实战诊断</span></div>
+</div>
+
+<!-- ============ 附录 A 术语速查 ============ -->
+<div class="page ca">
+  <div class="chapkick">APPENDIX A · 速查</div>
+  <div class="chaptitle serif" style="font-size:22pt">附录 A：色彩术语速查表</div>
+  <table class="data dense">
+    <tr><th>中文</th><th>英文</th><th>一句话定义</th><th>章节</th></tr>
+    <tr><td>色相</td><td>Hue</td><td>颜色是"什么色"，色轮角度 0–360°</td><td>2</td></tr>
+    <tr><td>饱和度 / 彩度</td><td>Saturation / Chroma</td><td>相对/绝对的鲜艳程度</td><td>2</td></tr>
+    <tr><td>明度 / 亮度</td><td>Lightness / Value / Brightness</td><td>颜色的明暗，各模型公式不同</td><td>2</td></tr>
+    <tr><td>色域</td><td>Color Gamut</td><td>设备能表现的颜色全集</td><td>1</td></tr>
+    <tr><td>色彩空间</td><td>Color Space</td><td>一套具体颜色定义（sRGB、P3…）</td><td>1</td></tr>
+    <tr><td>色深</td><td>Bit Depth</td><td>每通道级数：8bit=1677 万色</td><td>1</td></tr>
+    <tr><td>色带</td><td>Banding</td><td>色深不够导致的渐变台阶</td><td>1</td></tr>
+    <tr><td>伽马</td><td>Gamma</td><td>亮度的幂曲线编解码（≈2.2）</td><td>1</td></tr>
+    <tr><td>白点 / 色温</td><td>White Point / CCT</td><td>标准白的色温（D65=6500K）</td><td>1/6</td></tr>
+    <tr><td>ICC 特性文件</td><td>ICC Profile</td><td>设备颜色的"方言翻译表"</td><td>1</td></tr>
+    <tr><td>同色异谱</td><td>Metamerism</td><td>光谱不同但观感相同的颜色</td><td>1</td></tr>
+    <tr><td>加色 / 减色模型</td><td>Additive / Subtractive</td><td>RGB 开灯越加越亮 / CMYK 盖滤镜越叠越暗</td><td>1/3</td></tr>
+    <tr><td>原色 / 间色 / 复色</td><td>Primary / Secondary / Tertiary</td><td>色轮的三个层级</td><td>3</td></tr>
+    <tr><td>补色</td><td>Complementary Colors</td><td>色轮相距 180° 的一对</td><td>3</td></tr>
+    <tr><td>视觉振动</td><td>Visual Vibration</td><td>等量补色并置的刺眼闪烁感</td><td>3</td></tr>
+    <tr><td>类似色 / 三角色 / 分裂补色</td><td>Analogous / Triadic / Split-Complementary</td><td>经典配色公式</td><td>3</td></tr>
+    <tr><td>感知均匀</td><td>Perceptually Uniform</td><td>数值距离 ≈ 视觉差异（Lab/OKLCH）</td><td>2</td></tr>
+    <tr><td>色差</td><td>Delta E (ΔE)</td><td>两色差异的度量，&lt;1 不可辨</td><td>2</td></tr>
+    <tr><td>相对亮度 / 对比度</td><td>Relative Luminance / Contrast Ratio</td><td>WCAG 的可读性算法，1:1–21:1</td><td>2/4</td></tr>
+    <tr><td>同时对比 / 马赫带 / 色彩恒常性</td><td>Simultaneous Contrast / Mach Bands / Color Constancy</td><td>上下文改变颜色观感的三大错觉</td><td>2</td></tr>
+    <tr><td>语义色</td><td>Semantic Colors</td><td>按角色命名、自动适配的颜色</td><td>3/5</td></tr>
+    <tr><td>强调色</td><td>Accent Color</td><td>60-30-10 中的 10%，≤2–3 种</td><td>3/4</td></tr>
+    <tr><td>色觉缺陷</td><td>Color Vision Deficiency (CVD)</td><td>色盲色弱统称，男性约 8%</td><td>4</td></tr>
+    <tr><td>玻璃拟态</td><td>Glassmorphism</td><td>半透明 + 背景模糊的浮层语言</td><td>5</td></tr>
+    <tr><td>海拔</td><td>Elevation</td><td>深色模式"越高层越亮"的层级法</td><td>5</td></tr>
+    <tr><td>白平衡</td><td>White Balance (WB)</td><td>相机对光源色温的反向补偿</td><td>6</td></tr>
+    <tr><td>橙青对比</td><td>Teal and Orange</td><td>肤色保橙 + 背景推青的电影配色</td><td>6</td></tr>
+    <tr><td>校色 / 调色</td><td>Color Correction / Grading</td><td>先修正后风格的两步流程</td><td>6</td></tr>
+    <tr><td>查找表</td><td>LUT (Look-Up Table)</td><td>输入色→输出色的预设对照表</td><td>6</td></tr>
+    <tr><td>潘通专色</td><td>Pantone (PMS)</td><td>预混标准油墨，跨批次最稳</td><td>6</td></tr>
+  </table>
+  <div class="foot"><span>看懂颜色 · 从小白到能用的色彩课</span><span>附录 A</span></div>
+</div>
+
+<!-- ============ 附录 B 工具 + 结语 ============ -->
+<div class="page ca">
+  <div class="chapkick">APPENDIX B · 工具与结语</div>
+  <div class="chaptitle serif" style="font-size:22pt">附录 B：工具清单</div>
+
+  <h2 class="sec">对比度与无障碍</h2>
+  <ul class="dash">
+    <li><strong>WebAIM Contrast Checker</strong>——最常用的对比度计算器，输两个色值出比值与 AA/AAA 判定。</li>
+    <li><strong>Colour Contrast Analyser（TPGi）</strong>——桌面端，可取屏幕上任意颜色。</li>
+    <li><strong>WhoCanUse</strong>——直接展示各色觉人群"有多少人能用"的占比。</li>
+    <li><strong>Stark</strong>——Figma/Sketch/浏览器插件，批量检查 + 色盲模拟。</li>
+  </ul>
+
+  <h2 class="sec">色盲模拟</h2>
+  <ul class="dash">
+    <li><strong>Chrome DevTools</strong>——Rendering → Emulate vision deficiencies，免装插件，最顺手。</li>
+    <li><strong>Coblis</strong>——在线传图模拟各类 CVD。</li>
+    <li><strong>Color Oracle</strong>——Win/Mac/Linux 全屏实时滤镜。</li>
+    <li>真机：Android 开发者选项"模拟颜色空间"；iOS 设置 → 辅助功能 → 色彩滤镜。</li>
+  </ul>
+
+  <h2 class="sec">配色生成与取色</h2>
+  <ul class="dash">
+    <li><strong>Adobe Color</strong>——色轮取色（类似/三角/补色…）+ 对比度与 CVD 检查。</li>
+    <li><strong>Coolors</strong>——空格键刷色板，锁定微调，导出色阶。</li>
+    <li><strong>Material Theme Builder</strong>——M3 色调板自动生成，对比度官方兜底。</li>
+    <li><strong>Android Palette API</strong>——从图片提取 Vibrant/Muted 六色样（移动端）。</li>
+    <li><strong>OKLCH Color Picker</strong>——感知均匀取色与色阶生成。</li>
+  </ul>
+
+  <h2 class="sec">结语：把这本手册用起来</h2>
+  <p>读完这本手册，你已经拥有了一套完整的"颜色关系"检查清单。下次再打开任何界面、照片或视频，试着按这个顺序看：</p>
+  <ol class="num">
+    <li><strong>亮度关系</strong>——字和背景的对比度够吗？（心算或 WebAIM 验证，正文 4.5:1）</li>
+    <li><strong>色温关系</strong>——中性色的冷暖和强调色统一吗？有没有打架的冷暖并置？</li>
+    <li><strong>层级关系</strong>——背景、卡片、弹层能一眼分出谁浮在谁上面吗？</li>
+    <li><strong>数量关系</strong>——强调色超过 3 种了吗？到处都是重点了吗？</li>
+    <li><strong>人群关系</strong>——去掉颜色（灰度模式），信息还成立吗？</li>
+  </ol>
+  <p>五问都过，配色大概率不会翻车；任何一问卡住，回到对应章节找药。</p>
+  <div class="pull">每一种颜色都必须挣到自己的位置——现在，你知道怎么审查它们了。<span class="src">—— 全册完</span></div>
+
+  <div class="foot"><span>看懂颜色 · 从小白到能用的色彩课</span><span>附录 B · 全册完</span></div>
+</div>
+<script>
+(function () {
+  /* 1. 按文档顺序为每个 .page 分配锚点 id（顺序即章节顺序） */
+  var pages = Array.prototype.slice.call(document.querySelectorAll('.page'));
+  var ids = ['cover','toc','ch00','ch01','ch01b','ch01c','ch02','ch02b','ch02c','ch02d',
+             'ch03','ch03b','ch03c','ch03d','ch04','ch04b','ch04c','ch05','ch05b','ch05c',
+             'ch06','ch06b','ch06c','ch06d','ch07','ch07b','appA','appB'];
+  pages.forEach(function (el, i) { if (ids[i]) el.id = ids[i]; });
+
+  /* 2. 章节导航数据 */
+  var nav = [
+    { id: 'ch00', n: '00', t: '开篇', c: '#B45309', subs: [] },
+    { id: 'ch01', n: '01', t: '屏幕里的颜色', c: '#0E7490', subs: [['ch01b','1.3 色域谱系'],['ch01c','1.4 色深·Gamma·白点']] },
+    { id: 'ch02', n: '02', t: '描述颜色的语言', c: '#7C3AED', subs: [['ch02b','2.4 RGB 与 HSL/HSV'],['ch02c','2.6 LAB 与 OKLCH'],['ch02d','2.8 对比度的数学']] },
+    { id: 'ch03', n: '03', t: '配色的底层逻辑', c: '#EA580C', subs: [['ch03b','3.2 补色'],['ch03c','3.4 冷暖色调'],['ch03d','3.6 色彩心理与语义色']] },
+    { id: 'ch04', n: '04', t: 'UI 里的颜色规则', c: '#16A34A', subs: [['ch04b','4.3 WCAG 对比度'],['ch04c','4.4 色盲与色弱']] },
+    { id: 'ch05', n: '05', t: '好系统怎么配色', c: '#475569', subs: [['ch05b','5.3 灰阶与玻璃拟态'],['ch05c','5.5 深色模式']] },
+    { id: 'ch06', n: '06', t: '屏幕之外：影像配色', c: '#DC2626', subs: [['ch06b','6.2 橙青对比'],['ch06c','6.3 调色与用光'],['ch06d','6.5 AI 视频与品牌色']] },
+    { id: 'ch07', n: '07', t: '实战诊断：玄览', c: '#007AFF', subs: [['ch07b','7.3 整改方案']] },
+    { id: 'appA', n: 'A', t: '附录 · 术语速查', c: '#6B7280', subs: [] },
+    { id: 'appB', n: 'B', t: '附录 · 工具清单', c: '#6B7280', subs: [] }
+  ];
+
+  function buildNav() {
+    return nav.map(function (ch) {
+      var s = '<div class="ritem" data-t="' + ch.id + '" style="--c:' + ch.c + '">' +
+              '<span class="rdot"></span><span class="rno">' + ch.n + '</span><span>' + ch.t + '</span></div>';
+      ch.subs.forEach(function (sub) {
+        s += '<div class="rsub" data-t="' + sub[0] + '">' + sub[1] + '</div>';
+      });
+      return s;
+    }).join('');
+  }
+
+  document.body.insertAdjacentHTML('afterbegin',
+    '<div id="progress"></div>' +
+    '<div id="topbar"><span>看懂颜色 · 色彩课</span><button id="tocBtn" type="button">☰ 目录</button></div>' +
+    '<nav id="rail">' + buildNav() + '</nav>' +
+    '<div id="drawerMask"></div>' +
+    '<aside id="drawer"><h5>目录 CONTENTS</h5>' + buildNav() + '</aside>' +
+    '<button id="toTop" type="button" title="回到顶部">↑</button>');
+
+  /* 3. 点击跳转 */
+  var drawer = document.getElementById('drawer');
+  var mask = document.getElementById('drawerMask');
+  function closeDrawer() { drawer.classList.remove('open'); mask.classList.remove('open'); }
+  document.getElementById('tocBtn').addEventListener('click', function () {
+    drawer.classList.add('open'); mask.classList.add('open');
+  });
+  mask.addEventListener('click', closeDrawer);
+  document.querySelectorAll('[data-t]').forEach(function (el) {
+    el.addEventListener('click', function () {
+      var target = document.getElementById(el.dataset.t);
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      closeDrawer();
+    });
+  });
+  document.getElementById('toTop').addEventListener('click', function () {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  /* 4. 目录页条目可点击（顺序与 nav 一一对应） */
+  var tocItems = document.querySelectorAll('.tocitem');
+  tocItems.forEach(function (el, i) {
+    if (nav[i]) el.dataset.t = nav[i].id;
+    el.addEventListener('click', function () {
+      var target = document.getElementById(el.dataset.t);
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+
+  /* 5. 滚动监听：章节高亮 + 进度条 + 回顶按钮 */
+  var links = {};
+  document.querySelectorAll('#rail [data-t], #drawer [data-t]').forEach(function (a) {
+    (links[a.dataset.t] = links[a.dataset.t] || []).push(a);
+  });
+  function setActive(id) {
+    document.querySelectorAll('#rail .active, #drawer .active').forEach(function (x) { x.classList.remove('active'); });
+    (links[id] || []).forEach(function (x) { x.classList.add('active'); });
+  }
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) { if (e.isIntersecting) setActive(e.target.id); });
+  }, { rootMargin: '-30% 0px -60% 0px' });
+  pages.forEach(function (el) { io.observe(el); });
+
+  var progress = document.getElementById('progress');
+  var toTop = document.getElementById('toTop');
+  window.addEventListener('scroll', function () {
+    var h = document.documentElement;
+    var max = h.scrollHeight - h.clientHeight;
+    progress.style.width = (max > 0 ? (h.scrollTop / max) * 100 : 0) + '%';
+    toTop.classList.toggle('show', h.scrollTop > 600);
+  }, { passive: true });
+})();
+</script>
+</body>
+</html>
