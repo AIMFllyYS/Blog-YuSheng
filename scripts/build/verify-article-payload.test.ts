@@ -16,9 +16,16 @@ test('largest article RSC/HTML stay within the client-projection budget', async 
 
   let largestPage = { slug: '', bytes: 0, gzip: 0 }
   for (const slug of slugs) {
-    const pageFile = await findPageFile(path.join(blogRoot, slug))
+    const pageFile =
+      (await findPageFile(path.join(blogRoot, slug))) ??
+      path.join(blogRoot, slug, 'index.txt')
     const htmlFile = path.join(blogRoot, slug, 'index.html')
-    if (!pageFile) continue
+    try {
+      await stat(pageFile)
+      await stat(htmlFile)
+    } catch {
+      continue
+    }
     const page = await readFile(pageFile)
     const html = await readFile(htmlFile)
     const pageText = page.toString('utf8')
@@ -49,22 +56,24 @@ test('largest article RSC/HTML stay within the client-projection budget', async 
   expect(largestPage.gzip).toBeLessThanOrEqual(PAGE_GZIP_BUDGET)
 })
 
-async function findPageFile(articleDir: string) {
-  const nextBlog = path.join(articleDir, '__next.blog')
-  try {
-    await stat(nextBlog)
-  } catch {
-    return undefined
-  }
-  const children = await readdir(nextBlog, { withFileTypes: true })
-  for (const child of children) {
-    if (!child.isDirectory()) continue
-    const candidate = path.join(nextBlog, child.name, '__PAGE__.txt')
+async function findPageFile(articleDir: string): Promise<string | undefined> {
+  const stack = [articleDir]
+  while (stack.length > 0) {
+    const current = stack.pop()
+    if (!current) continue
+    let entries
     try {
-      await stat(candidate)
-      return candidate
+      entries = await readdir(current, { withFileTypes: true })
     } catch {
       continue
+    }
+    for (const entry of entries) {
+      const full = path.join(current, entry.name)
+      if (entry.isDirectory()) {
+        stack.push(full)
+        continue
+      }
+      if (entry.name === '__PAGE__.txt') return full
     }
   }
   return undefined
