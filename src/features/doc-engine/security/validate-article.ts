@@ -8,6 +8,7 @@ import type {
   RegisteredComponentNode,
 } from '../core/document-types'
 import { hasCanvasRenderer } from '../registry/canvas-renderer-registry'
+import { BUILTIN_RENDERER_REGISTRY } from '../registry/register-builtins'
 import {
   isAuthorHostedAudioUrl,
   isAuthorHostedImageUrl,
@@ -26,6 +27,7 @@ export function validateArticleDocument(
 ): readonly DocumentDiagnostic[] {
   const diagnostics: DocumentDiagnostic[] = []
   let canvasInstances = 0
+  let textMarkInstances = 0
   const stack: DocumentNode[] = [document.root]
   while (stack.length > 0) {
     const node = stack.pop()!
@@ -76,6 +78,12 @@ export function validateArticleDocument(
       if (failure) diagnostics.push(articleError(document, node, failure))
     }
     if (node.type === 'registeredComponent') {
+      if (node.name === 'text-mark') {
+        textMarkInstances += 1
+        if (textMarkInstances > 200) {
+          diagnostics.push(articleError(document, node, '单篇 text-mark 不得超过 200 个。'))
+        }
+      }
       if (node.name === 'canvas-render') {
         canvasInstances += 1
         if (canvasInstances > CANVAS_SECURITY_POLICY.maxInstancesPerDocument) {
@@ -102,6 +110,10 @@ function validateArticleComponent(
   document: CompiledDocument,
   node: RegisteredComponentNode,
 ): readonly DocumentDiagnostic[] {
+  const definition = BUILTIN_RENDERER_REGISTRY.get(node.name)
+  if (definition && !definition.schema.safeParse(node.attributes).success) {
+    return [articleError(document, node, `${node.name} 属性未通过 schema。`)]
+  }
   if (node.name === 'web-embed') {
     const source = stringAttribute(node, 'src')
     const safeSameSitePath =

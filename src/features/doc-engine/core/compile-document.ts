@@ -8,15 +8,30 @@ import {
   DOCUMENT_SCHEMA_VERSION,
   type BlockImageNode,
   type BlockNode,
+  type BlockRegisteredComponentNode,
   type CompiledDocument,
   type InlineNode,
+  type InlineRegisteredComponentNode,
   type RootNode,
   type SourceMapSegment,
   type SourceRange,
 } from './document-types'
 import { normalizeArticleImageRelativePath } from './image-path'
-import { parseComponentSyntax } from './component-syntax'
+import {
+  getComponentSchema,
+  parseComponentSyntax,
+  type ComponentName,
+} from './component-syntax'
 import { parseDocument, type MarkdownNode } from './parse-document'
+import {
+  findMatchingClose,
+  isClosingTag,
+  isCompletePairedTag,
+  isInlineRegisteredTag,
+  openingTagName,
+  shouldCombinePairedHtml,
+  splitTopLevelPairedTags,
+} from './registered-tag-parse'
 import {
   createDocumentFingerprint,
   createStableBlockId,
@@ -45,6 +60,8 @@ type CompileContext = {
   sourceMap: Record<string, readonly SourceMapSegment[]>
   headingStack: Array<{ depth: number; slug: string }>
   definitions: ReadonlyMap<string, MarkdownNode>
+  generatedIds: number
+  parentComponent?: ComponentName
 }
 
 type InlineResult = {
@@ -64,6 +81,7 @@ export async function compileDocument(
     sourceMap: {},
     headingStack: [],
     definitions: collectDefinitions(ast),
+    generatedIds: 0,
   }
   const children = await compileBlocks(ast.children ?? [], context, [])
   const root: RootNode = {
@@ -147,17 +165,13 @@ function combinePairedComponent(
   source: string,
 ): MarkdownNode | undefined {
   if (node.type !== 'html' || typeof node.value !== 'string') return undefined
-  const name = node.value.match(/^<(html-embed|web-embed)\b/)?.[1]
-  if (!name || new RegExp(`<\\/${name}\\s*>`).test(node.value)) {
-    return undefined
-  }
+  const name = shouldCombinePairedHtml(node.value)
+  if (!name) return undefined
   const startOffset = node.position?.start.offset
   if (startOffset === undefined) return undefined
-  const closingPattern = new RegExp(`<\\/${name}\\s*>`, 'g')
-  closingPattern.lastIndex = startOffset + node.value.length
-  const closingMatch = closingPattern.exec(source)
-  if (!closingMatch) return undefined
-  const endOffset = closingMatch.index + closingMatch[0].length
+  const close = findMatchingClose(source, name, startOffset + node.value.length)
+  if (!close) return undefined
+  const endOffset = close.index + close.length
   const logical = stripContainerContinuationPrefixes(
     source.slice(startOffset, endOffset),
     startOffset,
@@ -252,7 +266,10 @@ async function compileBlock(
   }
   if (node.type === 'paragraph') {
     if (node.children?.length === 1 && node.children[0]?.type === 'html') {
-      return compileHtmlComponent(node.children[0], context, structuralPath, siblingIndex)
+      const htmlName = openingTagName(stringValue(node.children[0].value))
+      if (!htmlName || !isInlineRegisteredTag(htmlName)) {
+        return compileHtmlComponent(node.children[0], context, structuralPath, siblingIndex)
+      }
     }
     const inline = compileInline(node.children ?? [], context)
     if (inline.nodes.length === 1 && inline.nodes[0]?.type === 'image') {
@@ -458,6 +475,7 @@ async function compileBlock(
           type: 'tableCell' as const,
           nodeId: cellId,
           blockId: cellId,
+          header: rowIndex === 0,
           canonicalText: inline.canonicalText,
           sourceRange: rangeOf(cell, context.input.source),
           sourceText: sliceRange(context.input.source, rangeOf(cell, context.input.source)),
@@ -520,6 +538,22 @@ async function compileBlock(
     }
   }
   if (node.type === 'html') {
+    const htmlName = openingTagName(stringValue(node.value))
+    if (htmlName && isInlineRegisteredTag(htmlName)) {
+      const inline = compileInline([node], context)
+      const canonicalText = inline.canonicalText
+      const blockId = await blockIdFor(context, structuralPath, 'paragraph', siblingIndex, canonicalText)
+      context.sourceMap[blockId] = inline.segments
+      return {
+        type: 'paragraph',
+        nodeId: blockId,
+        blockId,
+        canonicalText,
+        sourceRange: range,
+        sourceText,
+        children: inline.nodes,
+      }
+    }
     return compileHtmlComponent(node, context, structuralPath, siblingIndex)
   }
   context.diagnostics.push(
@@ -534,15 +568,16 @@ async function compileBlock(
 
 function compileInline(nodes: readonly MarkdownNode[], context: CompileContext): InlineResult {
   const result: InlineResult = { nodes: [], canonicalText: '', segments: [] }
-  for (const node of nodes) {
+  const append = (inline: InlineResult) => {
+    const offset = result.canonicalText.length
+    result.nodes.push(...inline.nodes)
+    result.canonicalText += inline.canonicalText
+    result.segments.push(...shiftSegments(inline.segments, offset))
+  }
+  for (let index = 0; index < nodes.length; index += 1) {
+    const node = nodes[index]!
     const range = rangeOf(node, context.input.source)
     const nodeId = `inline-${node.type}-${range.start.offset}`
-    const append = (inline: InlineResult) => {
-      const offset = result.canonicalText.length
-      result.nodes.push(...inline.nodes)
-      result.canonicalText += inline.canonicalText
-      result.segments.push(...shiftSegments(inline.segments, offset))
-    }
     if (node.type === 'text') {
       const originalValue = stringValue(node.value)
       const value = originalValue.normalize('NFC')
@@ -639,6 +674,12 @@ function compileInline(nodes: readonly MarkdownNode[], context: CompileContext):
       continue
     }
     if (node.type === 'html') {
+      const stitched = stitchInlineComponent(nodes, index, context)
+      if (stitched) {
+        append(stitched.result)
+        index = stitched.endIndex
+        continue
+      }
       const parsed = parseComponentSyntax(stringValue(node.value), range)
       const code = parsed.kind === 'unknown-tag'
         ? 'DOC-REGISTRY-001'
@@ -700,21 +741,39 @@ async function compileHtmlComponent(node: MarkdownNode, context: CompileContext,
     }))
     return undefined
   }
-  const allocated = context.allocator.allocateComponent(parsed.component.id, range)
+  const schema = getComponentSchema(parsed.component.name)
+  if (schema?.placement === 'slot' && context.parentComponent !== 'compare-block') {
+    context.diagnostics.push(createDocumentDiagnostic('DOC-PARSE-003', {
+      articleSlug: context.input.articleSlug,
+      sourceRange: range,
+      message: 'compare-side 只能写在 compare-block 里面。',
+    }))
+  }
+  const componentId = parsed.component.id || nextGeneratedId(context, parsed.component.name)
+  const allocated = context.allocator.allocateComponent(componentId, range)
   if (allocated.diagnostic) context.diagnostics.push(allocated.diagnostic)
   let fallbackNodes: MarkdownNode[] = []
   if (parsed.component.fallbackSource) {
-    const fallbackAst = parseDocument(parsed.component.fallbackSource)
-    shiftMarkdownPositions(
-      fallbackAst,
-      range.start.offset + parsed.component.fallbackOffset,
-      context.input.source,
-      node.sourceOffsetMap,
-      parsed.component.fallbackOffset,
-    )
-    fallbackNodes = (fallbackAst.children ?? []).filter(
-      (child) => child.type !== 'yaml' && child.type !== 'definition',
-    )
+    const innerStart = range.start.offset + parsed.component.fallbackOffset
+    if (schema?.content === 'slots' || schema?.content === 'flow') {
+      fallbackNodes = markdownNodesFromDesignInner(
+        parsed.component.fallbackSource,
+        innerStart,
+        context.input.source,
+      )
+    } else {
+      const fallbackAst = parseDocument(parsed.component.fallbackSource)
+      shiftMarkdownPositions(
+        fallbackAst,
+        innerStart,
+        context.input.source,
+        node.sourceOffsetMap,
+        parsed.component.fallbackOffset,
+      )
+      fallbackNodes = (fallbackAst.children ?? []).filter(
+        (child) => child.type !== 'yaml' && child.type !== 'definition',
+      )
+    }
   }
   const fallbackCanonicalText = canonicalBlockText(
     fallbackNodes,
@@ -723,13 +782,193 @@ async function compileHtmlComponent(node: MarkdownNode, context: CompileContext,
   const canonicalText = fallbackCanonicalText || String(parsed.component.attributes.title ?? parsed.component.name)
   const blockId = await blockIdFor(context, structuralPath, 'registeredComponent', siblingIndex, canonicalText)
   const savedHeadingStack = [...context.headingStack]
+  const previousParent = context.parentComponent
+  context.parentComponent = parsed.component.name
   const children = await compileBlocks(fallbackNodes, context, [
     ...structuralPath,
     blockId,
   ])
+  context.parentComponent = previousParent
   context.headingStack = savedHeadingStack
-  context.sourceMap[blockId] = [atomicSegment(node, allocated.nodeId, canonicalText, context)]
-  return { type: 'registeredComponent', nodeId: allocated.nodeId, componentId: parsed.component.id, blockId, name: parsed.component.name, attributes: parsed.component.attributes, attributeSourceRanges: Object.fromEntries(Object.entries(parsed.component.attributeOffsets).map(([name, offsets]) => [name, rangeForLogicalOffsets(node, offsets.start, offsets.end, context.input.source)])), selectable: 'none', canonicalText, sourceRange: range, sourceText: sliceRange(context.input.source, range), children }
+  if (parsed.component.name === 'compare-block') {
+    const sides = children.filter(
+      (child) => child.type === 'registeredComponent' && child.name === 'compare-side',
+    )
+    if (sides.length !== 2 || children.length !== 2) {
+      context.diagnostics.push(createDocumentDiagnostic('DOC-PARSE-003', {
+        articleSlug: context.input.articleSlug,
+        sourceRange: range,
+        message: 'compare-block 必须恰好包含两个 compare-side。',
+      }))
+    }
+  }
+  if (parsed.component.name === 'timeline-block' && !children.some((child) => child.type === 'list')) {
+    context.diagnostics.push(createDocumentDiagnostic('DOC-PARSE-003', {
+      articleSlug: context.input.articleSlug,
+      sourceRange: range,
+      message: 'timeline-block 的内容必须是一个列表。',
+    }))
+  }
+  const selectable =
+    schema?.content === 'flow' || schema?.content === 'slots' ? 'text-range' : 'none'
+  context.sourceMap[blockId] =
+    selectable === 'text-range'
+      ? collectChildSegments(children, context)
+      : [atomicSegment(node, allocated.nodeId, canonicalText, context)]
+  const compiled: BlockRegisteredComponentNode = {
+    type: 'registeredComponent',
+    placement: 'block',
+    nodeId: allocated.nodeId,
+    componentId,
+    blockId,
+    name: parsed.component.name,
+    attributes: parsed.component.attributes,
+    attributeSourceRanges: Object.fromEntries(
+      Object.entries(parsed.component.attributeOffsets).map(([name, offsets]) => [
+        name,
+        rangeForLogicalOffsets(node, offsets.start, offsets.end, context.input.source),
+      ]),
+    ),
+    selectable,
+    canonicalText,
+    sourceRange: range,
+    sourceText: sliceRange(context.input.source, range),
+    children,
+  }
+  return compiled
+}
+
+function nextGeneratedId(context: CompileContext, name: ComponentName): string {
+  context.generatedIds += 1
+  return `${name}-${context.generatedIds}`
+}
+
+function stitchInlineComponent(
+  nodes: readonly MarkdownNode[],
+  startIndex: number,
+  context: CompileContext,
+): { result: InlineResult; endIndex: number } | undefined {
+  const node = nodes[startIndex]!
+  const raw = stringValue(node.value)
+  const name = openingTagName(raw)
+  if (!name || !isInlineRegisteredTag(name)) return undefined
+  const range = rangeOf(node, context.input.source)
+  if (context.parentComponent === 'text-mark' && name === 'text-mark') {
+    context.diagnostics.push(createDocumentDiagnostic('DOC-PARSE-003', {
+      articleSlug: context.input.articleSlug,
+      sourceRange: range,
+      message: 'text-mark 不能再包一层 text-mark。',
+    }))
+    return undefined
+  }
+  const complete = isCompletePairedTag(raw, name)
+  const parsed = parseComponentSyntax(complete ? raw : `${raw.trim()}</${name}>`, range)
+  if (parsed.kind !== 'component') return undefined
+  let innerNodes: MarkdownNode[] = []
+  let endIndex = startIndex
+  let endRange = range
+  if (complete) {
+    if (parsed.component.fallbackSource) {
+      const ast = parseDocument(parsed.component.fallbackSource)
+      innerNodes = phrasingFromFragment(ast.children ?? [])
+    }
+  } else {
+    const inner: MarkdownNode[] = []
+    let found = false
+    for (let index = startIndex + 1; index < nodes.length; index += 1) {
+      const candidate = nodes[index]!
+      if (candidate.type === 'html' && isClosingTag(stringValue(candidate.value), name)) {
+        found = true
+        endIndex = index
+        endRange = rangeOf(candidate, context.input.source)
+        break
+      }
+      inner.push(candidate)
+    }
+    if (!found) {
+      context.diagnostics.push(createDocumentDiagnostic('DOC-PARSE-003', {
+        articleSlug: context.input.articleSlug,
+        sourceRange: range,
+        message: `${name} 没有闭合标签。`,
+      }))
+      return undefined
+    }
+    innerNodes = inner
+  }
+  const innerCompiled = compileInline(innerNodes, {
+    ...context,
+    parentComponent: parsed.component.name,
+  })
+  const componentId = parsed.component.id || nextGeneratedId(context, parsed.component.name)
+  const sourceRange: SourceRange = { start: range.start, end: endRange.end }
+  const allocated = context.allocator.allocateComponent(componentId, sourceRange)
+  if (allocated.diagnostic) context.diagnostics.push(allocated.diagnostic)
+  const compiled: InlineRegisteredComponentNode = {
+    type: 'registeredComponent',
+    placement: 'inline',
+    nodeId: allocated.nodeId,
+    componentId,
+    name: parsed.component.name,
+    attributes: parsed.component.attributes,
+    attributeSourceRanges: Object.fromEntries(
+      Object.entries(parsed.component.attributeOffsets).map(([attrName, offsets]) => [
+        attrName,
+        rangeForLogicalOffsets(node, offsets.start, offsets.end, context.input.source),
+      ]),
+    ),
+    selectable: 'text-range',
+    canonicalText: innerCompiled.canonicalText,
+    sourceRange,
+    sourceText: sliceRange(context.input.source, sourceRange),
+    children: innerCompiled.nodes,
+  }
+  return {
+    result: {
+      nodes: [compiled],
+      canonicalText: innerCompiled.canonicalText,
+      segments: innerCompiled.segments,
+    },
+    endIndex,
+  }
+}
+
+function markdownNodesFromDesignInner(
+  inner: string,
+  absoluteStart: number,
+  fullSource: string,
+): MarkdownNode[] {
+  const nodes: MarkdownNode[] = []
+  for (const slice of splitTopLevelPairedTags(inner, absoluteStart)) {
+    if (slice.kind === 'tag') {
+      nodes.push({
+        type: 'html',
+        value: slice.raw,
+        position: {
+          start: pointFromOffset(fullSource, slice.start),
+          end: pointFromOffset(fullSource, slice.end),
+        },
+      })
+      continue
+    }
+    if (!slice.text.trim()) continue
+    const ast = parseDocument(slice.text)
+    shiftMarkdownPositions(ast, slice.start, fullSource)
+    nodes.push(
+      ...(ast.children ?? []).filter(
+        (child) => child.type !== 'yaml' && child.type !== 'definition',
+      ),
+    )
+  }
+  return nodes
+}
+
+function phrasingFromFragment(nodes: readonly MarkdownNode[]): MarkdownNode[] {
+  if (nodes.length === 1 && nodes[0]?.type === 'paragraph') {
+    return nodes[0].children ?? []
+  }
+  return nodes.flatMap((child) =>
+    child.type === 'paragraph' ? child.children ?? [] : [child],
+  )
 }
 
 async function blockIdFor(context: CompileContext, structuralPath: readonly string[], blockType: StableBlockNodeType, siblingIndex: number, canonicalText: string) {

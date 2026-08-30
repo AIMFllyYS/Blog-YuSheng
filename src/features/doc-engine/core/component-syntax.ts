@@ -1,60 +1,151 @@
 import type { SourceRange } from './document-types'
 
+type ComponentPlacement = 'block' | 'inline' | 'slot'
+type ComponentContent = 'none' | 'fallback-text' | 'flow' | 'phrasing' | 'slots'
+
 const COMPONENT_SCHEMAS = {
   'video-embed': {
     required: ['id', 'src', 'title'],
     optional: ['poster'],
     numeric: [],
     paired: false,
+    placement: 'block',
+    content: 'none',
   },
   'audio-embed': {
     required: ['id', 'src', 'title'],
     optional: [],
     numeric: [],
     paired: false,
+    placement: 'block',
+    content: 'none',
   },
   'canvas-render': {
     required: ['id', 'renderer'],
     optional: ['data-src', 'width', 'height'],
     numeric: ['width', 'height'],
     paired: false,
+    placement: 'block',
+    content: 'none',
   },
   'svg-embed': {
     required: ['id', 'src', 'title'],
     optional: [],
     numeric: [],
     paired: false,
+    placement: 'block',
+    content: 'none',
   },
   'html-embed': {
     required: ['id', 'src', 'title'],
     optional: ['height'],
     numeric: ['height'],
     paired: true,
+    placement: 'block',
+    content: 'fallback-text',
   },
   'web-embed': {
     required: ['id', 'src', 'title'],
     optional: ['height'],
     numeric: ['height'],
     paired: true,
+    placement: 'block',
+    content: 'fallback-text',
   },
   'choice-question': {
     required: ['id', 'data-src'],
     optional: [],
     numeric: [],
     paired: false,
+    placement: 'block',
+    content: 'none',
   },
   'fill-blank-question': {
     required: ['id', 'data-src'],
     optional: [],
     numeric: [],
     paired: false,
+    placement: 'block',
+    content: 'none',
   },
-} as const
+  'text-mark': {
+    required: [],
+    optional: ['id', 'tone', 'swatch', 'color', 'color-night', 'effect'],
+    numeric: [],
+    paired: true,
+    placement: 'inline',
+    content: 'phrasing',
+  },
+  'aside-note': {
+    required: ['id', 'kind'],
+    optional: ['title', 'swatch', 'tone'],
+    numeric: [],
+    paired: true,
+    placement: 'block',
+    content: 'flow',
+  },
+  'compare-block': {
+    required: ['id'],
+    optional: ['title'],
+    numeric: [],
+    paired: true,
+    placement: 'block',
+    content: 'slots',
+  },
+  'compare-side': {
+    required: ['role'],
+    optional: ['id', 'title'],
+    numeric: [],
+    paired: true,
+    placement: 'slot',
+    content: 'flow',
+  },
+  'timeline-block': {
+    required: ['id'],
+    optional: ['title', 'tone', 'swatch'],
+    numeric: [],
+    paired: true,
+    placement: 'block',
+    content: 'flow',
+  },
+  'inset-card': {
+    required: ['id', 'title'],
+    optional: ['eyebrow', 'kicker', 'swatch', 'tone'],
+    numeric: [],
+    paired: true,
+    placement: 'block',
+    content: 'flow',
+  },
+} as const satisfies Record<
+  string,
+  {
+    required: readonly string[]
+    optional: readonly string[]
+    numeric: readonly string[]
+    paired: boolean
+    placement: ComponentPlacement
+    content: ComponentContent
+  }
+>
 
 export type ComponentName = keyof typeof COMPONENT_SCHEMAS
+export type ComponentSchema = (typeof COMPONENT_SCHEMAS)[ComponentName]
 export const REGISTERED_COMPONENT_NAMES = Object.freeze(
   Object.keys(COMPONENT_SCHEMAS) as ComponentName[],
 )
+
+export function isRegisteredComponentName(name: string): name is ComponentName {
+  return Object.hasOwn(COMPONENT_SCHEMAS, name)
+}
+
+export function getComponentSchema(name: string): ComponentSchema | undefined {
+  return isRegisteredComponentName(name) ? COMPONENT_SCHEMAS[name] : undefined
+}
+
+export function isPairedRegisteredName(name: string): name is ComponentName {
+  const schema = getComponentSchema(name)
+  return schema?.paired === true
+}
 
 export type ParsedComponent = {
   name: ComponentName
@@ -156,15 +247,18 @@ export function parseComponentSyntax(
       return { kind: 'invalid', reason: 'attribute', message: `${name} 缺少必填属性 ${key}。` }
     }
   }
+  const requiresId = (schema.required as readonly string[]).includes('id')
   const id = attributes.id
-  if (typeof id !== 'string' || !/^[a-z][a-z\d-]*$/.test(id)) {
-    return { kind: 'invalid', reason: 'attribute', message: '组件 id 必须是小写 kebab-case。' }
+  if (requiresId || id !== undefined) {
+    if (typeof id !== 'string' || !/^[a-z][a-z\d-]*$/.test(id)) {
+      return { kind: 'invalid', reason: 'attribute', message: '组件 id 必须是小写 kebab-case。' }
+    }
   }
   return {
     kind: 'component',
     component: {
       name,
-      id,
+      id: typeof id === 'string' ? id : '',
       attributes,
       attributeOffsets,
       fallbackText: fallback.trim().normalize('NFC'),

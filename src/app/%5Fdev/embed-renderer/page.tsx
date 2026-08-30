@@ -6,6 +6,7 @@ import { WebEmbedScreenRenderer } from '@/features/doc-engine/renderers/web/scre
 const point = Object.freeze({ line: 1, column: 1, offset: 0 })
 const node: RegisteredComponentNode = Object.freeze({
   type: 'registeredComponent',
+  placement: 'block',
   name: 'web-embed',
   componentId: 'timeout-web',
   attributes: Object.freeze({

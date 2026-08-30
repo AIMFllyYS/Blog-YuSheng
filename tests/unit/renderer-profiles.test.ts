@@ -40,7 +40,7 @@ import {
 } from '../../src/features/doc-engine'
 
 describe('renderer registry and screen profiles', () => {
-  it('uses one immutable static registry for builtins and all eight components', () => {
+  it('uses one immutable static registry for builtins and registered components', () => {
     const definitions = BUILTIN_RENDERER_REGISTRY.list()
     expect(definitions.map((definition) => definition.name)).toEqual([
       'markdown',
@@ -56,6 +56,12 @@ describe('renderer registry and screen profiles', () => {
       'web-embed',
       'choice-question',
       'fill-blank-question',
+      'text-mark',
+      'aside-note',
+      'compare-block',
+      'compare-side',
+      'timeline-block',
+      'inset-card',
     ])
     expect(listCanvasRendererRegistrations()).toEqual([
       expect.objectContaining({ key: 'function-plot', version: 1 }),

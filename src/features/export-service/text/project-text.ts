@@ -175,6 +175,8 @@ function projectInline(
       return projectSpecial(node, document, manifest)
     case 'footnoteReference':
       return `[^${node.identifier}]`
+    case 'registeredComponent':
+      return projectInlines(node.children, document, manifest)
   }
 }
 

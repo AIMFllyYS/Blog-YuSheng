@@ -101,7 +101,7 @@ content/posts/<slug>/
 7. 未注册标签、重复 ID、未知属性、类型错误和资源失效必须产生诊断；
 8. 解析器应容忍属性换行，不以视觉排版影响语义。
 
-首批标签名锁定为 `<video-embed>`、`<audio-embed>`、`<canvas-render>`、`<svg-embed>`、`<html-embed>`、`<web-embed>`、`<choice-question>`、`<fill-blank-question>`；标准图片继续使用 Markdown 图片语法。逐项属性 schema 在对应 renderer 的 `schema.ts` 中定义，但不得另起同义标签。
+首批媒体/问答标签名锁定为 `<video-embed>`、`<audio-embed>`、`<canvas-render>`、`<svg-embed>`、`<html-embed>`、`<web-embed>`、`<choice-question>`、`<fill-blank-question>`。正文设计语言另增 `<text-mark>`、`<aside-note>`、`<compare-block>` / `<compare-side>`、`<timeline-block>`、`<inset-card>`。标准图片继续使用 Markdown 图片语法。逐项属性 schema 在对应 renderer 的 `schema.ts` 中定义，但不得另起同义标签。
 
 v1 最小属性：
 
@@ -115,6 +115,12 @@ v1 最小属性：
 | `web-embed` | `id`, `src`, `title` | `height` | `src` 必须命中 URL/域名策略 |
 | `choice-question` | `id`, `data-src` | — | JSON 定义题干、选项、答案、解析 |
 | `fill-blank-question` | `id`, `data-src` | — | JSON 定义题干、可接受答案、解析 |
+| `text-mark` | `tone` 或 `swatch` 或 `color` 三选一 | `id`, `effect`, `color-night` | 行内成对标签；禁止 `style`/`class`；`swatch` 读 `./data/palette.json` |
+| `aside-note` | `id`, `kind` | `title`, `swatch`, `tone` | `kind`: `callout`/`warn`/`addon`/`quote`；孩子是 Markdown |
+| `compare-block` | `id` | `title` | 必须恰好两个 `compare-side` |
+| `compare-side` | `role` | `id`, `title` | `role`: `good`/`bad`/`a`/`b`；只出现在 compare-block 内 |
+| `timeline-block` | `id` | `title`, `tone`, `swatch` | 孩子必须是一个列表 |
+| `inset-card` | `id`, `title` | `eyebrow`, `kicker`, `swatch`, `tone` | 方向卡片 / 编号结论 |
 
 除表中字段外一律拒绝；后续新增可选字段必须保持旧文章可解析。作者偏好的标准写法是单行标签，属性换行只是兼容能力。
 
@@ -414,7 +420,7 @@ type TextAnchor = {
 - 普通文本的 `canonicalText` 使用 LF、Unicode NFC，并由编译期 source map 处理 Markdown 标记、实体和软换行；代码保留源码字符，仅把 CRLF 规范为 LF。
 - `exact` 必须等于区间文本；`prefix`/`suffix` 各最多保存相邻 32 个 UTF-16 code units。数据库限制各字段长度并拒绝越界或不一致数据。
 - KaTeX 选择任意视觉部分都归一为完整公式节点，保存原始 TeX。
-- v1 中自定义 renderer 一律 `selectable = none`；`whole-node` 只是未来协议预留，不在 P1 开放。
+- `trustLevel: 'sandboxed'` 的自定义 renderer（html/web/svg/canvas）`selectable = none`。`text-mark` 与其它 native 设计语言标签的**孩子**可 `text-range`（与 `strong` 一样留在段落/内部块里）；仍不跨 `aside-note` / `compare-block` 边界划词。`whole-node` 只是未来协议预留。
 - `documentFingerprint` 是规范化文章编译输入的版本化 SHA-256；构建同时产出只读 anchor manifest。P2 写入通过受控 RPC/Edge Function 对 manifest 校验 article、fingerprint、block、offset 和 exact，不接受客户端自证。
 - 新旧页面版本竞争时只接受当前及紧邻上一部署 manifest；更旧版本要求客户端刷新后重建锚点。
 - 重连顺序为块 ID/位置 → exact+上下文 → 标题路径；结果写入/派生为 `attached`、`reattached` 或 `orphaned`。失败仍保留在线程列表，不能静默删除。

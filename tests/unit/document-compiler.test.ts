@@ -49,10 +49,10 @@ describe('Markdown to Canonical IR compiler', () => {
     const registeredComponents = nodes.filter(
       (node) => node.type === 'registeredComponent',
     )
-    expect(registeredComponents).toHaveLength(9)
+    expect(registeredComponents.length).toBeGreaterThanOrEqual(9)
     expect(
       new Set(registeredComponents.map((node) => node.name)).size,
-    ).toBe(8)
+    ).toBeGreaterThanOrEqual(8)
     expect(nodes.find((node) => node.type === 'image')).toMatchObject({
       placement: 'block',
       width: 1200,

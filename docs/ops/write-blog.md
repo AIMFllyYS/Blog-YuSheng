@@ -181,6 +181,8 @@ draft: false
 
 ### 2.3 自定义标签（媒体、问答、嵌入）
 
+正文能上色、能区分结论/警示/对比的写法，完整速查见 **[article-design-language.md](./article-design-language.md)**（`tone` / `swatch` / `color`、`<text-mark>`、`<aside-note>` 等）。下面是总表。
+
 标签名小写 kebab-case；每篇里 `id` 必须唯一；作者偏好写成**单行**。没在表里的属性一律拒绝。
 
 | 标签 | 必填属性 | 可选 | 资源必须放在 |
@@ -193,6 +195,25 @@ draft: false
 | `<web-embed>` | `id`, `src`, `title` | `height` | `src` 是外链，且必须命中站点允许的 URL 策略；未允许会显示降级卡，不会偷偷 iframe |
 | `<choice-question>` | `id`, `data-src` | — | `data-src` → `data/*.json` |
 | `<fill-blank-question>` | `id`, `data-src` | — | 同上 |
+| `<text-mark>` | `tone` 或 `swatch` 或 `color` | `id`, `effect`, `color-night` | 包在句子里；`tone` 跟主题；`swatch` 要有 `data/palette.json`；`color` 只接受 `#RGB`/`#RRGGBB` |
+| `<aside-note>` | `id`, `kind` | `title`, `swatch`, `tone` | `kind`：`callout` / `warn` / `addon` / `quote` |
+| `<compare-block>` + `<compare-side>` | 外层 `id`；侧 `role` | `title` | 恰好两列；`role`：`good`/`bad`/`a`/`b` |
+| `<timeline-block>` | `id` | `title`, `tone`, `swatch` | 里面写一个 Markdown 列表 |
+| `<inset-card>` | `id`, `title` | `eyebrow`, `kicker`, `swatch`, `tone` | 带色条的卡片 |
+
+结论、警示、对比、时间线用上面这些标签，**不要**做成不会动的 `html-embed` 海报。`html-embed` 只留给读者能搜、能拨、能点的交互小页。
+
+`text-mark` / `aside-note` 等写法：
+
+```markdown
+AI 是<text-mark tone="thesis" effect="fluorescent">杠杆</text-mark>。
+
+<aside-note id="breadth-thesis" kind="callout" title="先说结论">
+问题不是钻得不够深，是广度没有基本认知。
+</aside-note>
+```
+
+`effect` 只能是 `fluorescent` / `wash` / `pill` / `kbd` / `dim`。禁止 `style=`、`class=`、任意 CSS。文章自己的六维色写在 `data/palette.json`，用 `swatch="act"` 引用。
 
 写法示例：
 
@@ -442,6 +463,7 @@ draft: false
 - 黄金样例：[content/posts/p0-kitchen-sink/](../../content/posts/p0-kitchen-sink/)（验收文，可对照格式，不必当自己的第一篇正式文章来改；它故意留在散页）
 - 板块注册表：[content/sections.yml](../../content/sections.yml)（七个大方向的权威源）
 - 标签备忘：[post-tags.md](./post-tags.md)（只记录常用词，不参与构建）
+- 正文组件与颜色：[article-design-language.md](./article-design-language.md)
 - 内容协议：[blog-content-engine.md](../specs/blog-content-engine.md) 第四节
 - 目录与 `embeds/` URL：[project-structure.md](../conventions/project-structure.md)
 - 网址与分享：[routing.md](../conventions/routing.md)

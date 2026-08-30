@@ -1,4 +1,5 @@
 export * from './core'
+export * from './mark-style'
 export * from './profiles'
 export * from './registry'
 export * from './renderers'

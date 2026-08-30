@@ -133,6 +133,7 @@ export type TableRowNode = DocumentNodeBase<'tableRow'> & {
 }
 
 export type TableCellNode = SemanticBlockBase<'tableCell'> & {
+  readonly header?: boolean
   readonly children: readonly InlineNode[]
 }
 
@@ -178,14 +179,31 @@ export type BlockImageNode = SemanticBlockBase<'image'> &
     readonly placement: 'block'
   }
 
-export type RegisteredComponentNode = SemanticBlockBase<'registeredComponent'> & {
+type RegisteredComponentFields = {
   readonly name: string
   readonly componentId: string
   readonly attributes: Readonly<Record<string, unknown>>
   readonly attributeSourceRanges?: Readonly<Record<string, SourceRange>>
-  readonly children: readonly BlockNode[]
   readonly selectable: 'text-range' | 'whole-node' | 'none'
 }
+
+export type InlineRegisteredComponentNode = DocumentNodeBase<'registeredComponent'> &
+  RegisteredComponentFields & {
+    readonly placement: 'inline'
+    readonly blockId?: string
+    readonly children: readonly InlineNode[]
+    readonly canonicalText: string
+  }
+
+export type BlockRegisteredComponentNode = SemanticBlockBase<'registeredComponent'> &
+  RegisteredComponentFields & {
+    readonly placement: 'block'
+    readonly children: readonly BlockNode[]
+  }
+
+export type RegisteredComponentNode =
+  | InlineRegisteredComponentNode
+  | BlockRegisteredComponentNode
 
 export type FootnoteDefinitionNode = SemanticBlockBase<'footnoteDefinition'> & {
   readonly identifier: string
@@ -204,6 +222,7 @@ export type InlineNode =
   | InlineMathNode
   | InlineImageNode
   | FootnoteReferenceNode
+  | InlineRegisteredComponentNode
 
 export type BlockNode =
   | HeadingNode
@@ -215,7 +234,7 @@ export type BlockNode =
   | DisplayMathNode
   | MermaidNode
   | BlockImageNode
-  | RegisteredComponentNode
+  | BlockRegisteredComponentNode
   | FootnoteDefinitionNode
   | ThematicBreakNode
 
