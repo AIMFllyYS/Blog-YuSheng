@@ -74,7 +74,7 @@ export const IMPORTED_SOURCE_EXPECTATIONS = [
     slug: 'agent-principles-and-trends',
     title: 'Agent的简单理解',
     section: 'fullstack-learning',
-    publishedAt: '2026-08-30T00:59:45+08:00',
+    publishedAt: '2026-08-08T00:00:00+08:00',
     bodyAnchors: ['智能体方面的需求很大', '阿尔法go'],
   },
   {

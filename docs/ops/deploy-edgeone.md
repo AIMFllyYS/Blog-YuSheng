@@ -167,6 +167,30 @@ SSG 模式下 Next.js 输出到 `out/`，不是 `.next/`。这个值由 `next.co
 
 **根因：** 通常是前一步 `buildCommand` 失败导致 `out/` 没有产物，EdgeOne 回退到纯静态项目路径但又找不到 bundle 文件。这是**连锁反应，不是独立根因**——修好 `buildCommand` 后自动消失。
 
+### `write-anchor-manifests.test.ts` 在 5000ms 超时
+
+**现象：** Next.js 已经编译成功，TypeScript 检查通过，所有静态页面也已生成，但 `pnpm run build` 在自动执行 `postbuild` 时失败：
+
+```text
+× writes a read-only anchor manifest beside every generated article 5005ms
+→ Test timed out in 5000ms.
+```
+
+**根因：** 这是全站生成型集成测试，不是常数时间的单元测试。它会重新扫描内容资产、编译每篇已发布文章，并为每篇文章写入 `anchor-manifest.json` 和 `export-source.json`。工作量会随文章数量和正文长度增长，EdgeOne 共享构建机可能比本地慢；Vitest 默认的 5 秒单测试上限因此会造成假失败。
+
+**判断方法：** 如果日志只报告精确贴近 5000ms 的 timeout，没有内容 diagnostic、文件缺失、路径越界或写入错误，则应先按运行时预算问题处理。后续的 `No server-handler detected` 和 `bundle file not found` 仍然是 `postbuild` 返回非零后的连锁提示。
+
+**修复约束：**
+
+- 只给这个全站集成测试设置显式、有上限的超时，当前使用 30 秒。
+- 不要全局放宽 Vitest 的所有测试，避免掩盖其他死循环或性能回归。
+- 不要通过跳过 `postbuild`、删除断言或 `--no-verify` 绕过构建门禁。
+- 如果未来真实执行时间持续接近 30 秒，应优化重复的资产扫描与文章编译，而不是继续无上限提高 timeout。
+
+#### 故障记录（2026-08-31）
+
+四篇长篇超级富文本文章入库后，EdgeOne 成功完成依赖安装、Next.js 编译、TypeScript 检查与 54 个静态页面生成，但全站锚点 sidecar 生成在 5005ms 被 Vitest 默认超时终止。同一测试本地核心执行约 2.4 秒，而云端同组内容资产测试比本地慢约 84%，证实这是构建机性能差异与目录增长共同触发的时间预算问题，不是文章、HTML embed、EdgeOne 配置或静态导出失败。
+
 ### 构建超时（20 分钟）
 
 **排查方向：**
