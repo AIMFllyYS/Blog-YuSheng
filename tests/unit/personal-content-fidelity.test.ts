@@ -10,6 +10,10 @@ import type { DocumentNode } from '../../src/features/doc-engine/core/document-t
 import { createAssetManifest } from '../../src/server/content/asset-manifest'
 import { ContentBuildError } from '../../src/server/content/content-error'
 import { assembleExport } from '../../src/features/export-service'
+import structureRegistry from '../fixtures/personal-content-structure.json'
+
+type StructurePlan = { headings: string[]; restoreOrdinalLists: string[] }
+const structures: Readonly<Record<string, StructurePlan>> = structureRegistry
 
 const assets = createAssetManifest().then((entries) => Promise.all(
   entries.filter((entry) => baselines.some((baseline) => baseline.slug === entry.articleSlug)).map(async (entry) => {
@@ -25,11 +29,15 @@ const assets = createAssetManifest().then((entries) => Promise.all(
   throw error
 })
 
-function authorText(node: DocumentNode, svgText: ReadonlyMap<string, string>): string {
+function authorText(node: DocumentNode, svgText: ReadonlyMap<string, string>, structure?: StructurePlan): string {
+  if (node.type === 'heading' && structure?.headings.includes(node.canonicalText)) return ''
   if (node.type === 'image') return svgText.get(node.src) ?? ''
   if (node.type === 'registeredComponent' && node.name === 'svg-embed') return svgText.get(node.componentId) ?? ''
   if (node.type === 'registeredComponent' && ['html-embed', 'web-embed', 'canvas-render', 'svg-embed'].includes(node.name)) return ''
-  if ('children' in node) return node.children.map((child) => authorText(child, svgText)).join('')
+  if (node.type === 'list' && node.ordered && structure?.restoreOrdinalLists.some((prefix) =>
+    node.children[0]?.canonicalText.replace(/\s/gu, '').startsWith(prefix),
+  )) return node.children.map((child, index) => `${(node.start ?? 1) + index}.` + authorText(child, svgText, structure)).join('')
+  if ('children' in node) return node.children.map((child) => authorText(child, svgText, structure)).join('')
   if (node.type === 'text' || node.type === 'inlineCode' || node.type === 'code' || node.type === 'math') return node.value
   return ''
 }
@@ -56,7 +64,11 @@ describe('personal materials: frozen words beneath the presentation layer', () =
         expect(createHash('sha256').update(await readFile(path.join(process.cwd(), item.renderedPath))).digest('hex')).toBe(item.renderedSha256)
       }
     }
-    const text = body.map((node) => authorText(node, svgText)).join('').normalize('NFC').replace(/\s/gu, '')
+    const structure = structures[entry.slug]
+    for (const heading of structure?.headings ?? []) {
+      expect(body.filter((node) => node.type === 'heading' && node.canonicalText === heading)).toHaveLength(1)
+    }
+    const text = body.map((node) => authorText(node, svgText, structure)).join('').normalize('NFC').replace(/\s/gu, '')
     if (process.env.FIDELITY_DIAGNOSTICS === '1') {
       const directory = path.join(process.cwd(), '.tmp/content-fidelity/compiled-text')
       await mkdir(directory, { recursive: true })

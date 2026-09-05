@@ -98,7 +98,17 @@ GPT-5.6在Codex里最强的一点，其实是长任务能力。除了ClaudeCode�
 
 以游戏开发为例，主要要干的事情无非这五步：
 
-想清楚——游戏内容、机制这些先用自然语言想好；转架构——把自然语言的需求，转化成代码层面的整体架构；写代码——把架构再转成真正能跑的代码；审代码——代码审查加测试；端到端测试——页面有没有问题，真人上去试玩、找bug、改bug，然后继续往里加内容、加关卡、加机制。
+
+
+- 想清楚——游戏内容、机制这些先用自然语言想好；
+
+- 转架构——把自然语言的需求，转化成代码层面的整体架构；
+
+- 写代码——把架构再转成真正能跑的代码；
+
+- 审代码——代码审查加测试；
+
+- 端到端测试——页面有没有问题，真人上去试玩、找bug、改bug，然后继续往里加内容、加关卡、加机制。
 
 这五步说起来简单，但真正决定项目能不能撑到后期的，其实是第二步——架构。下一节细说。
 
@@ -118,7 +128,11 @@ GPT-5.6在Codex里最强的一点，其实是长任务能力。除了ClaudeCode�
 
 <text-mark tone="muted" effect="dim">概念卡 · H A R N E S S E N G I N E E R I N G</text-mark>
 
-一个公式：Agent = Model + Harness这是MartinFowler那篇文章里给出的定义，业内现在基本认这个说法：模型是原始能力，harness是模型之外的所有东西——告诉agent在你的代码库里该怎么表现的规则文件、拦住烂输出的校验循环、防止已知失败模式重演的质量关卡。说白了，模型决定这个agent有多聪明，harness决定它靠不靠谱。这个词最早来自软件测试里的"测试挟具"（testharness），现在被借用来描述整套围绕AIagent的运行时基础设施：怎么管上下文、怎么调工具、怎么记项目记忆、怎么追责失败、怎么验证完成。
+一个公式：
+
+`Agent = Model + Harness`
+
+这是MartinFowler那篇文章里给出的定义，业内现在基本认这个说法：模型是原始能力，harness是模型之外的所有东西——告诉agent在你的代码库里该怎么表现的规则文件、拦住烂输出的校验循环、防止已知失败模式重演的质量关卡。说白了，模型决定这个agent有多聪明，harness决定它靠不靠谱。这个词最早来自软件测试里的"测试挟具"（testharness），现在被借用来描述整套围绕AIagent的运行时基础设施：怎么管上下文、怎么调工具、怎么记项目记忆、怎么追责失败、怎么验证完成。
 
 LangChain有个很直观的案例：同一个模型不动，只是把harness换掉，在Terminal-Bench 2\.0上的得分就从52.8%冲到66.5%，排名从前30冲进前5。模型没变，变的是模型外面那层系统——这也是为什么我一直强调"架构比模型更重要"不是一句空话。
 
@@ -148,13 +162,21 @@ LangChain有个很直观的案例：同一个模型不动，只是把harness换�
 
 <text-mark tone="muted" effect="dim">核实 · 四个词的真实出处</text-mark>
 
-不是我瞎编排的顺序，时间线是这样的VibeCoding——2025年2月2日，AndrejKarpathy在X上一条帖子里造的词，形容"完全放弃阅读diff、报错直接复制粘贴进去"的写代码状态。这词后来被Merriam-Webster收进俚语词条。
+不是我瞎编排的顺序，时间线是这样的
 
-HarnessEngineering——2026年上半年由MartinFowler、Thoughtworks等一批工程博客系统化，核心公式是"Agent=Model+Harness"，讨论的是模型之外那层运行时基础设施该怎么设计。
+- VibeCoding——2025年2月2日，AndrejKarpathy在X上一条帖子里造的词，形容"完全放弃阅读diff、报错直接复制粘贴进去"的写代码状态。这词后来被Merriam-Webster收进俚语词条。
 
-LoopEngineering——由ClaudeCode的作者BorisCherny、OpenClaw的作者Peter Steinberger在社交媒体上带火，AndrewNg还专门写了一期Batch通讯讨论它。核心是把"响应一次"的模型调用，升级成"动作→观察结果→决定下一步→重复直到达成目标"的循环，并且用子智能体把循环控制器和具体执行者分开，防止主循环的上下文被写满。
 
-AgenticEngineering——Karpathy本人在2026年年初对vibecoding说法的"正名"和升级，想把这套工作流和"不读代码、图一乐"的刻板印象剥离开，强调速度和工程严谨性可以同时要。
+
+- HarnessEngineering——2026年上半年由MartinFowler、Thoughtworks等一批工程博客系统化，核心公式是"Agent=Model+Harness"，讨论的是模型之外那层运行时基础设施该怎么设计。
+
+
+
+- LoopEngineering——由ClaudeCode的作者BorisCherny、OpenClaw的作者Peter Steinberger在社交媒体上带火，AndrewNg还专门写了一期Batch通讯讨论它。核心是把"响应一次"的模型调用，升级成"动作→观察结果→决定下一步→重复直到达成目标"的循环，并且用子智能体把循环控制器和具体执行者分开，防止主循环的上下文被写满。
+
+
+
+- AgenticEngineering——Karpathy本人在2026年年初对vibecoding说法的"正名"和升级，想把这套工作流和"不读代码、图一乐"的刻板印象剥离开，强调速度和工程严谨性可以同时要。
 
 <text-mark tone="muted" effect="dim">来源：arxiv.org/html/2506.23253（vibe coding 语义史）</text-mark>
 
