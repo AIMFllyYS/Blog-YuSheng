@@ -17,7 +17,7 @@ describe('Markdown to Canonical IR compiler', () => {
   it('compiles the Chinese kitchen-sink article through one canonical pipeline', async () => {
     const post = await readPost('p0-kitchen-sink')
     const manifest = await transformContentImages(
-      await createAssetManifest(),
+      (await createAssetManifest()).filter((entry) => entry.articleSlug === 'p0-kitchen-sink'),
       path.join(process.cwd(), '.tmp', 'compiler-image-cache'),
     )
     const document = await compileArticleDocument({

@@ -23,7 +23,7 @@ let index: SelectionDocumentIndex
 beforeAll(async () => {
   const post = await readPost('p0-kitchen-sink')
   const manifest = await transformContentImages(
-    await createAssetManifest(),
+    (await createAssetManifest()).filter((entry) => entry.articleSlug === 'p0-kitchen-sink'),
     path.join(process.cwd(), '.tmp', 'compiler-image-cache'),
   )
   const document = await compileArticleDocument({

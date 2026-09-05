@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>先想清楚，再把事情做出来</title><style>
+:root{--paper:#f6f1e7;--ink:#302c26;--muted:#70665a;--line:#d8cebd;--accent:#9a6034;--wash:#ebe0cd;--ease-damp:cubic-bezier(.22,.82,.28,1);color-scheme:light dark}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.8 "Noto Serif CJK","Source Han Serif SC","Songti SC",SimSun,serif}main{padding:clamp(20px,5vw,42px);max-width:1080px;margin:auto}h1,h2,p{margin:0}h1{font-weight:500;font-size:clamp(24px,5vw,40px);line-height:1.35;letter-spacing:.04em;margin:8px 0 14px}h2{font-weight:500;font-size:22px}.eyebrow{font:11px/1.5 Consolas,monospace;letter-spacing:.18em;text-transform:uppercase;color:var(--accent)}.intro,.caption{color:var(--muted);font-size:13px}.caption{margin-top:18px;border-top:1px solid var(--line);padding-top:12px}button,input,select{font:inherit}button{cursor:pointer;border:1px solid var(--line);background:transparent;color:var(--ink);padding:9px 16px;min-height:44px;transition:background .3s,color .3s}button:hover,button[aria-pressed=true]{background:var(--ink);color:var(--paper)}button:disabled{opacity:.45;cursor:default}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--accent);outline-offset:4px}input[type=range]{width:100%;accent-color:var(--accent)}.controls{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}.readout{border-left:2px solid var(--accent);padding:8px 0 8px 20px;margin-top:20px;min-height:80px}.readout p{white-space:pre-wrap}.readout small{color:var(--muted)}svg,canvas{max-width:100%;display:block}blockquote{margin:0;white-space:pre-wrap}details{margin-top:18px}summary{cursor:pointer;color:var(--accent);min-height:44px}pre{white-space:pre-wrap;overflow-wrap:anywhere;font:13px/1.8 Consolas,monospace}.theme{float:right;font-size:12px;padding:3px 10px;min-height:34px}
+:root[data-theme=night]{--paper:#171b1c;--ink:#e9e4d8;--muted:#b6b1a6;--line:#444846;--accent:#deb47d;--wash:#293333;color-scheme:dark}
+@media(prefers-color-scheme:dark){:root:not([data-theme=paper]){--paper:#171b1c;--ink:#e9e4d8;--muted:#b6b1a6;--line:#444846;--accent:#deb47d;--wash:#293333}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+.balance{display:grid;grid-template-columns:1fr 1fr;gap:35px;margin-top:30px;align-items:center}.balance button{border:1px solid var(--line);border-radius:50%;aspect-ratio:1;max-width:210px;width:100%;justify-self:center;font-size:25px;background:var(--wash)}.balance button[aria-pressed=true]{background:var(--ink);color:var(--paper)}.balance small{display:block;font:11px Consolas,monospace;letter-spacing:.16em;margin-top:12px}.balance-copy{margin-top:28px;padding:20px 0;border-top:2px solid var(--accent);font-size:16px;min-height:100px}.balance-copy span{display:block;font-size:12px;color:var(--muted);margin-bottom:12px}</style></head>
+<body><main><button class="theme" data-theme-toggle aria-label="切换小页明暗主题">明 / 暗</button><div class="eyebrow">DECISION / EXECUTION · FIELD NOTES</div><h1>先想清楚，再把事情做出来</h1><p class="intro">沿着原稿中的分工线，分别查看决策和执行。这里讨论的是工作性质，不给模型排名，也不更新历史价格。</p>
+<div class="balance"><button data-role="0" aria-pressed="true">想清楚<small>DECIDE</small></button><button data-role="1" aria-pressed="false">做出来<small>EXECUTE</small></button></div><div class="balance-copy" aria-live="polite"><span>原文摘录</span><blockquote id="balance-copy">强模型负责想清楚"要干什么"</blockquote></div>
+<p class="caption">阅读辅助 · 原稿讨论的是分工与边界；两个圆的大小相同，不表示算力、价格或能力相同。</p></main>
+<!-- blog-yusheng:html-embed-handshake v1 -->
+<script>
+(() => {
+  const nonce = new URLSearchParams(location.hash.slice(1)).get('nonce')
+  if (!nonce || window.parent === window) return
+  window.parent.postMessage({ nonce, message: { type: 'ready' } }, '*')
+  const reportHeight = () => window.parent.postMessage({ type: 'resize', height: document.documentElement.scrollHeight }, '*')
+  requestAnimationFrame(reportHeight)
+  new ResizeObserver(reportHeight).observe(document.documentElement)
+})()
+</script><script>
+document.querySelector('[data-theme-toggle]').addEventListener('click',()=>{const dark=getComputedStyle(document.documentElement).getPropertyValue('--paper').trim()==='#171b1c';document.documentElement.dataset.theme=dark?'paper':'night';window.dispatchEvent(new Event('themechange'))})
+
+const copies=['强模型负责想清楚"要干什么"','弱一点、便宜一点的模型负责把想清楚的事情"做出来"'];document.querySelectorAll('[data-role]').forEach(b=>b.onclick=()=>{document.querySelector('#balance-copy').textContent=copies[Number(b.dataset.role)];document.querySelectorAll('[data-role]').forEach(n=>n.setAttribute('aria-pressed',String(n===b)))})</script></body></html>

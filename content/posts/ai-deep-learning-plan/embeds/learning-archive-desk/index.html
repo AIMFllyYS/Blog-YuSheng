@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>让零散的积累，有处可寻</title><style>
+:root{--paper:#f6f1e7;--ink:#302c26;--muted:#70665a;--line:#d8cebd;--accent:#9a6034;--wash:#ebe0cd;--ease-damp:cubic-bezier(.22,.82,.28,1);color-scheme:light dark}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.8 "Noto Serif CJK","Source Han Serif SC","Songti SC",SimSun,serif}main{padding:clamp(20px,5vw,42px);max-width:1080px;margin:auto}h1,h2,p{margin:0}h1{font-weight:500;font-size:clamp(24px,5vw,40px);line-height:1.35;letter-spacing:.04em;margin:8px 0 14px}h2{font-weight:500;font-size:22px}.eyebrow{font:11px/1.5 Consolas,monospace;letter-spacing:.18em;text-transform:uppercase;color:var(--accent)}.intro,.caption{color:var(--muted);font-size:13px}.caption{margin-top:18px;border-top:1px solid var(--line);padding-top:12px}button,input,select{font:inherit}button{cursor:pointer;border:1px solid var(--line);background:transparent;color:var(--ink);padding:9px 16px;min-height:44px;transition:background .3s,color .3s}button:hover,button[aria-pressed=true]{background:var(--ink);color:var(--paper)}button:disabled{opacity:.45;cursor:default}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--accent);outline-offset:4px}input[type=range]{width:100%;accent-color:var(--accent)}.controls{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}.readout{border-left:2px solid var(--accent);padding:8px 0 8px 20px;margin-top:20px;min-height:80px}.readout p{white-space:pre-wrap}.readout small{color:var(--muted)}svg,canvas{max-width:100%;display:block}blockquote{margin:0;white-space:pre-wrap}details{margin-top:18px}summary{cursor:pointer;color:var(--accent);min-height:44px}pre{white-space:pre-wrap;overflow-wrap:anywhere;font:13px/1.8 Consolas,monospace}.theme{float:right;font-size:12px;padding:3px 10px;min-height:34px}
+:root[data-theme=night]{--paper:#171b1c;--ink:#e9e4d8;--muted:#b6b1a6;--line:#444846;--accent:#deb47d;--wash:#293333;color-scheme:dark}
+@media(prefers-color-scheme:dark){:root:not([data-theme=paper]){--paper:#171b1c;--ink:#e9e4d8;--muted:#b6b1a6;--line:#444846;--accent:#deb47d;--wash:#293333}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+.archive{display:grid;grid-template-columns:110px 1fr;gap:24px;margin-top:26px}.tabs{display:flex;flex-direction:column;gap:4px}.tabs button{text-align:left;border-width:0 0 1px}.archive-sheet{background:var(--wash);padding:24px;min-height:235px}.archive-sheet h2{margin-bottom:16px;font-size:24px}.archive-sheet blockquote{font-size:15px}@media(max-width:470px){.archive{grid-template-columns:1fr}.tabs{flex-direction:row;flex-wrap:wrap}.archive-sheet{padding:18px}}</style></head>
+<body><main><button class="theme" data-theme-toggle aria-label="切换小页明暗主题">明 / 暗</button><div class="eyebrow">LEARNING ARCHIVE / NOTEBOOK</div><h1>让零散的积累，有处可寻</h1><p class="intro">按原文提到的积累对象翻看备忘。这里只整理阅读入口，不替作者确定未来的职业路线。</p>
+<div class="archive"><nav class="tabs" aria-label="备忘对象"><button data-archive="0" aria-pressed="true">模型</button><button data-archive="1" aria-pressed="false">实践</button><button data-archive="2" aria-pressed="false">点子</button><button data-archive="3" aria-pressed="false">作品</button></nav><section class="archive-sheet" aria-live="polite"><h2 id="archive-title">分类清楚</h2><blockquote id="archive-copy"></blockquote></section></div>
+<p class="caption">阅读辅助 · 原文片段不改字；备份与数据安全仍以正文当时的思考呈现，不额外加入操作建议。</p></main>
+<!-- blog-yusheng:html-embed-handshake v1 -->
+<script>
+(() => {
+  const nonce = new URLSearchParams(location.hash.slice(1)).get('nonce')
+  if (!nonce || window.parent === window) return
+  window.parent.postMessage({ nonce, message: { type: 'ready' } }, '*')
+  const reportHeight = () => window.parent.postMessage({ type: 'resize', height: document.documentElement.scrollHeight }, '*')
+  requestAnimationFrame(reportHeight)
+  new ResizeObserver(reportHeight).observe(document.documentElement)
+})()
+</script><script>
+document.querySelector('[data-theme-toggle]').addEventListener('click',()=>{const dark=getComputedStyle(document.documentElement).getPropertyValue('--paper').trim()==='#171b1c';document.documentElement.dataset.theme=dark?'paper':'night';window.dispatchEvent(new Event('themechange'))})
+
+const archive=[['分类清楚','分类清楚，理解差异，才能好好使用'],['实践与理论','所以说目前我的ai方向就是先走实践，需要的时候去了解相关的理论，甚至学习的底层的逻辑关系'],['点子的备份','除了这些数据文件等等的备份，还需要注意一些点子的备份，要经常写备忘录，要经常反复的去看，如何构建一个相关的东西，把它储存起来很重要'],['作品的积累','包括以后的那些视频，一定要留下自己创作的证据，这个也很重要']];function read(i){document.querySelector('#archive-title').textContent=archive[i][0];document.querySelector('#archive-copy').textContent=archive[i][1];document.querySelectorAll('[data-archive]').forEach(b=>b.setAttribute('aria-pressed',String(Number(b.dataset.archive)===i)))}document.querySelectorAll('[data-archive]').forEach(b=>b.onclick=()=>read(Number(b.dataset.archive)));read(0);</script></body></html>

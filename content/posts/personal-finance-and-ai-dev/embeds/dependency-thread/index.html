@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>先有画布，才有画布里的功能</title><style>
+:root{--paper:#f6f1e7;--ink:#302c26;--muted:#70665a;--line:#d8cebd;--accent:#9a6034;--wash:#ebe0cd;--ease-damp:cubic-bezier(.22,.82,.28,1);color-scheme:light dark}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.8 "Noto Serif CJK","Source Han Serif SC","Songti SC",SimSun,serif}main{padding:clamp(20px,5vw,42px);max-width:1080px;margin:auto}h1,h2,p{margin:0}h1{font-weight:500;font-size:clamp(24px,5vw,40px);line-height:1.35;letter-spacing:.04em;margin:8px 0 14px}h2{font-weight:500;font-size:22px}.eyebrow{font:11px/1.5 Consolas,monospace;letter-spacing:.18em;text-transform:uppercase;color:var(--accent)}.intro,.caption{color:var(--muted);font-size:13px}.caption{margin-top:18px;border-top:1px solid var(--line);padding-top:12px}button,input,select{font:inherit}button{cursor:pointer;border:1px solid var(--line);background:transparent;color:var(--ink);padding:9px 16px;min-height:44px;transition:background .3s,color .3s}button:hover,button[aria-pressed=true]{background:var(--ink);color:var(--paper)}button:disabled{opacity:.45;cursor:default}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--accent);outline-offset:4px}input[type=range]{width:100%;accent-color:var(--accent)}.controls{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}.readout{border-left:2px solid var(--accent);padding:8px 0 8px 20px;margin-top:20px;min-height:80px}.readout p{white-space:pre-wrap}.readout small{color:var(--muted)}svg,canvas{max-width:100%;display:block}blockquote{margin:0;white-space:pre-wrap}details{margin-top:18px}summary{cursor:pointer;color:var(--accent);min-height:44px}pre{white-space:pre-wrap;overflow-wrap:anywhere;font:13px/1.8 Consolas,monospace}.theme{float:right;font-size:12px;padding:3px 10px;min-height:34px}
+:root[data-theme=night]{--paper:#171b1c;--ink:#e9e4d8;--muted:#b6b1a6;--line:#444846;--accent:#deb47d;--wash:#293333;color-scheme:dark}
+@media(prefers-color-scheme:dark){:root:not([data-theme=paper]){--paper:#171b1c;--ink:#e9e4d8;--muted:#b6b1a6;--line:#444846;--accent:#deb47d;--wash:#293333}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+.dependency{display:flex;align-items:center;gap:12px;margin-top:30px}.dependency button{flex:1;min-height:110px;text-align:left}.dependency strong{font:28px Georgia,serif;display:block;color:var(--accent)}.dependency span{color:var(--accent)}.dependency button[data-done=true]{border:2px solid var(--accent);background:var(--wash);color:var(--ink)}.dep-state{min-height:90px;margin-top:20px;padding:16px 0;border-top:1px solid var(--line)}@media(max-width:450px){.dependency{flex-direction:column;align-items:stretch}.dependency button{min-height:76px}.dependency span{align-self:center;transform:rotate(90deg)}}</style></head>
+<body><main><button class="theme" data-theme-toggle aria-label="切换小页明暗主题">明 / 暗</button><div class="eyebrow">DEPENDENCY THREAD / TASK ORDER</div><h1>先有画布，才有画布里的功能</h1><p class="intro">试着先选择后面的任务，再逐步完成前置条件。用原文的画布例子看“为什么任务不能随便换顺序”。</p>
+<div class="dependency"><button data-dependency="0"><strong>01</strong>基础文档</button><span aria-hidden="true">→</span><button data-dependency="1"><strong>02</strong>画布</button><span aria-hidden="true">→</span><button data-dependency="2"><strong>03</strong>画布内功能</button></div><p id="dep-state" class="dep-state" aria-live="polite">先试试点“画布内功能”。</p><button id="dep-reset">重新试一次</button>
+<p class="caption">交互示意 · 不对应作者项目的真实进度；P0／P1 等原稿中有歧义的级别未被擅自补齐。</p></main>
+<!-- blog-yusheng:html-embed-handshake v1 -->
+<script>
+(() => {
+  const nonce = new URLSearchParams(location.hash.slice(1)).get('nonce')
+  if (!nonce || window.parent === window) return
+  window.parent.postMessage({ nonce, message: { type: 'ready' } }, '*')
+  const reportHeight = () => window.parent.postMessage({ type: 'resize', height: document.documentElement.scrollHeight }, '*')
+  requestAnimationFrame(reportHeight)
+  new ResizeObserver(reportHeight).observe(document.documentElement)
+})()
+</script><script>
+document.querySelector('[data-theme-toggle]').addEventListener('click',()=>{const dark=getComputedStyle(document.documentElement).getPropertyValue('--paper').trim()==='#171b1c';document.documentElement.dataset.theme=dark?'paper':'night';window.dispatchEvent(new Event('themechange'))})
+
+let done=[false,false,false];function show(){document.querySelectorAll('[data-dependency]').forEach(b=>{const i=Number(b.dataset.dependency);b.dataset.done=String(done[i]);b.setAttribute('aria-pressed',String(done[i]))})}document.querySelectorAll('[data-dependency]').forEach(b=>b.onclick=()=>{const i=Number(b.dataset.dependency);if(i>0&&!done[i-1]){document.querySelector('#dep-state').textContent=i===2?'画布还没有准备好。先完成“画布”，再开发里面的功能。':'基础文档还没有准备好。先从基础任务开始。';return}done[i]=true;show();document.querySelector('#dep-state').textContent=i===2?'这一条依赖链已走通。任务顺序由依赖决定，不由卡片排列的美观决定。':'当前环节已就绪，可以继续下一个任务。'});document.querySelector('#dep-reset').onclick=()=>{done=[false,false,false];show();document.querySelector('#dep-state').textContent='先试试点“画布内功能”。'};show();</script></body></html>

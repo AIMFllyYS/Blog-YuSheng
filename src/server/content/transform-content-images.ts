@@ -1,7 +1,7 @@
 import 'server-only'
 
-import { createHash } from 'node:crypto'
-import { mkdir, readFile, stat } from 'node:fs/promises'
+import { createHash, randomUUID } from 'node:crypto'
+import { mkdir, readFile, rename, stat, unlink } from 'node:fs/promises'
 import path from 'node:path'
 import sharp, { type Metadata } from 'sharp'
 import type { AssetManifestEntry } from './asset-manifest'
@@ -123,12 +123,12 @@ export async function transformContentImages(
             format,
             quality,
           )
-        } catch {
+        } catch (error) {
           diagnostics.push(
             imageDiagnostic(
               entry,
               'IMAGE_TRANSFORM_FAILED',
-              `sharp 无法完整解码或转换图片：${entry.outputPath}`,
+              `sharp 无法完整解码或转换图片：${entry.outputPath}${error instanceof Error ? `（${error.message}）` : ''}`,
             ),
           )
           continue
@@ -219,7 +219,7 @@ async function ensureVariant(
   quality: number,
 ) {
   try {
-    const cached = await sharp(cachePath).metadata()
+    const cached = await sharp(await readFile(cachePath)).metadata()
     if (cached.width === width && matchesSharpFormat(cached.format, format)) {
       return cached
     }
@@ -235,8 +235,42 @@ async function ensureVariant(
     format === 'avif'
       ? pipeline.avif({ quality })
       : pipeline.webp({ quality })
-  await pipeline.toFile(cachePath)
-  return sharp(cachePath).metadata()
+  // Next prerenders multiple routes in separate workers. Never expose a partial
+  // content-addressed image to another worker while sharp is still writing it.
+  const pendingPath = path.join(
+    path.dirname(cachePath),
+    `.pending-${process.pid}-${randomUUID()}.${format}`,
+  )
+  try {
+    await pipeline.toFile(pendingPath)
+    const completed = await sharp(await readFile(pendingPath)).metadata()
+    // Read bytes before passing them to libvips so metadata readers do not
+    // keep a Windows file handle open while a peer publishes the same key.
+    const winner = await readFile(cachePath)
+      .then((bytes) => sharp(bytes).metadata())
+      .catch(() => undefined)
+    if (winner?.width === width && matchesSharpFormat(winner.format, format)) {
+      return winner
+    }
+    try {
+      await rename(pendingPath, cachePath)
+    } catch (error) {
+      // Windows may refuse replacing a file another worker has open. Its
+      // completed result is equivalent only when dimensions/format match.
+      const existing = await readFile(cachePath)
+        .then((bytes) => sharp(bytes).metadata())
+        .catch(() => undefined)
+      if (existing?.width !== width || !matchesSharpFormat(existing.format, format)) {
+        throw error
+      }
+    }
+    return completed
+  } finally {
+    // Only our own uniquely named temporary file; never remove a shared cache.
+    await unlink(pendingPath).catch((error: NodeJS.ErrnoException) => {
+      if (error.code !== 'ENOENT') throw error
+    })
+  }
 }
 
 function matchesSharpFormat(

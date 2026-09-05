@@ -1,5 +1,5 @@
 import { randomFillSync } from 'node:crypto'
-import { copyFile, mkdir, readFile, rm, stat, writeFile } from 'node:fs/promises'
+import { copyFile, mkdir, readFile, readdir, rm, stat, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import sharp from 'sharp'
 import { afterEach, describe, expect, it } from 'vitest'
@@ -19,10 +19,28 @@ afterEach(async () => {
 })
 
 describe('build-time image variants', () => {
+  it('publishes complete variants when concurrent workers share a cold cache', async () => {
+    const root = await createTemporaryRoot('concurrent-cache')
+    const source = path.join(root, 'shared.png')
+    await sharp({ create: { width: 600, height: 300, channels: 3, background: '#735b41' } }).png().toFile(source)
+    const cache = path.join(root, 'cache')
+    const batches = await Promise.all(Array.from({ length: 8 }, () =>
+      transformContentImages([imageEntry(source, 'shared')], cache),
+    ))
+    for (const batch of batches) {
+      for (const variant of batch.filter((entry) => entry.image?.derived)) {
+        const decoded = await sharp(variant.sourcePath).raw().toBuffer({ resolveWithObject: true })
+        expect(decoded.info.width).toBe(480)
+        expect(decoded.info.height).toBe(240)
+      }
+    }
+    expect((await readdir(cache)).some((filename) => filename.startsWith('.pending-'))).toBe(false)
+  })
+
   it('creates the locked widths and formats without upscaling', async () => {
     const cacheRoot = await createTemporaryRoot('variants')
     const manifest = await transformContentImages(
-      await createAssetManifest(),
+      await goldenImageManifest(),
       cacheRoot,
     )
     const variants = manifest.filter((entry) => entry.image?.derived)
@@ -89,7 +107,7 @@ describe('build-time image variants', () => {
 
   it('records original image dimensions for the future IR compiler', async () => {
     const manifest = await transformContentImages(
-      await createAssetManifest(),
+      await goldenImageManifest(),
       await createTemporaryRoot('dimensions'),
     )
 
@@ -163,7 +181,7 @@ describe('build-time image variants', () => {
 
   it('reuses content-addressed cache files on repeat transforms', async () => {
     const cacheRoot = await createTemporaryRoot('cache')
-    const sourceManifest = await createAssetManifest()
+    const sourceManifest = await goldenImageManifest()
     const first = await transformContentImages(sourceManifest, cacheRoot)
     const firstVariant = first.find((entry) => entry.image?.derived)
     expect(firstVariant).toBeDefined()
@@ -181,7 +199,7 @@ describe('build-time image variants', () => {
 
   it('writes actual AVIF and WebP cache files with recorded dimensions', async () => {
     const manifest = await transformContentImages(
-      await createAssetManifest(),
+      await goldenImageManifest(),
       await createTemporaryRoot('decode'),
     )
     for (const entry of manifest.filter((item) => item.image?.derived)) {
@@ -313,6 +331,12 @@ describe('build-time image variants', () => {
   })
 
 })
+
+// Exact golden widths belong to the kitchen-sink fixture, not every future
+// article image. Real article assets are covered by the content/build checks.
+async function goldenImageManifest() {
+  return (await createAssetManifest()).filter((entry) => entry.articleSlug === 'p0-kitchen-sink')
+}
 
 async function createTemporaryRoot(label: string) {
   const root = path.join(

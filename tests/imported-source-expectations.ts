@@ -27,7 +27,7 @@ export const IMPORTED_SOURCE_EXPECTATIONS = [
     title: 'AI 技术组发展方向与工程化思维',
     section: 'fullstack-learning',
     publishedAt: '2026-07-29T00:00:00+08:00',
-    bodyAnchors: ['树成林 AI 社群技术组', '深度不是终点，广度才是护城河'],
+    bodyAnchors: ['树成林 · AI 社群技术组', '深度不是终点，广度才是护城河'],
   },
   {
     sourceFile: 'AI编程方向概览/AI编程核心能力体系与工程实践指南（下册）.html',

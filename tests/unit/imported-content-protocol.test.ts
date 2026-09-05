@@ -7,16 +7,13 @@ import { IMPORTED_SOURCE_EXPECTATIONS } from '../imported-source-expectations'
 const RAW_ARTICLE_HTML = /<(div|script|iframe)\b/i
 
 describe('imported article protocol', () => {
-  it('ports the HTML visual handbook through html-embed, not raw page HTML', async () => {
+  it('ports original diagrams and purposeful interactives, not raw page HTML', async () => {
     const post = await readPost('from-ten-to-hundred-ai-video')
     expect(post.body).not.toMatch(RAW_ARTICLE_HTML)
-    expect(post.body).toMatch(/```mermaid/)
+    expect(post.body).toMatch(/!\[原稿图示 /)
     const embedIds = [
-      'six-dimensions',
-      'path-0-1-10-100',
-      'crew-model',
-      'cinematic-diagrams',
-      'pipeline-inject',
+      'frame-composition-bench',
+      'sound-cut-bench',
     ]
     for (const id of embedIds) {
       expect(post.body).toContain(
@@ -39,7 +36,7 @@ describe('imported article protocol', () => {
     const post = await readPost('july-28-ai-frontier-review')
     expect(post.body).not.toMatch(/说话人\s*\d/)
     expect(post.body).not.toMatch(RAW_ARTICLE_HTML)
-    expect(post.body).toContain('```mermaid')
+    expect(post.body).toContain('<html-embed id="scope-lens"')
     expect(post.body).toContain('Hello这是第一天的正式复盘')
     expect(post.frontmatter.section).toBe('yu-reviews')
     expect(post.frontmatter.title).toBe('26-7-28 复盘 · AI方向如是状态')

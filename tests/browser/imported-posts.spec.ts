@@ -130,7 +130,7 @@ test('title archive keeps the first subtitle and the personal-finance date', asy
   ).toBeVisible()
   await expect(
     page.locator('[data-reader-article]').getByText(
-      '当我们在聊 AI 编程的时候，我们到底在聊什么',
+      '当我们在聊AI 编程的时候我们到底在聊什么',
       { exact: true },
     ),
   ).toBeVisible()

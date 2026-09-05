@@ -17,7 +17,7 @@ test('builds the validated content asset manifest into out', async () => {
   const variants = manifest.filter((entry) => entry.image?.derived)
 
   expect(original?.image).toMatchObject({ derived: false, format: 'png' })
-  expect(variants).toHaveLength(6)
+  expect(variants.filter((entry) => entry.articleSlug === 'p0-kitchen-sink')).toHaveLength(6)
   for (const entry of [original!, ...variants]) {
     const outputPath = path.join(process.cwd(), 'out', entry.outputPath)
     const metadata = await sharp(outputPath).metadata()
