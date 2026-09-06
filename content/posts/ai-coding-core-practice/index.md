@@ -312,16 +312,15 @@ Chapter 04 · Beginner Traps
 
 Chapter 05 · Component Libraries \& SDKs
 
-组件库与 SDK
-复用是工程的本质
+<aside-note id="chapter-05-map" kind="addon" title="这一章先看四个切面">
+组件库与 SDK 复用是工程的本质
 
 同一个博客项目，从"每次都重写一遍"到"引入组件库"，代码量能差出上百倍。
 
-案例：博客项目从 5-7 万行到几百行
-
-富文本、评论、登录都有现成组件库
-
-MCP 与 Skills 的 token 消耗差异
+- 案例：博客项目从 5-7 万行到几百行
+- 富文本、评论、登录都有现成组件库
+- MCP 与 Skills 的 token 消耗差异
+</aside-note>
 
 ## 组件库与 SDK：复用是工程的本质
 
@@ -452,10 +451,10 @@ Chapter 07 · Deployment \& Production
 <inset-card id="source-card-3" title="原文卡片 03">
 #### 部署前要搞懂的几个词
 
-- <text-mark tone="thesis">域名</text-mark>与 <text-mark tone="thesis">IP</text-mark>如何绑定
-- <text-mark tone="thesis">SSL 证书</text-mark>：为什么网站需要它
-- <text-mark tone="thesis">端口</text-mark>：本地与线上分别怎么用
-- <text-mark tone="thesis">pm2</text-mark>：守护进程，保证服务不掉线
+- **域名**与 **IP** 如何绑定
+- **SSL 证书**：为什么网站需要它
+- **端口**：本地与线上分别怎么用
+- **pm2**：守护进程，保证服务不掉线
 </inset-card>
 
 <inset-card id="source-card-4" title="原文卡片 04">

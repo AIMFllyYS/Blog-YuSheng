@@ -5,6 +5,46 @@ import { compileDocument } from '../../src/features/doc-engine'
 const FRONT = ''
 
 describe('article design language tags', () => {
+  it('keeps inline marks inside complete list items in a flow component', async () => {
+    const source = `<inset-card id="terms" title="部署术语">
+#### 几个词
+
+- <text-mark tone="thesis">域名</text-mark>与 <text-mark tone="thesis">IP</text-mark>如何绑定
+- <text-mark tone="thesis">SSL 证书</text-mark>：为什么网站需要它
+- <text-mark tone="thesis">端口</text-mark>：本地与线上分别怎么用
+- <text-mark tone="thesis">pm2</text-mark>：守护进程，保证服务不掉线
+</inset-card>`
+    const result = await compileDocument({ articleSlug: 'flow-inline-list', source, frontmatter: {} })
+    expect(result.diagnostics).toEqual([])
+    const card = result.document.root.children[0]!
+    if (card.type !== 'registeredComponent' || card.placement !== 'block') throw new Error('missing card')
+    expect(card.children.map((node) => node.type)).toEqual(['heading', 'list'])
+    const list = card.children[1]!
+    if (list.type !== 'list') throw new Error('missing list')
+    expect(list.children).toHaveLength(4)
+    expect(list.children.map((node) => node.children.map((child) => child.canonicalText).join(''))).toEqual([
+      '域名与 IP如何绑定', 'SSL 证书：为什么网站需要它',
+      '端口：本地与线上分别怎么用', 'pm2：守护进程，保证服务不掉线',
+    ])
+  })
+
+  it('does not split emphasis, tables or quotes around an inline mark', async () => {
+    const source = `<aside-note id="flow" kind="addon">
+句子前<text-mark tone="thesis">重点</text-mark>句子后。
+
+> 引用<text-mark tone="note">原句</text-mark>。
+
+| 术语 | 解释 |
+| --- | --- |
+| <text-mark tone="thesis">SDK</text-mark> | 工具包 |
+</aside-note>`
+    const result = await compileDocument({ articleSlug: 'flow-inline-table', source, frontmatter: {} })
+    expect(result.diagnostics).toEqual([])
+    const note = result.document.root.children[0]!
+    if (note.type !== 'registeredComponent' || note.placement !== 'block') throw new Error('missing note')
+    expect(note.children.map((node) => node.type)).toEqual(['paragraph', 'quote', 'table'])
+    expect(note.children[0]?.canonicalText).toBe('句子前重点句子后。')
+  })
   it('compiles inline text-mark inside a Chinese paragraph', async () => {
     const source = `${FRONT}AI 是<text-mark tone="thesis" effect="fluorescent">杠杆</text-mark>，专业知识是支点。\n`
     const result = await compileDocument({

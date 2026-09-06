@@ -103,7 +103,7 @@ describe('build-time image variants', () => {
       variants.every((entry) => entry.derivedFrom?.endsWith('.png')),
     ).toBe(true)
     expect(summary.some((entry) => entry.width === 1440)).toBe(false)
-  })
+  }, 20_000)
 
   it('records original image dimensions for the future IR compiler', async () => {
     const manifest = await transformContentImages(

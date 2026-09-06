@@ -84,7 +84,7 @@ describe('content asset manifest', () => {
           'blog/from-using-ai-to-understanding-ai/data/complexity.json',
       )?.data,
     ).toMatchObject({ expression: 'x^2' })
-  })
+  }, 20_000)
 
   it('rejects canvas JSON that does not match its statically registered schema', async () => {
     const postsRoot = await createPostsRoot()

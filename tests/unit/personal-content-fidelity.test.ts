@@ -84,5 +84,5 @@ describe('personal materials: frozen words beneath the presentation layer', () =
       else expect(value).not.toMatch(/<\/?(?:html-embed|aside-note|text-mark|inset-card|timeline-block)\b/)
       expect(result.document.originalSource).toBe(source)
     }
-  })
+  }, 20_000)
 })

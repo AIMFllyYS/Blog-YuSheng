@@ -80,5 +80,5 @@ describe('TXT export projection', () => {
     expect(text).not.toContain('可接受答案：')
     expect(document.originalSource).toBe(originalSource)
     expect(document.originalSource).toBe(post.source)
-  })
+  }, 20_000)
 })

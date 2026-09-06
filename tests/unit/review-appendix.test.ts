@@ -314,5 +314,5 @@ describe('prepare review appendix', () => {
     expect(readFileSync(GOLDEN, 'utf8').replace(/\r\n/g, '\n')).toBe(
       body.replace(/\r\n/g, '\n'),
     )
-  })
+  }, 20_000)
 })

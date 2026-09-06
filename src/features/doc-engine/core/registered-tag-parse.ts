@@ -149,7 +149,10 @@ function nextPairedOpen(
       continue
     }
     const name = match[1]
-    if (name && isPairedRegisteredName(name)) {
+    // Inline marks belong to the surrounding Markdown sentence/list/table.
+    // Splitting them here turns the following list marker into a setext
+    // underline and creates spurious headings out of sentence fragments.
+    if (name && isPairedRegisteredName(name) && !isInlineRegisteredTag(name)) {
       return { index, length: match[0].length, name }
     }
     match = pattern.exec(source)
