@@ -4,16 +4,20 @@ export const POINT_VERTEX_SHADER = /* glsl */ `
 
   uniform float uPixelRatio;
   uniform float uScale;
+  uniform float uTime;
+  uniform float uTwinkle;
 
   varying float vAlpha;
+  varying float vPointSize;
 
   void main() {
     vec4 viewPosition = modelViewMatrix * vec4(position, 1.0);
     float perspective = 9.0 / max(1.0, -viewPosition.z);
 
-    vAlpha = aAlpha;
+    vAlpha = aAlpha * (1.0 - uTwinkle * 0.16 + sin(uTime * 0.8 + position.x * 0.7 + position.y) * uTwinkle * 0.16);
+    vPointSize = aSize;
     gl_Position = projectionMatrix * viewPosition;
-    gl_PointSize = clamp(aSize * uPixelRatio * uScale * perspective, 0.7, 5.2);
+    gl_PointSize = clamp(aSize * uPixelRatio * uScale * perspective, 0.7, 6.4);
   }
 `
 
@@ -22,13 +26,16 @@ export const POINT_FRAGMENT_SHADER = /* glsl */ `
   uniform float uOpacity;
 
   varying float vAlpha;
+  varying float vPointSize;
 
   void main() {
     vec2 centered = gl_PointCoord - vec2(0.5);
     float radius = length(centered);
-    float core = 1.0 - smoothstep(0.04, 0.5, radius);
-    float halo = 1.0 - smoothstep(0.15, 0.5, radius);
-    float alpha = (core * 0.72 + halo * 0.28) * vAlpha * uOpacity;
+    float core = 1.0 - smoothstep(0.03, 0.38, radius);
+    float halo = 1.0 - smoothstep(0.14, 0.5, radius);
+    float flare = (1.0 - smoothstep(0.0, 0.18, abs(centered.x))) *
+      (1.0 - smoothstep(0.0, 0.18, abs(centered.y))) * 0.22;
+    float alpha = (core * 0.7 + halo * 0.18 + flare) * vAlpha * uOpacity;
 
     if (alpha < 0.004) discard;
 

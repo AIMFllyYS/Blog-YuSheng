@@ -238,20 +238,33 @@ button {
   isolation: isolate;
 }
 
+/* QA seeks the GSAP timeline, not wall-clock hover/active-state transitions. */
+.journey-stage[data-journey-qa="true"] *,
+.journey-stage[data-journey-qa="true"] *::before,
+.journey-stage[data-journey-qa="true"] *::after {
+  transition: none !important;
+}
+
 .journey-nebula {
   background:
-    radial-gradient(
-      ellipse at 22% 31%,
-      color-mix(in srgb, var(--journey-nebula) 42%, transparent) 0%,
-      transparent 41%
-    ),
-    radial-gradient(
-      ellipse at 78% 62%,
-      color-mix(in srgb, var(--journey-gold) 9%, transparent) 0%,
-      transparent 46%
-    );
+    radial-gradient(ellipse at 18% 28%, color-mix(in srgb, var(--journey-nebula) 38%, transparent), transparent 42%),
+    radial-gradient(ellipse at 76% 68%, color-mix(in srgb, var(--journey-gold) 11%, transparent), transparent 44%),
+    linear-gradient(112deg, transparent 22%, color-mix(in srgb, var(--journey-nebula) 10%, transparent) 48%, transparent 74%);
   mix-blend-mode: screen;
-  opacity: 0.72;
+  opacity: 0.54;
+  transform: scale(1.08) rotate(-4deg);
+}
+
+.journey-nebula::before {
+  position: absolute;
+  inset: -22% -10%;
+  background:
+    radial-gradient(ellipse at 50% 50%, color-mix(in srgb, var(--journey-nebula) 26%, transparent), transparent 54%),
+    linear-gradient(118deg, transparent 31%, color-mix(in srgb, var(--journey-nebula) 19%, transparent) 45%, color-mix(in srgb, var(--journey-gold) 7%, transparent) 52%, transparent 69%);
+  content: "";
+  filter: blur(26px);
+  opacity: 0.86;
+  transform: rotate(3deg);
 }
 
 .journey-vignette {
@@ -298,27 +311,27 @@ button {
 
 .journey-title-fragment {
   color: var(--journey-gold-soft);
+  font-weight: 600;
+  mix-blend-mode: normal;
   text-shadow:
     0 0 0.34em var(--journey-gold),
     0 0 1.4em color-mix(in srgb, var(--journey-gold) 38%, transparent);
 }
 
+
 .journey-cover-tile {
-  border: 1px solid color-mix(in srgb, var(--journey-gold) 34%, transparent);
+  border: 1px solid color-mix(in srgb, var(--journey-gold) 22%, transparent);
   background:
     linear-gradient(
       118deg,
       color-mix(in srgb, var(--journey-void-raised) 93%, transparent),
       color-mix(in srgb, var(--journey-gold) 22%, var(--journey-void))
     ),
-    repeating-linear-gradient(
-      0deg,
-      transparent 0 5px,
-      color-mix(in srgb, var(--journey-paper-edge) 9%, transparent) 5px 6px
-    );
+    linear-gradient(145deg, transparent 32%, color-mix(in srgb, var(--journey-paper-edge) 11%, transparent) 48%, transparent 64%);
   box-shadow:
     inset 0 0 2.4rem var(--journey-shadow),
-    0 0 1rem color-mix(in srgb, var(--journey-gold) 12%, transparent);
+    0 0 1rem color-mix(in srgb, var(--journey-gold) 10%, transparent);
+  clip-path: polygon(4% 8%, 94% 0, 100% 88%, 12% 100%);
 }
 
 .journey-book-title {
@@ -365,6 +378,109 @@ button {
     transparent
   );
 }
+
+.journey-star-hotspot {
+  color: var(--journey-gold-soft);
+  opacity: 0.72;
+  transition: opacity var(--dur-base) ease-out, transform var(--dur-base) var(--ease-damp);
+}
+
+.journey-star-hotspot:hover,
+.journey-star-hotspot:focus-visible,
+.journey-star-hotspot[data-found="true"] {
+  opacity: 1;
+}
+
+.journey-star-core,
+.journey-star-orbit {
+  position: absolute;
+  inset: 50%;
+  display: block;
+  border-radius: 999px;
+  transform: translate(-50%, -50%);
+}
+
+.journey-star-core {
+  width: 0.28rem;
+  height: 0.28rem;
+  background: currentColor;
+  box-shadow: 0 0 0.7rem 0.18rem currentColor;
+}
+
+.journey-star-orbit {
+  width: 1.4rem;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, currentColor, transparent);
+  opacity: 0.72;
+  transform: translate(-50%, -50%) rotate(-12deg);
+}
+.journey-star-orbit::after { position: absolute; inset: 0; background: inherit; content: ""; transform: rotate(90deg) scaleX(.72); }
+
+.journey-star-hotspot-cool {
+  color: var(--journey-star-cool);
+}
+
+.journey-star-hotspot-warm {
+  color: var(--journey-gold-soft);
+}
+
+[data-easter-card] {
+  will-change: transform, opacity;
+}
+
+.journey-star-echo { position: absolute; inset: 0; width: 100%; height: 100%; color: var(--journey-gold-soft); pointer-events: none; }
+.journey-sky-hint { position: absolute; bottom: 2.4rem; left: 3rem; margin: 0; color: var(--journey-ink-muted); font-size: 11px; letter-spacing: .15em; }
+.journey-sky-hint span { display: inline-block; margin-left: 1rem; color: var(--journey-gold-soft); font-size: 10px; }
+[data-home-star-slot] .journey-sky-hint { bottom: .5rem; left: 50%; transform: translateX(-50%); white-space: nowrap; }
+.journey-discovery-note { position: absolute; bottom: 5rem; left: 3rem; width: min(19rem, calc(100% - 4rem)); padding: 1.25rem 1.4rem; border: 1px solid var(--line); background: var(--scroll-paper); box-shadow: 0 18px 50px var(--journey-shadow); transform: rotate(-1deg); color: var(--ink); }
+.journey-discovery-note::before { position: absolute; top: -.5rem; left: calc(50% - 1.5rem); width: 3rem; height: 1rem; background: color-mix(in srgb, var(--scroll-paper) 80%, transparent); border: 1px solid var(--line); opacity: .8; content: ""; transform: rotate(4deg); }
+.journey-discovery-note p:first-child { color: var(--accent); }
+.journey-discovery-note p { color: var(--ink); }
+.journey-discovery-note button { color: var(--ink-muted); min-height: 32px; }
+
+[data-journey-scene="epilogue"] [data-book-insight],
+[data-journey-scene="prologue"] [data-book-insight],
+[data-journey-scene="scatter"] [data-book-insight],
+[data-journey-scene="scatter-end"] [data-book-insight] {
+  display: none;
+}
+
+.journey-chapters { position: absolute; left: 2.7rem; top: 35%; z-index: var(--z-floating); display: grid; gap: .75rem; color: var(--journey-paper); }
+.journey-chapter-eyebrow { font-size: 10px; letter-spacing: .3em; opacity: .6; margin-bottom: .6rem; }
+.journey-chapters button { display: flex; align-items: center; gap: .65rem; min-height: 44px; padding: .25rem .7rem; margin-left: -.7rem; border-left: 1px solid transparent; background: transparent; color: var(--journey-ink-muted); transition: color var(--dur-slow), border-color var(--dur-slow); }
+.journey-chapters button:hover, .journey-chapters button:focus-visible, .journey-chapters button[aria-current] { color: var(--journey-gold-soft); border-color: var(--journey-gold); outline: none; }
+.journey-chapter-number { font-size: 9px; opacity: .65; font-family: monospace; }
+.journey-chapters button > span:nth-child(2) { font-size: 19px; }
+.journey-chapter-label { font-size: 10px; letter-spacing: .12em; opacity: 0; transform: translateX(-4px); transition: opacity var(--dur-slow), transform var(--dur-slow) var(--ease-damp); }
+.journey-chapters button:hover .journey-chapter-label, .journey-chapters button:focus-visible .journey-chapter-label { opacity: .8; transform: translateX(0); }
+.journey-book-inspector { position: absolute; right: 2.7rem; bottom: 2.5rem; z-index: var(--z-floating); width: 20rem; color: var(--journey-ink-muted); font-size: 11px; }
+.journey-book-inspector-controls { display: flex; gap: .75rem; align-items: center; justify-content: flex-end; }
+.journey-book-inspector-controls > span { font-size: 10px; letter-spacing: .08em; margin-right: .5rem; }
+.journey-book-inspector button { min-height: 44px; color: var(--journey-gold-soft); }
+.journey-book-inspector-controls button { border-bottom: 1px solid transparent; }
+.journey-book-inspector-controls button:hover, .journey-book-inspector-controls button:focus-visible, .journey-book-inspector-controls button[aria-pressed="true"] { border-color: var(--journey-gold); outline: none; }
+.journey-book-detail { position: absolute; bottom: 4rem; right: 0; width: 19rem; padding: 1rem 1.3rem; border: 1px solid var(--line); background: var(--scroll-paper); color: var(--ink); box-shadow: 0 18px 45px var(--journey-shadow); }
+.journey-book-detail > div { display: flex; align-items: center; justify-content: space-between; }
+.journey-book-detail button { min-width: 32px; font-size: 22px; color: var(--ink-muted); }
+.journey-book-detail p { font-size: 12px; line-height: 1.9; margin: .25rem 0; }
+.journey-destination-card { transition-timing-function: var(--ease-damp); }
+.journey-entry-object { display: block; float: right; position: relative; width: 48px; height: 68px; margin: .2rem .4rem .35rem .5rem; perspective: 350px; transform: rotate(7deg); }
+.journey-entry-cover { position: absolute; inset: 0; display: grid; place-items: center; transform-origin: left center; transform: rotateY(-25deg); transform-style: preserve-3d; border: 1px solid var(--line); color: var(--accent); background: var(--bg-elevated); box-shadow: inset 4px 0 0 var(--accent), 6px 8px 16px var(--shadow-color); transition: transform var(--dur-reveal) var(--ease-damp); }
+.journey-entry-pages { position: absolute; inset: 3px -4px -2px 4px; border: 1px solid var(--line); background: repeating-linear-gradient(0deg,var(--scroll-paper) 0 2px,var(--line) 2px 3px); transform: rotateY(-18deg); }
+.journey-entry-vertical { writing-mode: vertical-rl; font-size: 10px; letter-spacing: .13em; padding: .3rem; border: 1px solid var(--line); }
+.journey-destination-card:hover .journey-entry-cover, .journey-destination-card:focus-visible .journey-entry-cover { transform: rotateY(-54deg) translateZ(2px); }
+.journey-entry-object-notes { transform: rotate(-7deg) scale(.94); }
+.journey-entry-object-notes .journey-entry-cover { box-shadow: 4px 6px 12px var(--shadow-color); }
+.journey-entry-object-notes .journey-entry-cover::after { position: absolute; right: -1px; top: -1px; content: ""; width: 13px; height: 13px; background: linear-gradient(45deg,var(--line) 50%,var(--scroll-paper) 51%); }
+.journey-entry-lines { display: grid; gap: 7px; width: 28px; }
+.journey-entry-lines i { height: 1px; background: var(--line); }
+.journey-entry-lines i:last-child { width: 60%; }
+.journey-entry-object-works .journey-entry-cover { background: var(--ink); color: var(--scroll-paper); box-shadow: 5px 7px 15px var(--shadow-color); }
+.journey-entry-object-works svg { width: 33px; height: 41px; }
+.journey-entry-object-about { transform: rotate(-3deg) scale(.85); }
+.journey-entry-object-about .journey-entry-cover { box-shadow: 5px 7px 15px var(--shadow-color); }
+.journey-entry-seal { border: 2px solid var(--accent); outline: 1px solid var(--accent); outline-offset: 3px; padding: 4px; font-size: 20px; color: var(--accent); }
+@media (max-width: 1050px) { .journey-chapters { left: 1.25rem; } .journey-chapter-label { display: none; } .journey-book-inspector { right: 1.25rem; } }
 
 @media (prefers-reduced-motion: reduce) {
   *,

@@ -193,7 +193,9 @@ export const JOURNEY_VARIABLES = {
   '--journey-line': '#6b5936',
   '--journey-accent': 'var(--journey-gold)',
   '--journey-nebula': '#17284a',
+  '--journey-nebula-deep': '#0e1730',
   '--journey-star': 'var(--journey-gold-soft)',
+  '--journey-star-cool': '#93b6da',
   '--journey-shadow': 'rgba(0, 0, 0, 0.62)',
 } as const
 

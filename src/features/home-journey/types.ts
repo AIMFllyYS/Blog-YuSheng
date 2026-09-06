@@ -24,5 +24,7 @@ export type JourneyScene3DProps = {
   diagnostics?: boolean
   progressRef: JourneyProgressRef
   renderRequestRef: RefObject<(() => void) | null>
+  onBookInspect?: (event: { detail: 'binding' | 'seal' | 'pages' }) => void
   onCanvasReady?: () => void
+  onCanvasError?: () => void
 }

@@ -1,7 +1,8 @@
 'use client'
 
-import type { CSSProperties } from 'react'
+import { useMemo, type CSSProperties } from 'react'
 import { JOURNEY_CONTENT } from '../content'
+import { createTitleFragments } from '../motion/glyph-fragments'
 import { seededUnit } from '../motion/math'
 import type { TypographyLayout } from '../motion/pretext-layout'
 
@@ -9,39 +10,13 @@ type JourneyTypeLayerProps = {
   layout: TypographyLayout
 }
 const RUNE_GLYPHS = ['玄', '卜', '川', '山', '彡', '乚', '爻', '无'] as const
-const STROKE_GLYPHS = ['丶', '丿', '丨', '乚', '羽', '升'] as const
 
 function calcLeft(x: number) {
   return `calc(50% + ${x.toFixed(2)}px)`
 }
 
 export function JourneyTypeLayer({ layout }: JourneyTypeLayerProps) {
-  const titleFragments = Array.from({ length: 64 }, (_, index) => {
-    const glyph = layout.title[index % layout.title.length]
-    const sourceX = glyph?.x ?? 0
-    const sourceWidth = glyph?.width ?? layout.styles.title.fontSize
-    const scatterAngle = seededUnit(20260815, index, 'scatter-angle') * Math.PI * 2
-    const scatterRadius = 140 + seededUnit(20260815, index, 'scatter-radius') * 430
-    const swirlAngle = (index / 64) * Math.PI * 2.8
-    const swirlRadius = 95 + (index % 9) * 14
-
-    return {
-      id: `title-fragment-${index}`,
-      char: STROKE_GLYPHS[index % STROKE_GLYPHS.length],
-      homeX:
-        sourceX +
-        (seededUnit(20260815, index, 'home-x') - 0.5) * sourceWidth * 0.78,
-      homeY:
-        (seededUnit(20260815, index, 'home-y') - 0.5) *
-        layout.styles.title.fontSize *
-        0.68,
-      scatterX: Math.cos(scatterAngle) * scatterRadius,
-      scatterY: Math.sin(scatterAngle) * scatterRadius * 0.62,
-      scatterRotation: -80 + seededUnit(20260815, index, 'rotation') * 160,
-      swirlX: Math.cos(swirlAngle) * swirlRadius,
-      swirlY: Math.sin(swirlAngle) * swirlRadius * 0.54,
-    }
-  })
+  const titleFragments = useMemo(() => createTitleFragments(layout), [layout])
 
   const coverTiles = Array.from({ length: 24 }, (_, index) => ({
     id: `cover-tile-${index}`,
@@ -50,6 +25,12 @@ export function JourneyTypeLayer({ layout }: JourneyTypeLayerProps) {
     rotation: -28 + seededUnit(20260815, index, 'tile-rotation') * 56,
     exitX: (seededUnit(20260815, index, 'tile-exit-x') - 0.5) * 460,
     exitY: (seededUnit(20260815, index, 'tile-exit-y') - 0.5) * 320,
+    // Used only for the broad, overlapping occlusion sheets. Their motion
+    // remains in pixels (`x`/`y`) so the existing G33 timeline is unchanged.
+    indexX: 8 + seededUnit(20260815, index, 'tile-index-x') * 56,
+    indexY: 4 + seededUnit(20260815, index, 'tile-index-y') * 64,
+    width: 58 + seededUnit(20260815, index, 'tile-width') * 62,
+    height: 30 + seededUnit(20260815, index, 'tile-height') * 48,
   }))
 
   return (
@@ -141,7 +122,7 @@ export function JourneyTypeLayer({ layout }: JourneyTypeLayerProps) {
               >
                 <span
                   data-motion-resolved-glyph
-                  className="journey-resolved-glyph absolute inset-0 will-change-transform"
+                  className="journey-resolved-glyph absolute inset-0"
                   style={{
                     transform:
                       'translate3d(0, var(--journey-idle-y, 0px), 0)',
@@ -151,7 +132,7 @@ export function JourneyTypeLayer({ layout }: JourneyTypeLayerProps) {
                 </span>
                 <span
                   data-motion-cipher-glyph
-                  className="journey-rune-glyph invisible absolute inset-0 opacity-0 will-change-transform"
+                  className="journey-rune-glyph invisible absolute inset-0 opacity-0"
                   style={{
                     transform:
                       'translate3d(0, var(--journey-idle-y, 0px), 0)',
@@ -165,33 +146,64 @@ export function JourneyTypeLayer({ layout }: JourneyTypeLayerProps) {
         </div>
       </div>
 
-      <div className="absolute inset-0">
-        {titleFragments.map((fragment) => (
+      <div
+        data-title-fracture-field
+        className="absolute inset-x-0 top-[33%] h-[30%] [perspective:1100px]"
+        style={{ perspectiveOrigin: `50% ${layout.styles.title.fontSize / 2}px` }}
+      >
+        {titleFragments.map((fragment, index) => (
           <span
             key={fragment.id}
             data-title-fragment
             data-motion-id={fragment.id}
+            data-fragment-source={fragment.sourceChar}
+            data-fragment-glyph-index={fragment.glyphIndex}
+            data-fragment-index={index}
             data-scatter-x={fragment.scatterX.toFixed(2)}
             data-scatter-y={fragment.scatterY.toFixed(2)}
+            data-scatter-z={fragment.scatterZ.toFixed(2)}
             data-scatter-rotation={fragment.scatterRotation.toFixed(2)}
+            data-scatter-tilt-x={fragment.scatterTiltX.toFixed(2)}
+            data-scatter-tilt-y={fragment.scatterTiltY.toFixed(2)}
             data-swirl-x={fragment.swirlX.toFixed(2)}
             data-swirl-y={fragment.swirlY.toFixed(2)}
-            className="journey-title-fragment invisible absolute top-[43%] -translate-x-1/2 -translate-y-1/2 opacity-0"
+            data-collapse-x={fragment.collapseX.toFixed(2)}
+            data-collapse-y={fragment.collapseY.toFixed(2)}
+            className="journey-title-fragment invisible absolute overflow-hidden opacity-0"
             style={{
-              fontFamily: layout.styles.title.fontFamily,
               left: calcLeft(fragment.homeX),
-              marginTop: fragment.homeY,
-              fontSize: `${16 + (fragment.id.length % 5) * 3}px`,
+              top: fragment.homeY,
+              width: fragment.cellWidth,
+              height: fragment.cellHeight,
+              clipPath: fragment.clipPath,
+              textShadow: 'none',
+              transformOrigin: `${fragment.originX}px ${fragment.originY}px`,
             }}
           >
-            {fragment.char}
+            <span
+              aria-hidden="true"
+              className="journey-title-glyph absolute block whitespace-nowrap text-center leading-none"
+              style={{
+                left: -fragment.cellX,
+                top: -fragment.cellY,
+                width: fragment.sourceWidth,
+                height: layout.styles.title.fontSize,
+                fontFamily: layout.styles.title.fontFamily,
+                fontSize: layout.styles.title.fontSize,
+                fontWeight: layout.styles.title.fontWeight,
+                letterSpacing: 0,
+                lineHeight: `${layout.styles.title.fontSize}px`,
+              }}
+            >
+              {fragment.sourceChar}
+            </span>
           </span>
         ))}
       </div>
 
       <div
         data-motion-cover-field
-        className="absolute inset-0 grid grid-cols-6 grid-rows-4"
+        className="absolute inset-0"
       >
         {coverTiles.map((tile) => (
           <span
@@ -203,14 +215,31 @@ export function JourneyTypeLayer({ layout }: JourneyTypeLayerProps) {
             data-entry-rotation={tile.rotation.toFixed(2)}
             data-exit-x={tile.exitX.toFixed(2)}
             data-exit-y={tile.exitY.toFixed(2)}
-            className="journey-cover-tile invisible block h-full w-full opacity-0"
+            className="journey-cover-tile invisible absolute opacity-0"
+            style={{
+              // A full-frame first shard guarantees a true covered swap. The
+              // remaining broad, overlapping sheets make the exchange feel
+              // like paper/foil folding rather than a visible CSS grid.
+              inset: tile.id === 'cover-tile-0' ? 0 : undefined,
+              left: tile.id === 'cover-tile-0' ? undefined : `${tile.indexX}%`,
+              top: tile.id === 'cover-tile-0' ? undefined : `${tile.indexY}%`,
+              width: tile.id === 'cover-tile-0' ? '100%' : `${tile.width}%`,
+              height: tile.id === 'cover-tile-0' ? '100%' : `${tile.height}%`,
+              backgroundColor: tile.id === 'cover-tile-0' ? 'var(--journey-paper)' : 'transparent',
+              backgroundImage: tile.id === 'cover-tile-0'
+                ? 'linear-gradient(128deg, var(--journey-paper-edge), var(--journey-paper) 44%, var(--journey-gold-soft))'
+                : 'linear-gradient(128deg, transparent 12%, color-mix(in srgb, var(--journey-paper) 18%, transparent) 48%, transparent 86%)',
+              border: 'none',
+              boxShadow: 'none',
+              clipPath: 'none',
+            }}
           />
         ))}
       </div>
 
       <div
         data-book-title
-        className="journey-book-title invisible absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 font-serif text-[clamp(2.1rem,4.4vw,4.4rem)] tracking-[0.34em] opacity-0 [writing-mode:vertical-rl]"
+        className="journey-book-title invisible absolute bottom-[10%] left-1/2 -translate-x-1/2 font-serif text-[clamp(0.9rem,1.35vw,1.2rem)] tracking-[0.48em] opacity-0"
       >
         {JOURNEY_CONTENT.bookTitle}
       </div>
