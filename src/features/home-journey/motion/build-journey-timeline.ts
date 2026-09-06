@@ -1,4 +1,5 @@
 import gsap from 'gsap'
+import { buildTitleFracture } from './build-title-fracture'
 import type { MotionBuildContext } from './use-web-gsap-timeline'
 
 function selectAll(scope: HTMLElement, selector: string) {
@@ -126,31 +127,44 @@ function buildG04CipherEscalation(context: MotionBuildContext) {
 
 function buildG33GlyphCover(context: MotionBuildContext) {
   const tiles = selectAll(context.scope, '[data-motion-tile]')
+  const base = tiles[0]
+  const sheets = tiles.slice(1)
+  const entry = {
+    x: (_index: number, target: HTMLElement) => motionValue(target, 'entryX'),
+    y: (_index: number, target: HTMLElement) => motionValue(target, 'entryY'),
+    rotation: (_index: number, target: HTMLElement) => motionValue(target, 'entryRotation'),
+    scale: 0.18,
+    autoAlpha: 0,
+  }
+  const covered = { x: 0, y: 0, rotation: 0, scale: 1, autoAlpha: 1 }
 
   context.timeline
     .fromTo(
-      tiles,
+      base,
+      entry,
       {
-        x: (_index, target) => motionValue(target, 'entryX'),
-        y: (_index, target) => motionValue(target, 'entryY'),
-        rotation: (_index, target) => motionValue(target, 'entryRotation'),
-        scale: 0.18,
-        autoAlpha: 0,
-      },
-      {
-        x: 0,
-        y: 0,
-        rotation: 0,
-        scale: 1,
-        autoAlpha: 1,
-        duration: context.frames(18),
-        stagger: context.frames(1),
-        ease: 'power4.in',
+        ...covered,
+        duration: span(context, 0.25, 0.32),
+        ease: 'sine.inOut',
+        immediateRender: false,
       },
       at(context, 0.25),
     )
-    .to(
+    .fromTo(
+      sheets,
+      entry,
+      {
+        ...covered,
+        duration: context.frames(34),
+        stagger: { amount: context.frames(8) },
+        ease: 'sine.inOut',
+        immediateRender: false,
+      },
+      at(context, 0.25),
+    )
+    .fromTo(
       tiles,
+      covered,
       {
         x: (_index, target) => motionValue(target, 'exitX'),
         y: (_index, target) => motionValue(target, 'exitY'),
@@ -166,7 +180,8 @@ function buildG33GlyphCover(context: MotionBuildContext) {
             8,
             context.frames,
           ),
-        ease: 'power4.out',
+        ease: 'sine.inOut',
+        immediateRender: false,
       },
       at(context, 0.32),
     )
@@ -179,6 +194,8 @@ export function buildJourneyTimeline(context: MotionBuildContext) {
   const scrollCue = selectOne(context.scope, '[data-scroll-cue]')
   const bookTitle = selectOne(context.scope, '[data-book-title]')
   const openGlyphs = selectAll(context.scope, '[data-open-glyph]')
+  const rainGlyphs = openGlyphs.filter((_glyph, index) => index % 3 === 0)
+  const hoveringGlyphs = openGlyphs.filter((_glyph, index) => index % 3 !== 0)
   const narrativeLine = selectOne(context.scope, '[data-narrative-line]')
   const narrativeGlyphs = selectAll(context.scope, '[data-narrative-glyph]')
   const gateLine = selectOne(context.scope, '[data-gate-line]')
@@ -189,23 +206,44 @@ export function buildJourneyTimeline(context: MotionBuildContext) {
   const skipButton = selectOne(context.scope, '[data-testid="journey-skip"]')
   const totalDuration = at(context, 1)
 
+  // A paused timeline need not render its zero-duration children on the
+  // first progress(0) call. Establish the same paint origin before building
+  // it that reverse seeking will restore later. The inner idle-wave spans
+  // exclusively own the prologue's ambient motion.
+  const titleStart = {
+    autoAlpha: 1, x: 0, y: 0, xPercent: -50, yPercent: 0,
+    scale: 1, filter: 'brightness(1)', force3D: true,
+  }
+  const mottoStart = {
+    x: 0, y: 0, xPercent: -50, yPercent: 0, scale: 1, rotation: 0, force3D: true,
+  }
+  const floatingStart = {
+    autoAlpha: 0, x: 0, y: 0, xPercent: -50, yPercent: -50, scale: 0.45, force3D: false,
+  }
+  gsap.set(titleGlyphs, titleStart)
+  gsap.set(mottoGlyphs, mottoStart)
+  gsap.set(openGlyphs, floatingStart)
+  gsap.set([narrativeLine, ...narrativeGlyphs], {
+    force3D: false,
+  })
+
   context.timeline
     .addLabel('prologue', 0)
     .set('[data-motion-cipher-glyph]', { autoAlpha: 0 }, 0)
     .set(
       titleGlyphs,
-      { y: (index) => Math.sin(index * 1.1) * 4 },
+      titleStart,
       0,
     )
     .set(
       mottoGlyphs,
-      { y: (index) => Math.sin(index * 0.72) * 2.5 },
+      mottoStart,
       0,
     )
-    .set(titleFragments, { autoAlpha: 0, scale: 0.35 }, 0)
+    .set(titleFragments, { autoAlpha: 0, scale: 1 }, 0)
     .set('[data-motion-tile]', { autoAlpha: 0 }, 0)
     .set(bookTitle, { autoAlpha: 0, y: 22, rotateZ: -3 }, 0)
-    .set(openGlyphs, { autoAlpha: 0, scale: 0.45 }, 0)
+    .set(openGlyphs, floatingStart, 0)
     .set(narrativeLine, { autoAlpha: 0 }, 0)
     .set(narrativeGlyphs, { autoAlpha: 0, y: 24 }, 0)
     .set(gateLine, { autoAlpha: 0, clipPath: 'inset(0 50% 0 50%)' }, 0)
@@ -244,67 +282,7 @@ export function buildJourneyTimeline(context: MotionBuildContext) {
 
   buildG04CipherEscalation(context)
 
-  context.timeline
-    .addLabel('scatter', at(context, 0.1))
-    .to(
-      titleGlyphs,
-      {
-        autoAlpha: 0,
-        filter: 'blur(0.08em)',
-        scale: 1.1,
-        duration: span(context, 0.1, 0.2),
-        stagger: context.frames(4),
-        ease: 'power4.in',
-      },
-      at(context, 0.1),
-    )
-    .fromTo(
-      titleFragments,
-      { autoAlpha: 0, scale: 0.35 },
-      {
-        autoAlpha: 0.94,
-        scale: 1,
-        x: (_index, target) => motionValue(target, 'scatterX'),
-        y: (_index, target) => motionValue(target, 'scatterY'),
-        rotation: (_index, target) => motionValue(target, 'scatterRotation'),
-        duration: span(context, 0.1, 0.2),
-        stagger: (_index, target) =>
-          seededDelay(
-            context.seed,
-            target,
-            'title-fragment-order',
-            8,
-            context.frames,
-          ),
-        ease: 'power4.out',
-      },
-      at(context, 0.1),
-    )
-    .to(
-      titleFragments,
-      {
-        x: (_index, target) => motionValue(target, 'swirlX'),
-        y: (_index, target) => motionValue(target, 'swirlY'),
-        rotation: '+=110',
-        scale: 0.72,
-        duration: span(context, 0.2, 0.25),
-        ease: 'power3.inOut',
-      },
-      at(context, 0.2),
-    )
-    .addLabel('scatter-end', at(context, 0.25))
-    .to(
-      titleFragments,
-      {
-        x: 0,
-        y: 0,
-        scale: 0.14,
-        autoAlpha: 0,
-        duration: span(context, 0.25, 0.32),
-        ease: 'power4.in',
-      },
-      at(context, 0.25),
-    )
+  buildTitleFracture(context, titleGlyphs, titleFragments)
 
   buildG33GlyphCover(context)
 
@@ -334,7 +312,7 @@ export function buildJourneyTimeline(context: MotionBuildContext) {
       at(context, 0.5),
     )
     .fromTo(
-      openGlyphs,
+      hoveringGlyphs,
       { autoAlpha: 0, x: 0, y: 0, scale: 0.45 },
       {
         autoAlpha: 0.88,
@@ -354,13 +332,33 @@ export function buildJourneyTimeline(context: MotionBuildContext) {
       },
       at(context, 0.56),
     )
-    .to(
-      openGlyphs.filter((_glyph, index) => index % 3 === 0),
+    .fromTo(
+      rainGlyphs,
+      { autoAlpha: 0, x: 0, y: 0, scale: 0.45 },
+      {
+        autoAlpha: 0.88,
+        x: (_index, target) => motionValue(target, 'floatX'),
+        y: (_index, target) => motionValue(target, 'floatY'),
+        scale: 1,
+        duration: context.frames(30),
+        stagger: { amount: context.frames(6) },
+        ease: 'power3.out',
+        immediateRender: false,
+      },
+      at(context, 0.56),
+    )
+    .fromTo(
+      rainGlyphs,
+      {
+        y: (_index, target) => motionValue(target, 'floatY'),
+        autoAlpha: 0.88,
+      },
       {
         y: (_index, target) => motionValue(target, 'rainY'),
         autoAlpha: 0,
         duration: span(context, 0.62, 0.72),
         ease: 'power2.in',
+        immediateRender: false,
       },
       at(context, 0.62),
     )
@@ -431,9 +429,9 @@ export function buildJourneyTimeline(context: MotionBuildContext) {
     .to(
       flash,
       {
-        autoAlpha: 0.92,
-        duration: span(context, 0.88, 0.95),
-        ease: 'power4.in',
+        autoAlpha: 0.98,
+        duration: span(context, 0.88, 0.932),
+        ease: 'power2.inOut',
       },
       at(context, 0.88),
     )
@@ -454,8 +452,8 @@ export function buildJourneyTimeline(context: MotionBuildContext) {
         y: 0,
         rotation: 0,
         duration: context.frames(15),
-        stagger: context.frames(3),
-        ease: 'back.out(1.35)',
+        stagger: { amount: context.frames(12) },
+        ease: 'power3.out',
       },
       at(context, 0.955),
     )

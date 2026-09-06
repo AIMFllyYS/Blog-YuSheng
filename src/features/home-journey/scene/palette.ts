@@ -7,6 +7,10 @@ export type JourneyPalette = {
   paper: string
   paperEdge: string
   ink: string
+  nebula: string
+  nebulaDeep: string
+  star: string
+  starCool: string
 }
 
 const JOURNEY_COLOR_PROPERTIES = {
@@ -17,6 +21,10 @@ const JOURNEY_COLOR_PROPERTIES = {
   paper: '--journey-paper',
   paperEdge: '--journey-paper-edge',
   ink: '--journey-ink',
+  nebula: '--journey-nebula',
+  nebulaDeep: '--journey-nebula-deep',
+  star: '--journey-star',
+  starCool: '--journey-star-cool',
 } as const
 
 export function readJourneyPalette(element: HTMLElement): JourneyPalette {

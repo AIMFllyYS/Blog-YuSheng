@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import { useThree } from '@react-three/fiber'
 import type { JourneyProgressRef } from '../types'
 import { Atmosphere } from './Atmosphere'
+import { GalaxyNebula } from './galaxy-nebula'
 import { BoundBook } from './BoundBook'
 import { JourneyCameraRig } from './JourneyCameraRig'
 import { LightGate } from './LightGate'
@@ -9,16 +10,18 @@ import { readJourneyPalette } from './palette'
 import { WordVortex } from './WordVortex'
 
 type JourneyWorldProps = {
+  onBookInspect?: (event: { detail: 'binding' | 'seal' | 'pages' }) => void
   progressRef: JourneyProgressRef
 }
 
-export function JourneyWorld({ progressRef }: JourneyWorldProps) {
+export function JourneyWorld({ onBookInspect, progressRef }: JourneyWorldProps) {
   const gl = useThree((state) => state.gl)
   const palette = useMemo(() => readJourneyPalette(gl.domElement), [gl])
 
   return (
     <>
       <JourneyCameraRig progressRef={progressRef} />
+      <GalaxyNebula palette={palette} progressRef={progressRef} />
 
       <ambientLight color={palette.voidRaised} intensity={0.56} />
       <directionalLight
@@ -37,10 +40,11 @@ export function JourneyWorld({ progressRef }: JourneyWorldProps) {
       <Atmosphere
         gold={palette.gold}
         goldSoft={palette.goldSoft}
+        starCool={palette.starCool}
         progressRef={progressRef}
       />
       <WordVortex color={palette.gold} progressRef={progressRef} />
-      <BoundBook palette={palette} progressRef={progressRef} />
+      <BoundBook onInspect={onBookInspect} palette={palette} progressRef={progressRef} />
       <LightGate palette={palette} progressRef={progressRef} />
     </>
   )

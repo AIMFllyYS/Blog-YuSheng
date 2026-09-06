@@ -15,8 +15,10 @@ function mix(start: number, end: number, progress: number) {
 export function JourneyCameraRig({ progressRef }: JourneyCameraRigProps) {
   const target = useMemo(() => new Vector3(), [])
 
-  useFrame(({ camera }) => {
-    const progress = progressRef.current?.progress ?? 0
+  useFrame(({ camera, clock }) => {
+    const snapshot = progressRef.current
+    const progress = snapshot?.progress ?? 0
+    const ambientTime = snapshot?.qaFreeze ? 0 : clock.elapsedTime
     let cameraX = 0
     let cameraY = 0.1
     let cameraZ = mix(10.5, 9.35, smootherStep(rangeProgress(progress, 0, 0.22)))
@@ -33,23 +35,23 @@ export function JourneyCameraRig({ progressRef }: JourneyCameraRigProps) {
     } else if (progress >= 0.5 && progress < 0.56) {
       const descend = smootherStep(rangeProgress(progress, 0.5, 0.56))
       cameraX = mix(1.1, 0.72, descend)
-      cameraY = mix(5.35, 4.55, descend)
-      cameraZ = mix(7.1, 6.18, descend)
-      targetY = -0.12
-      fieldOfView = mix(43, 40.5, descend)
+      cameraY = mix(5.35, 5.8, descend)
+      cameraZ = mix(7.1, 8.6, descend)
+      targetY = mix(-0.12, 0.5, descend)
+      fieldOfView = 43
     } else if (progress >= 0.56 && progress < 0.75) {
       const openBook = smootherStep(rangeProgress(progress, 0.56, 0.75))
       cameraX = mix(0.72, 0.2, openBook)
-      cameraY = mix(4.55, 5.65, openBook)
-      cameraZ = mix(6.18, 7.45, openBook)
-      targetY = mix(-0.12, 0, openBook)
-      fieldOfView = mix(40.5, 43.5, openBook)
+      cameraY = mix(5.8, 6.4, openBook)
+      cameraZ = mix(8.6, 9, openBook)
+      targetY = mix(0.5, 0.1, openBook)
+      fieldOfView = mix(43, 43.5, openBook)
     } else if (progress >= 0.75 && progress < 0.82) {
       const riseToGate = smootherStep(rangeProgress(progress, 0.75, 0.82))
       cameraX = mix(0.2, 0, riseToGate)
-      cameraY = mix(5.65, 0.35, riseToGate)
-      cameraZ = mix(7.45, 10, riseToGate)
-      targetY = mix(0, 0.2, riseToGate)
+      cameraY = mix(6.4, 0.35, riseToGate)
+      cameraZ = mix(9, 10, riseToGate)
+      targetY = mix(0.1, 0.2, riseToGate)
       fieldOfView = mix(43.5, 47, riseToGate)
     } else if (progress >= 0.82 && progress < 0.88) {
       const gateReveal = smootherStep(rangeProgress(progress, 0.82, 0.88))
@@ -75,6 +77,9 @@ export function JourneyCameraRig({ progressRef }: JourneyCameraRigProps) {
     camera.position.set(cameraX, cameraY, cameraZ)
     target.set(0, targetY, targetZ)
     camera.lookAt(target)
+    camera.rotation.z =
+      Math.sin(ambientTime * 0.08 + progress * Math.PI * 2) * 0.0025 +
+      smootherStep(rangeProgress(progress, 0.75, 0.88)) * 0.004
 
     if (camera instanceof PerspectiveCamera && camera.fov !== fieldOfView) {
       camera.fov = fieldOfView

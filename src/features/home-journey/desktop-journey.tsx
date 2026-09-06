@@ -4,6 +4,9 @@ import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useEffect, useRef, useState } from 'react'
 import { HomeShell } from './components/home-shell'
+import { JourneyEasterEggs } from './components/journey-easter-eggs'
+import { BookInspector } from './components/book-inspector'
+import { JourneyChapters } from './components/journey-chapters'
 import { JourneyTypeLayer } from './components/journey-type-layer'
 import { buildJourneyTimeline } from './motion/build-journey-timeline'
 import { getChapterSnapTarget, getJourneyScene } from './motion/progress'
@@ -25,9 +28,10 @@ function readQaProgress() {
 
 type MotionStageProps = {
   layout: NonNullable<ReturnType<typeof usePretextLayout>>
+  onCanvasError: () => void
 }
 
-function MotionStage({ layout }: MotionStageProps) {
+function MotionStage({ layout, onCanvasError }: MotionStageProps) {
   const [qaProgress] = useState(readQaProgress)
   const isQa = qaProgress !== null
   const trackRef = useRef<HTMLElement>(null)
@@ -35,6 +39,7 @@ function MotionStage({ layout }: MotionStageProps) {
   const ambientTimelineRef = useRef<gsap.core.Timeline | null>(null)
   const skipTimelineRef = useRef<gsap.core.Timeline | null>(null)
   const skipRunningRef = useRef(false)
+  const chapterTargetRef = useRef<number | null>(null)
   const canvasRenderRequestRef = useRef<(() => void) | null>(null)
   const progressRef = useRef<JourneyProgressSnapshot>({
     progress: qaProgress ?? 0,
@@ -42,6 +47,11 @@ function MotionStage({ layout }: MotionStageProps) {
   })
   const [canvasReady, setCanvasReady] = useState(false)
   const [timelineReady, setTimelineReady] = useState(false)
+  const [scene, setScene] = useState(() => getJourneyScene(qaProgress ?? 0))
+  const [discoveryTarget, setDiscoveryTarget] = useState<HTMLDivElement | null>(null)
+  const [bookDetail, setBookDetail] = useState<
+    'binding' | 'seal' | 'pages' | null
+  >(null)
 
   const updateJourneyState = (timeline: gsap.core.Timeline, root: HTMLElement) => {
     const progress = timeline.progress()
@@ -49,14 +59,16 @@ function MotionStage({ layout }: MotionStageProps) {
     canvasRenderRequestRef.current?.()
     const ambientTimeline = ambientTimelineRef.current
     if (ambientTimeline) {
-      if (progress <= 0.0005) {
+      if (progress <= 0.0005 && document.visibilityState !== 'hidden') {
         if (ambientTimeline.paused()) ambientTimeline.play()
       } else if (!ambientTimeline.paused() || ambientTimeline.time() > 0) {
         ambientTimeline.pause(0)
       }
     }
     root.dataset.journeyProgress = progress.toFixed(4)
-    root.dataset.journeyScene = getJourneyScene(progress)
+    const nextScene = getJourneyScene(progress)
+    if (root.dataset.journeyScene !== nextScene) setScene(nextScene)
+    root.dataset.journeyScene = nextScene
   }
 
   useWebGsapTimeline(trackRef, buildJourneyTimeline, {
@@ -78,7 +90,16 @@ function MotionStage({ layout }: MotionStageProps) {
         timeline.progress(qaProgress, false)
         updateJourneyState(timeline, root)
         setTimelineReady(true)
-        return () => timeline.eventCallback('onUpdate', null)
+        const handleSeek = (event: Event) => {
+          if (!(event instanceof CustomEvent) || typeof event.detail !== 'number' || !Number.isFinite(event.detail)) return
+          timeline.progress(Math.max(0, Math.min(1, event.detail)), false)
+          updateJourneyState(timeline, root)
+        }
+        root.addEventListener('journey:qa-seek', handleSeek)
+        return () => {
+          root.removeEventListener('journey:qa-seek', handleSeek)
+          timeline.eventCallback('onUpdate', null)
+        }
       }
 
       const trigger = ScrollTrigger.create({
@@ -90,7 +111,7 @@ function MotionStage({ layout }: MotionStageProps) {
         scrub: 0.38,
         invalidateOnRefresh: true,
         snap: {
-          snapTo: (value, self) =>
+          snapTo: (value, self) => chapterTargetRef.current ??
             getChapterSnapTarget(value, self?.direction ?? 1),
           duration: { min: 0.3, max: 0.62 },
           delay: 0.08,
@@ -157,8 +178,14 @@ function MotionStage({ layout }: MotionStageProps) {
     }
 
     ambientTimelineRef.current = ambientTimeline
+    const syncVisibility = () => {
+      if (document.visibilityState === 'hidden') ambientTimeline.pause()
+      else if (progressRef.current.progress <= 0.0005) ambientTimeline.play()
+    }
+    document.addEventListener('visibilitychange', syncVisibility)
 
     return () => {
+      document.removeEventListener('visibilitychange', syncVisibility)
       ambientTimeline.kill()
       if (ambientTimelineRef.current === ambientTimeline) {
         ambientTimelineRef.current = null
@@ -181,10 +208,26 @@ function MotionStage({ layout }: MotionStageProps) {
     [],
   )
 
+  useEffect(() => {
+    const releaseChapter = () => { chapterTargetRef.current = null }
+    const handleKey = (event: KeyboardEvent) => {
+      if (['ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', 'Home', 'End', ' '].includes(event.key)) releaseChapter()
+    }
+    window.addEventListener('wheel', releaseChapter, { passive: true })
+    window.addEventListener('touchstart', releaseChapter, { passive: true })
+    window.addEventListener('keydown', handleKey)
+    return () => {
+      window.removeEventListener('wheel', releaseChapter)
+      window.removeEventListener('touchstart', releaseChapter)
+      window.removeEventListener('keydown', handleKey)
+    }
+  }, [])
+
   const handleSkip = () => {
     const timeline = timelineRef.current
     const root = trackRef.current
     if (!timeline || !root || skipRunningRef.current) return
+    chapterTargetRef.current = null
 
     const flash = root.querySelector<HTMLElement>('[data-journey-flash]')
     const scrollTarget = root.offsetTop + root.offsetHeight - window.innerHeight
@@ -219,6 +262,20 @@ function MotionStage({ layout }: MotionStageProps) {
   }
 
   const ready = canvasReady && timelineReady
+  const inBook = scene === 'gather' || scene === 'gather-end' || scene === 'open' || scene === 'open-end'
+  const activeChapter = scene.startsWith('gather') ? 1 : scene.startsWith('open') ? 2 : scene.startsWith('gate') ? 3 : 0
+  const selectChapter = (progress: number) => {
+    const root = trackRef.current
+    const timeline = timelineRef.current
+    if (!root || !timeline) return
+    chapterTargetRef.current = progress
+    if (isQa) {
+      timeline.progress(progress, false)
+      updateJourneyState(timeline, root)
+    } else {
+      window.scrollTo({ top: root.offsetTop + (root.offsetHeight - window.innerHeight) * progress, behavior: 'smooth' })
+    }
+  }
 
   return (
     <main
@@ -243,6 +300,8 @@ function MotionStage({ layout }: MotionStageProps) {
         >
           <JourneyCanvas
             diagnostics={isQa}
+            onCanvasError={onCanvasError}
+            onBookInspect={({ detail }) => setBookDetail(detail)}
             progressRef={progressRef}
             renderRequestRef={canvasRenderRequestRef}
             onCanvasReady={() => setCanvasReady(true)}
@@ -253,12 +312,15 @@ function MotionStage({ layout }: MotionStageProps) {
         <div className="journey-vignette pointer-events-none absolute inset-0" />
 
         <JourneyTypeLayer layout={layout} />
+        <JourneyEasterEggs portalTarget={discoveryTarget} settled={scene === 'epilogue'} enabled={scene === 'prologue' || scene === 'scatter' || scene === 'scatter-end' || scene === 'epilogue'} />
+        {scene !== 'epilogue' && scene !== 'gate-pass' ? <JourneyChapters active={activeChapter} onSelect={selectChapter} /> : null}
+        {inBook ? <BookInspector detail={bookDetail} onInspect={setBookDetail} /> : null}
 
         <div
           data-home-shell-layer
           className="invisible pointer-events-none absolute inset-0 z-[var(--z-panel)] overflow-y-auto opacity-0 [scrollbar-gutter:stable]"
         >
-          <HomeShell mode="cinematic" />
+          <HomeShell mode="cinematic" discoveryRef={setDiscoveryTarget} />
         </div>
 
         <div
@@ -304,6 +366,15 @@ function MotionStage({ layout }: MotionStageProps) {
 
 export function DesktopJourney() {
   const layout = usePretextLayout()
+  const [canvasFailed, setCanvasFailed] = useState(false)
+
+  if (canvasFailed) {
+    return (
+      <main data-testid="home-journey" data-journey-mode="reduced" data-journey-ready="true" data-journey-scene="epilogue" className="min-h-screen bg-[var(--journey-void)]">
+        <HomeShell mode="reduced" />
+      </main>
+    )
+  }
 
   if (!layout) {
     return (
@@ -318,5 +389,5 @@ export function DesktopJourney() {
     )
   }
 
-  return <MotionStage layout={layout} />
+  return <MotionStage layout={layout} onCanvasError={() => setCanvasFailed(true)} />
 }

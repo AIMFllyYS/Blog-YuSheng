@@ -3,14 +3,16 @@
 import Link from 'next/link'
 import { RopeNavigation } from '@/features/navigation'
 import { HOME_DESTINATIONS, JOURNEY_CONTENT } from '../content'
+import { DestinationObject } from './destination-object'
 
 export type HomeShellProps = {
   mode: 'cinematic' | 'reduced'
+  discoveryRef?: (element: HTMLDivElement | null) => void
 }
 
 const backdropStyle = {
   backgroundImage:
-    'radial-gradient(circle at 50% 2%, var(--journey-nebula) 0%, var(--journey-bg) 64%)',
+    'radial-gradient(circle at 50% 2%, color-mix(in srgb, var(--journey-nebula) 58%, transparent) 0%, color-mix(in srgb, var(--journey-bg) 84%, transparent) 66%, transparent 100%), linear-gradient(180deg, color-mix(in srgb, var(--journey-bg) 38%, transparent), transparent 70%)',
 }
 
 function DestinationEntry({
@@ -22,6 +24,7 @@ function DestinationEntry({
 }) {
   const content = (
     <>
+      <DestinationObject kind={destination.id} />
       <span className="text-[0.68rem] font-semibold tracking-[0.28em] text-[var(--ink-muted)]">
         {destination.eyebrow}
       </span>
@@ -39,7 +42,7 @@ function DestinationEntry({
   )
 
   const className =
-    'group relative block min-h-[15.5rem] overflow-hidden border border-[var(--line)] bg-[var(--scroll-paper)] p-5 text-left shadow-[0_22px_58px_var(--shadow-color)] transition-[transform,border-color,box-shadow] duration-[var(--dur-base)] ease-out before:absolute before:inset-y-4 before:left-0 before:w-1 before:bg-[var(--accent)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--accent)]'
+    'journey-destination-card group relative block min-h-[15.5rem] overflow-hidden border border-[var(--line)] bg-[var(--scroll-paper)] p-5 text-left shadow-[0_22px_58px_var(--shadow-color)] transition-[transform,border-color,box-shadow] duration-[var(--dur-slow)] before:absolute before:inset-y-4 before:left-0 before:w-1 before:bg-[var(--accent)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--accent)]'
 
   if (destination.available) {
     return (
@@ -68,10 +71,10 @@ function DestinationEntry({
   )
 }
 
-export function HomeShell({ mode }: HomeShellProps) {
+export function HomeShell({ mode, discoveryRef }: HomeShellProps) {
   return (
     <section
-      className="relative min-h-[100svh] bg-[var(--journey-bg)] px-4 pb-16 pt-44 text-[var(--journey-paper)] transition-colors duration-[var(--dur-slow)] ease-out md:px-8 md:pt-52"
+      className="relative min-h-[100svh] bg-transparent px-4 pb-16 pt-44 text-[var(--journey-paper)] transition-colors duration-[var(--dur-slow)] ease-out md:px-8 md:pt-52"
       data-journey-mode={mode}
       data-testid="home-shell"
     >
@@ -126,6 +129,7 @@ export function HomeShell({ mode }: HomeShellProps) {
             />
           ))}
         </div>
+        {mode === 'cinematic' ? <div ref={discoveryRef} data-home-star-slot className="relative mt-8 h-32" /> : null}
       </div>
     </section>
   )
