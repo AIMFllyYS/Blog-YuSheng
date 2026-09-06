@@ -19,6 +19,8 @@ export type GlyphStroke = {
   strokeLength: number
   strokeOffsetX: number
   strokeOffsetY: number
+  homeX: number
+  homeY: number
 }
 
 export function createStarCloud(count: number, seed: number): PointCloudData {
@@ -34,8 +36,56 @@ export function createStarCloud(count: number, seed: number): PointCloudData {
     positions[index * 3] = Math.cos(angle) * flattenedRadius
     positions[index * 3 + 1] = Math.sin(angle) * flattenedRadius * 0.62
     positions[index * 3 + 2] = 8 - seededUnit(seed, index, 'depth') * 43
-    sizes[index] = 0.48 + seededUnit(seed, index, 'size') * 1.9
-    alphas[index] = 0.24 + seededUnit(seed, index, 'alpha') * 0.72
+    sizes[index] = 1.1 + Math.pow(seededUnit(seed, index, 'size'), 4) * 5.5
+    alphas[index] = 0.48 + seededUnit(seed, index, 'alpha') * 0.52
+  }
+
+  return { positions, sizes, alphas }
+}
+
+/**
+ * A deterministic logarithmic-spiral galaxy. The mild gaussian-like jitter
+ * keeps the arms natural without introducing a texture or a runtime noise pass.
+ */
+export function createGalaxyCloud(count: number, seed: number): PointCloudData {
+  const positions = new Float32Array(count * 3)
+  const sizes = new Float32Array(count)
+  const alphas = new Float32Array(count)
+
+  for (let index = 0; index < count; index += 1) {
+    const arm = index % 4
+    const radius = 1.2 + Math.pow(seededUnit(seed, index, 'radius'), 0.66) * 18.8
+    const armAngle = arm * (FULL_TURN / 4)
+    const spiralAngle = armAngle + radius * 0.27 + (seededUnit(seed, index, 'angle') - 0.5) * 0.68
+    const lane = (seededUnit(seed, index, 'lane') - 0.5) * (0.28 + radius * 0.055)
+    const x = Math.cos(spiralAngle) * radius + Math.cos(spiralAngle + Math.PI / 2) * lane
+    const y = Math.sin(spiralAngle) * radius * 0.56 + Math.sin(spiralAngle + Math.PI / 2) * lane
+
+    positions[index * 3] = x
+    positions[index * 3 + 1] = y + (seededUnit(seed, index, 'vertical') - 0.5) * 0.34
+    positions[index * 3 + 2] = 2.5 - radius * 0.62 - seededUnit(seed, index, 'depth') * 12
+    sizes[index] = 0.36 + seededUnit(seed, index, 'size') * 1.55 + (radius < 3 ? 0.5 : 0)
+    alphas[index] = 0.12 + seededUnit(seed, index, 'alpha') * 0.46
+  }
+
+  return { positions, sizes, alphas }
+}
+
+export function createStarBand(count: number, seed: number): PointCloudData {
+  const positions = new Float32Array(count * 3)
+  const sizes = new Float32Array(count)
+  const alphas = new Float32Array(count)
+
+  for (let index = 0; index < count; index += 1) {
+    const x = (seededUnit(seed, index, 'x') - 0.5) * 24
+    const center = Math.sin(x * 0.32) * 1.1
+    const y = center + (seededUnit(seed, index, 'y') - 0.5) * (1.25 + Math.abs(x) * 0.08)
+
+    positions[index * 3] = x
+    positions[index * 3 + 1] = y
+    positions[index * 3 + 2] = -1.5 - seededUnit(seed, index, 'depth') * 13
+    sizes[index] = 0.28 + seededUnit(seed, index, 'size') * 1.25
+    alphas[index] = 0.16 + seededUnit(seed, index, 'alpha') * 0.42
   }
 
   return { positions, sizes, alphas }
@@ -91,6 +141,12 @@ export function createGlyphStrokes(
       strokeOffsetX: (strokeIndex - 1) * 0.11,
       strokeOffsetY:
         (seededUnit(seed, index, 'stroke-offset-y') - 0.5) * 0.2,
+      homeX:
+        (glyphIndex % 2 === 0 ? -0.88 : 0.88) +
+        (seededUnit(seed, glyphIndex, 'home-x') - 0.5) * 0.24,
+      homeY:
+        (strokeIndex - 1) * 0.36 +
+        (seededUnit(seed, glyphIndex, 'home-y') - 0.5) * 0.18,
     }
   })
 }

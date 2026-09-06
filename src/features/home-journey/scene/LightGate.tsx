@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, type RefObject } from 'react'
 import { useFrame } from '@react-three/fiber'
-import { Billboard } from '@react-three/drei'
+import { Billboard, RoundedBox } from '@react-three/drei'
 import {
   AdditiveBlending,
   Color,
@@ -29,15 +29,15 @@ function useGateMaterials(palette: JourneyPalette): GateMaterials {
     () => ({
       door: new MeshStandardMaterial({
         color: new Color(palette.voidRaised),
-        metalness: 0.08,
-        roughness: 0.48,
+        metalness: 0.24,
+        roughness: 0.58,
       }),
       frame: new MeshStandardMaterial({
         color: new Color(palette.gold),
         emissive: new Color(palette.gold),
-        emissiveIntensity: 0.74,
-        metalness: 0.22,
-        roughness: 0.3,
+        emissiveIntensity: 0.2,
+        metalness: 0.56,
+        roughness: 0.42,
       }),
     }),
     [palette],
@@ -71,9 +71,18 @@ function DoorLeaf({
   return (
     <group ref={pivotRef} position={[direction * 2.45, 0, 0]}>
       <group position={[inward * 1.17, 0, 0]}>
-        <mesh material={doorMaterial}>
-          <boxGeometry args={[2.32, 6.22, 0.16]} />
-        </mesh>
+        <RoundedBox args={[2.32, 6.22, 0.16]} radius={0.05} smoothness={2} material={doorMaterial} />
+        {[-1.75, 1.75].map((y) => (
+          <RoundedBox key={y} args={[1.66, 1.2, 0.065]} radius={0.025} smoothness={2} position={[0, y, 0.12]} material={doorMaterial} />
+        ))}
+
+        {/* A small pierced lattice, not an additional light source. */}
+        {[-0.62, 0, 0.62].map((x) => (
+          <group key={x} position={[x, 1.42, 0.17]}>
+            <mesh material={frameMaterial} rotation={[0, 0, Math.PI / 4]}><boxGeometry args={[0.018, 0.8, 0.018]} /></mesh>
+            <mesh material={frameMaterial} rotation={[0, 0, -Math.PI / 4]}><boxGeometry args={[0.018, 0.8, 0.018]} /></mesh>
+          </group>
+        ))}
 
         <mesh material={frameMaterial} position={[0, 2.58, 0.105]}>
           <boxGeometry args={[2.08, 0.09, 0.08]} />
@@ -91,7 +100,10 @@ function DoorLeaf({
           <boxGeometry args={[1.92, 0.075, 0.08]} />
         </mesh>
         <mesh material={frameMaterial} position={[inward * 0.72, 0, 0.18]}>
-          <sphereGeometry args={[0.09, 18, 12]} />
+          <sphereGeometry args={[0.08, 12, 8]} />
+        </mesh>
+        <mesh material={frameMaterial} position={[inward * 0.72, -0.13, 0.24]}>
+          <torusGeometry args={[0.14, 0.022, 6, 24]} />
         </mesh>
       </group>
     </group>
@@ -156,7 +168,10 @@ export function LightGate({ palette, progressRef }: LightGateProps) {
     const surgeStrength = surgeRise * surgeFall
     const formation = smootherStep(rangeProgress(progress, 0.815, 0.88))
     const opening = smootherStep(rangeProgress(progress, 0.88, 0.95))
-    const portalFade = 1 - smootherStep(rangeProgress(progress, 0.935, 0.975))
+    // Hand the radiance to the screen-space exposure before the camera crosses
+    // this plane. Otherwise near-plane clipping removes a full-screen light in
+    // one frame at ~92.5% of the journey.
+    const portalFade = 1 - smootherStep(rangeProgress(progress, 0.903, 0.919))
     const gateScale = Math.max(0.0001, formation)
 
     surge.visible = surgeStrength > 0.002
@@ -195,18 +210,21 @@ export function LightGate({ palette, progressRef }: LightGateProps) {
       </Billboard>
 
       <group ref={gateRef} position={[0, 0.2, 0]}>
-        <mesh material={materials.frame} position={[-2.68, 0, 0]}>
+        <mesh material={materials.door} position={[-2.68, 0, 0]}>
+          <boxGeometry args={[0.38, 7.05, 0.46, 2, 10, 2]} />
+        </mesh>
+        <mesh material={materials.door} position={[2.68, 0, 0]}>
           <boxGeometry args={[0.38, 7.05, 0.46]} />
         </mesh>
-        <mesh material={materials.frame} position={[2.68, 0, 0]}>
-          <boxGeometry args={[0.38, 7.05, 0.46]} />
-        </mesh>
-        <mesh material={materials.frame} position={[0, 3.45, 0]}>
+        <mesh material={materials.door} position={[0, 3.45, 0]}>
           <boxGeometry args={[5.72, 0.4, 0.46]} />
         </mesh>
-        <mesh material={materials.frame} position={[0, -3.45, 0]}>
+        <mesh material={materials.door} position={[0, -3.45, 0]}>
           <boxGeometry args={[5.72, 0.24, 0.46]} />
         </mesh>
+
+        {[-2.69, 2.69].map((x) => <mesh key={x} material={materials.frame} position={[x, 0, 0.24]}><boxGeometry args={[0.036, 6.8, 0.016]} /></mesh>)}
+        {[-3.44, 3.44].map((y) => <mesh key={y} material={materials.frame} position={[0, y, 0.24]}><boxGeometry args={[5.4, 0.036, 0.016]} /></mesh>)}
 
         <mesh position={[0, 0, -0.2]} renderOrder={4}>
           <planeGeometry args={[5.08, 6.62]} />
@@ -235,15 +253,8 @@ export function LightGate({ palette, progressRef }: LightGateProps) {
           pivotRef={rightDoorRef}
         />
 
-        <pointLight
-          ref={portalLightRef}
-          color={palette.gold}
-          distance={16}
-          decay={1.45}
-          intensity={0}
-          position={[0, 0, 1.5]}
-        />
       </group>
+      <pointLight ref={portalLightRef} color={palette.gold} distance={16} decay={1.45} intensity={0} position={[0, 0, 1.5]} />
     </group>
   )
 }
