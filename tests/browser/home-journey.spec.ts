@@ -129,3 +129,24 @@ test('short desktop epilogue keeps discovery stars below link cards', async ({ p
     await page.locator('[data-home-destination="blog"]').click({ trial: true })
   }
 })
+
+test('switching or closing a star discovery restores interrupted pulse styles', async ({ page }) => {
+  await ready(page, 0)
+  const first = page.getByRole('button', { name: '发现星签：北辰' })
+  const second = page.getByRole('button', { name: '发现星签：墨彗' })
+  const readPulse = (element: HTMLElement) => {
+    const style = getComputedStyle(element)
+    const matrix = style.transform === 'none' ? new DOMMatrixReadOnly() : new DOMMatrixReadOnly(style.transform)
+    return { scale: matrix.a, filter: style.filter }
+  }
+  await first.focus()
+  await page.keyboard.press('Enter')
+  await expect.poll(() => first.evaluate(readPulse).then((state) => state.scale)).toBeGreaterThan(1.1)
+  await second.focus()
+  await page.keyboard.press('Enter')
+  await expect.poll(() => first.evaluate(readPulse)).toEqual({ scale: 1, filter: 'none' })
+  await expect.poll(() => second.evaluate(readPulse).then((state) => state.scale)).toBeGreaterThan(1.1)
+  await page.getByRole('button', { name: '收起星签' }).focus()
+  await page.keyboard.press('Enter')
+  await expect.poll(() => second.evaluate(readPulse)).toEqual({ scale: 1, filter: 'none' })
+})

@@ -61,26 +61,29 @@ export function JourneyEasterEggs({ enabled, settled = false, portalTarget }: { 
     const card = cardRef.current
     if (!card || !activeEgg || !enabled) return
     const hotspot = hotspotRefs.current[activeEgg.id]
-    const timeline = gsap.timeline()
+    const context = gsap.context(() => {
+      const timeline = gsap.timeline()
 
-    timeline.fromTo(
-      card,
-      { autoAlpha: 0, y: 18, scale: 0.94, rotate: -1.5 },
-      { autoAlpha: 1, y: 0, scale: 1, rotate: 0, duration: 0.46, ease: 'power3.out' },
-    )
-    if (hotspot) {
-      timeline
-        .fromTo(
-          hotspot,
-          { scale: 1, filter: 'brightness(1)' },
-          { scale: 2.45, filter: 'brightness(1.8)', duration: 0.18, ease: 'power4.out' },
-          0,
-        )
-        .to(hotspot, { scale: 1, filter: 'brightness(1)', duration: 0.78, ease: 'power2.out' }, 0.18)
-    }
+      timeline.fromTo(
+        card,
+        { autoAlpha: 0, y: 18, scale: 0.94, rotate: -1.5 },
+        { autoAlpha: 1, y: 0, scale: 1, rotate: 0, duration: 0.46, ease: 'power3.out' },
+      )
+      if (hotspot) {
+        timeline
+          .fromTo(
+            hotspot,
+            { scale: 1, filter: 'brightness(1)' },
+            { scale: 2.45, filter: 'brightness(1.8)', duration: 0.18, ease: 'power4.out' },
+            0,
+          )
+          .to(hotspot, { scale: 1, filter: 'brightness(1)', duration: 0.78, ease: 'power2.out' }, 0.18)
+      }
+    })
 
     return () => {
-      timeline.kill()
+      // Restore the pre-pulse styles even if another discovery interrupts it.
+      context.revert()
     }
   }, [activeEgg, echo, enabled])
 
