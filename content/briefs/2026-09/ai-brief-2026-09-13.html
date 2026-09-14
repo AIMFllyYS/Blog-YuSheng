@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>折晓早报 · 对拍 · 2026-09-13</title>
+<!--
+Design references (2026-09-13):
+1. Codrops — Between Print and Digital: The Making of MERSI’s Website
+   https://tympanus.net/codrops/2026/07/27/between-print-and-digital-the-making-of-mersis-website/
+   Steal: split-screen comparison with central label; clip-path as the only reveal; editorial tension.
+2. 优设 — 用4个章节，帮你快速了解网页设计中的粗野主义
+   https://www.uisdc.com/brutalism
+   Steal: skeleton on display; huge type; conflict color; no soft chrome.
+3. DEV Community — Image Comparison Slider — Before/After Without Canvas
+   https://dev.to/wdsega/component-deep-dive-36-image-comparison-slider-beforeafter-without-canvas-4h97
+   Steal: native range + clip-path inset; keyboard-accessible compare as primary input.
+Style × Interaction × Genre: 粗野主义大字 × 对比滑杆（全速↔缓行） × 编辑部杂志/滚动纪录片
+Title metaphor: 对拍 — Amodei/Altman/Musk 同日踩闸叙事 vs Positron 仍在加码推理芯片；滑杆本身是判断。
+Do not reuse: 热键学徒, 抽思价, 对花小刊, 异心关, 侧线稿, 备胎传染, 晨间旗标, 可读半径, 驿路图, 晒印, 闸口.
+-->
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#0a0a0a;--paper:#f4f1ea;--cream:#fff8e7;--rush:#ff2d2d;--pace:#1a5cff;
+  --signal:#ffe600;--mute:#5a5a5a;--line:#0a0a0a;--pos:50%;
+}
+html{scroll-behavior:smooth}
+body{
+  background:var(--paper);color:var(--ink);
+  font-family:"Helvetica Neue",Helvetica,Arial,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  line-height:1.5;-webkit-font-smoothing:antialiased;min-height:100%;
+}
+a{color:inherit}
+.mast{
+  display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;
+  padding:18px 22px;border-bottom:4px solid var(--ink);background:var(--signal);
+}
+.mast .brand{font-weight:900;font-size:14px;letter-spacing:.12em;text-transform:uppercase}
+.mast .meta{font-size:12px;font-weight:700;letter-spacing:.06em}
+.hero{padding:28px 22px 8px;max-width:1100px;margin:0 auto}
+.eyebrow{font-size:11px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;margin-bottom:10px}
+.hero h1{
+  font-size:clamp(64px,16vw,140px);font-weight:900;letter-spacing:-.06em;line-height:.88;
+  text-transform:uppercase;margin:0 0 12px
+}
+.hero .lead{font-size:clamp(16px,2.4vw,22px);max-width:34em;font-weight:600;line-height:1.35}
+.today-num{
+  display:inline-block;margin-top:22px;padding:10px 16px;background:var(--ink);color:var(--signal);
+  font-size:clamp(28px,7vw,48px);font-weight:900;letter-spacing:-.04em;border:4px solid var(--ink);
+  box-shadow:8px 8px 0 var(--rush)
+}
+.today-num span{display:block;font-size:11px;letter-spacing:.16em;color:#fff;font-weight:800;margin-bottom:2px}
+.thesis{
+  margin:18px 0 0;padding:14px 16px;border:3px solid var(--ink);background:#fff;
+  font-size:17px;font-weight:700;max-width:40em;box-shadow:6px 6px 0 var(--ink)
+}
+
+/* Compare stage */
+.stage-wrap{padding:24px 22px 8px;max-width:1100px;margin:0 auto}
+.stage-label{font-size:11px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;margin-bottom:10px}
+.compare{
+  --pos:50%;
+  position:relative;height:min(62vh,520px);min-height:360px;
+  border:4px solid var(--ink);background:var(--ink);overflow:hidden;
+  box-shadow:12px 12px 0 rgba(0,0,0,.25);user-select:none;touch-action:none;
+}
+.pane{
+  position:absolute;inset:0;padding:22px 24px;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between
+}
+.pane.rush{background:var(--rush);color:#fff;z-index:1}
+.pane.pace{background:var(--pace);color:#fff;z-index:2;clip-path:inset(0 0 0 var(--pos))}
+.pane .tag{
+  display:inline-block;font-size:11px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;
+  padding:6px 10px;background:var(--ink);color:var(--signal);width:max-content
+}
+.pane h2{font-size:clamp(36px,8vw,72px);font-weight:900;letter-spacing:-.05em;line-height:.92;margin:18px 0 10px;max-width:8em}
+.pane p{font-size:15px;font-weight:600;max-width:28em;opacity:.95}
+.pane .bits{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.pane .bit{
+  font-size:12px;font-weight:800;padding:6px 10px;border:2px solid currentColor;background:rgba(0,0,0,.15)
+}
+.handle{
+  position:absolute;top:0;bottom:0;left:var(--pos);width:4px;background:var(--signal);z-index:4;
+  transform:translateX(-50%);pointer-events:none
+}
+.handle::before{
+  content:"";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:44px;height:44px;border:4px solid var(--ink);background:var(--signal);
+  box-shadow:4px 4px 0 var(--ink)
+}
+.handle::after{
+  content:"⟷";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  font-size:18px;font-weight:900;color:var(--ink);z-index:1
+}
+.compare input[type=range]{
+  appearance:none;-webkit-appearance:none;position:absolute;inset:0;width:100%;height:100%;
+  margin:0;opacity:0;cursor:col-resize;z-index:5
+}
+.bpm{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  margin-top:12px;padding:12px 14px;border:3px solid var(--ink);background:#fff;font-weight:800
+}
+.bpm .meter{flex:1;min-width:160px;height:14px;border:3px solid var(--ink);background:#eee;position:relative}
+.bpm .meter i{display:block;height:100%;background:linear-gradient(90deg,var(--rush),var(--pace));width:var(--pos)}
+.bpm .readout{font-size:13px;letter-spacing:.04em}
+.hint{font-size:12px;font-weight:700;color:var(--mute);margin-top:8px}
+
+/* Editorial sections */
+.spread{max-width:1100px;margin:0 auto;padding:36px 22px}
+.spread h3{
+  font-size:clamp(28px,5vw,42px);font-weight:900;letter-spacing:-.04em;line-height:1;
+  border-bottom:4px solid var(--ink);padding-bottom:10px;margin-bottom:18px
+}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.card{
+  border:3px solid var(--ink);background:#fff;padding:16px 16px 18px;
+  box-shadow:6px 6px 0 var(--ink);display:flex;flex-direction:column;gap:8px
+}
+.card .kicker{font-size:10px;font-weight:900;letter-spacing:.16em;text-transform:uppercase;color:var(--rush)}
+.card.blue .kicker{color:var(--pace)}
+.card.yellow{background:var(--signal)}
+.card h4{font-size:20px;font-weight:900;letter-spacing:-.02em;line-height:1.15}
+.card p{font-size:14px;font-weight:500;color:#222}
+.card .why{font-size:13px;font-weight:700;border-top:2px solid var(--ink);padding-top:8px;margin-top:4px}
+.card a.src{font-size:12px;font-weight:800;text-decoration:underline;text-underline-offset:3px}
+
+/* Essay */
+.essay{
+  max-width:720px;margin:8px auto 0;padding:28px 22px 40px;
+  border-top:4px solid var(--ink)
+}
+.essay .label{font-size:11px;font-weight:900;letter-spacing:.18em;text-transform:uppercase;margin-bottom:10px}
+.essay h3{font-size:28px;font-weight:900;letter-spacing:-.03em;margin-bottom:14px}
+.essay p{font-size:16px;margin-bottom:14px;font-weight:500}
+.essay p.drop::first-letter{
+  float:left;font-size:56px;line-height:.85;font-weight:900;padding:6px 10px 0 0;color:var(--rush)
+}
+
+/* Archive as end credits */
+.credits{
+  background:var(--ink);color:#e8e8e8;padding:36px 22px 80px;margin-top:20px
+}
+.credits .inner{max-width:900px;margin:0 auto}
+.credits h3{font-size:14px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:var(--signal);margin-bottom:16px}
+.credits table{width:100%;border-collapse:collapse;font-size:13px}
+.credits td{padding:8px 6px;border-bottom:1px solid #333;vertical-align:top}
+.credits td.t{width:88px;color:var(--signal);font-weight:800;white-space:nowrap}
+.credits td.s{width:120px;font-weight:700;color:#aaa}
+.credits .soft{opacity:.55}
+.footer{
+  text-align:center;padding:18px;font-size:12px;font-weight:800;letter-spacing:.08em;
+  border-top:4px solid var(--ink);background:var(--signal)
+}
+
+/* Mail corner note */
+.mail-btn{
+  position:fixed;right:14px;bottom:14px;z-index:40;
+  width:56px;height:56px;border:4px solid var(--ink);background:var(--signal);
+  box-shadow:5px 5px 0 var(--ink);font-weight:900;font-size:11px;letter-spacing:.04em;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.1
+}
+.mail-btn:hover{transform:translate(-1px,-1px);box-shadow:6px 6px 0 var(--ink)}
+.mail-panel{
+  position:fixed;right:14px;bottom:80px;z-index:41;width:min(360px,calc(100vw - 28px));
+  border:4px solid var(--ink);background:#fff;box-shadow:8px 8px 0 var(--ink);
+  padding:14px 14px 16px;display:none
+}
+.mail-panel.open{display:block}
+.mail-panel h4{font-size:14px;font-weight:900;margin-bottom:8px;letter-spacing:.04em}
+.mail-panel .sec{font-size:10px;font-weight:900;letter-spacing:.14em;margin:10px 0 4px;text-transform:uppercase}
+.mail-panel .sec.action{color:var(--rush)}
+.mail-panel .sec.watch{color:var(--pace)}
+.mail-panel .sec.skip{color:var(--mute)}
+.mail-panel ul{list-style:none;font-size:13px;font-weight:600}
+.mail-panel li{padding:5px 0;border-bottom:1px dashed #ccc}
+.mail-panel .close{
+  position:absolute;top:8px;right:10px;border:2px solid var(--ink);background:var(--cream);
+  font-weight:900;width:28px;height:28px;cursor:pointer
+}
+@media (max-width:640px){
+  .compare{min-height:420px}
+  .pane h2{font-size:40px}
+}
+</style>
+</head>
+<body>
+<header class="mast">
+  <div class="brand">折晓 · 早报</div>
+  <div class="meta">北京时间 2026-09-13 · 窗 09-12 06:00 → 09-13 06:00</div>
+</header>
+
+<section class="hero">
+  <div class="eyebrow">Edition · Pace Film / 对拍</div>
+  <h1>对拍</h1>
+  <p class="lead">同一天，三家对手齐声说要踩闸；同一天，推理芯片融资仍在加码。把滑杆拖过去——左边是「全速叙事」，右边是「缓行声明」。判断在中间那条黄线。</p>
+  <div class="today-num"><span>TODAY NUMBER</span>2027</div>
+  <p class="thesis">Altman 把 OpenAI IPO 推到「不是 2026」；Amodei 要 1–2 年对齐窗；资本的对拍另一面是 Positron 的 $875M。</p>
+</section>
+
+<section class="stage-wrap">
+  <div class="stage-label">主交互 · 拖动对拍（键盘 ← → 亦可）</div>
+  <div class="compare" id="compare" style="--pos:50%" role="group" aria-label="全速与缓行对比">
+    <div class="pane rush" aria-hidden="true">
+      <div>
+        <span class="tag">LEFT · 全速</span>
+        <h2>先发、先融、先上线</h2>
+        <p>旗舰仍在炖，但便宜代理层、推理 ASIC、具身数据轮子没有停。缓行声明还没落地成共同安全条，资本已经在下一层下注。</p>
+      </div>
+      <div class="bits">
+        <span class="bit">Positron $875M · $5B</span>
+        <span class="bit">Asimov LPDDR 推理</span>
+        <span class="bit">Mecka ≈$500M 报道称</span>
+        <span class="bit">DeepSeek Flash 价签</span>
+      </div>
+    </div>
+    <div class="pane pace" id="pacePane">
+      <div>
+        <span class="tag">RIGHT · 缓行</span>
+        <h2>Pace the Frontier</h2>
+        <p>不是停训。是给第三方评估「员工级」权限，给行业 1–2 年对齐窗，再谈民主国家协调与全球闸门——含芯片与蒸馏。</p>
+      </div>
+      <div class="bits">
+        <span class="bit">Amodei 三步</span>
+        <span class="bit">Altman：独立评估也做</span>
+        <span class="bit">Musk：Dario is right</span>
+        <span class="bit">IPO ≠ 2026</span>
+      </div>
+    </div>
+    <div class="handle" id="handle" aria-hidden="true"></div>
+    <input type="range" id="slider" min="0" max="100" value="50" aria-label="对拍滑杆：左全速，右缓行">
+  </div>
+  <div class="bpm">
+    <div class="readout" id="readout">对拍 50% · 两边都在画面里</div>
+    <div class="meter" aria-hidden="true"><i id="meterFill"></i></div>
+  </div>
+  <p class="hint">拖过约 28% 会解锁片尾档案；过 72% 会点亮制片笔记。滑杆讲的是今天的判断，不只是导航。</p>
+</section>
+
+<section class="spread" id="spine">
+  <h3>主线四帧</h3>
+  <div class="grid">
+    <article class="card blue">
+      <div class="kicker">01 · 政策安全</div>
+      <h4>Amodei：《We Must Pace the Frontier》</h4>
+      <p>周六发文：放缓不是停训，是给安全评估与对齐留窗。Anthropic 单方面承诺向第三方评估机构提供永久、员工级访问；第二步民主国家协调标准；第三步才碰威权侧与芯片/蒸馏闸。</p>
+      <p class="why">为什么重要：把「自愿踩闸」从研究员辞职推特，抬成 CEO 级工业倡议；并把蒸馏写进地缘步骤。</p>
+      <a class="src" href="https://www.theverge.com/ai-artificial-intelligence/994337/anthropic-ceo-slow-down-ai-development" target="_blank" rel="noopener">The Verge</a>
+      · <a class="src" href="https://www.cnbc.com/2026/09/12/anthropics-amodei-proposes-plan-to-slow-the-pace-of-advancing-ai-capabilities.html" target="_blank" rel="noopener">CNBC</a>
+      · <a class="src" href="https://www.ithome.com/1/001/651.htm" target="_blank" rel="noopener">IT之家</a>
+    </article>
+    <article class="card">
+      <div class="kicker">02 · 资本市场</div>
+      <h4>Altman：现在 IPO「ill-advised」</h4>
+      <p>Fortune 访谈确认 OpenAI 不会在 2026 上市；安全与对齐优先。同日他公开同意 Amodei「pace the frontier」，并说独立评估「我们也会做」。Musk 回复：Dario is right。</p>
+      <p class="why">为什么重要：今日数字 2027——史上最被期待的 IPO 之一，被安全叙事明确推迟一年档。</p>
+      <a class="src" href="https://fortune.com/2026/09/12/sam-altman-openai-ipo-delay-ill-advised-moment-safety-concerns/" target="_blank" rel="noopener">Fortune</a>
+      · <a class="src" href="https://www.reuters.com/legal/litigation/openai-ipo-will-not-happen-2026-amid-ai-safety-fears-altman-says-2026-09-12/" target="_blank" rel="noopener">Reuters</a>
+    </article>
+    <article class="card yellow">
+      <div class="kicker">03 · 算力芯片</div>
+      <h4>Positron：$875M，估值 $5B</h4>
+      <p>TechTimes 9/12：Series C/C-1 合计约 $875M；Asimov 走 LPDDR5X 而非 HBM，瞄准推理。NEA 与 Jim Clark 等领投。生产目标约 2027 H2。</p>
+      <p class="why">为什么重要：口头缓行的同一周末，推理侧仍在用「商品内存」叙事冲估值——对拍的左半屏。</p>
+      <a class="src" href="https://www.techtimes.com/articles/327400/20260912/positron-ai-raises-875m-prove-commodity-memory-can-beat-hbm-inference.htm" target="_blank" rel="noopener">TechTimes</a>
+      · <a class="src" href="https://www.reuters.com/business/ai-chip-startup-positrons-valuation-skyrockets-latest-funding-round-2026-09-10/" target="_blank" rel="noopener">Reuters（轮融资细节）</a>
+    </article>
+    <article class="card">
+      <div class="kicker">04 · 机器人数据</div>
+      <h4>Mecka：报道称逼近 $500M</h4>
+      <p>TechCrunch 报道称 Sequoia 领投、估值约 $5 亿（条款未定）。做具身/人形训练用的人体动作数据，六月刚融 $60M。</p>
+      <p class="why">对 Sofia：具身数据公司在「Scale for robots」赛道加速；若你跟机器人/多模态，这是数据层信号，不是整机信号。</p>
+      <a class="src" href="https://techcrunch.com/2026/09/11/mecka-ai-nears-500m-valuation-in-sequoia-led-deal-amid-rush-for-robot-training-data/" target="_blank" rel="noopener">TechCrunch（报道称）</a>
+    </article>
+  </div>
+</section>
+
+<section class="essay" id="essay">
+  <div class="label">制片笔记 · B 面长文</div>
+  <h3>缓行是声明，对拍才是事实</h3>
+  <p class="drop">周六这天读起来像一场罕见的合唱：Amodei 写《We Must Pace the Frontier》，Altman 在 Fortune 里说现在上市「ill-advised」，Musk 甩一句 Dario is right。三个平时互相拆台的人，突然站上同一块「踩闸」牌子。</p>
+  <p>但牌子上写的不是停训。Amodei 自己说得很清楚：pacing 是给对齐、工程标准、模型「脑部 fMRI」、更硬的评测留 1–2 年；第一步他能单方面做——把第三方评估机构请成「像员工一样能进系统」。第二步要同行协调；第三步才碰中国等威权侧，并点名芯片出口与蒸馏。IT之家转述里，他还把 OpenAI/Hugging Face 集群事故写成「全行业都有轻症、未来 6–12 个月可能长成僵尸网」的预警。</p>
+  <p>同一时间轴的另一条声轨更吵：Positron 用 LPDDR 推理 ASIC 故事融到约 $875M、估值 $5B；Mecka 在具身数据上被报道推向约 $5 亿估值。DeepSeek V4.1 Flash 的价签与 9/14 Pro→Flash 改道仍在倒计时——昨天早报已经讲透，今天不装新闻，只留在片尾。缓行声明需要同行真的把节奏降下来才算数；在那之前，滑杆两边都会同时亮着。</p>
+  <p>对学医又摸 AI 的你：今天值得记住的不是口号，而是机制——「员工级评估权限」若真落地，比再多一篇 CEO 随笔更像可验证的闸。IPO 推迟是资本市场读到的同构信号。芯片与数据融资则提醒：下游并不自动跟着口号减速。</p>
+</section>
+
+<section class="credits" id="archive">
+  <div class="inner">
+    <h3>片尾字幕 · 24h 档案</h3>
+    <table>
+      <tr><td class="t">约 09-12</td><td class="s">Anthropic</td><td>Amodei 发文 Pace the Frontier；三步计划；单方面员工级第三方评估。</td></tr>
+      <tr><td class="t">09-12</td><td class="s">Fortune</td><td>Altman：2026 IPO ill-advised；「not 2026」；安全/对齐优先。</td></tr>
+      <tr><td class="t">09-12</td><td class="s">X/社交</td><td>Altman 同意 pace + 独立评估；Musk「Dario is right」。</td></tr>
+      <tr><td class="t">09-12</td><td class="s">Verge/CNBC</td><td>缓行报道；点名 RSI 与 Hugging Face 集群事故为动机。</td></tr>
+      <tr><td class="t">09-12</td><td class="s">IT之家</td><td>中文转述：1–2 年窗、四类安全投入、员工级评估。</td></tr>
+      <tr><td class="t">09-12</td><td class="s">TechTimes</td><td>Positron $875M / $5B；Asimov LPDDR5X 推理 ASIC。</td></tr>
+      <tr><td class="t">09-12 窗内</td><td class="s">TechCrunch</td><td>Mecka 报道称 Sequoia 领投、估值约 $500M（未定）。</td></tr>
+      <tr class="soft"><td class="t">侧翼</td><td class="s">DeepSeek</td><td>V4.1 Flash 价签与 9/14 Pro→Flash——昨报已讲，今日不装新。</td></tr>
+      <tr class="soft"><td class="t">侧翼</td><td class="s">Cursor/OpenAI</td><td>11/12 模型切断提案仍为旧闻，今日无新进展。</td></tr>
+      <tr class="soft"><td class="t">邮件</td><td class="s">CI</td><td>SCI-AIChat-Demo / deepseek-harness 仍红——见角落便条。</td></tr>
+    </table>
+  </div>
+</section>
+
+<footer class="footer">2026-09-13 北京时间 · 折晓 早报 · 对拍</footer>
+
+<button type="button" class="mail-btn" id="mailBtn" aria-expanded="false" aria-controls="mailPanel">角落<br>便条</button>
+<aside class="mail-panel" id="mailPanel" role="dialog" aria-label="邮件便条">
+  <button type="button" class="close" id="mailClose" aria-label="关闭">×</button>
+  <h4>角落便条 · 两邮箱</h4>
+  <p style="font-size:12px;font-weight:600;color:#555;margin-bottom:6px">窗：09-12 06:00–09-13 06:00 上海 · sofiapintos190 / aimfllyys</p>
+  <div class="sec action">ACTION</div>
+  <ul><li>无新截止件。Slack Pro trial 仍至 09-17（昨报已标，续盯）。</li></ul>
+  <div class="sec watch">WATCH</div>
+  <ul>
+    <li>SCI-AIChat-Demo CI 仍红 · master/579183f（09-12 20:35Z 再报）。</li>
+    <li>deepseek-harness E2E/CI 仍红 · master/c291e79（09-12 04:32Z / 10:17Z）。</li>
+    <li>Consensus：免费搜索 15→10（产品变更邮件，可忽略）。</li>
+  </ul>
+  <div class="sec skip">SKIP</div>
+  <ul>
+    <li>OpenRouter 验证码；Twitch/Quizlet/Scite/Elicit/Readwise/Sider 促销欢迎信；两笔发卡密收据。</li>
+    <li>sofiapintos190：本窗无新件（此前 Vercel/Google 登录提示在窗外）。</li>
+  </ul>
+</aside>
+
+<script>
+(function(){
+  var compare=document.getElementById('compare');
+  var slider=document.getElementById('slider');
+  var pace=document.getElementById('pacePane');
+  var handle=document.getElementById('handle');
+  var readout=document.getElementById('readout');
+  var essay=document.getElementById('essay');
+  var archive=document.getElementById('archive');
+  var unlocked={essay:false,archive:false};
+
+  function setPos(v){
+    v=Math.max(0,Math.min(100,Number(v)));
+    compare.style.setProperty('--pos',v+'%');
+    pace.style.clipPath='inset(0 0 0 '+v+'%)';
+    handle.style.left=v+'%';
+    slider.value=String(v);
+    var label;
+    if(v<28) label='偏全速 '+Math.round(v)+'% · 芯片/融资声部更响';
+    else if(v>72) label='偏缓行 '+Math.round(v)+'% · 声明与 IPO 推迟更响';
+    else label='对拍 '+Math.round(v)+'% · 两边都在画面里';
+    readout.textContent=label;
+    if(v<=28 && !unlocked.archive){
+      unlocked.archive=true;
+      archive.scrollIntoView({behavior:'smooth',block:'start'});
+    }
+    if(v>=72 && !unlocked.essay){
+      unlocked.essay=true;
+      essay.scrollIntoView({behavior:'smooth',block:'start'});
+    }
+  }
+  slider.addEventListener('input',function(){setPos(slider.value)});
+  setPos(50);
+
+  var mailBtn=document.getElementById('mailBtn');
+  var mailPanel=document.getElementById('mailPanel');
+  var mailClose=document.getElementById('mailClose');
+  function toggleMail(open){
+    var on=typeof open==='boolean'?open:!mailPanel.classList.contains('open');
+    mailPanel.classList.toggle('open',on);
+    mailBtn.setAttribute('aria-expanded',on?'true':'false');
+  }
+  mailBtn.addEventListener('click',function(){toggleMail()});
+  mailClose.addEventListener('click',function(){toggleMail(false)});
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Escape') toggleMail(false);
+    if(e.key==='ArrowLeft'){setPos(Number(slider.value)-3);e.preventDefault()}
+    if(e.key==='ArrowRight'){setPos(Number(slider.value)+3);e.preventDefault()}
+  });
+})();
+</script>
+</body>
+</html>

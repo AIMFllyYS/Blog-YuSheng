@@ -133,6 +133,20 @@ function BookmarkFace({
 
   if (!slot.href) return null
 
+  if (slot.external) {
+    return (
+      <a
+        className={className}
+        data-tip={slot.tip}
+        href={slot.href}
+        rel="noreferrer"
+        target="_blank"
+      >
+        {slot.label}
+      </a>
+    )
+  }
+
   return (
     <Link
       aria-current={current ? 'page' : undefined}

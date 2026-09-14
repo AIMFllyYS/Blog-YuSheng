@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>可读半径 · 折晓 早报 · 2026-09-03</title>
+<!--
+DESIGN SOURCES (user-invisible)
+- Hearst Exhibit 2026 Awwwards/OSMOS https://www.awwwards.com/sites/hearst-exhibit-2026 — exhibition pieces not card wall
+- CTRLSZE Building the cursor reveal https://ctrlsze.studio/blog/building-a-cursor-reveal — mask-image radial lens + lerp ~0.15
+- Vercel agents design.md https://vercel.com/blog/how-our-agents-build-on-brand-pages-with-design-md — refuse generic SaaS dashboard
+- Combo: 手绘铅笔 × 光标聚光灯 × 迷你网站 · 《可读半径》
+- Anti-patterns: no card wall, dark dashboard, compare-slider, 灯箱, fold-letter, star map, blueprint weld, cover→hotspot map
+-->
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --paper:#F3EEE4;
+  --graphite:#2C2C2A;
+  --graphite-mid:#5C5850;
+  --ink-blue:#5A87B0;
+  --correct-red:#C14B3A;
+  --tape:#E6D59A;
+  --lens-warm:#FFF6D6;
+  --grid:28px;
+  --lens-x:50%;
+  --lens-y:40%;
+  --lens-r:140px;
+  --margin:clamp(48px,8vw,96px);
+}
+html{scroll-behavior:smooth}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{
+  background:#C8C0B0;
+  color:var(--graphite);
+  font-family:system-ui,"PingFang SC","Noto Sans SC",sans-serif;
+  line-height:1.55;
+  min-height:100vh;
+  overflow-x:hidden;
+}
+body.fine-pointer{cursor:none}
+body.fine-pointer a,body.fine-pointer button,body.fine-pointer .mail-card,body.fine-pointer .arch-tab{cursor:none}
+.crosshair{
+  position:fixed;width:18px;height:18px;pointer-events:none;z-index:9999;
+  transform:translate(-50%,-50%);display:none;mix-blend-mode:multiply;
+}
+.crosshair::before,.crosshair::after{
+  content:"";position:absolute;background:var(--graphite);opacity:.85;
+}
+.crosshair::before{left:50%;top:0;width:2px;height:100%;margin-left:-1px}
+.crosshair::after{top:50%;left:0;height:2px;width:100%;margin-top:-1px}
+body.fine-pointer:not(.reveal-open):not(.lens-off) .crosshair{display:block}
+.sheet-stage{
+  position:relative;
+  max-width:1180px;
+  margin:24px auto 64px;
+  padding:0;
+}
+.sheet{
+  position:relative;
+  background:var(--paper);
+  min-height:calc(100vh - 48px);
+  box-shadow:
+    0 1px 0 rgba(44,44,42,.08),
+    0 12px 40px rgba(44,44,42,.18),
+    inset 0 0 0 1px rgba(92,88,80,.12);
+  background-image:
+    repeating-linear-gradient(0deg,transparent,transparent calc(var(--grid) - 1px),rgba(90,135,176,.07) calc(var(--grid) - 1px),rgba(90,135,176,.07) var(--grid)),
+    repeating-linear-gradient(90deg,transparent,transparent calc(var(--grid) - 1px),rgba(90,135,176,.05) calc(var(--grid) - 1px),rgba(90,135,176,.05) var(--grid)),
+    repeating-linear-gradient(105deg,rgba(44,44,42,.04) 0 1px,transparent 1px 3px);
+  overflow:hidden;
+  transition:transform .45s cubic-bezier(.22,.61,.36,1);
+}
+.sheet.slide-peek{transform:translateX(18px) rotate(.3deg)}
+.layer{
+  position:relative;
+  display:grid;
+  grid-template-columns:56px 1fr minmax(240px,40%);
+  grid-template-rows:auto 1fr auto;
+  gap:0;
+  padding:var(--margin) var(--margin) 48px calc(var(--margin) + 12px);
+  min-height:inherit;
+}
+#ink{z-index:1}
+#graphite{
+  position:absolute;inset:0;z-index:2;pointer-events:none;
+  -webkit-mask-image:radial-gradient(circle var(--lens-r) at var(--lens-x) var(--lens-y),
+    #000 0%,#000 55%,rgba(0,0,0,.45) 72%,transparent 100%);
+  mask-image:radial-gradient(circle var(--lens-r) at var(--lens-x) var(--lens-y),
+    #000 0%,#000 55%,rgba(0,0,0,.45) 72%,transparent 100%);
+  background:radial-gradient(circle var(--lens-r) at var(--lens-x) var(--lens-y),
+    rgba(255,246,214,.18) 0%,transparent 70%);
+}
+body.lens-off #graphite,
+body.no-lens #graphite{
+  -webkit-mask-image:none;mask-image:none;
+  opacity:0;transition:opacity .4s ease;
+  background:transparent;
+}
+body.lens-off.layer-on #graphite,
+body.no-lens.layer-on #graphite{
+  opacity:.4;
+}
+body.reveal-open #graphite{
+  -webkit-mask-image:none;mask-image:none;opacity:0;background:transparent;
+}
+.g-grid{
+  display:grid;
+  grid-template-columns:56px 1fr minmax(240px,40%);
+  grid-template-rows:auto 1fr auto;
+  gap:0;
+  padding:var(--margin) var(--margin) 48px calc(var(--margin) + 12px);
+  min-height:100%;
+  font-family:Georgia,"Songti SC","Noto Serif SC",serif;
+  font-style:italic;
+  color:var(--graphite-mid);
+  font-size:13.5px;
+  line-height:1.45;
+}
+.mast{
+  grid-column:2 / 3;
+  grid-row:1;
+  margin-bottom:28px;
+  position:relative;
+}
+.mast-meta{
+  font-family:ui-monospace,"SF Mono",Menlo,monospace;
+  font-size:11px;letter-spacing:.08em;color:var(--ink-blue);
+  text-transform:uppercase;margin-bottom:10px;
+}
+.mast h1{
+  font-size:clamp(28px,4.2vw,42px);
+  font-weight:600;letter-spacing:.02em;
+  color:var(--graphite);line-height:1.15;
+  border-bottom:1.5px solid var(--graphite);
+  padding-bottom:8px;display:inline-block;
+}
+.today-block{
+  margin-top:18px;display:flex;flex-wrap:wrap;align-items:baseline;gap:16px 28px;
+}
+.today-num{
+  font-size:clamp(56px,9vw,92px);font-weight:700;line-height:1;
+  color:var(--graphite);letter-spacing:-.03em;
+  font-variant-numeric:tabular-nums;
+}
+.today-num span{font-size:.45em;vertical-align:super;margin-left:2px}
+.thesis{
+  max-width:22em;font-size:clamp(16px,2vw,20px);font-weight:500;
+  border-left:2px solid var(--correct-red);padding-left:14px;
+  color:var(--graphite);
+}
+.thesis em{font-style:normal;color:var(--correct-red)}
+.subclaim{
+  font-family:ui-monospace,"SF Mono",Menlo,monospace;
+  font-size:11px;color:var(--graphite-mid);margin-top:8px;max-width:36em;
+}
+.rail{
+  grid-column:1;grid-row:1 / 4;
+  position:sticky;top:24px;align-self:start;
+  display:flex;flex-direction:column;gap:18px;
+  padding-top:8px;z-index:5;
+}
+.rail a{
+  width:28px;height:28px;border:1.5px solid var(--ink-blue);
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-family:ui-monospace,"SF Mono",Menlo,monospace;
+  font-size:12px;color:var(--ink-blue);text-decoration:none;
+  background:rgba(243,238,228,.85);
+}
+.rail a:hover,.rail a:focus-visible{background:var(--ink-blue);color:var(--paper);outline:none}
+.spine{
+  grid-column:2;grid-row:2;
+  display:flex;flex-direction:column;gap:0;
+  scroll-snap-type:y proximity;
+  padding-right:20px;
+}
+.specimen{
+  scroll-snap-align:center;
+  padding:28px 0 32px;
+  border-top:1px solid rgba(90,135,176,.35);
+  position:relative;
+}
+.specimen:first-child{border-top:none;padding-top:8px}
+.spec-num{
+  position:absolute;left:-8px;top:28px;
+  font-family:ui-monospace,"SF Mono",Menlo,monospace;
+  font-size:13px;color:var(--ink-blue);
+  width:24px;height:24px;border:1.5px solid var(--ink-blue);
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  background:var(--paper);
+}
+.specimen h2{
+  font-size:17px;font-weight:600;margin:0 0 8px 28px;line-height:1.35;
+}
+.specimen .lede{margin:0 0 10px 28px;font-size:14.5px;color:var(--graphite);max-width:38em}
+.specimen ul{margin:0 0 0 44px;padding:0;list-style:none}
+.specimen li{
+  position:relative;padding:3px 0 3px 14px;font-size:13.5px;
+  color:var(--graphite-mid);max-width:36em;
+}
+.specimen li::before{
+  content:"";position:absolute;left:0;top:.7em;width:6px;height:1px;background:var(--ink-blue);
+}
+.specimen .why{
+  margin:12px 0 0 28px;font-size:12.5px;color:var(--graphite);
+  border-left:2px solid var(--tape);padding-left:10px;max-width:36em;
+}
+.specimen a{color:var(--ink-blue);text-decoration:underline;text-underline-offset:2px}
+.specimen a:hover{color:var(--correct-red)}
+.opt-tag{
+  display:inline-block;font-family:ui-monospace,Menlo,monospace;font-size:10px;
+  border:1px solid var(--graphite-mid);padding:1px 6px;margin-left:6px;
+  vertical-align:middle;letter-spacing:.04em;color:var(--graphite-mid);
+}
+.essay-col{
+  grid-column:3;grid-row:1 / 3;
+  border-left:1px solid rgba(90,135,176,.4);
+  padding-left:22px;margin-left:8px;
+  position:relative;
+}
+.essay-col h2{
+  font-size:15px;font-weight:600;letter-spacing:.12em;
+  color:var(--ink-blue);margin-bottom:14px;
+  font-family:ui-monospace,"SF Mono",Menlo,monospace;
+}
+.essay-body{
+  font-size:14px;line-height:1.75;color:var(--graphite);
+  max-width:32em;
+}
+.essay-body p{margin-bottom:1em}
+.essay-body .tip{
+  margin-top:1.2em;padding:10px 12px;
+  border:1px dashed var(--correct-red);
+  background:rgba(193,75,58,.04);
+  font-size:13px;line-height:1.65;
+}
+.foot{
+  grid-column:2 / 4;grid-row:3;
+  margin-top:36px;padding-top:14px;
+  border-top:1.5px solid var(--graphite);
+  display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px;
+  font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:11px;color:var(--graphite-mid);
+}
+/* graphite overlays */
+.g-mast{grid-column:2;grid-row:1;margin-bottom:28px;min-height:180px;position:relative}
+.g-note{
+  position:absolute;font-size:12.5px;max-width:16em;
+  transform:rotate(-0.2deg);color:var(--graphite);
+}
+.g-note.red{color:var(--correct-red);font-style:italic}
+.g-strike{text-decoration:line-through;text-decoration-color:var(--correct-red);opacity:.85}
+.g-circ{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:1.35em;height:1.35em;border:1.5px solid var(--ink-blue);
+  border-radius:50%;font-style:normal;font-family:ui-monospace,Menlo,monospace;
+  font-size:11px;color:var(--ink-blue);margin:0 3px;
+}
+.g-const{
+  border:1px dashed var(--ink-blue);opacity:.7;pointer-events:none;
+}
+.g-spine{grid-column:2;grid-row:2;padding-right:20px}
+.g-spec{padding:28px 0 32px;min-height:140px;position:relative;border-top:1px solid transparent}
+.g-spec:first-child{padding-top:8px}
+.g-margin{
+  margin-left:28px;margin-top:4px;font-size:12.5px;max-width:34em;
+  color:var(--graphite);transform:rotate(0.15deg);
+}
+.g-margin .nag{color:var(--correct-red);display:block;margin-top:4px}
+.g-essay{grid-column:3;grid-row:1 / 3;padding-left:22px;margin-left:8px;position:relative}
+.g-essay-ann{
+  position:absolute;left:0;top:60px;width:18px;
+  writing-mode:vertical-rl;font-size:11px;color:var(--correct-red);
+  letter-spacing:.15em;transform:rotate(180deg);
+}
+.g-essay-side{
+  margin-top:200px;margin-left:-6px;padding:8px 6px;
+  border-left:2px solid var(--ink-blue);font-size:12px;max-width:11em;
+  color:var(--graphite);transform:rotate(-0.3deg);
+}
+/* mail card */
+.mail-wrap{
+  position:absolute;top:18px;right:22px;z-index:20;width:210px;
+  transform:rotate(2.2deg);
+}
+.mail-tape{
+  position:absolute;top:-8px;left:50%;transform:translateX(-50%) rotate(-3deg);
+  width:68px;height:16px;background:var(--tape);
+  box-shadow:0 1px 2px rgba(44,44,42,.15);opacity:.92;z-index:2;
+  background-image:repeating-linear-gradient(90deg,transparent,transparent 3px,rgba(44,44,42,.06) 3px,rgba(44,44,42,.06) 4px);
+}
+.mail-card{
+  background:#F7F2E8;border:1px solid rgba(44,44,42,.25);
+  box-shadow:2px 3px 0 rgba(44,44,42,.08),0 4px 12px rgba(44,44,42,.1);
+  padding:14px 12px 10px;position:relative;
+  font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:11px;
+  cursor:pointer;text-align:left;width:100%;
+  color:var(--graphite);
+}
+.mail-card:focus-visible{outline:2px solid var(--ink-blue);outline-offset:2px}
+.mail-badge{font-weight:700;letter-spacing:.06em;font-size:12px}
+.mail-badge .dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--ink-blue);margin-right:5px;vertical-align:middle}
+.mail-peek{margin-top:6px;color:var(--graphite-mid);line-height:1.4}
+.mail-body{
+  display:none;margin-top:10px;padding-top:8px;
+  border-top:1px dashed rgba(92,88,80,.4);text-align:left;
+  max-height:280px;overflow-y:auto;line-height:1.45;
+}
+.mail-wrap.open .mail-body{display:block!important}
+.mail-wrap.open{transform:rotate(0.4deg);z-index:30}
+.mail-wrap.open .mail-card{cursor:auto}
+.mail-sec{margin-bottom:8px}
+.mail-sec strong{display:block;font-size:10px;letter-spacing:.08em;margin-bottom:3px}
+.mail-sec.action strong{color:var(--correct-red)}
+.mail-sec.watch strong{color:var(--ink-blue)}
+.mail-sec.skip strong{color:var(--graphite-mid)}
+.mail-sec a{color:var(--ink-blue);word-break:break-all}
+.mail-close{
+  display:none;margin-top:8px;font-size:10px;color:var(--graphite-mid);
+  background:none;border:none;text-decoration:underline;cursor:pointer;padding:0;
+  font-family:inherit;
+}
+.mail-wrap.open .mail-close{display:inline}
+.clip{
+  position:absolute;top:-4px;right:10px;width:10px;height:22px;
+  border:1.5px solid var(--graphite-mid);border-radius:3px 3px 6px 6px;
+  background:transparent;opacity:.6;pointer-events:none;
+}
+/* archive tabs */
+.arch{
+  position:fixed;left:0;top:50%;transform:translateY(-50%);
+  z-index:40;display:flex;flex-direction:column;gap:3px;
+}
+.arch-tab{
+  writing-mode:vertical-rl;transform:rotate(180deg);
+  background:var(--paper);border:1px solid rgba(92,88,80,.35);
+  border-left:none;padding:10px 4px;font-size:10px;
+  font-family:ui-monospace,Menlo,monospace;color:var(--graphite-mid);
+  text-decoration:none;letter-spacing:.04em;
+  box-shadow:2px 1px 4px rgba(44,44,42,.08);
+  width:22px;
+}
+.arch-tab:hover,.arch-tab:focus-visible{
+  background:#EDE6D8;color:var(--graphite);width:28px;outline:none;
+}
+.arch-drawer{
+  position:fixed;left:28px;top:50%;transform:translateY(-50%) translateX(-120%);
+  width:min(320px,80vw);max-height:70vh;overflow-y:auto;
+  background:var(--paper);border:1px solid rgba(44,44,42,.3);
+  box-shadow:6px 8px 24px rgba(44,44,42,.2);z-index:41;
+  padding:14px 14px 16px;transition:transform .35s ease;
+  font-size:12px;
+}
+.arch-drawer.open{transform:translateY(-50%) translateX(0)}
+.arch-drawer h3{
+  font-family:ui-monospace,Menlo,monospace;font-size:11px;
+  letter-spacing:.1em;color:var(--ink-blue);margin-bottom:10px;
+  border-bottom:1px solid rgba(90,135,176,.4);padding-bottom:6px;
+}
+.arch-drawer ul{list-style:none}
+.arch-drawer li{padding:5px 0;border-bottom:1px dotted rgba(92,88,80,.25);line-height:1.4}
+.arch-drawer a{color:var(--ink-blue);text-decoration:none}
+.arch-drawer a:hover{text-decoration:underline}
+.arch-drawer .src{color:var(--graphite-mid);font-size:10px;display:block}
+.arch-close{
+  position:absolute;top:8px;right:10px;background:none;border:none;
+  font-size:14px;cursor:pointer;color:var(--graphite-mid);font-family:inherit;
+}
+/* reveal toggle */
+.reveal-toggle{
+  position:fixed;bottom:20px;right:20px;z-index:50;
+  font-family:ui-monospace,Menlo,monospace;font-size:12px;
+  background:var(--paper);border:1.5px solid var(--graphite);
+  padding:8px 14px;color:var(--graphite);
+  box-shadow:2px 2px 0 rgba(44,44,42,.15);display:none;
+}
+.reveal-toggle:focus-visible{outline:2px solid var(--ink-blue);outline-offset:2px}
+body.no-lens .reveal-toggle,body.lens-off .reveal-toggle{display:block}
+body.layer-on .reveal-toggle{background:var(--graphite);color:var(--paper)}
+.hint{
+  position:fixed;bottom:20px;left:50%;transform:translateX(-50%);
+  font-family:ui-monospace,Menlo,monospace;font-size:11px;
+  color:var(--graphite-mid);background:rgba(243,238,228,.9);
+  border:1px solid rgba(92,88,80,.3);padding:6px 12px;z-index:45;
+  pointer-events:none;opacity:1;transition:opacity .6s;
+}
+.hint.hide{opacity:0}
+@media(max-width:860px){
+  .layer,.g-grid{grid-template-columns:40px 1fr;padding:36px 20px 40px 16px}
+  .essay-col,.g-essay{grid-column:2;grid-row:auto;border-left:none;padding-left:0;margin:28px 0 0;border-top:1px solid rgba(90,135,176,.4);padding-top:20px}
+  .spine,.g-spine{grid-column:2}
+  .mast,.g-mast{grid-column:2}
+  .foot{grid-column:2}
+  .mail-wrap{position:relative;top:auto;right:auto;margin:0 20px 12px auto;width:180px;display:block}
+  .sheet-stage{margin-top:8px}
+  .today-num{font-size:56px}
+  .arch{top:auto;bottom:70px;transform:none}
+}
+@media(pointer:coarse){
+  body{cursor:auto}
+  .crosshair{display:none!important}
+}
+</style>
+</head>
+<body>
+<div class="crosshair" id="crosshair" aria-hidden="true"></div>
+<button type="button" class="reveal-toggle" id="revealToggle" aria-pressed="false">揭层</button>
+<div class="hint" id="hint">移动光标 · 阅读半径内的铅笔层</div>
+
+<nav class="arch" aria-label="往日硫酸纸">
+  <a class="arch-tab" href="#d=0902" data-arch="0902" title="09-02 口袋星图">09-02 口袋星图</a>
+  <a class="arch-tab" href="#d=0901" data-arch="0901" title="09-01 焊点图">09-01 焊点图</a>
+  <a class="arch-tab" href="#d=0831" data-arch="0831" title="08-31 周一印次">08-31 周一印次</a>
+  <button type="button" class="arch-tab" id="archOpen" style="cursor:pointer;border:1px solid rgba(92,88,80,.35);background:#E8E2D4" title="24h 源表">24h 源</button>
+</nav>
+<aside class="arch-drawer" id="archDrawer" aria-hidden="true">
+  <button type="button" class="arch-close" id="archClose" aria-label="关闭">×</button>
+  <h3>24h 档案抽屉 · 2026-09-02→03</h3>
+  <ul>
+    <li><a href="https://blog.google/innovation-and-ai/models-and-research/gemini-models/3-8-flash-and-3-8-flash-cyber/" target="_blank" rel="noopener">Gemini 3.8 Flash / Flash Cyber</a><span class="src">Google Blog · 09-02</span></li>
+    <li><a href="https://blog.google/innovation-and-ai/technology/safety-security/fairwind-program/" target="_blank" rel="noopener">Fairwind Program</a><span class="src">Google · gov / critical infra 通道</span></li>
+    <li><a href="https://techcrunch.com/2026/09/02/openais-new-reasoning-technique-alarms-ai-safety-experts/" target="_blank" rel="noopener">Astra opaque recurrence</a><span class="src">TechCrunch · The Information</span></li>
+    <li><a href="https://www.theverge.com/ai-artificial-intelligence/988334/openai-astra-ai-monitoring-safety" target="_blank" rel="noopener">CoT monitoring fragile</a><span class="src">The Verge · 09-02</span></li>
+    <li><a href="https://www.anthropic.com/claude-fable-and-mythos-5-1" target="_blank" rel="noopener">Claude Fable &amp; Mythos 5.1</a><span class="src">Anthropic · Cursor 上架</span></li>
+    <li><a href="https://help.aliyun.com/zh/model-studio/newly-released-models" target="_blank" rel="noopener">Qwen3.8-Max-0902</a><span class="src">阿里云 Model Studio</span></li>
+    <li><a href="https://www.ithome.com/0/997/270.htm" target="_blank" rel="noopener">万有无界公测</a><span class="src">IT之家 · 多角色 Agent</span></li>
+    <li><span>Grok 4.7「10 天后」≈9/12</span><span class="src">报道称 / 创始人口径 · xAI docs 仍 4.6</span></li>
+    <li><span>Fable 余波：cache-read −75%；Mythos 蛋白 ~50% hit</span><span class="src">厂商口径 · 第一财经 / 华尔街见闻 / 钛媒体</span></li>
+    <li><span>Hy4 API / CN 反应窗</span><span class="src">思考块焊死反蒸馏 · 报道称 IPO $2T</span></li>
+  </ul>
+</aside>
+
+<div class="sheet-stage">
+  <div class="sheet" id="sheet">
+
+    <div class="mail-wrap" id="mailWrap">
+      <div class="mail-tape" aria-hidden="true"></div>
+      <div class="clip" aria-hidden="true"></div>
+      <button type="button" class="mail-card" id="mailToggle" aria-expanded="false">
+        <div class="mail-badge"><span class="dot"></span>MAIL · 2</div>
+        <div class="mail-peek">ACTION 0 · WATCH 2<br>无新增行动项</div>
+      </button>
+      <div class="mail-body" id="mailBody">
+        <div class="mail-sec action"><strong>ACTION · 0</strong>无新增 ACTION（窗口 09-02 06:00–09-03 06:00 上海）</div>
+        <div class="mail-sec watch"><strong>WATCH · 2</strong>
+          · SCI-AIChat-Demo still red master/579183f（09-02 21:04Z）compileall+pytest；lint+tsc+vitest；nightly live LLM ok。<a href="https://github.com/AIMFllyYS/SCI-AIChat-Demo/actions/runs/33682960735" target="_blank" rel="noopener">run</a><br>
+          · deepseek-harness E2E still red master/cd5ef81（09-02 04:31Z）。<a href="https://github.com/AIMFllyYS/deepseek-harness/actions/runs/33591080307" target="_blank" rel="noopener">run</a><br>
+          · Blog-YuSheng / Linear：本窗无新邮件（记忆提示，非新证据）<br>
+          · 史岸冰《细胞生物学绪论.pdf》：回复在窗外——若尚未道谢，轻推一句即可
+        </div>
+        <div class="mail-sec skip"><strong>SKIP</strong>
+          sofiapintos190：SuperGrok tax update effective Oct 1 2026<br>
+          aimfllyys：Docker promo；Kimi Code 申请确认（~7工作日）；Mobbin Wednesday Web Drop；Stripe/Cline receipt；Grok Bot 3-day trial promo
+        </div>
+        <button type="button" class="mail-close" id="mailClose">别上 · 收回卡片</button>
+      </div>
+    </div>
+
+    <!-- INK LAYER -->
+    <div class="layer" id="ink">
+      <nav class="rail" aria-label="脊骨标本">
+        <a href="#s1">①</a><a href="#s2">②</a><a href="#s3">③</a>
+        <a href="#s4">④</a><a href="#s5">⑤</a><a href="#s6">⑥</a>
+      </nav>
+
+      <header class="mast">
+        <div class="mast-meta">折晓早报 · DRAFTING SHEET · 北京 2026-09-03</div>
+        <h1>《可读半径》</h1>
+        <div class="today-block">
+          <div class="today-num">2.6×<span></span></div>
+          <div>
+            <p class="thesis">补丁开了<em>专窗</em>，思考却在<em>关窗</em>。</p>
+            <p class="subclaim">Google Chrome Security：Gemini 3.8 Flash Cyber 在 Chrome 漏洞上产出正确补丁数 = 更大商用模型的 2.6×（官方 blog 2026-09-02）</p>
+          </div>
+        </div>
+      </header>
+
+      <main class="spine">
+        <article class="specimen" id="s1">
+          <span class="spec-num" aria-hidden="true">1</span>
+          <h2>Google Gemini 3.8 Flash + Flash Cyber + Fairwind</h2>
+          <p class="lede">2026-09-02 官方：Flash 作 workhorse；Cyber 经 Fairwind 开给政府 / 关键基础设施 / 维护者——补丁能力产品化，通道收窄。</p>
+          <ul>
+            <li>导入价 $0.75 / $3.75 per 1M，至 2026-12-31，其后翻倍</li>
+            <li>Cyber via Fairwind；CodeMender 在列</li>
+            <li>厂商称 CyberGym 胜过更大旗舰；CWE-Bench pass@1 47.2% vs 47.8%；Wiz recall +7.5–9.7%，成本 2.3–5.2× 更低</li>
+          </ul>
+          <p class="why">Why：昨日 Astra Critical；今日 Google 把「补丁窗」压到 Flash 价——能力外溢，门禁收紧。</p>
+          <p class="lede" style="margin-top:8px;font-size:12.5px">
+            <a href="https://blog.google/innovation-and-ai/models-and-research/gemini-models/3-8-flash-and-3-8-flash-cyber/" target="_blank" rel="noopener">3.8 Flash / Cyber</a>
+            ·
+            <a href="https://blog.google/innovation-and-ai/technology/safety-security/fairwind-program/" target="_blank" rel="noopener">Fairwind</a>
+          </p>
+        </article>
+
+        <article class="specimen" id="s2">
+          <span class="spec-num" aria-hidden="true">2</span>
+          <h2>Astra 新争执：不透明回路 / recurrent depth</h2>
+          <p class="lede">不是再写 Critical 本身——The Information → TechCrunch / Verge（09-02）：不透明 recurrence；可监控性成为 Critical 之后的新战线。</p>
+          <ul>
+            <li>Greenblatt：「possibly worst AI safety progress」</li>
+            <li>Pachocki：depth 在 GPT-4 的 ×2 以内</li>
+            <li>CoT monitoring「fragile and getting worse」；OpenAI 称 CoT 仍可读，拒绝 neuralese</li>
+          </ul>
+          <p class="why">Why：monitorability 是 Critical 之后的新吵架点。</p>
+          <p class="lede" style="margin-top:8px;font-size:12.5px">
+            <a href="https://techcrunch.com/2026/09/02/openais-new-reasoning-technique-alarms-ai-safety-experts/" target="_blank" rel="noopener">TechCrunch</a>
+            ·
+            <a href="https://www.theverge.com/ai-artificial-intelligence/988334/openai-astra-ai-monitoring-safety" target="_blank" rel="noopener">The Verge</a>
+          </p>
+        </article>
+
+        <article class="specimen" id="s3">
+          <span class="spec-num" aria-hidden="true">3</span>
+          <h2>Cursor 上架 Fable 5.1</h2>
+          <p class="lede">CursorBench 3.2 max effort <strong>73.4%</strong>（Fable 5 70.5 / Opus 5 70.0）；五档 effort，无「关思考」开关；Privacy Mode 需 Dashboard 同意数据保留。</p>
+          <ul>
+            <li>分数在 max cost 档——别当免费默认</li>
+            <li>Anthropic 旗舰进编辑器优先轴</li>
+          </ul>
+          <p class="why">Why：Cursor 优先级轴线；旗舰住进你每天写代码的地方。</p>
+          <p class="lede" style="margin-top:8px;font-size:12.5px">
+            <a href="https://www.anthropic.com/claude-fable-and-mythos-5-1" target="_blank" rel="noopener">Claude Fable &amp; Mythos 5.1</a>
+          </p>
+        </article>
+
+        <article class="specimen" id="s4">
+          <span class="spec-num" aria-hidden="true">4</span>
+          <h2>阿里 Qwen3.8-Max-0902 +「万有无界」公测</h2>
+          <p class="lede">2026-09-02：1M context；CodeArena frontend +22 → 1691 夺冠（厂商/榜单口径）；多角色 Agent 协作台。</p>
+          <ul>
+            <li>新模型入口见阿里云 Model Studio</li>
+            <li>万有无界：多角色协作公测</li>
+          </ul>
+          <p class="why">Why：开源阵营把「长上下文 + 前端榜」同时按上桌。</p>
+          <p class="lede" style="margin-top:8px;font-size:12.5px">
+            <a href="https://help.aliyun.com/zh/model-studio/newly-released-models" target="_blank" rel="noopener">阿里云新模型</a>
+            ·
+            <a href="https://www.ithome.com/0/997/270.htm" target="_blank" rel="noopener">IT之家 · 万有无界</a>
+          </p>
+        </article>
+
+        <article class="specimen" id="s5">
+          <span class="spec-num" aria-hidden="true">5</span>
+          <h2>Musk：Grok 4.7「10 天后」≈9/12</h2>
+          <p class="lede">创始人倒计时，非规格表——标记为<strong>报道称 / 创始人口径</strong>；xAI docs 仍停在 4.6。</p>
+          <ul>
+            <li>倒计时不等于发版说明书</li>
+            <li>以 docs 与正式 release note 为准</li>
+          </ul>
+          <p class="why">Why：噪声日程 vs 可验证规格——早报只记账，不预支。</p>
+        </article>
+
+        <article class="specimen" id="s6">
+          <span class="spec-num" aria-hidden="true">6</span>
+          <h2>Fable 余波 <span class="opt-tag">OPTIONAL</span></h2>
+          <p class="lede">cache-read −75%；Mythos protein binder ~50% hit（厂商）；报道称 IPO $2T；思考块焊死反蒸馏——产品本身约在窗前，中文覆盖/反应落在本窗。</p>
+          <ul>
+            <li>第一财经 / 华尔街见闻 / 钛媒体等跟进反应</li>
+            <li>能力开窗与名单关窗同日并行</li>
+          </ul>
+          <p class="why">Why：同一发布被劈成「能读论文的门」与「生命科学要审核的门」。</p>
+        </article>
+      </main>
+
+      <aside class="essay-col" data-cursor-reveal-pause>
+        <h2>今日判词</h2>
+        <div class="essay-body">
+          <p>今天这张硫酸纸上，印刷层写的是「补丁开了专窗」——Flash Cyber 用更小的账单，在 Chrome 漏洞上交出 2.6× 的正确补丁；Fairwind 把通道写进政府与关键基础设施名单。铅笔层写的是另一句：思考却在关窗。Astra 的争执从 Critical 评级挪到了不透明回路与 recurrent depth；CoT 监控被说成 fragile，OpenAI 仍坚持轨迹可读、拒绝 neuralese。两边用的是同一类词——窗——方向却相反。</p>
+          <p>Cursor 把 Fable 5.1 嵌进编辑器，max effort 才亮出 73.4%；阿里把 Qwen3.8-Max 与万有无界一并公测；马斯克用「十天后」预支 Grok 4.7。表面热闹，底下是通道设计：谁能打补丁、谁能看推理、谁能碰蛋白设计，越来越不像统一的开源广场，而像一叠带印章的通行证。</p>
+          <p>Sofia 同时读医与摸 AI，会先撞上这道缝：不是模型忽然变笨，而是「能办事的能力」被写进名单。印刷墨水永远可读；石墨异议只在光标半径里——这正是今天的论点本身。</p>
+          <p class="tip">同一套模型正在被劈成两扇门：Fable 能帮你读论文；Mythos 把蛋白设计命中率做到厂商所称近 50%（课本常见 10–15%），但生命科学闸门要审核——你作为医学生先碰到的，不是开源神器，是「能看病的能力被锁在名单里」。</p>
+        </div>
+      </aside>
+
+      <footer class="foot">
+        <span>北京时间 2026-09-03</span>
+        <span>折晓 早报 · 《可读半径》</span>
+      </footer>
+    </div>
+
+    <!-- GRAPHITE LAYER -->
+    <div id="graphite" aria-hidden="true">
+      <div class="g-grid">
+        <div style="grid-column:1;grid-row:1/4"></div>
+        <div class="g-mast">
+          <div class="g-note" style="top:8px;left:200px;max-width:14em">印刷 = 官方 CoT / 通稿线<br>石墨 = 监控看不见的异议</div>
+          <div class="g-note red" style="top:100px;left:320px;transform:rotate(-1.2deg)">← 专窗 ≠ 开窗<br>名单才是半径</div>
+          <div class="g-note" style="top:48px;left:0;font-size:11px;color:var(--ink-blue)">constr. line · non-photo blue</div>
+          <div class="g-const" style="position:absolute;top:130px;left:40px;width:120px;height:40px"></div>
+          <div class="g-note" style="top:155px;left:50px;font-size:11px"><span class="g-circ">R</span> readable radius ≈ lens</div>
+        </div>
+        <div class="g-spine">
+          <div class="g-spec">
+            <div class="g-margin">
+              <span class="g-strike">「人人可用的安全模型」</span>
+              <span class="nag">→ Fairwind 名单：gov / critical infra / maintainers · 能力外溢，通道收窄</span>
+              价签到 12-31 是诱饵窗；CyberGym 赢的是基准，不是通用权。
+            </div>
+          </div>
+          <div class="g-spec">
+            <div class="g-margin">
+              Critical 已成旧新闻。<span class="nag">新战场：能不能监视思考本身。</span>
+              Greenblatt 用「worst safety progress」——不是性能，是可读性塌方。
+              OpenAI「仍 legible」= 官方印刷；铅笔写的是 <em>fragile and getting worse</em>。
+            </div>
+          </div>
+          <div class="g-spec">
+            <div class="g-margin">
+              73.4% @ max effort · <span class="g-strike">默认就强</span>
+              <span class="nag">无「关思考」= 思考焊在产品里 · Privacy Mode 要 Dashboard 点头才留数据</span>
+            </div>
+          </div>
+          <div class="g-spec">
+            <div class="g-margin">
+              1691 夺冠 = 榜单口径。<span class="nag">多角色协作台：把「谁在回话」拆成可编排工位</span>
+              与 Fairwind 对照看：一边开公测，一边发通行证。
+            </div>
+          </div>
+          <div class="g-spec">
+            <div class="g-margin">
+              <span class="g-circ">!</span> 倒计时 ≠ changelog
+              <span class="nag">docs 仍 4.6 · 早报记账，不预支发版</span>
+            </div>
+          </div>
+          <div class="g-spec">
+            <div class="g-margin">
+              思考块焊死反蒸馏 · 报道称 $2T IPO
+              <span class="nag">Mythos ~50% hit（厂商）vs 课本 10–15% → 医学生先遇闸门，不是神器</span>
+            </div>
+          </div>
+        </div>
+        <div class="g-essay">
+          <div class="g-essay-ann">边注 · 仅半径可见</div>
+          <div class="g-essay-side">
+            判词可跳过透镜<br>（CTRLSZE：skippable）<br><br>
+            墨水论证完整；<br>石墨只加压力。
+          </div>
+        </div>
+        <div style="grid-column:2/4;grid-row:3;margin-top:36px;padding-top:14px;font-size:11px;opacity:.7">铅笔层 · 非通稿</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+(function(){
+  var root = document.documentElement;
+  var body = document.body;
+  var cross = document.getElementById('crosshair');
+  var sheet = document.getElementById('sheet');
+  var hint = document.getElementById('hint');
+  var mailWrap = document.getElementById('mailWrap');
+  var mailToggle = document.getElementById('mailToggle');
+  var mailBody = document.getElementById('mailBody');
+  var mailClose = document.getElementById('mailClose');
+  var revealToggle = document.getElementById('revealToggle');
+  var archDrawer = document.getElementById('archDrawer');
+  var archOpen = document.getElementById('archOpen');
+  var archClose = document.getElementById('archClose');
+
+  var fine = window.matchMedia('(pointer:fine)').matches;
+  var reduce = window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  var touch = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
+
+  if(fine && !reduce){ body.classList.add('fine-pointer'); }
+  else { body.classList.add('no-lens'); }
+
+  var tx = window.innerWidth * 0.5, ty = window.innerHeight * 0.4;
+  var cx = tx, cy = ty;
+  var raf = 0, idle = true, hintTimer;
+
+  function setLens(x, y){
+    var r = sheet.getBoundingClientRect();
+    var px = ((x - r.left) / r.width * 100);
+    var py = ((y - r.top) / r.height * 100);
+    root.style.setProperty('--lens-x', px + '%');
+    root.style.setProperty('--lens-y', py + '%');
+  }
+
+  function tick(){
+    raf = 0;
+    cx += (tx - cx) * 0.15;
+    cy += (ty - cy) * 0.15;
+    if(cross){ cross.style.left = cx + 'px'; cross.style.top = cy + 'px'; }
+    if(!body.classList.contains('reveal-open') && !body.classList.contains('lens-off') && !body.classList.contains('no-lens')){
+      setLens(cx, cy);
+    }
+    if(Math.abs(tx - cx) > 0.2 || Math.abs(ty - cy) > 0.2){
+      raf = requestAnimationFrame(tick);
+    } else {
+      idle = true;
+    }
+  }
+
+  function onMove(e){
+    if(body.classList.contains('no-lens') || body.classList.contains('lens-off')) return;
+    if(body.classList.contains('reveal-open')) return;
+    if(e.target.closest && e.target.closest('[data-cursor-reveal-pause]')){
+      /* essay body: still move crosshair but graphite mask can stay; pause only means essay text stays readable — graphite margin still ok */
+    }
+    tx = e.clientX; ty = e.clientY;
+    if(hint && !hint.classList.contains('hide')){
+      clearTimeout(hintTimer);
+      hintTimer = setTimeout(function(){ hint.classList.add('hide'); }, 1200);
+    }
+    if(idle){ idle = false; raf = requestAnimationFrame(tick); }
+  }
+
+  if(fine && !reduce){
+    window.addEventListener('pointermove', onMove, {passive:true});
+    setLens(cx, cy);
+    if(cross){ cross.style.left = cx + 'px'; cross.style.top = cy + 'px'; }
+  }
+
+  /* mail accordion */
+  function openMail(open){
+    if(open){
+      mailWrap.classList.add('open');
+      mailToggle.setAttribute('aria-expanded', 'true');
+      body.classList.add('reveal-open');
+      mailWrap.setAttribute('data-cursor-reveal-pause', '');
+    } else {
+      mailWrap.classList.remove('open');
+      mailToggle.setAttribute('aria-expanded', 'false');
+      body.classList.remove('reveal-open');
+      mailWrap.removeAttribute('data-cursor-reveal-pause');
+    }
+  }
+  mailToggle.addEventListener('click', function(e){
+    e.stopPropagation();
+    openMail(!mailWrap.classList.contains('open'));
+  });
+  mailClose.addEventListener('click', function(e){
+    e.stopPropagation();
+    openMail(false);
+  });
+
+  /* 揭层 toggle */
+  revealToggle.addEventListener('click', function(){
+    var on = body.classList.toggle('layer-on');
+    revealToggle.setAttribute('aria-pressed', on ? 'true' : 'false');
+    revealToggle.textContent = on ? '收层' : '揭层';
+  });
+
+  /* archive drawer */
+  function openArch(on){
+    archDrawer.classList.toggle('open', on);
+    archDrawer.setAttribute('aria-hidden', on ? 'false' : 'true');
+    if(on) body.classList.add('reveal-open');
+    else if(!mailWrap.classList.contains('open')) body.classList.remove('reveal-open');
+  }
+  archOpen.addEventListener('click', function(){ openArch(!archDrawer.classList.contains('open')); });
+  archClose.addEventListener('click', function(){ openArch(false); });
+
+  /* sheet tabs — slide peek, not fold */
+  document.querySelectorAll('.arch-tab[data-arch]').forEach(function(tab){
+    tab.addEventListener('click', function(e){
+      e.preventDefault();
+      sheet.classList.add('slide-peek');
+      history.replaceState(null, '', '#d=' + tab.getAttribute('data-arch'));
+      setTimeout(function(){ sheet.classList.remove('slide-peek'); }, 600);
+    });
+  });
+  if(/^#d=/.test(location.hash)){
+    sheet.classList.add('slide-peek');
+    setTimeout(function(){ sheet.classList.remove('slide-peek'); }, 800);
+  }
+
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape'){
+      openMail(false);
+      openArch(false);
+    }
+  });
+})();
+</script>
+</body>
+</html>

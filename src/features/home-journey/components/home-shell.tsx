@@ -2,7 +2,11 @@
 
 import Link from 'next/link'
 import { RopeNavigation } from '@/features/navigation'
-import { HOME_DESTINATIONS, JOURNEY_CONTENT } from '../content'
+import {
+  HOME_DESTINATIONS,
+  JOURNEY_CONTENT,
+  type HomeDestination,
+} from '../content'
 import { DestinationObject } from './destination-object'
 
 export type HomeShellProps = {
@@ -19,9 +23,14 @@ function DestinationEntry({
   destination,
   index,
 }: {
-  destination: (typeof HOME_DESTINATIONS)[number]
+  destination: HomeDestination
   index: number
 }) {
+  const cta = !destination.available
+    ? '筹备中'
+    : destination.external
+      ? '前往站外'
+      : '入卷阅读'
   const content = (
     <>
       <DestinationObject kind={destination.id} />
@@ -35,7 +44,7 @@ function DestinationEntry({
         {destination.description}
       </span>
       <span className="mt-7 flex min-h-11 items-center justify-between border-t border-[var(--line)] pt-3 text-xs font-semibold tracking-[0.16em] text-[var(--accent)]">
-        <span>{destination.available ? '入卷阅读' : '筹备中'}</span>
+        <span>{cta}</span>
         <span aria-hidden="true">{destination.available ? '↗' : `0${index + 1}`}</span>
       </span>
     </>
@@ -44,10 +53,28 @@ function DestinationEntry({
   const className =
     'journey-destination-card group relative block min-h-[15.5rem] overflow-hidden border border-[var(--line)] bg-[var(--scroll-paper)] p-5 text-left shadow-[0_22px_58px_var(--shadow-color)] transition-[transform,border-color,box-shadow] duration-[var(--dur-slow)] before:absolute before:inset-y-4 before:left-0 before:w-1 before:bg-[var(--accent)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--accent)]'
 
+  const hoverClassName = `${className} hover:-translate-y-1 hover:border-[var(--accent)] hover:shadow-[0_26px_68px_var(--shadow-color)]`
+
+  if (destination.available && destination.external) {
+    return (
+      <a
+        className={hoverClassName}
+        data-home-destination={destination.id}
+        data-home-external="true"
+        data-home-reveal
+        href={destination.href}
+        rel="noreferrer"
+        target="_blank"
+      >
+        {content}
+      </a>
+    )
+  }
+
   if (destination.available) {
     return (
       <Link
-        className={`${className} hover:-translate-y-1 hover:border-[var(--accent)] hover:shadow-[0_26px_68px_var(--shadow-color)]`}
+        className={hoverClassName}
         data-home-destination={destination.id}
         data-home-reveal
         href={destination.href}

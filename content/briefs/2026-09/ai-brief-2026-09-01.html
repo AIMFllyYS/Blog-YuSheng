@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>折晓早报 · 焊点图 REV.0901</title>
+<!--
+STEAL / design refs (titles + URLs):
+1. It’s Nice That — Eleanor Yang Synthetic Nature — https://www.itsnicethat.com/articles/eleanor-yang-synthetic-nature-graphic-design-project-160326 — activation→evolution; density of lines changes form
+2. Awwwards SOTD Aimee’s Papercraft World — https://www.awwwards.com/sites/aimees-papercraft-world — continuous crafted environment (adapt as blueprint sheet continuity, NOT papercraft UI)
+3. 优设细节猎人 豆瓣书影音档案 — https://www.uisdc.com/hunter/0221432506.html — archive as physical boxes/shelf ritual → here as 图纸修订匣 REV stack
+COMBO: 蓝图 × 手绘路径逐笔画出(stroke-dashoffset) × 迷你工程图/功能 demo
+EDITION: 「焊点图」· sheet REV.0901
+-->
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#0B1F33;--cyan:#7EC8E3;--cyan2:#4AA3C7;--cream:#E8F1F5;
+  --amber:#E8A838;--red:#D94B4B;--muted:#8AA0B2;--ink:#0B1F33;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --sans:system-ui,-apple-system,"PingFang SC","Noto Sans SC",sans-serif;
+}
+html,body{background:var(--navy);color:var(--cream);font-family:var(--sans);min-height:100%}
+body{overflow-x:hidden}
+a{color:var(--cyan2)}
+a:hover{color:var(--cyan)}
+.sheet{
+  position:relative;max-width:980px;margin:12px auto 48px;padding:14px 14px 56px;
+  background:
+    linear-gradient(90deg,rgba(126,200,227,.06) 1px,transparent 1px) 0 0/24px 24px,
+    linear-gradient(rgba(126,200,227,.06) 1px,transparent 1px) 0 0/24px 24px,
+    var(--navy);
+  border:1px solid transparent;
+}
+.frame-svg{
+  position:absolute;inset:6px;width:calc(100% - 12px);height:calc(100% - 12px);
+  pointer-events:none;overflow:visible;z-index:0;
+}
+.frame-svg rect,.frame-svg path{fill:none;stroke:var(--cyan);stroke-width:1.25}
+.titleblock{
+  position:relative;z-index:2;display:grid;grid-template-columns:1fr auto;
+  gap:10px;padding:10px 12px;margin:8px 8px 14px;
+  border:1px solid var(--cyan2);background:rgba(11,31,51,.85);
+  font-family:var(--mono);font-size:11px;letter-spacing:.04em;
+}
+.tb-draw{stroke:var(--cyan);fill:none;stroke-width:1.2}
+.tb-left h1{font-size:18px;font-weight:700;color:var(--cream);letter-spacing:.08em;margin-bottom:4px}
+.tb-left .meta{color:var(--muted);line-height:1.5}
+.tb-right{text-align:right;color:var(--cyan);line-height:1.55;min-width:140px}
+.tb-right .rev{font-size:13px;color:var(--amber);font-weight:700}
+.thesis{
+  margin-top:8px;padding:6px 8px;border:1px dashed var(--amber);color:var(--amber);
+  font-family:var(--sans);font-size:14px;letter-spacing:.02em;opacity:0;
+  max-height:0;overflow:hidden;transition:opacity .5s,max-height .5s;
+}
+.thesis.on{opacity:1;max-height:80px}
+.num-badge{
+  display:inline-block;margin-top:6px;padding:3px 8px;border:1px solid var(--amber);
+  color:var(--amber);font-size:16px;font-weight:700;letter-spacing:.06em;
+  opacity:0;transform:scale(.9);transition:opacity .4s,transform .4s;
+}
+.num-badge.on{opacity:1;transform:scale(1)}
+.layout{position:relative;z-index:2;display:grid;grid-template-columns:150px 1fr;gap:12px;padding:0 8px}
+@media(max-width:720px){.layout{grid-template-columns:1fr}.rev-stack{order:3}}
+.rev-stack{font-family:var(--mono);font-size:10px}
+.rev-label{color:var(--muted);margin-bottom:6px;letter-spacing:.12em}
+.rev-box{
+  position:relative;height:28px;margin-bottom:4px;cursor:pointer;
+  border:1px solid var(--cyan2);background:rgba(232,241,245,.04);
+  transform:translateX(0);transition:transform .25s,border-color .2s,background .2s;
+}
+.rev-box:hover,.rev-box.open{border-color:var(--cyan);background:rgba(126,200,227,.1);transform:translateX(6px)}
+.rev-box span{position:absolute;left:8px;top:6px;color:var(--cyan);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:92%}
+.rev-drawer{
+  display:none;margin:0 0 8px;padding:8px;border:1px solid var(--cyan2);
+  background:var(--cream);color:var(--ink);font-family:var(--sans);font-size:12px;line-height:1.55;
+}
+.rev-drawer.open{display:block}
+.rev-drawer b{font-family:var(--mono);font-size:10px;color:var(--cyan2);display:block;margin-bottom:4px}
+.canvas-wrap{position:relative;min-height:420px;border:1px solid rgba(126,200,227,.35);background:rgba(11,31,51,.4);padding:8px}
+.canvas-hd{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:8px;font-family:var(--mono);font-size:11px;color:var(--muted)}
+.btn{
+  appearance:none;border:1px solid var(--cyan2);background:transparent;color:var(--cyan);
+  font-family:var(--mono);font-size:11px;padding:6px 10px;cursor:pointer;letter-spacing:.06em;
+}
+.btn:hover,.btn:focus-visible{background:rgba(126,200,227,.15);outline:2px solid var(--amber);outline-offset:2px}
+.btn.prim{border-color:var(--amber);color:var(--amber)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.schematic{position:relative;width:100%;height:380px}
+.schematic svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.trace{fill:none;stroke:var(--cyan);stroke-width:2;stroke-linecap:round;opacity:.95}
+.trace.done{stroke:var(--amber)}
+.trace.sec{stroke:var(--cyan2);stroke-width:1.5}
+.node{
+  position:absolute;width:108px;transform:translate(-50%,-50%);
+  border:1px solid var(--cyan2);background:rgba(11,31,51,.92);padding:8px 6px;
+  text-align:center;cursor:pointer;font-family:var(--mono);font-size:10px;color:var(--cream);
+  transition:border-color .2s,box-shadow .2s;
+}
+.node:hover,.node:focus-visible,.node.sel{border-color:var(--cyan);box-shadow:0 0 0 1px var(--cyan);outline:none}
+.node .chip{display:block;font-size:12px;font-weight:700;color:var(--cyan);margin-bottom:2px;letter-spacing:.04em}
+.node .sub{color:var(--muted);font-size:9px;line-height:1.3}
+.pad{
+  position:absolute;width:14px;height:14px;border-radius:50%;
+  border:2px solid var(--amber);background:transparent;cursor:pointer;
+  transform:translate(-50%,-50%);z-index:3;
+}
+.pad:hover,.pad:focus-visible{background:var(--amber);outline:2px solid var(--cream);outline-offset:2px}
+.pad.lit{background:var(--amber);box-shadow:0 0 8px var(--amber)}
+.n1{left:18%;top:28%}.n2{left:72%;top:28%}.n3{left:18%;top:72%}.n4{left:72%;top:72%}.n5{left:45%;top:50%}
+.story{
+  display:none;margin-top:10px;padding:10px 12px;border-left:3px solid var(--cyan2);
+  background:rgba(232,241,245,.06);font-size:13px;line-height:1.65;
+}
+.story.on{display:block}
+.story h3{font-family:var(--mono);font-size:12px;color:var(--cyan);margin-bottom:4px;letter-spacing:.04em}
+.story .why{color:var(--muted);font-size:12px;margin:4px 0}
+.story.amber-border{border-left-color:var(--amber)}
+.hint{font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:6px}
+.peel-bar{
+  margin:14px 8px 0;border:1px solid var(--cyan2);position:relative;z-index:2;
+}
+.peel-tab{
+  width:100%;appearance:none;border:0;border-bottom:1px solid var(--cyan2);
+  background:rgba(126,200,227,.08);color:var(--cyan);font-family:var(--mono);
+  font-size:11px;padding:8px 12px;cursor:pointer;text-align:left;letter-spacing:.1em;
+}
+.peel-tab:hover,.peel-tab:focus-visible{background:rgba(126,200,227,.18);outline:2px solid var(--amber);outline-offset:-2px}
+.essay{
+  display:none;padding:14px 16px;background:var(--cream);color:var(--ink);
+  font-size:14px;line-height:1.8;
+}
+.essay.open{display:block}
+.essay h2{font-family:var(--mono);font-size:12px;color:var(--cyan2);margin-bottom:8px;letter-spacing:.12em}
+.stamp{
+  position:absolute;right:18px;bottom:14px;z-index:5;
+  width:92px;height:92px;border:2px double var(--amber);border-radius:50%;
+  background:rgba(11,31,51,.9);color:var(--amber);font-family:var(--mono);
+  font-size:9px;letter-spacing:.06em;cursor:pointer;text-align:center;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+  transform:rotate(-8deg);box-shadow:0 0 0 1px rgba(232,168,56,.3);
+}
+.stamp:hover,.stamp:focus-visible{background:rgba(232,168,56,.15);outline:2px solid var(--cream)}
+.stamp strong{font-size:11px;display:block}
+.stamp .dot{width:6px;height:6px;border-radius:50%;background:var(--red);margin-bottom:2px}
+.mail{
+  display:none;position:fixed;right:16px;bottom:110px;width:min(340px,92vw);z-index:40;
+  border:1px solid var(--amber);background:var(--cream);color:var(--ink);
+  padding:12px;font-size:12px;line-height:1.55;box-shadow:0 8px 24px rgba(0,0,0,.4);
+}
+.mail.open{display:block}
+.mail h3{font-family:var(--mono);font-size:11px;color:var(--cyan2);margin-bottom:6px;letter-spacing:.08em}
+.mail .act{color:var(--red);font-weight:700}
+.mail .skip{color:var(--muted)}
+.mail ul{margin:4px 0 8px 16px}
+.mail button{margin-top:6px}
+.footer{
+  position:relative;z-index:2;margin:18px 8px 0;padding-top:10px;
+  border-top:1px dashed var(--cyan2);font-family:var(--mono);font-size:10px;color:var(--muted);
+  letter-spacing:.08em;text-align:center;
+}
+.kbd{opacity:.7}
+@media(prefers-reduced-motion:reduce){
+  .trace,.tb-draw,.frame-svg rect{transition:none!important;animation:none!important}
+}
+</style>
+</head>
+<body>
+<div class="sheet" id="sheet" role="main">
+  <svg class="frame-svg" aria-hidden="true" preserveAspectRatio="none" viewBox="0 0 100 100">
+    <rect id="frameRect" class="draw-me" x="0.5" y="0.5" width="99" height="99" pathLength="100"/>
+  </svg>
+
+  <header class="titleblock" aria-label="标题栏">
+    <svg style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none" viewBox="0 0 100 40" preserveAspectRatio="none" aria-hidden="true">
+      <rect id="tbRect" class="tb-draw draw-me" x="0.4" y="0.6" width="99.2" height="38.8" pathLength="100"/>
+    </svg>
+    <div class="tb-left">
+      <h1>焊点图 · 折晓早报</h1>
+      <div class="meta">SHEET · AI INTERCONNECT · OFFLINE BLUEPRINT<br>
+        窗口 2026-08-31 06:00 — 2026-09-01 06:00 · Asia/Shanghai</div>
+      <div class="num-badge" id="todayNum" aria-live="polite">TODAY · $35亿</div>
+      <div class="thesis" id="thesis" aria-live="polite">「客制化芯片越想逃，互连标准越黏」</div>
+    </div>
+    <div class="tb-right">
+      <div class="rev">REV.0901</div>
+      <div>SCALE 1:1</div>
+      <div>DRAWN 折晓</div>
+      <div>CHECK 走线完成</div>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="rev-stack" aria-label="图纸修订匣">
+      <div class="rev-label">REV 匣 · ARCHIVE</div>
+      <div class="rev-box" data-rev="0" role="button" tabindex="0" aria-expanded="false"><span>REV.A · NVDA–MTK $3.5B</span></div>
+      <div class="rev-drawer" id="rd0"><b>NVIDIA News · 08-31</b>官方深化与联发科合作：MediaTek 采用 NVLink Fusion，把客制 XPU 焊进 NVLink 机架；NVIDIA 认购 35 亿美元可转债。主焊点。</div>
+      <div class="rev-box" data-rev="1" role="button" tabindex="0"><span>REV.B · TC 分析</span></div>
+      <div class="rev-drawer" id="rd1"><b>TechCrunch · 08-31</b>解读：这笔押注针对大厂自研芯片潮——互连标准比裸 GPU 更难逃。保留作判词骨架。</div>
+      <div class="rev-box" data-rev="2" role="button" tabindex="0"><span>REV.C · 一财 / 台媒 ECB</span></div>
+      <div class="rev-drawer" id="rd2"><b>一财 / 台媒 · 08-31</b>联发科同日订价约 39 亿美元台湾海外可转债（报道称创纪录）；转换价约 NT$4513.75（报道称）。</div>
+      <div class="rev-box" data-rev="3" role="button" tabindex="0"><span>REV.D · Alphabet 参与</span></div>
+      <div class="rev-drawer" id="rd3"><b>报道称 · 同日</b>Alphabet 亦参与 MediaTek CB，金额未披露。侧焊点：云厂仍愿坐进 NV 生态债。</div>
+      <div class="rev-box" data-rev="4" role="button" tabindex="0"><span>REV.E · Cursor 08-31 跟进</span></div>
+      <div class="rev-drawer" id="rd4"><b>Forbes / InfoWorld · 08-31</b>放大 OpenAI→Cursor 停供跟进（主事实 08-28）：拟 2026-11-12 切断；非今日首发。</div>
+      <div class="rev-box" data-rev="5" role="button" tabindex="0"><span>REV.F · OpenAI 官方 08-28</span></div>
+      <div class="rev-drawer" id="rd5"><b>OpenAI · 08-28</b>收购 SpaceX 收购 Cursor 后的模型供给决定原文。侧线回读用。</div>
+      <div class="rev-box" data-rev="6" role="button" tabindex="0"><span>REV.G · Truell ~5%</span></div>
+      <div class="rev-drawer" id="rd6"><b>BI / 既报</b>Truell：OpenAI 约占 Cursor 流量 ~5%。解释为何切断是信号而非流量末日。</div>
+      <div class="rev-box" data-rev="7" role="button" tabindex="0"><span>REV.H · Claude 额度</span></div>
+      <div class="rev-drawer" id="rd7"><b>Anthropic · 08-29</b>Claude Code：自 9/14 起永久 +25% vs baseline ≈ 相对当前临时 +50% 回落约 −17%（BleepingComputer）。</div>
+      <div class="rev-box" data-rev="8" role="button" tabindex="0"><span>REV.I · Gemini 3.8 报道称</span></div>
+      <div class="rev-drawer" id="rd8"><b>BI · ~08-27</b>报道称员工在内部 Jetski 测 Gemini 3.8 Flash Preview。仅分层，不作主焊。</div>
+      <div class="rev-box" data-rev="9" role="button" tabindex="0"><span>REV.J · Hy4 / Kimi 回声</span></div>
+      <div class="rev-drawer" id="rd9"><b>语境 · 非今日主线</b>Hy4（08-28）与 Kimi Reuters（08-26）仅作回声档，避免抢走 NV–MTK 焊点。</div>
+    </aside>
+
+    <section class="canvas-wrap" aria-label="互连示意图">
+      <div class="canvas-hd">
+        <span>SCHEMATIC · 点击焊盘或节点对走线</span>
+        <button type="button" class="btn prim" id="btnWire" aria-label="走线：焊接 NVIDIA 与 MediaTek">「走线」主焊点 NVIDIA↔MediaTek</button>
+        <button type="button" class="btn" id="btnReset" aria-label="重置走线">复位</button>
+        <span class="kbd">键 1–5 焊盘 · a 匣 · Esc 关</span>
+      </div>
+      <div class="schematic" id="schematic">
+        <svg id="traceSvg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+          <path id="t01" class="trace" d="M18,28 C40,20 50,20 72,28" pathLength="100"/>
+          <path id="t02" class="trace sec" d="M18,28 C18,50 18,50 18,72" pathLength="100"/>
+          <path id="t34" class="trace sec" d="M72,72 C50,80 50,80 18,72" pathLength="100"/>
+          <path id="t45" class="trace sec" d="M72,28 C60,40 55,45 45,50" pathLength="100"/>
+          <path id="t15" class="trace sec" d="M18,28 C30,40 35,45 45,50" pathLength="100"/>
+        </svg>
+        <button type="button" class="node n1" id="nNV" data-id="0" aria-label="组件 NVIDIA"><span class="chip">NVIDIA</span><span class="sub">NVLink Fusion<br>scaffold</span></button>
+        <button type="button" class="node n2" id="nMT" data-id="1" aria-label="组件 MediaTek"><span class="chip">MediaTek</span><span class="sub">custom XPU<br>+ $3.9B CB</span></button>
+        <button type="button" class="node n3" id="nCur" data-id="2" aria-label="组件 Cursor OpenAI"><span class="chip">Cursor</span><span class="sub">↔ OpenAI<br>wind-down</span></button>
+        <button type="button" class="node n4" id="nCl" data-id="3" aria-label="组件 Anthropic Claude"><span class="chip">Claude</span><span class="sub">Code limits<br>Sep 14</span></button>
+        <button type="button" class="node n5" id="nAb" data-id="4" aria-label="组件 Alphabet"><span class="chip">Alphabet</span><span class="sub">CB 参与<br>金额未披露</span></button>
+        <button type="button" class="pad" style="left:45%;top:28%" data-joint="01" aria-label="焊盘1 NVIDIA-MediaTek" title="1"></button>
+        <button type="button" class="pad" style="left:18%;top:50%" data-joint="02" aria-label="焊盘2 NVIDIA-Cursor" title="2"></button>
+        <button type="button" class="pad" style="left:45%;top:72%" data-joint="34" aria-label="焊盘3 Cursor-Claude" title="3"></button>
+        <button type="button" class="pad" style="left:58%;top:40%" data-joint="45" aria-label="焊盘4 MediaTek-Alphabet" title="4"></button>
+        <button type="button" class="pad" style="left:32%;top:40%" data-joint="15" aria-label="焊盘5 NVIDIA-Alphabet" title="5"></button>
+      </div>
+      <p class="hint">首焊必做：NVIDIA↔MediaTek（$3.5B）。焊完后标题栏亮 TODAY NUMBER 与判词；侧焊解锁旁路故事。</p>
+
+      <article class="story amber-border" id="s01">
+        <h3>A · 主焊点 NVIDIA × MediaTek · $35亿</h3>
+        <p><strong>What</strong>：NVIDIA 与联发科深化合作；MediaTek 采用 <em>NVLink Fusion</em>，把客制化 XPU 接入 NVLink 机架；NVIDIA 官方认购 <strong>$3.5B</strong> 可转债。同日联发科订价约 <strong>$3.9B</strong> 台湾海外 CB（台媒/一财，报道称创纪录）；转换价约 NT$4513.75（报道称）。Alphabet 亦参与，金额未披露。</p>
+        <p class="why"><strong>Why</strong>：大厂想用自研芯片「逃」纯 GPU 锁定，却仍被焊回 NV 互连脚手架——逃的是硅，黏的是标准。</p>
+        <p>Links：
+          <a href="https://nvidianews.nvidia.com/news/nvidia-and-mediatek-deepen-long-standing-partnership-to-build-ai-edge-to-cloud-computing-platforms" target="_blank" rel="noopener">NVIDIA News</a> ·
+          <a href="https://techcrunch.com/2026/08/31/nvidias-3-5b-mediatek-bet-reveals-its-plan-for-tackling-big-techs-ai-chip-buildout/" target="_blank" rel="noopener">TechCrunch</a> ·
+          <a href="https://www.yicai.com/news/103341457.html" target="_blank" rel="noopener">一财</a>
+        </p>
+      </article>
+      <article class="story" id="s02">
+        <h3>B · 侧焊 Cursor ↔ OpenAI（跟进，非首发）</h3>
+        <p><strong>What</strong>：OpenAI→Cursor 停供跟进（主事实 Aug 28；Aug 31 Forbes/InfoWorld 放大）。拟 <strong>2026-11-12</strong> 切断；Truell：OpenAI ≈ Cursor 流量 5%；Anthropic Tom Brown 增加给 Cursor 的 Claude 算力。</p>
+        <p class="why"><strong>Why</strong>：工具链也可被「拆焊」——与芯片互连故事同构：依赖单一供给面时，标准与合约决定你还能不能点亮。</p>
+        <p>Links：
+          <a href="https://openai.com/index/our-decision-on-cursor-following-its-acquisition-by-spacex/" target="_blank" rel="noopener">OpenAI</a> ·
+          <a href="https://www.infoworld.com/article/4216503/cursor-customers-will-lose-access-to-openai-coding-models-in-november.html" target="_blank" rel="noopener">InfoWorld</a> ·
+          <a href="https://www.forbes.com/sites/jonmarkman/2026/08/31/openai-cuts-off-cursor-after-spacexs-60-billion-takeover/" target="_blank" rel="noopener">Forbes</a>
+        </p>
+      </article>
+      <article class="story" id="s34">
+        <h3>E · Claude Code 额度回落</h3>
+        <p><strong>What</strong>：自 <strong>Sep 14</strong> 起永久额度相对 baseline +25%，约等于相对当前临时 +50% 回落 <strong>−17%</strong>（Aug 29 Anthropic，经 BleepingComputer）。</p>
+        <p class="why"><strong>Why</strong>：侧焊提醒：就算换到另一家，额度与配额仍是「焊盘规格」——要写进自己的回退路径。</p>
+      </article>
+      <article class="story" id="s45">
+        <h3>C/D · Alphabet 坐进 CB · Gemini 分层</h3>
+        <p><strong>What</strong>：Alphabet 参与 MediaTek CB（金额未披露）。另：<strong>报道称</strong> Google 员工在内部 Jetski 测试 Gemini 3.8 Flash Preview（BI ~Aug 27）——仅分层，不作今日主焊。</p>
+        <p class="why"><strong>Why</strong>：云厂一边测下一代 Flash，一边用债仓坐进 NV–MTK 互连同盟。</p>
+        <p>Link：<a href="https://www.businessinsider.com/google-employees-testing-next-gemini-flash-3-8-model-2026-8" target="_blank" rel="noopener">Business Insider（报道称）</a></p>
+      </article>
+      <article class="story" id="s15">
+        <h3>旁路 · NVIDIA ↔ Alphabet</h3>
+        <p>同一张蓝图上：NV 卖互连标准，Alphabet 买债仓 + 自研模型并行。不是二选一，是双轨焊接。</p>
+      </article>
+    </section>
+  </div>
+
+  <div class="peel-bar">
+    <button type="button" class="peel-tab" id="peelTab" aria-expanded="false" aria-controls="essay">▸ 工程说明 · 今日判词（揭页）</button>
+    <div class="essay" id="essay" role="region">
+      <h2>ENGINEERING NOTE · 今日判词</h2>
+      <p>今天的主焊点不是又一张「谁又投了谁」的财经快讯，而是一张互连图：NVIDIA 向 MediaTek 砸下官方 $3.5B 可转债，换来的是把客制化 XPU 焊进 NVLink Fusion 机架的资格。表面叙事是「大厂逃离纯 GPU」；图纸读法却是——你越想用自研硅逃出锁定，越要先承认机架级互连才是真正的插座标准。逃的是芯片品牌，黏的是链路协议。</p>
+      <p>同一张图的侧焊，是 Cursor 被 OpenAI 拟于 11 月切断直连模型、Claude Code 额度自 9/14 从临时宽松回落。工具面与芯片面同构：多模型对冲不是品味，是焊盘冗余。Sofia 学医也一样：别把诊疗流程绑在单一供应商上——Cursor 断 OpenAI、Claude 额度回落都在提醒：工具可换，证据链与回退路径要先写进自己的学习工作流。先画好走线，再决定今天点亮哪一颗芯片。</p>
+    </div>
+  </div>
+
+  <button type="button" class="stamp" id="stamp" aria-label="打开标题栏角票邮件摘要" aria-expanded="false">
+    <span class="dot" aria-hidden="true"></span>
+    <strong>TITLE BLOCK</strong>
+    <span>角票 STAMP</span>
+    <span>MAIL · ACTION</span>
+  </button>
+
+  <div class="footer">2026-09-01 · 北京时间 · 折晓 早报</div>
+</div>
+
+<div class="mail" id="mail" role="dialog" aria-label="邮件角票">
+  <h3>标题栏角票 · MAIL NOTE</h3>
+  <p><b>sofiapintos190</b>：窗口内无新邮件。</p>
+  <p class="act">aimfllyys · ACTION</p>
+  <ul>
+    <li>SCI-AIChat-Demo security-audit 仍红 master/579183f（失败 ~08-31 16:59 北京）</li>
+    <li>deepseek-harness E2E 仍红 master/cd5ef81（失败 ~08-31 13:32 北京）</li>
+    <li>Blog-YuSheng quality-gate 仍红（main/dev ~08-31 07:45 北京 c2eb774；PR #113/#114 已批但 CI 仍失败）</li>
+    <li>Cursor GitHub App updated-permissions 仍未读（自 08-27）</li>
+    <li>Linear：2 封未读（08-31 早 / 残留）</li>
+  </ul>
+  <p class="skip">SKIP：OpenRouter「Stop switching models」促销；Mobbin Monday Mobile Drop。</p>
+  <button type="button" class="btn" id="mailClose" aria-label="关闭角票">关闭</button>
+</div>
+
+<script>
+(function(){
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var done = {};
+  var sel = null;
+  var jointMap = {
+    '01':{path:'t01',story:'s01',primary:true,nodes:['0','1']},
+    '02':{path:'t02',story:'s02',nodes:['0','2']},
+    '34':{path:'t34',story:'s34',nodes:['2','3']},
+    '45':{path:'t45',story:'s45',nodes:['3','4']},
+    '15':{path:'t15',story:'s15',nodes:['0','4']}
+  };
+  var padOrder = ['01','02','34','45','15'];
+
+  function prepDraw(el){
+    if(!el) return;
+    el.style.strokeDasharray = '100';
+    el.style.strokeDashoffset = reduce ? '0' : '100';
+  }
+  function animateDraw(el, ms, cb){
+    if(!el){ if(cb) cb(); return; }
+    if(reduce){ el.style.strokeDashoffset='0'; if(cb) cb(); return; }
+    el.style.transition = 'none';
+    el.style.strokeDashoffset = '100';
+    el.getBoundingClientRect();
+    el.style.transition = 'stroke-dashoffset '+(ms||900)+'ms ease-out';
+    el.style.strokeDashoffset = '0';
+    var t = setTimeout(function(){ if(cb) cb(); }, (ms||900)+40);
+  }
+
+  // boot frame + titleblock
+  var fr = document.getElementById('frameRect');
+  var tb = document.getElementById('tbRect');
+  prepDraw(fr); prepDraw(tb);
+  Object.keys(jointMap).forEach(function(k){
+    prepDraw(document.getElementById(jointMap[k].path));
+  });
+  requestAnimationFrame(function(){
+    animateDraw(fr, 1200);
+    animateDraw(tb, 1100);
+  });
+
+  function revealPrimary(){
+    document.getElementById('todayNum').classList.add('on');
+    document.getElementById('thesis').classList.add('on');
+  }
+
+  function solder(key){
+    var j = jointMap[key];
+    if(!j || done[key]) {
+      if(done[key] && j) document.getElementById(j.story).classList.add('on');
+      return;
+    }
+    done[key] = true;
+    var path = document.getElementById(j.path);
+    var pad = document.querySelector('.pad[data-joint="'+key+'"]');
+    if(pad) pad.classList.add('lit');
+    animateDraw(path, j.primary?1000:700, function(){
+      if(path) path.classList.add('done');
+      document.getElementById(j.story).classList.add('on');
+      if(j.primary) revealPrimary();
+    });
+  }
+
+  document.getElementById('btnWire').addEventListener('click', function(){ solder('01'); });
+  document.getElementById('btnReset').addEventListener('click', function(){
+    done = {};
+    Object.keys(jointMap).forEach(function(k){
+      var p = document.getElementById(jointMap[k].path);
+      prepDraw(p); if(p) p.classList.remove('done');
+      document.getElementById(jointMap[k].story).classList.remove('on');
+    });
+    document.querySelectorAll('.pad').forEach(function(p){ p.classList.remove('lit'); });
+    document.getElementById('todayNum').classList.remove('on');
+    document.getElementById('thesis').classList.remove('on');
+    document.querySelectorAll('.node').forEach(function(n){ n.classList.remove('sel'); });
+    sel = null;
+  });
+
+  document.querySelectorAll('.pad').forEach(function(p){
+    p.addEventListener('click', function(){ solder(p.getAttribute('data-joint')); });
+  });
+
+  document.querySelectorAll('.node').forEach(function(n){
+    n.addEventListener('click', function(){
+      var id = n.getAttribute('data-id');
+      if(sel === null){
+        sel = id; n.classList.add('sel');
+      } else if(sel === id){
+        n.classList.remove('sel'); sel = null;
+      } else {
+        var a = sel, b = id;
+        document.querySelectorAll('.node').forEach(function(x){ x.classList.remove('sel'); });
+        sel = null;
+        var key = null;
+        Object.keys(jointMap).forEach(function(k){
+          var ns = jointMap[k].nodes;
+          if((ns[0]===a && ns[1]===b) || (ns[0]===b && ns[1]===a)) key = k;
+        });
+        if(key) solder(key);
+        else {
+          // nearest semantic: try primary if involves 0-1
+          if((a==='0'&&b==='1')||(a==='1'&&b==='0')) solder('01');
+        }
+      }
+    });
+  });
+
+  // REV drawers
+  function toggleRev(i){
+    var d = document.getElementById('rd'+i);
+    var box = document.querySelector('.rev-box[data-rev="'+i+'"]');
+    var open = d.classList.contains('open');
+    document.querySelectorAll('.rev-drawer').forEach(function(x){ x.classList.remove('open'); });
+    document.querySelectorAll('.rev-box').forEach(function(x){ x.classList.remove('open'); x.setAttribute('aria-expanded','false'); });
+    if(!open){ d.classList.add('open'); box.classList.add('open'); box.setAttribute('aria-expanded','true'); }
+  }
+  document.querySelectorAll('.rev-box').forEach(function(box){
+    box.addEventListener('click', function(){ toggleRev(box.getAttribute('data-rev')); });
+    box.addEventListener('keydown', function(e){
+      if(e.key==='Enter'||e.key===' '){ e.preventDefault(); toggleRev(box.getAttribute('data-rev')); }
+    });
+  });
+
+  // essay peel
+  var peel = document.getElementById('peelTab');
+  var essay = document.getElementById('essay');
+  peel.addEventListener('click', function(){
+    var on = essay.classList.toggle('open');
+    peel.setAttribute('aria-expanded', on?'true':'false');
+    peel.textContent = (on?'▾':'▸')+' 工程说明 · 今日判词（揭页）';
+  });
+
+  // mail stamp
+  var stamp = document.getElementById('stamp');
+  var mail = document.getElementById('mail');
+  function setMail(on){
+    mail.classList.toggle('open', on);
+    stamp.setAttribute('aria-expanded', on?'true':'false');
+  }
+  stamp.addEventListener('click', function(){ setMail(!mail.classList.contains('open')); });
+  document.getElementById('mailClose').addEventListener('click', function(){ setMail(false); });
+
+  document.addEventListener('keydown', function(e){
+    if(e.key==='Escape'){
+      setMail(false);
+      document.querySelectorAll('.rev-drawer').forEach(function(x){ x.classList.remove('open'); });
+      document.querySelectorAll('.rev-box').forEach(function(x){ x.classList.remove('open'); });
+      return;
+    }
+    if(e.key==='a'||e.key==='A'){
+      var first = document.querySelector('.rev-box');
+      if(first) first.focus();
+      toggleRev('0');
+      return;
+    }
+    if(e.key>='1'&&e.key<='5'){
+      solder(padOrder[parseInt(e.key,10)-1]);
+    }
+  });
+})();
+</script>
+</body>
+</html>

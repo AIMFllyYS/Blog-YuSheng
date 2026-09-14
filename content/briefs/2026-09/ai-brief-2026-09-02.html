@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>口袋星图 · 折晓 早报 · 2026-09-02</title>
+<!--
+DESIGN LESSON 2026-09-02 「口袋星图」
+style=粗野主义大字 × interaction=星图点选连线 × genre=迷你天文馆网站
+1. DeepSkies「A Billion Stars in Your Pocket」https://deepskies.observer/
+   steal: pocket-catalog metaphor — news as named stars you pick from a sky, not a card wall.
+2. Onething Design · What Is Neo Brutalism UI Design
+   https://www.onething.design/post/what-is-neo-brutalism-ui-design
+   steal: thick black borders, hard offset shadows, oversized type, press-in buttons.
+3. CrazyGL Starfield Warp https://crazygl.com/hero/starfield-warp
+   steal: cursor as a small lens/glow accessory; the click-to-connect is the real interaction.
+window: Asia/Shanghai 2026-09-01 06:00 → 2026-09-02 06:00
+combo: 粗野主义 × 星图点选 × 迷你天文馆. Do not reuse 焊点图 / 周一印次 / 折信日曜 / 剪报拼台 / cassette / CRT / compare-slider / Apple sticky / Swiss contact / Linear board.
+-->
+<style>
+:root{
+  --paper:#F4EFE6; --ink:#111111; --line:#111; --indigo:#3D5AFE; --coral:#FF5A36;
+  --gold:#FFE14D; --mint:#7DFFB3; --mute:#5A5348; --card:#FFFDF8; --sky:#E7E1D4;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--paper);color:var(--ink);font:16px/1.55 "IBM Plex Sans","Noto Sans SC","PingFang SC","Hiragino Sans GB","Microsoft YaHei",ui-sans-serif,system-ui,sans-serif}
+button,input{font:inherit;color:inherit}
+a{color:var(--indigo)}
+a:focus-visible,button:focus-visible,.star:focus-visible{outline:3px solid var(--coral);outline-offset:2px}
+body{min-height:100vh;overflow-x:hidden}
+#glow{position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(220px 220px at var(--mx,70%) var(--my,30%),rgba(61,90,254,.16),transparent 70%)}
+.wrap{position:relative;z-index:1;max-width:1080px;margin:0 auto;padding:18px 16px 72px}
+.top{display:flex;gap:12px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;margin-bottom:14px}
+.mast{border:3px solid var(--ink);background:var(--gold);box-shadow:6px 6px 0 var(--ink);padding:10px 14px;transform:rotate(-1.2deg)}
+.mast .k{font-size:11px;letter-spacing:.18em;font-weight:700;text-transform:uppercase}
+.mast h1{font-size:clamp(36px,7vw,64px);line-height:.9;letter-spacing:-.04em;font-weight:900;margin:2px 0 4px}
+.mast .sub{font-size:13px;font-weight:600}
+.num{border:3px solid var(--ink);background:var(--coral);color:#fff;box-shadow:6px 6px 0 var(--ink);padding:10px 14px;min-width:168px;transform:rotate(1.4deg)}
+.num .k{font-size:11px;letter-spacing:.16em;font-weight:800}
+.num b{display:block;font-size:42px;line-height:.9;letter-spacing:-.04em}
+.num span{font-size:12px;font-weight:700}
+.hint{margin:8px 0 14px;font-size:14px;color:var(--mute);font-weight:600}
+.hint i{font-style:normal;background:var(--ink);color:var(--gold);padding:1px 6px}
+.sky{position:relative;height:min(64vh,520px);border:3px solid var(--ink);background:var(--sky);box-shadow:8px 8px 0 var(--ink);overflow:hidden}
+.sky svg.lines{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1}
+.star{position:absolute;z-index:2;width:22px;height:22px;border-radius:50%;border:3px solid var(--ink);background:#fff;box-shadow:3px 3px 0 var(--ink);cursor:pointer;transform:translate(-50%,-50%)}
+.star::after{content:"";position:absolute;inset:-7px;border-radius:50%;border:2px solid transparent}
+.star.on{background:var(--gold)}
+.star.on::after{border-color:var(--ink);animation:pulse 1.6s ease-out infinite}
+.star.spine{width:26px;height:26px}
+.star.echo{background:#ddd}
+.lbl{position:absolute;z-index:2;transform:translate(-10%,8px);font-size:11px;font-weight:800;background:var(--card);border:2px solid var(--ink);padding:1px 6px;white-space:nowrap;pointer-events:none;box-shadow:2px 2px 0 var(--ink)}
+@keyframes pulse{0%{opacity:.7;transform:scale(1)}100%{opacity:0;transform:scale(1.7)}}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}
+.btn{border:3px solid var(--ink);background:#fff;padding:8px 12px;font-weight:800;box-shadow:4px 4px 0 var(--ink);cursor:pointer}
+.btn:hover{transform:translate(-1px,-1px);box-shadow:5px 5px 0 var(--ink)}
+.btn:active{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--ink)}
+.btn.on{background:var(--indigo);color:#fff}
+.thesis{display:none;margin:14px 0;border:3px solid var(--ink);background:var(--indigo);color:#fff;box-shadow:8px 8px 0 var(--ink);padding:16px 18px}
+.thesis.show{display:block}
+.thesis .k{font-size:11px;letter-spacing:.2em;font-weight:800}
+.thesis h2{font-size:clamp(22px,4vw,34px);line-height:1.15;margin:4px 0 6px;letter-spacing:-.03em}
+.panel{display:none;margin-top:14px;border:3px solid var(--ink);background:var(--card);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
+.panel.show{display:block}
+.panel h3{font-size:22px;letter-spacing:-.03em;margin-bottom:6px}
+.meta{font-size:12px;font-weight:700;color:var(--mute);margin-bottom:8px}
+.why{border-left:6px solid var(--coral);padding:6px 10px;margin:10px 0;background:#fff3ee;font-size:14px}
+.links{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.links a{display:inline-block;border:2px solid var(--ink);padding:4px 8px;text-decoration:none;font-size:12px;font-weight:800;box-shadow:2px 2px 0 var(--ink);background:var(--gold)}
+.stamp{position:fixed;top:14px;right:14px;z-index:20;width:86px;height:94px;border:3px dashed var(--ink);background:repeating-linear-gradient(135deg,var(--coral) 0 8px,#fff 8px 16px);box-shadow:5px 5px 0 var(--ink);cursor:pointer;display:flex;align-items:flex-end;justify-content:center;padding:6px}
+.stamp b{background:#fff;border:2px solid var(--ink);font-size:12px;padding:2px 6px}
+.mail{position:fixed;top:118px;right:14px;z-index:21;width:min(360px,92vw);max-height:70vh;overflow:auto;display:none;border:3px solid var(--ink);background:var(--card);box-shadow:8px 8px 0 var(--ink);padding:12px}
+.mail.show{display:block}
+.mail h4{font-size:16px;margin-bottom:8px}
+.item{border:2px solid var(--ink);padding:8px;margin:0 0 8px;background:#fff}
+.item .t{font-size:11px;font-weight:800;letter-spacing:.08em}
+.item.act{background:#fff6e8}
+.item.skip{opacity:.7}
+.catalog table{width:100%;border-collapse:collapse;font-size:13px}
+.catalog th,.catalog td{border:2px solid var(--ink);padding:6px 8px;vertical-align:top;text-align:left}
+.catalog th{background:var(--gold)}
+.log p{margin:0 0 12px}
+.foot{margin-top:28px;font-size:12px;font-weight:700;color:var(--mute);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+kbd{border:2px solid var(--ink);padding:0 4px;font-size:11px;background:#fff;box-shadow:1px 1px 0 var(--ink)}
+@media (max-width:640px){
+  .sky{height:420px}
+  .num{min-width:0}
+  .stamp{width:72px;height:80px}
+}
+</style>
+</head>
+<body>
+<div id="glow"></div>
+<button class="stamp" id="stamp" type="button" title="邮筒" aria-expanded="false"> <b>邮筒</b></button>
+<aside class="mail" id="mail" hidden>
+  <h4>邮筒 · 要办，不是收件箱</h4>
+  <div class="item act"><div class="t">ACTION · aimfllyys · 09-01 12:54 北京</div>
+    <p><b>细胞生物学课件已回。</b>史岸冰老师回信并附《绪论.pdf》。课后已申请；要办：下载细读，课件只用于个人复习、勿外传。</p></div>
+  <div class="item act"><div class="t">ACTION · aimfllyys · 持续红</div>
+    <p><b>SCI-AIChat-Demo CI</b> 仍红 master/579183f。本窗：08-31 22:51Z lint+tsc+vitest；09-01 21:03Z compileall+pytest。不要只重跑。</p></div>
+  <div class="item act"><div class="t">ACTION · aimfllyys · 09-01 05:06Z</div>
+    <p><b>deepseek-harness E2E</b> 仍红 master/cd5ef81（真 API）。</p></div>
+  <div class="item act"><div class="t">持续 · aimfllyys</div>
+    <p><b>Blog-YuSheng quality-gate</b> 仍红（c2eb774 等）。PR #113/#114 早前已批，CI 没跟上。</p>
+    <p style="margin-top:6px">Linear 仍 2 unread。</p></div>
+  <div class="item skip"><div class="t">FYI / SKIP</div>
+    <p>贵州大模型云建议优先 Grok 4.6（平台倍率 4x）。Docker 演讲邀、OpenRouter auto、Mobbin Monday Drop：促销，略。sofiapintos190：Google Play 09-01 收据，略。</p></div>
+</aside>
+
+<div class="wrap">
+  <div class="top">
+    <div class="mast">
+      <div class="k">ZHEXIAO · WED 0902</div>
+      <h1>口袋星图</h1>
+      <div class="sub">北京 09-01 06:00 → 09-02 06:00 · 迷你天文馆</div>
+    </div>
+    <div class="num">
+      <div class="k">TODAY NUMBER</div>
+      <b>100万</b>
+      <span>端侧原生 Token 上下文<br>星火 X2.5 厂商自述</span>
+    </div>
+  </div>
+  <p class="hint">点亮三颗主星 <i>星火</i> <i>Astra</i> <i>Lambda</i>，连成今日判词。光标只是透镜，点击才是观测。<kbd>1</kbd>–<kbd>7</kbd> 跳星 · <kbd>A</kbd> 星表 · <kbd>L</kbd> 日志 · <kbd>Esc</kbd> 关</p>
+
+  <div class="sky" id="sky" aria-label="今日星图">
+    <svg class="lines" id="lines" viewBox="0 0 100 100" preserveAspectRatio="none"></svg>
+  </div>
+
+  <div class="toolbar">
+    <button class="btn" id="btnCat" type="button">星表</button>
+    <button class="btn" id="btnLog" type="button">观测日志</button>
+    <button class="btn" id="btnReset" type="button">熄灭</button>
+  </div>
+
+  <div class="thesis" id="thesis">
+    <div class="k">THESIS UNLOCKED</div>
+    <h2>云端在签千亿单，手册塞进了口袋</h2>
+    <p>一边是路透报道称 Anthropic 与 Lambda 签下约 350 亿美元云算力；一边是 4B / 1.7B 把 100 万 Token 上下文开源到端侧。Astra 同日被 OpenAI 标成 Critical 网络安全能力。观测到三颗主星，才准写这句。</p>
+  </div>
+
+  <section class="panel" id="detail"></section>
+  <section class="panel catalog" id="catalog">
+    <h3>星表 · Messier 0902</h3>
+    <p class="meta">全量档案长在这张表里。来源 · 时间 · 一句事实 · 为什么留。</p>
+    <table>
+      <thead><tr><th>时</th><th>事实</th><th>留</th></tr></thead>
+      <tbody id="catBody"></tbody>
+    </table>
+  </section>
+  <section class="panel log" id="log">
+    <h3>观测日志</h3>
+    <p>星期三的天空分两层。上层是云：路透在协调世界时八月三十一日二十三时五十九分写，知情人士称 Anthropic 和 Nvidia 支持的 Lambda 签了约三百五十亿美元的云算力，地点在德州 Nueces County，Hut 8 大约三百五十兆瓦。华尔街日报称 Nvidia 自己持有那座机房的租约。四家公司当时都没置评。标「报道称」，不当成交公告。</p>
+    <p>下层是口袋。同一窗口里，科大讯飞词元星火把星火 X2.5 的 4B 和 1.7B 开源了：原生最长一百万 Token 上下文，全国产算力大约二十万亿 Token 预训练，权重上 Hugging Face 和 GitHub，API 在星辰 MaaS 限时免费。厂商自称端侧唯一该量级——本报只把它印成今日数字，不写成第三方榜。九月七日还有 293B。对医学生，这一百万不是跑分。它是整本售后手册、整份课件 PDF，可以离线塞进本地模型，不必先把病历和讲义交给云。</p>
+    <p>中间那颗最亮的，不卖参数。OpenAI 九月一日官方《Path to Astra》：Astra 达到准备框架里 Critical 网络安全能力阈值，是他们标出的第一个。文里写，配上工具和权限，它可以在多类 hardened 系统上找未知漏洞并发展利用，不必人逐步领着。ExploitBench 满分；内部 Port 评测里甚至用上两个零日，正在披露。高级网络能力先给小范围测试，再走 Daybreak Blue 防御通道。对齐评测称它比 GPT-5.6 Sol 更守边界。发布被安全拖住，本身就是新闻。</p>
+    <p>旁边还有两颗不要看错。中央社九月一日：联发科称 Nvidia 投三十五亿美元可转债，总发行三十九亿创台企纪录，并点名 Alphabet 与国际机构参与。昨日焊点图已经写过这笔钱和「Alphabet 未披露」；今天新的是官方转述把 Alphabet 点了名。欧委会八月三十一日把 ChatGPT 指定为 DSA 下超大型在线搜索引擎，Reddit、Roblox 为超大型平台，四个月补义务。布鲁塞尔日间可能略早于本窗起点，盖「近窗过夜」，不作第一印。Cursor 十一日十二日断供、Claude Code 限额从促销的 +50% 落到永久 +25%（相对现在大约少 17%），都是回声，不当新铅。</p>
+    <p>给 Sofia 的一句：课件刚刚从老师信箱落到桌上。论文是阶段性结论，不是盖棺。端侧长上下文也一样——能把整本《绪论》塞进口袋，不代表结论已经写死。先读 PDF，再决定要不要把它喂给本地模型。</p>
+  </section>
+  <div class="foot"><span>北京时间 2026-09-02</span><span>折晓 早报</span></div>
+</div>
+<script>
+(function(){
+  var STARS=[
+    {id:'spark',n:'星火',k:'1',x:22,y:38,spine:1,tag:'今日数字',t:'星火 X2.5-4B / 1.7B 开源：端侧 100 万 Token',
+      body:'科大讯飞词元星火 9 月 1 日推出并开源星火 X2.5-4B 与 1.7B。原生支持最长 100 万 Token 上下文；混合注意力；全国产算力约 20 万亿 Token 预训练。权重在 Hugging Face / GitHub，API 上讯飞星辰 MaaS，限时免费。9 月 7 日将发 X2.5-293B。厂商称端侧唯一该量级上下文——本报印成今日数字，不写成第三方榜。',
+      why:'端侧长上下文 = 课件和手册可以离线进本地模型。别把「唯一」抄成评测冠军。',
+      time:'2026-09-01 ~11:20 北京 · IT之家',
+      links:[['IT之家','https://www.ithome.com/0/996/855.htm'],['Hugging Face','https://huggingface.co/collections/XHToken/spark-x25'],['GitHub','https://github.com/XHToken/Spark-X2.5']]},
+    {id:'astra',n:'Astra',k:'2',x:52,y:22,spine:1,tag:'Critical',t:'OpenAI：Astra 达 Critical 网络安全能力',
+      body:'OpenAI 9 月 1 日官方《Path to Astra》：Astra 达到准备框架 Critical 网络安全能力阈值，是他们标出的第一个。文中写，配上工具和权限，可在多类 hardened 系统上找未知漏洞并发展利用，不必人逐步领着。ExploitBench 100%；内部 Port（2026 年 6–8 月）评测中发现并使用两个零日，正在向维护者披露。高级网络能力先给小范围测试，再经 Daybreak Blue 扩大防御用途。对齐评测称较 GPT-5.6 Sol 更守边界。',
+      why:'前沿模型正式跨入「关键网络能力」档。发布节奏被安全拖住，是今日主叙事之一。',
+      time:'2026-09-01 · OpenAI 官方',
+      links:[['Path to Astra','https://openai.com/index/path-to-astra/']]},
+    {id:'lambda',n:'Lambda',k:'3',x:78,y:42,spine:1,tag:'报道称 $350亿',t:'报道称 Anthropic × Lambda 约 350 亿美元云算力',
+      body:'路透 2026-08-31 23:59 UTC（落在本窗）：知情人士称 Anthropic 与 Nvidia 支持的 Lambda 签约约 350 亿美元云算力，项目在德州 Nueces County，由 Hut 8 开发，大约 350 兆瓦。华尔街日报（路透转述）称 Nvidia 自己持有该机房租约。Anthropic、Nvidia、Hut 8、Lambda 当时未置评。标「报道称」，不当成交公告。',
+      why:'一边端侧塞口袋，一边云端签千亿。对照今日数字。',
+      time:'2026-08-31 23:59 UTC · Reuters',
+      links:[['Reuters','https://www.reuters.com/technology/anthropic-signs-35-billion-cloud-deal-with-nvidia-backed-lambda-source-says-2026-08-31/']]},
+    {id:'mediatek',n:'联发科',k:'4',x:36,y:68,tag:'补记',t:'联发科点名 Alphabet 参与 39 亿可转债',
+      body:'中央社 Focus Taiwan 9 月 1 日：联发科称 Nvidia 投资 35 亿美元可转债，总发行 39 亿美元创台企纪录，并点名 Alphabet 与国际机构参与。联发科将采用 NVLink Fusion，服务客制 AI 加速器；三条线：AI 基建、edge AI（RTX / DGX Spark）、车载。昨日焊点图已写 35 亿与「Alphabet 未披露」；今日新的是官方转述把 Alphabet 点了名。',
+      why:'不是把昨天的焊点再焊一遍。新铅是 Alphabet 被点名。',
+      time:'2026-09-01 14:21 台北 · 中央社',
+      links:[['Focus Taiwan','https://focustaiwan.tw/business/202609010010'],['NVIDIA 新闻稿 08-31','https://nvidianews.nvidia.com/news/nvidia-and-mediatek-deepen-long-standing-partnership-to-build-ai-edge-to-cloud-computing-platforms']]},
+    {id:'dsa',n:'VLOSE',k:'5',x:64,y:62,tag:'近窗过夜',t:'欧委会指定 ChatGPT 为超大型在线搜索引擎',
+      body:'欧委会 8 月 31 日指定 ChatGPT 为 DSA 下 Very Large Online Search Engine（首个被当搜索引擎的 AI 聊天），Reddit 与 Roblox 为 Very Large Online Platforms。通知后四个月（至 2027 年 1 月）履行额外义务。Search Engine Journal 转述 OpenAI 披露：ChatGPT search 约 1.591 亿欧盟月活（截至 2026-03-31）。布鲁塞尔日间可能略早于本窗起点（UTC 08-31 22:00）——近窗过夜，不作今日第一印。',
+      why:'法律分类变了：聊天被当成搜索引擎监管。',
+      time:'2026-08-31 · 欧委会',
+      links:[['欧委会','https://digital-strategy.ec.europa.eu/en/news/commission-designates-chatgpt-reddit-roblox-under-digital-services-act']]},
+    {id:'cursor',n:'Cursor',k:'6',x:14,y:72,echo:1,tag:'昨日回声',t:'Cursor 断供续报：没有新截止日期',
+      body:'中文 9 月 1 日继续放大 OpenAI 对 Cursor 的 11 月 12 日断供。Truell：OpenAI 模型约占 Cursor 用户流量 5%。Anthropic 联合创始人 Tom Brown 表态将增加算力支持 Cursor 内 Claude。无新截止日期、无新合同文本。不当新铅。',
+      why:'昨天已经讲透。今天只在星表里留一颗暗星。',
+      time:'2026-09-01 中文转载 · 回声',
+      links:[['科技新报','https://technews.tw/2026/09/01/openai-to-wind-down-contract-providing-models-to-cursor/']]},
+    {id:'claude',n:'限额',k:'7',x:88,y:70,echo:1,tag:'附录',t:'Claude Code：促销结束，09-14 起相对现在约 −17%',
+      body:'Anthropic 给 Claude Code 的 +50% 周限额促销于 8 月 31 日 23:59 PT 结束。9 月 14 日起永久上调标准周限额 25%。相对促销期，大约少 17%。公司称还有「令人兴奋的变化」补差，未给细节。',
+      why:'用 Cursor / Claude Code 的人要按新限额排周计划。',
+      time:'附录 · 08-31 促销截止',
+      links:[]}
+  ];
+  var ARCH=[
+    ['09-01 ~11:20 北京','IT之家：星火 X2.5-4B/1.7B 开源，原生 100 万 Token 上下文；HF/GitHub；MaaS 限时免费；9/7 发 293B。','今日数字。厂商「端侧唯一」不当第三方榜。','https://www.ithome.com/0/996/855.htm'],
+    ['09-01 官方','OpenAI Path to Astra：Critical 网络安全能力阈值，首个；ExploitBench 100%；内部 Port 两枚零日在披露。','主星。','https://openai.com/index/path-to-astra/'],
+    ['08-31 23:59 UTC','路透报道称 Anthropic–Lambda ~$350 亿云算力；Hut 8 ~350MW；WSJ 称 Nvidia 持租约；四家未置评。','主星。标报道称。','https://www.reuters.com/technology/anthropic-signs-35-billion-cloud-deal-with-nvidia-backed-lambda-source-says-2026-08-31/'],
+    ['09-01 14:21 台北','中央社：Nvidia 投联发科 $35 亿 CB，总发行 $39 亿；点名 Alphabet。','昨日焊点图补记，新铅是 Alphabet 被点名。','https://focustaiwan.tw/business/202609010010'],
+    ['08-31 欧委会','ChatGPT 指定为 DSA VLOSE，Reddit/Roblox 为 VLOP；四个月补义务。','近窗过夜，不作第一印。','https://digital-strategy.ec.europa.eu/en/news/commission-designates-chatgpt-reddit-roblox-under-digital-services-act'],
+    ['09-01 中文转载','Cursor 11-12 断供续报；Truell 5%；Tom Brown 加码 Claude。无新截止日期。','回声，不当新铅。','https://technews.tw/2026/09/01/openai-to-wind-down-contract-providing-models-to-cursor/'],
+    ['附录','Claude Code +50% 促销 08-31 PT 截止；09-14 永久 +25% ≈ 相对现在 −17%。','限额日历。',''],
+    ['SKIP','NVIDIA–MediaTek NVLink Fusion 主叙事、Cursor 断供正文、Claude Code 限额主写：昨日已见报，无新进展不当新铅。','不装新。','']
+  ];
+  var on={}, order=[], sky=document.getElementById('sky'), lines=document.getElementById('lines');
+  function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+  STARS.forEach(function(s){
+    var b=document.createElement('button');
+    b.className='star'+(s.spine?' spine':'')+(s.echo?' echo':'');
+    b.id='s-'+s.id; b.style.left=s.x+'%'; b.style.top=s.y+'%';
+    b.title=s.n+' · '+s.t; b.setAttribute('aria-label',s.n); b.type='button';
+    b.addEventListener('click',function(){ toggle(s.id); show(s.id); });
+    var lb=document.createElement('div');
+    lb.className='lbl'; lb.style.left=s.x+'%'; lb.style.top=s.y+'%';
+    lb.textContent=s.k+' '+s.n;
+    sky.appendChild(b); sky.appendChild(lb);
+  });
+  function draw(){
+    var pts=order.map(function(id){ var s=find(id); return s.x+','+s.y; });
+    var d='';
+    if(pts.length>1) d='<polyline fill="none" stroke="#111" stroke-width="1.2" points="'+pts.join(' ')+'"/>';
+    order.forEach(function(id){
+      var s=find(id);
+      d+='<circle cx="'+s.x+'" cy="'+s.y+'" r="'+(s.spine?1.8:1.3)+'" fill="#FFE14D" stroke="#111" stroke-width="0.4"/>';
+    });
+    lines.innerHTML=d;
+    var ok=on.spark&&on.astra&&on.lambda;
+    document.getElementById('thesis').classList.toggle('show',!!ok);
+  }
+  function find(id){ for(var i=0;i<STARS.length;i++) if(STARS[i].id===id) return STARS[i]; }
+  function toggle(id){
+    var el=document.getElementById('s-'+id);
+    if(on[id]){ delete on[id]; order=order.filter(function(x){return x!==id;}); el.classList.remove('on'); }
+    else { on[id]=1; order.push(id); el.classList.add('on'); }
+    draw();
+  }
+  function show(id){
+    var s=find(id);
+    var p=document.getElementById('detail');
+    p.classList.add('show');
+    document.getElementById('catalog').classList.remove('show');
+    document.getElementById('log').classList.remove('show');
+    document.getElementById('btnCat').classList.remove('on');
+    document.getElementById('btnLog').classList.remove('on');
+    var ls=(s.links||[]).map(function(a){return '<a href="'+esc(a[1])+'" target="_blank" rel="noopener">'+esc(a[0])+'</a>';}).join('');
+    p.innerHTML='<div class="meta">'+esc(s.tag)+' · '+esc(s.time)+'</div><h3>'+esc(s.t)+'</h3><p>'+esc(s.body)+'</p><div class="why">对 Sofia：'+esc(s.why)+'</div><div class="links">'+ls+'</div>';
+    p.scrollIntoView({behavior:'smooth',block:'nearest'});
+  }
+  document.getElementById('btnReset').onclick=function(){
+    order.slice().forEach(function(id){ toggle(id); });
+    document.getElementById('detail').classList.remove('show');
+  };
+  function panel(which){
+    var cat=document.getElementById('catalog'), log=document.getElementById('log');
+    var bc=document.getElementById('btnCat'), bl=document.getElementById('btnLog');
+    if(which==='cat'){
+      var onn=cat.classList.toggle('show');
+      log.classList.remove('show'); bc.classList.toggle('on',onn); bl.classList.remove('on');
+      if(onn) cat.scrollIntoView({behavior:'smooth',block:'nearest'});
+    } else {
+      var onn2=log.classList.toggle('show');
+      cat.classList.remove('show'); bl.classList.toggle('on',onn2); bc.classList.remove('on');
+      if(onn2) log.scrollIntoView({behavior:'smooth',block:'nearest'});
+    }
+  }
+  document.getElementById('btnCat').onclick=function(){ panel('cat'); };
+  document.getElementById('btnLog').onclick=function(){ panel('log'); };
+  var tb=document.getElementById('catBody');
+  ARCH.forEach(function(r){
+    var tr=document.createElement('tr');
+    tr.innerHTML='<td>'+esc(r[0])+'</td><td>'+esc(r[1])+(r[3]?'<br><a href="'+esc(r[3])+'" target="_blank" rel="noopener">源</a>':'')+'</td><td>'+esc(r[2])+'</td>';
+    tb.appendChild(tr);
+  });
+  var stamp=document.getElementById('stamp'), mail=document.getElementById('mail');
+  stamp.onclick=function(){
+    var o=mail.classList.toggle('show');
+    mail.hidden=!o; stamp.setAttribute('aria-expanded',o?'true':'false');
+  };
+  document.addEventListener('mousemove',function(e){
+    document.documentElement.style.setProperty('--mx',e.clientX+'px');
+    document.documentElement.style.setProperty('--my',e.clientY+'px');
+  });
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Escape'){
+      mail.classList.remove('show'); mail.hidden=true;
+      document.getElementById('detail').classList.remove('show');
+      document.getElementById('catalog').classList.remove('show');
+      document.getElementById('log').classList.remove('show');
+      document.getElementById('btnCat').classList.remove('on');
+      document.getElementById('btnLog').classList.remove('on');
+    }
+    if(e.key==='a'||e.key==='A') panel('cat');
+    if(e.key==='l'||e.key==='L') panel('log');
+    var n=parseInt(e.key,10);
+    if(n>=1&&n<=7){ var s=STARS[n-1]; toggle(s.id); show(s.id); }
+  });
+})();
+</script>
+</body>
+</html>

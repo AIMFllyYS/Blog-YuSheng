@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>折晓 早报 · 2026-08-23 · ROLL 08</title>
+<style>
+:root{
+  --paper:#d8d2c4;
+  --ink:#111111;
+  --red:#c41e3a;
+  --mute:#6a655c;
+  --yday:#8a9aa8;
+  --mail:#c9a227;
+  --rebate:#cfc8b8;
+  --print:#efe9dc;
+  --rule:1px solid #111;
+  --sans:"Helvetica Neue",Helvetica,Arial,"PingFang SC","Hiragino Sans GB","Noto Sans SC","Source Han Sans SC","Microsoft YaHei",sans-serif;
+  --mono:ui-monospace,"SFMono-Regular",Menlo,Consolas,"Liberation Mono",monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--paper);color:var(--ink);font-family:var(--sans);
+  -webkit-font-smoothing:antialiased}
+body{
+  background:
+    radial-gradient(ellipse at 38% 32%, #efe9db 0%, var(--paper) 62%);
+}
+button,input{font-family:inherit;color:inherit}
+a{color:var(--red);text-decoration:none;border-bottom:1px solid rgba(196,30,58,.35)}
+a:hover{border-bottom-color:var(--red)}
+:focus-visible{outline:2px solid var(--red);outline-offset:2px}
+
+#table{min-height:100vh;display:grid;grid-template-rows:auto 1fr auto}
+.mast{
+  display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  padding:14px 22px 10px;border-bottom:var(--rule);
+  font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+}
+.mast .lab{color:var(--red);letter-spacing:.2em}
+.mast .clk{font-variant-numeric:tabular-nums;letter-spacing:.12em}
+.mast h1{font-family:var(--sans);font-size:13px;font-weight:500;letter-spacing:.28em;text-transform:uppercase}
+
+.work{
+  display:grid;grid-template-columns:minmax(0,1.15fr) minmax(280px,.85fr);
+  min-height:0;
+}
+@media (max-width:900px){
+  .work{grid-template-columns:1fr}
+  .easel{border-left:none;border-top:var(--rule);min-height:46vh}
+}
+
+.light{position:relative;min-height:0;overflow:auto;cursor:grab;padding:18px 18px 28px}
+.light:active{cursor:grabbing}
+.sheet{
+  display:grid;grid-template-columns:repeat(4,minmax(140px,1fr));
+  gap:8px;min-width:640px;
+}
+.frame{
+  position:relative;aspect-ratio:3/2;background:var(--print);
+  border:var(--rule);padding:8px 8px 6px;
+  cursor:pointer;overflow:hidden;
+}
+.frame .id{
+  position:absolute;left:6px;bottom:4px;font-family:var(--mono);font-size:9px;
+  letter-spacing:.14em;color:var(--mute)
+}
+.frame .k{
+  font-family:var(--mono);font-size:8px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--mute)
+}
+.frame .big{
+  font-size:clamp(18px,2.4vw,28px);line-height:.95;letter-spacing:-.03em;
+  margin-top:6px;font-weight:500;max-width:12ch
+}
+.frame .cap{font-size:10px;line-height:1.35;color:var(--mute);margin-top:4px;max-width:22ch}
+.frame.yday{filter:grayscale(.7) contrast(.85);background:#ddd8ce}
+.frame.yday .stamp-y{
+  position:absolute;right:6px;top:6px;font-family:var(--mono);font-size:8px;
+  letter-spacing:.2em;color:var(--yday);border:1px solid var(--yday);padding:1px 4px
+}
+.circ{
+  position:absolute;inset:-6px;width:calc(100% + 12px);height:calc(100% + 12px);
+  pointer-events:none;display:none;z-index:2
+}
+.frame.on .circ{display:block}
+.grease{
+  position:absolute;right:5px;top:5px;z-index:3;font-family:var(--mono);font-size:8px;
+  letter-spacing:.16em;color:var(--mail);border:1.5px solid var(--mail);
+  padding:1px 5px;transform:rotate(8deg);background:transparent;cursor:pointer
+}
+.grease.urg{color:var(--red);border-color:var(--red);transform:rotate(-7deg)}
+.pop{
+  display:none;position:absolute;right:4px;top:22px;z-index:4;width:min(220px,70%);
+  background:var(--print);border:var(--rule);padding:7px 8px;
+  font-size:11px;line-height:1.4;text-align:left;transform:none;letter-spacing:0;
+  text-transform:none;color:var(--ink)
+}
+.grease:hover .pop,.grease:focus .pop,.grease:focus-within .pop{display:block}
+
+.easel{
+  border-left:var(--rule);padding:22px 28px 36px;overflow:auto;
+  background:rgba(239,233,220,.55)
+}
+.easel .em{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--mute)}
+.easel h2{font-size:clamp(22px,2.6vw,34px);font-weight:500;letter-spacing:-.03em;line-height:1.15;margin:8px 0 12px;max-width:18ch}
+.easel .num{
+  font-size:clamp(56px,8vw,96px);line-height:.85;letter-spacing:-.04em;color:var(--red);
+  font-weight:500;margin:4px 0 10px
+}
+.easel .lede{font-size:15px;line-height:1.55;max-width:36rem}
+.easel .lede p + p{margin-top:.85em}
+.easel .meta{font-family:var(--mono);font-size:11px;line-height:1.55;color:var(--mute);margin:12px 0 16px}
+.easel .grid{
+  font-family:var(--mono);font-size:11px;line-height:1.45;white-space:pre;overflow:auto;
+  border-top:var(--rule);border-bottom:var(--rule);padding:10px 0;margin:12px 0;color:var(--ink)
+}
+.easel .src{font-family:var(--mono);font-size:10px;line-height:1.6;margin-top:14px}
+.burn > *{animation:burn .55s ease both}
+.burn > *:nth-child(1){animation-delay:.02s}
+.burn > *:nth-child(2){animation-delay:.08s}
+.burn > *:nth-child(3){animation-delay:.14s}
+.burn > *:nth-child(4){animation-delay:.2s}
+.burn > *:nth-child(5){animation-delay:.26s}
+.burn > *:nth-child(6){animation-delay:.32s}
+.burn > *:nth-child(7){animation-delay:.38s}
+.burn > *:nth-child(8){animation-delay:.44s}
+@keyframes burn{
+  from{opacity:0;filter:contrast(1.8) brightness(1.35)}
+  to{opacity:1;filter:none}
+}
+@media (prefers-reduced-motion:reduce){
+  .burn > *{animation:none}
+}
+.seek{
+  width:100%;border:none;border-bottom:var(--rule);background:transparent;
+  padding:6px 0;margin:8px 0 12px;font-size:14px;outline:none;font-family:var(--mono)
+}
+.log{font-size:12.5px;line-height:1.5}
+.log .row{border-top:1px solid rgba(17,17,17,.18);padding:8px 0}
+.log .t{font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--mute)}
+.log .w{color:var(--mute);font-size:11px;margin-top:2px}
+
+.foot{
+  border-top:var(--rule);padding:8px 22px 10px;
+  display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)
+}
+.hint b{color:var(--ink);font-weight:400}
+</style>
+</head>
+<body>
+<!--
+  Design references actually used:
+  • It's Nice That visual index (numbered specimens on one sheet):
+    https://www.itsnicethat.com/features/forward-thinking-graphic-trends-2026-graphic-design-120126
+  • CSSDA WOTD 2026-08-22 NOTA / UPROCK — last analog notes before the session ends:
+    https://cssdesignawards.com/
+  • Mira Rojanasakul / Storybench on NYT Thwaites: a sheet you sit down and study, not a cinematic scroll:
+    https://www.storybench.org/turning-the-threat-to-a-distant-glacier-into-a-local-story-through-data-visualization/
+  • Guidelight Control Assessment interactive score table, printed as a CLI grid on frame 06:
+    https://guidelight.ai/blog/control-assessment-august-2026
+  • Swiss restraint / one emphasis (red grease #c41e3a) — typographic discipline, not a Stripe clone.
+
+  Interaction: contact sheet + enlarger. Click or keys 1–0 / arrows. No modal. No page-flip.
+-->
+<div id="table">
+  <header class="mast">
+    <div>ROLL 08 &nbsp;·&nbsp; 2026-08-23 SUN &nbsp;·&nbsp; EMULSION 01–12</div>
+    <h1>折晓 早报</h1>
+    <div class="lab">LAB CLOSE 08:00 SGT &nbsp;<span class="clk" id="clk">--:--:--</span></div>
+  </header>
+
+  <div class="work">
+    <div class="light" id="light" title="拖移灯箱">
+      <div class="sheet" id="sheet">
+
+        <div class="frame on" data-id="01" role="button" tabindex="0" aria-pressed="true">
+          <svg class="circ" viewBox="0 0 100 66" aria-hidden="true"><ellipse cx="50" cy="33" rx="47" ry="29" fill="none" stroke="#c41e3a" stroke-width="1.5" transform="rotate(-7 50 33)"/></svg>
+          <div class="k">01 · essay</div>
+          <div class="big">校对</div>
+          <div class="cap">圈住价钱与身份。药液未倒。</div>
+          <span class="id">01</span>
+        </div>
+
+        <div class="frame" role="button" tabindex="0" data-id="02" aria-pressed="false">
+          <svg class="circ" viewBox="0 0 100 66" aria-hidden="true"><ellipse cx="50" cy="33" rx="47" ry="29" fill="none" stroke="#c41e3a" stroke-width="1.5" transform="rotate(-7 50 33)"/></svg>
+          <div class="k">02 · lead · 报道称</div>
+          <div class="big" style="color:#c41e3a">&gt;15%</div>
+          <div class="cap">Nvidia 服务器 · 早 2027 · 记忆体</div>
+          <span class="id">02</span>
+        </div>
+
+        <div class="frame" role="button" tabindex="0" data-id="03" aria-pressed="false">
+          <svg class="circ" viewBox="0 0 100 66" aria-hidden="true"><ellipse cx="50" cy="33" rx="47" ry="29" fill="none" stroke="#c41e3a" stroke-width="1.5" transform="rotate(-7 50 33)"/></svg>
+          <div class="k">03 · distro</div>
+          <div class="big">4.6 → GCP</div>
+          <div class="cap">Model Garden · 不是新模型</div>
+          <span class="id">03</span>
+        </div>
+
+        <div class="frame" role="button" tabindex="0" data-id="04" aria-pressed="false">
+          <svg class="circ" viewBox="0 0 100 66" aria-hidden="true"><ellipse cx="50" cy="33" rx="47" ry="29" fill="none" stroke="#c41e3a" stroke-width="1.5" transform="rotate(-7 50 33)"/></svg>
+          <div class="k">04 · 报道称</div>
+          <div class="big">无工牌</div>
+          <div class="cap">ox-alpha · 服务层像智谱</div>
+          <span class="id">04</span>
+        </div>
+
+        <div class="frame" role="button" tabindex="0" data-id="05" aria-pressed="false">
+          <svg class="circ" viewBox="0 0 100 66" aria-hidden="true"><ellipse cx="50" cy="33" rx="47" ry="29" fill="none" stroke="#c41e3a" stroke-width="1.5" transform="rotate(-7 50 33)"/></svg>
+          <div class="k">05 · already on</div>
+          <div class="big">周末价</div>
+          <div class="cap">00:00 起全日空闲 · 已生效</div>
+          <span class="id">05</span>
+        </div>
+
+        <div class="frame" role="button" tabindex="0" data-id="06" aria-pressed="false">
+          <svg class="circ" viewBox="0 0 100 66" aria-hidden="true"><ellipse cx="50" cy="33" rx="47" ry="29" fill="none" stroke="#c41e3a" stroke-width="1.5" transform="rotate(-7 50 33)"/></svg>
+          <div class="k">06 · side · not first print</div>
+          <div class="big">遏制 0</div>
+          <div class="cap">Guidelight 公开分 · Decoder 已写</div>
+          <span class="id">06</span>
+        </div>
+
+        <div class="frame" role="button" tabindex="0" data-id="07" aria-pressed="false">
+          <svg class="circ" viewBox="0 0 100 66" aria-hidden="true"><ellipse cx="50" cy="33" rx="47" ry="29" fill="none" stroke="#c41e3a" stroke-width="1.5" transform="rotate(-7 50 33)"/></svg>
+          <div class="k">07 · human dump</div>
+          <div class="big">07:59</div>
+          <div class="cap">Manus 羽升备份 · SGT</div>
+          <span class="id">07</span>
+          <span class="grease urg" tabindex="0">MAIL 1
+            <span class="pop">URGENT · 羽升须在 2026-08-23 07:59 SGT 前备份 Account / Subscription / Task。<br>删除 08:00 起。早报六点，约两小时。</span>
+          </span>
+        </div>
+
+        <div class="frame" role="button" tabindex="0" data-id="08" aria-pressed="false">
+          <svg class="circ" viewBox="0 0 100 66" aria-hidden="true"><ellipse cx="50" cy="33" rx="47" ry="29" fill="none" stroke="#c41e3a" stroke-width="1.5" transform="rotate(-7 50 33)"/></svg>
+          <div class="k">08 · ci / fyi</div>
+          <div class="big">又红了</div>
+          <div class="cap">两路 CI · 试用将尽</div>
+          <span class="id">08</span>
+          <span class="grease" tabindex="0">MAIL
+            <span class="pop">SCI-AIChat-Demo 18:49 UTC master 579183f。<br>Tmp-Skills-Hub 07:31 UTC 2df0158。<br>Quick Plus 24 Aug · Qoder 25 00:00 SGT。</span>
+          </span>
+        </div>
+
+        <div class="frame yday" role="button" tabindex="0" data-id="09" aria-pressed="false">
+          <svg class="circ" viewBox="0 0 100 66" aria-hidden="true"><ellipse cx="50" cy="33" rx="47" ry="29" fill="none" stroke="#c41e3a" stroke-width="1.5" transform="rotate(-7 50 33)"/></svg>
+          <span class="stamp-y">YDAY</span>
+          <div class="k">09 · prior day</div>
+          <div class="big">Grok Bot</div>
+          <div class="cap">扩权进套餐 · 不是今日首发</div>
+          <span class="id">09</span>
+        </div>
+
+        <div class="frame yday" role="button" tabindex="0" data-id="10" aria-pressed="false">
+          <svg class="circ" viewBox="0 0 100 66" aria-hidden="true"><ellipse cx="50" cy="33" rx="47" ry="29" fill="none" stroke="#c41e3a" stroke-width="1.5" transform="rotate(-7 50 33)"/></svg>
+          <span class="stamp-y">YDAY</span>
+          <div class="k">10 · prior day</div>
+          <div class="big">Vision-Exp</div>
+          <div class="cap">视觉进 API · 已见报</div>
+          <span class="id">10</span>
+        </div>
+
+        <div class="frame yday" role="button" tabindex="0" data-id="11" aria-pressed="false">
+          <svg class="circ" viewBox="0 0 100 66" aria-hidden="true"><ellipse cx="50" cy="33" rx="47" ry="29" fill="none" stroke="#c41e3a" stroke-width="1.5" transform="rotate(-7 50 33)"/></svg>
+          <span class="stamp-y">YDAY</span>
+          <div class="k">11 · prior day</div>
+          <div class="big">100.00</div>
+          <div class="cap">AVO 公开集 · 非模型分</div>
+          <span class="id">11</span>
+        </div>
+
+        <div class="frame yday" role="button" tabindex="0" data-id="12" aria-pressed="false">
+          <svg class="circ" viewBox="0 0 100 66" aria-hidden="true"><ellipse cx="50" cy="33" rx="47" ry="29" fill="none" stroke="#c41e3a" stroke-width="1.5" transform="rotate(-7 50 33)"/></svg>
+          <span class="stamp-y">YDAY</span>
+          <div class="k">12 · archive log</div>
+          <div class="big">底片簿</div>
+          <div class="cap">可检索 · 仍在这张表上</div>
+          <span class="id">12</span>
+        </div>
+      </div>
+    </div>
+
+    <aside class="easel" id="easel" aria-live="polite">
+      <div class="em">01 · easel · essay · 900–1600 汉字</div>
+      <h2>价钱，和没戴工牌的名字</h2>
+      <div class="lede"><p>星期日不发布大脑。星期日把已经拍下的底片摊在灯箱上：看谁还该被红圈圈住，谁该在药液倒掉之前被丢掉。接触印相不是首发会。它是最后一次校对。</p><p>今日数字不是分数，是报价。彭博社二〇二六年八月二十二日十四点四十二分美东时间——合协调世界时十八时四十二分，落在本报窗口内——报道称：Nvidia 已通知部分大客户，搭载其人工智能芯片的服务器价格在许多情况下将上调逾百分之十五，记忆体成本是主因。涨价作用于二〇二七年初出货的系统，点名 Vera Rubin 与 Grace Blackwell，幅度随芯片代际与记忆体配置而变。同一篇报道还写，为微软、谷歌、甲骨文代工服务器的厂商已把消息转给自己的客户。路透社写明无法独立核实；Nvidia 周末未置评。本报不发明星期六的收盘价。大于百分之十五，必须和「报道称」印在同一行。</p><p>第二格是分发，不是首发。SpaceXAI 官方新闻页日期写作八月二十一日：Grok 4.6 现已可在 Google Enterprise Agent Platform 调用，入口是 Model Garden。文档标识为 xai/grok-4.6。上下文五十万 token；官价每百万 token 输入两美元、缓存零点五美元、输出六美元。次级渠道另有缓存零点三美元的写法，本报只认官方页。旗舰早已在。这不是一次新模型，是一次企业分发——把现成的大脑放进 GCP 的花园。小时未公布，按星期五美国、星期六北京处理。</p><p>第三格没有工牌。OpenRouter 上 stealth/ox-alpha 仍不写实验室。八月二十二日，研究者 Chetaslua 放出服务层痕迹：向 OpenCode 路线发送畸形请求，打回 Java 栈 com.wd.paas.api.domain.v4.chat.ChatCompletionRequest，对得上智谱公开的 paas 第四版聊天路径；错误码一二一四与 OpenRouter 上的 GLM-5.3、5.2、5v-turbo 一致，而 DeepInfra 上的同权重报的是另一套错；三十组分词探测对齐 GLM-5.3。报道称指向智谱／Z.AI 的服务层，不是实验室自己摘面罩。OpenRouter 仍未点名。OpenCode 称日容量一百万亿 token，那是厂商口径。开发者 Ben Davis 单次跑出 DeepSWE 百分之八十——单次，不是榜。免费、无名、可能是 GLM 没戴工牌。不要把取证写成揭牌。</p><p>灯箱边上还有两格不抢头条。DeepSeek 官方价目写明：自北京时间八月二十三日零时起，周末（周六、周日）全日不再区分峰谷，一律按空闲价收取。高峰仍是工作日北京时间九点至十二点、十四点至十八点；空闲为高峰的一半。例子：v4-pro 输出空闲十三点五元、高峰二十七点〇元每百万 token。Vision-exp 与 flash 同价。早报六点，这条已经生效——周末价是今天真正拨下去的开关。Guidelight 依据截至八月十八日的公开材料，给五家实验室的遏制计划打分：OpenAI 遏制项三，Anthropic 与 Meta 为零；总分 Anthropic 与 OpenAI 同为 C+ 二点五〇。The Decoder 八月十九日已经写过，TechCrunch 二十二日九点太平洋夏令时再写一遍。可以作侧格，不作今日第一印。</p><p>人这边的开关更近。Manus 于八月二十一日十五时二十二分协调世界时来信：羽升须在八月二十三日七点五十九分新加坡时间前备份账户、订阅与任务；删除从八点持续到二十五日七点五十九分；二十五日八点起可恢复。早报六点北京，还剩大约两小时。SCI-AIChat-Demo 在二十二日十八时四十九分协调世界时于 master 五七九一八三 f 再失败；Tmp-Skills-Hub 同日七点三十一分也失败。Amazon Quick Plus 试用二十四日结束。Qoder Pro 二十五日零点新加坡自动续费，信未写金额。sofiapintos190 本窗口无信。</p><p>昨天的格子不要重拍。Grok Bot 扩权、Vision-Exp 进接口、AVO 在公开集上的一百分，都已见报，盖上昨日戳。今天只圈三张——涨价、分发、无名模型——再把已经生效的周末价，和两小时后的删除，钉在同一张接触印相上。</p><p>服务器的涨价落在明年。人的删除落在两小时后。一个是报道称，一个已经写进信里。灯箱不负责把它们加成同一个数字。实验室可以不公布遏制计划。药液倒掉的时间，不会等人把红圈画完。</p></div>
+    </aside>
+  </div>
+
+  <footer class="foot">
+    <div>2026-08-23 北京时间 · 折晓 早报</div>
+    <div class="hint">KEYS <b>1–0</b> / <b>← →</b> · CLICK FRAME · PAN SHEET · NO MODAL</div>
+    <div>WINDOW 08-22 06:00 → 08-23 06:00 BJ</div>
+  </footer>
+</div>
+
+<template id="c01">
+  <div class="em">01 · easel · essay · 900–1600 汉字</div>
+  <h2>价钱，和没戴工牌的名字</h2>
+  <div class="lede"><p>星期日不发布大脑。星期日把已经拍下的底片摊在灯箱上：看谁还该被红圈圈住，谁该在药液倒掉之前被丢掉。接触印相不是首发会。它是最后一次校对。</p><p>今日数字不是分数，是报价。彭博社二〇二六年八月二十二日十四点四十二分美东时间——合协调世界时十八时四十二分，落在本报窗口内——报道称：Nvidia 已通知部分大客户，搭载其人工智能芯片的服务器价格在许多情况下将上调逾百分之十五，记忆体成本是主因。涨价作用于二〇二七年初出货的系统，点名 Vera Rubin 与 Grace Blackwell，幅度随芯片代际与记忆体配置而变。同一篇报道还写，为微软、谷歌、甲骨文代工服务器的厂商已把消息转给自己的客户。路透社写明无法独立核实；Nvidia 周末未置评。本报不发明星期六的收盘价。大于百分之十五，必须和「报道称」印在同一行。</p><p>第二格是分发，不是首发。SpaceXAI 官方新闻页日期写作八月二十一日：Grok 4.6 现已可在 Google Enterprise Agent Platform 调用，入口是 Model Garden。文档标识为 xai/grok-4.6。上下文五十万 token；官价每百万 token 输入两美元、缓存零点五美元、输出六美元。次级渠道另有缓存零点三美元的写法，本报只认官方页。旗舰早已在。这不是一次新模型，是一次企业分发——把现成的大脑放进 GCP 的花园。小时未公布，按星期五美国、星期六北京处理。</p><p>第三格没有工牌。OpenRouter 上 stealth/ox-alpha 仍不写实验室。八月二十二日，研究者 Chetaslua 放出服务层痕迹：向 OpenCode 路线发送畸形请求，打回 Java 栈 com.wd.paas.api.domain.v4.chat.ChatCompletionRequest，对得上智谱公开的 paas 第四版聊天路径；错误码一二一四与 OpenRouter 上的 GLM-5.3、5.2、5v-turbo 一致，而 DeepInfra 上的同权重报的是另一套错；三十组分词探测对齐 GLM-5.3。报道称指向智谱／Z.AI 的服务层，不是实验室自己摘面罩。OpenRouter 仍未点名。OpenCode 称日容量一百万亿 token，那是厂商口径。开发者 Ben Davis 单次跑出 DeepSWE 百分之八十——单次，不是榜。免费、无名、可能是 GLM 没戴工牌。不要把取证写成揭牌。</p><p>灯箱边上还有两格不抢头条。DeepSeek 官方价目写明：自北京时间八月二十三日零时起，周末（周六、周日）全日不再区分峰谷，一律按空闲价收取。高峰仍是工作日北京时间九点至十二点、十四点至十八点；空闲为高峰的一半。例子：v4-pro 输出空闲十三点五元、高峰二十七点〇元每百万 token。Vision-exp 与 flash 同价。早报六点，这条已经生效——周末价是今天真正拨下去的开关。Guidelight 依据截至八月十八日的公开材料，给五家实验室的遏制计划打分：OpenAI 遏制项三，Anthropic 与 Meta 为零；总分 Anthropic 与 OpenAI 同为 C+ 二点五〇。The Decoder 八月十九日已经写过，TechCrunch 二十二日九点太平洋夏令时再写一遍。可以作侧格，不作今日第一印。</p><p>人这边的开关更近。Manus 于八月二十一日十五时二十二分协调世界时来信：羽升须在八月二十三日七点五十九分新加坡时间前备份账户、订阅与任务；删除从八点持续到二十五日七点五十九分；二十五日八点起可恢复。早报六点北京，还剩大约两小时。SCI-AIChat-Demo 在二十二日十八时四十九分协调世界时于 master 五七九一八三 f 再失败；Tmp-Skills-Hub 同日七点三十一分也失败。Amazon Quick Plus 试用二十四日结束。Qoder Pro 二十五日零点新加坡自动续费，信未写金额。sofiapintos190 本窗口无信。</p><p>昨天的格子不要重拍。Grok Bot 扩权、Vision-Exp 进接口、AVO 在公开集上的一百分，都已见报，盖上昨日戳。今天只圈三张——涨价、分发、无名模型——再把已经生效的周末价，和两小时后的删除，钉在同一张接触印相上。</p><p>服务器的涨价落在明年。人的删除落在两小时后。一个是报道称，一个已经写进信里。灯箱不负责把它们加成同一个数字。实验室可以不公布遏制计划。药液倒掉的时间，不会等人把红圈画完。</p></div>
+</template>
+
+<template id="c02">
+  <div class="em">02 · lead · today number · 报道称</div>
+  <div class="num">&gt;15%</div>
+  <h2>Nvidia 告诉大客户：早 2027 的 AI 服务器，许多情况下贵出一截</h2>
+  <div class="lede">
+    <p>彭博社 2026-08-22 14:42 EDT = 18:42 UTC，落在窗口内。报道称：部分最大客户已被告知，含其人工智能芯片的服务器价格在许多情况下上调逾 15%，记忆体成本是主因。点名 Vera Rubin 与 Grace Blackwell；涨价落在明年年初出货的系统；幅度随芯片代际与记忆体配置而变。</p>
+    <p>同一篇报道还写，为微软、谷歌、甲骨文代工服务器的厂商已把消息转下去。路透社写明无法独立核实。Nvidia 周末未置评。CNBC 是同一根线的转写，不是独立证实。</p>
+    <p>本报不发明星期六的收盘价。美股现金盘当日休市。今日数字是 <b style="color:#c41e3a;font-weight:500">&gt;15%</b>，必须和「报道称」印在一起。</p>
+  </div>
+  <div class="src">
+    <a href="https://www.bloomberg.com/news/articles/2026-08-22/nvidia-customers-notified-about-ai-related-price-hikes-above-15">bloomberg.com/…price-hikes-above-15</a><br>
+    <a href="https://www.cnbc.com/2026/08/22/nvidia-customers-reportedly-warned-about-ai-related-price-hikes-.html">cnbc.com/2026/08/22/…price-hikes</a>
+  </div>
+</template>
+
+<template id="c03">
+  <div class="em">03 · official distro · not a launch</div>
+  <h2>Grok 4.6 出现在 Google 企业花园里</h2>
+  <div class="lede">
+    <p>SpaceXAI 官方新闻页日期为 Aug 21：Grok 4.6 现可通过 Google Enterprise Agent Platform 调用，入口是 Model Garden。文档标识 <span style="font-family:ui-monospace,Menlo,monospace">xai/grok-4.6</span>。上下文 500k；推理档 low / medium / high / xhigh。</p>
+    <p>官价每百万 token：输入 $2 · 缓存 $0.50 · 输出 $6。次级渠道另有 $0.30 缓存写法，本报只认官方页。</p>
+    <p>这不是一次新模型。旗舰早已在。按星期五美国、星期六北京的分发处理——把现成的大脑放进 GCP。</p>
+  </div>
+  <div class="src">
+    <a href="https://x.ai/news/grok-4-6-vertex-ai">x.ai/news/grok-4-6-vertex-ai</a><br>
+    <a href="https://docs.x.ai/developers/community/google-cloud-vertex-ai">docs.x.ai/…/google-cloud-vertex-ai</a>
+  </div>
+</template>
+
+<template id="c04">
+  <div class="em">04 · forensics · 报道称 · not confirmed</div>
+  <h2>Ox Alpha 仍无名。服务层像智谱。</h2>
+  <div class="lede">
+    <p>OpenRouter 上 <span style="font-family:ui-monospace,Menlo,monospace">stealth/ox-alpha</span> 仍不写实验室。新进入本窗口的是八月二十二日的服务层取证，不是八月二十日那次上架。</p>
+    <p>Chetaslua：畸形请求打回 Java 栈 <span style="font-family:ui-monospace,Menlo,monospace;font-size:12px">com.wd.paas.api.domain.v4.chat.ChatCompletionRequest</span>，对得上智谱 paas v4；错误码 1214 与 OpenRouter 上的 GLM 系列一致，DeepInfra 上同权重则不然；30/30 分词探测对齐 GLM-5.3。</p>
+    <p>报道称指向 Zhipu / Z.AI。OpenRouter 未点名。OpenCode「100T tokens/day」是厂商口径。Ben Davis 单次 DeepSWE 80%——单次，不是榜。不要把取证写成揭牌。</p>
+  </div>
+  <div class="src">
+    <a href="https://openrouter.ai/stealth/ox-alpha">openrouter.ai/stealth/ox-alpha</a><br>
+    <a href="https://explainx.ai/blog/openrouter-ox-alpha-stealth-model-august-2026">explainx.ai/blog/openrouter-ox-alpha-…</a>
+  </div>
+</template>
+
+<template id="c05">
+  <div class="em">05 · official · already in effect at 06:00 BJ</div>
+  <h2>周末不再分峰谷。开关已经拨下。</h2>
+  <div class="lede">
+    <p>DeepSeek 官方价目：自北京时间 2026-08-23 00:00（周日）起，周末（周六、周日）全日不再区分峰谷，一律按空闲价。早报六点，这条已经生效。</p>
+    <p>工作日高峰仍是北京 9:00–12:00 与 14:00–18:00。空闲为高峰一半。例子：v4-pro 输出 空闲 13.5 元 / 高峰 27.0 元 每百万 token。Vision-exp 与 flash 同价。</p>
+    <p>这是今天真正已经拨下去的价开关。不是新模型首发。</p>
+  </div>
+  <div class="src">
+    <a href="https://api-docs.deepseek.com/zh-cn/quick_start/pricing">api-docs.deepseek.com/zh-cn/quick_start/pricing</a><br>
+    <a href="https://api-docs.deepseek.com/quick_start/pricing">api-docs.deepseek.com/quick_start/pricing</a>
+  </div>
+</template>
+
+<template id="c06">
+  <div class="em">06 · side frame · Decoder 08-19 already had it · not first print</div>
+  <h2>公开遏制计划：OpenAI 3，Anthropic 与 Meta 0</h2>
+  <div class="lede">
+    <p>Guidelight 依据截至 2026-08-18 的公开材料，给五家实验室的六项控制实践打 0–5。没有任何一项实践高于 3。TechCrunch 08-22 09:00 PDT（16:00 UTC，窗口内）再写遏制项：OpenAI 最高 3/5，Anthropic 与 Meta 最低 0。The Decoder 八月十九日已经见报，故不作今日第一印。</p>
+  </div>
+  <pre class="grid">PRACTICE         ANTH   OAI    GOOG   xAI    META
+Overall          C+     C+     D+     D−     F
+                 2.50   2.50   1.50   0.83   0.67
+Logging          3      3      2      0      1
+Monitor          3      3      1      0      1
+Gated actions    3      2      1      2      0
+Circuit break    3      2      1      2      0
+Third-party      3      2      2      0      2
+Containment      0      3      2      1      0
+0 none · 1 precursor · 2 limited · 3 substantial partial · none above 3</pre>
+  <div class="src">
+    <a href="https://guidelight.ai/blog/control-assessment-august-2026">guidelight.ai/blog/control-assessment-august-2026</a><br>
+    <a href="https://techcrunch.com/2026/08/22/frontier-ai-labs-still-wont-say-how-theyd-contain-a-rogue-model/">techcrunch.com/2026/08/22/…contain-a-rogue-model</a>
+  </div>
+</template>
+
+<template id="c07">
+  <div class="em">07 · mail · urgent carry · ~2h at briefing</div>
+  <div class="num">07:59</div>
+  <h2>Manus 删除窗口。人的开关。</h2>
+  <div class="lede">
+    <p>来信 2026-08-21 15:22 UTC，但截止日期是今早。羽升须在 2026-08-23 07:59 SGT 前备份 Account / Subscription / Task。删除 08-23 08:00–08-25 07:59 SGT。恢复从 08-25 08:00 SGT 起。</p>
+    <p>早报 06:00 北京 = 06:00 新加坡。还剩大约两小时。灯箱上的红圈，对不上这封信的钟。</p>
+  </div>
+</template>
+
+<template id="c08">
+  <div class="em">08 · mail · ci / fyi · not a drawer</div>
+  <h2>两路红灯，两张将到期的账单</h2>
+  <div class="lede">
+    <p>SCI-AIChat-Demo CI 再失败：2026-08-22 18:49 UTC，master 579183f，compileall + pytest / nightly replay 混在一起。</p>
+    <p>Tmp-Skills-Hub CI 失败：2026-08-22 07:31 UTC，CI - dev（2df0158）。</p>
+    <p>FYI Amazon Quick Plus 试用至 24 Aug 2026，之后回 Free：1 user，1 GB。</p>
+    <p>FYI Qoder Pro 自动续费 2026-08-25 00:00 SGT，金额信中未写。</p>
+    <p>sofiapintos190 本窗口无信。已略过 OTP、收据（含 08-22 11:15 Codex 购买）、Dribbble。</p>
+  </div>
+</template>
+
+<template id="c09">
+  <div class="em">09 · YDAY · prior day · do not re-lead</div>
+  <h2>Grok Bot 扩权。昨日的格子。</h2>
+  <div class="lede">
+    <p>PRIOR DAY。SpaceXAI 八月二十一日：Grok Bot 随 SuperGrok Plus / Heavy、Cursor Pro+ / Ultra、Teams Standard / Premium 一并提供。测试自八月十一日。企业等候名单。这是扩权，不是今日首发。本报不重拍。</p>
+  </div>
+  <div class="src"><a href="https://x.ai/news/grok-bot-more-plans">x.ai/news/grok-bot-more-plans</a></div>
+</template>
+
+<template id="c10">
+  <div class="em">10 · YDAY · prior day · do not re-lead</div>
+  <h2>Vision-Exp 进接口。昨日的格子。</h2>
+  <div class="lede">
+    <p>PRIOR DAY。DeepSeek-V4-Flash-Vision-Exp 于八月二十一日进入 API。价同 V4-Flash。没有新的开源权重。本报不重拍。</p>
+  </div>
+  <div class="src"><a href="https://api-docs.deepseek.com/updates/">api-docs.deepseek.com/updates</a></div>
+</template>
+
+<template id="c11">
+  <div class="em">11 · YDAY · prior day · do not re-lead</div>
+  <h2>AVO 100.00。昨日的格子。</h2>
+  <div class="lede">
+    <p>PRIOR DAY。NVIDIA AVO 配 Claude Opus 5，ARC-AGI-3 公开集 RHAE 100.00。不是基础模型分，不是半私有 / 私有赛集。本报不重拍。</p>
+  </div>
+  <div class="src"><a href="https://developer.nvidia.com/blog/nvidia-avo-reaches-100-on-arc-agi-3-demonstrating-a-frontier-level-general-purpose-architecture-for-long-horizon-autonomous-agents/">developer.nvidia.com/blog/…avo…arc-agi-3</a></div>
+</template>
+
+<template id="c12">
+  <div class="em">12 · archive · still on the sheet</div>
+  <h2>底片簿</h2>
+  <input class="seek" id="seek" type="search" placeholder="检索时间 / 事实 / URL" autocomplete="off">
+  <div class="log" id="log"></div>
+</template>
+
+<script>
+(function(){
+  var frames=[].slice.call(document.querySelectorAll('.frame'));
+  var easel=document.getElementById('easel');
+  var cur='01';
+  var rows=[
+    {t:'2026-08-22 18:42 UTC',f:'报道称 Bloomberg：Nvidia 告知部分大客户，AI 服务器许多情况下涨逾 15%；Vera Rubin + Grace Blackwell；早 2027 出货；记忆体驱动。路透无法独立核实。Nvidia 周末未置评。',w:'今日数字。不发明星期六股价。',u:'https://www.bloomberg.com/news/articles/2026-08-22/nvidia-customers-notified-about-ai-related-price-hikes-above-15'},
+    {t:'2026-08-22',f:'CNBC / Reuters 转写同一根 Nvidia 线，不是独立证实。',w:'同一报道称。',u:'https://www.cnbc.com/2026/08/22/nvidia-customers-reportedly-warned-about-ai-related-price-hikes-.html'},
+    {t:'dated 2026-08-21 · Fri-US / Sat-BJ',f:'SpaceXAI：Grok 4.6 上 Google Enterprise Agent Platform / Model Garden。xai/grok-4.6。500k。$2 / $0.50 cached / $6 per 1M。不是新模型。',w:'企业分发。',u:'https://x.ai/news/grok-4-6-vertex-ai'},
+    {t:'2026-08-22',f:'报道称 Chetaslua 服务层取证：ox-alpha Java paas v4 栈 + 错误码 1214 + 30/30 分词 → Zhipu/Z.AI。OpenRouter 未点名。',w:'身份，不是揭牌。',u:'https://explainx.ai/blog/openrouter-ox-alpha-stealth-model-august-2026'},
+    {t:'2026-08-23 00:00 BJ · already on',f:'DeepSeek 官方：周末全日空闲价，不再分峰谷。v4-pro 输出 13.5 / 27.0 元每百万 token。Vision-exp 同 flash。',w:'已生效的价开关。',u:'https://api-docs.deepseek.com/zh-cn/quick_start/pricing'},
+    {t:'2026-08-22 16:00 UTC · not first print',f:'TechCrunch 转 Guidelight：遏制项 OpenAI 3、Anthropic/Meta 0。总分 C+ 2.50 / C+ 2.50 / D+ 1.50 / D− 0.83 / F 0.67。Decoder 08-19 已写。',w:'侧格。公开材料截至 08-18。',u:'https://techcrunch.com/2026/08/22/frontier-ai-labs-still-wont-say-how-theyd-contain-a-rogue-model/'},
+    {t:'Guidelight table',f:'六项实践 0–5，无一项高于 3。Containment：OAI 3, Google 2, xAI 1, Anthropic 0, Meta 0。',w:'档案格，非头版。',u:'https://guidelight.ai/blog/control-assessment-august-2026'},
+    {t:'carry · deadline 2026-08-23 07:59 SGT',f:'Manus：羽升备份 Account/Subscription/Task。删除 08:00–08-25 07:59 SGT。来信 08-21 15:22 UTC。',w:'人的开关。',u:''},
+    {t:'2026-08-22 18:49 UTC',f:'SCI-AIChat-Demo CI 失败，master 579183f，compileall+pytest / nightly replay。',w:'邮件。',u:''},
+    {t:'2026-08-22 07:31 UTC',f:'Tmp-Skills-Hub CI 失败，CI - dev (2df0158)。',w:'邮件。',u:''},
+    {t:'PRIOR DAY 2026-08-21',f:'Grok Bot 扩至 SuperGrok Plus/Heavy、Cursor Pro+/Ultra、Teams Standard+Premium。非今日。',w:'昨日戳。不重拍。',u:'https://x.ai/news/grok-bot-more-plans'},
+    {t:'PRIOR DAY 2026-08-21',f:'DeepSeek-V4-Flash-Vision-Exp 进 API。价同 flash。无新开源权重。',w:'昨日戳。不重拍。',u:'https://api-docs.deepseek.com/updates/'},
+    {t:'PRIOR DAY 2026-08-21',f:'NVIDIA AVO + Claude Opus 5：ARC-AGI-3 公开集 100.00 RHAE。非模型分。',w:'昨日戳。不重拍。',u:'https://developer.nvidia.com/blog/nvidia-avo-reaches-100-on-arc-agi-3-demonstrating-a-frontier-level-general-purpose-architecture-for-long-horizon-autonomous-agents/'}
+  ];
+
+  function renderLog(q){
+    var box=document.getElementById('log');
+    if(!box) return;
+    q=(q||'').toLowerCase();
+    var hit=rows.filter(function(r){return !q || (r.t+r.f+r.w+r.u).toLowerCase().indexOf(q)>-1;});
+    box.innerHTML=hit.map(function(r){
+      var link=r.u ? '<br><a href="'+r.u+'">'+r.u+'</a>' : '';
+      return '<div class="row"><div class="t">'+r.t+'</div>'+r.f+'<div class="w">留：'+r.w+'</div>'+link+'</div>';
+    }).join('') || '<div class="row">无匹配底片。</div>';
+  }
+
+  function burn(id){
+    cur=id;
+    frames.forEach(function(f){
+      var on=f.getAttribute('data-id')===id;
+      f.classList.toggle('on',on);
+      f.setAttribute('aria-pressed', on?'true':'false');
+    });
+    var tpl=document.getElementById('c'+id);
+    easel.innerHTML='';
+    var node=document.createElement('div');
+    node.className='burn';
+    node.innerHTML=tpl.innerHTML;
+    easel.appendChild(node);
+    if(id==='12'){
+      renderLog('');
+      var s=document.getElementById('seek');
+      if(s) s.addEventListener('input',function(){renderLog(this.value);});
+    }
+  }
+
+  frames.forEach(function(f){
+    f.addEventListener('click',function(e){
+      burn(f.getAttribute('data-id'));
+    });
+    f.addEventListener('keydown',function(e){
+      if(e.key==='Enter' || e.key===' '){ e.preventDefault(); burn(f.getAttribute('data-id')); }
+    });
+  });
+  document.querySelectorAll('.grease').forEach(function(g){
+    g.addEventListener('click',function(e){
+      e.stopPropagation();
+      var f=g.closest('.frame');
+      if(f) burn(f.getAttribute('data-id'));
+    });
+  });
+
+  document.addEventListener('keydown',function(e){
+    if(e.target && (e.target.tagName==='INPUT' || e.target.tagName==='TEXTAREA')) return;
+    var ids=frames.map(function(f){return f.getAttribute('data-id');});
+    var i=ids.indexOf(cur);
+    if(e.key>='1' && e.key<='9'){ burn('0'+e.key); e.preventDefault(); }
+    else if(e.key==='0'){ burn('10'); e.preventDefault(); }
+    else if(e.key==='ArrowRight' || e.key==='ArrowDown'){ burn(ids[(i+1)%ids.length]); e.preventDefault(); }
+    else if(e.key==='ArrowLeft' || e.key==='ArrowUp'){ burn(ids[(i-1+ids.length)%ids.length]); e.preventDefault(); }
+  });
+
+  /* pan sheet without turning pages */
+  var light=document.getElementById('light');
+  var drag=false, sx=0, sy=0, sl=0, st=0;
+  light.addEventListener('pointerdown',function(e){
+    if(e.target.closest('.frame,.grease,.pop,a,input,button')) return;
+    drag=true; sx=e.clientX; sy=e.clientY; sl=light.scrollLeft; st=light.scrollTop;
+    light.setPointerCapture(e.pointerId);
+  });
+  light.addEventListener('pointermove',function(e){
+    if(!drag) return;
+    light.scrollLeft=sl-(e.clientX-sx);
+    light.scrollTop=st-(e.clientY-sy);
+  });
+  light.addEventListener('pointerup',function(){ drag=false; });
+
+  function tick(){
+    var end=Date.parse('2026-08-23T00:00:00+08:00'); /* 08:00 SGT */
+    var d=end-Date.now();
+    var el=document.getElementById('clk');
+    if(d<=0){ el.textContent='DUMPING'; return; }
+    var s=Math.floor(d/1000);
+    var h=Math.floor(s/3600), m=Math.floor((s%3600)/60), sec=s%60;
+    el.textContent=(h<10?'0':'')+h+':'+(m<10?'0':'')+m+':'+(sec<10?'0':'')+sec;
+  }
+  tick(); setInterval(tick,1000);
+
+  burn('01');
+})();
+</script>
+</body>
+</html>

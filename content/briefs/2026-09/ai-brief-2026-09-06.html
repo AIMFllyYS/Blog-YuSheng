@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>闸口 · 折晓早报 2026-09-06</title>
+<!--
+Design lesson 2026-09-06 《闸口》
+STYLE 粗野主义大字 × INTERACTION 滚动叙事/二元闸门开合 × GENRE 可滚动纪录片
+Sources opened:
+1. Best Scrollytelling Examples (2026) — https://scrollytelling.ai/examples/
+   steal: YesNo binary brutalist scroll; Adidas chapter rail; typography chapters (Universe to You)
+2. Linear's Brand System — Speed as a Visual Language — https://welovedaily.net/projects/linear-brand-system-speed-as-language
+   steal: restraint / refuse decoration / grid-as-discipline (NOT Linear product UI clone)
+3. Editorial Web Design Trends That Put Words First — https://themex.studio/guides/editorial-web-design-trends-that-put-words-first/
+   steal: type roles; curated front; quiet gates not conversion walls
+-->
+<style>
+:root{
+  --bg:#0a0a0a; --fg:#f4f1ea; --mute:#8a8680; --line:#2a2a2a;
+  --acid:#c8ff00; --warn:#ff3b00; --paper:#ece7dc; --ink:#111;
+  --gate-closed:#ff3b00; --gate-open:#c8ff00;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  background:var(--bg); color:var(--fg);
+  line-height:1.45; overflow-x:hidden;
+}
+button,a{font:inherit;color:inherit}
+.noise{
+  pointer-events:none; position:fixed; inset:0; z-index:0; opacity:.04;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.chrome{
+  position:fixed; top:0; left:0; right:0; z-index:40;
+  display:flex; justify-content:space-between; align-items:center;
+  padding:.55rem .8rem; border-bottom:2px solid var(--fg);
+  background:rgba(10,10,10,.92); backdrop-filter:blur(4px);
+}
+.chrome b{letter-spacing:.08em; font-size:.75rem}
+.chrome .meta{color:var(--mute); font-size:.7rem}
+#rail{
+  position:fixed; right:.6rem; top:50%; transform:translateY(-50%);
+  z-index:35; display:flex; flex-direction:column; gap:.45rem;
+}
+#rail a{
+  width:10px; height:10px; border:2px solid var(--fg); background:transparent;
+  text-indent:-999px; overflow:hidden;
+}
+#rail a.on{background:var(--acid); border-color:var(--acid)}
+.sticky-gate{
+  position:sticky; top:48px; z-index:20;
+  display:grid; grid-template-columns:1fr auto 1fr;
+  align-items:center; gap:.75rem;
+  padding:.7rem .9rem; border-bottom:2px solid var(--fg);
+  background:var(--bg);
+}
+.sticky-gate .side{font-size:.65rem; letter-spacing:.12em; color:var(--mute); text-transform:uppercase}
+.sticky-gate .lamp{
+  min-width:9.5rem; text-align:center; font-weight:800; font-size:1.05rem;
+  letter-spacing:.14em; padding:.35rem .6rem; border:3px solid var(--fg);
+}
+.sticky-gate[data-state="CLOSED"] .lamp{color:var(--bg); background:var(--gate-closed); border-color:var(--gate-closed)}
+.sticky-gate[data-state="OPEN"] .lamp{color:var(--ink); background:var(--gate-open); border-color:var(--gate-open)}
+.sticky-gate[data-state="HALF"] .lamp{color:var(--ink); background:var(--paper); border-color:var(--fg)}
+.wrap{position:relative; z-index:1; max-width:920px; margin:0 auto; padding:4.2rem 1rem 6rem}
+.hero{
+  min-height:88vh; display:flex; flex-direction:column; justify-content:flex-end;
+  padding:2rem 0 3rem; border-bottom:3px solid var(--fg);
+}
+.kicker{font-size:.72rem; letter-spacing:.18em; color:var(--acid); margin-bottom:1rem}
+.hero h1{
+  font-family: Impact, Haettenschweiler, "Arial Black", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  font-size:clamp(4.2rem, 18vw, 9rem); line-height:.88; letter-spacing:-.02em;
+  text-transform:uppercase;
+}
+.hero .en{display:block; font-size:clamp(1.4rem,5vw,2.4rem); letter-spacing:.2em; color:var(--mute); margin-top:.4rem; font-weight:400}
+.num-row{display:flex; flex-wrap:wrap; gap:1.2rem; align-items:flex-end; margin:1.6rem 0 1rem}
+.today-num{
+  font-family: Impact, Haettenschweiler, "Arial Black", sans-serif;
+  font-size:clamp(3.5rem,12vw,6rem); line-height:1; color:var(--acid);
+}
+.today-lab{font-size:.78rem; color:var(--mute); max-width:16rem}
+.thesis{
+  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif;
+  font-size:clamp(1.15rem, 2.6vw, 1.55rem); font-weight:600; max-width:34rem; margin-top:.5rem;
+}
+.scroll-hint{margin-top:2.2rem; font-size:.7rem; letter-spacing:.16em; color:var(--mute)}
+.chapter{
+  padding:3.2rem 0 4rem; border-bottom:2px solid var(--line);
+  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif;
+}
+.chapter .tag{
+  font-family: ui-monospace, Menlo, Consolas, monospace;
+  font-size:.68rem; letter-spacing:.16em; color:var(--acid); margin-bottom:.8rem;
+}
+.chapter h2{
+  font-family: Impact, Haettenschweiler, "Arial Black", "PingFang SC", sans-serif;
+  font-size:clamp(1.8rem, 5vw, 2.8rem); line-height:1.05; margin-bottom:.9rem;
+  letter-spacing:-.01em;
+}
+.chapter p{font-size:1.02rem; color:#ddd8cf; margin:.7rem 0; max-width:38rem}
+.chapter .why{border-left:4px solid var(--acid); padding-left:.8rem; color:var(--fg)}
+.chapter a.link{
+  display:inline-block; margin-top:.8rem; padding:.35rem .55rem;
+  border:2px solid var(--fg); text-decoration:none; font-family:ui-monospace,Menlo,monospace;
+  font-size:.72rem; letter-spacing:.08em;
+}
+.chapter a.link:hover{background:var(--fg); color:var(--bg)}
+.sof{margin-top:1rem; font-size:.92rem; color:var(--mute)}
+.sof strong{color:var(--acid); font-weight:600}
+.panel{
+  margin:1.2rem 0; padding:1rem; border:2px solid var(--fg); background:#111;
+  font-family:ui-monospace,Menlo,Consolas,monospace; font-size:.78rem;
+}
+.panel .row{display:flex; justify-content:space-between; gap:1rem; padding:.25rem 0; border-bottom:1px dashed var(--line)}
+.panel .row:last-child{border:0}
+.essay{
+  margin:2.5rem 0; padding:1.4rem 1.1rem; background:var(--paper); color:var(--ink);
+  border:3px solid var(--fg); font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",serif;
+}
+.essay .lab{font-family:ui-monospace,Menlo,monospace; font-size:.68rem; letter-spacing:.14em; margin-bottom:.8rem}
+.essay h3{font-size:1.35rem; margin-bottom:.7rem}
+.essay p{margin:.65rem 0; font-size:1rem; line-height:1.7}
+.manifest-wrap{margin:2rem 0; border:3px solid var(--fg)}
+.manifest-toggle{
+  width:100%; text-align:left; background:var(--fg); color:var(--bg);
+  padding:.85rem 1rem; border:0; cursor:pointer; font-weight:800;
+  letter-spacing:.1em; display:flex; justify-content:space-between; align-items:center;
+}
+.manifest-toggle:hover{background:var(--acid)}
+.manifest{display:none; padding:1rem; background:#0d0d0d}
+.manifest.open{display:block}
+.manifest li{
+  list-style:none; padding:.55rem 0; border-bottom:1px solid var(--line);
+  font-size:.82rem; font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+}
+.manifest li .src{display:block; color:var(--mute); font-family:ui-monospace,Menlo,monospace; font-size:.68rem; margin-top:.2rem}
+.foot{
+  margin-top:3rem; padding-top:1rem; border-top:2px solid var(--fg);
+  font-size:.75rem; color:var(--mute); letter-spacing:.08em;
+}
+/* corner permission slip */
+#slip{
+  position:fixed; left:.7rem; bottom:.7rem; z-index:50;
+}
+#slip-btn{
+  width:3.4rem; height:3.4rem; border:3px solid var(--fg); background:var(--acid); color:var(--ink);
+  font-weight:900; font-size:.62rem; letter-spacing:.06em; line-height:1.15; cursor:pointer;
+  transform:rotate(-6deg); box-shadow:4px 4px 0 var(--fg);
+}
+#slip-btn:hover{transform:rotate(0)}
+#slip-panel{
+  display:none; position:absolute; left:0; bottom:3.8rem; width:min(92vw, 340px);
+  background:var(--paper); color:var(--ink); border:3px solid var(--ink);
+  padding:1rem; box-shadow:6px 6px 0 #000;
+  font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif; font-size:.88rem;
+}
+#slip-panel.open{display:block}
+#slip-panel h4{font-family:Impact,"Arial Black",sans-serif; letter-spacing:.08em; margin-bottom:.5rem}
+#slip-panel .sec{margin:.7rem 0 .3rem; font-family:ui-monospace,Menlo,monospace; font-size:.68rem; letter-spacing:.12em}
+#slip-panel ul{padding-left:1.1rem; margin:.2rem 0}
+#slip-panel li{margin:.25rem 0}
+#slip-panel .x{
+  position:absolute; top:.35rem; right:.45rem; border:0; background:transparent;
+  font-size:1.1rem; cursor:pointer; color:var(--ink);
+}
+@media (max-width:640px){
+  #rail{display:none}
+  .sticky-gate{grid-template-columns:1fr; gap:.35rem}
+  .sticky-gate .side{display:none}
+}
+</style>
+</head>
+<body>
+<div class="noise" aria-hidden="true"></div>
+<header class="chrome">
+  <b>折晓 · DOC.GATE</b>
+  <span class="meta">BJ 2026-09-06 · WINDOW 09-05 06:00→09-06 06:00</span>
+</header>
+<nav id="rail" aria-label="章节">
+  <a href="#hero" class="on" title="开场">0</a>
+  <a href="#c1" title="榜">1</a>
+  <a href="#c2" title="IPO">2</a>
+  <a href="#c3" title="放号">3</a>
+  <a href="#c4" title="场记">4</a>
+  <a href="#c5" title="清单">5</a>
+</nav>
+
+<div class="sticky-gate" id="gate" data-state="CLOSED" aria-live="polite">
+  <div class="side">DOCUMENTARY · SUN</div>
+  <div class="lamp" id="gateLamp">GATE · CLOSED</div>
+  <div class="side" style="text-align:right" id="gateSide">SCROLL TO OPEN</div>
+</div>
+
+<main class="wrap">
+  <section class="hero" id="hero" data-gate="CLOSED" data-label="INTRO">
+    <div class="kicker">SUNDAY BRIEF · 可滚动纪录片</div>
+    <h1>闸口<span class="en">THE GATE</span></h1>
+    <div class="num-row">
+      <div class="today-num">40%</div>
+      <div class="today-lab">今日数字：Artificial Analysis Index v4.2 把私有 / held-out 测试权重加倍到 40%——榜还在，但更难刷。</div>
+    </div>
+    <p class="thesis">登顶声明之后，真正卡住的是闸口。</p>
+    <p class="scroll-hint">↓ 往下滚 · 闸门会开合 · J/K 也可</p>
+  </section>
+
+  <section class="chapter" id="c1" data-gate="OPEN" data-label="INDEX">
+    <div class="tag">CH.01 · YARDSTICK</div>
+    <h2>独立榜先把门加厚，再让你争第一</h2>
+    <p>Artificial Analysis 放出 Intelligence Index <strong>v4.2</strong>（官方文稿标 9 月 4 日，5 日继续被广泛转述）：Claude <strong>Fable 5.1</strong> 仍居首，GPT-6 <strong>Astra</strong> 第二，较 GPT-5.6 Sol 大约 <strong>+4</strong> 分；Meta 实验室第三，其后是 SpaceXAI、Moonshot/Kimi、Z.AI、Google。</p>
+    <p class="why"><strong>为什么重要：</strong>私有 held-out 权重提到 <strong>40%</strong>（v4.1 的两倍），并加入 AA-Briefcase（多周知识工作）与 Surge 的 GDP.pdf（100 份 PDF、4592 页、1275 条全过才算）。GPQA Diamond 因饱和退役。OpenAI 刚喊过 AGI 时代，独立尺先把「刷题」空间收窄。</p>
+    <div class="panel">
+      <div class="row"><span>GDP.pdf All-pass</span><span>Astra 33.2% · Sol 28.2% · Fable 26.2%</span></div>
+      <div class="row"><span>AA-Briefcase</span><span>Fable / Opus 5 领先；Astra ≈ +85 Elo vs Sol</span></div>
+      <div class="row"><span>Token 效率</span><span>Astra 仍压着多数前沿模型的输出 token</span></div>
+    </div>
+    <p class="sof"><strong>给 Sofia：</strong>医学文献常常是「证据散在几千页里」。GDP.pdf 这种全过标准，比单题排行更接近你以后读综述、对指南的真实痛点。</p>
+    <a class="link" href="https://artificialanalysis.ai/articles/artificial-analysis-intelligence-index-v4-2" target="_blank" rel="noopener">SOURCE · artificialanalysis.ai</a>
+  </section>
+
+  <section class="chapter" id="c2" data-gate="CLOSED" data-label="IPO">
+    <div class="tag">CH.02 · CAPITAL CALENDAR</div>
+    <h2>Anthropic 的上市闸，拨到十月中</h2>
+    <p>据知情人士周五对路透系媒体透露（Japan Times 9 月 5 日）：Anthropic 预计最早 <strong>十月中</strong> 才启动 IPO 路演营销；招股书从「最早下周」推迟到 <strong>九月下旬</strong>。有投资者仍把这次发行往约 <strong>$2T</strong> 体量想——会是公开市场对 AI 胃口的一次大考。公司还在敲定约 <strong>$15B</strong> 循环信贷；承销行包括摩根士丹利、高盛、摩根大通、花旗。Anthropic 拒评；时间表仍可能再变。</p>
+    <p class="why"><strong>为什么重要：</strong>产品侧在抢访问权，资本侧却把闸往后拨。同一周里，「谁更快」和「谁先上市」不一定同向。</p>
+    <p class="sof"><strong>给 Sofia：</strong>看见万亿估值标题时，先找时间表动词：marketing / prospectus / listing——三个闸，不是同一个。</p>
+    <a class="link" href="https://www.japantimes.co.jp/business/2026/09/05/tech/anthropic-ipo-launch-october/" target="_blank" rel="noopener">SOURCE · Japan Times / Reuters</a>
+  </section>
+
+  <section class="chapter" id="c3" data-gate="HALF" data-label="ACCESS">
+    <div class="tag">CH.03 · HALF OPEN</div>
+    <h2>Astra 的闸开了一半；额度也是战场</h2>
+    <p>OpenAI 在 9 月 4 日称 GPT-6 Astra 已向 ChatGPT Work / Codex 的 Pro、Enterprise、Business Premium 与 API 开放，Plus / 普通 Business 仍要再等几天（窗口内中文跟进与邮件侧证都落在 9 月 5 日）。API 标价约 <strong>$10 / $50</strong> 每百万 in/out token；Codex 增加跨上下文「笔记」以免长任务被摘要冲掉。Anthropic 则给 Claude Code 加了 <code>/limit-reset</code>：每周一次清掉五小时会话限制，但<strong>不提高</strong>周额度。</p>
+    <p>你邮箱里的贵州大模型云也在放号：<strong>gpt-6-astra</strong> 已上架，平台倍率 15×，上游仍小并发、建议小任务试；另有 GPT-5.4 在 ChatGPT 账号登录的 Codex 路径下架通知（报道称 API Key 路径不受影响）。</p>
+    <p class="why"><strong>为什么重要：</strong>发布会不等于能用。Critical 网络安全门槛之后，闸口变成分阶段放量、套餐分层、云厂商并发——开发者体感往往取决于「下午会不会撞墙」。</p>
+    <p class="sof"><strong>给 Sofia：</strong>选工具时并排三件事：模型名、套餐是否轮到你、重置键动的是时段还是总额。</p>
+  </section>
+
+  <section class="chapter essay" id="c4" data-gate="OPEN" data-label="CONTINUITY">
+    <div class="lab">场记本 · CONTINUITY NOTES</div>
+    <h3>同一天里，有人改尺，有人改号，有人改上市钟</h3>
+    <p>周日的窗口往往不「炸」，但会把一周的余震摊平。Astra 的登场话术还在空气里晃，独立评测就把私有题权重拉到四成，并塞进更像入职试工的 Briefcase、更像跨文档找证据的 GDP.pdf。榜首仍是 Fable，这不否定 Astra 在文档推理或 token 效率上的长处，只是提醒：宣言和排行用的不是同一把钥匙。</p>
+    <p>另一扇闸在华尔街日历上。Anthropic 的招股与路演往九月下旬、十月中挪，信贷额度谈到一百五十亿美元量级——资本愿意给故事定价，却仍按自己的节拍开门。产品侧同时在抢「能用多久」：一边是 Pro / API 放号，一边是会话重置键。对中国区用户，云上的上架通知和官方套餐放号常常差半拍，倍率与并发才是体感。</p>
+    <p>所以今天的主线不是再复读 Critical 或并购价签，而是看闸口本身：谁改了尺子，谁推迟了钟，谁把访问权拆成半开的门。医学训练里也一样——先确认你进得了哪间实验室、能用哪些试剂，再谈谁的摘要写得漂亮。</p>
+  </section>
+
+  <section class="chapter" id="c5" data-gate="OPEN" data-label="MANIFEST">
+    <div class="tag">CH.04 · MANIFEST</div>
+    <h2>通行证名单</h2>
+    <p>全量档案长在这套纪录片里：敲开印章，而不是另砌一堵「查看全部」。</p>
+    <div class="manifest-wrap">
+      <button type="button" class="manifest-toggle" id="manBtn" aria-expanded="false">PASS · 通行证名单 <span>+ OPEN</span></button>
+      <ol class="manifest" id="manifest">
+        <li>AA Intelligence Index v4.2：Fable 5.1 居首，Astra 第二（+4 vs Sol）；held-out 40%；+AA-Briefcase、+GDP.pdf；退 GPQA Diamond。<span class="src">artificialanalysis.ai · Sep 4 文稿 / Sep 5 流转</span></li>
+        <li>Anthropic IPO：路演最早十月中；招股书偏九月下旬；约 $2T 体量讨论；$15B 循环信贷。<span class="src">Japan Times / Reuters · Sep 5</span></li>
+        <li>Astra 访问：Pro / Enterprise / Business Premium + API；Plus 仍排队；Azure / Bedrock 同步叙事。<span class="src">OpenAI 9/4 声明 · 窗口内跟进</span></li>
+        <li>Claude Code <code>/limit-reset</code>：清五小时会话，不动周上限。<span class="src">同期开发者访问权拉锯</span></li>
+        <li>贵州云：gpt-6-astra 上架，15×，逐步放量；GPT-5.4 Codex（ChatGPT 登录）下架通知。<span class="src">aimfllyys 邮件 · Sep 5</span></li>
+        <li>WATCH CI：SCI-AIChat-Demo master/579183f 仍红（09-05 20:22Z）；deepseek-harness E2E master/cd5ef81 仍红（09-05 04:25Z）。<span class="src">GitHub notify</span></li>
+        <li>SKIP / 已讲透：Ban ASI Act、NVIDIA–HF ≈$12.93B、9/3 多云同掉、Astra Critical 首发话术当「新新闻」。<span class="src">仅作闸口背景</span></li>
+      </ol>
+    </div>
+  </section>
+
+  <footer class="foot">北京时间 2026-09-06 · 折晓 早报 · 《闸口》粗野主义 × 滚动闸门 × 纪录片</footer>
+</main>
+
+<div id="slip">
+  <button type="button" id="slip-btn" aria-expanded="false" title="通行条">通行<br>条</button>
+  <div id="slip-panel" role="dialog" aria-label="邮件通行条">
+    <button type="button" class="x" id="slip-x" aria-label="关闭">×</button>
+    <h4>PERM SLIP · 通行条</h4>
+    <p style="font-size:.75rem;opacity:.7;margin-bottom:.4rem">窗：09-05 06:00–09-06 06:00 · 北京</p>
+    <div class="sec">ACTION</div>
+    <ul>
+      <li>GitHub：AIMFllyYS 账号授权了第三方 OAuth <strong>gitee.com</strong>（09-05 07:54Z）——确认是否本人操作。</li>
+    </ul>
+    <div class="sec">WATCH</div>
+    <ul>
+      <li>SCI-AIChat-Demo CI 仍红 · master/579183f（09-05 20:22Z）</li>
+      <li>deepseek-harness E2E 仍红 · master/cd5ef81（09-05 04:25Z）</li>
+    </ul>
+    <div class="sec">NOTE</div>
+    <ul>
+      <li>aimfllyys：贵州云 Astra 上架逐步放量（15×）；GPT-5.4 Codex 下架通知（ChatGPT 登录路径）</li>
+      <li>sofiapintos190：Grok Bot usage reset</li>
+    </ul>
+    <div class="sec">SKIP</div>
+    <ul><li>GitHub sudo OTP；促销邮件</li></ul>
+  </div>
+</div>
+
+<script>
+(function(){
+  var gate=document.getElementById('gate');
+  var lamp=document.getElementById('gateLamp');
+  var side=document.getElementById('gateSide');
+  var sections=[].slice.call(document.querySelectorAll('[data-gate]'));
+  var rail=[].slice.call(document.querySelectorAll('#rail a'));
+  function setGate(state,label){
+    gate.setAttribute('data-state',state);
+    var text=state==='OPEN'?'GATE · OPEN':state==='HALF'?'GATE · HALF':'GATE · CLOSED';
+    lamp.textContent=text;
+    side.textContent=label||state;
+  }
+  var io=new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if(!en.isIntersecting) return;
+      var el=en.target;
+      setGate(el.getAttribute('data-gate'), el.getAttribute('data-label'));
+      var id=el.id;
+      rail.forEach(function(a){
+        a.classList.toggle('on', a.getAttribute('href')==='#'+id);
+      });
+    });
+  },{root:null, threshold:0.45, rootMargin:'-20% 0px -35% 0px'});
+  sections.forEach(function(s){io.observe(s);});
+
+  var manBtn=document.getElementById('manBtn');
+  var man=document.getElementById('manifest');
+  manBtn.addEventListener('click',function(){
+    var open=man.classList.toggle('open');
+    manBtn.setAttribute('aria-expanded', open?'true':'false');
+    manBtn.querySelector('span').textContent=open?'− CLOSE':'+ OPEN';
+  });
+
+  var slipBtn=document.getElementById('slip-btn');
+  var slipPanel=document.getElementById('slip-panel');
+  function toggleSlip(force){
+    var open=typeof force==='boolean'?force:!slipPanel.classList.contains('open');
+    slipPanel.classList.toggle('open',open);
+    slipBtn.setAttribute('aria-expanded', open?'true':'false');
+  }
+  slipBtn.addEventListener('click',function(){toggleSlip();});
+  document.getElementById('slip-x').addEventListener('click',function(){toggleSlip(false);});
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Escape') toggleSlip(false);
+    if(e.key==='j'||e.key==='k'){
+      var ids=['hero','c1','c2','c3','c4','c5'];
+      var cur=0;
+      for(var i=0;i<ids.length;i++){
+        var r=document.getElementById(ids[i]).getBoundingClientRect();
+        if(r.top<window.innerHeight*0.4) cur=i;
+      }
+      var next=e.key==='j'?Math.min(ids.length-1,cur+1):Math.max(0,cur-1);
+      document.getElementById(ids[next]).scrollIntoView({behavior:'smooth',block:'start'});
+    }
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>同一小时 · 折晓 早报 · 2026-08-20</title>
+<style>
+:root{
+  --vermilion:#b11b2c;
+  --vermilion-deep:#7a1220;
+  --brass:#c9a24a;
+  --brass-dim:#8a7030;
+  --concrete:#5c6066;
+  --concrete-dark:#2c2f33;
+  --hall:#1a1c1e;
+  --fluor:#dce8c8;
+  --fluor-dim:#a8b892;
+  --ink:#141210;
+  --paper:#e4e2dc;
+  --wrist:#f3e15a;
+  --crate:#6b4a2a;
+  --mute:#9aa09a;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--hall);color:var(--fluor);
+  font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei UI","Microsoft YaHei","Noto Sans CJK SC",system-ui,sans-serif;
+  overflow:hidden}
+button,a{font:inherit}
+.mono{font-family:ui-monospace,"SF Mono",Menlo,Consolas,"Courier New",monospace}
+button{cursor:pointer;border:0;background:none;color:inherit}
+
+/* ===== LANDING: two curtains ===== */
+#landing{position:fixed;inset:0;z-index:30;display:flex;cursor:pointer;user-select:none;overflow:hidden}
+#landing.up .curtain{transform:translateY(-108%)}
+#landing.up .lift-hint{opacity:0}
+#landing.gone{display:none}
+.curtain{
+  flex:1;position:relative;transition:transform 1.05s cubic-bezier(.55,.02,.3,1);
+  background:
+    repeating-linear-gradient(90deg,rgba(0,0,0,.12) 0 3px,transparent 3px 28px),
+    linear-gradient(180deg,var(--vermilion) 0%,var(--vermilion-deep) 70%,#4a0c16 100%);
+  box-shadow:inset 0 0 80px rgba(0,0,0,.35);
+}
+.curtain.right{transition-delay:.04s}
+.curtain .hem{
+  position:absolute;left:0;right:0;bottom:0;height:18px;
+  background:linear-gradient(180deg,var(--brass),#8a6a20);
+  box-shadow:0 -4px 12px rgba(201,162,74,.35);
+}
+.curtain .tassel{
+  position:absolute;top:0;width:10px;height:42px;
+  background:linear-gradient(180deg,var(--brass),#6a5010);
+}
+.curtain.left .tassel{left:18%}
+.curtain.right .tassel{right:18%}
+.curtain .label{
+  position:absolute;left:50%;top:38%;transform:translate(-50%,-50%);
+  text-align:center;letter-spacing:.28em;color:var(--brass);
+  text-shadow:0 2px 0 #4a0c16;
+}
+.curtain .label b{display:block;font-size:clamp(22px,3.4vw,36px);margin-bottom:8px}
+.curtain .label span{font-size:12px;opacity:.85;letter-spacing:.2em}
+.gong{
+  position:absolute;left:50%;bottom:22%;transform:translateX(-50%);
+  width:88px;height:88px;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#f0d78a,#c9a24a 45%,#6a5018);
+  box-shadow:0 0 0 6px #5a4010,0 8px 0 #3a2808,0 0 28px rgba(201,162,74,.4);
+}
+.gong.ring{animation:gonghit .55s ease}
+@keyframes gonghit{0%{transform:translateX(-50%) scale(1)}30%{transform:translateX(-50%) scale(1.08)}100%{transform:translateX(-50%) scale(1)}}
+.wrench-icon{
+  position:absolute;left:50%;bottom:20%;width:96px;height:96px;
+  transform:translateX(-50%) rotate(-18deg);
+}
+.wrench-icon.hit{animation:wrhit .45s ease}
+@keyframes wrhit{0%{transform:translateX(-50%) rotate(-18deg)}40%{transform:translateX(-50%) rotate(12deg)}100%{transform:translateX(-50%) rotate(-18deg)}}
+.lift-hint{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  z-index:4;text-align:center;pointer-events:none;
+  transition:opacity .4s;
+}
+.lift-hint .brand{font-size:13px;letter-spacing:.46em;color:var(--brass);margin-bottom:10px}
+.lift-hint h1{font-size:clamp(28px,5vw,52px);letter-spacing:.18em;color:#fff4e0;text-shadow:0 4px 0 #4a0c16}
+.lift-hint p{margin-top:14px;max-width:420px;line-height:1.7;color:#f0d8b0;font-size:14px}
+.lift-hint .k{margin-top:22px;font-size:12px;letter-spacing:.32em;color:var(--brass)}
+
+/* ===== HALL ===== */
+#hall{
+  position:fixed;inset:0;z-index:1;display:none;flex-direction:column;
+  background:
+    radial-gradient(ellipse at 50% 0%,rgba(220,232,200,.08),transparent 42%),
+    linear-gradient(#24282c,#1a1c1e 40%,#151618);
+}
+#hall.on{display:flex}
+.mast{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:8px 16px;border-bottom:1px solid #3a3e42;
+  font-size:12px;letter-spacing:.14em;color:var(--fluor-dim);
+}
+.mast b{color:var(--brass)}
+.floor{
+  flex:1;display:grid;grid-template-columns:1fr 140px 1fr;min-height:0;position:relative;
+}
+.stage{
+  position:relative;margin:12px 10px 8px;border:1px solid #3e4248;
+  background:
+    linear-gradient(180deg,rgba(220,232,200,.05),transparent 30%),
+    linear-gradient(#2a2e32,#22262a);
+  box-shadow:inset 0 0 0 1px rgba(201,162,74,.08),0 12px 28px rgba(0,0,0,.25);
+  cursor:pointer;overflow:hidden;min-height:0;
+}
+.stage:hover,.stage.on{border-color:var(--brass);box-shadow:inset 0 0 0 1px var(--brass)}
+.stage h3{
+  position:absolute;top:8px;left:10px;z-index:2;
+  font-size:11px;letter-spacing:.22em;color:var(--brass);font-weight:600;
+}
+.fluor-bar{
+  position:absolute;top:0;left:8%;right:8%;height:6px;
+  background:linear-gradient(90deg,transparent,var(--fluor),transparent);
+  box-shadow:0 8px 24px rgba(220,232,200,.18);opacity:.7;
+}
+.aisle{
+  position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;
+  padding:8px 4px 10px;min-height:0;
+}
+.aisle-mark{
+  position:absolute;inset:10px 40%; 
+  background:repeating-linear-gradient(180deg,transparent 0 10px,rgba(201,162,74,.12) 10px 12px);
+  pointer-events:none;
+}
+.center-g1{cursor:pointer;z-index:3;transition:transform .2s}
+.center-g1:hover{transform:translateY(-4px)}
+.booklet{
+  z-index:3;margin-top:8px;width:92px;
+  background:var(--paper);color:var(--ink);padding:7px 8px 8px;
+  box-shadow:2px 3px 0 #3a3428;cursor:pointer;font-size:11px;line-height:1.35;
+  transform:rotate(-3deg);
+}
+.booklet:hover{transform:rotate(0) translateY(-2px)}
+.booklet b{display:block;font-size:12px;letter-spacing:.08em}
+.booklet i{font-style:normal;opacity:.6;font-size:10px}
+
+/* ticker */
+.ticker{
+  position:absolute;top:32px;left:0;right:0;height:22px;overflow:hidden;
+  background:#121416;border-top:1px solid var(--brass-dim);border-bottom:1px solid var(--brass-dim);
+  color:var(--brass);font-size:12px;letter-spacing:.08em;white-space:nowrap;
+}
+.ticker span{display:inline-block;padding-left:100%;animation:tick 14s linear infinite}
+@keyframes tick{to{transform:translateX(-100%)}}
+.bell{
+  position:absolute;right:16px;top:64px;width:46px;height:46px;
+  background:radial-gradient(circle at 40% 30%,#f0d78a,#c9a24a 50%,#6a5018);
+  border-radius:50% 50% 42% 42%;box-shadow:0 5px 0 #4a3408;
+}
+.bell::before{content:"";position:absolute;top:-7px;left:50%;transform:translateX(-50%);width:18px;height:8px;background:#e6c56a;border-radius:3px}
+.price-stack{position:absolute;left:14px;bottom:18px;z-index:2}
+.price-stack .row{font-size:13px;letter-spacing:.06em;color:var(--fluor-dim);line-height:1.7}
+.price-stack .row em{font-style:normal;color:var(--brass);font-weight:700}
+.price-stack .big{font-size:34px;font-weight:800;color:#fff4e0;line-height:1;letter-spacing:.04em}
+.price-stack .sub{font-size:12px;color:var(--vermilion);letter-spacing:.1em;margin-top:4px}
+
+/* booth right */
+.booth-sign{
+  position:absolute;top:36px;left:12px;right:12px;
+  background:var(--vermilion);color:#fff4e0;padding:6px 8px;
+  letter-spacing:.2em;font-size:11px;text-align:center;
+  box-shadow:0 3px 0 var(--vermilion-deep);
+}
+.tech{position:absolute;right:18px;bottom:22px;width:54px;z-index:2}
+.tech .head{width:16px;height:16px;border-radius:50%;background:#c4b8a4;margin:0 auto}
+.tech .body{width:22px;height:26px;background:#4a5560;margin:2px auto 0;border-radius:3px}
+.tech .arm{position:absolute;right:-6px;top:18px;width:28px;height:5px;background:#6a7380;transform:rotate(-28deg);transform-origin:left center}
+.wrench{
+  position:absolute;right:-22px;top:10px;width:28px;height:8px;
+  background:var(--brass);border-radius:2px 6px 6px 2px;
+  transform:rotate(18deg);transform-origin:left center;
+  animation:torque 1.6s ease-in-out infinite;
+}
+@keyframes torque{50%{transform:rotate(42deg)}}
+
+/* G1 figure */
+.g1{position:relative;width:46px;height:92px}
+.g1 .h{width:18px;height:18px;border-radius:40%;background:#c8c2b6;margin:0 auto;box-shadow:0 0 8px rgba(220,232,200,.25)}
+.g1 .t{width:20px;height:28px;background:#8a8680;margin:3px auto 0;border-radius:4px;box-shadow:inset 0 0 0 1px #5a5854}
+.g1 .a{position:absolute;top:22px;width:5px;height:22px;background:#6e6a64;border-radius:2px}
+.g1 .al{left:6px;transform:rotate(8deg)}
+.g1 .ar{right:6px;transform:rotate(-8deg)}
+.g1 .l{position:absolute;bottom:0;width:6px;height:24px;background:#5c5a56;border-radius:2px}
+.g1 .ll{left:14px}
+.g1 .lr{right:14px}
+.g1.small{transform:scale(.85)}
+.g1.left-g{position:absolute;left:42%;bottom:28px}
+.g1.right-g{position:absolute;left:22%;bottom:24px}
+.g1.serviced .lr{transform:rotate(18deg);transform-origin:top}
+
+.crate{
+  position:absolute;left:10px;bottom:8px;z-index:4;width:118px;
+  background:linear-gradient(180deg,#8a6234,#5a3a1c);
+  border:2px solid #3a2410;color:#f0d8b0;padding:7px 8px;
+  font-size:11px;cursor:pointer;box-shadow:3px 4px 0 #2a1808;
+}
+.crate:hover{transform:translateY(-2px)}
+.crate b{display:block;letter-spacing:.16em;font-size:12px}
+.crate i{font-style:normal;opacity:.7;font-size:10px}
+.crate::before{
+  content:"";position:absolute;left:8px;right:8px;top:4px;height:3px;
+  background:repeating-linear-gradient(90deg,#3a2410 0 6px,transparent 6px 10px);
+}
+
+.spine{
+  display:flex;gap:6px;padding:0 12px 8px;flex-wrap:wrap;
+}
+.sp{
+  flex:1;min-width:88px;background:#22262a;border:1px solid #3e4248;
+  color:var(--fluor-dim);padding:7px 8px;font-size:11px;text-align:left;
+  letter-spacing:.04em;
+}
+.sp:hover,.sp.on{border-color:var(--brass);color:var(--brass)}
+.sp small{display:block;opacity:.55;margin-top:2px;font-size:10px}
+
+.wrist{
+  position:fixed;left:12px;bottom:40px;z-index:6;width:128px;
+  background:var(--wrist);color:#2a2200;padding:8px 10px 10px;
+  transform:rotate(-7deg);box-shadow:3px 4px 0 #6a5a10;cursor:pointer;
+  font-size:12px;line-height:1.35;
+  border-top:6px dashed #2a2200;
+}
+.wrist:hover{transform:rotate(-2deg) translateY(-2px)}
+.wrist b{display:block;font-size:13px;letter-spacing:.08em}
+.wrist i{font-style:normal;opacity:.65;font-size:10px}
+
+.foot{padding:5px 16px 7px;font-size:11px;letter-spacing:.16em;color:#6a7068;text-align:center}
+
+/* overlays */
+.ov{position:fixed;inset:0;z-index:50;display:none;background:rgba(12,12,14,.72);align-items:flex-end;justify-content:center}
+.ov.show{display:flex}
+.sheet{
+  width:min(760px,94vw);max-height:86vh;overflow:auto;
+  background:var(--paper);color:var(--ink);
+  padding:22px 26px 28px;border-top:8px solid var(--vermilion);
+  box-shadow:0 -18px 50px rgba(0,0,0,.45);
+  animation:rise .28s ease;
+}
+@keyframes rise{from{transform:translateY(22px);opacity:.4}}
+.sheet.book{background:#efece4;border-top-color:var(--brass)}
+.sheet.crate-sheet{background:#efe6d2;max-height:90vh}
+.sheet.wrist-sheet{background:var(--wrist);border-top-color:#2a2200}
+.sheet.num-sheet{background:#1e2226;color:var(--fluor);border-top-color:var(--brass)}
+.close{float:right;background:var(--vermilion);color:#fff4e0;border:0;padding:4px 9px;cursor:pointer;font-size:11px;letter-spacing:.12em}
+.kicker{font-size:11px;letter-spacing:.2em;color:var(--vermilion);margin-bottom:6px}
+.sheet h2{font-size:22px;line-height:1.35;margin-bottom:12px}
+.sheet p{font-size:15px;line-height:1.85;margin-bottom:12px}
+.srcs{margin-top:10px;padding-top:10px;border-top:1px dashed #b8a898}
+.srcs a{display:block;color:#7a2018;margin:4px 0;font-size:13px}
+.num-sheet .srcs a{color:var(--brass)}
+.wo{border:1px solid #2a2200;padding:10px 12px;margin:8px 0;background:rgba(255,255,255,.28)}
+.wo .tag{display:inline-block;background:#111;color:var(--wrist);font-size:10px;padding:1px 6px;letter-spacing:.12em;margin-right:6px}
+.wo .tag.fyi{background:#4a3a00;color:#ffe9a0}
+.line{padding:10px 0;border-bottom:1px dashed #c8b890;font-size:13.5px;line-height:1.7}
+.line a{color:#7a2018}
+.playbar{height:8px;background:#2a2c28;margin:10px 0 14px;position:relative;overflow:hidden}
+.playbar i{display:block;height:100%;width:0;background:var(--brass);box-shadow:0 0 8px var(--brass)}
+.rbtns{display:flex;gap:8px;margin-top:12px}
+.rbtns button{background:#2a2010;color:var(--brass);border:1px solid var(--brass);padding:8px 12px;cursor:pointer}
+.rbtns button:disabled{opacity:.35;cursor:default}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px}
+.tab{background:#ddd8ce;color:#3a3020;padding:4px 8px;font-size:11px;border:1px solid #b8b0a0}
+.tab.on{background:var(--vermilion);color:#fff4e0;border-color:var(--vermilion)}
+.num-hero{font-size:56px;font-weight:800;color:var(--brass);letter-spacing:.04em;line-height:1}
+.num-sub{font-size:16px;color:var(--fluor);margin:8px 0 16px;letter-spacing:.08em}
+@media(max-width:860px){
+  .floor{grid-template-columns:1fr;overflow:auto}
+  .aisle{min-height:140px;flex-direction:row;justify-content:center;gap:16px}
+  .aisle-mark{display:none}
+  .wrist{left:6px;bottom:32px}
+}
+</style>
+</head>
+<body>
+
+<div id="landing" role="button" tabindex="0" aria-label="升起两边幕布">
+  <div class="curtain left">
+    <i class="tassel"></i>
+    <div class="label"><b>上交所 · 科创板</b><span>开市铃 · 150.80 → 1100 → 845</span></div>
+    <div class="gong" id="gong"></div>
+    <div class="hem"></div>
+  </div>
+  <div class="curtain right">
+    <i class="tassel"></i>
+    <div class="label"><b>北京亦庄 · WRC</b><span>展台 · 扳手咬住踝关节</span></div>
+    <svg class="wrench-icon" id="wr" viewBox="0 0 96 96" aria-hidden="true">
+      <rect x="38" y="10" width="20" height="52" rx="4" fill="#c9a24a"/>
+      <circle cx="48" cy="72" r="16" fill="none" stroke="#c9a24a" stroke-width="10"/>
+      <circle cx="48" cy="72" r="6" fill="#7a1220"/>
+    </svg>
+    <div class="hem"></div>
+  </div>
+  <div class="lift-hint">
+    <div class="brand">折晓 · 早报</div>
+    <h1>同一小时</h1>
+    <p>今天，一台人形在上海被定价，在亦庄被拧紧。锣与扳手叠在同一拍。</p>
+    <div class="k mono">点击或空格 · 两边幕布一起升</div>
+  </div>
+</div>
+
+<div id="hall">
+  <header class="mast">
+    <div><b>折晓</b> · 双台早报 · 北京 2026-08-20</div>
+    <div class="kb mono">过道站位 · 左台资本 · 右台展品 · 中人形今日数字 · 1–7 脊骨</div>
+  </header>
+  <div class="floor">
+    <section class="stage" id="stageL" data-side="L" title="左台 · 资本">
+      <div class="fluor-bar"></div>
+      <h3>左台 · 科创板开市铃</h3>
+      <div class="ticker mono"><span>688836 宇树科技　发行 150.80　开盘 1100 +629.44%　收盘 845 +460.34%　市值 3418亿　换手 ~85%　中签率 0.018%　募资 ~61亿　　688836 宇树科技　发行 150.80　开盘 1100 +629.44%　收盘 845 +460.34%　市值 3418亿　　</span></div>
+      <div class="bell" aria-hidden="true"></div>
+      <div class="g1 left-g small" aria-hidden="true">
+        <div class="h"></div><div class="t"></div>
+        <i class="a al"></i><i class="a ar"></i>
+        <i class="l ll"></i><i class="l lr"></i>
+      </div>
+      <div class="price-stack">
+        <div class="row">发行 <em>150.80</em> → 开盘 <em>1100</em></div>
+        <div class="big mono">845</div>
+        <div class="sub">+460.34% · 3418亿</div>
+      </div>
+    </section>
+
+    <div class="aisle">
+      <div class="aisle-mark"></div>
+      <div class="center-g1" id="centerFig" title="今日数字 845" role="button" tabindex="0">
+        <div class="g1">
+          <div class="h"></div><div class="t"></div>
+          <i class="a al"></i><i class="a ar"></i>
+          <i class="l ll"></i><i class="l lr"></i>
+        </div>
+      </div>
+      <button class="booklet" id="booklet" type="button">
+        <b>说明书</b>双台节目单内页
+        <i>先听一段 · 再读完整篇</i>
+      </button>
+    </div>
+
+    <section class="stage" id="stageR" data-side="R" title="右台 · WRC">
+      <div class="fluor-bar"></div>
+      <h3>右台 · 亦庄 WRC 展位</h3>
+      <div class="booth-sign">WRC 2026 · 人机共生 产需共融 · 至 08-23</div>
+      <div class="g1 right-g serviced" aria-hidden="true">
+        <div class="h"></div><div class="t"></div>
+        <i class="a al"></i><i class="a ar"></i>
+        <i class="l ll"></i><i class="l lr"></i>
+      </div>
+      <div class="tech" aria-hidden="true">
+        <div class="head"></div>
+        <div class="body"></div>
+        <div class="arm"></div>
+        <div class="wrench"></div>
+      </div>
+      <button class="crate" id="crate" type="button">
+        <b>装箱单</b>
+        展台底下零件箱
+        <i>拉开全部通报行</i>
+      </button>
+    </section>
+  </div>
+
+  <div class="spine">
+    <button class="sp" data-id="1" type="button">1 开市铃<small>688836 · 845</small></button>
+    <button class="sp" data-id="2" type="button">2 亦庄馆<small>WRC 至 23 日</small></button>
+    <button class="sp" data-id="3" type="button">3 铁大<small>工厂不是货架</small></button>
+    <button class="sp" data-id="4" type="button">4 京东<small>百亿到 2028</small></button>
+    <button class="sp" data-id="5" type="button">5 权证<small>Marvell × Google</small></button>
+    <button class="sp" data-id="6" type="button">6 Mac<small>Meta AI 应用</small></button>
+    <button class="sp" data-id="7" type="button">7 蛋白<small>14 / 15 靶点</small></button>
+  </div>
+
+  <button class="wrist" id="wrist" type="button">
+    <b>入场腕带</b>
+    展商工单未销
+    <i>不是收件箱 · 是待办</i>
+  </button>
+  <footer class="foot">2026-08-20 北京时间 · 折晓 早报 · 窗口 08-19 06:00–08-20 06:00 上海</footer>
+</div>
+
+<div class="ov" id="ovStory"><div class="sheet" id="storyInner"></div></div>
+<div class="ov" id="ovNum"><div class="sheet num-sheet" id="numInner"></div></div>
+<div class="ov" id="ovMail"><div class="sheet wrist-sheet" id="mailInner"></div></div>
+<div class="ov" id="ovArch"><div class="sheet crate-sheet" id="archInner"></div></div>
+<div class="ov" id="ovBook">
+  <div class="sheet book">
+    <button class="close" type="button">合上</button>
+    <div class="kicker">双台节目单 · 说明书内页</div>
+    <h2>同一小时</h2>
+    <div class="playbar"><i id="playI"></i></div>
+    <p id="teaser" style="min-height:4.8em;line-height:1.75"></p>
+    <div class="rbtns">
+      <button type="button" id="btnHear" disabled>听完整篇</button>
+      <button type="button" id="btnRead" disabled>读完整篇</button>
+    </div>
+  </div>
+</div>
+<div class="ov" id="ovEssay"><div class="sheet book" id="essayInner"></div></div>
+
+<script>
+const STORIES = [
+{"id":1,"side":"L","bay":"左台 · 开市铃","kicker":"688836 · 今日数字的出处","title":"宇树登陆科创板：150.80 开到 1100，收到 845，市值 3418 亿","body":"8 月 19 日，宇树科技（688836）在上交所科创板挂牌。发行价 150.80 元，开盘 1100 元，较发行价涨 629.44%；收盘 845 元，涨 460.34%，市值 3418 亿元。换手约 85%，成交额约 231.60 亿元。网上中签率 0.01809759%，募资约 61 亿元。从 3 月 20 日IPO获受理到挂牌，全程 152 天。\\n\\n证券时报写：这是 A 股「人形机器人第一股」，十年估值增超 4500 倍；发行后市值约 609.93 亿元对应发行价，二级市场第一天把它改写成 3418 亿。高盛近日报告仍把大规模部署放在 2027–2029。不要把开盘价写成收盘价，也不要把春晚扭秧歌写成已经量产。","links":[["证券时报 · 人形第一股 / 十年 4500 倍","https://www.stcn.com/article/detail/4085607.html"],["新浪 · 收涨 460.34% / 市值 3418 亿 / 换手超 85%","https://finance.sina.com.cn/jjxw/2026-08-19/doc-ininvwqs2575263.shtml"],["新浪 · 开盘与收盘核对","https://finance.sina.com.cn/jjxw/2026-08-19/doc-ininvfsz9509875.shtml"]]},
+{"id":2,"side":"R","bay":"右台 · 亦庄馆","kicker":"WRC 2026 · 至 08-23","title":"世界机器人大会在亦庄开幕：300 余家，3000 余件，拧到 23 日","body":"中新社北京 8 月 19 日电：以「人机共生，产需共融」为主题的 2026 世界机器人大会当日在北京开幕，300 余家国内外企业携 3000 余件展品同台。会期 5 天，至 8 月 23 日，由中国电子学会与世界机器人合作组织共同主办，设 7 场主论坛、70 场同期活动。\\n\\n永久会址在北京经济技术开发区，也就是亦庄。展台底下有人蹲着拧脚踝——这不是修辞，是本届大会把自己从表演馆改写成验收馆的方式。新面孔里，成立不满一年的上海墨奇万象把轮式机器人推进模拟家庭；船舶焊接、高位作业、乒乓球对打同时占着相邻摊位。先看会期和规模，再点进装箱单里的分展位。","links":[["中新网 · 300 余家 / 3000 余件","https://www.chinanews.com.cn/cj/2026/08-19/10680358.shtml"]]},
+{"id":3,"side":"R","bay":"右台 · 铁大工位","kicker":"1.70 m · 66 kg · 66 DOF","title":"小米铁大首次亮相展会：3–5 秒标准作业可部署，工厂不是货架","body":"WRC 现场，小米新一代人形「铁大」首次亮相展会。身高约 1.70 米，体重 66 公斤，全身 66 个自由度，一半集中在手部。新浪科技记：向迪昀说 2024 年运动控制已工程化，50 公斤机体奔跑约 12–13 公里每小时；此后不再沿跑跳路线往前推，转做大脑。2024 年 3 月铁大在真实产线跑满 4 小时、任务成功率 90%，雷军才同意对外亮相，仍称实习期。\\n\\n时代周报补充：对单流程 3–5 秒的标准化任务，已具备稳定部署条件；非标准化、人工程度高的作业还要迭代。落地场景是汽车工厂，不是消费货架上的 SKU。不要写成「家庭机器人发布」。","links":[["新浪科技 · 铁大首秀 / 66 DOF","https://finance.sina.com.cn/jjxw/2026-08-19/doc-ininvwqk8313155.shtml"],["金融界 / 时代周报 · 3–5 秒可部署","https://finance.jrj.com.cn/2026/08/19153658174958.shtml"]]},
+{"id":4,"side":"R","bay":"右台 · 京东馆","kicker":"百亿资源 · 至 2028","title":"京东在 WRC 摊开机器人战略：200 余品牌，JoyInside，1000 万小时","body":"京东出任本届 WRC 全球战略合作伙伴，并发布机器人战略。供应链：截至 2028 年投入百亿资源，助力 100 个品牌独立销售额破 10 亿；已通过自营合作 200 余家机器人品牌及大量零部件企业，京东欧洲 Joybuy 与 50 余家中国品牌合作。服务：未来 5 年覆盖全球超 100 个国家售后，创造超 10 万名机器人售后工程师岗位，建 80 个 RoboBase。\\n\\n技术：附身智能 JoyInside 预计年内实现含机器人在内的超千万终端接入；京东云计划两年内累计采集超 1000 万小时真实场景数据。展区约 600 平方米，分赛博训练营、实景产业园、未来生活家。这是渠道与数据的摊子，不是又一家本体厂的发布会。","links":[["中华网财经 · 京东 WRC 战略","https://finance.china.com/TMT/13004688/20260819/49686367.html"]]},
+{"id":5,"side":"L","bay":"左台 · 权证","kicker":"8-K 签署 19 日","title":"Marvell 向 Google 发认股权证：最多 5897 万股，约 122 亿美元，绑在 TPU 周边","body":"Marvell 8-K：最早事项日 8 月 18 日，签署日 8 月 19 日。公司于 18 日向 Google 发行认股权证，最多购买 58,970,907 股普通股，行权价 206.58 美元。其中 1,360,867 股按时间在协议首年按季归属；其余按 Google 及其关联方自 2027 财年第三季至 2033 财年每 5 亿美元定制产品收入归属一档，共 240 档。权证可行使至 2033 年 8 月 18 日。\\n\\n商业协议覆盖附着于 TPU 生态的定制硅：推理加速器、存储控制器、网卡、内存接口与近存计算。TNW 把满额行权写成约 122 亿美元，并转述若采购目标打满、定制硅销售或约 1200 亿美元——后一句是推演，不是已经入账的订单。不要写成「谷歌买下 Marvell」。","links":[["SEC 8-K 原文","https://www.sec.gov/Archives/edgar/data/1835632/000119312526356217/d412696d8k.htm"],["TNW · 约 122 亿美元权证","https://thenextweb.com/news/marvell-google-12-2bn-warrant-custom-chip-deal"]]},
+{"id":6,"side":"R","bay":"右台外侧 · 桌面","kicker":"Verge 19 日 17:00 UTC · 非 Newsroom","title":"Meta 推出 Mac 上的 AI 应用：共享窗口、听写、接工作区与广告账户","body":"The Verge 8 月 19 日 17:00 UTC 报道：Meta 推出面向 Mac 的 Meta AI 应用。可把窗口共享给聊天机器人，基于屏幕内容给建议、答题或生成内容；并支持在所有应用里听写。网页、移动端与 Mac 现可直接对接 Instagram、Facebook 账户、Meta 广告投放与 Google Workspace，例如分析帖子触达并建议下一则，或拉账户与网页信息做幻灯、文档、表格。\\n\\n这是 Emma Roth 的产品稿，不是 Meta Newsroom 确认件。不要写成「Meta 官方新闻室发布」。它在追赶已经有桌面端的 Gemini、ChatGPT 与 Claude，但稿子写明：ChatGPT 与 Claude 还可以接管电脑，Meta 这一版还没有走到那一步。","links":[["The Verge · Meta AI Mac 应用","https://www.theverge.com/tech/982270/meta-ai-mac-app"]]},
+{"id":7,"side":"C","bay":"说明书附录 · 蛋白","kicker":"主文 18 日 · 19 日仍在流转","title":"Anthropic：14 / 15 个靶点做出结合物，354 / 1320，约 26.8%","body":"Anthropic 8 月 18 日主文《How Claude is accelerating protein design and analytical chemistry》：Claude（Mythos Preview 与 Opus 4.8）为 15 个靶点设计蛋白结合物，14 个靶点成功；共 1320 个设计，354 个结合，约 26.8%。多靶点 48 小时一轮，Mythos 命中率 26.7%、Opus 4.8 为 22.6%；单靶点多轮 24 小时，Mythos 到 35.1%。今日蛋白设计活动常见命中率约 10–15%。湿实验由 Adaptyv Bio 与 Twist Bioscience 独立完成。\\n\\n数据集放到 Hugging Face：Anthropic/claude-protein-binder-design。主文是 18 日，19 日仍在窗口内流转。蛋白设计在最强模型上对公众关闭，属双用途能力；Opus 类仍可用于分析化学——给原始 NMR / LC-MS 文件，23 与 19 分钟内对齐实验室的氢计数与纯度。不要写成「药已经做出来了」。","links":[["Anthropic 研究主文","https://www.anthropic.com/research/Claude-accelerates-protein-design"],["Hugging Face 数据集","https://huggingface.co/datasets/Anthropic/claude-protein-binder-design"]]}
+];
+
+const MAIL = [
+{"acct":"sofiapintos190","tag":"知悉","t":"08-20 00:17","who":"Cursor","title":"Auto 定价与限额变更，2026-08-24 生效","body":"Cursor Auto 的定价与限额调整将于 2026-08-24 生效。两只邮箱都收到了同一封。","act":"打开 Cursor 设置核对应套餐与限额，不必回信。"},
+{"acct":"sofiapintos190","tag":"知悉","t":"窗口内","who":"Slack / Google","title":"Slack Pro 免费试用已开始；新工作区；Google 向 Slack 共享了数据","body":"Slack Pro 试用启动，并有新工作区。Google 提示已与 Slack 共享数据。","act":"确认工作区是否本人创建；到 Google 第三方访问核对 Slack 权限。"},
+{"acct":"sofiapintos190","tag":"知悉","t":"窗口内","who":"Cursor","title":"Cloud Agent 环境保存提示","body":"Cursor 提示保存 Cloud Agent 环境。","act":"若环境要用，按提示保存；不用可忽略。"},
+{"acct":"aimfllyys","tag":"待回","t":"08-20 02:54","who":"GitHub Actions","title":"SCI-AIChat-Demo ci · master 失败","body":"master 上 lint + tsc + vitest 失败。","act":"看日志并修，不要只重跑。","href":"https://github.com/AIMFllyYS/SCI-AIChat-Demo/actions"},
+{"acct":"aimfllyys","tag":"待回","t":"08-19 16:36","who":"GitHub · snpeng258","title":"邀请加入 snpeng258/Knowledge-Base-RAG","body":"snpeng258 邀请你进入 Knowledge-Base-RAG。接受或拒绝，不要留着黄点。","act":"打开邀请，接受或拒绝。","href":"https://github.com/snpeng258/Knowledge-Base-RAG"},
+{"acct":"aimfllyys","tag":"知悉","t":"08-20 00:17","who":"Cursor","title":"同一封 Auto 定价，08-24 生效","body":"与 sofiapintos190 同一封 Cursor Auto 定价/限额变更。","act":"两只邮箱对过即可，不必各回一次。"}
+];
+
+const ARCHIVE = [
+["08-19 开盘","宇树 688836 开盘 1100 元，较发行价 150.80 涨 629.44%，开盘市值一度 4449 亿。","左台第一笔报价，不要和收盘混写。","https://finance.sina.com.cn/jjxw/2026-08-19/doc-ininvwqs2575263.shtml","新浪财经"],
+["08-19 收盘","宇树收盘 845 元，+460.34%，市值 3418 亿，换手约 85%，成交约 231.60 亿。网上中签率 0.018%，募资约 61 亿。","今日数字的出处。","https://www.stcn.com/article/detail/4085607.html","证券时报 / 新浪"],
+["08-19 报道称","报道称王兴兴持股市值超千亿，成 90 后新首富；梁文锋经 DeepSeek 战配 93.34 万股加网下打新，浮盈被写成约 8 亿或超 11 亿，两家稿数字不一致。","造富稿，标报道称，不把身家当公告。","https://finance.sina.com.cn/jjxw/2026-08-19/doc-ininwawq2533651.shtml","时代周报 / 财联社"],
+["08-19 15:32","WRC 2026 在北京开幕：300 余家企业、3000 余件展品，至 8 月 23 日。","右台会期与规模。","https://www.chinanews.com.cn/cj/2026/08-19/10680358.shtml","中新社"],
+["08-19 下午","小米铁大亮相：1.70 m / 66 kg / 66 DOF；3–5 秒标准作业可部署；工厂场景，非消费 SKU。","展品，不是货架发布。","https://finance.sina.com.cn/jjxw/2026-08-19/doc-ininvwqk8313155.shtml","新浪科技"],
+["08-19 19:05","京东任 WRC 全球战略合作伙伴：至 2028 百亿资源，200 余品牌，JoyInside，两年 1000 万小时数据。","渠道与数据，不是本体厂。","https://finance.china.com/TMT/13004688/20260819/49686367.html","中华网财经"],
+["08-19 上午","墨奇首次国内系统亮相：MoRA 架构 + MORPHI KINO 轮式机器人，15 分钟家庭长程任务；先酒店后公寓再进家。已积累约 3 万小时真实数据。","新面孔摊位。","https://finance.sina.com.cn/tech/2026-08-19/doc-ininvfsv7149398.shtml","新浪科技"],
+["08-19 报道称","超维动力称全球首个人形机器人自主乒乓球完整对局，现场 SMASH 2.0；KAIBot 自称 117 全身自由度。厂商表述，标报道称。","展台自称，不是第三方裁判。","https://finance.sina.com.cn/roll/2026-08-19/doc-ininwawm6970997.shtml","环球网 / 量子位"],
+["08-18 发行 / 19 日签","Marvell 8-K：向 Google 发最多 58,970,907 股权证，行权价 206.58 美元，约 122 亿美元，绑 TPU 周边定制硅。","海外资本台，原文在 SEC。","https://www.sec.gov/Archives/edgar/data/1835632/000119312526356217/d412696d8k.htm","SEC / TNW"],
+["08-19 17:00 UTC","The Verge：Meta AI 推出 Mac 应用，窗口共享、听写、接 Google Workspace 与广告账户。非 Newsroom 确认。","桌面助手，标来源层级。","https://www.theverge.com/tech/982270/meta-ai-mac-app","The Verge"],
+["录像仍在流转","YC Startup School 2026（7 月 25–26，Chase Center）演讲与录像仍在窗口内流转：Garry Tan《Own Your Intelligence / Personal AGI》，同场还有 Huang、Altman、Dean。不是本窗口新开的大会。","旧会新流转，不当新开幕。","https://ycstartupschools.com/","YC"],
+["主文 08-18 · 19 日流转","Anthropic：Claude 设计蛋白结合物，14/15 靶点，354/1320 ≈ 26.8%；数据集上 HF。","科学附录，主文昨日、今日仍在传。","https://www.anthropic.com/research/Claude-accelerates-protein-design","Anthropic"],
+["08-19 凌晨 报道","报道称智谱 GLM-5.3 API 上线，与 5.2 同基座、后训练提升；AA 指数 60，权重约 28 日开源，定价同上一代。","开源接口，标报道称。","https://www.163.com/dy/article/L4MJEDE1053469RG.html","证券时报广东 / 联合报"],
+["08-18 官方 · 窗口内发酵","ChatGPT Ads 将于 8 月 24 日进入 31 个欧洲市场，只打 Free 与 Go；Plus/Pro/Enterprise 仍无广告。欧洲边缘，不是主轴。","广告扩张，记日期与档位。","https://openai.com/index/chatgpt-ads-expands-across-europe/","OpenAI"],
+["08-18 宣布 · 19 日稿","AWS 在路易斯安那什里夫波特增加第三座数据中心园区，州内承诺从 120 亿增至 180 亿美元。","算力地理，不是模型新闻。","https://www.datacenterdynamics.com/en/news/aws-pledges-6bn-investment-in-data-center-campus-in-shreveport-louisiana/","DCD / About Amazon"],
+["08-19 报道称","报道称 Anthropic 上市前循环信贷拟扩至 100 亿美元以上，牵头行约 12.5 亿、次级约 10 亿；讨论未定，也可能低于目标。","IPO 前弹药，标报道称。","https://finance.sina.com.cn/jjxw/2026-08-19/doc-ininvfsy2777136.shtml","财联社 / 彭博转述"],
+["08-19 盘面","宇树上市日机器人板块与 ETF 下挫：华夏机器人 ETF 午前跌约 6.75%，创业板跌逾 5%；利好兑现叠加大盘回调。","锣响在新股，抛压在旧票。","https://m.21jingji.com/article/20260819/herald/91201e8b59d2cc766764b88707f5aa43.html","21 财经 / 同花顺"],
+["08-19 转载","BBC 转载昨日 OpenAI 因 Hugging Face 事件减速训练、暂停部分强化学习两周。转载，不是新刹车。勿把英伟达 1050 亿、Astra 20% 监视税再当新铅。","昨日主轴的海外转载。","https://www.bbc.com/news/articles/c235dmndylzo","BBC"],
+["窗口内常备入口","Kaggle Models 上 DeepSeek 官方组织仍提供 R1-0528、Coder V2、Prover 等权重。窗口内无新竞赛可当头条，记为开源侧常备入口，不当新发布。","开源入口，不是新比赛。","https://www.kaggle.com/models/deepseek-ai/deepseek-r1-0528","Kaggle Models"]
+];
+
+const ESSAY = "同一小时里，一台人形被敲了锣，也被拧了扳手。八月十九日早晨，上海科创板的开市铃落下。宇树科技六八八八三六，发行价一百五十元八角，开盘一千一百元，较发行价涨百分之六百二十九点四四；收到八百四十五元，涨百分之四百六十点三四，市值三千四百一十八亿元，全日换手约百分之八十五。网上中签率百分之零点零一八，募资约六十一亿元。十年前杭州一间五十平米的办公室，十年后它成为A股人形机器人第一股。锣声不是庆祝，是给一具身体标价。同一天，北京亦庄。世界机器人大会开幕，三百余家中外企业携三千余件展品进馆，主题写着人机共生、产需共融，会期到二十三日。展台底下有人蹲着，扭矩扳手咬住一只人形的踝关节，咔哒一声，力矩到了。这不是表演的谢幕，是验收。扳手问的是：这只脚能不能踩在真实地面上。一台G1式的身体同时站在两边。左边被写成发行价、开盘价、收盘价、换手、市值；右边被写成身高、公斤、自由度、节拍、部署条件。今天的数字不是监视税，是八百四十五元。加百分之四百六十，乘三千四百一十八亿。定价和观看叠在同一拍。报道称，王兴兴持股市值越过千亿，成了九十后新首富；梁文锋经深度求索战略配售与网下打新，账面浮盈被写成八亿或十一亿——两家稿对不上号，标成报道称。板块没有一起欢呼。机器人ETF与概念股当日下挫，创业板午前一度跌逾百分之五，绿的谐波、巨轮智能一类旧票把利好兑现在自己身上。锣响在新股，抛压在旧票。展馆里，小米把铁大从工厂实习拉到灯光下：一米七十，六十六公斤，六十六个自由度，一半长在手上。三到五秒的标准作业，他们说已经具备稳定部署的条件；非标、长链路还要再拧。这不是消费货架上的SKU，是产线工位。京东以全球战略合作伙伴进馆，说到二零二八年投入百亿资源，已合作二百余品牌，JoyInside要接超千万终端，云计划两年采集一千万小时真实场景。墨奇把轮式摩菲放进模拟家庭，十五分钟串起清洁、补货、洗烘；他们说先酒店、后公寓、再进家。超维动力自称全球首个人形自主乒乓球完整对局——这是厂商自己的表述，标成报道称。锣声传到海外。Marvell在十八日向谷歌发出认股权证，最多五千八百九十七万零九百零七股，行权价二百零六点五八美元，约合一百二十二亿美元，绑在张量处理单元生态周边的定制硅上，一路接到二零三三财年。十八日是发行日，十九日签署现行报告。Meta给Mac做了一只人工智能应用：共享窗口、听写、接工作区和广告账户。《维奇》十九日十七时世界时记下，新闻室未见确认。Anthropic十八日主文：克劳德给十五个靶点设计蛋白结合物，十四个做成，一千三百二十个设计里三百五十四个结合，约百分之二十六点八，数据集放到拥抱脸；十九日稿子仍在流转。边缘不要写成主轴。智谱报道称第五点三接口凌晨上线，权重约二十八日开源，定价跟上一代。聊天机器人广告将于二十四日进入三十一国欧洲市场，只打免费与入门档。亚马逊云把路易斯安那的数据中心承诺加到一百八十亿美元，第三座落在什里夫波特。报道称Anthropic上市前循环信贷要扩到一百亿美元以上，银行在抢承销入场券。英国广播公司转载了昨日开放人工智能减速训练的旧闻，不是新刹车。竞赛平台上深度求索官方权重仍可拉取，窗口内没有新竞赛可当头条。英伟达一千零五十亿美元、阿斯特拉百分之二十监视税、青少年模式、起源托管条款、科斯尼奇漏洞，都不是今天的新铅。说明书翻到最后一页：同一小时，人形有了股价，也有了扭矩。锣和扳手叠在同一拍。先听完这一段，再去读完整篇。";
+
+const $ = (s,r=document)=>r.querySelector(s);
+const $$ = (s,r=document)=>[...r.querySelectorAll(s)];
+
+function beepGong(){
+  try{
+    const ac = new (window.AudioContext||window.webkitAudioContext)();
+    const o = ac.createOscillator();
+    const g = ac.createGain();
+    o.type = "sine"; o.frequency.setValueAtTime(196, ac.currentTime);
+    o.frequency.exponentialRampToValueAtTime(98, ac.currentTime+0.8);
+    g.gain.setValueAtTime(0.0001, ac.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.18, ac.currentTime+0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime+1.1);
+    o.connect(g); g.connect(ac.destination); o.start(); o.stop(ac.currentTime+1.2);
+    const o2 = ac.createOscillator();
+    const g2 = ac.createGain();
+    o2.type = "triangle"; o2.frequency.value = 420;
+    g2.gain.setValueAtTime(0.12, ac.currentTime);
+    g2.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime+0.18);
+    o2.connect(g2); g2.connect(ac.destination); o2.start(); o2.stop(ac.currentTime+0.2);
+  }catch(e){}
+}
+
+function lift(){
+  const L = $("#landing");
+  if(L.classList.contains("up")) return;
+  $("#gong").classList.add("ring");
+  $("#wr").classList.add("hit");
+  beepGong();
+  L.classList.add("up");
+  setTimeout(()=>{
+    L.classList.add("gone");
+    $("#hall").classList.add("on");
+  }, 1100);
+}
+
+function openOv(id){ $(id).classList.add("show"); }
+function closeOv(){
+  $$(".ov").forEach(o=>o.classList.remove("show"));
+  $$(".sp,.stage").forEach(x=>x.classList.remove("on"));
+}
+
+function storyHTML(st){
+  const links = st.links.map(l=>`<a href="${l[1]}" target="_blank" rel="noopener">${l[0]}</a>`).join("");
+  const paras = st.body.split(/\\n\\n+/).map(p=>`<p>${p.replace(/</g,"&lt;")}</p>`).join("");
+  return `<button class="close" type="button">收起</button>
+    <div class="kicker">${st.bay} · ${st.kicker}</div>
+    <h2>${st.title}</h2>
+    ${paras}
+    <div class="srcs">${links}</div>`;
+}
+
+function showStory(id){
+  const st = STORIES.find(x=>x.id===id);
+  if(!st) return;
+  $$(".sp").forEach(x=>x.classList.toggle("on", Number(x.dataset.id)===id));
+  $$(".stage").forEach(x=>x.classList.toggle("on", x.dataset.side===st.side));
+  $("#storyInner").innerHTML = storyHTML(st);
+  openOv("#ovStory");
+}
+
+function showSide(side){
+  const list = STORIES.filter(s=>s.side===side);
+  const first = list[0];
+  $$(".stage").forEach(x=>x.classList.toggle("on", x.dataset.side===side));
+  const tabs = list.map(s=>`<button class="tab${s.id===first.id?" on":""}" data-id="${s.id}" type="button">${s.id} ${s.kicker.split("·")[0].trim()}</button>`).join("");
+  $("#storyInner").innerHTML = `<div class="tabs">${tabs}</div>` + storyHTML(first);
+  openOv("#ovStory");
+}
+
+function showNum(){
+  $$(".stage").forEach(x=>x.classList.remove("on"));
+  $("#numInner").innerHTML = `
+    <button class="close" type="button">退回过道</button>
+    <div class="kicker" style="color:var(--brass)">过道正中 · 今日数字</div>
+    <div class="num-hero mono">845 元</div>
+    <div class="num-sub">+460.34% · 市值 3418 亿</div>
+    <p>发行 150.80，开盘 1100（+629.44%），收到 845。换手约 85%，中签率 0.018%，募资约 61 亿。同一小时，这具身体在左台被标价，在右台被扳手咬住脚踝。</p>
+    <p>点左台读资本，点右台读展品，键盘 1–7 走脊骨。英伟达 1050 亿、Astra 监视税、青少年模式、Origin、CoSnitch，都不是今天的新铅。</p>
+    <div class="srcs">
+      <a href="https://www.stcn.com/article/detail/4085607.html" target="_blank" rel="noopener">证券时报 · 上市长文</a>
+      <a href="https://finance.sina.com.cn/jjxw/2026-08-19/doc-ininvwqs2575263.shtml" target="_blank" rel="noopener">新浪 · 收盘 845 / 3418 亿</a>
+    </div>`;
+  openOv("#ovNum");
+}
+
+function showMail(){
+  const html = MAIL.map(m=>{
+    const tag = m.tag==="待回" ? "tag" : "tag fyi";
+    const href = m.href ? `<div><a href="${m.href}" target="_blank" rel="noopener">打开</a></div>` : "";
+    return `<div class="wo">
+      <div><span class="${tag}">${m.tag}</span><b>${m.title}</b></div>
+      <div class="mono" style="font-size:11px;margin:4px 0 6px">${m.t} · ${m.acct} · ${m.who}</div>
+      <div>${m.body}</div>
+      <div style="margin-top:6px"><b>工单：</b>${m.act}</div>${href}
+    </div>`;
+  }).join("");
+  $("#mailInner").innerHTML = `
+    <button class="close" type="button">戴回腕带</button>
+    <div class="kicker" style="color:#2a2200">入场腕带存根 · 展商工单</div>
+    <h2>待办，不是收件箱</h2>
+    <p style="font-size:13px">Docker / Mobbin / llm-agent 推销已抽走，不占工位。</p>
+    ${html}`;
+  openOv("#ovMail");
+}
+
+function showArch(){
+  const rows = ARCHIVE.map(a=>`<div class="line">
+    <div class="mono" style="font-size:11px;opacity:.65">${a[0]} · ${a[4]}</div>
+    <div><b>${a[1]}</b></div>
+    <div>${a[2]}</div>
+    <a href="${a[3]}" target="_blank" rel="noopener">${a[3]}</a>
+  </div>`).join("");
+  $("#archInner").innerHTML = `
+    <button class="close" type="button">钉回箱盖</button>
+    <div class="kicker">WRC 展台 · 装箱单</div>
+    <h2>零件箱拉开 · ${ARCHIVE.length} 行</h2>
+    <p style="font-size:13px">不是「查看全部」。每一行都是要装进箱子的零件：时间、事实、为什么留下、链接。</p>
+    ${rows}`;
+  openOv("#ovArch");
+}
+
+let played = false;
+function openBook(){
+  openOv("#ovBook");
+  const teaser = "同一小时里，一台人形被敲了锣，也被拧了扳手。左台是科创板的开市铃，右台是亦庄展位上的扭矩。八百四十五元，加百分之四百六十，乘三千四百一十八亿。先听完这一段。";
+  const el = $("#teaser");
+  const bar = $("#playI");
+  el.textContent = "";
+  bar.style.width = "0";
+  $("#btnHear").disabled = true;
+  $("#btnRead").disabled = true;
+
+  let i = 0;
+  const t = setInterval(()=>{
+    i += 1;
+    el.textContent = teaser.slice(0, i);
+    bar.style.width = Math.min(100, (i/teaser.length)*100) + "%";
+    if(i >= teaser.length){
+      clearInterval(t);
+      played = true;
+      $("#btnHear").disabled = false;
+      $("#btnRead").disabled = false;
+    }
+  }, 28);
+}
+
+function showEssay(){
+  const paras = ESSAY.split(/(?<=。)/).reduce((acc,s)=>{
+    if(!s) return acc;
+    if(!acc.length || acc[acc.length-1].length>90) acc.push(s);
+    else acc[acc.length-1] += s;
+    return acc;
+  },[]);
+  $("#essayInner").innerHTML = `
+    <button class="close" type="button">合上内页</button>
+    <div class="kicker">说明书内页 · 完整篇</div>
+    <h2>同一小时</h2>
+    ${paras.map(p=>"<p>"+p+"</p>").join("")}
+    <p class="mono" style="font-size:12px;opacity:.6">2026-08-20 北京时间 · 折晓 早报</p>`;
+  openOv("#ovEssay");
+}
+
+$("#landing").addEventListener("click", lift);
+$("#stageL").addEventListener("click", ()=>showSide("L"));
+$("#stageR").addEventListener("click", e=>{
+  if(e.target.closest("#crate")) return;
+  showSide("R");
+});
+$("#centerFig").addEventListener("click", showNum);
+$("#crate").addEventListener("click", e=>{ e.stopPropagation(); showArch(); });
+$("#booklet").addEventListener("click", openBook);
+$("#wrist").addEventListener("click", showMail);
+$$(".sp").forEach(b=>b.addEventListener("click", ()=>showStory(Number(b.dataset.id))));
+
+document.addEventListener("click", e=>{
+  if(e.target.classList.contains("close")) closeOv();
+  if(e.target.classList.contains("tab")){
+    const id = Number(e.target.dataset.id);
+    const st = STORIES.find(x=>x.id===id);
+    if(!st) return;
+    const tabs = e.target.parentElement.outerHTML;
+    $("#storyInner").innerHTML = tabs + storyHTML(st);
+    $$(".tab").forEach(x=>x.classList.toggle("on", Number(x.dataset.id)===id));
+  }
+});
+$("#btnRead").addEventListener("click", showEssay);
+$("#btnHear").addEventListener("click", showEssay);
+
+document.addEventListener("keydown", e=>{
+  if(e.key==="Escape") closeOv();
+  if(e.code==="Space" && !$("#hall").classList.contains("on")){
+    e.preventDefault(); lift();
+  }
+  if($("#hall").classList.contains("on") && /^[1-7]$/.test(e.key)){
+    showStory(Number(e.key));
+  }
+});
+$$(".ov").forEach(o=>o.addEventListener("click", e=>{ if(e.target===o) closeOv(); }));
+</script>
+</body>
+</html>

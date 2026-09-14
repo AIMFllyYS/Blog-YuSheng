@@ -10,7 +10,8 @@ describe('rope profile', () => {
     ['/', 'hub'],
     ['/blog', 'hub'],
     ['/blog/', 'hub'],
-    ['/notes/', 'hub'],
+    ['/daily/', 'hub'],
+    ['/daily/2026-09-14/', 'hub'],
     ['/works/', 'hub'],
     ['/blog/p0-kitchen-sink', 'article'],
     ['/blog/p0-kitchen-sink/', 'article'],
@@ -25,7 +26,8 @@ describe('rope profile', () => {
 
   it('marks nested blog articles as the blog plate', () => {
     expect(isActiveHref('/blog/', '/blog/p0-kitchen-sink/')).toBe(true)
-    expect(isActiveHref('/notes/', '/blog/')).toBe(false)
+    expect(isActiveHref('/daily/', '/blog/')).toBe(false)
+    expect(isActiveHref('/daily/', '/daily/2026-09-14/')).toBe(true)
     expect(isActiveHref('/', '/blog/')).toBe(false)
   })
 })

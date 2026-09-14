@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>备胎传染 · STATUS · 折晓 · 2026-09-04</title>
+<!-- Design lesson 2026-09-04
+Structure: Razorpay Sprint 26 (Awwwards) — product updates lived through scroll/click interactions https://www.awwwards.com/sites/razorpay-sprint-26
+Style: Swiss internationalism + OpenAI/Anthropic status-page typography
+Interaction: Vercel Web Interface Guidelines — URL as state / deep-link everything / redundant status cues (color+text) / no dead zones https://vercel.com/design/guidelines
+News spine: Ars Technica overlapping downtime https://arstechnica.com/ai/2026/09/four-major-ai-models-suffer-rare-overlapping-downtime/
+Also: Verge ChatGPT+Grok+Claude https://www.theverge.com/ai-artificial-intelligence/989503/chatgpt-grok-claude-outage-down
+OpenAI status https://status.openai.com/incidents/01M1KWEDH417T2CF44YYHZDFCR
+Astra system card https://deploymentsafety.openai.com/gpt-6-astra
+Verge Astra release https://www.theverge.com/ai-artificial-intelligence/989601/openai-gpt-6-astra-release
+-->
+<style>
+:root{
+  --bg:#fff;--fg:#111;--muted:#666;--line:#e5e5e5;--line2:#ccc;
+  --red:#c41e3a;--amber:#d97706;--green:#15803d;
+  --panel:#fafafa;--shadow:0 12px 40px rgba(0,0,0,.12);
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --sans:"Helvetica Neue",Helvetica,Arial,"PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--sans);background:var(--bg);color:var(--fg);
+  line-height:1.5;font-size:15px;-webkit-font-smoothing:antialiased;
+  min-height:100vh;
+}
+button{font:inherit;cursor:pointer;background:none;border:none;color:inherit}
+a{color:var(--fg);text-underline-offset:2px}
+.tabular{font-variant-numeric:tabular-nums}
+.micro{
+  font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--muted);font-weight:600;
+}
+.wrap{max-width:960px;margin:0 auto;padding:24px 20px 80px}
+
+/* masthead */
+.mast{
+  display:grid;grid-template-columns:1fr auto;gap:12px;
+  align-items:end;border-bottom:2px solid var(--fg);padding-bottom:16px;margin-bottom:28px;
+}
+.mast-brand{font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:700}
+.mast-sub{font-size:12px;color:var(--muted);margin-top:4px}
+.mast-live{
+  display:flex;align-items:center;gap:8px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;
+}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0}
+.dot.pulse{animation:pulse 1.6s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+
+/* hero */
+.hero{
+  display:grid;grid-template-columns:160px 1fr;gap:28px;align-items:start;
+  margin-bottom:28px;
+}
+.giant{
+  font-size:120px;font-weight:700;line-height:.85;letter-spacing:-.04em;
+  font-variant-numeric:tabular-nums;
+}
+.giant-label{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:8px;font-weight:600}
+.thesis{font-size:28px;font-weight:700;letter-spacing:-.02em;line-height:1.25;margin-bottom:10px}
+.tip{
+  font-size:13px;color:var(--muted);border-left:3px solid var(--fg);
+  padding:6px 0 6px 12px;max-width:52ch;
+}
+@media(max-width:720px){
+  .hero{grid-template-columns:1fr;gap:12px}
+  .giant{font-size:80px}
+  .thesis{font-size:22px}
+}
+
+/* failover bar */
+.failbar{
+  display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;
+  border:1px solid var(--fg);padding:12px 16px;margin-bottom:16px;background:var(--panel);
+}
+.fail-copy{font-size:13px}
+.fail-copy strong{font-weight:700}
+.toggle{
+  display:inline-flex;align-items:center;gap:10px;
+  border:1px solid var(--fg);padding:6px 10px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;
+}
+.toggle .sw{
+  width:36px;height:20px;border:1.5px solid var(--fg);position:relative;background:#fff;
+}
+.toggle .knob{
+  position:absolute;top:1px;left:1px;width:14px;height:14px;background:var(--fg);
+  transition:transform .15s ease;
+}
+.toggle.on .sw{background:var(--red);border-color:var(--red)}
+.toggle.on .knob{background:#fff;transform:translateX(16px)}
+.toggle:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
+
+/* provider grid */
+.providers{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line2);
+  border:1px solid var(--fg);margin-bottom:28px;
+}
+.prov{
+  background:#fff;padding:16px 14px;min-height:132px;
+  display:flex;flex-direction:column;gap:8px;text-align:left;
+  transition:background .2s ease;
+  position:relative;
+}
+.prov:hover{background:var(--panel)}
+.prov:focus-visible{outline:2px solid var(--fg);outline-offset:-2px;z-index:1}
+.prov-name{font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:700}
+.prov-svc{font-size:11px;color:var(--muted)}
+.prov-status{
+  font-size:14px;font-weight:700;letter-spacing:.02em;margin-top:auto;
+  display:flex;align-items:center;gap:8px;
+}
+.prov-status .lamp{
+  width:10px;height:10px;border-radius:50%;background:var(--green);flex-shrink:0;
+  box-shadow:0 0 0 2px #fff,0 0 0 3px var(--green);
+}
+.prov[data-state="degraded"] .lamp{background:var(--amber);box-shadow:0 0 0 2px #fff,0 0 0 3px var(--amber)}
+.prov[data-state="down"] .lamp{background:var(--red);box-shadow:0 0 0 2px #fff,0 0 0 3px var(--red)}
+.prov[data-state="degraded"] .prov-status{color:var(--amber)}
+.prov[data-state="down"] .prov-status{color:var(--red)}
+.prov[data-state="down"]{background:#fff5f6}
+.prov-time{font-size:10px;color:var(--muted);font-variant-numeric:tabular-nums;line-height:1.4}
+.prov-key{position:absolute;top:10px;right:10px;font-size:9px;color:var(--line2);font-weight:700}
+@media(max-width:720px){
+  .providers{grid-template-columns:1fr 1fr}
+}
+@media(max-width:420px){
+  .providers{grid-template-columns:1fr}
+}
+
+/* toast */
+.toast{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);
+  background:var(--fg);color:#fff;padding:12px 18px;font-size:13px;max-width:min(520px,92vw);
+  opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;z-index:80;
+  box-shadow:var(--shadow);
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);pointer-events:auto}
+.toast .t-micro{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:#aaa;margin-bottom:4px}
+
+/* nav tabs */
+.nav{
+  display:flex;flex-wrap:wrap;gap:0;border-bottom:1px solid var(--fg);margin-bottom:0;
+}
+.nav a{
+  font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;
+  text-decoration:none;padding:10px 14px;border:1px solid transparent;border-bottom:none;
+  color:var(--muted);
+}
+.nav a:hover,.nav a:focus-visible{color:var(--fg);background:var(--panel)}
+.nav a.active{color:var(--fg);border-color:var(--fg);background:#fff;margin-bottom:-1px}
+
+/* panels */
+.panel{display:none;border:1px solid var(--fg);border-top:none;padding:22px 20px;background:#fff;margin-bottom:28px}
+.panel.open{display:block}
+.panel h2{font-size:18px;font-weight:700;letter-spacing:-.01em;margin-bottom:6px}
+.panel .lede{font-size:13px;color:var(--muted);margin-bottom:18px}
+
+/* spine rows */
+.rows{display:flex;flex-direction:column;border-top:1px solid var(--line)}
+.row{border-bottom:1px solid var(--line)}
+.row-h{
+  width:100%;display:grid;grid-template-columns:72px 1fr auto;gap:12px;align-items:center;
+  padding:14px 4px;text-align:left;
+}
+.row-h:hover{background:var(--panel)}
+.row-h:focus-visible{outline:2px solid var(--fg);outline-offset:-2px}
+.row-id{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums}
+.row-title{font-size:15px;font-weight:600}
+.row-meta{font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums}
+.row-body{
+  display:none;padding:0 4px 18px 84px;font-size:14px;color:#222;max-width:68ch;
+}
+.row.open .row-body{display:block}
+.row.open .row-h{background:var(--panel)}
+.row-body p{margin-bottom:10px}
+.row-body a{color:var(--red)}
+.tag{
+  display:inline-block;font-size:9px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;
+  border:1px solid var(--fg);padding:2px 6px;margin-right:6px;
+}
+.tag.mail{border-color:var(--amber);color:var(--amber)}
+
+/* timeline scrub */
+.scrub{
+  margin:8px 0 20px;padding:14px;border:1px solid var(--line);background:var(--panel);
+}
+.scrub-track{
+  position:relative;height:28px;margin:10px 0 6px;
+  background:linear-gradient(90deg,#eee 0%,#eee 100%);
+  border:1px solid var(--line2);
+}
+.scrub-fill{position:absolute;inset:0 auto 0 0;background:rgba(196,30,58,.15);pointer-events:none}
+.scrub-marks{position:absolute;inset:0;display:flex}
+.scrub-mark{
+  flex:1;border-right:1px solid #ddd;cursor:pointer;position:relative;
+  background:transparent;
+}
+.scrub-mark:last-child{border-right:none}
+.scrub-mark.active{background:rgba(196,30,58,.25)}
+.scrub-mark:hover{background:rgba(0,0,0,.04)}
+.scrub-mark:focus-visible{outline:2px solid var(--fg);outline-offset:-2px;z-index:1}
+.scrub-mark .tick{
+  position:absolute;bottom:100%;left:50%;transform:translateX(-50%);
+  font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);
+  white-space:nowrap;margin-bottom:4px;font-variant-numeric:tabular-nums;font-weight:600;
+}
+.scrub-cap{font-size:13px;min-height:2.6em}
+
+/* archive log */
+.log{font-family:var(--mono);font-size:12px;line-height:1.65}
+.log-item{
+  display:grid;grid-template-columns:88px 1fr;gap:12px;
+  padding:8px 0;border-bottom:1px solid var(--line);
+}
+.log-t{color:var(--muted);font-variant-numeric:tabular-nums}
+.log-src{color:var(--red);font-size:10px;letter-spacing:.06em;text-transform:uppercase;font-weight:700}
+
+/* essay */
+.essay{font-size:15.5px;line-height:1.85;max-width:62ch}
+.essay p{margin-bottom:1.1em}
+.essay strong{font-weight:700}
+
+/* mail corner */
+.mail-tab{
+  position:fixed;top:0;right:18px;z-index:60;
+  width:56px;height:56px;padding:0;
+  clip-path:polygon(0 0,100% 0,100% 100%);
+  background:var(--fg);color:#fff;
+  display:flex;align-items:flex-start;justify-content:flex-end;
+}
+.mail-tab span{
+  font-size:9px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;
+  transform:rotate(45deg);margin:10px 2px 0 0;display:block;
+}
+.mail-tab:hover{background:var(--red)}
+.mail-tab:focus-visible{outline:2px solid var(--red);outline-offset:2px}
+.drawer-bg{
+  position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:70;
+  opacity:0;pointer-events:none;transition:opacity .2s;
+}
+.drawer-bg.open{opacity:1;pointer-events:auto}
+.drawer{
+  position:fixed;top:0;right:0;width:min(400px,94vw);height:100%;
+  background:#fff;border-left:2px solid var(--fg);z-index:71;
+  transform:translateX(100%);transition:transform .25s ease;
+  padding:28px 22px;overflow:auto;box-shadow:var(--shadow);
+}
+.drawer.open{transform:translateX(0)}
+.drawer h3{font-size:16px;font-weight:700;margin-bottom:4px}
+.drawer .close{
+  position:absolute;top:16px;right:16px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;
+  border:1px solid var(--fg);padding:4px 8px;
+}
+.drawer .close:hover{background:var(--fg);color:#fff}
+.mail-sec{margin-top:18px}
+.mail-sec h4{font-size:10px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;margin-bottom:8px;color:var(--muted)}
+.mail-sec ul{list-style:none}
+.mail-sec li{font-size:13px;padding:6px 0;border-bottom:1px solid var(--line);line-height:1.45}
+.mail-sec.action h4{color:var(--green)}
+.mail-sec.watch h4{color:var(--amber)}
+.mail-sec.skip h4{color:var(--muted)}
+
+/* footer */
+.foot{
+  border-top:2px solid var(--fg);padding-top:14px;margin-top:8px;
+  display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;
+  font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:var(--muted);
+}
+.kbd{
+  font-size:10px;color:var(--muted);margin-top:16px;font-variant-numeric:tabular-nums;
+}
+.kbd kbd{
+  font-family:var(--mono);font-size:10px;border:1px solid var(--line2);
+  padding:1px 5px;margin:0 2px;background:var(--panel);
+}
+
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+  .dot.pulse{animation:none}
+}
+</style>
+</head>
+<body>
+<a class="mail-tab" href="#mail" id="mailTab" aria-label="打开便条邮件角"><span>便条</span></a>
+
+<div class="wrap">
+  <header class="mast">
+    <div>
+      <div class="mast-brand">STATUS · 折晓 · 2026-09-04 · Asia/Shanghai</div>
+      <div class="mast-sub">status.fold.day — 假产品控制台 · 《备胎传染》</div>
+    </div>
+    <div class="mast-live" id="liveBadge"><span class="dot pulse" id="liveDot"></span><span id="liveText">Console live</span></div>
+  </header>
+
+  <section class="hero" aria-label="今日数字">
+    <div>
+      <div class="giant tabular" id="todayNum">4</div>
+      <div class="giant-label">同刻掉线的前沿云</div>
+    </div>
+    <div>
+      <h1 class="thesis">多云不是保险，备胎也会传染</h1>
+      <p class="tip">同一分钟四家挂了，写作业别只绑一个 API；病历系统同理——备份供应商要真隔离。</p>
+    </div>
+  </section>
+
+  <div class="failbar">
+    <div class="fail-copy"><strong>备胎路由 / failover</strong> — 打开后，任一供应商设为 DOWN，观察连锁变红。</div>
+    <button type="button" class="toggle" id="failoverBtn" aria-pressed="false" title="按 F 切换">
+      <span>Failover</span>
+      <span class="sw" aria-hidden="true"><span class="knob"></span></span>
+      <span id="failLabel">OFF</span>
+    </button>
+  </div>
+  <p class="micro" style="margin:-8px 0 12px">打开备胎路由，看传染 · 键盘 1–4 切换供应商 · F 切换备胎 · Esc 关抽屉</p>
+
+  <div class="providers" role="group" aria-label="供应商状态">
+    <button type="button" class="prov" data-id="openai" data-state="operational" id="p-openai" aria-pressed="false">
+      <span class="prov-key">1</span>
+      <div class="prov-name">OpenAI</div>
+      <div class="prov-svc">ChatGPT + Codex</div>
+      <div class="prov-status"><span class="lamp"></span><span class="stxt">Operational</span></div>
+      <div class="prov-time">ET 12:55 resolved<br>上海 00:55 (+1)</div>
+    </button>
+    <button type="button" class="prov" data-id="anthropic" data-state="operational" id="p-anthropic" aria-pressed="false">
+      <span class="prov-key">2</span>
+      <div class="prov-name">Anthropic</div>
+      <div class="prov-svc">Claude · Mythos / Fable / Opus</div>
+      <div class="prov-status"><span class="lamp"></span><span class="stxt">Operational</span></div>
+      <div class="prov-time">ET ~12:15 mostly back<br>上海 00:15 (+1)</div>
+    </button>
+    <button type="button" class="prov" data-id="xai" data-state="operational" id="p-xai" aria-pressed="false">
+      <span class="prov-key">3</span>
+      <div class="prov-name">xAI</div>
+      <div class="prov-svc">Grok · Memphis DC</div>
+      <div class="prov-status"><span class="lamp"></span><span class="stxt">Operational</span></div>
+      <div class="prov-time">ET ~09:30 spike<br>上海 21:30</div>
+    </button>
+    <button type="button" class="prov" data-id="google" data-state="operational" id="p-google" aria-pressed="false">
+      <span class="prov-key">4</span>
+      <div class="prov-name">Google</div>
+      <div class="prov-svc">Gemini · DownDetector</div>
+      <div class="prov-status"><span class="lamp"></span><span class="stxt">Operational</span></div>
+      <div class="prov-time">ET ~10:45–11:15<br>上海 22:45–23:15</div>
+    </button>
+  </div>
+
+  <nav class="nav" aria-label="面板导航">
+    <a href="#incident" data-panel="incident" class="active">Incident</a>
+    <a href="#astra" data-panel="astra">Astra</a>
+    <a href="#archive" data-panel="archive">事件日志</a>
+    <a href="#essay" data-panel="essay">事后分析</a>
+    <a href="#mail" data-panel="mail">便条</a>
+  </nav>
+
+  <!-- INCIDENT -->
+  <section class="panel open" id="panel-incident" data-panel="incident">
+    <h2>四家同刻掉线</h2>
+    <p class="lede">2026-09-03 美东午后 · 时间轴可 scrub · 展开行读细节</p>
+
+    <div class="scrub" aria-label="事故时间轴">
+      <div class="micro">Timeline scrub · ET</div>
+      <div class="scrub-track">
+        <div class="scrub-fill" id="scrubFill" style="width:0%"></div>
+        <div class="scrub-marks">
+          <button type="button" class="scrub-mark" data-i="0" data-cap="09:23 ET · Claude partial（Mythos / Fable 5.1 / Opus 5…）"><span class="tick">09:23</span></button>
+          <button type="button" class="scrub-mark" data-i="1" data-cap="≈09:30 ET · Grok Memphis「model overloaded」· Verge"><span class="tick">09:30</span></button>
+          <button type="button" class="scrub-mark" data-i="2" data-cap="10:43 ET · OpenAI elevated errors · ChatGPT + Codex"><span class="tick">10:43</span></button>
+          <button type="button" class="scrub-mark" data-i="3" data-cap="≈10:45–11:15 ET · Gemini DownDetector / StatusGator 尖峰"><span class="tick">10:45</span></button>
+          <button type="button" class="scrub-mark" data-i="4" data-cap="≈12:15 ET · Anthropic 大体恢复 · Opus 一度残留"><span class="tick">12:15</span></button>
+          <button type="button" class="scrub-mark" data-i="5" data-cap="12:55 ET · OpenAI resolved · 15 ChatGPT + 4 Codex 组件"><span class="tick">12:55</span></button>
+        </div>
+      </div>
+      <div class="scrub-cap" id="scrubCap">点击时间点，回放同刻重叠。</div>
+    </div>
+
+    <div class="rows">
+      <div class="row open" id="row-overlap">
+        <button type="button" class="row-h" aria-expanded="true">
+          <span class="row-id">01</span>
+          <span class="row-title">四家同刻掉线 — 多云在峰值变成负荷传染</span>
+          <span class="row-meta">Ars 2:10pm</span>
+        </button>
+        <div class="row-body">
+          <p>Ars Technica（9 月 3 日约 2:10pm）：Claude 约 9:23 ET 起 partial；Grok 孟菲斯机房约 9:30 ET；Gemini 在 DownDetector / StatusGator 约 10:45–11:15 ET 尖峰（Google 未公开承认）；OpenAI ChatGPT + Codex 10:43 ET elevated errors，12:55 ET resolved（status 页：15 个 ChatGPT + 4 个 Codex 组件）。</p>
+          <p>为什么值得记：多云备份在峰值时，可能把流量一起推到「备胎」，备胎也跟着红——冗余不等于独立故障域。</p>
+          <p>
+            <a href="https://arstechnica.com/ai/2026/09/four-major-ai-models-suffer-rare-overlapping-downtime/" target="_blank" rel="noopener">Ars</a> ·
+            <a href="https://www.theverge.com/ai-artificial-intelligence/989503/chatgpt-grok-claude-outage-down" target="_blank" rel="noopener">Verge</a> ·
+            <a href="https://status.openai.com/incidents/01M1KWEDH417T2CF44YYHZDFCR" target="_blank" rel="noopener">status.openai.com</a>
+          </p>
+        </div>
+      </div>
+      <div class="row" id="row-xai">
+        <button type="button" class="row-h" aria-expanded="false">
+          <span class="row-id">02</span>
+          <span class="row-title">xAI 点名孟菲斯机房</span>
+          <span class="row-meta">Verge</span>
+        </button>
+        <div class="row-body">
+          <p>Verge：Grok 在 Android / iOS / web 同时受影响，报错「model overloaded」，并与 Memphis data center 关联。单点机房名字被写进报道，是今天时间轴上最早的「具体地址」。</p>
+        </div>
+      </div>
+      <div class="row" id="row-anth">
+        <button type="button" class="row-h" aria-expanded="false">
+          <span class="row-id">03</span>
+          <span class="row-title">Anthropic：基础设施问题</span>
+          <span class="row-meta">CJ Avilla</span>
+        </button>
+        <div class="row-body">
+          <p>Anthropic 称基础设施问题（CJ Avilla）。约 12:15 ET 大体恢复；Opus 一度残留 degraded。与 OpenAI 恢复窗口几乎咬合——同刻压力下，两家「回来」也挤在同一小时。</p>
+        </div>
+      </div>
+      <div class="row" id="row-mail">
+        <button type="button" class="row-h" aria-expanded="false">
+          <span class="row-id">04</span>
+          <span class="row-title"><span class="tag mail">邮件侧证</span>中国转发层：GPT 上游故障 → 恢复</span>
+          <span class="row-meta">aimfllyys</span>
+        </button>
+        <div class="row-body">
+          <p>aimfllyys 邮箱：北京时间 9/3 晚收到 GPT 上游异常通知，9/4 00:20 恢复通知。这是转发层侧证，不是一手根因——但对依赖国内中转写作业的人，它就是「你屏幕上的红灯」。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ASTRA -->
+  <section class="panel" id="panel-astra" data-panel="astra">
+    <h2>GPT-6 Astra 正式放出</h2>
+    <p class="lede">Verge · Sep 3 · 6:00 PM UTC · Daybreak 企业先开</p>
+    <div class="rows">
+      <div class="row open">
+        <button type="button" class="row-h" aria-expanded="true">
+          <span class="row-id">A1</span>
+          <span class="row-title">Daybreak → Plus / Pro / API / AWS</span>
+          <span class="row-meta">Brockman</span>
+        </button>
+        <div class="row-body">
+          <p>Greg Brockman：数日内到 Plus / Pro / Business / Enterprise，并开 API 与 AWS。Critical cyber 门槛；Daybreak Blue 守门。发布节奏是「企业先开、再铺开」——和昨晚掉线不是同一条新闻，但同一天叠在一起，读起来很吵。</p>
+          <p>
+            <a href="https://www.theverge.com/ai-artificial-intelligence/989601/openai-gpt-6-astra-release" target="_blank" rel="noopener">Verge Astra</a> ·
+            <a href="https://deploymentsafety.openai.com/gpt-6-astra" target="_blank" rel="noopener">System card</a>
+          </p>
+        </div>
+      </div>
+      <div class="row">
+        <button type="button" class="row-h" aria-expanded="false">
+          <span class="row-id">A2</span>
+          <span class="row-title">System card：监视变脆，对齐更好</span>
+          <span class="row-meta">HealthBench 63.4</span>
+        </button>
+        <div class="row-body">
+          <p>相对 Sol：CoT monitorability 下降；对齐更好。HealthBench Professional length-adjusted 63.4（Sol 60.5）。对 Sofia：医疗向评测仍在涨，但别把 system card 当临床指南——评测涨分 ≠ 可以替代病历判断。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ARCHIVE -->
+  <section class="panel" id="panel-archive" data-panel="archive">
+    <h2>事件日志</h2>
+    <p class="lede">窗口 09-03 06:00 → 09-04 06:00 Asia/Shanghai · 一行一条 · 含漏报归档</p>
+    <div class="log">
+      <div class="log-item"><div class="log-t">09-03 21:10</div><div><span class="log-src">Ars</span> 四家前沿模型罕见同刻重叠 downtime；评论区谈 failover 多米诺</div></div>
+      <div class="log-item"><div class="log-t">09-03 18:00Z</div><div><span class="log-src">Verge</span> GPT-6 Astra 放出；Daybreak 企业通道；Brockman 数日内铺开</div></div>
+      <div class="log-item"><div class="log-t">09-03 16:55Z</div><div><span class="log-src">OpenAI</span> ChatGPT+Codex incident resolved 12:55 ET；15+4 组件</div></div>
+      <div class="log-item"><div class="log-t">09-03 14:43Z</div><div><span class="log-src">OpenAI</span> elevated errors 起于 10:43 ET（ChatGPT + Codex）</div></div>
+      <div class="log-item"><div class="log-t">09-03 ~15Z</div><div><span class="log-src">Verge</span> Grok Android/iOS/web · Memphis DC · model overloaded</div></div>
+      <div class="log-item"><div class="log-t">09-03 ~13Z</div><div><span class="log-src">StatusGator</span> Gemini 尖峰 ~10:45–11:15 ET；Google 未公开承认</div></div>
+      <div class="log-item"><div class="log-t">09-03 13:23Z</div><div><span class="log-src">Anthropic</span> Claude partial ~9:23 ET；~12:15 ET 大体恢复</div></div>
+      <div class="log-item"><div class="log-t">09-03 早</div><div><span class="log-src">OpenAI</span> ChatGPT Work Mode 同日凌晨另有一小事故（一句记过）</div></div>
+      <div class="log-item"><div class="log-t">09-04 00:20</div><div><span class="log-src">邮件</span> aimfllyys：GPT 上游恢复通知（北京时间）· 侧证非根因</div></div>
+      <div class="log-item"><div class="log-t">09-03 晚</div><div><span class="log-src">邮件</span> aimfllyys：GPT 上游异常通知抵达中国转发层</div></div>
+      <div class="log-item"><div class="log-t">漏报</div><div><span class="log-src">Meta</span> Muse Spark 1.3（当地 9/2 发布；今日中文二次报道）· 昨日窗口可归档</div></div>
+      <div class="log-item"><div class="log-t">已报</div><div><span class="log-src">昨日</span> 勿装新：Gemini 3.8 Flash/Cyber · Astra Path-to 辩论 · Cursor×Fable 5.1 · Qwen3.8-Max-0902 · Grok 4.7「10天后」</div></div>
+      <div class="log-item"><div class="log-t">评论</div><div><span class="log-src">Ars</span> 报道称 OpenAI 员工 Tibo：备胎切换像多米诺 / contagion</div></div>
+    </div>
+  </section>
+
+  <!-- ESSAY -->
+  <section class="panel" id="panel-essay" data-panel="essay">
+    <h2>事后分析 / RCA</h2>
+    <p class="lede">为什么「备胎」会在同一分钟一起红</p>
+    <article class="essay">
+      <p>今天数字是 4。不是四条花边，是四家你写作业会随手点开的云，在美东同一段午后叠着掉线。Claude 先 partial，Grok 报孟菲斯过载，Gemini 在第三方监测里尖峰，OpenAI 的 ChatGPT 和 Codex 一起 elevated——等你想「那我切到另一家」的时候，另一家可能已经在排队了。</p>
+      <p>多云听起来像保险。保险的前提是：备胎和主路不要共享同一个拥挤的出口。可是 agent 工作流常常把「切换供应商」写成一行 fallback；峰值一来，所有人都去拍同一扇备胎门，门栓也会弯。Ars 评论里有人形容得很难听也很难忘：备胎切换像多米诺。传染不是病毒，是相关的需求曲线。</p>
+      <p>学医的人其实更该懂这件事。病历系统、影像云、挂号接口——「我们有两家供应商」只写在采购表上不够；你要问故障域是否真的隔离：机房、骨干、身份、甚至同一波人为流量。冗余若高度相关，同刻掉线就不是小概率童话，而是统计上的亲戚。</p>
+      <p>所以《备胎传染》想教的判断很短：先看相关，再谈备份。写作业别把死线绑死在一个 API；做演示先演一遍 failover 会不会把大家都染红。Astra 同天放出、评测还在涨，那是另一条时间线——发布与事故叠日，更提醒你：热闹和可用性，从来不是同一个仪表盘。</p>
+    </article>
+  </section>
+
+  <!-- MAIL panel (also deep-link; drawer mirrors) -->
+  <section class="panel" id="panel-mail" data-panel="mail">
+    <h2>便条 · 邮件角</h2>
+    <p class="lede">窗口内扫描 · ACTION / WATCH / SKIP</p>
+    <div class="mail-sec action">
+      <h4>Action</h4>
+      <ul><li>无新回复 / 截止项</li></ul>
+    </div>
+    <div class="mail-sec watch">
+      <h4>Watch</h4>
+      <ul>
+        <li>SCI-AIChat-Demo CI 仍红 master/579183f（09-03 21:04Z，compileall+pytest 等；与昨日同 commit）</li>
+        <li>deepseek-harness E2E 仍红 master/cd5ef81（09-03 04:22Z）</li>
+        <li>GPT 上游故障链：aimfllyys 收到异常→恢复（恢复称北京时间 09-04 00:20）</li>
+      </ul>
+    </div>
+    <div class="mail-sec skip">
+      <h4>Skip</h4>
+      <ul>
+        <li>sofiapintos190：Cursor 登录验证码 ×3</li>
+        <li>Linear Changelog: Priority inbox</li>
+        <li>Dribbble newsletter</li>
+        <li>SuperGrok tax Oct 1（昨日已 SKIP，窗外）</li>
+      </ul>
+    </div>
+  </section>
+
+  <p class="kbd">快捷键 <kbd>1</kbd><kbd>2</kbd><kbd>3</kbd><kbd>4</kbd> 供应商 · <kbd>F</kbd> 备胎 · <kbd>Esc</kbd> 关闭</p>
+
+  <footer class="foot">
+    <span>北京时间 2026-09-04 · 折晓 早报</span>
+    <span>Swiss · Fake status · 备胎传染</span>
+  </footer>
+</div>
+
+<div class="drawer-bg" id="drawerBg" hidden></div>
+<aside class="drawer" id="mailDrawer" aria-hidden="true" role="dialog" aria-label="邮件便条">
+  <button type="button" class="close" id="drawerClose">Close · Esc</button>
+  <div class="micro" style="margin-bottom:8px">Mail corner</div>
+  <h3>便条</h3>
+  <p style="font-size:12px;color:var(--muted);margin-bottom:8px">窗口 09-03 06:00–09-04 06:00 上海</p>
+  <div class="mail-sec action">
+    <h4>Action</h4>
+    <ul><li>无新回复 / 截止项</li></ul>
+  </div>
+  <div class="mail-sec watch">
+    <h4>Watch</h4>
+    <ul>
+      <li>SCI-AIChat-Demo CI 仍红 master/579183f（09-03 21:04Z；同 commit）</li>
+      <li>deepseek-harness E2E 仍红 master/cd5ef81（09-03 04:22Z）</li>
+      <li>GPT 上游：aimfllyys 异常→恢复（09-04 00:20 北京）</li>
+    </ul>
+  </div>
+  <div class="mail-sec skip">
+    <h4>Skip</h4>
+    <ul>
+      <li>Cursor 验证码 ×3</li>
+      <li>Linear Priority inbox</li>
+      <li>Dribbble newsletter</li>
+      <li>SuperGrok tax Oct 1</li>
+    </ul>
+  </div>
+</aside>
+
+<div class="toast" id="toast" role="status" aria-live="polite">
+  <div class="t-micro">Contagion</div>
+  <div id="toastText"></div>
+</div>
+
+<script>
+(function(){
+  var STATES = ['operational','degraded','down'];
+  var LABELS = {operational:'Operational',degraded:'Degraded',down:'Down / Partial'};
+  var ORDER = ['openai','anthropic','xai','google'];
+  var failover = false;
+  var cascading = false;
+  var timers = [];
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var failoverBtn = document.getElementById('failoverBtn');
+  var failLabel = document.getElementById('failLabel');
+  var toast = document.getElementById('toast');
+  var toastText = document.getElementById('toastText');
+  var liveDot = document.getElementById('liveDot');
+  var liveText = document.getElementById('liveText');
+  var drawer = document.getElementById('mailDrawer');
+  var drawerBg = document.getElementById('drawerBg');
+
+  function clearTimers(){
+    timers.forEach(function(t){ clearTimeout(t); });
+    timers = [];
+  }
+
+  function setProvState(id, state, silent){
+    var el = document.getElementById('p-' + id);
+    if(!el) return;
+    el.dataset.state = state;
+    el.querySelector('.stxt').textContent = LABELS[state];
+    el.setAttribute('aria-pressed', state === 'down' ? 'true' : 'false');
+  }
+
+  function countDown(){
+    return ORDER.filter(function(id){
+      return document.getElementById('p-'+id).dataset.state === 'down';
+    }).length;
+  }
+
+  function updateLive(){
+    var n = countDown();
+    if(n === 0){
+      liveDot.style.background = 'var(--green)';
+      liveText.textContent = 'All clear (demo)';
+    } else if(n < 4){
+      liveDot.style.background = 'var(--amber)';
+      liveText.textContent = n + ' provider(s) down';
+    } else {
+      liveDot.style.background = 'var(--red)';
+      liveText.textContent = 'Contagion · 4 down';
+    }
+  }
+
+  function showToast(msg){
+    toastText.textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(function(){ toast.classList.remove('show'); }, 4800);
+  }
+
+  function cascadeFrom(sourceId){
+    if(!failover || cascading) return;
+    cascading = true;
+    var delay = reduceMotion ? 40 : 380;
+    var others = ORDER.filter(function(id){ return id !== sourceId; });
+    others.forEach(function(id, i){
+      var t = setTimeout(function(){
+        setProvState(id, 'down');
+        updateLive();
+        if(i === others.length - 1){
+          cascading = false;
+          showToast('报道称 OpenAI 员工 Tibo：备胎切换像多米诺 / contagion。多云峰值时，failover 本身会传染负荷。');
+        }
+      }, delay * (i + 1));
+      timers.push(t);
+    });
+    if(others.length === 0) cascading = false;
+  }
+
+  function cycleProv(id){
+    var el = document.getElementById('p-' + id);
+    var cur = el.dataset.state;
+    var next = STATES[(STATES.indexOf(cur) + 1) % STATES.length];
+    /* if failover on, jumping to down triggers contagion; from down go to operational resets */
+    if(failover && next === 'degraded'){
+      /* skip degraded when demonstrating contagion — faster path to down */
+      next = 'down';
+    }
+    clearTimers();
+    cascading = false;
+    setProvState(id, next);
+    updateLive();
+    if(failover && next === 'down'){
+      cascadeFrom(id);
+    }
+  }
+
+  ORDER.forEach(function(id){
+    document.getElementById('p-' + id).addEventListener('click', function(){
+      cycleProv(id);
+    });
+  });
+
+  function setFailover(on){
+    failover = on;
+    failoverBtn.classList.toggle('on', on);
+    failoverBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    failLabel.textContent = on ? 'ON' : 'OFF';
+    if(!on){
+      clearTimers();
+      cascading = false;
+    } else {
+      showToast('备胎路由已开：把任一卡片点到 DOWN，看连锁变红。');
+    }
+  }
+
+  failoverBtn.addEventListener('click', function(){
+    setFailover(!failover);
+  });
+
+  /* expandable rows */
+  document.querySelectorAll('.row-h').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var row = btn.parentElement;
+      var open = row.classList.toggle('open');
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+  });
+
+  /* timeline scrub */
+  var marks = document.querySelectorAll('.scrub-mark');
+  var scrubFill = document.getElementById('scrubFill');
+  var scrubCap = document.getElementById('scrubCap');
+  marks.forEach(function(m){
+    m.addEventListener('click', function(){
+      marks.forEach(function(x){ x.classList.remove('active'); });
+      m.classList.add('active');
+      var i = +m.dataset.i;
+      scrubFill.style.width = ((i + 1) / marks.length * 100) + '%';
+      scrubCap.textContent = m.dataset.cap;
+      /* lightly tint matching providers for teaching */
+      var map = [
+        ['anthropic'],
+        ['xai'],
+        ['openai'],
+        ['google'],
+        ['anthropic'],
+        ['openai']
+      ];
+      ORDER.forEach(function(id){
+        var el = document.getElementById('p-'+id);
+        if(!failover && !cascading){
+          if(map[i].indexOf(id) >= 0){
+            setProvState(id, i === 4 || i === 5 ? 'degraded' : 'down');
+          } else if(i < 4){
+            /* leave others as-is unless early in timeline */
+            if(i === 0) setProvState(id, id === 'anthropic' ? 'down' : 'operational');
+          }
+        }
+      });
+      if(!failover){
+        /* reconstruct approximate concurrent state at scrub point */
+        setProvState('openai', i >= 2 && i < 5 ? 'down' : (i >= 5 ? 'operational' : 'operational'));
+        setProvState('anthropic', i >= 0 && i < 4 ? 'down' : (i >= 4 ? 'degraded' : 'operational'));
+        if(i >= 4) setProvState('anthropic', i === 4 ? 'degraded' : 'operational');
+        setProvState('xai', i >= 1 && i < 5 ? 'down' : 'operational');
+        setProvState('google', i >= 3 && i < 5 ? 'down' : 'operational');
+        if(i === 5){
+          setProvState('openai','operational');
+          setProvState('anthropic','operational');
+          setProvState('xai','operational');
+          setProvState('google','operational');
+        }
+        updateLive();
+      }
+    });
+  });
+
+  /* panels + hash */
+  var panelIds = ['incident','astra','archive','essay','mail'];
+  function openPanel(name, push){
+    if(name === 'mail'){
+      openDrawer();
+      /* also show mail panel behind */
+    }
+    if(panelIds.indexOf(name) < 0) name = 'incident';
+    document.querySelectorAll('.panel').forEach(function(p){
+      p.classList.toggle('open', p.dataset.panel === name);
+    });
+    document.querySelectorAll('.nav a').forEach(function(a){
+      a.classList.toggle('active', a.dataset.panel === name);
+    });
+    if(push !== false){
+      if(location.hash !== '#' + name){
+        history.pushState(null, '', '#' + name);
+      }
+    }
+  }
+
+  function openDrawer(){
+    drawer.hidden = false;
+    drawerBg.hidden = false;
+    requestAnimationFrame(function(){
+      drawer.classList.add('open');
+      drawerBg.classList.add('open');
+      drawer.setAttribute('aria-hidden','false');
+    });
+  }
+  function closeDrawer(){
+    drawer.classList.remove('open');
+    drawerBg.classList.remove('open');
+    drawer.setAttribute('aria-hidden','true');
+    setTimeout(function(){
+      if(!drawer.classList.contains('open')){
+        drawerBg.hidden = true;
+      }
+    }, 250);
+    if(location.hash === '#mail'){
+      history.replaceState(null, '', '#incident');
+      openPanel('incident', false);
+    }
+  }
+
+  document.querySelectorAll('.nav a').forEach(function(a){
+    a.addEventListener('click', function(e){
+      e.preventDefault();
+      var name = a.dataset.panel;
+      if(name === 'mail'){
+        openPanel('mail');
+        openDrawer();
+      } else {
+        closeDrawer();
+        openPanel(name);
+      }
+    });
+  });
+
+  document.getElementById('mailTab').addEventListener('click', function(e){
+    e.preventDefault();
+    openPanel('mail');
+    openDrawer();
+  });
+  document.getElementById('drawerClose').addEventListener('click', closeDrawer);
+  drawerBg.addEventListener('click', closeDrawer);
+
+  function applyHash(){
+    var h = (location.hash || '#incident').slice(1);
+    if(h === 'mail'){
+      openPanel('mail', false);
+      openDrawer();
+    } else {
+      closeDrawer();
+      openPanel(h || 'incident', false);
+    }
+  }
+  window.addEventListener('hashchange', applyHash);
+  window.addEventListener('popstate', applyHash);
+
+  document.addEventListener('keydown', function(e){
+    if(e.target && /INPUT|TEXTAREA|SELECT/.test(e.target.tagName)) return;
+    var k = e.key;
+    if(k === 'Escape'){ closeDrawer(); toast.classList.remove('show'); return; }
+    if(k === 'f' || k === 'F'){ e.preventDefault(); setFailover(!failover); return; }
+    if(k >= '1' && k <= '4'){
+      e.preventDefault();
+      cycleProv(ORDER[+k - 1]);
+    }
+  });
+
+  updateLive();
+  applyHash();
+})();
+</script>
+</body>
+</html>

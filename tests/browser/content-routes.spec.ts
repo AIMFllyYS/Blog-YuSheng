@@ -1,4 +1,4 @@
-import { expect, test, type Page } from '@playwright/test'
+﻿import { expect, test, type Page } from '@playwright/test'
 
 const KITCHEN_SINK_HREF = '/blog/p0-kitchen-sink/'
 const CATALOG_SURFACE = '[data-catalog-shelf], [data-blog-tree]'
@@ -46,7 +46,7 @@ test('博客列表链接到构建期文章页面', async ({ page }) => {
   await expect(page.getByText(/预计阅读 \d+ 分钟/).first()).toBeVisible()
   await expect(page.getByRole('navigation', { name: '绳挂主导航' })).toContainText('羽升')
   await expect(page.getByRole('navigation', { name: '绳挂主导航' })).toContainText('博客')
-  await expect(page.getByRole('navigation', { name: '绳挂主导航' })).toContainText('随笔')
+  await expect(page.getByRole('navigation', { name: '绳挂主导航' })).toContainText('日报')
   await expect(page.getByRole('navigation', { name: '绳挂主导航' })).toContainText('作品集')
   await expect(page.getByRole('link', { name: '回到首页' })).toHaveAttribute('href', '/')
   await expect(page.getByRole('button', { name: /切换主题/ })).toBeVisible()
@@ -93,7 +93,7 @@ test('博客书架在窄屏走目录树且不横向溢出', async ({ page }) => 
   const navigation = page.getByRole('navigation', { name: '绳挂主导航' })
   await expect(navigation.getByText('羽升')).toBeVisible()
   await expect(navigation.getByRole('link', { name: '博客' })).toBeHidden()
-  await expect(navigation.getByRole('link', { name: '随笔' })).toBeHidden()
+  await expect(navigation.getByRole('link', { name: '日报' })).toBeHidden()
   await expect(navigation.getByRole('link', { name: '作品集' })).toBeHidden()
   await expect(navigation.getByRole('button', { name: /切换主题/ })).toBeVisible()
   await expect(navigation.getByRole('button', { name: /音效偏好/ })).toBeVisible()

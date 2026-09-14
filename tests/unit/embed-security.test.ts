@@ -174,4 +174,23 @@ describe('iframe security gate v1', () => {
       },
     ])
   })
+
+  it('lets daily briefs be framed same-origin with popups but no storage', () => {
+    const briefRule = edgeoneConfig.headers.find(
+      (rule) => rule.source === '/briefs/*',
+    )
+    expect(briefRule?.headers).toEqual([
+      { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
+      {
+        key: 'Content-Security-Policy',
+        value:
+          "frame-ancestors 'self'; sandbox allow-scripts allow-popups allow-popups-to-escape-sandbox",
+      },
+    ])
+    expect(edgeoneConfig.redirects).toContainEqual({
+      source: '/notes/',
+      destination: '/daily/',
+      statusCode: 301,
+    })
+  })
 })

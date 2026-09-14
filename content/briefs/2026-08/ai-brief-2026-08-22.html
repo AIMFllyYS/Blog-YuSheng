@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>折晓晚刊 · SAT 8.22 · VOL.34</title>
+<style>
+:root{
+  --stock:#F3E6C8;
+  --pink:#FF2D95;
+  --cobalt:#2B4CFF;
+  --ink:#1A1A1A;
+  --kraft:#C4A06A;
+  --kraft-dk:#8B5A2B;
+  --manila:#E8D5A3;
+  --manila-dk:#C9A96A;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#2a2418;color:var(--ink);
+  font-family:Georgia,"Iowan Old Style","Songti SC","STSong","Noto Serif CJK SC","PingFang SC","Hiragino Mincho ProN",serif;
+  overflow:hidden;-webkit-font-smoothing:antialiased}
+button,input{font-family:inherit}
+/* grain + stock */
+.grain{position:fixed;inset:0;pointer-events:none;z-index:80;opacity:.28;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='.55'/></svg>");
+}
+.halftone{position:fixed;inset:0;pointer-events:none;z-index:81;opacity:.07;mix-blend-mode:multiply;
+  background-image:radial-gradient(circle, #1A1A1A 0.55px, transparent 0.65px);
+  background-size:4px 4px}
+.stage{position:relative;width:100vw;height:100vh;perspective:2200px;
+  background:var(--stock);
+  background-image:
+    linear-gradient(90deg,rgba(43,76,255,.04) 0,transparent 8%,transparent 92%,rgba(255,45,149,.05) 100%),
+    repeating-linear-gradient(0deg,transparent,transparent 27px,rgba(26,26,26,.035) 28px);
+}
+.deck{position:relative;width:100%;height:100%;}
+.spread{position:absolute;inset:18px 22px 28px;background:var(--stock);
+  box-shadow:0 18px 50px rgba(0,0,0,.35), inset 0 0 80px rgba(139,90,43,.08);
+  transform-origin:left center;transition:transform .62s cubic-bezier(.2,.7,.2,1), opacity .4s;
+  overflow:hidden;display:none;border:1px solid rgba(26,26,26,.18);
+}
+.spread.on{display:block;z-index:3}
+.spread.exit-next{display:block;z-index:4;transform:rotateY(-88deg) translateX(-4%);opacity:0}
+.spread.enter-prev{display:block;z-index:4;transform:rotateY(8deg);opacity:1}
+.gutter{position:absolute;left:50%;top:0;bottom:0;width:2px;margin-left:-1px;
+  background:linear-gradient(180deg,transparent,rgba(26,26,26,.18),transparent);pointer-events:none;z-index:2}
+.folio{position:absolute;bottom:8px;left:0;right:0;text-align:center;
+  font-family:ui-monospace,Menlo,Consolas,monospace;font-size:10px;letter-spacing:.18em;
+  color:var(--cobalt);mix-blend-mode:multiply;z-index:5}
+.nav{position:fixed;bottom:10px;right:22px;z-index:90;display:flex;gap:8px}
+.nav b{cursor:pointer;border:none;background:transparent;color:var(--pink);mix-blend-mode:multiply;
+  font-size:13px;letter-spacing:.12em;padding:4px 8px}
+.hint{position:fixed;bottom:10px;left:22px;z-index:90;font-size:10px;letter-spacing:.14em;
+  color:var(--cobalt);mix-blend-mode:multiply;font-family:ui-monospace,Menlo,monospace}
+.mis{position:relative;color:var(--cobalt);mix-blend-mode:multiply;font-weight:400}
+.mis:before{content:attr(data-t);position:absolute;left:2px;top:3px;color:var(--pink);
+  mix-blend-mode:multiply;pointer-events:none;z-index:-1}
+.pink{color:var(--pink);mix-blend-mode:multiply}
+.rule{height:2px;background:var(--cobalt);mix-blend-mode:multiply;opacity:.7}
+.cut{background:var(--stock);box-shadow:2px 3px 0 rgba(26,26,26,.12);
+  border:1px solid rgba(26,26,26,.22);transform:rotate(-0.4deg);padding:10px 12px}
+.stamp{display:inline-block;border:2px solid var(--pink);color:var(--pink);mix-blend-mode:multiply;
+  padding:2px 8px;letter-spacing:.16em;font-size:11px;transform:rotate(-6deg);
+  font-family:ui-monospace,Menlo,monospace}
+/* cover */
+.cover{padding:28px 36px 40px;height:100%;display:grid;grid-template-rows:auto auto 1fr auto}
+.mast{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:3px solid var(--cobalt);
+  mix-blend-mode:multiply;padding-bottom:8px}
+.mast h1{font-size:clamp(42px,7vw,86px);line-height:.85;letter-spacing:-.03em}
+.mast .meta{text-align:right;font-size:11px;letter-spacing:.18em;color:var(--cobalt);mix-blend-mode:multiply}
+.kicker{margin-top:10px;font-size:12px;letter-spacing:.28em;color:var(--cobalt);mix-blend-mode:multiply}
+.lead{margin-top:18px;max-width:78%}
+.lead h2{font-size:clamp(28px,4.2vw,52px);line-height:1.05;max-width:18ch}
+.lead p{margin-top:12px;font-size:15px;line-height:1.55;max-width:62ch}
+.cover-idx{display:flex;gap:16px;flex-wrap:wrap;margin-top:18px;font-size:12px;letter-spacing:.08em}
+.cover-idx span{border-top:2px solid var(--cobalt);padding-top:4px;mix-blend-mode:multiply}
+/* interior 2-col */
+.sheet{height:100%;display:grid;grid-template-columns:1fr 1fr;gap:0}
+.pg{padding:26px 28px 36px;position:relative}
+.pg + .pg{border-left:1px dashed rgba(43,76,255,.25)}
+h3.hed{font-size:clamp(22px,2.6vw,34px);line-height:1.15;margin:8px 0 10px}
+.dek{font-size:14px;line-height:1.5;margin-bottom:10px}
+.body{font-size:13.5px;line-height:1.62}
+.body p+p{margin-top:.7em}
+.scores{display:grid;grid-template-columns:1fr 1fr;gap:6px 12px;margin-top:10px;font-size:12px}
+.scores i{font-style:normal;color:var(--pink);mix-blend-mode:multiply}
+.big{font-size:clamp(72px,14vw,140px);line-height:.8;letter-spacing:-.04em;color:var(--pink);
+  mix-blend-mode:multiply}
+.cap{font-size:12px;line-height:1.45;margin-top:8px;max-width:36ch}
+/* essay tip-in */
+.tipwrap{position:absolute;inset:0;z-index:6;pointer-events:none}
+.tab{pointer-events:auto;position:absolute;right:0;top:18%;width:34px;padding:14px 6px;
+  background:var(--pink);color:var(--stock);letter-spacing:.14em;font-size:11px;
+  writing-mode:vertical-rl;border:none;cursor:grab;mix-blend-mode:multiply;
+  box-shadow:-3px 4px 0 rgba(26,26,26,.15)}
+.juan{pointer-events:auto;position:absolute;top:6%;bottom:8%;right:36px;width:0;
+  overflow:hidden;background:#F7EBD2;border:1px solid rgba(26,26,26,.25);
+  box-shadow:-12px 8px 0 rgba(26,26,26,.12);transition:width .55s cubic-bezier(.2,.7,.2,1)}
+.juan.open{width:min(92vw,1180px)}
+.juan-in{width:min(90vw,1140px);padding:22px 28px 28px;column-count:3;column-gap:28px;
+  font-size:14.5px;line-height:1.72;height:100%;overflow:auto}
+.juan-in h4{column-span:all;font-size:22px;margin-bottom:10px;color:var(--pink);mix-blend-mode:multiply}
+/* pocket */
+.pocket{height:100%;padding:24px 28px 40px;position:relative}
+.flap{position:absolute;left:8%;right:8%;top:10%;height:46%;background:var(--manila);
+  border:2px solid var(--kraft-dk);transform-origin:top center;transition:transform .55s;
+  z-index:4;cursor:pointer;box-shadow:0 10px 0 rgba(139,90,43,.15)}
+.flap.up{transform:rotateX(78deg) translateY(-8px)}
+.flap .lbl{position:absolute;bottom:16px;left:0;right:0;text-align:center;letter-spacing:.22em;
+  color:var(--kraft-dk);font-size:13px}
+.slips{position:absolute;left:8%;right:8%;top:22%;bottom:12%;overflow:auto;padding:8px}
+.slip{background:#F4E8C4;border:1px solid rgba(26,26,26,.25);margin:0 0 8px;padding:8px 10px;
+  font-size:12.5px;line-height:1.45;transform:rotate(-0.2deg);box-shadow:1px 2px 0 rgba(26,26,26,.08)}
+.slip a{color:var(--cobalt);mix-blend-mode:multiply}
+.seek{width:100%;border:none;border-bottom:2px solid var(--pink);background:transparent;
+  padding:6px 0;margin:8px 0 12px;font-size:14px;color:var(--ink);outline:none}
+/* mail */
+.env{position:fixed;top:0;right:34px;z-index:95;width:86px;height:64px;cursor:pointer}
+.env .tri{width:0;height:0;border-left:43px solid transparent;border-right:43px solid transparent;
+  border-top:52px solid var(--kraft);filter:drop-shadow(2px 3px 0 rgba(0,0,0,.18))}
+.env .e{position:absolute;top:10px;left:0;right:0;text-align:center;font-size:9px;
+  letter-spacing:.2em;color:var(--kraft-dk)}
+.mail{position:fixed;top:58px;right:18px;width:min(380px,92vw);max-height:70vh;overflow:auto;
+  background:#E8C99A;border:1px solid var(--kraft-dk);padding:14px 14px 16px;z-index:96;
+  display:none;box-shadow:-6px 8px 0 rgba(26,26,26,.18);transform:rotate(1.1deg)}
+.mail.on{display:block}
+.mail h5{font-size:13px;letter-spacing:.16em;margin-bottom:8px;color:var(--kraft-dk)}
+.note{border-top:1px dashed rgba(139,90,43,.5);padding:8px 0;font-size:12.5px;line-height:1.5}
+.note em{font-style:normal;color:var(--pink);mix-blend-mode:multiply}
+</style>
+</head>
+<body>
+<!--
+  Design notes used, not listed:
+  • Stripe / Linear / Loom restraint + ONE emphasis (the pink plate only — no italic-plus-bold-plus-spot stack):
+    https://plinthstudio.dev/blog/stripe-linear-loom-design-lessons
+    Pink overprint is the single stress mark: $100.00, UNFOLD tab, urgent 便条. Body stays soy-ink.
+  • NYT scrollytelling “the page turns as judgment” adapted to a Saturday flip, not a vertical card wall.
+    Each horizontal spread is a verdict you accept by turning; you do not scroll a stack of takes.
+  • Awwwards SOTD family (Mouthful of Dust / Thorgal): cinematic sequence of scenes.
+    Here the scenes are paper spreads — cover, wires, center-fold 长卷, manila back pocket.
+-->
+<div class="grain"></div>
+<div class="halftone"></div>
+<div class="stage" id="stage">
+  <div class="deck" id="deck">
+
+    <!-- P.01 COVER -->
+    <section class="spread on" data-p="01">
+      <div class="cover">
+        <div class="mast">
+          <h1 class="mis" data-t="折晓">折晓</h1>
+          <div class="meta">SATURDAY EVENING PAPER<br>北京 八月廿二<br>VOL. XXXIV<br>窗口 08-21 06:00 → 08-22 06:00</div>
+        </div>
+        <div class="kicker">晚刊 · 扩权号 · 不是八月十一日那次首发</div>
+        <div class="lead">
+          <span class="stamp">OFFICIAL</span>
+          <h2 class="mis" data-t="Grok Bot 被写进更多套餐格子">Grok Bot 被写进更多套餐格子</h2>
+          <p>SpaceXAI 八月二十一日：Grok Bot 现随 SuperGrok Plus、SuperGrok Heavy、Cursor Pro+、Cursor Ultra，以及 Cursor Teams 的 Standard 与 Premium 一并提供。测试始于八月十一日。企业仍在等候名单。九to五转述官方账号：其余用户另有用量受限的免费试用。准入是复选框。</p>
+          <p class="body">数字在内页，不在头版：<span class="pink">100.00</span> 是 NVIDIA AVO 加 Claude Opus 5 在 ARC-AGI-3 <em style="font-style:normal">公开集</em> 上的 RHAE，不是基础模型分。</p>
+        </div>
+        <div class="cover-idx">
+          <span>P.02 视觉进 API</span>
+          <span>P.03 公开集 100.00</span>
+          <span>P.04 八 B · 四 K</span>
+          <span>P.05 中缝拉开</span>
+          <span>P.06 报道称 Rebellions</span>
+          <span>P.08 分类广告 / 版权</span>
+        </div>
+      </div>
+      <div class="folio">SAT 8.22 · VOL.34 · P.01</div>
+    </section>
+
+    <!-- P.02 DeepSeek -->
+    <section class="spread" data-p="02">
+      <div class="gutter"></div>
+      <div class="sheet">
+        <div class="pg">
+          <span class="stamp">官方更新 08-21</span>
+          <h3 class="hed mis" data-t="视觉进了接口，不是进了仓库">视觉进了接口，不是进了仓库</h3>
+          <p class="dek">DeepSeek-V4-Flash-Vision-Exp 上线 API。深科技 18:56 北京，窗口内。调用名 <code>deepseek-v4-flash-vision-exp</code>。无新开源权重。</p>
+          <div class="body">
+            <p>官方：纯文本能力（Agent、推理、世界知识等）与正式版 V4-Flash 持平。需要视觉理解的 Agent 基准上「明显跃升」，并称多模态 Agent 接近 Opus-4.8。</p>
+            <p>图片按尺寸折 token，单张至多 384，价同 V4-Flash。支持 Chat Completions / Messages / Responses；图可用 Base64、URL 或 Files API。</p>
+            <p>代码 Agent 公开基准用 DeepSeek Harness 最小模式、max effort、topp=0.95、temperature=1.0。ApexBench 与 Agents' Last Exam 上，文本版 V4-Flash 忽略其中的多模态元素。</p>
+          </div>
+        </div>
+        <div class="pg">
+          <div class="scores">
+            <div>Terminal Bench 2.1 <i>83.9</i></div>
+            <div>NL2Repo <i>57.7</i></div>
+            <div>DeepSWE <i>59.3</i></div>
+            <div>DSBench-Hard <i>63.6</i></div>
+            <div>AutomationBench Public <i>25.7</i></div>
+            <div>ApexBench Pass@1 <i>36.5</i></div>
+            <div>Agents' Last Exam <i>27.3</i></div>
+            <div>Chartography <i>64.3</i></div>
+            <div>ZeroBench Pass@5 <i>35.0</i></div>
+          </div>
+          <p class="body" style="margin-top:14px">分数抄自官方更新页，不是本报复测。实验后缀仍在：Exp 不是终局。</p>
+          <p class="body"><a href="https://api-docs.deepseek.com/updates/" style="color:#2B4CFF">api-docs.deepseek.com/updates</a><br>
+          <a href="https://www.163.com/dy/article/L4SJR8OV05119734.html" style="color:#2B4CFF">深科技 18:56</a></p>
+        </div>
+      </div>
+      <div class="folio">SAT 8.22 · VOL.34 · P.02</div>
+    </section>
+
+    <!-- P.03 AVO -->
+    <section class="spread" data-p="03">
+      <div class="gutter"></div>
+      <div class="sheet">
+        <div class="pg">
+          <span class="stamp">TODAY №</span>
+          <div class="big mis" data-t="100.00">100.00</div>
+          <p class="cap">ARC-AGI-3 <strong style="font-weight:400" class="pink">公开集</strong> RHAE。AVO + Claude Opus 5。不是基础模型分。不是半私有 / 私有赛集。</p>
+          <p class="body" style="margin-top:12px">二十五环境、一百八十三关、6,624 步环境动作；VISTA 报 7,542 步（约少 12%）。官方：两套系统不可当作受控消融。</p>
+        </div>
+        <div class="pg">
+          <h3 class="hed">套子，不是模型单独的成绩单</h3>
+          <div class="body">
+            <p>NVIDIA 八月二十一日研究博文：Agentic Variation Operators（AVO）是长程自主的通用 agent 架构。Frontier 语言模型只是组件；套子决定上下文、工具、状态、失败恢复。</p>
+            <p>ARC Prize 另报 Claude Opus 5 在高推理档约 30%。公司写明：不应把该数字读成 AVO 的提升幅度。本报把 100.00 印成今日数字，必须连这句限制一起印。</p>
+            <p>观察接口：AVO 配置下模型吃的是 64×64 文本格，不送图像 token。与 VISTA 的 PNG 主配置不同。</p>
+            <p><a href="https://developer.nvidia.com/blog/nvidia-avo-reaches-100-on-arc-agi-3-demonstrating-a-frontier-level-general-purpose-architecture-for-long-horizon-autonomous-agents/" style="color:#2B4CFF">developer.nvidia.com/blog/…avo…arc-agi-3</a></p>
+          </div>
+        </div>
+      </div>
+      <div class="folio">SAT 8.22 · VOL.34 · P.03</div>
+    </section>
+
+    <!-- P.04 SenseNova -->
+    <section class="spread" data-p="04">
+      <div class="gutter"></div>
+      <div class="sheet">
+        <div class="pg">
+          <span class="stamp">IT之家 12:20:53</span>
+          <h3 class="hed mis" data-t="八 B，原生四 K，今日宣布">八 B，原生四 K，今日宣布</h3>
+          <p class="dek">商汤正式宣布开源 SenseNova U1.5 Lite：轻量、原生统一多模态。中国「今日宣布」落在窗口内。</p>
+          <div class="body">
+            <p>IT之家：原生支持 3–4k 上下文；官方列更高质量生成、更可靠原生编辑、中英文与复杂版式、Bounding Box / Visual Marker 控制，以及原生 4K 输出。</p>
+            <p>权重或已于八月二十日出现在 Hugging Face 模型卡一侧。宣布是二十一日；落地可能早一天。两者都记下。</p>
+          </div>
+        </div>
+        <div class="pg">
+          <div class="cut">
+            <p class="body">官方自称：作为 8B 轻量化模型，在指令遵循与图像编辑保持度上超越同量级，并在文字渲染与复杂布局上达到媲美超大规模商业模型的交付水平。<span class="pink">报道称</span>——公司口径，不是本报榜单。</p>
+          </div>
+          <p class="body" style="margin-top:14px">开源页：<br>
+          <a href="https://www.ithome.com/0/992/589.htm" style="color:#2B4CFF">ithome.com/0/992/589.htm</a><br>
+          <a href="https://huggingface.co/sensenova/SenseNova-U1.5-8B-MoT" style="color:#2B4CFF">huggingface.co/sensenova/SenseNova-U1.5-8B-MoT</a></p>
+        </div>
+      </div>
+      <div class="folio">SAT 8.22 · VOL.34 · P.04</div>
+    </section>
+
+    <!-- P.05 ESSAY -->
+    <section class="spread" data-p="05">
+      <div class="gutter"></div>
+      <div class="sheet">
+        <div class="pg">
+          <span class="stamp">中缝</span>
+          <h3 class="hed">拉开这一页</h3>
+          <p class="dek">星期六的判断不做成弹窗。粉签 UNFOLD / 拉开，拖或点，展开长卷。纸还在下面。</p>
+          <p class="body">准入、套子、接口、传闻、删除窗口——同一书桌。右签是入口。</p>
+        </div>
+        <div class="pg">
+          <p class="body">Stripe / Linear / Loom 的克制在这里只留一处强调：粉版。翻页即判决，不是竖墙。场景按折页走，像 Mouthful of Dust 那一类叙事，只是载体换成晚报。</p>
+        </div>
+      </div>
+      <div class="tipwrap">
+        <button class="tab" id="tab" type="button">UNFOLD / 拉开</button>
+        <div class="juan" id="juan"><div class="juan-in">
+          <h4>中缝 · 准入与套子</h4>
+          <p>星期六这一叠，卖的不是新大脑，是准入，是套子。</p><p>头版不是一次首发。SpaceXAI 在二〇二六年八月二十一日写明：八月十一日以测试上线的 Grok Bot，扩进 SuperGrok Plus、SuperGrok Heavy、Cursor Pro+、Cursor Ultra，以及 Cursor Teams 的 Standard 与 Premium。企业仍在等候名单。九to五转述官方账号：其余用户另有用量受限的免费试用。Bot 被写成可并行、可进真实工具、可在你走开后继续做事的同事；读者要做的第一件事，是确认自己勾中了哪一档。准入被做成套餐格子。格子被勾上，故事才开始。这是扩权，不是八月十一日那次发布的重演。</p><p>同一窗口的下午，DeepSeek 把视觉补进接口。官方更新日志日期为八月二十一日；深科技见报十八时五十六分，落在北京时间窗口内。实验模型 DeepSeek-V4-Flash-Vision-Exp，调用名 deepseek-v4-flash-vision-exp。官方写：纯文本、Agent、世界知识与正式版 V4-Flash 持平；在需要视觉理解的 Agent 基准上有明显跃升，并称多模态 Agent 能力接近 Opus-4.8。分数按官方表抄录——Terminal Bench 2.1 为八三点九，NL2Repo 五七点七，DeepSWE 五九点三，DSBench-Hard 六三点六，AutomationBench Public 二五点七，ApexBench Pass@1 三六点五，Agents' Last Exam 二七点三，Chartography 六四点三，ZeroBench Pass@5 三五。图片按尺寸折成 token，单张至多三百八十四，价同 V4-Flash。没有新的开源权重。这是一次 API 回路：看见屏幕，再把工具跑完。不是开源节。</p><p>NVIDIA 研究项目 AVO 配 Claude Opus 5，在 ARC-AGI-3 公开集拿到一〇〇点〇〇的 RHAE：二十五环境、一百八十三关、六千六百二十四步环境动作；对照 VISTA 的七千五百四十二步，大约少百分之十二。官方写明：这是公开集，不是半私有，也不是私有赛集；也不是模型单独的分数。ARC Prize 另报 Opus 5 在高推理档约百分之三十，公司说不要把它读成 AVO 的提升幅度。一百分是套子加模型，在公开集上。今天的数字必须带着这句限制一起印。</p><p>商汤今日宣布开源 SenseNova U1.5 Lite：八 B 统一多模态，原生四 K。IT之家时间戳为八月二十一日十二点二十分五十三秒。权重页一侧的更新写作八月二十日——中国「今日宣布」落在窗口内，权重或已于二十日落地。官方自称同量级指令遵循与编辑保持度领先，文字与复杂布局可比超大商业模型：报道称，不作本报实测。</p><p>报道称，彭博社八月二十一日凌晨三点四十五分美东时间，合北京十五点四十五分：Nvidia 与韩国芯片公司 Rebellions 处在早期商谈，范围可能是技术合作、投资，乃至收购。黄仁勋本周在圣克拉拉会见对方联合创始人兼首席执行官。Rebellions 大约融资八亿五千万美元，最近估值约二十三亿，另有韩国政府直接投资。商谈初步，可能谈不成。Nvidia 未回应置评。本报不把「也许」写成成交。</p><p>把五条压在同一张书桌上，形状清楚了。格子是准入；视觉是接口；一百分是套子；八 B 四 K 是宣布；收购是传闻。没有一条需要新的舞台布景。油墨自己会糊。</p><p>更短的期限钉在桌角的牛皮三角上。Manus 于八月二十一日十五时二十二分（协调世界时）来信：羽升须在八月二十三日七点五十九分（新加坡）前备份账户、订阅与任务数据；删除从二十三日八点持续到二十五日七点五十九分；二十五日八点起可恢复。还剩一日。SCI-AIChat-Demo 的持续集成在 master 五七九一八三 f 再失败。Qoder Pro 将于二十五日零点（新加坡）自动续费，信未写金额。Amazon Quick Plus 试用二十四日结束，之后回到免费：一用户、一吉字节。笔记本电脑在卖格子，人在倒数备份。谁先到，谁说了算。</p><p>中缝不负责预测下一周谁赢。中缝只负责把价钱与套子对齐。Grok 是复选框；DeepSeek 是看见图的循环；AVO 是公开集上的一百分——必须说出限制；SenseNova 是八 B 的四 K 宣布；Rebellions 是报道称的也许。翻页本身就是判断：你愿意先看见套餐，还是先看见截止日期。</p>
+        </div></div>
+      </div>
+      <div class="folio">SAT 8.22 · VOL.34 · P.05</div>
+    </section>
+
+    <!-- P.06 Rebellions -->
+    <section class="spread" data-p="06">
+      <div class="gutter"></div>
+      <div class="sheet">
+        <div class="pg">
+          <span class="stamp">报道称 · 15:45 北京</span>
+          <h3 class="hed mis" data-t="早期商谈，不是成交">早期商谈，不是成交</h3>
+          <p class="dek">彭博社八月二十一日 3:45 AM EDT（= 北京 15:45，窗口内）：Nvidia 与 Rebellions 谈可能的技术合作、投资，乃至收购。</p>
+          <div class="body">
+            <p>知情人士：黄仁勋本周在圣克拉拉总部会见 Rebellions 联合创始人兼 CEO Sunghyun Park。商谈初步，可能不会达成交易。Nvidia 未回应置评；Rebellions 代表拒绝置评。</p>
+            <p>报道称对方大约融资 8.5 亿美元（投资方包括 SK Hynix、Samsung Ventures、Arm），最近估值约 23 亿美元，并有韩国政府直接投资。本报不发明结构、价格或持股。</p>
+          </div>
+        </div>
+        <div class="pg">
+          <p class="body">Rebellions 做数据中心推理向神经处理单元。彭博原文把范围写成 partnership / investment / perhaps acquisition——三个词并列，不是已经选定的一种。</p>
+          <p class="body" style="margin-top:12px"><a href="https://www.bloomberg.com/news/articles/2026-08-21/nvidia-in-talks-with-chip-startup-rebellions-for-potential-deal" style="color:#2B4CFF">bloomberg.com/…rebellions…</a></p>
+        </div>
+      </div>
+      <div class="folio">SAT 8.22 · VOL.34 · P.06</div>
+    </section>
+
+    <!-- P.07 wires -->
+    <section class="spread" data-p="07">
+      <div class="gutter"></div>
+      <div class="sheet">
+        <div class="pg">
+          <span class="stamp">短讯 · 不抬头</span>
+          <h3 class="hed">展台与邮件</h3>
+          <div class="body">
+            <p><strong style="font-weight:400" class="pink">星海图 · WRC</strong> 新浪科技八月二十一日下午：高继扬发布「1+3+N」——整机+智能为 1；Kengo / Nexo / Lemo 为 3；行业落地为 N。并发布新一代轮臂 Nexo：全身 30 自由度，双臂最高 20kg 负载。不是本叠头版。</p>
+            <p><strong style="font-weight:400" class="pink">Linear 邮件</strong> 窗口内定价信，changelog 日期为 08-20，故不进脊柱：模型按供应商牌价、不加价；沙箱 $0.25 / 20 分钟；可设花费上限。</p>
+          </div>
+        </div>
+        <div class="pg">
+          <div class="body">
+            <p><strong style="font-weight:400" class="pink">韩国 OCP</strong> 八月二十一日首尔 Tech Day。公开报道写国内 NPU 要补的是开发者已经在用的软件层（Osiris 等对接 vLLM / PyTorch / Triton）。与 Rebellions 传闻同城不同栏。</p>
+            <p style="margin-top:12px"><a href="https://finance.sina.com.cn/jjxw/2026-08-21/doc-inipakuq1378540.shtml" style="color:#2B4CFF">sina 星海图</a><br>
+            <a href="https://linear.app/changelog/2026-08-20-coding-environments" style="color:#2B4CFF">linear changelog 08-20</a><br>
+            <a href="https://aiinasia.com/asian-ai/korea-ocp-open-system-software-npu-stack-asian-ai-news-2026-08-21" style="color:#2B4CFF">AI in Asia · OCP NPU stack</a><br>
+            <a href="https://ocpkorea.com/" style="color:#2B4CFF">ocpkorea.com</a></p>
+          </div>
+        </div>
+      </div>
+      <div class="folio">SAT 8.22 · VOL.34 · P.07</div>
+    </section>
+
+    <!-- P.08 archive pocket -->
+    <section class="spread" data-p="08">
+      <div class="pocket">
+        <p class="kicker">版权页 · 分类广告 · 二十四小时纸条</p>
+        <h3 class="hed">牛皮袋。揭开 recap。</h3>
+        <input class="seek" id="seek" placeholder="检索纸条（时间 / 事实 / 网址）" type="search">
+        <div class="flap" id="flap"><div class="lbl">CLASSIFIEDS / 分类广告 / 版权 · 揭开</div></div>
+        <div class="slips" id="slips"></div>
+      </div>
+      <div class="folio">SAT 8.22 · VOL.34 · P.08 · 2026-08-22 北京时间 · 折晓 早报</div>
+    </section>
+  </div>
+</div>
+
+<div class="env" id="env" title="便条">
+  <div class="tri"></div>
+  <div class="e">便条</div>
+</div>
+<aside class="mail" id="mail">
+  <h5>撕角 · 不是收件箱</h5>
+  <div class="note"><em>URGENT · 1 DAY</em><br>Manus：羽升须在 2026-08-23 07:59 SGT 前备份 Account / Subscription / Task。删除 08-23 08:00–08-25 07:59 SGT。08-25 08:00 起可恢复。来信 2026-08-21 15:22 UTC。</div>
+  <div class="note"><em>CI</em><br>SCI-AIChat-Demo 再失败：compileall + pytest，master 579183f，2026-08-21 18:57 UTC。GitHub Actions。</div>
+  <div class="note"><em>FYI</em><br>Linear 定价信（与 08-20 changelog 同文）：供应商牌价无加价；沙箱 $0.25 / 20 分钟；花费上限。</div>
+  <div class="note"><em>FYI</em><br>Qoder Pro 自动续费 2026-08-25 00:00 SGT；金额信中未写。</div>
+  <div class="note"><em>FYI</em><br>Amazon Quick Plus 试用至 24 Aug 2026，之后回 Free（1 user，1 GB）。</div>
+  <div class="note">sofiapintos190 本窗口无信。已略过 OTP / 收据 / Dribbble。Codex 购买 08-22 11:15 北京 — 窗口之后，不入袋。</div>
+</aside>
+
+<div class="nav"><b id="prev">← PREV</b><b id="next">NEXT →</b></div>
+<div class="hint">← → 或拖页翻折 · 头版即第一页</div>
+
+<script>
+(function(){
+  var spreads=[].slice.call(document.querySelectorAll('.spread'));
+  var i=0, drag=null, x0=0;
+  function show(n){
+    var nxt=(n+spreads.length)%spreads.length;
+    spreads.forEach(function(s,k){s.className='spread'+(k===nxt?' on':'');});
+    i=nxt;
+  }
+  function go(d){ show(i+d); }
+  document.getElementById('next').onclick=function(){go(1)};
+  document.getElementById('prev').onclick=function(){go(-1)};
+  document.addEventListener('keydown',function(e){
+    if(e.key==='ArrowRight') go(1);
+    if(e.key==='ArrowLeft') go(-1);
+  });
+  var stage=document.getElementById('stage');
+  stage.addEventListener('pointerdown',function(e){
+    if(e.target.closest('.tab,.juan,.mail,.env,.seek,.flap,.nav,.note,a,input,button')) return;
+    drag=true; x0=e.clientX;
+  });
+  stage.addEventListener('pointerup',function(e){
+    if(!drag) return; drag=false;
+    var dx=e.clientX-x0;
+    if(dx<-70) go(1);
+    if(dx>70) go(-1);
+  });
+
+  var juan=document.getElementById('juan'), tab=document.getElementById('tab'), open=false;
+  function setJuan(on){ open=on; juan.classList.toggle('open',on); }
+  tab.addEventListener('click',function(){ setJuan(!open); });
+  tab.addEventListener('pointerdown',function(e){
+    e.stopPropagation();
+    var sx=e.clientX, sw=juan.getBoundingClientRect().width, move=function(ev){
+      var w=Math.max(0, Math.min(window.innerWidth*0.92, sw+(sx-ev.clientX)));
+      juan.style.transition='none'; juan.style.width=w+'px';
+      if(w>80) juan.classList.add('open');
+    }, up=function(){
+      document.removeEventListener('pointermove',move);
+      document.removeEventListener('pointerup',up);
+      juan.style.transition='';
+      var w=juan.getBoundingClientRect().width;
+      if(w<160){ juan.style.width=''; setJuan(false);} else { juan.style.width=''; setJuan(true);}
+    };
+    document.addEventListener('pointermove',move);
+    document.addEventListener('pointerup',up);
+  });
+
+  document.getElementById('env').onclick=function(e){ e.stopPropagation(); document.getElementById('mail').classList.toggle('on'); };
+  document.getElementById('mail').onclick=function(e){ e.stopPropagation(); };
+
+  var rows=[
+    {t:'2026-08-21',f:'SpaceXAI：Grok Bot 扩至 SuperGrok Plus/Heavy、Cursor Pro+/Ultra、Teams Standard+Premium。测试自 08-11。企业等候名单。',w:'窗口内官方扩权，非首发。',u:'https://x.ai/news/grok-bot-more-plans'},
+    {t:'2026-08-21',f:'九to五更新转述 @bot：其余用户有用量受限免费试用。',w:'补官方未写进新闻稿的试用句。',u:'https://9to5mac.com/2026/08/21/grok-bot-is-an-all-new-iphone-and-mac-app-from-spacexai-and-cursor/'},
+    {t:'2026-08-21',f:'DeepSeek-V4-Flash-Vision-Exp 上 API。官方分数见内页。无新开源权重。',w:'脊柱 2。官方 changelog。',u:'https://api-docs.deepseek.com/updates/'},
+    {t:'2026-08-21 18:56 北京',f:'深科技：视觉补进 V4，多模态 Agent 官方称接近 Opus 4.8。图≤384 token，价同 V4-Flash。',w:'窗口内中文见报。',u:'https://www.163.com/dy/article/L4SJR8OV05119734.html'},
+    {t:'2026-08-21',f:'DeepSeek 新闻页：图按 V4-Flash 价计，单张至多 384 token；Harness 0.1.1 当日适配。',w:'计费与套子句。',u:'https://api-docs.deepseek.com/news/news260821/'},
+    {t:'2026-08-21',f:'NVIDIA AVO + Claude Opus 5：ARC-AGI-3 公开集 100.00 RHAE，183 关 / 25 环境，6624 步 vs VISTA 7542。',w:'今日数字。公开集，非模型分。',u:'https://developer.nvidia.com/blog/nvidia-avo-reaches-100-on-arc-agi-3-demonstrating-a-frontier-level-general-purpose-architecture-for-long-horizon-autonomous-agents/'},
+    {t:'2026-08-21 12:20:53',f:'IT之家：商汤宣布开源 SenseNova U1.5 Lite，8B 统一多模态，原生 4K。',w:'脊柱 4。今日宣布。',u:'https://www.ithome.com/0/992/589.htm'},
+    {t:'2026-08-20 权重侧 / 08-21 宣布',f:'HF：SenseNova-U1.5-8B-MoT。权重或已于 20 日落地。SOTA 口径=报道称。',w:'时间差必须写明。',u:'https://huggingface.co/sensenova/SenseNova-U1.5-8B-MoT'},
+    {t:'2026-08-21 15:45 北京',f:'报道称彭博：Nvidia 与 Rebellions 早期谈合作 / 投资 / 或收购。约 $850M 融资，近值约 $2.3B。初步，可能黄。Nvidia 未置评。',w:'窗口内二手，不作成交。',u:'https://www.bloomberg.com/news/articles/2026-08-21/nvidia-in-talks-with-chip-startup-rebellions-for-potential-deal'},
+    {t:'2026-08-21 下午',f:'星海图 WRC：「1+3+N」与新一代轮臂 Nexo（30 DoF，双臂最高 20kg）。',w:'窗口内短讯，不抬头。',u:'https://finance.sina.com.cn/jjxw/2026-08-21/doc-inipakuq1378540.shtml'},
+    {t:'邮件窗口内 / changelog 08-20',f:'Linear 编码会话：环境+浏览器测试；牌价无加价；沙箱 $0.25/20 分钟；花费上限。',w:'只作邮件/档案，不进脊柱。',u:'https://linear.app/changelog/2026-08-20-coding-environments'},
+    {t:'2026-08-21',f:'OCP Korea Tech Day 首尔。报道：国产 NPU 补软件层（Osiris 等对接常用推理栈）。',w:'与 Rebellions 同日不同栏。',u:'https://aiinasia.com/asian-ai/korea-ocp-open-system-software-npu-stack-asian-ai-news-2026-08-21'},
+    {t:'2026-08-21',f:'OCP Korea Tech Day 日程页：08-21 10:00–17:30 COEX。',w:'活动落点。',u:'https://ocpkorea.com/'}
+  ];
+  var box=document.getElementById('slips');
+  function render(q){
+    q=(q||'').toLowerCase();
+    box.innerHTML=rows.filter(function(r){
+      return !q || (r.t+r.f+r.w+r.u).toLowerCase().indexOf(q)>-1;
+    }).map(function(r){
+      return '<div class="slip"><b>'+r.t+'</b> · '+r.f+'<br>留：'+r.w+'<br><a href="'+r.u+'">'+r.u+'</a></div>';
+    }).join('') || '<div class="slip">无匹配纸条。</div>';
+  }
+  render('');
+  document.getElementById('seek').addEventListener('input',function(){render(this.value);});
+  var flap=document.getElementById('flap');
+  flap.addEventListener('click',function(){ flap.classList.toggle('up'); });
+})();
+</script>
+</body>
+</html>
