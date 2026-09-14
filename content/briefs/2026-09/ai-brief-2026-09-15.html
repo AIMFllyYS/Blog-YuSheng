@@ -1,596 +1,172 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>雾窗开扇 · 折晓早报 · 2026-09-15</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>折角判笺 · 折晓早报 · 2026-09-15</title>
 <!--
 SOURCES (design steal, offline):
-1. Codrops Never Ending Story GSAP/Lenis https://tympanus.net/codrops/2026/05/28/the-never-ending-story-building-a-seamless-infinite-scroll-experience-with-gsap-lenis/ — steal snap+parallax depth offline via scroll-snap/rAF
-2. It's Nice That graphic trends 2026 https://www.itsnicethat.com/features/forward-thinking-graphic-trends-2026-graphic-design-120126 — micrographics as furniture
-3. 数英 泡泡玛特虚拟潮玩 https://www.digitaling.com/projects/233134.html — spatial rooms as content zones
+1. Flip180 — Digital Magazine Layout… 2026 — editorial hierarchy, modular blocks, hover footnotes
+2. Daembrace Lab — Intent Driven Content Reveal — dwell-gated secondary layers
+3. Tack Mobile — Interface Origami — fold / peel / accordion as physical paper
 -->
-<style>
-:root{
-  --dawn:#e8eef4;
-  --mist:#d4dde8;
-  --glass:#c8d4e0;
-  --sash:#a8b4c0;
-  --alum:#8a96a4;
-  --alum-dark:#6a7684;
-  --concrete:#b8c0c8;
-  --ink:#2a3440;
-  --ink-soft:#4a5564;
-  --fog-white:rgba(232,238,244,.92);
-  --pane-bg:#f2f6fa;
-  --accent:#5a7a8a;
-  --warm:#c4a882;
-}
-*{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%;}
-body{
-  background:
-    radial-gradient(ellipse at 30% 20%,rgba(255,255,255,.55),transparent 55%),
-    radial-gradient(ellipse at 70% 80%,rgba(180,196,210,.35),transparent 50%),
-    linear-gradient(165deg,#dce4ec 0%,var(--dawn) 40%,var(--mist) 100%);
-  color:var(--ink);
-  font-family:"PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",system-ui,-apple-system,sans-serif;
-  overflow:hidden;
-  -webkit-font-smoothing:antialiased;
-}
-/* soft photocopier grain */
-.grain{
-  pointer-events:none;position:fixed;inset:0;z-index:100;opacity:.045;
-  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-}
-.stage{
-  position:relative;width:100vw;height:100vh;
-  display:flex;align-items:center;justify-content:center;
-  perspective:1800px;padding:1.5rem 1rem 3.5rem;
-}
-.mast{
-  position:absolute;top:1rem;left:1.25rem;z-index:30;
-  font-size:.7rem;letter-spacing:.18em;color:var(--alum-dark);
-  font-weight:500;
-}
-.mast span{color:var(--accent)}
-.hint{
-  position:absolute;bottom:3.2rem;left:50%;transform:translateX(-50%);z-index:30;
-  font-size:.68rem;color:var(--ink-soft);letter-spacing:.04em;
-  white-space:nowrap;opacity:.7;
-}
-/* ——— window frame ——— */
-.window{
-  position:relative;
-  width:min(980px,96vw);
-  height:min(640px,82vh);
-  transform-style:preserve-3d;
-}
-.frame{
-  position:absolute;inset:0;
-  background:linear-gradient(180deg,var(--sash) 0%,var(--alum) 50%,var(--alum-dark) 100%);
-  border-radius:3px;
-  box-shadow:
-    0 24px 48px rgba(42,52,64,.18),
-    0 2px 0 rgba(255,255,255,.35) inset,
-    0 -1px 0 rgba(0,0,0,.12) inset;
-  padding:14px 12px 18px;
-}
-.mullion-h{
-  position:absolute;left:12px;right:12px;top:50%;height:10px;
-  margin-top:-5px;background:linear-gradient(180deg,#b0bac4,#8a96a4);
-  z-index:5;border-radius:1px;
-  box-shadow:0 1px 0 rgba(255,255,255,.3),0 -1px 0 rgba(0,0,0,.15);
-  display:none; /* 3-pane vertical only */
-}
-.panes{
-  display:grid;
-  grid-template-columns:1fr 1.35fr 1fr;
-  gap:8px;
-  height:100%;
-  position:relative;
-  transform-style:preserve-3d;
-}
-.pane{
-  position:relative;
-  background:var(--pane-bg);
-  border:1px solid rgba(106,118,132,.45);
-  border-radius:2px;
-  overflow:hidden;
-  box-shadow:
-    inset 0 0 40px rgba(200,212,224,.35),
-    inset 0 1px 0 rgba(255,255,255,.5);
-  transform-style:preserve-3d;
-  transform-origin:center center;
-}
-.pane-left{transform-origin:right center;}
-.pane-right{transform-origin:left center;}
-.pane-center{z-index:2;}
 
-/* micrographic timestamps on glass edge */
-.edge-stamp{
-  position:absolute;writing-mode:vertical-rl;text-orientation:mixed;
-  font-size:9px;letter-spacing:.12em;color:rgba(90,122,138,.55);
-  font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
-  top:12px;bottom:12px;z-index:4;pointer-events:none;
-  user-select:none;
-}
-.pane-left .edge-stamp{right:4px;}
-.pane-right .edge-stamp{left:4px;}
-
-/* hinge handles */
-.hinge{
-  position:absolute;top:50%;width:22px;height:56px;margin-top:-28px;
-  background:linear-gradient(90deg,#9aa6b2,#c0c8d0,#9aa6b2);
-  border:1px solid var(--alum-dark);border-radius:3px;cursor:grab;
-  z-index:8;box-shadow:0 2px 6px rgba(0,0,0,.15);
-  display:flex;align-items:center;justify-content:center;
-  font-size:10px;color:var(--alum-dark);user-select:none;
-}
-.hinge:active{cursor:grabbing}
-.hinge-l{left:-6px;}
-.hinge-r{right:-6px;}
-.hinge::after{
-  content:"";width:3px;height:28px;background:rgba(42,52,64,.25);border-radius:1px;
-}
-
-/* archive content on side panes */
-.archive{
-  padding:1.1rem .9rem 1.1rem 1rem;
-  height:100%;overflow:auto;
-  scroll-snap-type:y mandatory;
-  font-size:.78rem;line-height:1.55;color:var(--ink-soft);
-  opacity:.28;transition:opacity .45s ease;
-  filter:blur(.4px);
-}
-.pane.open .archive{opacity:1;filter:none}
-.archive h3{
-  font-size:.72rem;letter-spacing:.14em;color:var(--accent);
-  font-weight:600;margin-bottom:.75rem;text-transform:uppercase;
-}
-.archive .slot{
-  scroll-snap-align:start;
-  padding:.55rem 0;border-bottom:1px solid rgba(138,150,164,.25);
-}
-.archive .t{
-  font-family:ui-monospace,"SF Mono",Menlo,monospace;
-  font-size:.65rem;color:var(--alum-dark);letter-spacing:.04em;margin-bottom:.2rem;
-}
-.archive a{color:var(--accent);text-decoration:underline;text-underline-offset:2px}
-.archive p{margin:0}
-
-/* center essay + fog */
-.essay-wrap{
-  position:relative;height:100%;padding:1.25rem 1.4rem 1.5rem;
-  overflow:auto;scroll-snap-type:y proximity;
-}
-.essay{
-  font-size:.9rem;line-height:1.75;color:var(--ink);
-  opacity:0;transition:opacity .7s ease;
-  max-width:36em;
-}
-.essay.revealed{opacity:1}
-.essay h1{
-  font-size:clamp(1.35rem,3.2vw,1.75rem);font-weight:700;
-  line-height:1.25;margin-bottom:.35rem;letter-spacing:.02em;
-}
-.essay .thesis{
-  font-size:.82rem;color:var(--accent);line-height:1.5;
-  margin-bottom:1rem;padding-bottom:.75rem;
-  border-bottom:1px solid rgba(138,150,164,.3);
-}
-.essay p{margin-bottom:.9rem;text-indent:0}
-.essay .num-call{
-  display:inline-block;font-family:ui-monospace,"SF Mono",Menlo,monospace;
-  font-size:1.05rem;font-weight:700;color:var(--accent);
-  letter-spacing:-.02em;
-}
-.essay a{color:var(--accent);text-decoration:underline;text-underline-offset:2px}
-.essay .sofia{
-  margin-top:1.1rem;padding:.85rem 1rem;
-  background:rgba(196,168,130,.12);
-  border-left:2px solid var(--warm);
-  font-size:.85rem;line-height:1.6;color:var(--ink);
-}
-.essay .src{
-  margin-top:1rem;font-size:.68rem;color:var(--ink-soft);
-  font-family:ui-monospace,"SF Mono",Menlo,monospace;line-height:1.5;
-}
-.essay .src a{color:var(--alum-dark)}
-
-/* fog overlay — CSS/SVG mask wipe */
-.fog{
-  position:absolute;inset:0;z-index:6;cursor:crosshair;
-  touch-action:none;
-  background:
-    radial-gradient(ellipse at 40% 35%,rgba(232,238,244,.72),transparent 60%),
-    linear-gradient(160deg,rgba(212,221,232,.92),rgba(200,212,224,.82));
-  -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
-  -webkit-mask-size:100% 100%;mask-size:100% 100%;
-  -webkit-mask-mode:luminance;mask-mode:luminance;
-  transition:opacity .4s ease;
-}
-.fog::before{
-  content:"";position:absolute;inset:0;opacity:.55;pointer-events:none;
-  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.45'/%3E%3C/svg%3E");
-}
-.fog.cleared{opacity:0;pointer-events:none}
-.fog-label{
-  position:absolute;left:50%;top:48%;transform:translate(-50%,-50%);
-  font-size:.75rem;letter-spacing:.16em;color:rgba(74,85,100,.7);
-  pointer-events:none;white-space:nowrap;z-index:7;
-  transition:opacity .3s;
-}
-.fog.cleared + .fog-label,.pane-center.wiped .fog-label{opacity:0}
-
-/* sill / mail */
-.sill{
-  position:absolute;left:0;right:0;bottom:-2px;
-  height:28px;z-index:12;
-  background:linear-gradient(180deg,#b0bac4 0%,#8a96a4 40%,#70808c 100%);
-  border-radius:0 0 3px 3px;
-  box-shadow:0 4px 12px rgba(0,0,0,.12),0 1px 0 rgba(255,255,255,.25) inset;
-  cursor:ns-resize;user-select:none;
-  display:flex;align-items:center;justify-content:center;
-}
-.sill::before{
-  content:"▲ 抬起窗台 · 信槽";
-  font-size:.62rem;letter-spacing:.1em;color:rgba(42,52,64,.55);
-}
-.sill.lifted::before{content:"▼ 放下"}
-.mail-slot{
-  position:absolute;left:8px;right:8px;bottom:26px;
-  max-height:0;overflow:hidden;
-  background:linear-gradient(180deg,#eef2f6,#e0e6ec);
-  border:1px solid var(--alum);
-  border-bottom:none;border-radius:4px 4px 0 0;
-  z-index:11;
-  transition:max-height .45s cubic-bezier(.22,.8,.28,1),padding .3s;
-  box-shadow:0 -8px 24px rgba(42,52,64,.12);
-}
-.mail-slot.open{
-  max-height:220px;padding:1rem 1.15rem .9rem;
-  overflow:auto;
-}
-.mail-slot h4{
-  font-size:.68rem;letter-spacing:.14em;color:var(--accent);
-  margin-bottom:.55rem;font-weight:600;
-}
-.mail-grid{
-  display:grid;grid-template-columns:1fr 1fr;gap:.5rem .85rem;
-  font-size:.72rem;line-height:1.45;color:var(--ink);
-}
-.mail-grid dt{
-  font-family:ui-monospace,"SF Mono",Menlo,monospace;
-  font-size:.62rem;letter-spacing:.08em;color:var(--alum-dark);
-  margin-bottom:.1rem;
-}
-.mail-grid dd{margin:0 0 .35rem}
-.mail-grid .skip{grid-column:1/-1;opacity:.65;font-size:.68rem}
-
-.footer{
-  position:fixed;bottom:.65rem;left:0;right:0;text-align:center;z-index:40;
-  font-size:.68rem;letter-spacing:.08em;color:var(--alum-dark);
-}
-
-/* open state transform */
-.pane-left.open{transform:rotateY(-52deg);box-shadow:8px 0 24px rgba(0,0,0,.12)}
-.pane-right.open{transform:rotateY(52deg);box-shadow:-8px 0 24px rgba(0,0,0,.12)}
-.pane{transition:transform .55s cubic-bezier(.22,.8,.28,1)}
-
-@media (prefers-reduced-motion:reduce){
-  .pane,.mail-slot,.archive,.essay,.fog{transition:none!important}
-  .fog{opacity:0!important;pointer-events:none!important}
-  .essay{opacity:1!important}
-  .archive{opacity:1!important;filter:none!important}
-}
-@media (max-width:720px){
-  .panes{grid-template-columns:1fr}
-  .pane-left,.pane-right{display:none}
-  .pane-left.show-m,.pane-right.show-m{display:block;position:absolute;inset:0;z-index:10}
-  .hinge{display:none}
-  .hint{font-size:.6rem;white-space:normal;text-align:center;max-width:90%}
-}
-</style>
-</head>
-<body>
-<div class="grain" aria-hidden="true"></div>
-<div class="stage">
-  <div class="mast">折晓 · 北京窗台 · <span>2026-09-15</span></div>
-  <div class="window" id="window">
-    <div class="frame">
-      <div class="panes">
-        <!-- LEFT ARCHIVE -->
-        <div class="pane pane-left" id="paneL" aria-label="左侧档案扇">
-          <div class="edge-stamp">06:00 · 14日窗沿 · archive-L · 制度密谈</div>
-          <div class="hinge hinge-l" id="hingeL" title="拖开左侧扇" aria-label="打开左侧扇"></div>
-          <div class="archive">
-            <h3>左扇 · 制度时辰</h3>
-            <div class="slot">
-              <div class="t">09-14 · WaPo</div>
-              <p>Anthropic、OpenAI、Google 自七月起磋商行业主导的 AI 安全标准机构（测试／审计／预发布评审）。尚无正式实体。<a href="https://www.washingtonpost.com/technology/2026/09/14/anthropic-openai-google-discussed-creating-new-ai-safety-body/" target="_blank" rel="noopener">华盛顿邮报</a>；Information EDGE 亦有跟进。</p>
-            </div>
-            <div class="slot">
-              <div class="t">09-13 · Reuters · 窗外</div>
-              <p>特朗普称「非常负面的力量」夸大 AI 忧虑，淡化放缓叙事。不作本窗首发，作对冲背景。<a href="https://www.reuters.com/world/europe/trump-says-very-negative-forces-raising-exaggerated-concerns-over-ai-2026-09-13/" target="_blank" rel="noopener">路透</a></p>
-            </div>
-            <div class="slot">
-              <div class="t">微图家具 · 窗棱</div>
-              <p>时间戳贴在玻璃边缘：治理会开多久，工具已经在生产里走了几圈。</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- CENTER ESSAY -->
-        <div class="pane pane-center" id="paneC">
-          <div class="fog" id="fog" role="img" aria-label="雾玻璃，指针擦拭可开扇"></div>
-          <div class="fog-label" id="fogLabel">擦雾 · 开扇</div>
-          <div class="essay-wrap">
-            <article class="essay" id="essay">
-              <h1>《雾窗开扇》</h1>
-              <p class="thesis">Pace 从合唱落到制度密谈，撞上白宫淡化；算力资本与 Astra agent 仍在并行</p>
-              <p>晨雾贴在铝框上，像一层未干的影印灰。这扇窗对着北京时间九月十四日六点到十五日六点：一边是安全标准的密谈，一边是算力筹资与 agent 进生产的平行声线。把雾擦开，先看见制度在开会，再看见工具已经少人盯着走进楼里。窗台早报不负责合唱，只负责把玻璃上的灰擦薄一点，让三条线同时入眼。</p>
-              <p>据《华盛顿邮报》九月十四日报道，Anthropic、OpenAI 与 Google 自七月起讨论组建一个由行业主导的 AI 安全标准机构，议题覆盖测试、审计与预发布评审。报道称，正式实体尚未成立——Pace 一类「独立评估」的合唱，正落到更具体的制度密谈里。密谈不等于立法，也不等于已经有人拿着章去拦发货；它更像把从前挂在口头上的标准，往可执行的流程里推了一寸。若把独立评估员想成药物上市前的外部评审，这层会议桌其实在问：谁签字、签什么、签完能不能拦住发货，以及拦不住时责任落在哪一侧。</p>
-              <p>同一条轴线却撞上另一股风。路透社九月十三日引述特朗普的说法：有「非常负面的力量」在夸大对 AI 的担忧。这则言论不在本窗首发，却足以作政策对冲——白宫淡化「放缓」叙事时，实验室间的密谈更像在雾里走路：方向有了，能见度仍低。一边是行业试图自建评审门槛，一边是政治话语把焦虑说成被夸大；两股力不互相取消，只是让「该不该慢一点」的公共讨论更难落成清晰的时间表。</p>
-              <p>雾的另一侧，资本与工具并不等人。今日数字：Firmus Technologies 正寻求在澳大利亚 IPO 筹资至多 <span class="num-call">$5B</span>。路透社九月十四日援引知情人士与彭博报道称，公司瞄准十月启动、最早或于十月下旬挂牌；规模与时间表仍可能变动。报道称，若达五十亿美元量级，这将跻身年内全球最大 IPO 之列。算力基建仍在路上募钱——安全机构还在谈章程时，数据中心的招股书已经写到了十月。</p>
-              <p>OpenAI 同日官方披露：Perplexity 使用 GPT-6 Astra，覆盖端到端系统——通信、真实软件、生产监控，以及自建测试框架。Astra 的故事不需要夸张：当治理还在会议室里排日程，agent 已经少人盯着进了生产。一边谈审计与预发布，一边是生产监控与自建 harness——两条时间轴并排，窗玻璃却只擦得开一面。治理若仍停留在「我们是否该成立某个机构」，生产侧已经在问「这个 agent 昨晚有没有把监控告警自己消化掉」。</p>
-              <p>次要一笔：据路透专访线路，现代汽车相关高管称波士顿动力二零二七年 IPO 可能性不高——人形机器人尚未规模部署、公司仍未盈利。资本叙事里，有人猛踩油门，有人说「不会那么容易」。把 Firmus 的五十亿美元意向与波士顿动力的推迟并置，并不是要制造戏剧，只是提醒：同一季节里，募资窗口与交付窗口并不总是同步打开。</p>
-              <p>于是这扇雾窗的主题并不复杂。Pace 从合唱落到制度密谈，撞上白宫淡化；算力资本与 Astra agent 仍在并行。擦雾的人站在窗台中间，左手是会议纪要，右手是招股与生产日志——早报只把它们摆在同一块玻璃上，让你决定先看哪一边。</p>
-              <div class="sofia">
-                <strong>给 Sofia：</strong>Pace／独立评估员 ≈ 药物上市前的外部评审；Astra 的故事提醒我们——治理还在开会时，工具已少人盯着进生产。窗台左边是制度时辰，右边是资本与 agent；中间这篇早报，只负责把雾擦薄一点。
-              </div>
-              <div class="src">
-                主链 ·
-                <a href="https://www.washingtonpost.com/technology/2026/09/14/anthropic-openai-google-discussed-creating-new-ai-safety-body/">WaPo 安全机构磋商</a> ·
-                <a href="https://www.reuters.com/world/europe/trump-says-very-negative-forces-raising-exaggerated-concerns-over-ai-2026-09-13/">Reuters 白宫淡化</a> ·
-                <a href="https://openai.com/index/perplexity-improving-accuracy-with-astra/">OpenAI × Perplexity Astra</a> ·
-                <a href="https://www.reuters.com/world/asia-pacific/firmus-seeks-raise-up-5-billion-australian-ipo-bloomberg-reports-2026-09-14/">Firmus ≤$5B IPO</a>
-              </div>
-            </article>
-          </div>
-        </div>
-
-        <!-- RIGHT ARCHIVE -->
-        <div class="pane pane-right" id="paneR" aria-label="右侧档案扇">
-          <div class="edge-stamp">06:00 · 15日窗沿 · archive-R · 资本·agent</div>
-          <div class="hinge hinge-r" id="hingeR" title="拖开右侧扇" aria-label="打开右侧扇"></div>
-          <div class="archive">
-            <h3>右扇 · 资本与 agent</h3>
-            <div class="slot">
-              <div class="t">09-14 · TODAY · ≤$5B</div>
-              <p>Firmus 澳 IPO 寻求筹资至多五十亿美元，报道称瞄准十月／下旬挂牌。<a href="https://www.reuters.com/world/asia-pacific/firmus-seeks-raise-up-5-billion-australian-ipo-bloomberg-reports-2026-09-14/" target="_blank" rel="noopener">路透（彭博）</a></p>
-            </div>
-            <div class="slot">
-              <div class="t">09-14 · OpenAI</div>
-              <p>Perplexity × GPT-6 Astra：端到端系统（通信、真实软件、生产监控、自建测试框架）。<a href="https://openai.com/index/perplexity-improving-accuracy-with-astra/" target="_blank" rel="noopener">OpenAI</a></p>
-            </div>
-            <div class="slot">
-              <div class="t">次要 · BD IPO</div>
-              <p>报道称波士顿动力二零二七年 IPO 可能性不高（现代汽车高管，路透专访线路）。</p>
-            </div>
-            <div class="slot">
-              <div class="t">空间分区</div>
-              <p>左扇制度、中扇散文、右扇资本——窗台三区，内容当房间用。</p>
-            </div>
-          </div>
-        </div>
+  <script type="module" crossorigin>(function(){const n=document.createElement("link").relList;if(n&&n.supports&&n.supports("modulepreload"))return;for(const a of document.querySelectorAll('link[rel="modulepreload"]'))i(a);new MutationObserver(a=>{for(const r of a)if(r.type==="childList")for(const d of r.addedNodes)d.tagName==="LINK"&&d.rel==="modulepreload"&&i(d)}).observe(document,{childList:!0,subtree:!0});function t(a){const r={};return a.integrity&&(r.integrity=a.integrity),a.referrerPolicy&&(r.referrerPolicy=a.referrerPolicy),a.crossOrigin==="use-credentials"?r.credentials="include":a.crossOrigin==="anonymous"?r.credentials="omit":r.credentials="same-origin",r}function i(a){if(a.ep)return;a.ep=!0;const r=t(a);fetch(a.href,r)}})();const m="2026-09-15",f="折角判笺",g="折晓早报",h="2026-09-15 北京时间 · 折晓 早报",b={label:"TODAY NUMBER",value:">$700M",detail:"Lumilens Series C · 估值 $5.51B",href:"https://www.frontier-enterprise.com/lumilens-raises-700m-to-break-ais-connectivity-bottlenecks-in-the-data-centre/"},v="同一新闻日内，前沿实验室在谈「标准机构尚未成体」，资本却砸向光互联——AI 瓶颈叙事从「买得到多少 GPU」切到「连得上多少 GPU」。",y=[{title:"行业安全标准机构：七月起开会，尚未成体",lede:"Anthropic、OpenAI、Google 自 2026-07 起 working group，讨论行业主导的 AI 安全标准机构（测试／发布前审计）。正式实体尚未成立。",body:"报道称议题覆盖测试、审计与预发布评审；迄今无公开章程、成员、资金或时间表。这与「放缓」合唱不同——是「已开会、未成体」。",grade:"B",sources:[{label:"华盛顿邮报",href:"https://www.washingtonpost.com/technology/2026/09/14/anthropic-openai-google-discussed-creating-new-ai-safety-body/"},{label:"PYMNTS",href:"https://www.pymnts.com/news/artificial-intelligence/2026/google-openai-and-anthropic-float-idea-of-ai-standards-body/"}]},{title:"Sakana Fugu Max + Ultra v2",lede:"编排层非单模；公司称 Ultra v2 在多项 agentic 基准上达最佳／并列最佳。",body:"池中不含 Fable 5/5.1、GPT-6-Astra。Max 标价约 $2/$6 per 1M in/out tokens；公司称相对若干前沿模降价 40–60%。",grade:"A",sources:[{label:"sakana.ai",href:"https://sakana.ai/fugu-max-release/"}]},{title:"AMD 锐龙 AI Max PRO 400 中国上市",lede:"公司称统一内存至 192GB，可本地跑约 300B 参数模型（上代约 128GB/200B）。",body:"联合联想等展出 9 款搭载 495 的新品。性能口径为公司称。",grade:"A-",sources:[{label:"新浪科技",href:"https://finance.sina.com.cn/jjxw/2026-09-14/doc-iniruxuy4544318.shtml"}]}],$=[{title:"国产 GPU+类脑异构推理（算力大会）",lede:"报道称相对同类国产 GPU 集群，DeepSeek V4 Flash 实测推理／能效升 1 倍以上、运营成本降 40%+——待一报复核。",grade:"C→B",sources:[{label:"快科技转述",href:"https://news.17173.com/content/09142026/100106237.shtml"}]}],k=[{title:"ISEMBYLD（apitegromab）FDA 批准",lede:"首个直接针对肌丢失的 SMA 疗法；≥2 岁且已在用 SMN2 靶向药。",body:"SAPPHIRE：2–12 岁主分析 HFMSE 改善；有意义改善约 34.2% vs 13.5%（安慰剂）。骨折风险升高。阶段：已批准。",stage:"已批准",grade:"A",sources:[{label:"FDA",href:"https://www.fda.gov/drugs/news-events-human-drugs/fda-approves-first-therapy-target-muscle-loss-spinal-muscular-atrophy"}]},{title:"Pixclara（¹⁸F-FET）胶质瘤诊断",lede:"Telix；首个 FDA 批准用于胶质瘤的 FET-PET；鉴别复发／进展 vs 治疗相关改变。",body:"成人 + ≥1 月龄儿科。公司称美年新发胶质瘤约 2.4 万。阶段：已批准（诊断药）。",stage:"已批准（诊断）",grade:"A",sources:[{label:"Telix",href:"https://telixpharma.com/news-views/fda-approves-telixs-brain-cancer-imaging-drug-pixclara/"}]},{title:"Beta Bionics Mint 贴片泵",lede:"FDA 510(k) 清除；CGM+手机；全量商业化预期 2027 Q1。",body:"3D Intelligence 算法另提 510(k)，尚未清。公司称 2027 一次性耗材产能目标至少 150 万套。",stage:"器械已清除",grade:"A-",sources:[{label:"GlobeNewswire 转述",href:"https://www.financialcontent.com/article/gnwcq-2026-9-14-beta-bionics-announces-fda-clearance-of-mint-the-companys-transformative-patch-pump-and-unveils-3d-intelligence-as-its-next-generation-insulin-dosing-algorithm"}]}],w={title:"今日医学知识桥｜SMN vs 肌抑素",text:"SMA 根因是 SMN1 缺陷→运动神经元死亡→继发肌萎缩。Spinraza／Zolgensma 等走 SMN2 补蛋白，保神经元，但对已失肌纤维帮助有限。Myostatin（GDF-8）负向调控骨骼肌生长；apitegromab 结合 pro-／latent myostatin，抑制成熟肌抑素激活，把治疗从「救神经」扩到「保／增肌」。临床用 HFMSE 量化运动功能。学习锚点：神经源性肌萎缩 vs 原发性肌病；生长因子负反馈；单抗中和配体。"},A=[{title:"中国移动硅光芯片高维多体纠缠",lede:"16×1.5 mm 可编程硅光芯片；三体四维 GHZ／W，保真度 93.2%／90.1%（机构宣称规模纪录）。",body:"高维 qudit 扩容信息与抗噪；通信／计算底层。论文脉络见 Light: Sci. & Appl.（Chi 等）。",grade:"A-",sources:[{label:"C114",href:"https://www.c114.com.cn/news/118/a1317516.html"},{label:"Global Times",href:"https://www.globaltimes.cn/page/202609/1370498.shtml"}]},{title:"Lumilens 光互联 Series C",lede:">$700M／估值 $5.51B；融资叙事：约束从 GPU 数量→可连接数量。",body:"与 TODAY NUMBER 交叉。公司称有 multi-billion-dollar hyperscaler 协议——写作标公司称。",grade:"A-",sources:[{label:"Frontier Enterprise",href:"https://www.frontier-enterprise.com/lumilens-raises-700m-to-break-ais-connectivity-bottlenecks-in-the-data-centre/"}]},{title:"Fujitsu MONAKA 主权 AI CPU",lede:"日设计 2nm 级 CPU + 主权 AI 服务器；全球销售自 2026-11。",body:"公司称同负载 AI 推理吞吐约 2×、服务器／功耗可减半——公司称。",grade:"A",sources:[{label:"Fujitsu 新闻稿",href:"https://www.newswire.ca/news-releases/fujitsu-launches-made-in-japan-next-generation-cpu-fujitsu-monaka-and-fujitsu-monaka-server-for-sovereign-ai-infrastructure-850554360.html"}]}],S={title:"长轨｜PsiQuantum CHIPS R&D ≤$100M",lede:"NIST 09-08：与美商务部敲定光电材料、单光子探测、低损耗封装进半导体制造流。",grade:"A",sources:[{label:"NIST",href:"https://www.nist.gov/news-events/news/2026/09/department-commerce-announces-finalization-chips-rd-award-psiquantum"}]},E={A:[{from:"GitHub → aimfllyys",subject:"Notebook-MedFreshman CI 多次失败（master + PR）",note:"最新 master ci failure（2026-09-14 12:50Z）。与「本学期学习平台不重构」一致：工程债可延后，除非阻塞维持可用。"}],B:[{from:"Slack",subject:"Pro 试用至 9/16",note:"信中写明「You have 3 more days…」；非 17。"},{from:"Cursor",subject:"Unblock your Cloud Agent Setup",note:"仍 blocked（sofia）；待你输入才能完成。"},{from:"GitHub",subject:"SCI-AIChat-Demo / deepseek-harness 红灯",note:"ci + security-audit；E2E (real DeepSeek API) failure。"}],C:[{from:"qqx1599@llm-agent.cc",subject:"GPT 倍率调整",note:"建议优先 Grok／国产；仅供参考。"}]},I=[{tier:"red",d:"D0",date:"09-15",text:"细胞首次实验报告 · 今交"},{tier:"red",d:"D1",date:"09-16",text:"医学英语 Unit1 Reading2 小组展示"},{tier:"red",d:"D3",date:"09-18",text:"人体组织学实验启动"},{tier:"blue",d:"D8",date:"09-23",text:"大学体育（二）开课"}],L="主日历今日→+14d 几乎只有习惯块（晚间复盘／晨跑／周日复盘）。课表／实验／展示硬日期未进 Calendar——Calendar ≠ Notion 硬日期，尚未对齐。",D={stage:"W3｜重新接管",stageNote:"保护近期交付 + 启动前置；W1–W2 已过、不做补偿爆肝。下一战略窗：W4–W5 第一次黄金窗口。",risks:[{level:"Medium",items:"细胞、系解、组织、生化、生化实验技术（预警）、医学英语"},{level:"Low",items:"分析化学、医学研究（Waiting）、AI概论（Completed）"}],family:"家庭近况｜姥姥近期住院（High，9/14 口述；无病情细节、不推测；需联系父母／合适时给姥姥电话）",paused:"学习平台：本学期功能冻结 > 真实使用；国庆／中秋仅允许短 Spike；核心重构／MCP／移动端 → 寒假。"},M={dailyLog:"仅 1 条（2026-09-14）：Sleep 6.28h · Score 80 · Bedtime 00:41 · Wake ~07:00；计划 14／完成 3。",studySessions:"空（0）——保持 empty，≠0",weeklyReviews:"空（0）",trend:"有效点数 <3 → 不写趋势。"},N={alerts:["D0 细胞首次实验报告今交——Daily Log 9/14 晚仍标未完成。把报告交出去比完美更重要。","D1 医英展示 9/16；D3 组织学实验 9/18。","姥姥住院：跟进父母／电话——非学业 DDL，但是 High。","睡眠样本：单日 00:41／6.28h；样本不足不趋势化。"],breakthroughs:["W3 控制台与学期战略已落库（风险／阶段／Final DDL 可机读）。","学习平台边界已写死（冻结／Spike／寒假）→ 降范围膨胀风险。"],opportunities:["把硬日期放进 Calendar：9/15 报告、9/16 展示、9/18 实验、9/23 体育。","先清 D0–D3，再开 W4–W5 章节地图。","Slack 试用 9/16、Cursor Cloud Agent 输入：低成本关闭。"]},C="细胞报告是 D0，不是危机。交出去，今天就算结算完这一折。",o={date:m,title:f,subtitle:g,footer:h,todayNumber:b,thesis:v,ai:y,aiArchive:$,med:k,medBridge:w,tech:A,techLongTrack:S,mail:E,ddl:I,calendarNote:L,notion:D,airtable:M,cross:N,encouragement:C};function s(e){return e.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}function p(e){return`<div class="sources">${e.map(n=>`<a href="${s(n.href)}" target="_blank" rel="noopener">${s(n.label)}</a>`).join("")}</div>`}function l(e){return`<article class="item">
+    <h3>${s(e.title)}
+      <span class="grade" title="证据等级">证 ${s(e.grade)}</span>
+      ${e.stage?`<span class="stage-pill">${s(e.stage)}</span>`:""}
+    </h3>
+    <p class="lede">${s(e.lede)}</p>
+    ${e.body?`<p class="body">${s(e.body)}</p>`:""}
+    ${p(e.sources)}
+  </article>`}function c(e,n,t,i,a){return`<section class="panel" id="panel-${e}" data-fold="closed" data-zone="${e}">
+    <div class="panel-hinge" aria-hidden="true"></div>
+    <button type="button" class="dog-ear" data-label="${s(t)}"
+      aria-expanded="false" aria-controls="inner-${e}"
+      title="折开 ${s(n)}"></button>
+    <div class="panel-face">
+      <div class="panel-lede">
+        <span class="tag">${s(n)}</span>
+        <span>${s(i)}</span>
+      </div>
+      <div class="panel-inner" id="inner-${e}" hidden>
+        ${a}
       </div>
     </div>
-    <div class="mail-slot" id="mail" aria-live="polite">
-      <h4>信槽 · MAIL</h4>
-      <dl class="mail-grid">
-        <div>
-          <dt>ACTION</dt>
-          <dd>Cursor Cloud Agent Setup 仍 blocked（sofia）；Slack Pro trial 至 Sep 16（信中写明，非 17）</dd>
-        </div>
-        <div>
-          <dt>WATCH</dt>
-          <dd>SCI-AIChat-Demo 579183f 仍红 + security-audit；deepseek-harness E2E c291e79；Notebook-MedFreshman PR CI 27512d2</dd>
-        </div>
-        <div>
-          <dt>INFO</dt>
-          <dd>llm-agent GPT 费率调整 — 优先 Grok／CN；5.5×5／5.6-sol×10／6-astra×25</dd>
-        </div>
-        <div class="skip">
-          <dt>SKIP</dt>
-          <dd>Mobbin／Sider／Scite／Consensus；无 OTP 明文</dd>
-        </div>
-      </dl>
+  </section>`}function x(){const e=o.mail,n=(t,i)=>{const a=e[t];return`<div class="flap" data-flap="${t}" data-open="false">
+      <button type="button" class="flap-tab" aria-expanded="false">
+        函 · ${t}｜${s(i)}
+        <span class="count">${a.length}</span>
+      </button>
+      <div class="flap-body" hidden>
+        ${a.map(r=>`<div class="mail-item">
+            <div class="from">${s(r.from)}</div>
+            <div><strong>${s(r.subject)}</strong></div>
+            <div>${s(r.note)}</div>
+          </div>`).join("")}
+      </div>
+    </div>`};return`<div class="mail-zone" id="mail-zone">
+    <h2>函｜邮件清理</h2>
+    <div class="mail-flaps">
+      ${n("A","必须处理")}
+      ${n("B","需要知道")}
+      ${n("C","仅供参考")}
     </div>
-    <div class="sill" id="sill" role="button" tabindex="0" aria-label="抬起窗台打开信槽" aria-expanded="false"></div>
-  </div>
-  <div class="hint">擦雾 W · 左右扇 ← → · 窗台 S · 拖铰链开扇</div>
-</div>
-<footer class="footer">2026-09-15 北京时间 · 折晓 早报</footer>
-<script>
-(function(){
-  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var fog = document.getElementById('fog');
-  var fogLabel = document.getElementById('fogLabel');
-  var essay = document.getElementById('essay');
-  var paneC = document.getElementById('paneC');
-  var paneL = document.getElementById('paneL');
-  var paneR = document.getElementById('paneR');
-  var sill = document.getElementById('sill');
-  var mail = document.getElementById('mail');
-  var holes = [];
-  var wiped = 0;
-  var leftOpen = false, rightOpen = false, sillOpen = false;
-  var maskDirty = false;
+  </div>`}function T(){return`<div class="ddl-rail" id="ddl-rail">
+    ${o.ddl.map(e=>`<button type="button" class="ticket ${s(e.tier)}" data-open="false"
+          aria-expanded="false">
+        <div class="d">${s(e.d)} · ${e.tier==="red"?"红":e.tier==="blue"?"蓝":"黄"}</div>
+        <div class="date">${s(e.date)}</div>
+        <div class="text">${s(e.text)}</div>
+      </button>`).join("")}
+    <p class="cal-note">${s(o.calendarNote)}</p>
+  </div>`}function B(){const e=o.notion;return`<div class="intent-rail" id="notion-rail" tabindex="0">
+    <h2>Notion｜意图旁注</h2>
+    <p class="dwell-hint">停住约 650ms 显墨……</p>
+    <div class="intent-ghost">
+      <div class="notion-block"><strong>${s(e.stage)}</strong> — ${s(e.stageNote)}</div>
+      <div class="notion-block"><strong>风险</strong>：${e.risks.map(n=>`${s(n.level)}｜${s(n.items)}`).join("；")}</div>
+      <div class="notion-block"><strong>家庭</strong>：${s(e.family)}</div>
+      <div class="notion-block"><strong>暂停</strong>：${s(e.paused)}</div>
+    </div>
+  </div>`}function P(){const e=o.airtable;return`<div class="reverse-strip" id="airtable-strip" data-open="false">
+    <button type="button" class="strip-toggle" aria-expanded="false">
+      ▾ 翻面｜Airtable 事实条
+    </button>
+    <div class="strip-back" hidden>
+      <p><strong>Daily Log</strong>：${s(e.dailyLog)}</p>
+      <p><strong>Study Sessions</strong>：${s(e.studySessions)}</p>
+      <p><strong>Weekly Reviews</strong>：${s(e.weeklyReviews)}</p>
+      <p><strong>趋势</strong>：${s(e.trend)}</p>
+    </div>
+  </div>`}function j(){const e=o.cross,n=t=>`<ul>${t.map(i=>`<li>${s(i)}</li>`).join("")}</ul>`;return`<aside class="cross-hinge" id="cross-hinge" aria-live="polite">
+    <h2>折缝交叉｜相邻开则显</h2>
+    <div class="cross-col">
+      <h3>警醒</h3>
+      ${n(e.alerts)}
+    </div>
+    <div class="cross-col">
+      <h3>突破</h3>
+      ${n(e.breakthroughs)}
+    </div>
+    <div class="cross-col">
+      <h3>机会</h3>
+      ${n(e.opportunities)}
+    </div>
+  </aside>`}function q(){const e=document.getElementById("app");if(!e)return;const n=o.ai.map(l).join("")+(o.aiArchive?.length?`<details style="margin-top:.6rem;font-size:.78rem">
+          <summary style="cursor:pointer;letter-spacing:.08em;color:var(--mute)">归档折｜较弱信号</summary>
+          ${o.aiArchive.map(l).join("")}
+        </details>`:""),t=o.med.map(l).join("")+`<div class="bridge"><h4>${s(o.medBridge.title)}</h4><p>${s(o.medBridge.text)}</p></div>`,i=o.tech.map(l).join("")+`<div class="long-track">
+      <strong>${s(o.techLongTrack.title)}</strong>
+      <p>${s(o.techLongTrack.lede)}
+        <span class="grade">证 ${s(o.techLongTrack.grade)}</span>
+      </p>
+      ${p(o.techLongTrack.sources)}
+    </div>`;e.innerHTML=`
+    <div class="grain" aria-hidden="true"></div>
+    <div class="desk">
+      <header class="mast">
+        <h1>${s(o.title)}</h1>
+        <span class="sub">${s(o.subtitle)}</span>
+        <span class="date">${s(o.date)}</span>
+      </header>
+      <article class="folio" role="main">
+        <div class="lede-block">
+          <a class="today-num" href="${s(o.todayNumber.href)}" target="_blank" rel="noopener">
+            <span class="lbl">${s(o.todayNumber.label)}</span>
+            <span class="val">${s(o.todayNumber.value)}</span>
+            <span class="det">${s(o.todayNumber.detail)}</span>
+          </a>
+          <p class="thesis">${s(o.thesis)}</p>
+          <p class="encourage">${s(o.encouragement)}</p>
+          <div class="seals" aria-label="今日印鉴">
+            <span class="seal break"><span class="dot"></span>突破 · W3 落库</span>
+            <span class="seal opp"><span class="dot"></span>机会 · 硬日期入历</span>
+            <span class="seal alert"><span class="dot"></span>警醒 · D0 报告</span>
+          </div>
+        </div>
+        <p class="hint-bar">折角开板块 · 停住显旁注 · 相邻两折同开见交叉 · 键盘 1–3 开 AI/医/科 · M 函 · D 票 · N Notion · A 翻面</p>
+        <div class="panels">
+          ${c("ai","AI","智",o.ai[0]?.title??"AI",n)}
+          ${c("med","MED","医",o.med[0]?.title??"医学",t)}
+          ${c("tech","TECH","科",o.tech[0]?.title??"科技",i)}
+          ${x()}
+          ${T()}
+          ${B()}
+          ${P()}
+          ${j()}
+        </div>
+      </article>
+      <footer class="footer">
+        <div>${s(o.footer)}</div>
+        <div class="kbd-help">prefer-reduced-motion：关闭旋转，仅显隐</div>
+      </footer>
+    </div>
+  `,H()}function u(e,n){e.dataset.fold=n?"open":"closed";const t=e.querySelector(".dog-ear"),i=e.querySelector(".panel-inner");t&&t.setAttribute("aria-expanded",n?"true":"false"),i&&(n?i.removeAttribute("hidden"):i.setAttribute("hidden","")),G()}function G(){const e=document.getElementById("panel-ai"),n=document.getElementById("panel-med"),t=document.getElementById("panel-tech"),i=document.getElementById("cross-hinge");if(!i||!e||!n||!t)return;const a=e.dataset.fold==="open"&&n.dataset.fold==="open"||n.dataset.fold==="open"&&t.dataset.fold==="open"||e.dataset.fold==="open"&&t.dataset.fold==="open";i.classList.toggle("visible",a)}function H(){document.querySelectorAll(".panel").forEach(t=>{const i=()=>u(t,t.dataset.fold!=="open");t.querySelector(".dog-ear")?.addEventListener("click",a=>{a.preventDefault(),i()}),t.querySelector(".panel-hinge")?.addEventListener("click",i),t.querySelector(".panel-lede")?.addEventListener("click",a=>{a.target.closest("a")||i()})}),document.querySelectorAll(".flap").forEach(t=>{const i=t.querySelector(".flap-tab"),a=t.querySelector(".flap-body");i.addEventListener("click",()=>{const r=t.dataset.open!=="true";t.dataset.open=r?"true":"false",i.setAttribute("aria-expanded",r?"true":"false"),r?a.removeAttribute("hidden"):a.setAttribute("hidden","")})}),document.querySelectorAll(".ticket").forEach(t=>{t.addEventListener("click",()=>{const i=t.dataset.open!=="true";t.dataset.open=i?"true":"false",t.setAttribute("aria-expanded",i?"true":"false")})});const e=document.getElementById("notion-rail");if(e){let t=null;const i=()=>{e.dataset.dwell!=="true"&&(t=window.setTimeout(()=>{e.dataset.dwell="true"},650))},a=()=>{t!=null&&(clearTimeout(t),t=null)};e.addEventListener("pointerenter",i),e.addEventListener("pointerleave",a),e.addEventListener("focus",i),e.addEventListener("blur",a)}const n=document.getElementById("airtable-strip");if(n){const t=n.querySelector(".strip-toggle"),i=n.querySelector(".strip-back");t.addEventListener("click",()=>{const a=n.dataset.open!=="true";n.dataset.open=a?"true":"false",t.setAttribute("aria-expanded",a?"true":"false"),a?i.removeAttribute("hidden"):i.setAttribute("hidden","")})}document.addEventListener("keydown",t=>{if(t.target instanceof HTMLInputElement||t.target instanceof HTMLTextAreaElement)return;const i={1:"ai",2:"med",3:"tech"};if(i[t.key]){const a=document.getElementById(`panel-${i[t.key]}`);a&&u(a,a.dataset.fold!=="open")}else if(t.key==="m"||t.key==="M")document.querySelector(".flap")?.querySelector("button")?.dispatchEvent(new Event("click"));else if(t.key==="d"||t.key==="D")document.querySelectorAll(".ticket").forEach(a=>{a.dataset.open="true",a.setAttribute("aria-expanded","true")});else if(t.key==="n"||t.key==="N"){const a=document.getElementById("notion-rail");a&&(a.dataset.dwell="true",a.focus())}else(t.key==="a"||t.key==="A")&&n?.querySelector("button")?.dispatchEvent(new Event("click"))})}q();const F=document.createComment(`
+SOURCES (design steal, offline):
+1. Flip180 — Digital Magazine Layout… 2026 — editorial hierarchy, modular blocks, hover footnotes
+2. Daembrace Lab — Intent Driven Content Reveal — dwell-gated secondary layers
+3. Tack Mobile — Interface Origami — fold / peel / accordion as physical paper
+`);document.documentElement.appendChild(F);const U=document.createComment(`
+DESIGN LESSON 2026-09-15 折晓早报
+STYLE: Warm kraft editorial cream paper #f4efe6 · ink #1a1a1a · kraft #d9c4a3
+INTERACTION: Concertina valley-fold (rotateY) + dwell ~650ms marginalia · dog-ears
+GENRE: Daily settlement folio（判帖）
+TITLE: 《折角判笺》
+THESIS: 同一新闻日内，前沿实验室在谈「标准机构尚未成体」，资本却砸向光互联——AI 瓶颈叙事从「买得到多少 GPU」切到「连得上多少 GPU」。
+`);document.documentElement.appendChild(U);</script>
+  <style rel="stylesheet" crossorigin>:root{--cream: #f4efe6;--ink: #1a1a1a;--kraft: #d9c4a3;--kraft-deep: #c4a882;--kraft-edge: #b89a72;--seal-red: #8b3a2a;--seal-gold: #a67c3a;--seal-green: #3d5c45;--alert: #9b2c1f;--opp: #5a6b3a;--break: #6b4c2a;--mute: #6a5e50;--hair: rgba(26, 26, 26, .12);--shadow: rgba(26, 26, 26, .18);--dwell: .65s;--fold: .38s;--ease: cubic-bezier(.2, .9, .2, 1);font-family:system-ui,-apple-system,Segoe UI,PingFang SC,Hiragino Sans GB,Noto Sans CJK SC,Microsoft YaHei,sans-serif}*,*:before,*:after{box-sizing:border-box;margin:0;padding:0}html,body{min-height:100%;background:radial-gradient(ellipse at 20% 10%,rgba(255,250,240,.7),transparent 50%),radial-gradient(ellipse at 80% 90%,rgba(200,170,130,.25),transparent 45%),linear-gradient(165deg,#e8dfd0,#dccfba 45%,#cbb896);color:var(--ink);-webkit-font-smoothing:antialiased}body{padding:1rem .75rem 3.5rem}.grain{pointer-events:none;position:fixed;inset:0;z-index:200;opacity:.04;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}.desk{max-width:920px;margin:0 auto;perspective:1400px}.mast{display:flex;flex-wrap:wrap;align-items:baseline;gap:.5rem 1rem;margin-bottom:.85rem;padding:0 .25rem}.mast h1{font-size:1.35rem;font-weight:650;letter-spacing:.12em}.mast .sub{font-size:.78rem;color:var(--mute);letter-spacing:.08em}.mast .date{margin-left:auto;font-size:.72rem;color:var(--kraft-edge);letter-spacing:.06em}.folio{position:relative;background:var(--cream);border:1px solid var(--kraft-edge);box-shadow:0 18px 40px var(--shadow),0 1px #ffffff73 inset,0 0 0 6px var(--kraft);border-radius:2px;overflow:visible}.folio:before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent 0,transparent calc(100% - 1px),var(--hair) 100%),repeating-linear-gradient(0deg,transparent,transparent 27px,rgba(26,26,26,.03) 28px);opacity:.55;z-index:0}.lede-block{position:relative;z-index:1;padding:1.25rem 1.35rem 1rem;border-bottom:1px dashed var(--kraft-deep)}.today-num{display:inline-flex;flex-direction:column;gap:.15rem;margin-bottom:.75rem;padding:.55rem .75rem;border:1.5px solid var(--ink);background:linear-gradient(135deg,#faf6ee,var(--kraft));text-decoration:none;color:inherit;max-width:100%}.today-num .lbl{font-size:.62rem;letter-spacing:.16em;color:var(--mute)}.today-num .val{font-size:1.45rem;font-weight:700;letter-spacing:.02em;line-height:1.1}.today-num .det{font-size:.72rem;color:var(--mute)}.thesis{font-size:.95rem;line-height:1.65;font-weight:500}.encourage{margin-top:.75rem;padding:.55rem .7rem;border-left:3px solid var(--kraft-deep);font-size:.82rem;color:var(--mute);line-height:1.5;background:#d9c4a338}.seals{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.9rem}.seal{display:inline-flex;align-items:center;gap:.35rem;padding:.28rem .55rem;border-radius:999px;font-size:.68rem;letter-spacing:.04em;border:1.5px solid currentColor;background:#ffffff59;cursor:default}.seal.break{color:var(--break)}.seal.opp{color:var(--opp)}.seal.alert{color:var(--alert)}.seal .dot{width:.45rem;height:.45rem;border-radius:50%;background:currentColor;box-shadow:0 0 0 2px #ffffff80}.hint-bar{position:relative;z-index:1;padding:.45rem 1.35rem;font-size:.68rem;color:var(--mute);letter-spacing:.04em;border-bottom:1px solid var(--hair);background:#d9c4a32e}.panels{position:relative;z-index:1;display:flex;flex-direction:column;gap:0;padding:.5rem .75rem 1.25rem}.panel{position:relative;transform-style:preserve-3d;margin:.35rem 0}.panel-hinge{position:absolute;left:0;top:0;bottom:0;width:10px;z-index:3;cursor:pointer;background:linear-gradient(90deg,var(--kraft-edge),transparent);opacity:.55}.dog-ear{position:absolute;top:0;right:0;z-index:5;width:0;height:0;border-style:solid;border-width:0 2.4rem 2.4rem 0;border-color:transparent var(--kraft-deep) transparent transparent;cursor:pointer;filter:drop-shadow(-1px 1px 1px rgba(0,0,0,.12));transition:border-color .2s ease}.dog-ear:after{content:attr(data-label);position:absolute;top:.35rem;right:-2.15rem;width:2rem;font-size:.58rem;font-weight:650;letter-spacing:.06em;color:var(--cream);transform:rotate(45deg);pointer-events:none;text-align:center}.dog-ear:hover,.dog-ear:focus-visible{border-color:transparent var(--ink) transparent transparent;outline:none}.panel-face{position:relative;background:var(--cream);border:1px solid var(--kraft);border-left:3px solid var(--kraft-edge);padding:.85rem 2.6rem .85rem 1rem;transform-origin:left center;transform:rotateY(-78deg);backface-visibility:hidden;transition:transform var(--fold) var(--ease),box-shadow var(--fold) var(--ease);box-shadow:8px 0 18px #00000014;min-height:3.2rem}.panel[data-fold=open] .panel-face{transform:rotateY(0);box-shadow:0 4px 14px #0000000f}.panel-lede{font-size:.88rem;font-weight:600;letter-spacing:.04em;display:flex;align-items:center;gap:.5rem}.panel-lede .tag{font-size:.62rem;padding:.12rem .4rem;border:1px solid var(--kraft-edge);color:var(--mute);letter-spacing:.1em;font-weight:500}.panel-inner{margin-top:.75rem;display:none;opacity:0;transform:translateY(4px)}.panel[data-fold=open] .panel-inner{display:block;animation:ink-in .35s var(--ease) forwards}@keyframes ink-in{to{opacity:1;transform:none}}.item{padding:.65rem 0;border-top:1px dashed var(--hair)}.item:first-child{border-top:none;padding-top:0}.item h3{font-size:.9rem;font-weight:650;margin-bottom:.25rem;display:flex;flex-wrap:wrap;align-items:baseline;gap:.4rem}.grade{font-size:.62rem;font-weight:500;color:var(--mute);letter-spacing:.08em;border:1px solid var(--hair);padding:.05rem .3rem}.stage-pill{font-size:.62rem;color:var(--seal-green);border:1px solid var(--seal-green);padding:.05rem .3rem}.item .lede{font-size:.82rem;line-height:1.55;margin-bottom:.25rem}.item .body{font-size:.78rem;line-height:1.5;color:var(--mute)}.sources{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.35rem}.sources a{font-size:.68rem;color:var(--ink);text-decoration:underline;text-underline-offset:2px;text-decoration-color:var(--kraft-deep)}.sources a:hover{text-decoration-color:var(--ink)}.bridge{margin-top:.75rem;padding:.7rem .8rem;background:#d9c4a347;border:1px solid var(--kraft);font-size:.8rem;line-height:1.6}.bridge h4{font-size:.72rem;letter-spacing:.1em;margin-bottom:.35rem;color:var(--mute)}.long-track{margin-top:.6rem;padding:.55rem .7rem;border-top:2px double var(--kraft-edge);font-size:.78rem;line-height:1.5}.mail-zone{position:relative;margin:.5rem 0;border:1px solid var(--kraft-edge);background:#f7f2e9;padding:.85rem 1rem 1rem}.mail-zone h2{font-size:.85rem;letter-spacing:.14em;margin-bottom:.6rem}.mail-flaps{display:flex;flex-direction:column;gap:.4rem}.flap{border:1px solid var(--kraft);background:var(--cream);overflow:hidden}.flap-tab{display:flex;align-items:center;gap:.5rem;width:100%;padding:.55rem .75rem;border:none;background:linear-gradient(90deg,var(--kraft),var(--cream) 40%);font:inherit;font-size:.8rem;font-weight:600;letter-spacing:.08em;cursor:pointer;text-align:left;color:var(--ink)}.flap-tab:focus-visible{outline:2px solid var(--ink);outline-offset:-2px}.flap-tab .count{margin-left:auto;font-size:.68rem;font-weight:500;color:var(--mute)}.flap-body{display:none;padding:.55rem .75rem .75rem;border-top:1px dashed var(--hair)}.flap[data-open=true] .flap-body{display:block;animation:ink-in .3s var(--ease) forwards}.mail-item{padding:.45rem 0;border-top:1px solid var(--hair);font-size:.78rem;line-height:1.5}.mail-item:first-child{border-top:none;padding-top:0}.mail-item .from{font-weight:600;font-size:.72rem;color:var(--mute);letter-spacing:.04em}.ddl-rail{display:flex;flex-wrap:wrap;gap:.45rem;margin:.5rem 0;padding:.75rem;border:1px dashed var(--kraft-edge);background:#f4efe6cc}.ticket{flex:1 1 140px;min-width:130px;border:1.5px solid var(--ink);background:var(--cream);padding:.5rem .6rem;position:relative;transform-origin:left center;transition:transform var(--fold) var(--ease),background .2s;cursor:pointer}.ticket:before{content:"";position:absolute;left:-1px;top:0;bottom:0;width:5px;background:var(--kraft-edge)}.ticket.red:before{background:var(--alert)}.ticket.blue:before{background:#3a5a7a}.ticket.yellow:before{background:#a67c3a}.ticket .d{font-size:.68rem;letter-spacing:.12em;font-weight:700}.ticket .date{font-size:.72rem;color:var(--mute)}.ticket .text{font-size:.78rem;margin-top:.25rem;line-height:1.35;display:none}.ticket[data-open=true] .text{display:block}.ticket[data-open=true]{background:#faf6ee;box-shadow:2px 2px 0 var(--kraft)}.cal-note{font-size:.72rem;color:var(--mute);line-height:1.45;margin-top:.45rem;width:100%}.intent-rail{margin:.5rem 0;padding:.85rem 1rem;border-left:3px solid var(--kraft-deep);background:#d9c4a326;min-height:4rem}.intent-rail h2{font-size:.78rem;letter-spacing:.12em;margin-bottom:.4rem}.intent-ghost{font-size:.8rem;color:var(--mute);filter:blur(3px);opacity:.55;transition:filter .4s ease,opacity .4s ease;line-height:1.55;user-select:none}.intent-rail[data-dwell=true] .intent-ghost{filter:none;opacity:1;user-select:text}.intent-rail .dwell-hint{font-size:.65rem;color:var(--kraft-edge);letter-spacing:.06em;margin-bottom:.35rem}.intent-rail[data-dwell=true] .dwell-hint{opacity:0;height:0;margin:0;overflow:hidden}.notion-block{margin-top:.45rem;font-size:.8rem;line-height:1.55}.notion-block strong{letter-spacing:.04em}.reverse-strip{margin:.5rem 0;perspective:800px}.strip-toggle{display:inline-flex;align-items:center;gap:.4rem;padding:.4rem .7rem;border:1px solid var(--kraft-edge);background:var(--kraft);font:inherit;font-size:.72rem;letter-spacing:.1em;cursor:pointer;color:var(--ink)}.strip-toggle:focus-visible{outline:2px solid var(--ink)}.strip-back{margin-top:.35rem;padding:.75rem .9rem;background:#ebe4d6;border:1px solid var(--kraft-edge);transform:rotateX(90deg);transform-origin:top center;opacity:0;max-height:0;overflow:hidden;transition:transform var(--fold) var(--ease),opacity .3s,max-height .35s;font-size:.78rem;line-height:1.55}.reverse-strip[data-open=true] .strip-back{transform:rotateX(0);opacity:1;max-height:240px}.cross-hinge{margin:.75rem 0 .25rem;padding:.85rem 1rem;border:2px solid var(--ink);background:linear-gradient(90deg,rgba(139,58,42,.06),transparent 30%,transparent 70%,rgba(90,107,58,.06)),var(--cream);display:none;opacity:0}.cross-hinge.visible{display:block;animation:ink-in .4s var(--ease) forwards}.cross-hinge h2{font-size:.8rem;letter-spacing:.14em;margin-bottom:.55rem}.cross-col{margin-bottom:.55rem}.cross-col h3{font-size:.72rem;letter-spacing:.1em;margin-bottom:.25rem;color:var(--mute)}.cross-col ul{list-style:none;padding:0}.cross-col li{font-size:.8rem;line-height:1.5;padding:.25rem 0 .25rem .7rem;position:relative}.cross-col li:before{content:"▸";position:absolute;left:0;color:var(--kraft-edge)}.footer{text-align:center;margin-top:1.25rem;font-size:.68rem;color:var(--mute);letter-spacing:.08em}.kbd-help{font-size:.65rem;color:var(--kraft-edge);margin-top:.35rem}@media (prefers-reduced-motion: reduce){.panel-face{transform:none!important;transition:none!important}.panel:not([data-fold=open]) .panel-face{max-height:3.2rem;overflow:hidden;opacity:.85}.panel[data-fold=open] .panel-face{max-height:none;opacity:1}.panel-inner{animation:none!important;opacity:1;transform:none}.strip-back{transform:none!important;transition:opacity .2s,max-height .2s!important}.intent-ghost,.ticket{transition:none}}@media (max-width: 640px){.panel-face{transform:rotateY(-55deg)}.mast h1{font-size:1.15rem}.today-num .val{font-size:1.2rem}}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}</style>
+</head>
+<body>
+  <div id="app"></div>
+</body>
 
-  function applyMask(){
-    maskDirty = false;
-    var parts = ['<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none">',
-      '<rect width="100" height="100" fill="white"/>'];
-    for(var i=0;i<holes.length;i++){
-      var h = holes[i];
-      parts.push('<circle cx="'+h.x+'" cy="'+h.y+'" r="'+h.r+'" fill="black"/>');
-    }
-    parts.push('</svg>');
-    var uri = 'url("data:image/svg+xml;utf8,' + encodeURIComponent(parts.join('')) + '")';
-    fog.style.webkitMaskImage = uri;
-    fog.style.maskImage = uri;
-  }
-
-  function revealProgress(){
-    if(wiped > 0.04){
-      essay.classList.add('revealed');
-      essay.style.opacity = String(Math.min(1, wiped * 2.4));
-      if(fogLabel) fogLabel.style.opacity = String(Math.max(0, 1 - wiped * 4));
-    }
-    if(wiped > 0.28 || holes.length > 36){
-      fog.classList.add('cleared');
-      essay.style.opacity = '1';
-      essay.classList.add('revealed');
-      paneC.classList.add('wiped');
-      if(fogLabel) fogLabel.style.opacity = '0';
-    }
-  }
-
-  function wipeAt(nx, ny, r){
-    r = r || 9;
-    nx = Math.max(0, Math.min(100, nx * 100));
-    ny = Math.max(0, Math.min(100, ny * 100));
-    holes.push({x: nx.toFixed(2), y: ny.toFixed(2), r: r});
-    wiped += (r * r) / 9000;
-    if(!maskDirty){
-      maskDirty = true;
-      requestAnimationFrame(function(){ applyMask(); revealProgress(); });
-    }
-  }
-
-  function wipeStep(){
-    if(fog.classList.contains('cleared')) return;
-    wipeAt(0.18 + Math.random()*0.64, 0.18 + Math.random()*0.64, 14);
-  }
-
-  if(reduced){
-    fog.classList.add('cleared');
-    essay.classList.add('revealed');
-    paneC.classList.add('wiped');
-    paneL.classList.add('open');
-    paneR.classList.add('open');
-    leftOpen = rightOpen = true;
-  } else {
-    applyMask();
-  }
-
-  var drawing = false;
-  function ptrPos(e, el){
-    var r = el.getBoundingClientRect();
-    var cx = (e.clientX != null) ? e.clientX : (e.touches && e.touches[0].clientX);
-    var cy = (e.clientY != null) ? e.clientY : (e.touches && e.touches[0].clientY);
-    return {x:(cx-r.left)/r.width, y:(cy-r.top)/r.height};
-  }
-  function onDraw(e){
-    if(!drawing || fog.classList.contains('cleared')) return;
-    e.preventDefault();
-    var p = ptrPos(e, fog);
-    wipeAt(p.x, p.y, 11);
-  }
-  fog.addEventListener('pointerdown', function(e){
-    drawing = true;
-    fog.setPointerCapture(e.pointerId);
-    onDraw(e);
-  });
-  fog.addEventListener('pointermove', onDraw);
-  fog.addEventListener('pointerup', function(){ drawing = false; });
-  fog.addEventListener('pointercancel', function(){ drawing = false; });
-
-  function bindHinge(hinge, pane, side){
-    var startX = 0, dragging = false, moved = false;
-    hinge.addEventListener('pointerdown', function(e){
-      dragging = true; moved = false; startX = e.clientX;
-      pane.style.transition = 'none';
-      hinge.setPointerCapture(e.pointerId);
-      e.preventDefault();
-    });
-    hinge.addEventListener('pointermove', function(e){
-      if(!dragging) return;
-      var dx = e.clientX - startX;
-      if(Math.abs(dx) > 4) moved = true;
-      var base = (side === 'L' ? (leftOpen ? -52 : 0) : (rightOpen ? 52 : 0));
-      var ang = base + dx * 0.42;
-      if(side === 'L') ang = Math.max(-64, Math.min(10, ang));
-      else ang = Math.max(-10, Math.min(64, ang));
-      pane.style.transform = 'rotateY(' + ang + 'deg)';
-    });
-    function endDrag(){
-      if(!dragging) return;
-      dragging = false;
-      pane.style.transition = '';
-      var m = /rotateY\((-?[\d.]+)deg\)/.exec(pane.style.transform || '');
-      var ang = m ? parseFloat(m[1]) : 0;
-      if(side === 'L'){
-        leftOpen = ang < -26;
-        pane.classList.toggle('open', leftOpen);
-      } else {
-        rightOpen = ang > 26;
-        pane.classList.toggle('open', rightOpen);
-      }
-      pane.style.transform = '';
-    }
-    hinge.addEventListener('pointerup', endDrag);
-    hinge.addEventListener('pointercancel', endDrag);
-    hinge.addEventListener('click', function(e){
-      if(moved){ e.preventDefault(); e.stopPropagation(); return; }
-      if(side === 'L'){ leftOpen = !leftOpen; pane.classList.toggle('open', leftOpen); }
-      else { rightOpen = !rightOpen; pane.classList.toggle('open', rightOpen); }
-    });
-  }
-  bindHinge(document.getElementById('hingeL'), paneL, 'L');
-  bindHinge(document.getElementById('hingeR'), paneR, 'R');
-
-  function toggleSill(){
-    sillOpen = !sillOpen;
-    mail.classList.toggle('open', sillOpen);
-    sill.classList.toggle('lifted', sillOpen);
-    sill.setAttribute('aria-expanded', sillOpen ? 'true' : 'false');
-  }
-  sill.addEventListener('click', toggleSill);
-  sill.addEventListener('keydown', function(e){
-    if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); toggleSill(); }
-  });
-
-  var wrap = document.querySelector('.essay-wrap');
-  var rafPending = false;
-  wrap.addEventListener('scroll', function(){
-    if(rafPending) return;
-    rafPending = true;
-    requestAnimationFrame(function(){
-      var y = wrap.scrollTop;
-      essay.style.transform = 'translateY(' + (y * -0.02) + 'px)';
-      rafPending = false;
-    });
-  }, {passive:true});
-
-  document.addEventListener('keydown', function(e){
-    if(e.key === 'ArrowLeft'){
-      leftOpen = !leftOpen; paneL.classList.toggle('open', leftOpen);
-      if(window.innerWidth <= 720){
-        paneL.classList.toggle('show-m', leftOpen);
-        paneR.classList.remove('show-m'); rightOpen = false; paneR.classList.remove('open');
-      }
-    } else if(e.key === 'ArrowRight'){
-      rightOpen = !rightOpen; paneR.classList.toggle('open', rightOpen);
-      if(window.innerWidth <= 720){
-        paneR.classList.toggle('show-m', rightOpen);
-        paneL.classList.remove('show-m'); leftOpen = false; paneL.classList.remove('open');
-      }
-    } else if(e.key === 'w' || e.key === 'W'){
-      wipeStep();
-    } else if(e.key === 's' || e.key === 'S'){
-      toggleSill();
-    }
-  });
-})();
-</script>
 <!--
 DESIGN LESSON 2026-09-15 折晓早报
-STYLE: 晨雾铝框窗 cool aluminum sash + fog grain
-GENRE: 窗台早报 apartment windowsill brief
-TITLE: 《雾窗开扇》
-THESIS: Pace 从合唱落到制度密谈，撞上白宫淡化；算力资本与 Astra agent 仍在并行
+STYLE: Warm kraft editorial cream paper #f4efe6 · ink #1a1a1a · kraft #d9c4a3
+INTERACTION: Concertina valley-fold (rotateY) + dwell ~650ms marginalia · dog-ears
+GENRE: Daily settlement folio（判帖）
+TITLE: 《折角判笺》
+THESIS: 同一新闻日内，前沿实验室在谈「标准机构尚未成体」，资本却砸向光互联——AI 瓶颈叙事从「买得到多少 GPU」切到「连得上多少 GPU」。
 -->
-</body>
 </html>
