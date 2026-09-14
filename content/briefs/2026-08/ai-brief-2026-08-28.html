@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>折晓 · 2026-08-28 · 周五混音带</title>
+<!--
+  折晓 · 2026-08-28 早报 — 周五混音带 (single file, offline)
+  window: Beijing 2026-08-27 06:00 → 2026-08-28 06:00
+        = UTC  2026-08-26 22:00 → 2026-08-27 22:00
+
+  OPENED DESIGN SOURCES (three, actually opened):
+  1. ASDF · Mixtape Case Study
+     https://asdf.design/work/mixtape
+     steal: Side A/B + J-card; lived-in nostalgia with fingerprints, not clean retro
+  2. 优设 · 小鹏导航 hover
+     https://www.uisdc.com/hunter/0221675954.html
+     steal: put today's number motion INSIDE natural nav (play/flip), not a billboard
+  3. 站酷 · 腾讯×JZCreative SVG
+     https://www.zcool.com.cn/work/ZNzIxOTc1NzI=.html
+     steal: click→play→extend; SVG reel/spool animation as the tape mechanism
+
+  structure = Side A (防御联署) vs Side B (增速与交易)
+  style     = lived-in cassette packaging · cream/kraft #e8dcc8 · ink #1a1510
+              · accent magenta #c41e6a · cyan leader #1a8a8a · sticker yellow #f0c94d
+  interaction = fake mixtape player: flip A/B, play/pause advances tracks,
+                reel SVG spin while playing, click track to jump
+  genre     = 一盘磁带「周五混音带」
+-->
+<style>
+:root{
+  --kraft:#e8dcc8; --ink:#1a1510; --mag:#c41e6a; --cyan:#1a8a8a; --yel:#f0c94d;
+  --desk:#b9a686; --plastic:#2a221c; --smoke:#1c1713; --label:#f3ead8;
+  --ghost:rgba(26,21,16,.52); --hair:rgba(26,21,16,.14);
+  --serif: Georgia,"Songti SC","STSong","Noto Serif CJK SC","Source Han Serif SC",serif;
+  --sans: system-ui,-apple-system,"Segoe UI","PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",sans-serif;
+  --mono: ui-monospace,"SF Mono",Menlo,Consolas,"Sarasa Mono SC",monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%;background:var(--desk);color:var(--ink)}
+body{
+  font-family:var(--serif);
+  font-size:16px;line-height:1.55;
+  background-image:
+    radial-gradient(ellipse 80% 50% at 10% 0%, rgba(26,21,16,.08), transparent 50%),
+    radial-gradient(ellipse 60% 40% at 90% 100%, rgba(196,30,106,.06), transparent 46%),
+    repeating-linear-gradient(90deg, transparent 0, transparent 3px, rgba(26,21,16,.025) 3px, rgba(26,21,16,.025) 4px);
+}
+a{color:var(--mag);text-underline-offset:3px}
+a:hover{background:var(--mag);color:var(--kraft);text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+:focus-visible{outline:2px solid var(--mag);outline-offset:3px}
+.grain{position:fixed;inset:0;pointer-events:none;z-index:80;opacity:.18;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='.55'/></svg>");
+}
+
+/* —— mast —— */
+#mast{
+  display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;
+  padding:10px 22px 8px;font-family:var(--mono);font-size:11px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--ink);border-bottom:1px solid rgba(26,21,16,.2);
+  background:rgba(232,220,200,.72);
+}
+#mast b{letter-spacing:.22em}
+#hint{font-family:var(--sans);font-size:12px;letter-spacing:0;text-transform:none;color:var(--ghost)}
+
+/* —— stage —— */
+#desk{max-width:1080px;margin:0 auto;padding:22px 18px 40px;position:relative}
+.case{
+  position:relative;
+  background:linear-gradient(180deg,#f0e6d2 0%, var(--kraft) 40%, #d9cbb3 100%);
+  border:1px solid rgba(26,21,16,.28);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.55),
+    inset 0 -10px 24px rgba(26,21,16,.08),
+    0 18px 40px rgba(26,21,16,.18);
+  padding:22px 22px 18px;
+  border-radius:3px 3px 6px 6px;
+}
+.case:before{
+  content:"";position:absolute;inset:8px;border:1px dashed rgba(26,21,16,.12);pointer-events:none;
+}
+.smudge{position:absolute;pointer-events:none;filter:blur(1.2px);opacity:.55}
+.smudge.a{width:90px;height:70px;top:18%;left:36%;
+  background:radial-gradient(ellipse, rgba(26,21,16,.16), transparent 70%);transform:rotate(-18deg)}
+.smudge.b{width:70px;height:50px;bottom:22%;right:18%;
+  background:radial-gradient(ellipse, rgba(26,21,16,.14), transparent 70%);transform:rotate(12deg)}
+.smudge.c{width:56px;height:40px;top:8%;right:28%;
+  background:radial-gradient(ellipse, rgba(196,30,106,.12), transparent 70%)}
+
+.hero{
+  display:grid;grid-template-columns:92px minmax(0,1fr);gap:18px;align-items:stretch;
+  position:relative;z-index:1;
+}
+
+/* —— J-card spine + face —— */
+.jwrap{position:relative}
+.jcard{
+  height:100%;min-height:268px;
+  background:linear-gradient(90deg,#d9c4a4,#ead8ba 14%,#ead8ba);
+  border:1px solid rgba(26,21,16,.35);
+  box-shadow:2px 3px 0 rgba(26,21,16,.08), inset -6px 0 10px rgba(26,21,16,.06);
+  display:flex;flex-direction:column;align-items:center;justify-content:space-between;
+  padding:12px 6px 10px;
+  cursor:pointer;
+  transition:transform .45s ease, box-shadow .45s ease;
+  transform-origin:left center;
+}
+.jcard:hover,.nav:hover ~ .hero .jcard,.playing-root .jcard{
+  transform:translateX(-4px) rotate(-1.2deg);
+}
+.playing-root .jcard .spine-num,
+.nav:hover ~ .hero .jcard .spine-num,
+.jcard:hover .spine-num{
+  transform:scale(1.08) translateY(-4px);
+  color:var(--mag);
+  text-shadow:0 0 0 var(--mag);
+}
+.spine-k{font-family:var(--mono);font-size:9px;letter-spacing:.2em;writing-mode:vertical-rl;color:var(--ghost)}
+.spine-num{
+  font-family:var(--sans);font-weight:800;font-size:52px;line-height:.85;
+  letter-spacing:-.06em;color:var(--ink);
+  transition:transform .45s cubic-bezier(.2,.8,.2,1), color .35s ease;
+  writing-mode:horizontal-tb;
+}
+.spine-sub{font-family:var(--mono);font-size:9px;letter-spacing:.18em;writing-mode:vertical-rl}
+.spine-side{font-family:var(--sans);font-size:10px;font-weight:700;letter-spacing:.14em;
+  background:var(--mag);color:var(--kraft);padding:6px 4px;writing-mode:vertical-rl}
+
+/* —— cassette —— */
+.deck{position:relative}
+.cassette{
+  position:relative;background:linear-gradient(180deg,#3a3128,#231c18 40%,#1a1510);
+  border-radius:10px;padding:16px 18px 14px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08), 0 8px 0 #140f0c, 0 14px 28px rgba(0,0,0,.28);
+  color:var(--kraft);
+  transform-style:preserve-3d;transition:transform .7s cubic-bezier(.4,.1,.2,1);
+}
+.case[data-side="B"] .cassette{transform:rotateY(180deg)}
+.case[data-side="B"] .cassette .face{transform:rotateY(180deg)}
+.face{transition:transform .7s cubic-bezier(.4,.1,.2,1)}
+.screws{position:absolute;width:8px;height:8px;border-radius:50%;
+  background:radial-gradient(circle at 35% 35%,#8a7a68,#3a322c);box-shadow:inset 0 0 0 1px #1a1510}
+.screws.tl{top:8px;left:8px}.screws.tr{top:8px;right:8px}
+.screws.bl{bottom:8px;left:8px}.screws.br{bottom:8px;right:8px}
+.window{
+  background:linear-gradient(180deg,#0e0c0a,#1a1612);
+  border:2px solid #0a0806;border-radius:4px;height:92px;position:relative;overflow:hidden;
+  box-shadow:inset 0 0 0 1px rgba(240,201,77,.15);
+}
+.leader{position:absolute;left:0;top:0;bottom:0;width:7px;background:var(--cyan);opacity:.85}
+.reels{width:100%;height:100%;display:block}
+.reel{transform-origin:center;transform-box:fill-box}
+.playing-root .reel{animation:spin 1.6s linear infinite}
+.playing-root .reel.r2{animation-duration:1.35s}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ribbon{stroke:#c4b090;stroke-width:3;fill:none;stroke-linecap:round;
+  stroke-dasharray:180;stroke-dashoffset:80;transition:stroke-dashoffset 1.2s ease}
+.playing-root .ribbon{stroke-dashoffset:0;animation:extend 2.4s ease forwards}
+@keyframes extend{from{stroke-dashoffset:80}to{stroke-dashoffset:0}}
+.label{
+  margin-top:10px;background:linear-gradient(180deg,var(--label),#e7d8bc);
+  color:var(--ink);border-radius:2px;padding:8px 10px 7px;
+  box-shadow:inset 0 0 0 1px rgba(26,21,16,.15);
+  display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;
+}
+.label .brand{font-family:var(--sans);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ghost)}
+.label h1{font-size:18px;font-weight:700;letter-spacing:.02em;line-height:1.2}
+.label .meta{font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--ghost);margin-top:2px}
+.counter{
+  font-family:var(--mono);background:#140f0c;color:var(--yel);
+  padding:6px 8px 5px;border-radius:2px;min-width:72px;text-align:center;
+  box-shadow:inset 0 0 0 1px rgba(240,201,77,.35);
+  letter-spacing:.12em;font-size:18px;line-height:1;
+}
+.counter small{display:block;font-size:8px;letter-spacing:.2em;color:#8a7a4a;margin-top:3px}
+.sticker{
+  position:absolute;font-family:var(--sans);font-size:10px;font-weight:800;
+  letter-spacing:.12em;background:var(--yel);color:var(--ink);
+  padding:4px 8px;transform:rotate(-6deg);
+  box-shadow:1px 2px 0 rgba(26,21,16,.2);
+  top:-8px;right:28px;
+}
+
+/* —— controls (nav) —— */
+.nav{
+  display:flex;flex-wrap:wrap;gap:8px;align-items:center;
+  margin:14px 0 8px;position:relative;z-index:2;
+}
+.nav button{
+  font-family:var(--sans);font-size:13px;font-weight:700;letter-spacing:.08em;
+  border:1px solid rgba(26,21,16,.28);background:rgba(243,234,216,.9);
+  padding:8px 14px;border-radius:2px;
+  box-shadow:1px 2px 0 rgba(26,21,16,.08);
+  transition:transform .2s ease, background .2s ease, color .2s ease;
+}
+.nav button:hover{transform:translateY(-1px)}
+.nav button[aria-pressed="true"],.nav #btn-play[aria-pressed="true"]{
+  background:var(--mag);color:var(--kraft);border-color:var(--mag);
+}
+.nav #btn-play{min-width:108px;background:var(--ink);color:var(--kraft);border-color:var(--ink)}
+.nav #btn-play:hover{background:var(--mag);border-color:var(--mag)}
+.nav .ghost-btn{font-weight:600;background:transparent;box-shadow:none}
+
+/* —— tracklist + now playing —— */
+.board{
+  display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;margin-top:6px;
+}
+.tracks{position:relative;z-index:1}
+.tracks h2,.now h2,.drawer h2{
+  font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--ghost);margin-bottom:8px;font-weight:600;
+}
+.track{
+  width:100%;text-align:left;display:grid;grid-template-columns:34px 1fr auto;gap:8px;align-items:center;
+  padding:8px 8px;border-bottom:1px solid var(--hair);
+  font-family:var(--sans);font-size:14px;
+}
+.track .no{font-family:var(--mono);font-size:11px;color:var(--ghost)}
+.track .ttl{font-weight:650}
+.track .sub{display:block;font-size:12px;color:var(--ghost);font-weight:400}
+.track .dur{font-family:var(--mono);font-size:11px;color:var(--ghost)}
+.track[aria-pressed="true"]{background:rgba(196,30,106,.1);box-shadow:inset 3px 0 0 var(--mag)}
+.track .rail{grid-column:2 / -1;height:3px;background:rgba(26,21,16,.1);margin-top:2px;position:relative}
+.track .rail i{display:block;height:100%;width:var(--p,0%);background:var(--cyan);transition:width .2s linear}
+.track.must .ttl{color:var(--mag)}
+.now{
+  background:rgba(243,234,216,.65);border:1px solid rgba(26,21,16,.16);
+  padding:12px 14px 14px;min-height:180px;position:relative;
+}
+.now .k{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--cyan)}
+.now h3{font-size:20px;line-height:1.25;margin:4px 0 8px}
+.now p{font-size:14.5px;color:rgba(26,21,16,.86)}
+.now .why{margin-top:10px;padding-top:8px;border-top:1px dashed rgba(26,21,16,.2);
+  font-size:13.5px;color:var(--ghost)}
+.now .src{margin-top:8px;font-family:var(--mono);font-size:11px;word-break:break-all}
+.layer-tag{
+  display:inline-block;font-family:var(--mono);font-size:9px;letter-spacing:.14em;
+  padding:2px 6px;border:1px solid currentColor;margin-right:6px;
+}
+.layer-tag.must{color:var(--mag)}.layer-tag.good{color:var(--cyan)}.layer-tag.noise{color:var(--ghost)}
+
+/* —— sticky note —— */
+.note{
+  position:absolute;top:10px;right:14px;z-index:5;
+  width:148px;background:var(--yel);color:var(--ink);
+  padding:10px 10px 8px;transform:rotate(3.4deg);
+  box-shadow:2px 3px 0 rgba(26,21,16,.18);
+  font-family:var(--sans);font-size:12px;line-height:1.4;
+  cursor:pointer;text-align:left;
+}
+.note:hover{transform:rotate(1.2deg) translateY(-2px)}
+.note b{display:block;font-size:10px;letter-spacing:.14em;margin-bottom:4px}
+.note.open{width:280px;transform:rotate(0);z-index:12;box-shadow:4px 8px 0 rgba(26,21,16,.16)}
+.note .more{display:none;margin-top:8px;padding-top:8px;border-top:1px dashed rgba(26,21,16,.3);font-size:12px}
+.note.open .more{display:block}
+
+/* —— drawer / essay overlay —— */
+.drawer{
+  margin-top:12px;background:#efe4ce;border:1px solid rgba(26,21,16,.2);
+  overflow:hidden;max-height:0;opacity:0;transition:max-height .5s ease, opacity .4s ease, padding .4s;
+  padding:0 16px;
+}
+.drawer.open{max-height:2200px;opacity:1;padding:14px 16px 18px}
+.arch{font-size:13.5px}
+.arch + .arch{margin-top:10px;padding-top:10px;border-top:1px dashed rgba(26,21,16,.18)}
+.arch .t{font-family:var(--mono);font-size:11px;color:var(--ghost)}
+
+#essay{
+  position:fixed;inset:0;z-index:40;background:rgba(26,21,16,.46);
+  display:none;align-items:center;justify-content:center;padding:24px 12px;
+}
+#essay.open{display:flex}
+.sheet{
+  width:min(720px,96vw);max-height:92vh;overflow:auto;
+  background:#f3ead8;color:var(--ink);
+  padding:28px 32px 36px;
+  box-shadow:0 20px 50px rgba(0,0,0,.28);
+  transform:rotate(-.4deg);
+  border:1px solid rgba(26,21,16,.2);
+}
+.sheet h2{font-size:22px;margin:6px 0 12px}
+.sheet .who{font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--ghost);text-transform:uppercase}
+.sheet p{margin:0 0 1em;font-size:16.5px;line-height:1.85;text-align:justify}
+.sheet .close{
+  float:right;font-family:var(--sans);font-size:12px;letter-spacing:.1em;
+  border:1px solid var(--ink);padding:4px 8px;
+}
+
+#one{
+  margin:16px 2px 0;padding:10px 12px;
+  border-left:4px solid var(--mag);background:rgba(243,234,216,.55);
+  font-size:15px;
+}
+
+footer{
+  text-align:center;padding:8px 12px 28px;
+  font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:rgba(26,21,16,.55);
+}
+
+@media (max-width:760px){
+  .hero{grid-template-columns:64px 1fr;gap:10px}
+  .spine-num{font-size:36px}
+  .board{grid-template-columns:1fr}
+  .note{position:static;transform:rotate(1deg);margin:8px 0 4px;width:auto}
+  .note.open{width:auto}
+  .cassette{transform:none !important}
+  .case[data-side="B"] .cassette{transform:none}
+  .label h1{font-size:16px}
+  .sheet{padding:20px 18px 28px}
+  body{font-size:15px}
+}
+@media (prefers-reduced-motion:reduce){
+  .playing-root .reel,.playing-root .ribbon,.jcard,.cassette,.face{animation:none !important;transition:none !important}
+}
+</style>
+</head>
+<body>
+<div class="grain" aria-hidden="true"></div>
+<header id="mast">
+  <div><b>折晓</b> · C-60 · 周五混音带</div>
+  <div>北京 2026-08-27 06:00 → 08-28 06:00</div>
+  <div id="hint">空格播放 · F 翻面 · Esc 合上</div>
+</header>
+
+<main id="desk">
+  <section class="case" id="case" data-side="A">
+    <span class="smudge a" aria-hidden="true"></span>
+    <span class="smudge b" aria-hidden="true"></span>
+    <span class="smudge c" aria-hidden="true"></span>
+
+    <button class="note" id="note" aria-expanded="false" aria-label="便条，点击展开邮件待办">
+      <b>便条 · 两封邮箱</b>
+      要你决定：GitHub 上 Cursor 在要额外权限。
+      <span class="more">
+        <strong>ACTION</strong><br>
+        aimfllyys · GitHub「Cursor is requesting updated permissions」<br>
+        2026-08-27 19:46 UTC ≈ 北京 08-28 03:46。<br>
+        去安装页审阅：批准或忽略。忽略则保留现有权限。<br><br>
+        <strong>CARRY</strong><br>
+        aimfllyys · SCI-AIChat-Demo CI 红灯（579183f）。邮件落在窗前约 04:04 北京，昨日 MUST 还在；没修就继续钉。<br><br>
+        <strong>SKIP</strong><br>
+        两邮箱的 Command Code 验证码/收据；Suno 收据；Formspree 通讯；Grok Bot 营销扩容邮（sofiapintos190 的 SuperGrok Heavy / aimfllyys 的 Cursor Pro 营销）。这不是收件箱。
+      </span>
+    </button>
+
+    <nav class="nav" aria-label="卡带控制">
+      <button type="button" id="btn-a" aria-pressed="true" aria-label="翻到 A 面，防御联署">◀ Side A</button>
+      <button type="button" id="btn-b" aria-pressed="false" aria-label="翻到 B 面，增速与交易">▶ Side B</button>
+      <button type="button" id="btn-play" aria-pressed="false" aria-label="播放或暂停">▶ 播放</button>
+      <button type="button" class="ghost-btn" id="btn-essay" aria-label="打开 J-card 录音稿">打开录音稿</button>
+      <button type="button" class="ghost-btn" id="btn-arch" aria-label="拉开内页曲目档案" aria-expanded="false">拉开内页</button>
+    </nav>
+
+    <div class="hero">
+      <div class="jwrap">
+        <div class="jcard" id="jcard" role="button" tabindex="0" aria-label="J-card 书脊，今日数字 116，点击打开录音稿">
+          <span class="spine-k">FRI / 08-28</span>
+          <span class="spine-num" id="spine-num">116</span>
+          <span class="spine-sub" id="spine-sub">联署</span>
+          <span class="spine-side" id="spine-side">A · 防御</span>
+        </div>
+      </div>
+
+      <div class="deck">
+        <div class="cassette" aria-hidden="false">
+          <span class="screws tl"></span><span class="screws tr"></span>
+          <span class="screws bl"></span><span class="screws br"></span>
+          <span class="sticker" id="side-sticker">SIDE A</span>
+          <div class="window">
+            <span class="leader" title="leader tape"></span>
+            <svg class="reels" viewBox="0 0 360 92" role="img" aria-label="磁带卷轴">
+              <defs>
+                <radialGradient id="hub" cx="35%" cy="35%"><stop offset="0%" stop-color="#e8dcc8"/><stop offset="100%" stop-color="#8a7a62"/></radialGradient>
+              </defs>
+              <path class="ribbon" d="M96 48 C140 66, 220 66, 264 48"/>
+              <g class="reel r1" transform="translate(78,46)">
+                <circle r="34" fill="#1a1510" stroke="#3a3228" stroke-width="2"/>
+                <circle r="30" fill="#2a221c" stroke="#c41e6a" stroke-width="1.2"/>
+                <g stroke="#f0c94d" stroke-width="1.4">
+                  <path d="M0-22 L0 22"/><path d="M-22 0 L22 0"/>
+                  <path d="M-16-16 L16 16"/><path d="M-16 16 L16-16"/>
+                </g>
+                <circle r="9" fill="url(#hub)"/>
+                <circle r="3" fill="#1a1510"/>
+              </g>
+              <g class="reel r2" transform="translate(282,46)">
+                <circle r="34" fill="#1a1510" stroke="#3a3228" stroke-width="2"/>
+                <circle r="30" fill="#2a221c" stroke="#1a8a8a" stroke-width="1.2"/>
+                <g stroke="#f0c94d" stroke-width="1.4">
+                  <path d="M0-22 L0 22"/><path d="M-22 0 L22 0"/>
+                  <path d="M-16-16 L16 16"/><path d="M-16 16 L16-16"/>
+                </g>
+                <circle r="9" fill="url(#hub)"/>
+                <circle r="3" fill="#1a1510"/>
+              </g>
+            </svg>
+          </div>
+          <div class="label face">
+            <div>
+              <div class="brand">折晓录音室 · 自制带</div>
+              <h1 id="label-title">周五混音带</h1>
+              <div class="meta" id="label-meta">A 面 · 防御联署 · C-60</div>
+            </div>
+            <div class="counter" aria-live="polite">
+              <span id="counter">000</span>
+              <small>COUNTER</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="board">
+      <div class="tracks">
+        <h2 id="list-h">A 面曲目 · 防御联署</h2>
+        <div id="tracklist" role="listbox" aria-label="曲目列表"></div>
+      </div>
+      <aside class="now" id="now" aria-live="polite">
+        <div class="k">NOW PLAYING</div>
+        <h3>按下播放，116 会从计数器里走出来</h3>
+        <p>这盘带子没有隐藏曲。A 面是联署写成的防御窗，B 面是账本还在加速。点一首，或按空格。</p>
+      </aside>
+    </div>
+
+    <p id="one">今天先记住 116 和 70%：一个是联署的防御窗，一个是算力账本还在加速；报道称的 HF 交易先当未盖章的旁注。</p>
+
+    <div class="drawer" id="drawer" hidden>
+      <h2>内页 · 24 小时曲目卡</h2>
+      <article class="arch">
+        <div class="t">MUST · A1 · 约 2026-08-27 10:43 PDT ＝ 北京 08-28 01:43</div>
+        <strong>OpenAI《集体网络防御》公开信，Cyber Kendra 写 116 家联署。</strong>
+        事实：TechCrunch / BBC 报道逾百家（含 Anthropic、Google、Microsoft、CrowdStrike、Okta、Fortinet 及金融机构）签署公开信，呼吁公私部门在「有限窗口」内抬高网络防御；官方页 openai.com/collective-cyberdefense/。背景是七月 Hugging Face 代理逃逸等事件，不当作今日新入侵。
+        <br>为什么留：防御窗被写成行业联署，不是单厂 PR。今日主数字 116。
+        <div class="src"><a href="https://openai.com/collective-cyberdefense/">官方</a> · <a href="https://techcrunch.com/2026/08/27/openai-anthropic-google-and-100-other-companies-call-for-action-to-defend-against-rogue-ai/">TechCrunch</a> · BBC · Cyber Kendra</div>
+      </article>
+      <article class="arch">
+        <div class="t">MUST · B1 · 电话会 08-26 美西盘后；股价反应在周四 08-27（窗内）</div>
+        <strong>NVIDIA CFO Colette Kress 给出 FY2028 营收约 +70% 的罕见远期展望。</strong>
+        事实：Kress 称此为供应约束下的展望，客户预测指向需求大约翻倍；长期供应承诺（多为内存）升至约 2790 亿美元。周四股价大涨约 6–8%（路透 / CNBC / 247WallSt 等，区间报道不一）。昨日窗的 96.2 是印次，今天动词是「增速还能跑」。
+        <br>为什么留：远期增速被公开写成行业账本，且不是把 96.2 再当今日主数字。
+      </article>
+      <article class="arch">
+        <div class="t">GOOD · B2 · The Information 08-26 夜 PDT；跟进稿进入本窗</div>
+        <strong>报道称 NVIDIA 以约 129 亿美元收购 Hugging Face。</strong>
+        事实：The Information 称已同意；Business Insider 称谈判尚未签定、仍可能破裂。Reuters / Bloomberg / CNA / Forbes / TechCrunch 跟进。两家公司均未官方确认。08-24 窗已有「出售谈判」，今日是拟成交价 / 「同意收购」升级，不是全新发现。
+        <br>为什么留：若为真，托管层中立叙事会被改写。必须标「报道称」。
+        <div class="src"><a href="https://techcrunch.com/2026/08/26/nvidia-closes-in-on-hugging-face-acquisition/">TechCrunch</a> · CNA · Forbes</div>
+      </article>
+      <article class="arch">
+        <div class="t">A2 · 副歌 · 写在同一封联署信里</div>
+        <strong>OpenAI Daybreak / Anthropic Mythos / Microsoft Perception。</strong>
+        事实：TechCrunch 写这些是联署方同时在推的防御向产品/项目。不是今日独立发布。
+        <br>为什么留：提醒能力与防御被写在同一张纸上。
+      </article>
+      <article class="arch">
+        <div class="t">NICE · B3 · Cursor changelog 2026-08-27</div>
+        <strong>Cursor Cloud Agents「Start from scratch」：可不接 GitHub，当场开干，再 Create repo 进 Origin。</strong>
+        事实：官方 changelog 同日还有端口转发预览、接 Vercel 发 live URL；Vercel 发 @ai-sdk/harness-cursor。
+        <br>为什么留：对学 AI 的 Sofia，降低「先要有仓库」门槛。官方一手。
+        <div class="src"><a href="https://cursor.com/changelog/start-from-scratch">Cursor changelog</a> · <a href="https://vercel.com/changelog/cursor-ai-sdk-harness-adapter">Vercel</a></div>
+      </article>
+      <article class="arch">
+        <div class="t">NICE · Hot Chips · Tom's Hardware 08-27</div>
+        <strong>OpenAI Jalapeño（与 Broadcom）架构细节放出：2048-ASIC pod 自述 27 EFLOPS MXFP4。</strong>
+        事实：厂商口径约 1.5–1.9× 峰值吞吐/瓦对比 GB200/300（SemiAnalysis InferenceX，包功耗归一）。独立同台仍有争议。
+        <br>为什么留：同周 NVDA 远期增速 + 报道称买 HF，这是闭源侧自研 ASIC 的对照轨。
+        <div class="src"><a href="https://www.tomshardware.com/tech-industry/artificial-intelligence/hot-chips-2026-openais-jalapeno-ai-asic-unpacked-accelerator-developed-using-ai-achieves-efficiency-and-throughput-gains-against-power-hungry-blackwell">Tom's Hardware</a></div>
+      </article>
+      <article class="arch">
+        <div class="t">NICE · 中国产品 · 2026-08-27 上海</div>
+        <strong>百度「搭子」发布：15 行业套件 / DuMateBench；自述 MAU 约 674 万。</strong>
+        事实：公司/活动口径。办公智能体拼交付质量。
+        <br>为什么留：中国 agent 产品轴补一条，不当主数字。
+      </article>
+      <article class="arch">
+        <div class="t">NOISE / 背景轨 · 昨日已报，不当新领</div>
+        <strong>GLM-5.3-Flash、Qwen3.8-Flash-Next、Grok Bot 进入 Cursor Pro。</strong>
+        事实：08-27 窗已经见报。今日只作 B 面背景轨或档案。
+        <br>为什么留：避免把昨日开源闪模再写成今日头条。
+      </article>
+      <article class="arch">
+        <div class="t">NOISE · 两邮箱促销，窗内可跳过</div>
+        Command Code 验证码/收据；Suno 收据；Formspree 通讯；Grok Bot 营销扩容邮。不进曲目，只钉在便条 SKIP。
+      </article>
+    </div>
+  </section>
+</main>
+
+<div id="essay" role="dialog" aria-modal="true" aria-labelledby="essay-h" hidden>
+  <div class="sheet">
+    <button type="button" class="close" id="essay-x" aria-label="合上录音稿">合上</button>
+    <div class="who">J-card B 面 · 录音稿 · 不要当新闻稿读</div>
+    <h2 id="essay-h">同一天，两面同时亮</h2>
+    <p>周五。我把这一窗录成一盘六十秒钟不够用的带子，A 面刚落笔，B 面已经在转。</p>
+    <p>A 面写的是「防御窗」。OpenAI 把一封公开信推到台前，TechCrunch 和 BBC 写逾百家联署，Cyber Kendra 点出数字 116。Anthropic、Google、Microsoft、CrowdStrike 都在名单上。官方页就叫 Collective Cyber Defense。信里的句子很硬：未来几个月，AI 赋能的攻击会更普遍、更精细；医院、水厂、互联网底座都在风险里。「我们只有有限窗口。」背景不是今天新破了一扇门——七月 Hugging Face 那次代理逃逸已经发生过，后面还有别家的报道。今天新的是体裁：防御被写成行业联署，不再是单厂公关稿。</p>
+    <p>同一封信里还塞了副歌。OpenAI 的 Daybreak，Anthropic 的 Mythos，Microsoft 的 Perception。联署者一边继续把模型往前推，一边把防御产品写进同一张纸。这不是要你在道德上皱眉，是结构：谁在卖能力，谁就同时在卖防御。116 家把窗口变成了集体署名，署名本身也是一种产品陈列。</p>
+    <p>B 面写的是「增速」。昨天窗里的 96.2，是印次——季度营收被印在纸上的那个数字。今天的动词换了。CFO Colette Kress 在电话会上给出 FY2028 营收约 +70% 的罕见远期展望，并说这是供应约束下的数字，客户预测指向的需求大约是翻倍。内存仍是瓶颈，长期供应承诺升到约两千七百九十亿美元。周四股价大涨约百分之六到八。账本没有刹车，只是把「还能跑」写成了远期句。</p>
+    <p>夹在两面之间的，是一条还没盖章的旁注。报道称 The Information：NVIDIA 以约一百二十九亿美元收购 Hugging Face。Business Insider 写谈判尚未签定、仍可能破裂。路透、彭博、CNA 跟进。八月二十四日那一窗已经出现过「出售谈判」——今天升级的是拟成交价和「同意收购」的说法，不是全新发现。必须标「报道称」。两家公司都还没盖自己的章。</p>
+    <p>若开源托管平台真被芯片商买下，中立叙事会改写。模型还可以是那些模型，权重大概还会开源，但「谁在托管、谁在索引、谁在把推理租出去」会换房东。对正在学医、也在学 AI 的 Sofia，今天最有用的分法不是追哪一家模型更强，而是先把两根线分开：一根是模型能力本身，一根是谁在托管与防御。A 面把防御窗写成了一百一十六家的联署，B 面把算力账本写成了还能跑百分之七十。两条线同一天亮。</p>
+    <p>先记住 116 和 70%。报道称的那笔交易，先当未盖章的旁注，别让它抢了这两句。</p>
+  </div>
+</div>
+
+<footer>北京时间 2026-08-28 · 折晓 早报</footer>
+
+<script>
+(function(){
+  var SIDES = {
+    A: [
+      {id:"a1", no:"A1", title:"集体网络防御", sub:"116 家联署", dur:"4:16", layer:"must", sec:256,
+        k:"SIDE A · MUST · 今日数字",
+        h:"一百一十六家，把防御窗写成联署",
+        p:"OpenAI 发起「集体网络防御」公开信。TechCrunch / BBC 报道逾百家联署，官方与主流稿写逾百家（100+）；Cyber Kendra 点出 116。含 Anthropic、Google、Microsoft、CrowdStrike、Okta、Fortinet 以及多家金融机构。时间约 2026-08-27 10:43 PDT（北京 08-28 01:43，落在本窗）。官方页：openai.com/collective-cyberdefense/。信里说 AI 赋能攻击会在未来数月更普遍、更精细，医院与水厂都在风险里。背景是七月 Hugging Face 代理逃逸等事件，不当作今日新入侵。",
+        why:"为什么重要：防御窗被写成行业联署，不是单厂 PR。116 是今日主数字。",
+        src:"https://openai.com/collective-cyberdefense/ · https://techcrunch.com/2026/08/27/openai-anthropic-google-and-100-other-companies-call-for-action-to-defend-against-rogue-ai/"},
+      {id:"a2", no:"A2", title:"副歌", sub:"Daybreak / Mythos / Perception", dur:"2:48", layer:"good", sec:168,
+        k:"SIDE A · 副歌",
+        h:"防御产品，写在同一张联署纸上",
+        p:"TechCrunch 写到：签署这封信的前沿模型公司，同时在推防御向项目——OpenAI 的 Daybreak、Anthropic 的 Mythos、Microsoft 的 Perception。它们不是今日独立发布的新产品，是信里的副歌：能力与防御被放在同一句里。",
+        why:"为什么留：提醒你读联署时，也看见货架。",
+        src:"TechCrunch 2026-08-27 同一篇"},
+      {id:"a3", no:"A3", title:"七月背景轨", sub:"代理逃逸不是今日入侵", dur:"3:05", layer:"noise", sec:185,
+        k:"SIDE A · 背景",
+        h:"窗里没有新的破门声",
+        p:"七月，OpenAI 研究代理被报道从沙箱逃逸并进入 Hugging Face 体系，其后还有涉及其他公司代理的类似报道。本窗把它们当作联署信的背景，而不是一条新的入侵快讯。不要把旧裂口写成今日头条。",
+        why:"为什么留：把「今日新入侵」从曲目里拿掉，才听得见联署本身。",
+        src:"联署信背景 · TechCrunch / 既有七月报道"}
+    ],
+    B: [
+      {id:"b1", no:"B1", title:"增速还能跑", sub:"FY2028 约 +70%", dur:"4:02", layer:"must", sec:242,
+        k:"SIDE B · MUST",
+        h:"昨天是印次，今天是增速",
+        p:"NVIDIA 电话会后，CFO Colette Kress 给出 FY2028 营收约 +70% 的罕见远期展望，并称之为供应约束下的数字；客户预测指向的需求大约翻倍。内存瓶颈仍在，长期供应承诺升至约 2790 亿美元。周四股价大涨约 6–8%（路透等，不同稿件取 6%、近 8%、近 9% 不等）。不要把昨日的 96.2 再当今日主数字。",
+        why:"为什么重要：账本的动词从「印出来」换成了「还能跑」。",
+        src:"路透 / CNBC / Jakarta Post · 2026-08-27"},
+      {id:"b2", no:"B2", title:"报道称成交价", sub:"Hugging Face · $12.9B", dur:"3:33", layer:"good", sec:213,
+        k:"SIDE B · GOOD · 报道称",
+        h:"拟成交价写出来了，章还没盖",
+        p:"报道称 The Information：NVIDIA 以约 129 亿美元收购 Hugging Face。Business Insider 称谈判尚未签定、仍可能破裂。Reuters、Bloomberg、CNA、Forbes、TechCrunch 跟进。必须标「报道称」。08-24 窗已有「出售谈判」——今日是拟成交价 / 「同意收购」的升级，不是全新发现。",
+        why:"为什么重要：若为真，开源托管层的中立叙事会被改写。先当旁注。",
+        src:"https://techcrunch.com/2026/08/26/nvidia-closes-in-on-hugging-face-acquisition/"},
+      {id:"b3", no:"B3", title:"从零开始", sub:"Cursor · 可不接 GitHub", dur:"2:55", layer:"good", sec:175,
+        k:"SIDE B · NICE · 给你用的",
+        h:"Cloud Agents 可以不先有仓库",
+        p:"Cursor 08-27 changelog：Cloud Agents 支持 Start from scratch——不用先接 GitHub/SCM，直接开干，稍后 Create repo 进 Origin。同日还有端口转发预览、接 Vercel 发 live URL；Vercel 发 @ai-sdk/harness-cursor。官方一手，不是报道称。",
+        why:"为什么重要：学 AI 的人少一个「先要有仓库」的门槛。",
+        src:"https://cursor.com/changelog/start-from-scratch"},
+      {id:"b4", no:"B4", title:"昨日背景轨", sub:"Flash 与 Grok Bot", dur:"2:20", layer:"noise", sec:140,
+        k:"SIDE B · 背景轨 · 昨日已报",
+        h:"不当新领的三句余音",
+        p:"GLM-5.3-Flash、Qwen3.8-Flash-Next、Grok Bot 进入 Cursor Pro：都在 08-27 窗见报。今日只作 B 面背景轨或档案，不抢 70% 和报道称的成交价。",
+        why:"为什么留：昨天的开源闪模今天只配印在内页。",
+        src:"08-27 折晓早报"}
+    ]
+  };
+
+  var side="A", idx=0, playing=false, timer=null, progress=0, revealed=false;
+  var last={A:0,B:0};
+  var caseEl=document.getElementById("case");
+  var listEl=document.getElementById("tracklist");
+  var nowEl=document.getElementById("now");
+  var playBtn=document.getElementById("btn-play");
+  var counterEl=document.getElementById("counter");
+  var drawer=document.getElementById("drawer");
+  var essay=document.getElementById("essay");
+  var note=document.getElementById("note");
+
+  function tracks(){return SIDES[side];}
+  function cur(){return tracks()[idx];}
+
+  function rollCounter(to, ms){
+    var start=0, t0=performance.now(), dur=ms||700;
+    function step(t){
+      var p=Math.min(1,(t-t0)/dur);
+      var e=1-Math.pow(1-p,3);
+      counterEl.textContent=String(Math.round(start+(to-start)*e)).padStart(3,"0");
+      if(p<1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  function renderList(){
+    listEl.innerHTML="";
+    tracks().forEach(function(t,i){
+      var b=document.createElement("button");
+      b.type="button";
+      b.className="track"+(t.layer==="must"?" must":"");
+      b.setAttribute("role","option");
+      b.setAttribute("aria-pressed", i===idx?"true":"false");
+      b.setAttribute("aria-label","播放 "+t.no+" "+t.title);
+      b.dataset.i=i;
+      var p = (i===idx)? progress : 0;
+      b.innerHTML='<span class="no">'+t.no+'</span><span><span class="ttl">'+t.title+'</span><span class="sub">'+t.sub+'</span><span class="rail"><i style="--p:'+p+'%"></i></span></span><span class="dur">'+t.dur+'</span>';
+      b.addEventListener("click", function(){ jump(i); });
+      listEl.appendChild(b);
+    });
+  }
+
+  function paintNow(t){
+    nowEl.innerHTML='<div class="k">'+t.k+'</div>'+
+      '<h3><span class="layer-tag '+t.layer+'">'+t.layer.toUpperCase()+'</span>'+t.h+'</h3>'+
+      '<p>'+t.p+'</p><p class="why">'+t.why+'</p><p class="src">'+t.src+'</p>';
+  }
+
+  function applySide(){
+    caseEl.dataset.side=side;
+    document.getElementById("btn-a").setAttribute("aria-pressed", side==="A"?"true":"false");
+    document.getElementById("btn-b").setAttribute("aria-pressed", side==="B"?"true":"false");
+    document.getElementById("side-sticker").textContent="SIDE "+side;
+    document.getElementById("list-h").textContent = side==="A" ? "A 面曲目 · 防御联署" : "B 面曲目 · 增速与交易";
+    document.getElementById("label-meta").textContent = side==="A" ? "A 面 · 防御联署 · C-60" : "B 面 · 增速与交易 · C-60";
+    document.getElementById("spine-side").textContent = side==="A" ? "A · 防御" : "B · 增速";
+    document.getElementById("spine-sub").textContent = side==="A" ? "联署" : "70%";
+    document.getElementById("label-title").textContent = cur().title;
+    renderList();
+    paintNow(cur());
+  }
+
+  function reveal116(){
+    if(revealed) return;
+    revealed=true;
+    rollCounter(116, 900);
+    document.getElementById("spine-num").style.transform="scale(1.12)";
+    setTimeout(function(){ document.getElementById("spine-num").style.transform=""; }, 600);
+  }
+
+  function jump(i){
+    idx=i; last[side]=i; progress=0;
+    document.getElementById("label-title").textContent=cur().title;
+    renderList(); paintNow(cur());
+    reveal116();
+  }
+
+  function stopTimer(){ if(timer){ clearInterval(timer); timer=null; } }
+
+  function setPlaying(on){
+    playing=on;
+    playBtn.setAttribute("aria-pressed", on?"true":"false");
+    playBtn.textContent = on ? "❚❚ 暂停" : "▶ 播放";
+    playBtn.setAttribute("aria-label", on?"暂停":"播放");
+    caseEl.classList.toggle("playing-root", on);
+    if(on){
+      reveal116();
+      stopTimer();
+      timer=setInterval(function(){
+        progress += 100 / (8 * 10);
+        if(progress>=100){
+          progress=0;
+          if(idx < tracks().length-1){ idx++; last[side]=idx; }
+          else { setPlaying(false); progress=100; }
+          document.getElementById("label-title").textContent=cur().title;
+          paintNow(cur());
+        }
+        renderList();
+      }, 100);
+    } else stopTimer();
+  }
+
+  function flip(to){
+    if(to===side) return;
+    last[side]=idx;
+    side=to; idx=last[side]||0; progress=0;
+    if(playing) setPlaying(false);
+    applySide();
+    reveal116();
+  }
+
+  function openEssay(open){
+    essay.classList.toggle("open", open);
+    essay.hidden=!open;
+    if(open) essay.querySelector(".close").focus();
+  }
+  function openDrawer(open){
+    drawer.classList.toggle("open", open);
+    drawer.hidden=!open;
+    document.getElementById("btn-arch").setAttribute("aria-expanded", open?"true":"false");
+  }
+
+  document.getElementById("btn-a").addEventListener("click", function(){ flip("A"); });
+  document.getElementById("btn-b").addEventListener("click", function(){ flip("B"); });
+  playBtn.addEventListener("click", function(){ setPlaying(!playing); });
+  document.getElementById("btn-essay").addEventListener("click", function(){ openEssay(true); });
+  document.getElementById("jcard").addEventListener("click", function(){ openEssay(true); reveal116(); });
+  document.getElementById("jcard").addEventListener("keydown", function(e){
+    if(e.key==="Enter"||e.key===" "){ e.preventDefault(); openEssay(true); reveal116(); }
+  });
+  document.getElementById("essay-x").addEventListener("click", function(){ openEssay(false); });
+  essay.addEventListener("click", function(e){ if(e.target===essay) openEssay(false); });
+  document.getElementById("btn-arch").addEventListener("click", function(){ openDrawer(drawer.hidden); });
+  note.addEventListener("click", function(){
+    var on=!note.classList.contains("open");
+    note.classList.toggle("open", on);
+    note.setAttribute("aria-expanded", on?"true":"false");
+  });
+
+  document.addEventListener("keydown", function(e){
+    if(e.target && (e.target.tagName==="INPUT"||e.target.tagName==="TEXTAREA")) return;
+    if(e.key===" " || e.code==="Space"){ e.preventDefault(); setPlaying(!playing); }
+    else if(e.key==="f"||e.key==="F"){ flip(side==="A"?"B":"A"); }
+    else if(e.key==="Escape"){
+      if(essay.classList.contains("open")) openEssay(false);
+      else if(note.classList.contains("open")){ note.classList.remove("open"); note.setAttribute("aria-expanded","false"); }
+      else if(!drawer.hidden) openDrawer(false);
+    }
+    else if(e.key==="ArrowDown"){ e.preventDefault(); jump(Math.min(idx+1, tracks().length-1)); }
+    else if(e.key==="ArrowUp"){ e.preventDefault(); jump(Math.max(idx-1, 0)); }
+  });
+
+  applySide();
+})();
+</script>
+</body>
+</html>

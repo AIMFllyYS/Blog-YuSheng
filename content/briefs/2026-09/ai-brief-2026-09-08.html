@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>《异心关》LEVEL 09-08 · 折晓早报</title>
+<!-- design refs:
+- Sage Agency Retro pixel art system: https://sage.agency/blog/websites-that-use-cool-pixel-art-design/
+- Codrops 8-bit Pixel Mask / Bayer: https://tympanus.net/codrops/2025/12/23/building-a-nostalgic-8-bit-universe-with-modern-tech-a-vibe-coding-journey/
+- It's Nice That Studio Dial code-as-material: https://www.itsnicethat.com/articles/studio-dial-graphic-design-discover-110826
+STYLE 像素8bit × INTERACTION RPG对话选择 × GENRE GameBoy迷你游戏 《异心关》
+-->
+<style>
+:root{
+  --gb0:#0f380f; --gb1:#306230; --gb2:#8bac0f; --gb3:#9bbc0f;
+  --ink:#0f380f; --panel:#9bbc0f; --mid:#8bac0f; --dark:#306230;
+  --frame:#1a1a1a; --bezel:#c4c4a8; --shadow:#0a1f0a;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{
+  min-height:100vh; background:#1a1f14;
+  display:flex; align-items:center; justify-content:center;
+  padding:12px; font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",
+    "Noto Sans SC","Segoe UI",system-ui,-apple-system,sans-serif;
+  color:var(--ink); line-height:1.55;
+}
+button{font:inherit;color:inherit;cursor:pointer;border:none;background:none}
+a{color:var(--dark); text-decoration:underline}
+a:hover{color:var(--ink)}
+.handheld{
+  width:100%; max-width:420px;
+  background:linear-gradient(165deg,#d4d4b8 0%,#b8b89a 40%,#a0a088 100%);
+  border-radius:18px 18px 48px 48px;
+  padding:14px 14px 22px;
+  box-shadow:0 8px 0 #6a6a52, 0 16px 40px rgba(0,0,0,.45),
+    inset 0 2px 0 rgba(255,255,255,.35);
+  position:relative;
+}
+.brand-row{
+  display:flex; justify-content:space-between; align-items:center;
+  padding:0 6px 8px; font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  font-size:9px; letter-spacing:.18em; color:#4a4a38; text-transform:uppercase;
+}
+.screen-bezel{
+  background:#0a140a; border-radius:8px; padding:10px 10px 12px;
+  box-shadow:inset 0 0 0 3px #2a2a22, inset 0 4px 12px rgba(0,0,0,.6);
+  position:relative;
+}
+.lcd{
+  background:var(--gb3); color:var(--ink);
+  min-height:420px; max-height:70vh; overflow:hidden;
+  border:4px solid var(--gb0); position:relative;
+  image-rendering:pixelated;
+}
+.lcd::after{
+  content:""; pointer-events:none; position:absolute; inset:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(15,56,15,.06) 2px,rgba(15,56,15,.06) 3px);
+  z-index:50;
+}
+.scene{display:none; flex-direction:column; height:100%; min-height:420px; position:relative; z-index:1}
+.scene.on{display:flex}
+.pixel-border{
+  border:3px solid var(--gb0);
+  box-shadow: inset -2px -2px 0 var(--gb1), inset 2px 2px 0 var(--gb2);
+}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.h1{font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-weight:700; letter-spacing:.04em}
+
+/* BOOT */
+#boot{align-items:center; justify-content:center; text-align:center; padding:24px 16px; gap:10px}
+.boot-title{font-size:28px; line-height:1.2; image-rendering:pixelated}
+.boot-sub{font-size:11px; letter-spacing:.2em; color:var(--dark)}
+.boot-num{
+  font-size:64px; line-height:1; margin:12px 0 4px;
+  text-shadow:3px 3px 0 var(--gb1); animation:blink 1.2s steps(2) infinite;
+}
+.boot-hint{font-size:12px; margin-top:8px; animation:blink 1s steps(2) infinite}
+@keyframes blink{50%{opacity:.35}}
+
+/* DIALOGUE */
+.stage{
+  flex:1; padding:12px; display:flex; flex-direction:column; gap:8px;
+  background:
+    linear-gradient(180deg, var(--gb2) 0%, var(--gb3) 60%);
+  position:relative;
+}
+.npc-row{display:flex; gap:10px; align-items:flex-start}
+.npc-sprite{
+  width:56px; height:56px; flex-shrink:0;
+  background:var(--gb1); border:3px solid var(--gb0);
+  image-rendering:pixelated;
+  box-shadow: inset -3px -3px 0 var(--gb0), inset 3px 3px 0 var(--gb2);
+  position:relative;
+}
+.npc-sprite::before{
+  content:""; position:absolute; left:14px; top:10px; width:24px; height:18px;
+  background:var(--gb3); border:2px solid var(--gb0);
+}
+.npc-sprite::after{
+  content:""; position:absolute; left:18px; top:32px; width:16px; height:16px;
+  background:var(--gb3); border:2px solid var(--gb0);
+}
+.npc-meta{font-size:11px; color:var(--dark)}
+.npc-meta b{display:block; font-size:13px; color:var(--ink)}
+.flags{display:flex; gap:6px; flex-wrap:wrap; margin-top:4px}
+.flag{
+  font-size:10px; padding:2px 6px; border:2px solid var(--gb0);
+  background:var(--gb2); font-family:ui-monospace,Menlo,monospace;
+}
+.flag.on{background:var(--gb0); color:var(--gb3)}
+.dialogue{
+  margin-top:auto; background:var(--gb3); border:3px solid var(--gb0);
+  box-shadow: inset -2px -2px 0 var(--gb1), 4px 4px 0 var(--shadow);
+  padding:10px 12px 14px; min-height:118px; position:relative;
+}
+.dialogue .name-tag{
+  position:absolute; top:-12px; left:8px; background:var(--gb0); color:var(--gb3);
+  font-size:11px; padding:2px 8px; font-family:ui-monospace,Menlo,monospace;
+  letter-spacing:.06em;
+}
+.dialogue .text{font-size:14px; min-height:3.2em; white-space:pre-wrap; word-break:break-word}
+.dialogue .caret{
+  display:inline-block; width:8px; height:12px; background:var(--gb0);
+  margin-left:2px; vertical-align:-1px; animation:blink .6s steps(2) infinite;
+}
+.choices{display:none; flex-direction:column; gap:6px; margin-top:8px}
+.choices.show{display:flex}
+.choice-btn{
+  text-align:left; padding:8px 10px; background:var(--gb2); border:3px solid var(--gb0);
+  font-size:13px; box-shadow:2px 2px 0 var(--shadow);
+  transition:transform .05s;
+}
+.choice-btn:hover,.choice-btn:focus{background:var(--gb0); color:var(--gb3); outline:none}
+.choice-btn:active{transform:translate(2px,2px); box-shadow:0 0 0 var(--shadow)}
+.choice-btn .key{
+  display:inline-block; font-family:ui-monospace,Menlo,monospace; font-size:10px;
+  border:2px solid currentColor; padding:0 4px; margin-right:6px;
+}
+.adv-hint{font-size:10px; color:var(--dark); text-align:right; margin-top:4px; font-family:ui-monospace,Menlo,monospace}
+
+/* STATUS / THESIS */
+.status-wrap{padding:10px; overflow:auto; flex:1; display:flex; flex-direction:column; gap:8px}
+.thesis-card{
+  background:var(--gb0); color:var(--gb3); padding:12px; border:3px solid var(--gb0);
+  box-shadow:4px 4px 0 var(--gb1);
+}
+.thesis-card .label{font-size:10px; letter-spacing:.16em; font-family:ui-monospace,Menlo,monospace; opacity:.85}
+.thesis-card .body{font-size:15px; font-weight:600; margin-top:6px; line-height:1.45}
+.tip{font-size:12px; background:var(--gb2); border:2px solid var(--gb0); padding:8px 10px}
+.inv-grid{display:grid; grid-template-columns:1fr; gap:6px}
+.inv-card{
+  background:var(--gb3); border:3px solid var(--gb0); padding:8px 10px;
+  box-shadow:inset -2px -2px 0 var(--gb1);
+}
+.inv-card h3{font-size:13px; margin-bottom:3px}
+.inv-card p{font-size:12px; color:var(--dark)}
+.inv-card .tag{font-size:10px; font-family:ui-monospace,Menlo,monospace; color:var(--gb0)}
+.inv-card a{font-size:11px}
+
+/* SAVE / ESSAY overlays */
+.overlay{
+  display:none; position:absolute; inset:0; z-index:40;
+  background:rgba(15,56,15,.92); color:var(--gb3); padding:14px;
+  overflow:auto; flex-direction:column; gap:8px;
+}
+.overlay.on{display:flex}
+.overlay h2{font-family:ui-monospace,Menlo,monospace; font-size:14px; letter-spacing:.1em}
+.slot{
+  border:3px solid var(--gb3); padding:8px 10px; background:var(--gb0);
+  font-size:12px; cursor:default;
+}
+.slot .id{font-family:ui-monospace,Menlo,monospace; font-size:10px; opacity:.7}
+.essay{font-size:13.5px; line-height:1.7; color:var(--gb3)}
+.essay p{margin-bottom:.85em}
+.close-x{
+  align-self:flex-end; border:2px solid var(--gb3); color:var(--gb3);
+  padding:2px 8px; font-size:11px; font-family:ui-monospace,Menlo,monospace;
+}
+
+/* CONTROLS */
+.controls{
+  display:flex; justify-content:space-between; align-items:center;
+  padding:14px 18px 4px; gap:12px;
+}
+.dpad{
+  width:78px; height:78px; position:relative;
+  filter:drop-shadow(2px 2px 0 #6a6a52);
+}
+.dpad span{
+  position:absolute; background:#2a2a22; border:2px solid #111;
+  width:24px; height:24px;
+}
+.dpad .u{top:0; left:27px} .dpad .d{bottom:0; left:27px}
+.dpad .l{left:0; top:27px} .dpad .r{right:0; top:27px}
+.dpad .c{top:27px; left:27px; background:#222}
+.ab{
+  display:flex; gap:14px; align-items:center;
+}
+.btn-round{
+  width:44px; height:44px; border-radius:50%; background:#6b2048;
+  border:3px solid #3a1028; color:#f0d0e0; font-family:ui-monospace,Menlo,monospace;
+  font-size:14px; font-weight:700;
+  box-shadow:0 3px 0 #3a1028, inset 0 2px 0 rgba(255,255,255,.2);
+}
+.btn-round:active{transform:translateY(2px); box-shadow:0 1px 0 #3a1028}
+.btn-round.b{background:#20486b; border-color:#10283a; box-shadow:0 3px 0 #10283a, inset 0 2px 0 rgba(255,255,255,.2)}
+.sel-row{
+  display:flex; justify-content:center; gap:20px; padding:2px 0 6px;
+}
+.pill{
+  font-size:9px; letter-spacing:.14em; font-family:ui-monospace,Menlo,monospace;
+  color:#3a3a2a; border:2px solid #5a5a48; border-radius:10px;
+  padding:4px 14px; background:#9a9a80; transform:rotate(-8deg);
+}
+.pill:active{background:#7a7a60}
+.footer-note{
+  text-align:center; font-size:10px; color:#4a4a38; padding-top:4px;
+  font-family:ui-monospace,Menlo,monospace; letter-spacing:.04em;
+}
+
+/* QUEST LOG */
+.quest{
+  position:absolute; top:8px; right:8px; z-index:30;
+  width:28px; height:28px; background:var(--gb0); color:var(--gb3);
+  border:2px solid var(--gb1); font-size:10px; font-family:ui-monospace,Menlo,monospace;
+  box-shadow:2px 2px 0 var(--shadow); line-height:1;
+}
+.quest-panel{
+  display:none; position:absolute; top:40px; right:8px; z-index:35;
+  width:min(280px, calc(100% - 24px)); background:var(--gb3);
+  border:3px solid var(--gb0); padding:10px; box-shadow:4px 4px 0 var(--shadow);
+  font-size:12px; max-height:280px; overflow:auto;
+}
+.quest-panel.on{display:block}
+.quest-panel h3{font-size:11px; font-family:ui-monospace,Menlo,monospace; letter-spacing:.08em; margin-bottom:6px}
+.quest-panel .q{margin-bottom:6px; padding-bottom:6px; border-bottom:2px dashed var(--gb1)}
+.quest-panel .q:last-child{border:0; margin:0; padding:0}
+.quest-panel .act{color:#5a2000; font-weight:600}
+.quest-panel .watch{color:var(--dark)}
+
+/* WIPE */
+.wipe{
+  display:none; position:absolute; inset:0; z-index:60; pointer-events:none;
+  background:
+    repeating-conic-gradient(var(--gb0) 0% 25%, var(--gb1) 0% 50%) 0 0/8px 8px;
+  opacity:0;
+}
+.wipe.on{display:block; animation:wipe .38s steps(6) forwards}
+@keyframes wipe{
+  0%{opacity:0} 20%{opacity:1} 80%{opacity:1} 100%{opacity:0}
+}
+
+.hud-bar{
+  display:flex; justify-content:space-between; align-items:center;
+  padding:4px 8px; background:var(--gb0); color:var(--gb3);
+  font-size:10px; font-family:ui-monospace,Menlo,monospace; letter-spacing:.06em;
+}
+</style>
+</head>
+<body>
+<div class="handheld" id="app" tabindex="0">
+  <div class="brand-row"><span>折晓 GAME</span><span>LEVEL 09-08</span></div>
+  <div class="screen-bezel">
+    <div class="lcd" id="lcd">
+      <div class="wipe" id="wipe"></div>
+      <button class="quest" id="questBtn" type="button" title="QUEST LOG">Q</button>
+      <div class="quest-panel" id="questPanel">
+        <h3>◆ QUEST LOG · 邮件角</h3>
+        <div class="q"><b>sofiapintos190</b><br>窗内无新 ACTION</div>
+        <div class="q act"><b>aimfllyys · ACTION×2</b><br>
+          · 前端样式调整（09-07 12:55，163 + zip）待按稿开发<br>
+          · GPT-6 Astra 暂缓（llm-agent）：质量骤降，改切 GPT-5.6-sol
+        </div>
+        <div class="q watch"><b>WATCH</b><br>
+          SCI-AIChat-Demo 仍红 master/579183f（含 09-08 05:32 ci）<br>
+          deepseek-harness E2E 仍红 master/cd5ef81
+        </div>
+      </div>
+
+      <!-- BOOT -->
+      <div class="scene on" id="boot">
+        <div class="boot-sub mono">NINTENDO… 不对，折晓牌</div>
+        <div class="boot-title h1">《异心关》</div>
+        <div class="boot-sub">ALIEN MIND GATE</div>
+        <div class="boot-num h1" style="font-size:42px">40万</div>
+        <div class="boot-sub">GPUs COMING ONLINE NEXT</div>
+        <div class="boot-hint mono">▼ PRESS START</div>
+        <div style="font-size:11px;color:var(--dark);margin-top:8px">Enter / Space / 点按屏幕</div>
+      </div>
+
+      <!-- PLAY -->
+      <div class="scene" id="play">
+        <div class="hud-bar"><span>LAB-01</span><span id="hudFlags">A□ B□</span></div>
+        <div class="stage">
+          <div class="npc-row">
+            <div class="npc-sprite" aria-hidden="true"></div>
+            <div>
+              <div class="npc-meta"><b id="npcName">实验室 NPC</b><span>天上×地上 · 2026-09-08</span></div>
+              <div class="flags">
+                <span class="flag" id="flagA">天上</span>
+                <span class="flag" id="flagB">地上</span>
+              </div>
+            </div>
+          </div>
+          <div class="dialogue pixel-border">
+            <div class="name-tag" id="dlgName">NPC</div>
+            <div class="text" id="dlgText"></div>
+            <div class="choices" id="choices"></div>
+            <div class="adv-hint" id="advHint">▼ A / Enter</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STATUS -->
+      <div class="scene" id="status">
+        <div class="hud-bar"><span>PARTY / STATUS</span><span>UNLOCKED</span></div>
+        <div class="status-wrap">
+          <div class="thesis-card">
+            <div class="label">THESIS · 异心关通关</div>
+            <div class="body">芯片老板在天上宣告 AGI 已到、下一批 40 万卡上线；最高法与工信部同一天在地上给 AI 立裁判规则、给算力网定 9800 EFLOPS——叙事加速度与制度护栏同窗。</div>
+          </div>
+          <div class="tip"><b>Sofia tip：</b>Insilico rentosertib（<i>Nature Biotechnology</i>，Phase 2a IPF）在六套蛋白质组衰老钟上呈生物年龄下降趋势——读试验设计与终点，别把「衰老逆转」营销句当临床结论；医学里真 AI 进步常在生物标志物，不在 AGI 宣告。</div>
+          <div class="inv-grid" id="inv"></div>
+          <div style="font-size:11px;color:var(--dark);font-family:ui-monospace,Menlo,monospace;padding:4px 0 8px">
+            SELECT=说明书 · START/SAVE=卡带 · Q=任务日志
+          </div>
+        </div>
+      </div>
+
+      <!-- SAVE -->
+      <div class="overlay" id="saveOverlay">
+        <button class="close-x" type="button" data-close="save">B · CLOSE</button>
+        <h2>◆ SAVE CARTRIDGE</h2>
+        <div class="slot"><span class="id">SLOT 1</span><br>千问办公「多人工作台」（极客公园 09-07）：自然语言生成百人协作页</div>
+        <div class="slot"><span class="id">SLOT 2</span><br>中科类脑数亿元 B+，中车资本领投（中证网 09-07）</div>
+        <div class="slot"><span class="id">SLOT 3</span><br>OpenAI 自动研究实习生自测 + 3.1 agent-日（近窗；昨早报未写）</div>
+        <div class="slot"><span class="id">SLOT 4</span><br>Gary Marcus：Huang 无定义宣告胜利（Substack，窗内）</div>
+        <div class="slot"><span class="id">SLOT 5</span><br>Insilico rentosertib 蛋白质组衰老钟分析（09-07）</div>
+        <div class="slot"><span class="id">SLOT 6 · SKIP</span><br>Grok Build Engadget 教程≠新品发布；Atlas「近日」转述不装新</div>
+      </div>
+
+      <!-- MANUAL / ESSAY -->
+      <div class="overlay" id="essayOverlay">
+        <button class="close-x" type="button" data-close="essay">B · CLOSE</button>
+        <h2>◆ 说明书 · SELECT</h2>
+        <div class="essay">
+          <p>把今天当成一张对开的病例：上联是天上的宣告，下联是地上的规矩。</p>
+          <p>上联落款是黄仁勋。窗口刚开不久，他祝贺 Astra，顺手写下「AGI has arrived」，并抛出下一句更硬的数字：400K GPUs coming online next。芯片老板用供应曲线给时代命名——卡堆到某个量级，叙事就改称 AGI。Gary Marcus 几乎同时回呛：没有定义的胜利不叫胜利。</p>
+          <p>下联落款是北京。同一天，最高法发布首部涉 AI《意见》（5 部分 24 条），把换脸、开盒、杀熟、自动驾驶致损写进裁判口径；工信部《信息通信十五五》把智能算力写到 2030 年 9800 EFLOPS，还点名智能体互联。规矩不是实验室博客，是可以开庭、可以立项的纸。</p>
+          <p>异心关就夹在这两行字中间。BBC 把 Pachocki《An Alien Mind》放大给大众：没有实验室充分解决对齐与监控，却仍在加速。讯飞星火 X2.5 用全国产 MoE 报出代码与智能体的价格牌；微信小微让两个 Agent 先聊、人只拍板；HiddenLayer 与 AIR 的融资说明，资本已经开始给 Agent 供应链买保险。邮件角上，上游让你暂缓 GPT-6、切回 5.6-sol——宣告与告警再一次同框。</p>
+          <p>通关不是站队。像读 IPF 试验一样读今天：看终点、看设计、看谁在说话。医学里真正的 AI 进步，常常藏在蛋白质组衰老钟这类标志物里，而不是 40 万卡的口号。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <div class="dpad" aria-hidden="true"><span class="u"></span><span class="d"></span><span class="l"></span><span class="r"></span><span class="c"></span></div>
+    <div class="ab">
+      <button class="btn-round b" type="button" id="btnB" title="B">B</button>
+      <button class="btn-round" type="button" id="btnA" title="A">A</button>
+    </div>
+  </div>
+  <div class="sel-row">
+    <button class="pill" type="button" id="btnSelect">SELECT</button>
+    <button class="pill" type="button" id="btnStart" style="transform:rotate(8deg)">START</button>
+  </div>
+  <div class="footer-note">北京时间 2026-09-08 · 折晓 早报</div>
+</div>
+
+<script>
+(function(){
+  var pathA=false, pathB=false, scene='boot', typing=false, typeTimer=null;
+  var lineIdx=0, charIdx=0, queue=[], choosing=false, unlocked=false;
+  var dlgText=document.getElementById('dlgText');
+  var choicesEl=document.getElementById('choices');
+  var advHint=document.getElementById('advHint');
+  var wipeEl=document.getElementById('wipe');
+
+  var SCRIPTS={
+    intro:[
+      {who:'实验室 NPC', text:'欢迎来到异心关。今天屏幕裂成两半——'},
+      {who:'实验室 NPC', text:'天上：黄仁勋宣告 AGI，并抛出「下一批 40 万卡」。地上：最高法 24 条、工信部 9800 EFLOPS。'},
+      {who:'系统', text:'请选择你要先读的半屏。两扇门都推开后，才能看见关底题词。', choices:[
+        {k:'1', label:'加速：天上宣告 / 40万卡', path:'A'},
+        {k:'2', label:'刹车：地上立规 / 异心', path:'B'}
+      ]}
+    ],
+    A:[
+      {who:'供应曲线', text:'Huang（约 09-06 22:59Z，窗内）：Astra ≈100K+ GB；「AGI has arrived」；「400K GPUs coming online next」。'},
+      {who:'供应曲线', text:'这是发布后的算力/叙事加码，不是再讲一遍 Astra 首发。Marcus 同步反驳：无定义的胜利不算数。', link:'https://www.businessinsider.com/nvidia-jensen-huang-agi-openai-astra-ai-2026-9'},
+      {who:'供应曲线', text:'侧声：实验室还在自报「自动研究实习生」与 3.1 agent-日——产量语言与 AGI 宣告叠在同一周。', link2:'https://garymarcus.substack.com/p/sad-to-see-jensen-huang-claim-that'},
+      {who:'系统', text:'「加速」路径已记录。还缺另一扇门。', back:true}
+    ],
+    B:[
+      {who:'裁判席', text:'最高法《意见》5 部分 24 条：换脸、开盒、杀熟、自动驾驶致损……首部国家级涉 AI 裁判规则。', link:'https://www.chinanews.com.cn/gn/2026/09-07/10691909.shtml'},
+      {who:'规划办', text:'工信部信息通信十五五：累计投资 3.8 万亿；智能算力 2030→9800 EFLOPS；适时 6G；专栏含智能体互联。', link2:'https://www.ce.cn/xwzx/gnsz/gdxw/202609/t20260907_3199037.shtml'},
+      {who:'异心档案', text:'Pachocki《An Alien Mind》正文略早于窗；BBC Sep 7 放大：无人充分解决对齐/监控。邮件侧证：上游暂缓 GPT-6。'},
+      {who:'系统', text:'「刹车」路径已记录。还缺另一扇门。', back:true}
+    ],
+    both:[
+      {who:'关底', text:'两半屏幕对读完毕。异心关开放。'},
+      {who:'关底', text:'天上宣告 AGI 与 40 万卡；地上落下 24 条与 9800 EFLOPS——加速度与护栏同窗。', unlock:true}
+    ]
+  };
+
+  var INV=[
+    {tag:'MAIN', title:'Huang：AGI + 40万卡 next', body:'窗内加码叙事；Marcus 反驳无定义胜利。勿重卖 Astra 首发。', links:[
+      ['BI','https://www.businessinsider.com/nvidia-jensen-huang-agi-openai-astra-ai-2026-9'],
+      ['Marcus','https://garymarcus.substack.com/p/sad-to-see-jensen-huang-claim-that']
+    ]},
+    {tag:'法', title:'最高法涉 AI《意见》24 条', body:'首部国家最高审判机构涉 AI 裁判规则；换脸/开盒/杀熟/自动驾驶等。', links:[['中新网','https://www.chinanews.com.cn/gn/2026/09-07/10691909.shtml']]},
+    {tag:'算力', title:'工信部十五五：9800 EFLOPS', body:'3.8 万亿投资；智能算力目标；适时 6G；智能体互联专栏。', links:[['中国经济网','http://www.ce.cn/xwzx/gnsz/gdxw/202609/t20260907_3199037.shtml']]},
+    {tag:'CN', title:'讯飞星火 Spark-X2.5', body:'293B-A30B MoE，全国产训推，代码/智能体；端侧开源口径见报道。', links:[['新浪科技','https://finance.sina.com.cn/tech/2026-09-07/doc-iniqymaa6395289.shtml']]},
+    {tag:'产品', title:'微信小微 Agent↔Agent', body:'报道称内测：两 AI 先聊，人拍板；腾讯称小范围测试。', links:[['界面','https://www.jiemian.com/article/15063609.html']]},
+    {tag:'安全$', title:'HiddenLayer $100M · AIR $50M', body:'Agent/MCP 供应链安全融资双响（AI Insider 09-07）。', links:[
+      ['HL','https://theaiinsider.tech/2026/09/07/hiddenlayer-announces-100m-series-b-as-ai-security-market-surges/'],
+      ['AIR','https://theaiinsider.tech/2026/09/07/ai-security-startup-air-emerges-from-stealth-with-50m-to-secure-the-ai-agent-supply-chain/']
+    ]},
+    {tag:'MAIL', title:'上游质量告警', body:'aimfllyys：GPT-6 暂缓 → 切 GPT-5.6-sol；另有前端 zip 待开发。', links:[]}
+  ];
+
+  function $(id){return document.getElementById(id)}
+  function showScene(id){
+    ['boot','play','status'].forEach(function(s){$(s).classList.toggle('on', s===id)});
+    scene=id;
+  }
+  function doWipe(cb){
+    wipeEl.classList.remove('on'); void wipeEl.offsetWidth; wipeEl.classList.add('on');
+    setTimeout(function(){ wipeEl.classList.remove('on'); if(cb) cb(); }, 380);
+  }
+  function updateFlags(){
+    $('flagA').classList.toggle('on', pathA);
+    $('flagB').classList.toggle('on', pathB);
+    $('hudFlags').textContent = 'A'+(pathA?'■':'□')+' B'+(pathB?'■':'□');
+  }
+  function setQueue(list){ queue=list.slice(); lineIdx=0; startLine(); }
+  function startLine(){
+    choosing=false; choicesEl.classList.remove('show'); choicesEl.innerHTML='';
+    if(lineIdx>=queue.length){ return; }
+    var L=queue[lineIdx];
+    $('dlgName').textContent=L.who||'NPC';
+    $('npcName').textContent=L.who||'实验室 NPC';
+    dlgText.textContent='';
+    charIdx=0; typing=true; advHint.textContent='…';
+    if(typeTimer) clearInterval(typeTimer);
+    typeTimer=setInterval(function(){
+      if(charIdx>=L.text.length){
+        clearInterval(typeTimer); typing=false;
+        finishLine(L);
+        return;
+      }
+      dlgText.textContent += L.text.charAt(charIdx++);
+    }, 28);
+  }
+  function finishLine(L){
+    var html=escapeHtml(L.text);
+    if(L.link) html += ' <a href="'+L.link+'" target="_blank" rel="noopener">[源]</a>';
+    if(L.link2) html += ' <a href="'+L.link2+'" target="_blank" rel="noopener">[源]</a>';
+    dlgText.innerHTML=html+'<span class="caret"></span>';
+    if(L.choices){
+      choosing=true; advHint.textContent='1 / 2 选择';
+      choicesEl.innerHTML='';
+      L.choices.forEach(function(c){
+        var b=document.createElement('button');
+        b.type='button'; b.className='choice-btn';
+        b.innerHTML='<span class="key">'+c.k+'</span>'+c.label;
+        b.onclick=function(){ pick(c.path); };
+        choicesEl.appendChild(b);
+      });
+      choicesEl.classList.add('show');
+    } else if(L.back){
+      advHint.textContent='▼ 回岔路';
+    } else if(L.unlock){
+      advHint.textContent='▼ 进入 STATUS';
+    } else {
+      advHint.textContent='▼ A / Enter';
+    }
+  }
+  function escapeHtml(s){
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+  function advance(){
+    if(scene==='boot'){ startGame(); return; }
+    if(scene!=='play') return;
+    if($('saveOverlay').classList.contains('on')||$('essayOverlay').classList.contains('on')) return;
+    if(choosing) return;
+    var L=queue[lineIdx];
+    if(typing){
+      clearInterval(typeTimer); typing=false; charIdx=L.text.length; finishLine(L); return;
+    }
+    if(L && L.unlock){ openStatus(); return; }
+    if(L && L.back){
+      if(pathA && pathB){ doWipe(function(){ setQueue(SCRIPTS.both); }); }
+      else { setQueue(SCRIPTS.intro); }
+      return;
+    }
+    lineIdx++;
+    if(lineIdx>=queue.length){
+      if(pathA && pathB && !unlocked){ setQueue(SCRIPTS.both); }
+      return;
+    }
+    startLine();
+  }
+  function pick(path){
+    if(path==='A'){ pathA=true; updateFlags(); doWipe(function(){ setQueue(SCRIPTS.A); }); }
+    if(path==='B'){ pathB=true; updateFlags(); doWipe(function(){ setQueue(SCRIPTS.B); }); }
+  }
+  function startGame(){
+    doWipe(function(){ showScene('play'); updateFlags(); setQueue(SCRIPTS.intro); });
+  }
+  function openStatus(){
+    unlocked=true;
+    var box=$('inv'); box.innerHTML='';
+    INV.forEach(function(it){
+      var d=document.createElement('div'); d.className='inv-card';
+      var links=it.links.map(function(l){ return '<a href="'+l[1]+'" target="_blank" rel="noopener">'+l[0]+'</a>'; }).join(' · ');
+      d.innerHTML='<div class="tag">'+it.tag+'</div><h3>'+it.title+'</h3><p>'+it.body+'</p>'+(links?'<p>'+links+'</p>':'');
+      box.appendChild(d);
+    });
+    doWipe(function(){ showScene('status'); });
+  }
+  function toggleSave(){
+    if(scene==='boot') return;
+    var el=$('saveOverlay');
+    var on=!el.classList.contains('on');
+    $('essayOverlay').classList.remove('on');
+    el.classList.toggle('on', on);
+  }
+  function toggleEssay(){
+    if(scene==='boot') return;
+    var el=$('essayOverlay');
+    var on=!el.classList.contains('on');
+    $('saveOverlay').classList.remove('on');
+    el.classList.toggle('on', on);
+  }
+  function closeOverlays(){
+    $('saveOverlay').classList.remove('on');
+    $('essayOverlay').classList.remove('on');
+    $('questPanel').classList.remove('on');
+  }
+
+  $('btnA').onclick=function(){ advance(); };
+  $('btnB').onclick=function(){ closeOverlays(); };
+  $('btnStart').onclick=function(){
+    if(scene==='boot') startGame();
+    else toggleSave();
+  };
+  $('btnSelect').onclick=function(){ toggleEssay(); };
+  $('boot').onclick=function(e){ if(e.target.closest && e.target.closest('a')) return; advance(); };
+  document.querySelector('#play .dialogue').addEventListener('click', function(e){
+    if(e.target.closest('a') || e.target.closest('.choice-btn')) return;
+    advance();
+  });
+  $('questBtn').onclick=function(e){
+    e.stopPropagation();
+    $('questPanel').classList.toggle('on');
+  };
+  document.querySelectorAll('[data-close]').forEach(function(b){
+    b.onclick=function(){ closeOverlays(); };
+  });
+  document.addEventListener('keydown', function(e){
+    var k=e.key;
+    if(k==='Enter' || k===' '){ e.preventDefault(); advance(); return; }
+    if(k==='1' && choosing){ pick('A'); return; }
+    if(k==='2' && choosing){ pick('B'); return; }
+    if(k==='b' || k==='B' || k==='Escape'){ closeOverlays(); return; }
+    if(k==='s' || k==='S'){ toggleSave(); return; }
+    if(k==='q' || k==='Q'){ $('questPanel').classList.toggle('on'); }
+  });
+  // focus for keys
+  $('app').focus();
+  document.body.addEventListener('click', function(){ $('app').focus(); }, true);
+})();
+</script>
+</body>
+</html>

@@ -2,17 +2,26 @@
 
 import Link from 'next/link'
 import { RopeNavigation } from '@/features/navigation'
-import { HOME_DESTINATIONS, JOURNEY_CONTENT } from '../content'
+import {
+  HOME_DESTINATIONS,
+  JOURNEY_CONTENT,
+  type HomeDestination,
+} from '../content'
 
 function MobileDestination({
   destination,
   index,
 }: {
-  destination: (typeof HOME_DESTINATIONS)[number]
+  destination: HomeDestination
   index: number
 }) {
   const cardClassName =
     'relative flex min-h-36 w-full flex-col justify-between overflow-hidden rounded-sm border border-[var(--line)] bg-[var(--bg-elevated)] p-5 text-left shadow-[0_14px_36px_var(--shadow-color)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]'
+  const cta = !destination.available
+    ? '筹备中'
+    : destination.external
+      ? '前往站外'
+      : '前往阅读'
   const content = (
     <>
       <span className="flex items-center justify-between gap-4">
@@ -32,16 +41,35 @@ function MobileDestination({
         </span>
       </span>
       <span className="mt-4 flex min-h-11 items-center justify-between border-t border-[var(--line)] pt-3 text-xs font-semibold tracking-[0.14em] text-[var(--accent)]">
-        {destination.available ? '前往阅读' : '筹备中'}
-        <span aria-hidden="true">{destination.available ? '→' : '—'}</span>
+        {cta}
+        <span aria-hidden="true">
+          {!destination.available ? '—' : destination.external ? '↗' : '→'}
+        </span>
       </span>
     </>
   )
 
+  const linkClassName = `${cardClassName} transition-[transform,border-color] duration-[var(--dur-fast)] ease-out active:translate-y-0.5`
+
+  if (destination.available && destination.external) {
+    return (
+      <a
+        className={linkClassName}
+        data-home-destination={destination.id}
+        data-home-external="true"
+        href={destination.href}
+        rel="noreferrer"
+        target="_blank"
+      >
+        {content}
+      </a>
+    )
+  }
+
   if (destination.available) {
     return (
       <Link
-        className={`${cardClassName} transition-[transform,border-color] duration-[var(--dur-fast)] ease-out active:translate-y-0.5`}
+        className={linkClassName}
         data-home-destination={destination.id}
         href={destination.href}
         prefetch={false}

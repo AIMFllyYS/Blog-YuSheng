@@ -4,7 +4,9 @@
   "installCommand": "pnpm install",
   "outputDirectory": "out",
   "nodeVersion": "22.11.0",
-  "redirects": [],
+  "redirects": [
+    { "source": "/notes/", "destination": "/daily/", "statusCode": 301 }
+  ],
   "headers": [
     {
       "source": "/*",
@@ -21,6 +23,16 @@
         {
           "key": "Content-Security-Policy",
           "value": "frame-ancestors 'self'; sandbox allow-scripts"
+        }
+      ]
+    },
+    {
+      "source": "/briefs/*",
+      "headers": [
+        { "key": "X-Frame-Options", "value": "SAMEORIGIN" },
+        {
+          "key": "Content-Security-Policy",
+          "value": "frame-ancestors 'self'; sandbox allow-scripts allow-popups allow-popups-to-escape-sandbox"
         }
       ]
     },

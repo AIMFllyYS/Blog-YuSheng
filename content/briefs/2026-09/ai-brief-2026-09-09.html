@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>对花小刊 · 折晓早报 · 2026-09-09</title>
+<!--
+design refs:
+1. It's Nice That — Risotto Riso Club: https://www.itsnicethat.com/features/risotto-riso-club-graphic-design-spotlight-080426
+2. Codrops PFold: https://tympanus.net/codrops/2012/10/17/pfold-paper-like-unfolding-effect/
+3. 站酷 Ivress brand case: https://www.zcool.com.cn/work/ZNzM0ODgwMDA=.html
+STYLE 剪纸镂空叠层 + light Riso ink (宣纸 ground, 窗花红 + 靛蓝 spot, intentional misregister) × INTERACTION 拖拽套准拼贴 (drag plates → registration crosses snap) × GENRE 窗花小刊 / cut-paper zine 「对花小刊」(alt 「镂空叠」)
+Do not reuse: 主权折 letter accordion, 折信日曜 origami letter, 异心关, 套架分, 闸口, 同日对开, 备胎传染, 晨间旗标, 可读半径, GameBoy, scratch-off, Swiss status, newsprint slider, details-rotateX accordion as main UX
+-->
+<style>
+:root{
+  --xuan:#f4efe4; --paper:#faf6ec; --ink:#1e2430; --muted:#5a6570;
+  --hong:#c43c3c; --hong-soft:#e8a0a0; --lan:#2b4a7a; --lan-soft:#7a9cc4;
+  --mis:#d45a2a; --rule:#d2c8b4; --stamp:#3d5c4a;
+  --shadow:rgba(30,36,48,.22); --plate:#fffdf7;
+  --ok:#2d6a4f; --warn:#9a5a18;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{
+  min-height:100vh;
+  background:
+    radial-gradient(ellipse at 15% 0%,#ebe4d4 0%,transparent 55%),
+    radial-gradient(ellipse at 90% 100%,#e0d8c8 0%,transparent 50%),
+    linear-gradient(160deg,#d8d0c0,#c8bfae);
+  color:var(--ink);
+  font-family:system-ui,-apple-system,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  line-height:1.6;
+  padding:20px 12px 40px;
+}
+a{color:var(--lan);text-underline-offset:2px}
+a:hover{color:var(--hong)}
+.wrap{max-width:760px;margin:0 auto;position:relative}
+
+/* —— cover flap (entrance only) —— */
+.cover{
+  perspective:1200px;margin-bottom:14px;
+}
+.flap{
+  background:var(--xuan);
+  border:1px solid var(--rule);
+  box-shadow:0 12px 28px var(--shadow);
+  transform-origin:top center;
+  transition:transform .7s cubic-bezier(.4,.0,.2,1);
+  position:relative;overflow:hidden;
+  cursor:pointer;
+}
+.flap.open{transform:rotateX(-105deg);pointer-events:none;opacity:.35;max-height:0;margin:0;border:0;padding:0}
+.flap-inner{padding:28px 24px 22px;text-align:center;position:relative}
+.flap-inner::before{
+  content:"";position:absolute;inset:12px;border:1.5px solid var(--hong);
+  opacity:.35;pointer-events:none;
+  /* cut-paper window pattern */
+  background:
+    radial-gradient(circle at 20% 30%,transparent 8px,var(--hong-soft) 8.5px,var(--hong-soft) 10px,transparent 10.5px),
+    radial-gradient(circle at 80% 70%,transparent 8px,var(--lan-soft) 8.5px,var(--lan-soft) 10px,transparent 10.5px);
+  background-size:100% 100%;
+  mix-blend-mode:multiply;
+}
+.micro{font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--muted)}
+h1{
+  font-size:clamp(2.2rem,7vw,3.2rem);font-weight:800;letter-spacing:.18em;
+  margin:12px 0 4px;color:var(--hong);
+  text-shadow:2px 0 0 rgba(43,74,122,.35), -1px 1px 0 rgba(212,90,42,.25);
+}
+.alt{font-size:12px;letter-spacing:.2em;color:var(--lan);margin-bottom:10px}
+.cover-hint{font-size:12px;color:var(--muted);margin-top:14px}
+.today-badge{
+  display:inline-block;margin-top:12px;padding:10px 20px;
+  border:2px solid var(--ink);background:var(--paper);
+  box-shadow:3px 3px 0 rgba(196,60,60,.35), 5px 5px 0 rgba(43,74,122,.2);
+}
+.today-badge .n{font-size:2.4rem;font-weight:800;letter-spacing:.04em;color:var(--hong);line-height:1}
+.today-badge .sub{font-size:11px;color:var(--muted);margin-top:4px}
+
+/* —— zine body —— */
+.zine{
+  background:var(--paper);
+  border:1px solid var(--rule);
+  box-shadow:0 16px 36px var(--shadow);
+  position:relative;overflow:hidden;
+}
+.zine::before{
+  content:"";position:absolute;inset:0;pointer-events:none;opacity:.07;z-index:0;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='60' height='60' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
+}
+.zine-inner{position:relative;z-index:1;padding:18px 16px 16px}
+
+/* postage mail strip */
+.postage{
+  perspective:800px;margin-bottom:14px;
+}
+.postage-strip{
+  background:linear-gradient(90deg,#f0e8d8,#e8dfd0);
+  border:1px dashed var(--stamp);
+  transform-origin:top center;
+  transition:transform .55s ease;
+  cursor:pointer;
+}
+.postage-strip.peeled{transform:rotateX(-92deg);max-height:0;opacity:0;pointer-events:none;margin:0;border:0;padding:0}
+.postage-face{padding:10px 12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.stamp-seal{
+  width:44px;height:44px;border:2px solid var(--stamp);border-radius:4px;
+  display:grid;place-items:center;font-size:9px;font-weight:700;letter-spacing:.06em;
+  color:var(--stamp);transform:rotate(-6deg);background:rgba(61,92,74,.08);flex-shrink:0;
+}
+.postage-label{font-size:11px;color:var(--muted);letter-spacing:.12em}
+.mail-panel{
+  display:none;background:var(--xuan);border:1px solid var(--rule);
+  padding:12px 14px;margin-bottom:14px;font-size:13px;
+}
+.mail-panel.show{display:block}
+.mail-panel h3{font-size:11px;letter-spacing:.16em;margin:8px 0 4px;color:var(--hong)}
+.mail-panel h3:first-child{margin-top:0}
+.mail-panel ul{padding-left:1.1em;margin:0}
+.mail-panel li{margin:3px 0}
+.tag-a{color:var(--hong);font-weight:700}
+.tag-w{color:var(--warn);font-weight:700}
+.tag-g{color:var(--ok);font-weight:700}
+
+/* toolbar */
+.toolbar{
+  display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;
+  margin-bottom:12px;padding:8px 10px;background:var(--xuan);border:1px solid var(--rule);
+  font-size:12px;
+}
+.toolbar label{display:inline-flex;align-items:center;gap:6px;cursor:pointer;user-select:none}
+.toolbar .prog{margin-left:auto;color:var(--muted)}
+.toolbar .prog strong{color:var(--hong)}
+
+/* registration desk */
+.desk{
+  position:relative;
+  min-height:340px;
+  background:
+    linear-gradient(90deg,transparent 49.5%,rgba(196,60,60,.12) 49.5%,rgba(196,60,60,.12) 50.5%,transparent 50.5%),
+    linear-gradient(transparent 49.5%,rgba(43,74,122,.1) 49.5%,rgba(43,74,122,.1) 50.5%,transparent 50.5%),
+    var(--xuan);
+  border:2px solid var(--ink);
+  margin-bottom:12px;
+  overflow:hidden;
+  touch-action:none;
+}
+.desk.misregister .plate.locked{transform:translate(var(--mx,2px),var(--my,-2px)) !important}
+.cross{
+  position:absolute;width:36px;height:36px;
+  transform:translate(-50%,-50%);
+  pointer-events:none;
+}
+.cross::before,.cross::after{
+  content:"";position:absolute;background:var(--ink);opacity:.55;
+}
+.cross::before{left:50%;top:4px;bottom:4px;width:1.5px;transform:translateX(-50%)}
+.cross::after{top:50%;left:4px;right:4px;height:1.5px;transform:translateY(-50%)}
+.cross .ring{
+  position:absolute;inset:4px;border:1.5px dashed var(--hong);border-radius:50%;opacity:.5;
+}
+.cross.filled .ring{border-style:solid;opacity:.9;border-color:var(--lan)}
+.cross-label{
+  position:absolute;top:100%;left:50%;transform:translateX(-50%);
+  font-size:9px;letter-spacing:.08em;color:var(--muted);white-space:nowrap;margin-top:2px;
+}
+
+/* plates */
+.tray{
+  display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;
+  min-height:48px;padding:8px;background:rgba(30,36,48,.04);border:1px dashed var(--rule);
+}
+.plate{
+  position:relative;
+  width:108px;height:72px;
+  background:var(--plate);
+  border:1.5px solid var(--ink);
+  box-shadow:2px 2px 0 rgba(196,60,60,.4), 4px 3px 0 rgba(43,74,122,.25);
+  cursor:grab;user-select:none;touch-action:none;
+  font-size:11px;padding:6px 7px;line-height:1.25;
+  z-index:5;
+  transition:box-shadow .15s;
+}
+.plate:active,.plate.dragging{cursor:grabbing;z-index:40;box-shadow:4px 6px 12px var(--shadow)}
+.plate.locked{
+  cursor:default;box-shadow:1px 1px 0 rgba(43,74,122,.35);
+  border-color:var(--lan);
+}
+.plate .p-tag{
+  display:block;font-size:9px;letter-spacing:.1em;font-weight:700;
+  color:var(--hong);margin-bottom:2px;
+}
+.plate.lan .p-tag{color:var(--lan)}
+.plate .p-title{font-weight:700;font-size:12px;letter-spacing:.02em}
+.plate .p-sub{font-size:9px;color:var(--muted);margin-top:2px}
+.plate.ghost{opacity:.35;pointer-events:none}
+.plate.cut{
+  /* faux papercut corners */
+  clip-path:polygon(0 6px,6px 0,calc(100% - 6px) 0,100% 6px,100% calc(100% - 6px),calc(100% - 6px) 100%,6px 100%,0 calc(100% - 6px));
+}
+
+/* thesis reveal */
+.thesis-box{
+  opacity:0;max-height:0;overflow:hidden;
+  transition:opacity .4s,max-height .5s;
+  margin-bottom:0;padding:0 4px;
+}
+.thesis-box.unlocked{
+  opacity:1;max-height:120px;margin-bottom:14px;
+  padding:12px 14px;border-left:4px solid var(--hong);
+  background:linear-gradient(90deg,rgba(196,60,60,.08),transparent);
+}
+.thesis-box .t-label{font-size:10px;letter-spacing:.2em;color:var(--hong);font-weight:700}
+.thesis-box p{font-size:15px;font-weight:650;margin-top:4px;letter-spacing:.04em;line-height:1.45}
+
+/* news cards (unlocked content) */
+.locked-veil{
+  opacity:.35;pointer-events:none;filter:blur(.4px);
+  transition:opacity .35s,filter .35s;
+}
+.locked-veil.open{opacity:1;pointer-events:auto;filter:none}
+.lock-note{
+  text-align:center;font-size:12px;color:var(--muted);
+  padding:8px;margin-bottom:8px;
+}
+.lock-note.hide{display:none}
+
+.news{display:grid;gap:10px;margin-bottom:16px}
+.card{
+  background:var(--xuan);border:1px solid var(--rule);padding:12px 14px;
+  position:relative;
+}
+.card::after{
+  content:"";position:absolute;top:6px;right:8px;width:18px;height:18px;
+  border:1.5px solid var(--hong);border-radius:50%;opacity:.35;
+  background:radial-gradient(circle,transparent 40%,var(--hong-soft) 41%,var(--hong-soft) 55%,transparent 56%);
+}
+.card h3{font-size:14px;margin-bottom:6px;letter-spacing:.04em;padding-right:28px}
+.card p{font-size:13px;color:var(--ink);margin:0 0 6px}
+.card .why{font-size:12px;color:var(--muted)}
+.card .src{font-size:11px;color:var(--muted)}
+.card.core{border-left:3px solid var(--hong)}
+.card.side{border-left:3px solid var(--lan)}
+
+/* essay through cutout */
+.verso{
+  margin-top:8px;padding:14px;background:var(--paper);
+  border:1px solid var(--rule);
+  position:relative;
+}
+.verso::before{
+  content:"";position:absolute;inset:8px;pointer-events:none;
+  border:1px solid rgba(196,60,60,.25);
+  background:
+    radial-gradient(circle at 12% 18%,transparent 14px,rgba(196,60,60,.12) 15px,rgba(196,60,60,.12) 16px,transparent 17px),
+    radial-gradient(circle at 88% 22%,transparent 12px,rgba(43,74,122,.12) 13px,rgba(43,74,122,.12) 14px,transparent 15px),
+    radial-gradient(circle at 18% 82%,transparent 10px,rgba(43,74,122,.1) 11px,rgba(43,74,122,.1) 12px,transparent 13px),
+    radial-gradient(circle at 78% 78%,transparent 14px,rgba(196,60,60,.1) 15px,rgba(196,60,60,.1) 16px,transparent 17px);
+}
+.verso h2{font-size:13px;letter-spacing:.2em;color:var(--lan);margin-bottom:10px;position:relative}
+.essay{position:relative;font-size:14px}
+.essay p{margin:0 0 1em;text-indent:2em}
+.essay p:first-of-type{text-indent:0}
+.essay .tip{
+  text-indent:0;margin-top:12px;padding:10px 12px;
+  border:1px dashed var(--hong);background:rgba(196,60,60,.06);
+  font-size:13px;
+}
+.essay .sign{text-indent:0;text-align:right;color:var(--muted);font-size:12px;margin-top:8px}
+
+/* archive atlas */
+.atlas{margin-top:16px}
+.atlas h2{font-size:12px;letter-spacing:.18em;color:var(--muted);margin-bottom:8px}
+.grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:6px;
+}
+.cell{
+  aspect-ratio:1.15;background:var(--xuan);border:1px solid var(--rule);
+  padding:6px;font-size:9px;line-height:1.3;color:var(--muted);
+  position:relative;overflow:hidden;
+}
+.cell::before{
+  content:"";position:absolute;top:3px;right:3px;width:8px;height:8px;
+  border:1px solid var(--hong-soft);border-radius:50%;opacity:.6;
+}
+.cell b{display:block;color:var(--ink);font-size:10px;margin-bottom:2px;letter-spacing:.04em}
+
+.foot{
+  margin-top:18px;text-align:center;font-size:11px;letter-spacing:.14em;color:var(--muted);
+  padding-top:10px;border-top:1px dashed var(--rule);
+}
+
+@media (prefers-reduced-motion:reduce){
+  .flap,.postage-strip,.thesis-box,.locked-veil{transition:none !important}
+  .flap.open{transform:none;opacity:0;max-height:0}
+  .postage-strip.peeled{transform:none;opacity:0;max-height:0}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- COVER: one flap unfold → registration desk -->
+  <div class="cover" id="cover">
+    <div class="flap" id="flap" role="button" tabindex="0" aria-label="掀开封面进入套准台">
+      <div class="flap-inner">
+        <div class="micro">折晓 · 窗花小刊 · 2026-09-09</div>
+        <h1>对花小刊</h1>
+        <div class="alt">镂空叠 · cut-paper zine</div>
+        <div class="today-badge">
+          <div class="n">€3B</div>
+          <div class="sub">Mistral Series D · 今日主印版</div>
+        </div>
+        <p class="cover-hint">点按掀开宣纸扉页 → 进入套准台</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="zine" id="zine">
+    <div class="zine-inner">
+
+      <!-- postage / mail peel -->
+      <div class="postage">
+        <div class="postage-strip" id="postage" role="button" tabindex="0" aria-label="揭开邮戳看邮件角">
+          <div class="postage-face">
+            <div class="stamp-seal">郵<br>戳</div>
+            <div>
+              <div class="postage-label">CORNER MAIL · 邮戳贴条</div>
+              <div style="font-size:12px;margin-top:2px">点按揭开 · ACTION / WATCH</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="mail-panel" id="mail">
+        <h3><span class="tag-a">ACTION</span></h3>
+        <ul>
+          <li>OpenRouter 异地登录：LA / Windows Chrome OAuth（09-08 12:15 上海）— 确认是否本人</li>
+        </ul>
+        <h3><span class="tag-w">WATCH</span></h3>
+        <ul>
+          <li>SCI-AIChat-Demo CI 仍红 master/579183f（09-09 05:11 再挂）</li>
+          <li>deepseek-harness E2E 仍红 master/cd5ef81</li>
+          <li>GPT-6 Astra 上游建议暂缓 → 改用 GPT-5.6-sol（09-07 午，窗外）</li>
+        </ul>
+        <h3><span class="tag-g">好消息 · FYI</span></h3>
+        <ul>
+          <li>AIAADC student-projects PR#1–#6 已全部 approve+merge</li>
+          <li>sofiapintos190 本窗无新信</li>
+        </ul>
+      </div>
+
+      <div class="toolbar">
+        <span style="font-weight:700;letter-spacing:.08em;color:var(--hong)">套准台</span>
+        <label><input type="checkbox" id="misToggle"> 错版 / 套准偏移</label>
+        <span class="prog">已套准 <strong id="lockCount">0</strong> / 3 核心版</span>
+      </div>
+
+      <div class="tray" id="tray" aria-label="可拖拽印版托盘">
+        <div class="plate cut" data-id="e3b" data-core="1" data-target="t-e3b" draggable="false">
+          <span class="p-tag">主印 · €3B</span>
+          <div class="p-title">Mistral</div>
+          <div class="p-sub">Series D 主权栈</div>
+        </div>
+        <div class="plate cut lan" data-id="sov" data-core="1" data-target="t-sov" draggable="false">
+          <span class="p-tag">靛蓝版</span>
+          <div class="p-title">主权合同</div>
+          <div class="p-sub">Samsung · Scaleup · PSG</div>
+        </div>
+        <div class="plate cut" data-id="chip" data-core="1" data-target="t-chip" draggable="false">
+          <span class="p-tag">套色 · 芯片</span>
+          <div class="p-title">高通–亚马逊</div>
+          <div class="p-sub">$4B warrant · $60B</div>
+        </div>
+        <div class="plate cut lan" data-id="inc" data-core="1" data-target="t-inc" draggable="false">
+          <span class="p-tag">披露版</span>
+          <div class="p-title">事故披露</div>
+          <div class="p-sub">EU AI Act · CoT↓</div>
+        </div>
+        <div class="plate cut" data-id="meta" data-core="0" data-target="t-meta" draggable="false">
+          <span class="p-tag">可选色</span>
+          <div class="p-title">Meta Muse</div>
+          <div class="p-sub">DeepSeek 内测</div>
+        </div>
+      </div>
+
+      <div class="desk" id="desk" aria-label="套准工作台">
+        <div class="cross" id="t-e3b" data-accept="e3b" style="left:22%;top:28%"><div class="ring"></div><span class="cross-label">€3B</span></div>
+        <div class="cross" id="t-sov" data-accept="sov" style="left:72%;top:26%"><div class="ring"></div><span class="cross-label">主权</span></div>
+        <div class="cross" id="t-chip" data-accept="chip" style="left:28%;top:68%"><div class="ring"></div><span class="cross-label">芯片</span></div>
+        <div class="cross" id="t-inc" data-accept="inc" style="left:70%;top:70%"><div class="ring"></div><span class="cross-label">披露</span></div>
+        <div class="cross" id="t-meta" data-accept="meta" style="left:50%;top:48%"><div class="ring"></div><span class="cross-label">可选</span></div>
+      </div>
+
+      <div class="thesis-box" id="thesis">
+        <div class="t-label">THESIS · 对花成句</div>
+        <p>只有套准的时候，镂空才成句</p>
+      </div>
+
+      <p class="lock-note" id="lockNote">把至少 3 块核心印版拖到十字套准线上——镂空对齐后，长文与档案才会透出来。</p>
+
+      <div class="locked-veil" id="veil">
+        <div class="news">
+          <article class="card core">
+            <h3>Mistral €3B Series D · 主权全栈写进合同</h3>
+            <p><strong>发生了什么。</strong>Mistral 完成约 €30 亿 Series D，投后估值逾 €210 亿。三星领投，Scaleup Europe Fund 与 PSG 跟投。叙事钉在「主权全栈」：模型、部署与数据边界可写进欧陆客户合同，而不是只卖 API 额度。</p>
+            <p class="why"><strong>套准读法。</strong>资本把「自己的栈」套进合同——镂空的主权字样，只有纸版与合同十字对齐时才成句。</p>
+            <p class="src"><time>2026-09-08</time> · <a href="https://www.unite.ai/mistral-raises-e3b-series-d-to-expand-sovereign-ai/" target="_blank" rel="noopener">Unite.AI · Mistral €3B</a></p>
+          </article>
+          <article class="card core">
+            <h3>Qualcomm–Amazon：认股权约 $4B，采购上看 $60B</h3>
+            <p><strong>发生了什么。</strong>高通与亚马逊达成定制 AI 数据中心芯片合作：约 $40 亿认股权（行权价约 $161.26），采购承诺上看 $600 亿；覆盖推理加速与最高约 1.6Tbps 光互连叙事。</p>
+            <p class="why"><strong>套准读法。</strong>与 Mistral 同日对照：一边是欧洲把模型主权套进合同，一边是云厂用长单把芯片供应商套进机房采购权。</p>
+            <p class="src"><time>2026-09-08</time> · <a href="https://www.reuters.com/technology/qualcomm-amazon-develop-custom-chips-ai-data-centers-2026-09-08/" target="_blank" rel="noopener">Reuters · Qualcomm–Amazon</a></p>
+          </article>
+          <article class="card core">
+            <h3>OpenAI 提交欧盟 AI Act 事故报告 · CoT 监视变薄</h3>
+            <p><strong>发生了什么。</strong>OpenAI 就 DseWiki agents 相关事件向欧盟提交 AI Act 事故报告，欧委会已确认收到。同日脉络里，首席科学家 Jakub Pachocki 承认对思维链（CoT）的可监视性正在减弱。</p>
+            <p class="why"><strong>套准读法。</strong>监管要求把事故套进披露；监控窗口变薄时，更要问谁握钥匙——镂空对不齐，句子就漏字。</p>
+            <p class="src"><time>2026-09-08</time> · <a href="https://www.techtimes.com/articles/326933/20260908/openai-files-first-eu-ai-act-incident-report-chief-scientist-admits-monitoring-gap.htm" target="_blank" rel="noopener">TechTimes · OpenAI EU filing</a></p>
+          </article>
+          <article class="card side">
+            <h3>Meta Muse 个人智能体美国上线</h3>
+            <p>Meta 推出 Muse AI agent（美国），可跨应用代办；信任与权限边界立刻成为消费侧主问句。</p>
+            <p class="src"><time>2026-09-08 · 12:00 PDT</time> · <a href="https://techcrunch.com/2026/09/08/meta-debuts-its-muse-ai-agent-will-consumers-trust-it/" target="_blank" rel="noopener">TechCrunch · Meta Muse</a></p>
+          </article>
+          <article class="card side">
+            <h3>Cognition AI $2B · 估值 $48B</h3>
+            <p>Cognition 完成约 $20 亿融资，估值约 $480 亿；a16z 与 Accel 领投。编码智能体赛道继续用支票标定时间表。</p>
+            <p class="src"><time>2026-09-08</time> · <a href="https://www.reuters.com/technology/cognition-ai-raises-2-billion-48-billion-valuation-2026-09-08/" target="_blank" rel="noopener">Reuters · Cognition $2B</a></p>
+          </article>
+          <article class="card side">
+            <h3>DeepSeek V4.1 Flash 内测 · 09-10 过期</h3>
+            <p>V4.1 Flash「中间版」内测：新结构、原生多模态；model id 含 <code style="font-size:11px;background:#efe8d8;padding:1px 4px">expires-on-0910</code>；计费同 V4 Flash。中间版会自己合页，别焊进生产。</p>
+            <p class="src"><time>2026-09-08</time> · <a href="https://finance.sina.com.cn/roll/2026-09-08/doc-inircmeq9212156.shtml" target="_blank" rel="noopener">第一财经 / 新浪 · DeepSeek</a></p>
+          </article>
+          <article class="card side">
+            <h3>Arm Mali G2-Ultra NX：首款 AI-native Mali GPU</h3>
+            <p>Arm 发布 Mali G2-Ultra NX，强调端侧 AI 原生图形与推理协同——移动印版上的另一层套色。</p>
+            <p class="src"><time>2026-09-08</time> · <a href="https://www.unite.ai/arm-unveils-mali-g2-ultra-nx-its-first-ai-native-mobile-gpu/" target="_blank" rel="noopener">Unite.AI · Arm Mali</a></p>
+          </article>
+        </div>
+
+        <section class="verso">
+          <h2>内页长文 · 透过镂空可读</h2>
+          <div class="essay">
+            <p>今天这叠窗花要套的不是装饰纹样，是权力的十字线。资本把「自己的栈」套进合同：Mistral 用 €30 亿告诉客户，模型、权重落点与部署边界可以写进条款；高通与亚马逊用认股权和长单告诉供应链，推理芯片不必只认一家门牌。钱买的不是口号里的自主，而是出事时还能指着合同说：这层镂空归我印、那层归你披露。</p>
+            <p>同一天，监管要求把事故套进披露。OpenAI 向欧盟递上 AI Act 事故报告，首席科学家又承认思维链监视正在变薄。这是对称的另一色：一边把控制权套准，一边把失败模式透出来。若中间推理不再透明，你就不能假装「看着 CoT 就等于握着方向盘」；你得问更素的问题——钥匙在谁口袋，遏制失效时谁有法定义务开口。镂空只有对齐才成句；监控窗口变薄时，错版会直接漏掉主语。</p>
+            <p>对一边读医、一边摸 AI 的人，这一层尤其具体。Meta Muse 一类智能体开始跨邮箱、日历、支付替你点下去；开源与商业代理继续代写网页与代码。效率很诱人，可医学场景里「代发、代付、代写病历草稿」一旦越权，伤害不是演示失败，是信任与合规同时撕裂。DeepSeek 把过期日写进模型 id，也是一种诚实的套色：中间版会消失，别把生产依赖焊在会合页的纸上。</p>
+            <p class="tip"><strong>给 Sofia。</strong>医学场景里能代你发邮件、付款的智能体，先问权限边界与事故披露，再谈效率。</p>
+            <p>所以「对花」不是民俗贴纸，是合同与披露的几何学：谁能合上哪一层，谁必须在哪条十字线上公开。今天的数字是 €3B；今天的提醒更便宜——先问钥匙，再问速度。</p>
+            <p class="sign">—— 折晓 · 对花小刊</p>
+          </div>
+        </section>
+
+        <section class="atlas">
+          <h2>VERS O · 明信片档案格</h2>
+          <div class="grid">
+            <div class="cell"><b>€3B</b>Mistral D<br>主权全栈</div>
+            <div class="cell"><b>$4B</b>QCOM–AMZN<br>认股权</div>
+            <div class="cell"><b>EU</b>AI Act<br>事故首报</div>
+            <div class="cell"><b>CoT↓</b>监视变薄<br>Pachocki</div>
+            <div class="cell"><b>Muse</b>Meta 代理<br>美国上线</div>
+            <div class="cell"><b>$48B</b>Cognition<br>$2B round</div>
+            <div class="cell"><b>0910</b>V4.1 Flash<br>内测过期</div>
+            <div class="cell"><b>Mali</b>G2-Ultra NX<br>AI GPU</div>
+            <div class="cell"><b>SKIP</b>Astra首发<br>NVDA–HF…</div>
+            <div class="cell"><b>MAIL</b>OpenRouter<br>异地登录</div>
+          </div>
+        </section>
+      </div>
+
+      <footer class="foot">北京时间 2026-09-09 · 折晓 早报</footer>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var SNAP = 28;
+  var coreLocked = 0;
+  var unlocked = false;
+
+  /* cover flap */
+  var flap = document.getElementById('flap');
+  function openCover(){
+    flap.classList.add('open');
+    flap.setAttribute('aria-hidden','true');
+  }
+  flap.addEventListener('click', openCover);
+  flap.addEventListener('keydown', function(e){ if(e.key==='Enter'||e.key===' '){e.preventDefault();openCover();} });
+
+  /* postage peel */
+  var postage = document.getElementById('postage');
+  var mail = document.getElementById('mail');
+  function peelMail(){
+    postage.classList.add('peeled');
+    mail.classList.add('show');
+  }
+  postage.addEventListener('click', peelMail);
+  postage.addEventListener('keydown', function(e){ if(e.key==='Enter'||e.key===' '){e.preventDefault();peelMail();} });
+
+  /* misregister toggle */
+  var desk = document.getElementById('desk');
+  document.getElementById('misToggle').addEventListener('change', function(){
+    desk.classList.toggle('misregister', this.checked);
+    document.querySelectorAll('.plate.locked').forEach(function(p,i){
+      p.style.setProperty('--mx', (i%2===0?2:-3)+'px');
+      p.style.setProperty('--my', (i%3===0?-2:3)+'px');
+    });
+  });
+
+  function updateUnlock(){
+    document.getElementById('lockCount').textContent = String(coreLocked);
+    if(coreLocked >= 3 && !unlocked){
+      unlocked = true;
+      document.getElementById('thesis').classList.add('unlocked');
+      document.getElementById('veil').classList.add('open');
+      document.getElementById('lockNote').classList.add('hide');
+    }
+  }
+
+  function placeAtTarget(plate, target){
+    var deskRect = desk.getBoundingClientRect();
+    var tw = target.offsetLeft;
+    var th = target.offsetTop;
+    plate.style.position = 'absolute';
+    plate.style.left = (tw - plate.offsetWidth/2) + 'px';
+    plate.style.top = (th - plate.offsetHeight/2) + 'px';
+    plate.style.right = 'auto';
+    plate.style.bottom = 'auto';
+    plate.style.margin = '0';
+    if(!plate.parentElement || plate.parentElement !== desk){
+      desk.appendChild(plate);
+    }
+    plate.classList.add('locked');
+    plate.classList.remove('dragging');
+    target.classList.add('filled');
+    if(plate.dataset.core === '1' && !plate.dataset.counted){
+      plate.dataset.counted = '1';
+      coreLocked++;
+      updateUnlock();
+    } else if(plate.dataset.core !== '1'){
+      /* optional plate still unlocks nothing alone */
+      updateUnlock();
+    }
+  }
+
+  /* pointer drag */
+  var drag = null;
+
+  function onPointerDown(e){
+    var plate = e.target.closest('.plate');
+    if(!plate || plate.classList.contains('locked')) return;
+    e.preventDefault();
+    var rect = plate.getBoundingClientRect();
+    var deskRect = desk.getBoundingClientRect();
+    /* move into desk coords if still in tray */
+    if(plate.parentElement !== desk){
+      desk.appendChild(plate);
+      plate.style.position = 'absolute';
+      plate.style.left = (rect.left - deskRect.left) + 'px';
+      plate.style.top = (rect.top - deskRect.top) + 'px';
+      plate.style.width = rect.width + 'px';
+    }
+    drag = {
+      plate: plate,
+      ox: e.clientX - plate.getBoundingClientRect().left,
+      oy: e.clientY - plate.getBoundingClientRect().top
+    };
+    plate.classList.add('dragging');
+    plate.setPointerCapture && plate.setPointerCapture(e.pointerId);
+  }
+
+  function onPointerMove(e){
+    if(!drag) return;
+    e.preventDefault();
+    var deskRect = desk.getBoundingClientRect();
+    var x = e.clientX - deskRect.left - drag.ox;
+    var y = e.clientY - deskRect.top - drag.oy;
+    x = Math.max(0, Math.min(deskRect.width - drag.plate.offsetWidth, x));
+    y = Math.max(0, Math.min(deskRect.height - drag.plate.offsetHeight, y));
+    drag.plate.style.left = x + 'px';
+    drag.plate.style.top = y + 'px';
+  }
+
+  function onPointerUp(e){
+    if(!drag) return;
+    var plate = drag.plate;
+    drag = null;
+    plate.classList.remove('dragging');
+    var targetId = plate.dataset.target;
+    var target = document.getElementById(targetId);
+    if(!target) return;
+    var deskRect = desk.getBoundingClientRect();
+    var pr = plate.getBoundingClientRect();
+    var pcx = pr.left + pr.width/2;
+    var pcy = pr.top + pr.height/2;
+    var tr = target.getBoundingClientRect();
+    var tcx = tr.left + tr.width/2;
+    var tcy = tr.top + tr.height/2;
+    var dx = pcx - tcx;
+    var dy = pcy - tcy;
+    var dist = Math.sqrt(dx*dx + dy*dy);
+    if(dist <= SNAP){
+      placeAtTarget(plate, target);
+    }
+  }
+
+  /* click-to-place for reduced motion / accessibility */
+  function onPlateClick(e){
+    var plate = e.target.closest('.plate');
+    if(!plate || plate.classList.contains('locked')) return;
+    if(reduce || e.detail === 2){
+      var target = document.getElementById(plate.dataset.target);
+      if(target) placeAtTarget(plate, target);
+    }
+  }
+
+  document.querySelectorAll('.plate').forEach(function(plate){
+    plate.addEventListener('pointerdown', onPointerDown);
+    plate.addEventListener('click', onPlateClick);
+  });
+  window.addEventListener('pointermove', onPointerMove);
+  window.addEventListener('pointerup', onPointerUp);
+  window.addEventListener('pointercancel', onPointerUp);
+
+  /* reduced motion: skip flap animation feel, still allow open */
+  if(reduce){
+    /* plates remain click-to-place via click handler */
+  }
+})();
+</script>
+</body>
+</html>

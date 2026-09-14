@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>早报 · 一份 1050 亿的契 · 2026-08-18</title>
+<style>
+  :root {
+    --brick: #3a241c;
+    --mortar: #6a4a38;
+    --paper: #e8d7b4;
+    --ink: #1a120c;
+    --red: #8c1c14;
+    --wax: #6b1410;
+    --copper: #b87333;
+    --dust: #c4a882;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: "Iowan Old Style", "Palatino Linotype", "Songti SC", "Noto Serif SC", serif;
+    background:
+      repeating-linear-gradient(90deg, #4a2e24 0 38px, #3d261e 38px 40px),
+      linear-gradient(#2c1a14, #1a100c);
+    background-blend-mode: multiply;
+    color: var(--ink);
+    overflow: hidden;
+  }
+  body::after {
+    content: "";
+    position: fixed; inset: 0;
+    background: radial-gradient(ellipse at 50% 20%, transparent 20%, rgba(10,6,4,.45) 100%);
+    pointer-events: none; z-index: 2;
+  }
+  .lintel {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 5;
+    background: #1c100c; color: var(--dust);
+    font-family: "Copperplate", "Songti SC", serif;
+    letter-spacing: .28em; text-align: center;
+    font-size: 11px; padding: 10px 16px 12px;
+    border-bottom: 4px solid #2a1812;
+  }
+  .lintel b { color: var(--paper); font-weight: 600; }
+  .help {
+    position: fixed; top: 42px; right: 16px; z-index: 6;
+    font-family: ui-monospace, Menlo, monospace; font-size: 10px; color: var(--dust);
+  }
+  .table {
+    position: relative; z-index: 3;
+    height: 100%; display: grid; place-items: center;
+    padding: 72px 20px 80px;
+  }
+  .deed {
+    width: min(640px, 92vw);
+    background: var(--paper);
+    box-shadow: 0 30px 80px rgba(0,0,0,.45), inset 0 0 80px rgba(90,50,20,.08);
+    padding: 36px 40px 28px;
+    cursor: pointer;
+    transform: rotate(-1.2deg);
+    transition: transform .5s ease;
+  }
+  .deed:hover { transform: rotate(0deg) translateY(-4px); }
+  .deed.opened { cursor: default; transform: none; width: min(1080px, 94vw); max-height: calc(100vh - 150px); overflow: auto; }
+  .deed h1 {
+    font-size: clamp(26px, 4vw, 42px); font-weight: 600; letter-spacing: .04em;
+    text-align: center; line-height: 1.25;
+  }
+  .deed .sub {
+    text-align: center; margin-top: 10px; font-size: 13px; letter-spacing: .16em;
+    color: var(--mortar); font-family: ui-monospace, Menlo, monospace;
+  }
+  .wafer {
+    width: 86px; height: 86px; margin: 22px auto 8px;
+    border-radius: 50%;
+    background: conic-gradient(from 20deg, #d8d0c4, #8a8f96, #efe6d4, #6e737a, #d8d0c4);
+    box-shadow: inset 0 0 0 8px rgba(255,255,255,.15), 0 8px 18px rgba(0,0,0,.2);
+    position: relative;
+  }
+  .wafer::after {
+    content: "TITLE";
+    position: absolute; inset: 0; display: grid; place-items: center;
+    font-family: ui-monospace, Menlo, monospace; font-size: 10px; letter-spacing: .2em; color: #2a2a2a;
+  }
+  .hint { text-align: center; margin-top: 18px; font-size: 15px; color: var(--red); }
+  .body { display: none; }
+  .deed.opened .folded { display: none; }
+  .deed.opened .body { display: block; }
+  .parties {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 22px 0 8px;
+  }
+  .seal {
+    border: 1px dashed var(--mortar); padding: 12px 10px; text-align: center; cursor: pointer;
+    background: rgba(255,255,255,.18);
+  }
+  .seal:hover { background: #fff6e4; }
+  .seal .who { font-family: ui-monospace, Menlo, monospace; font-size: 10px; letter-spacing: .16em; color: var(--red); }
+  .seal .name { display: block; margin-top: 4px; font-size: 18px; }
+  .seal .role { font-size: 12px; color: var(--mortar); }
+  .number {
+    text-align: center; margin: 18px 0 6px;
+    font-size: clamp(42px, 8vw, 84px); letter-spacing: -.03em; color: var(--red);
+    font-variant-numeric: tabular-nums;
+  }
+  .number small { display: block; font-size: 13px; letter-spacing: .18em; color: var(--mortar); margin-top: 4px; }
+  .years { margin: 16px 0 8px; }
+  .years input { width: 100%; accent-color: var(--red); }
+  .years .lab {
+    display: flex; justify-content: space-between;
+    font-family: ui-monospace, Menlo, monospace; font-size: 11px; color: var(--mortar); margin-top: 6px;
+  }
+  .yearbox {
+    margin-top: 10px; min-height: 64px; font-size: 15px; line-height: 1.6;
+    border-left: 3px solid var(--red); padding-left: 12px;
+  }
+  .clauses { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 18px; }
+  .clause {
+    text-align: left; border: 1px solid rgba(58,36,28,.2); padding: 10px 12px; cursor: pointer;
+    background: rgba(255,250,240,.4); font-size: 14px;
+  }
+  .clause:hover { background: #fff; }
+  .clause kbd {
+    font-family: ui-monospace, Menlo, monospace; font-size: 10px; color: var(--red); letter-spacing: .12em;
+  }
+  .overlay {
+    position: fixed; inset: 0; z-index: 20; display: none;
+    background: rgba(12,8,6,.55); place-items: center; padding: 20px;
+  }
+  .overlay.on { display: grid; }
+  .scroll {
+    width: min(720px, 94vw); max-height: 86vh; overflow: auto;
+    background: var(--paper); padding: 32px 36px; box-shadow: 0 20px 60px #000;
+  }
+  .scroll .tag { font-family: ui-monospace, Menlo, monospace; font-size: 11px; letter-spacing: .16em; color: var(--red); }
+  .scroll h2 { font-size: clamp(24px, 3.4vw, 34px); margin: 8px 0 14px; font-weight: 600; }
+  .scroll p { font-size: 16px; line-height: 1.75; margin: 10px 0; }
+  .why { background: rgba(140,28,20,.08); padding: 12px; margin: 14px 0; }
+  .src { font-family: ui-monospace, Menlo, monospace; font-size: 12px; line-height: 1.8; }
+  .src a { color: var(--wax); }
+  .close { float: right; border: 0; background: none; cursor: pointer; font-family: ui-monospace, Menlo, monospace; font-size: 11px; letter-spacing: .14em; color: var(--mortar); }
+  .mailbtn {
+    position: fixed; left: 16px; bottom: 18px; z-index: 7;
+    background: var(--paper); color: var(--ink); border: 1px solid var(--brick);
+    font-family: ui-monospace, Menlo, monospace; font-size: 11px; letter-spacing: .12em;
+    padding: 8px 10px; cursor: pointer;
+  }
+  footer.note {
+    position: fixed; right: 16px; bottom: 18px; z-index: 7;
+    font-family: ui-monospace, Menlo, monospace; font-size: 10px; color: var(--dust); letter-spacing: .1em;
+  }
+  .item { padding: 10px 0; border-bottom: 1px solid rgba(58,36,28,.15); }
+  .need { color: var(--red); font-family: ui-monospace, Menlo, monospace; font-size: 11px; letter-spacing: .12em; }
+  @media (max-width: 800px) {
+    .clauses, .parties { grid-template-columns: 1fr; }
+    body { overflow: auto; }
+  }
+</style>
+</head>
+<body>
+<div class="lintel">PORTS-PIKE · OHIO · <b>NVIDIA</b> 承保 · <b>OPENAI</b> 承租 · <b>SB ENERGY</b> 业主</div>
+<div class="help">点契展开 · 1–7 条款 · 拖年份 · M 邮件 · ESC</div>
+
+<div class="table">
+  <article class="deed" id="deed" tabindex="0">
+    <div class="folded">
+      <div class="wafer"></div>
+      <h1>残值担保契据</h1>
+      <div class="sub">RESIDUAL VALUE GUARANTY · FILED 2026-08-17</div>
+      <p class="hint">点开这张用晶圆当封面的地契</p>
+    </div>
+    <div class="body">
+      <div class="sub">8-K · 初始承诺累计上限</div>
+      <div class="number">$<span id="cap">0</span>B<small>不是现金出门，是一张为期约 20 年的看跌期权</small></div>
+      <div class="parties">
+        <button class="seal" data-id="1"><span class="who">UNDERWRITER</span><span class="name">NVIDIA</span><span class="role">承保人 · 写下一张 1050 亿的 put</span></button>
+        <button class="seal" data-id="2"><span class="who">TENANT</span><span class="name">OpenAI</span><span class="role">承租人 · 俄亥俄智力工厂</span></button>
+        <button class="seal" data-id="3"><span class="who">LANDLORD</span><span class="name">SB Energy</span><span class="role">业主 · SoftBank 电力臂</span></button>
+      </div>
+      <div class="years">
+        <input id="yr" type="range" min="2026" max="2048" value="2026">
+        <div class="lab"><span>2026 签约</span><span id="yrlab">2026</span><span>2048 约满</span></div>
+        <div class="yearbox" id="yrbox"></div>
+      </div>
+      <div class="clauses">
+        <button class="clause" data-id="1"><kbd>01</kbd> 1050 亿写进 8-K</button>
+        <button class="clause" data-id="2"><kbd>02</kbd> 15 亿入股 + 独占算力</button>
+        <button class="clause" data-id="3"><kbd>03</kbd> 黄仁勋自己的 6000 亿管道</button>
+        <button class="clause" data-id="4"><kbd>04</kbd> 债券市场的「幽灵负债」</button>
+        <button class="clause" data-id="5"><kbd>05</kbd> Claude 水印被讲清楚</button>
+        <button class="clause" data-id="6"><kbd>06</kbd> 报道称 OpenAI 解散 Preparedness</button>
+        <button class="clause" data-id="7"><kbd>07</kbd> 智象 HiDream 世界模型</button>
+      </div>
+    </div>
+  </article>
+</div>
+
+<button class="mailbtn" id="mailbtn">角落里的便条 · 3 件要办</button>
+<footer class="note">2026-08-18 北京时间 · Med-YuSheng 早报</footer>
+
+<div class="overlay" id="overlay"><article class="scroll" id="scroll"></article></div>
+
+<script>
+const years = {
+  2026: "契已备案。厂房还没起来。信用市场开始给这张 put 标价。",
+  2027: "土建与电网改造年。AEP Ohio 规划中的电网资本开支被写成至少 42 亿美元量级。",
+  2028: "机房开始就绪。担保随大厅投用生效。第一批约 800MW 量级的 IT 负载叙事从这一年写起。",
+  2029: "扩容窗口。8-K 里初始 4.25GW，另有约 3.8GW 期权。",
+  2030: "英伟达博客把「到 2030 年约 6000 亿美元算力机会」锚在这一年。",
+  2031: "进入多代升级周期。官方说法：一座厂可经历多轮 GPU 换代。",
+  2032: "租约仍在。触发条件仍是：OpenAI 破产违约，或租金未付。",
+  2033: "若 OpenAI 拿到令承保人满意的信用评级，义务可以提前结束。",
+  2034: "英伟达可选择承继、转租、出售、终止，或最多递延一年。",
+  2035: "OpenAI 对英伟达有补偿与赔偿条款。风险在纸面上被推回去一部分。",
+  2036: "十年处。这仍然不是现金，是或有。",
+  2037: "如果大厅已转租或出售，担保补的是「保证最低租金」与实际的差额。",
+  2038: "土地、电、壳，比芯片更硬。黄仁勋原话大意：AI 正在变成基础设施。",
+  2039: "阿巴拉契亚旧铀浓缩厂址上的智力磨坊，还在折旧表上。",
+  2040: "第二代、第三代加速卡如果按官方想象换上去，单代营收叙事是 1500–2000 亿美元。",
+  2041: "put 还在屋顶上。",
+  2042: "社区基金与电网承诺是政治附件，不是算力本身。",
+  2043: "谁是房东、谁是房客、谁是保险公司，这三者关系比模型版本号更稳。",
+  2044: "如果这一天到来时 OpenAI 已上市，这张契会变成招股书里的脚注。",
+  2045: "二十年期的后段。残值假设开始接受现实检验。",
+  2046: "CreditSights 的警告仍适用：亲周期，放大繁荣与萧条。",
+  2047: "接近到期。担保的「看起来不像负债」会变得越来越像负债。",
+  2048: "约期将尽。一张 2026 年 8 月 17 日签下的看跌期权，走完它的设计寿命。"
+};
+const stories = {
+  1: {
+    tag: "01 · 8-K · 2026-08-17",
+    title: "芯片公司第一次给前沿实验室当房东的保险公司。",
+    body: "英伟达 8-K：与 SoftBank 旗下 SB Energy 签下多份残值担保，覆盖俄亥俄 PORTS-Pike 约 4.25GW IT 负载，承租人是 OpenAI 关联方。初始承诺的累计赔付上限 1050 亿美元。触发：OpenAI 破产违约或租金未付。然后英伟达补「保证最低租金」与再出租/出售后的缺口，并可承继、转租、出售、终止或最多递延一年。OpenAI 对英伟达补偿。义务通常自租约起约 20 年，或直到 OpenAI 获得令其满意的信用评级。",
+    why: "这不是又一轮融资新闻。是芯片商把九千亿量级的或有承诺，写进了土地、电和厂房。",
+    src: [["SEC 8-K", "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000069/nvda-20260817.htm"],["NVIDIA 新闻稿", "https://nvidianews.nvidia.com/news/nvidia-guarantees-sb-energy-s-ports-pike-technology-campus-in-ohio-to-exclusively-host-nvidia-ai-compute"]]
+  },
+  2: {
+    tag: "02 · 股权与独占 · 同日",
+    title: "15 亿美元入股 SB Energy，算力只姓 NVIDIA。",
+    body: "同日新闻稿：英伟达向 SB Energy 投资 15 亿美元，与 SoftBank、OpenAI 并列；并成为独家 AI 算力供应商。SB Energy 建设、持有、运营，20 年租给 OpenAI。初始 4.25 IT-GW，剩余约 3.75–3.8 IT-GW 为期权，分期从 2028 年起。SB Energy 与 SoftBank 称至少 10GW 新发电对应 8 IT-GW 工厂容量，AEP Ohio 电网资本开支至少 42 亿美元，社区基金 8000 万美元。黄仁勋：土地、电和壳已经变成关键。Altman 在联合稿里说为在 Pike County 建它感到骄傲。",
+    why: "卡住的不是另一颗 GPU，是 LPS：land, power, shell。英伟达愿意给这三样托底。",
+    src: [["NVIDIA PR", "https://nvidianews.nvidia.com/news/nvidia-guarantees-sb-energy-s-ports-pike-technology-campus-in-ohio-to-exclusively-host-nvidia-ai-compute"],["SB Energy", "https://sbenergy.com/nvidia-ai-compute-ports-pike-ohio/"],["NVIDIA 博客", "https://blogs.nvidia.com/blog/securing-the-infrastructure-of-intelligence/"]]
+  },
+  3: {
+    tag: "03 · NVIDIA 自己的算术",
+    title: "1050 亿是 put，6000 亿是它想打开的订单。",
+    body: "英伟达博客：OpenAI 现有加规划的英伟达部署约 12GW，若行使俄亥俄期权可扩到约 16GW。「在这些水平上，到 2030 年的机会大约是 6000 亿美元英伟达算力。」PORTS-Pike 每一代「可能相当于大约 150 万颗 GPU，或大约 1500 到 2000 亿美元营收」，二十年内可多轮升级。公司强调担保是租约与电力的限定部分外加指定残值承诺，不是整个园区造价；随 2028–2030 大厅投用生效；并否认循环融资，「OpenAI 会付租金」。",
+    why: "读 8-K 要同时读销售管道。承保的理由写在营收里。",
+    src: [["Securing the infrastructure of intelligence", "https://blogs.nvidia.com/blog/securing-the-infrastructure-of-intelligence/"]]
+  },
+  4: {
+    tag: "04 · 信用市场 · 08-16/17",
+    title: "债券交易员已经在给「不上表的 put」标价。",
+    body: "彭博系 8 月 16 日稿：投资者担心约 700 亿美元残值担保「没有出现在主要 AI 公司的资产负债表上」。Meta 的披露口径是：RVG 付款「并非很可能，因此未确认负债」。CreditSights：英伟达是在「写下一张 put……亲周期，放大繁荣与萧条」。博通 Big Sky 曾为 Anthropic 一笔 350 亿美元芯片租赁托底；报道称美银估计 AI XPV 到 2029 年中或堆积 3700 亿美元优先债。中文 8 月 17 日是同一信用故事的转写。今天早上，抽象争论变成一份已备案的 1050 亿数字。",
+    why: "8-K 的 Item 2.03 本身就是这场争论的监管物证：表外，或有，但必须说出来。",
+    src: [["Business Times / Bloomberg", "https://www.businesstimes.com.sg/companies-markets/telcos-media-tech/us70-billion-phantom-liabilities-why-bond-traders-are-worried-about-ai-firms-credit-backstops"],["财联社/新浪转写", "https://finance.sina.com.cn/roll/2026-08-17/doc-ininqtnu9174139.shtml"]]
+  },
+  5: {
+    tag: "05 · The Verge 08-17 · 产品说明 08-14",
+    title: "Claude 的隐形水印，是换随机数，不是藏字符。",
+    body: "The Verge 8 月 17 日 10:57 UTC 把 Anthropic 的说明带进英文主流通。标记是 SynthID-Text 的一个版本：在几乎打平的下一个 token 之间，改随机性的来源。不加 token，不藏字符，不含用户/组织/会话身份，官方称对质量与价格「无实际影响」。全球生效，因为还不能按地区切开，为了欧盟 AI 法案和 2026 年 7 月行为准则。2026-08-02 及之后发布的模型上线即标，更早的模型随后补。检测 API「即将」。生成文件带 C2PA。短文本、事实、代码仍然弱。今天是传播，不是新发货。",
+    why: "合规动作先于能按国界切开的技术。不要把它理解成可靠溯源。",
+    src: [["The Verge", "https://www.theverge.com/ai-artificial-intelligence/980869/anthropic-claude-watermarks-synthid-text-system"],["Anthropic 说明", "https://www.anthropic.com/news/claude-text-watermark"]]
+  },
+  6: {
+    tag: "06 · 报道称 FT · 不是 OpenAI 确认",
+    title: "Preparedness 小组被拆掉的消息，在亚洲时间传开。",
+    body: "The Verge 8 月 16 日 21:32 UTC（刚在本窗口之前）与 8 月 17 日后续稿，转述金融时报：负责灾难性生物/网络风险评估的 Preparedness 团队于 2026 年 7 月底解散，工作按领域拆进现有团队。负责人 Dylan Scandinaro 转到「递归自我改进」方向。近期离开的还有伦理负责人 Chloé Bakalar、首席未来学家 Josh Achiam、安全负责人 Johannes Heidecke。Jan Leike 对 FT 说公司为了「闪亮产品」忽视安全。FT 标题簇把这和 Altman 筹备 IPO 放在一起。OpenAI 未在我们核对的一手稿里确认解散本身。",
+    why: "同一天：一边是 1050 亿基建托底，一边是评估灾难风险的建制被报道拆掉。",
+    src: [["The Verge", "https://www.theverge.com/ai-artificial-intelligence/980817/openai-disbands-preparedness-team"],["India Today 08-17", "https://www.indiatoday.in/technology/news/story/openai-disbands-team-responsible-for-checking-risk-levels-of-ai-models-report-says-2972825-2026-08-17"],["FT", "https://www.ft.com/content/53082739-7714-4aae-9816-e55ab423cbee"]]
+  },
+  7: {
+    tag: "07 · 中国 · 2026-08-17",
+    title: "今天唯一够格的模型发布，是一个能走进去的世界。",
+    body: "智象未来发布 HiDream-O1-World。原生全模态 UiT，可漫游、编辑、交互，输入是文本+图像+互动。在美团 LongCat 与复旦的 WBench 上：Navi 80.9，Physical 73.3（第一），Consistency 88.0，超过当天板上的腾讯混元 1.5 与阿里 Happy Oyster。CTO 姚霆说价值是理解空间、惯性和光，不是一张好看的三维静帧。相关 ECCV 2026 论文 DreamWorld 走「先几何再外观」。美国今天的故事是融资结构，中国今天的故事是世界模型。",
+    why: "别把俄亥俄的契当成全天唯一新闻。模型层并没有放假。",
+    src: [["新浪/机器之心线", "https://finance.sina.com.cn/jjxw/2026-08-17/doc-ininrkkn9069205.shtml"],["钛媒体", "https://www.tmtpost.com/nictation/8105525.html"],["DreamWorld", "https://yanghb22-fdu.github.io/DreamWorld"]]
+  },
+  mail: { mail: true, tag: "便条 · 08-17 06:00 → 08-18 06:00 北京", title: "三件要办，其余可扫一眼。" }
+};
+
+let opened = false;
+function openDeed() {
+  if (opened) return;
+  opened = true;
+  document.getElementById("deed").classList.add("opened");
+  count();
+  setYear(2026);
+}
+function count() {
+  const el = document.getElementById("cap");
+  const t0 = performance.now();
+  const tick = (now) => {
+    const p = Math.min(1, (now - t0) / 1200);
+    el.textContent = Math.round(105 * (1 - Math.pow(1 - p, 3)));
+    if (p < 1) requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+}
+function setYear(y) {
+  document.getElementById("yrlab").textContent = y;
+  document.getElementById("yrbox").textContent = years[y] || years[Math.max(...Object.keys(years).filter(k => k <= y))];
+}
+function openStory(id) {
+  const s = stories[id];
+  if (!s) return;
+  const box = document.getElementById("scroll");
+  if (s.mail) {
+    box.innerHTML = `<button class="close" onclick="closeD()">CLOSE · ESC</button>
+      <div class="tag">${s.tag}</div><h2>${s.title}</h2>
+      <div class="item"><span class="need">要办</span><br><b>sofiapintos190</b> · Supabase：HUST Nursing Platform 闲置超 7 天，将被暂停。</div>
+      <div class="item"><span class="need">要办</span><br><b>aimfllyys</b> · SCI-AIChat-Demo master：ci（lint/tsc/vitest）和 security-audit 都红了。</div>
+      <div class="item"><span class="need">要办</span><br><b>aimfllyys</b> · llm-agent.cc：8 月 20–26 日暂停开票，要发票得在 20 日前交。</div>
+      <div class="item"><b>aimfllyys</b> · Amazon Quick 试用 6 天后结束（约 8 月 24 日）。</div>
+      <div class="item"><b>aimfllyys</b> · GitHub 新 PAT「Grok-Bot」已创建。确认是你本人。</div>
+      <div class="item"><b>两个账号</b> · Cursor Ultra / Grok Bot / Suno 促销，可略过。</div>`;
+  } else {
+    const links = (s.src||[]).map(([n,u]) => `<div><a href="${u}" target="_blank" rel="noopener">${n}</a></div>`).join("");
+    box.innerHTML = `<button class="close" onclick="closeD()">CLOSE · ESC</button>
+      <div class="tag">${s.tag}</div><h2>${s.title}</h2>
+      <p>${s.body}</p><div class="why">${s.why}</div><div class="src">${links}</div>`;
+  }
+  document.getElementById("overlay").classList.add("on");
+}
+function closeD(){ document.getElementById("overlay").classList.remove("on"); }
+
+document.getElementById("deed").addEventListener("click", e => {
+  if (!opened) { openDeed(); return; }
+  const t = e.target.closest("[data-id]");
+  if (t) openStory(t.dataset.id);
+});
+document.getElementById("yr").addEventListener("input", e => setYear(e.target.value));
+document.getElementById("mailbtn").addEventListener("click", () => openStory("mail"));
+document.getElementById("overlay").addEventListener("click", e => { if (e.target.id === "overlay") closeD(); });
+window.addEventListener("keydown", e => {
+  if (e.key === " " && !opened) { e.preventDefault(); openDeed(); }
+  if (e.key === "Escape") closeD();
+  if (e.key === "m" || e.key === "M") openStory("mail");
+  if ("1234567".includes(e.key)) { if (!opened) openDeed(); openStory(e.key); }
+});
+</script>
+</body>
+</html>

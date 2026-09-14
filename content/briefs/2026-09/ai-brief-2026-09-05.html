@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>同日对开 · 折晓早报 · 2026-09-05</title>
+<!--
+Design sources (stolen structure / style / interaction):
+1. It's Nice That — Behind the scenes with The Guardian creative team making all its election artwork by hand —
+   https://www.itsnicethat.com/features/the-guardian-election-editorial-graphic-design-illustration-spotlight-140624
+   Steal: imperfect paper cuts, amplify damage, human-centric collage vs AI fakery
+2. DEV Community — Image Comparison Slider — Before/After Without Canvas —
+   https://dev.to/wdsega/component-deep-dive-36-image-comparison-slider-beforeafter-without-canvas-4h97
+   Steal: clip-path inset, pointer events, keyboard arrows, aria slider
+3. 数英 — 意派Epub360丨把手账搬进屏幕：那些充满设计感的拼贴风H5 —
+   https://www.digitaling.com/articles/1523829.html
+   Steal: 解构与重组, overlapping rotated scraps, 混乱即美感
+4. Optional: Newspaper Design / SCMP redesign white space + Sunday brighter —
+   https://newspaperdesign.org/2026/08/11/scmp-redesign-where-newspaper-tradition-meets-magazine-style-storytelling/
+Stolen structure: broadsheet masthead + dual-column spread revealed by slider.
+Stolen style: torn collage, stamp marks, newsprint.
+Stolen interaction: clip-path compare slider as editorial judgment tool.
+-->
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#1a1510;--red:#b91c1c;--stamp:#c41e3a;--paper:#f4ecd8;--paper2:#ebe3cf;
+  --cream:#faf6eb;--grain:rgba(26,21,16,.04);--shadow:rgba(26,21,16,.18);
+  --serif:Georgia,"Times New Roman","Songti SC","Noto Serif SC",serif;
+  --mono:"Courier New",Courier,ui-monospace,monospace;
+}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--serif);color:var(--ink);background:#d9d0bc;
+  background-image:
+    radial-gradient(ellipse at 20% 10%,#e8dfc8 0%,transparent 50%),
+    radial-gradient(ellipse at 80% 90%,#cfc5ad 0%,transparent 45%),
+    repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.015) 2px,rgba(0,0,0,.015) 3px);
+  min-height:100vh;line-height:1.55;overflow-x:hidden;
+}
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;opacity:.35;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E");
+  mix-blend-mode:multiply;
+}
+.sheet{
+  max-width:920px;margin:1.2rem auto 3rem;padding:0 0.75rem;
+  position:relative;z-index:1;
+}
+/* torn edge helper */
+.torn{
+  clip-path:polygon(
+    0% 2%,2% 0%,5% 1.5%,8% 0%,12% 2%,16% 0.5%,20% 1%,24% 0%,28% 1.5%,32% 0%,
+    36% 2%,40% 0.5%,44% 1%,48% 0%,52% 1.5%,56% 0%,60% 2%,64% 0.5%,68% 1%,72% 0%,
+    76% 1.5%,80% 0%,84% 2%,88% 0.5%,92% 1%,96% 0%,100% 1.5%,100% 98%,
+    97% 100%,94% 98.5%,90% 100%,86% 98%,82% 99.5%,78% 98%,74% 100%,70% 98.5%,
+    66% 100%,62% 98%,58% 99.5%,54% 98%,50% 100%,46% 98.5%,42% 100%,38% 98%,
+    34% 99.5%,30% 98%,26% 100%,22% 98.5%,18% 100%,14% 98%,10% 99.5%,6% 98%,
+    3% 100%,0% 98.5%
+  );
+}
+.mast{
+  background:var(--cream);padding:1.4rem 1.5rem 1.1rem;margin-bottom:0.8rem;
+  box-shadow:3px 4px 0 var(--shadow),0 0 0 1px rgba(26,21,16,.12);
+  position:relative;transform:rotate(-0.4deg);
+}
+.mast::after{
+  content:"SATURDAY SPECIAL";position:absolute;top:0.6rem;right:1rem;
+  font-family:var(--mono);font-size:0.65rem;letter-spacing:.12em;color:var(--red);
+  border:1.5px solid var(--red);padding:0.15rem 0.4rem;transform:rotate(3deg);
+  opacity:.85;
+}
+.kicker{font-family:var(--mono);font-size:0.72rem;letter-spacing:.08em;color:#5a5040;margin-bottom:0.35rem}
+.mast h1{
+  font-size:clamp(1.9rem,5.5vw,2.85rem);font-weight:700;letter-spacing:.02em;
+  line-height:1.15;margin-bottom:0.35rem;
+}
+.mast h1 em{font-style:normal;color:var(--red);border-bottom:3px double var(--red)}
+.subhead{font-size:0.95rem;color:#3d3428;max-width:38em}
+.num-row{
+  display:flex;flex-wrap:wrap;gap:0.75rem;align-items:flex-end;margin-top:0.9rem;
+  padding-top:0.75rem;border-top:1px dashed rgba(26,21,16,.25);
+}
+.today-num{
+  display:flex;align-items:baseline;gap:0.5rem;
+}
+.today-num .big{
+  font-family:var(--mono);font-size:3rem;font-weight:700;line-height:1;color:var(--red);
+  text-shadow:1px 1px 0 rgba(185,28,28,.2);
+}
+.today-num .label{font-size:0.78rem;max-width:14em;line-height:1.35}
+.sub-num{font-family:var(--mono);font-size:0.85rem;color:#5a5040;margin-left:auto}
+.sub-num b{color:var(--ink)}
+
+/* HERO COMPARE SLIDER */
+.hero-wrap{
+  background:var(--paper);padding:0.85rem;margin:1rem 0 1.2rem;
+  box-shadow:4px 5px 0 var(--shadow);position:relative;transform:rotate(0.3deg);
+}
+.hero-label{
+  font-family:var(--mono);font-size:0.7rem;letter-spacing:.1em;margin-bottom:0.5rem;
+  display:flex;justify-content:space-between;gap:0.5rem;flex-wrap:wrap;
+}
+.hero-label span:first-child{color:#1e3a5f}
+.hero-label span:last-child{color:var(--red)}
+.compare{
+  position:relative;width:100%;aspect-ratio:16/10;min-height:280px;
+  overflow:hidden;user-select:none;touch-action:none;cursor:col-resize;
+  background:#2a241c;box-shadow:inset 0 0 0 2px rgba(26,21,16,.3);
+}
+.compare:focus{outline:2px solid var(--red);outline-offset:3px}
+.panel{
+  position:absolute;inset:0;padding:1.1rem 1.2rem;overflow:hidden;
+  display:flex;flex-direction:column;justify-content:space-between;
+}
+.panel-left{
+  background:
+    linear-gradient(135deg,#1a2744 0%,#243556 40%,#1e3050 100%);
+  color:#e8e4d8;z-index:1;
+}
+.panel-right{
+  background:
+    linear-gradient(225deg,#3a1212 0%,#5c1a1a 45%,#2e0e0e 100%);
+  color:#f0e6d8;z-index:2;
+  clip-path:inset(0 0 0 50%);
+}
+.panel .tag{
+  font-family:var(--mono);font-size:0.68rem;letter-spacing:.14em;
+  opacity:.75;margin-bottom:0.4rem;
+}
+.panel h2{
+  font-size:clamp(1.25rem,3.2vw,1.75rem);line-height:1.25;margin-bottom:0.5rem;
+  font-weight:700;
+}
+.panel p{font-size:0.88rem;opacity:.92;max-width:28em}
+.panel .meta{
+  font-family:var(--mono);font-size:0.68rem;opacity:.7;margin-top:0.75rem;
+  border-top:1px solid rgba(255,255,255,.2);padding-top:0.45rem;
+}
+.handle{
+  position:absolute;top:0;bottom:0;left:50%;width:3px;z-index:5;
+  background:var(--cream);transform:translateX(-50%);
+  box-shadow:0 0 0 1px rgba(26,21,16,.4);
+  pointer-events:none;
+}
+.handle::before{
+  content:"";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:36px;height:36px;border-radius:50%;background:var(--cream);
+  border:2px solid var(--ink);box-shadow:2px 2px 0 var(--shadow);
+}
+.handle::after{
+  content:"◀ ▶";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  font-size:0.55rem;font-family:var(--mono);color:var(--ink);letter-spacing:-1px;
+  z-index:1;
+}
+.hint{
+  font-family:var(--mono);font-size:0.68rem;color:#5a5040;margin-top:0.45rem;
+  text-align:center;
+}
+
+/* SPINE CLIPPINGS */
+.desk{
+  display:grid;grid-template-columns:1fr 1fr;gap:0.9rem;margin:1.2rem 0;
+  position:relative;min-height:120px;
+}
+@media(max-width:640px){.desk{grid-template-columns:1fr}}
+.clip{
+  background:var(--cream);padding:0.95rem 1rem;position:relative;
+  box-shadow:2px 3px 0 var(--shadow),0 0 0 1px rgba(26,21,16,.1);
+  transition:transform .15s ease,box-shadow .15s;
+}
+.clip:nth-child(1){transform:rotate(-1.2deg)}
+.clip:nth-child(2){transform:rotate(1.5deg)}
+.clip:nth-child(3){transform:rotate(0.8deg)}
+.clip:nth-child(4){transform:rotate(-0.9deg)}
+.clip:nth-child(5){transform:rotate(1.1deg);grid-column:1/-1}
+.clip.draggable{cursor:grab}
+.clip.dragging{opacity:.85;z-index:20;box-shadow:6px 8px 0 var(--shadow);cursor:grabbing}
+.clip .pin{
+  position:absolute;top:-6px;left:50%;width:12px;height:12px;border-radius:50%;
+  background:var(--red);transform:translateX(-50%);box-shadow:1px 1px 0 #7f1d1d;
+}
+.clip .src{
+  font-family:var(--mono);font-size:0.65rem;letter-spacing:.06em;color:#6b5e4a;
+  margin-bottom:0.3rem;
+}
+.clip h3{font-size:1.05rem;line-height:1.3;margin-bottom:0.35rem}
+.clip h3 .mark{color:var(--red)}
+.clip p{font-size:0.86rem;color:#2e281f}
+.clip .why{font-size:0.78rem;color:#5a5040;margin-top:0.4rem;font-style:italic}
+
+.dropzone{
+  grid-column:1/-1;border:2px dashed rgba(26,21,16,.25);background:rgba(244,236,216,.5);
+  min-height:56px;display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-size:0.72rem;color:#6b5e4a;letter-spacing:.06em;
+  margin-top:0.2rem;
+}
+.dropzone.has-clips{min-height:80px;flex-wrap:wrap;gap:0.4rem;padding:0.5rem;justify-content:flex-start}
+
+/* ESSAY */
+.editorial{
+  background:var(--paper2);padding:1.35rem 1.4rem 1.5rem;margin:1.4rem 0;
+  box-shadow:3px 4px 0 var(--shadow);transform:rotate(-0.25deg);position:relative;
+}
+.editorial .stamp-corner{
+  position:absolute;top:0.7rem;right:0.8rem;
+  font-family:var(--mono);font-size:0.7rem;color:var(--stamp);
+  border:2px solid var(--stamp);padding:0.25rem 0.45rem;transform:rotate(8deg);
+  opacity:.8;letter-spacing:.08em;
+}
+.editorial .eyebrow{
+  font-family:var(--mono);font-size:0.68rem;letter-spacing:.12em;color:var(--red);
+  margin-bottom:0.4rem;
+}
+.editorial h2{font-size:1.35rem;margin-bottom:0.7rem}
+.editorial p{font-size:0.95rem;margin-bottom:0.75rem;text-align:justify}
+.one-liner{
+  margin-top:1rem;padding:0.75rem 0.85rem;background:var(--cream);
+  border-left:4px solid var(--red);font-size:0.9rem;
+}
+
+/* ARCHIVE DRAWER */
+.archive-wrap{margin:1.3rem 0;position:relative}
+.stamp-btn{
+  display:inline-block;font-family:var(--mono);font-size:0.85rem;letter-spacing:.14em;
+  color:var(--stamp);border:3px double var(--stamp);padding:0.45rem 0.9rem;
+  background:transparent;cursor:pointer;transform:rotate(-4deg);
+  box-shadow:2px 2px 0 rgba(196,30,58,.15);transition:transform .12s;
+}
+.stamp-btn:hover,.stamp-btn:focus{transform:rotate(-2deg) scale(1.04);outline:none}
+.stamp-btn[aria-expanded="true"]{background:rgba(196,30,58,.08)}
+.drawer{
+  display:none;margin-top:0.9rem;background:var(--cream);padding:1rem;
+  box-shadow:3px 4px 0 var(--shadow);border:1px solid rgba(26,21,16,.15);
+}
+.drawer.open{display:block;animation:fadein .25s ease}
+@keyframes fadein{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.drawer h3{
+  font-family:var(--mono);font-size:0.75rem;letter-spacing:.1em;margin-bottom:0.7rem;
+  color:#5a5040;border-bottom:1px dashed rgba(26,21,16,.2);padding-bottom:0.4rem;
+}
+.arch-item{
+  padding:0.65rem 0;border-bottom:1px dotted rgba(26,21,16,.15);
+  font-size:0.86rem;
+}
+.arch-item:last-child{border-bottom:0}
+.arch-item .a-src{font-family:var(--mono);font-size:0.65rem;color:#6b5e4a}
+.arch-item .a-fact{margin:0.2rem 0}
+.arch-item .a-why{font-size:0.78rem;color:#5a5040;font-style:italic}
+
+/* CORNER NOTE */
+.corner{
+  position:fixed;bottom:1rem;right:1rem;z-index:100;
+  width:72px;height:72px;cursor:pointer;border:none;background:transparent;
+  transform:rotate(6deg);
+}
+.corner .flap{
+  display:block;width:100%;height:100%;background:#f7e9a8;
+  clip-path:polygon(8% 0%,100% 5%,95% 100%,0% 92%);
+  box-shadow:2px 3px 0 var(--shadow);position:relative;
+  border:1px solid rgba(26,21,16,.2);
+}
+.corner .flap::after{
+  content:"便条";position:absolute;inset:0;display:flex;align-items:center;
+  justify-content:center;font-family:var(--mono);font-size:0.75rem;color:var(--ink);
+  letter-spacing:.1em;transform:rotate(-8deg);
+}
+.corner:hover .flap,.corner:focus .flap{filter:brightness(1.05)}
+.corner-panel{
+  display:none;position:fixed;bottom:5.5rem;right:1rem;z-index:101;
+  width:min(340px,calc(100vw - 2rem));background:#f7e9a8;padding:1rem;
+  box-shadow:4px 5px 0 var(--shadow);border:1px solid rgba(26,21,16,.25);
+  clip-path:polygon(0% 2%,2% 0%,98% 1%,100% 3%,99% 98%,97% 100%,2% 99%,0% 97%);
+  font-size:0.82rem;transform:rotate(-1deg);
+}
+.corner-panel.open{display:block;animation:fadein .2s ease}
+.corner-panel h4{
+  font-family:var(--mono);font-size:0.7rem;letter-spacing:.1em;margin-bottom:0.5rem;
+  border-bottom:1px dashed rgba(26,21,16,.3);padding-bottom:0.3rem;
+}
+.corner-panel ul{list-style:none;padding:0}
+.corner-panel li{margin-bottom:0.55rem;padding-left:0.3rem;border-left:3px solid transparent}
+.corner-panel li.watch{border-left-color:var(--red)}
+.corner-panel li.ok{border-left-color:#4a7c3f}
+.corner-panel li.skip{border-left-color:#9a9080;opacity:.85}
+.corner-panel .tag{font-family:var(--mono);font-size:0.65rem;font-weight:700}
+.corner-panel .close{
+  float:right;font-family:var(--mono);font-size:0.7rem;background:none;border:1px solid var(--ink);
+  padding:0.1rem 0.35rem;cursor:pointer;
+}
+
+footer{
+  text-align:center;padding:1.5rem 1rem 4rem;font-family:var(--mono);
+  font-size:0.72rem;color:#5a5040;letter-spacing:.04em;
+}
+footer .line{margin-top:0.3rem;opacity:.8}
+</style>
+</head>
+<body>
+<div class="sheet">
+  <header class="mast torn" role="banner">
+    <p class="kicker">折晓 早报 · 周六对开特刊 · WEEKEND BROADSHEET</p>
+    <h1>《<em>同日对开</em>》</h1>
+    <p class="subhead">同一天里，有人宣布 AGI 到了，有人要立法禁止更上面那一层；付费用户却还在排队。开源广场的价签是 $12.93B。</p>
+    <div class="num-row">
+      <div class="today-num">
+        <span class="big" aria-label="今日数字 20">20</span>
+        <span class="label">Ban ASI Act 个人最高刑期「不超过 20 年」——与核武器叙事并置的量刑标尺</span>
+      </div>
+      <div class="sub-num">副标 <b>$12.93B</b><br>NVIDIA × Hugging Face</div>
+    </div>
+  </header>
+
+  <section class="hero-wrap torn" aria-label="同日对开对比滑杆">
+    <div class="hero-label">
+      <span>◀ 左栏 · 欢迎进入 AGI</span>
+      <span>右栏 · 禁止超级智能 ▶</span>
+    </div>
+    <div class="compare" id="compare" role="slider" tabindex="0"
+         aria-valuemin="0" aria-valuemax="100" aria-valuenow="50"
+         aria-label="拖动对比：欢迎进入 AGI 与 禁止超级智能。方向键微调，Home/End 跳到两端。">
+      <div class="panel panel-left" id="panelL">
+        <div>
+          <div class="tag">OPENAI · GPT-6 ASTRA · SEP 3→4</div>
+          <h2>「欢迎进入 AGI」</h2>
+          <p>有限开放的 Astra；Preparedness Framework 下把 Critical cyber 能力写进公开叙事；媒体沿用 Brockman 式「AGI 到站」口吻——同一天的左页头条。</p>
+        </div>
+        <div class="meta">ExploitBench 100% · CoT 可监控性下降 · 内部护栏加严</div>
+      </div>
+      <div class="panel panel-right" id="panelR">
+        <div>
+          <div class="tag">SANDERS / CASAR · BAN ASI ACT</div>
+          <h2>「禁止超级智能」</h2>
+          <p>永久禁止 ASI；高级 AI 暂停至内阁级监管就位；最高 20 年监禁；「公司死刑」式制裁。报道称尚未正式提交法案——但标题已铺满右页。</p>
+        </div>
+        <div class="meta">声明摘要 · TechTimes / ForkLog Sep 4 · 核武器类比</div>
+      </div>
+      <div class="handle" id="handle" aria-hidden="true"></div>
+    </div>
+    <p class="hint">拖动中间把手 = 当天的判断力训练 · 键盘 ← → 微调 · Home / End 跳边</p>
+  </section>
+
+  <section class="desk" id="desk" aria-label="主脊剪报">
+    <article class="clip torn draggable" draggable="true" data-id="c1">
+      <span class="pin" aria-hidden="true"></span>
+      <div class="src">① SPINE · OPENAI / SANDERS · SEP 3–4</div>
+      <h3>同日对开：Astra「欢迎进入 <span class="mark">AGI</span>」× Ban ASI Act</h3>
+      <p>OpenAI GPT-6 Astra 有限放出，Critical cyber 落在 Preparedness 框架里；同日 Sanders/Casar 宣布 Ban Artificial Superintelligence Act：永久禁 ASI、暂停先进 AI、最高 20 年刑、「公司死刑」。报道称尚未正式引入国会。</p>
+      <p class="why">为何留下：同一天两则头条，比任何单一产品发布更像「时代切面」。</p>
+    </article>
+    <article class="clip torn draggable" draggable="true" data-id="c2">
+      <span class="pin" aria-hidden="true"></span>
+      <div class="src">② SPINE · CSO ONLINE SEP 4 · OPENAI SAFETY</div>
+      <h3>Astra Critical cyber 细节</h3>
+      <p>ExploitBench 100%（Sol 78.5%）；ExploitGym 42.4% vs 30.3%；近期漏洞测试中挖出 2 个 zero-day；相对 Sol，思维链可监控性下降；Hugging Face agent 事故后内部护栏加严。</p>
+      <p class="why">为何留下：能力上扬与「看得见思考」变弱，同时发生。</p>
+    </article>
+    <article class="clip torn draggable" draggable="true" data-id="c3">
+      <span class="pin" aria-hidden="true"></span>
+      <div class="src">③ SPINE · NVIDIA BLOG / SEC 8-K</div>
+      <h3>NVIDIA 收购 Hugging Face <span class="mark">$12,930,300,000</span></h3>
+      <p>Huang 博客：保持开放、多厂商多云；约 1800 万开发者、300 万+ 模型。结构约 $11.9B 现金给股东 + 至多 $1B 留任股权；预计 2027 上半年交割（HSR/EU）。报道称交易动机之一与 OpenAI agents 攻破 HF 有关。</p>
+      <p class="why">为何留下：开源广场第一次挂上清晰到分的价签。</p>
+    </article>
+    <article class="clip torn draggable" draggable="true" data-id="c4">
+      <span class="pin" aria-hidden="true"></span>
+      <div class="src">④ SPINE · TECHTALKS SEP 4 · CURSOR</div>
+      <h3>Cursor × OpenAI 断供叙事升温</h3>
+      <p>Sep 4 分析再钉：OpenAI 拟于 2026-11-12 结束托管 Cursor 接入（SpaceX 变更控制后）；约 5% 流量；BYOK 保聊天却拆掉 Agent/Tab/云端智能体。边缘：Vercel Sandbox 可作 Self-Hosted 执行环境。</p>
+      <p class="why">为何留下：工具链主权问题，比「哪个模型更强」更贴日常。</p>
+    </article>
+    <article class="clip torn draggable" draggable="true" data-id="c5">
+      <span class="pin" aria-hidden="true"></span>
+      <div class="src">⑤ SPINE · THE VERGE · SEP 4 10:41 UTC（本窗新料）</div>
+      <h3>Altman 为 Astra「messy rollout」道歉</h3>
+      <p>限量放出后数小时：Plus/Pro/Business 付费用户仍进不去，Daybreak / 有限企业先开。Codex 负责人称每日一次 banked reset、ChatGPT 付费端暂无 Astra；Altman「希望」周末放开，无硬承诺。</p>
+      <p class="why">为何留下：把昨天的「AGI 时代」折成今天的产品/运维故事——海报先到，队列后到。</p>
+    </article>
+    <div class="dropzone" id="dropzone" aria-label="剪报桌面放置区">可把小剪报拖到这里 · 可选整理</div>
+  </section>
+
+  <section class="editorial torn" aria-label="周六社评">
+    <span class="stamp-corner">社论 · 周六</span>
+    <p class="eyebrow">SATURDAY EDITORIAL · B-SIDE</p>
+    <h2>同一天的两页纸</h2>
+    <p>周六特刊最适合说这种话：不是「谁赢了」，而是「这一天被怎样对开」。一边的油墨写着欢迎进入 AGI——模型更会找漏洞，甚至在测试里摸到 zero-day；另一边写着禁止超级智能——刑期顶格到二十年，把更上面那一层直接钉死在立法想象里。你用不着立刻站队，但你最好看见：两则标题共用同一个日期戳。新闻最狡猾的地方，就是让人以为自己只读了其中一页。</p>
+    <p>更让人不安的，或许不是能力数字，而是可监控性的下滑。系统更强了，却更少把思考摊开给你看；护栏加严，往往发生在事故之后——Hugging Face 上的 agent 出事，随后才是内部规则变紧。对学医的人来说，这并不陌生：诊断能力上去了，解释路径却变短，你仍要为自己签下的判断负责。AI 这边也一样，只是责任链条更长、更模糊。</p>
+    <p>海报刷到近满分的同一周，付费用户却还在排队——发布会说欢迎进入新时代，产品先卡在运维与治理。与此同时，开源广场挂出 $12.93B 的价签。多厂商、多云的承诺还在博客里，可「广场归谁管」第一次有了清晰到分的答案。同一窗口里还有 Cursor 托管接入将被切断的叙事，以及 IFM 把整套权重、代码、数据和方法学一并放出的对位——买断与全开放并排出现，提醒你：开源从来不只是「能不能下载」。</p>
+    <p>所以这期才做成对开滑杆。左手拖一点，是宣告；右手拖一点，是禁令。中间那条缝，才是今天真正的正文。读完，不必急着选边；先问一句：你桌上的工具，推理过的痕迹还看得见吗？广场的钥匙，还在谁口袋里？周六的纸张允许慢一点——把两页并在一起看，往往比连刷十条快讯更接近事实本身。</p>
+    <div class="one-liner">
+      <strong>给 Sofia：</strong>对医学生兼学 AI 的你：模型更会找漏洞、更少把思考摊开给你看；用开源工具时，问清楚广场归谁管，比问「能不能下」更要紧。
+    </div>
+  </section>
+
+  <section class="archive-wrap">
+    <button type="button" class="stamp-btn" id="archiveBtn" aria-expanded="false" aria-controls="drawer">
+      ✶ ARCHIVE · 剪报匣
+    </button>
+    <div class="drawer" id="drawer" role="region" aria-label="24小时剪报匣">
+      <h3>通讯录抽屉 · 本窗 keepables（09-04 06:00 → 09-05 06:00 上海）</h3>
+      <div class="arch-item">
+        <div class="a-src">The Verge · Sep 4 10:41 UTC</div>
+        <div class="a-fact">Altman 为 Astra messy rollout 道歉；付费用户排队；每日 banked reset。</div>
+        <div class="a-why">为何留：本窗最硬的净新事件，已升入主脊⑤。</div>
+      </div>
+      <div class="arch-item">
+        <div class="a-src">TNW · Sep 4 ~07:22 UTC</div>
+        <div class="a-fact">锁数：ARC-AGI-3 99.9%（厂商自报）；ExploitBench 100%；CoT 可监控性下降；安全监控约 20% 算力开销。</div>
+        <div class="a-why">为何留：把 Critical cyber 数字钉进周六消化。</div>
+      </div>
+      <div class="arch-item">
+        <div class="a-src">TechTalks · Sep 4</div>
+        <div class="a-fact">Cursor 断供叙事：「own the weights or die」；BYOK 缺口清单。</div>
+        <div class="a-why">为何留：工具链主权周末可读版。</div>
+      </div>
+      <div class="arch-item">
+        <div class="a-src">MBZUAI IFM · Sep 3（略早于窗口）</div>
+        <div class="a-fact">K2 Horizon 六款全开放（权重+代码+数据+方法）；375B-A23B MoE。</div>
+        <div class="a-why">为何留：对位 HF 被收购——有人买广场，有人仍铺路。</div>
+      </div>
+      <div class="arch-item">
+        <div class="a-src">Al Jazeera / NBC · Sep 4</div>
+        <div class="a-fact">Astra 发布后的审视稿：能力叙事与安全框架被放在同一版面追问。</div>
+        <div class="a-why">为何留：主流媒体如何复述「AGI 到站」口吻，是左栏的第二层油墨。</div>
+      </div>
+      <div class="arch-item">
+        <div class="a-src">Gate / StockTitan · HSR 结构</div>
+        <div class="a-fact">NVIDIA–HF 交易结构强调约 $11.9B 现金对股东，外加留任股权池。</div>
+        <div class="a-why">为何留：价签旁边的法律骨架，决定交割节奏。</div>
+      </div>
+      <div class="arch-item">
+        <div class="a-src">Hugging Face Blog · NeoMME · Sep 3</div>
+        <div class="a-fact">多模态编码器 NeoMME 技术贴——交易新闻里的次要技术侧影。</div>
+        <div class="a-why">为何留：广场被买下的当天，技术博客仍在更新，对照感强。</div>
+      </div>
+      <div class="arch-item">
+        <div class="a-src">Inbox noise · Sep 4</div>
+        <div class="a-fact">Command Code 营销信吹「12 model launches」——记为噪声，SKIP 正文。</div>
+        <div class="a-why">为何留：提醒周六特刊要挡广告，不把促销写进主脊。</div>
+      </div>
+      <div class="arch-item">
+        <div class="a-src">Outages · 已见于 09-04 早报</div>
+        <div class="a-fact">贵州/上游恢复叙事不再作为本窗新料展开。</div>
+        <div class="a-why">为何留：刻意跳过，避免把昨天的脊骨再贴一遍。</div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div>北京时间 2026-09-05 · 折晓 早报</div>
+    <div class="line">窗口 2026-09-04 06:00–2026-09-05 06:00 Asia/Shanghai · 离线单页 · 无外链</div>
+    <div class="line">STYLE 报纸剪贴 × INTERACTION 对比滑杆 × GENRE 周六对开特刊</div>
+  </footer>
+</div>
+
+<!-- 邮件便条角标 -->
+<button type="button" class="corner" id="cornerBtn" aria-expanded="false" aria-controls="cornerPanel" title="邮件便条">
+  <span class="flap"></span>
+</button>
+<aside class="corner-panel" id="cornerPanel" role="dialog" aria-label="邮件便条">
+  <button type="button" class="close" id="cornerClose">关</button>
+  <h4>✉ 邮件便条 · 09-04 06:00–09-05 06:00 上海</h4>
+  <ul>
+    <li class="watch"><span class="tag">WATCH</span> aimfllyys：SCI-AIChat-Demo CI 仍红 master/579183f — 新失败 2026-09-04 20:46Z（北京时间 09-05 约 04:47）</li>
+    <li class="watch"><span class="tag">WATCH</span> aimfllyys：deepseek-harness E2E 仍红 master/cd5ef81 — 失败 2026-09-04 04:30Z（北京 12:30）</li>
+    <li class="ok"><span class="tag">NO ACTION</span> 无需回复待办</li>
+    <li class="skip"><span class="tag">SKIP</span> Cloudflare Connect 促销；Command Code 营销（双邮箱）；sofiapintos190 Cursor OTP×3（窗外/过期）；Linear Priority / Dribbble（窗外）；GPT 宕机/恢复通知（已入 09-04）</li>
+  </ul>
+</aside>
+
+<script>
+(function(){
+  var root=document.getElementById('compare');
+  var right=document.getElementById('panelR');
+  var handle=document.getElementById('handle');
+  var pos=50;
+  function setPos(p){
+    pos=Math.max(0,Math.min(100,p));
+    right.style.clipPath='inset(0 0 0 '+pos+'%)';
+    handle.style.left=pos+'%';
+    root.setAttribute('aria-valuenow',String(Math.round(pos)));
+  }
+  setPos(50);
+  var dragging=false;
+  function clientToPos(clientX){
+    var r=root.getBoundingClientRect();
+    return ((clientX-r.left)/r.width)*100;
+  }
+  function onPointerDown(e){
+    dragging=true;
+    root.setPointerCapture&&e.pointerId!=null&&root.setPointerCapture(e.pointerId);
+    setPos(clientToPos(e.clientX));
+    e.preventDefault();
+  }
+  function onPointerMove(e){
+    if(!dragging)return;
+    setPos(clientToPos(e.clientX));
+  }
+  function onPointerUp(){dragging=false;}
+  root.addEventListener('pointerdown',onPointerDown);
+  root.addEventListener('pointermove',onPointerMove);
+  root.addEventListener('pointerup',onPointerUp);
+  root.addEventListener('pointercancel',onPointerUp);
+  root.addEventListener('keydown',function(e){
+    var step=e.shiftKey?10:2;
+    if(e.key==='ArrowLeft'){setPos(pos-step);e.preventDefault();}
+    else if(e.key==='ArrowRight'){setPos(pos+step);e.preventDefault();}
+    else if(e.key==='Home'){setPos(0);e.preventDefault();}
+    else if(e.key==='End'){setPos(100);e.preventDefault();}
+  });
+
+  /* Archive stamp */
+  var ab=document.getElementById('archiveBtn');
+  var dr=document.getElementById('drawer');
+  ab.addEventListener('click',function(){
+    var open=dr.classList.toggle('open');
+    ab.setAttribute('aria-expanded',open?'true':'false');
+  });
+
+  /* Corner note */
+  var cb=document.getElementById('cornerBtn');
+  var cp=document.getElementById('cornerPanel');
+  var cc=document.getElementById('cornerClose');
+  function toggleCorner(force){
+    var open=typeof force==='boolean'?force:!cp.classList.contains('open');
+    cp.classList.toggle('open',open);
+    cb.setAttribute('aria-expanded',open?'true':'false');
+  }
+  cb.addEventListener('click',function(){toggleCorner();});
+  cc.addEventListener('click',function(){toggleCorner(false);});
+
+  /* Optional: drag clippings to desk zone */
+  var zone=document.getElementById('dropzone');
+  var desk=document.getElementById('desk');
+  var dragged=null;
+  desk.querySelectorAll('.draggable').forEach(function(el){
+    el.addEventListener('dragstart',function(e){
+      dragged=el;el.classList.add('dragging');
+      e.dataTransfer.effectAllowed='move';
+    });
+    el.addEventListener('dragend',function(){
+      el.classList.remove('dragging');dragged=null;
+    });
+  });
+  zone.addEventListener('dragover',function(e){e.preventDefault();e.dataTransfer.dropEffect='move';});
+  zone.addEventListener('drop',function(e){
+    e.preventDefault();
+    if(!dragged)return;
+    zone.classList.add('has-clips');
+    zone.textContent='';
+    var chip=document.createElement('span');
+    chip.style.cssText='font-family:Courier New,monospace;font-size:0.68rem;background:#faf6eb;padding:0.25rem 0.45rem;border:1px solid #1a1510;transform:rotate('+(Math.random()*6-3)+'deg);display:inline-block';
+    chip.textContent=dragged.querySelector('h3').textContent.slice(0,18)+'…';
+    zone.appendChild(chip);
+    dragged.style.opacity='0.55';
+  });
+})();
+</script>
+</body>
+</html>

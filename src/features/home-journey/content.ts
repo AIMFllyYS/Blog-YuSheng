@@ -6,7 +6,18 @@ export const JOURNEY_CONTENT = {
   gateLine: '玄之又玄，众妙之门',
 } as const
 
-export const HOME_DESTINATIONS = [
+export type HomeDestination = {
+  readonly id: 'blog' | 'daily' | 'works' | 'about'
+  readonly label: string
+  readonly eyebrow: string
+  readonly description: string
+  readonly href: string
+  readonly available: boolean
+  /** 站外链接：新标签打开，不走 next/link */
+  readonly external?: boolean
+}
+
+export const HOME_DESTINATIONS: readonly HomeDestination[] = [
   {
     id: 'blog',
     label: '博客',
@@ -16,11 +27,11 @@ export const HOME_DESTINATIONS = [
     available: true,
   },
   {
-    id: 'notes',
-    label: '短随笔',
-    eyebrow: '卷二 · 片语',
-    description: '日常灵光、生活侧记与尚未长成文章的念头。',
-    href: '/notes/',
+    id: 'daily',
+    label: '小日报',
+    eyebrow: '卷二 · 日课',
+    description: '每天清晨由电子分身折好的一份 AI 早报，按月归档、按周翻阅。',
+    href: '/daily/',
     available: true,
   },
   {
@@ -28,15 +39,17 @@ export const HOME_DESTINATIONS = [
     label: '作品集',
     eyebrow: '卷三 · 造物',
     description: '把想法做成真实可见、可触达、可继续生长的作品。',
-    href: '/works/',
+    href: 'https://artifact.yusheng.husteread.com/',
     available: true,
+    external: true,
   },
   {
     id: 'about',
     label: '关于我',
     eyebrow: '卷四 · 此身',
     description: '认识羽升，也认识正在被一点点写出来的电子分身。',
-    href: '/about/',
-    available: false,
+    href: 'https://husteread.com',
+    available: true,
+    external: true,
   },
-] as const
+]

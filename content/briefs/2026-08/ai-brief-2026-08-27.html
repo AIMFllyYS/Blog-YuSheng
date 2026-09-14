@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>折晓 · 2026-08-27 · 今日印次</title>
+<!--
+  折晓 · 2026-08-27 早报 — 对照印次 / 迷你网站 (single file, offline)
+  window: Beijing 2026-08-26 06:00 → 2026-08-27 06:00
+        = UTC 2026-08-25 22:00 → 2026-08-26 22:00
+        = +13 2026-08-26 11:00 → 2026-08-27 11:00
+
+  OPENED DESIGN SOURCES (three, actually opened):
+  1. CSSDA · Santioni Spirits
+     https://www.cssdesignawards.com/sites/santioni-spirits/50008/
+     steal: enter a universe, don't wait for boot — 开页已在对照里，没有开机等待
+  2. It's Nice That · Teddy Blanks film titles
+     https://www.itsnicethat.com/features/teddy-blanks-chips-film-title-typography-graphic-design-spotlight-240826
+     steal: impact is for THIS on-screen moment — 96.2 只为这一窗的标题字
+  3. Notion · Updating the design of Notion pages
+     https://www.notion.com/blog/updating-the-design-of-notion-pages
+     steal: rhythm from adjacency, not one baseline — Qwen / GLM 贴在正文旁，不跟 96.2 抢基线
+
+  structure = Guidance vs Actual print plate
+  style     = 粗野主义大字 · cream #f2ebe0 / ink #0a0a0a · Impact-scale grotesk
+  interaction = 对比滑杆 (range + pointer + ←/→)；刻度在轨道上
+  genre     = 迷你网站「今日印次」
+-->
+<style>
+:root{
+  --cream:#f2ebe0; --ink:#0a0a0a; --ghost:#8a8478; --rule:#0a0a0a;
+  --must:#9a1c1c; --good:#1a4a2a; --carry:#5a4a18;
+  --wipe:58%;
+  --display: Impact, Haettenschweiler, "Arial Black", "Helvetica Neue Condensed", "Arial Narrow", "Nimbus Sans Condensed", system-ui, sans-serif;
+  --sans: "Helvetica Neue", Helvetica, Arial, "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+  --serif: Georgia, "Songti SC", "STSong", "SimSun", "Noto Serif CJK SC", "Source Han Serif SC", serif;
+  --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--cream);color:var(--ink)}
+body{font-family:var(--serif);overflow:hidden}
+a{color:inherit;text-decoration:underline;text-underline-offset:3px}
+a:hover{background:var(--ink);color:var(--cream);text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+
+#mast{
+  position:fixed;top:0;left:0;right:0;z-index:20;
+  display:flex;justify-content:space-between;align-items:baseline;gap:12px;
+  padding:8px 18px 7px;border-bottom:1px solid var(--ink);
+  background:var(--cream);font-family:var(--mono);font-size:11px;letter-spacing:.16em;
+  text-transform:uppercase;
+}
+#mast b{letter-spacing:.22em}
+
+#plate{
+  position:relative;height:100vh;overflow:hidden;cursor:ew-resize;
+  padding-top:34px;padding-bottom:78px;
+}
+.layer{position:absolute;inset:34px 0 78px 0;overflow:auto;padding:18px 22px 8px}
+.layer-guide{color:var(--ghost);z-index:1}
+.layer-actual{z-index:2;color:var(--ink);background:var(--cream);
+  clip-path:inset(0 0 0 var(--wipe));
+}
+.layer-guide .essay{position:relative}
+.layer-guide .essay:after{
+  content:"";position:absolute;inset:-4px;pointer-events:none;
+  background-image:radial-gradient(circle, #0a0a0a 0.55px, transparent 0.65px);
+  background-size:3px 3px;opacity:.28;
+}
+.sheet{max-width:1180px;margin:0 auto;display:grid;
+  grid-template-columns:minmax(0,1.15fr) minmax(240px,0.85fr);gap:28px 36px;align-items:start}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;margin-bottom:4px}
+.num{
+  font-family:var(--display);font-weight:400;line-height:.78;
+  letter-spacing:-.045em;font-size:clamp(5.2rem, 26vw, 13.4rem);
+  cursor:pointer;user-select:none;width:max-content;max-width:100%;
+}
+.num[data-sz="2"]{font-size:clamp(6.2rem, 30vw, 15.2rem)}
+.num[data-sz="3"]{font-size:clamp(4.2rem, 20vw, 10.6rem)}
+.num.sub{font-size:clamp(3.4rem, 14vw, 8.2rem)}
+.num.sub[data-sz="2"]{font-size:clamp(4.2rem, 18vw, 9.6rem)}
+.num.sub[data-sz="3"]{font-size:clamp(2.8rem, 12vw, 6.8rem)}
+.unit{font-family:var(--display);font-size:clamp(1.4rem,4vw,2.6rem);letter-spacing:.02em;margin:4px 0 10px}
+.lede{font-family:var(--sans);font-size:clamp(16px,1.7vw,21px);line-height:1.35;font-weight:700;max-width:22em;margin-bottom:14px}
+.facts{font-family:var(--mono);font-size:12px;line-height:1.55;max-width:42em}
+.facts a{word-break:break-all}
+.col h2{font-family:var(--display);font-size:clamp(22px,3vw,34px);letter-spacing:-.02em;line-height:.95;margin:0 0 10px}
+.essay{font-size:15.5px;line-height:1.7;max-width:38em}
+.essay p{margin:0 0 0.85em}
+.essay .note{font-size:13px;color:inherit;opacity:.72}
+.sideplates{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px;margin-top:16px}
+.mini{border-top:1px solid currentColor;padding-top:8px}
+.mini .n{font-family:var(--display);font-size:clamp(28px,4vw,42px);line-height:.85;letter-spacing:-.03em}
+.mini .t{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:4px}
+.mini p{font-size:13px;line-height:1.4;margin-top:4px}
+
+#rule{
+  position:absolute;top:34px;bottom:78px;left:var(--wipe);width:0;z-index:8;pointer-events:none;
+}
+#rule>i{position:absolute;top:0;bottom:0;left:-1px;width:2px;background:var(--ink)}
+#grip{
+  position:absolute;top:50%;left:-11px;width:22px;height:22px;margin-top:-11px;
+  background:var(--ink);pointer-events:none;
+}
+
+#rail{
+  position:fixed;left:0;right:0;bottom:0;z-index:30;
+  background:var(--cream);border-top:1px solid var(--ink);padding:8px 18px 10px;
+}
+.rail-head{display:flex;justify-content:space-between;align-items:baseline;
+  font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:6px}
+.track{position:relative;height:28px}
+.track input[type=range]{
+  -webkit-appearance:none;appearance:none;position:absolute;left:0;right:0;top:11px;
+  width:100%;height:2px;background:var(--ink);margin:0;z-index:2;
+}
+.track input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:14px;height:14px;background:var(--ink);border:2px solid var(--cream);cursor:ew-resize;
+}
+.track input[type=range]::-moz-range-thumb{
+  width:14px;height:14px;background:var(--ink);border:2px solid var(--cream);border-radius:0;cursor:ew-resize;
+}
+.ticks{position:absolute;inset:0;z-index:3;pointer-events:none}
+.tick{
+  position:absolute;top:0;transform:translateX(-50%);pointer-events:auto;
+  font-family:var(--mono);font-size:9px;letter-spacing:.04em;line-height:1;
+  color:var(--ink);background:transparent;padding:0;text-align:center;white-space:nowrap;
+}
+.tick:before{
+  content:"";display:block;width:1px;height:9px;background:var(--ink);margin:0 auto 3px;
+}
+.tick.named:before{height:13px;width:2px}
+.tick.on{font-weight:700}
+.tick.on:after{content:"";display:block;width:5px;height:5px;background:var(--ink);margin:2px auto 0}
+.edge{position:absolute;top:-2px;transform:translateX(-50%);font-family:var(--mono);
+  font-size:9px;letter-spacing:.14em;text-transform:uppercase;pointer-events:none}
+.edge:before{content:"";display:block;width:2px;height:18px;background:var(--ink);margin:0 auto 2px}
+
+#ear{
+  position:fixed;right:14px;bottom:86px;z-index:40;
+  width:168px;transform:rotate(-2deg);transform-origin:bottom right;
+  background:var(--cream);border:1px solid var(--ink);
+  box-shadow:3px 3px 0 rgba(10,10,10,.18);
+  font-family:var(--sans);text-align:left;padding:18px 12px 10px;
+}
+#ear:before{
+  content:"";position:absolute;top:0;right:0;width:0;height:0;
+  border-style:solid;border-width:0 22px 22px 0;
+  border-color:transparent #c4b9a6 transparent transparent;
+  filter:drop-shadow(-1px 1px 0 var(--ink));
+}
+#ear:after{
+  content:"";position:absolute;top:0;right:0;width:22px;height:22px;
+  background:linear-gradient(135deg, transparent 49%, var(--cream) 50%);
+  box-shadow:-1px 1px 0 var(--ink);
+}
+#ear .brand{font-family:var(--display);font-size:20px;line-height:.9;letter-spacing:-.02em}
+#ear .sub{font-family:var(--mono);font-size:10px;letter-spacing:.12em;margin-top:6px;text-transform:uppercase}
+#ear.open{width:min(420px, calc(100vw - 28px));transform:rotate(0deg);padding:16px 14px 12px}
+#tickets{display:none;margin-top:12px;border-top:1px solid var(--ink);padding-top:10px}
+#ear.open #tickets{display:block}
+.job{display:block;width:100%;text-align:left;padding:8px 0;border-bottom:1px dashed #c4b9a6}
+.job:last-child{border-bottom:0}
+.job .fl{font-family:var(--display);font-size:18px;letter-spacing:.04em;line-height:1}
+.job.must .fl{color:var(--must)}
+.job.good .fl{color:var(--good)}
+.job.carry .fl{color:var(--carry)}
+.job .who{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;margin:2px 0 4px}
+.job p{font-size:13px;line-height:1.4}
+.job .more{display:none;margin-top:6px;font-size:12px;line-height:1.45;font-family:var(--serif)}
+.job.on .more{display:block}
+
+#peel{
+  position:fixed;left:0;top:42%;z-index:35;transform:rotate(-90deg);transform-origin:left center;
+  font-family:var(--display);font-size:15px;letter-spacing:.2em;
+  background:var(--ink);color:var(--cream);padding:6px 14px 7px;border:0;
+}
+#verso{
+  display:none;position:fixed;left:0;top:34px;bottom:78px;width:min(360px,86vw);z-index:34;
+  background:var(--cream);border-right:1px solid var(--ink);padding:22px 18px;overflow:auto;
+  font-size:13px;line-height:1.55;
+}
+#verso.on{display:block}
+#verso h3{font-family:var(--display);font-size:28px;letter-spacing:-.02em;margin-bottom:8px}
+#verso .row{border-top:1px solid #c4b9a6;padding:8px 0}
+#verso .lab{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase}
+
+.galley{font-family:var(--mono);font-size:12px;line-height:1.5}
+.galley .g{border-top:1px solid currentColor;padding:7px 0}
+.galley .tm{opacity:.7}
+
+@media (max-width:820px){
+  .sheet{grid-template-columns:1fr;gap:16px}
+  .num{font-size:clamp(4.4rem,28vw,9rem)}
+  #ear{right:8px;bottom:92px;width:140px}
+  .tick .full{display:none}
+  body{overflow:auto}
+  #plate{height:auto;min-height:100vh;overflow:visible}
+  .layer{position:relative;inset:auto;clip-path:none !important;padding:12px 14px 0}
+  .layer-guide{display:none}
+  #rule,#grip{display:none}
+  #plate{cursor:auto;padding-bottom:120px}
+}
+@media (prefers-reduced-motion:reduce){
+  *{transition:none !important}
+}
+</style>
+</head>
+<body>
+<header id="mast">
+  <div><b>折晓</b> · 今日印次</div>
+  <div>2026-08-27 · 北京 06:00</div>
+  <div>指引 → 实测 · ←/→</div>
+</header>
+
+<main id="plate" aria-label="对照印次">
+  <section class="layer layer-guide" id="guide" aria-hidden="true"></section>
+  <section class="layer layer-actual" id="actual"></section>
+  <div id="rule"><i></i><b id="grip"></b></div>
+</main>
+
+<div id="rail">
+  <div class="rail-head">
+    <span id="rail-left">印次轨道 · 刻度是日期与今日切口</span>
+    <span id="rail-right">今日边 ← 再往左是旧版</span>
+  </div>
+  <div class="track" id="track">
+    <input id="wipe" type="range" min="0" max="100" value="58" aria-label="对照滑杆">
+    <div class="ticks" id="ticks"></div>
+    <div class="edge" style="left:52%">今</div>
+  </div>
+</div>
+
+<button id="ear" type="button" aria-expanded="false" aria-label="折晓 · 今日印次 工票">
+  <div class="brand">折晓 · 今日印次</div>
+  <div class="sub">折角 · 三张工票</div>
+  <div id="tickets">
+    <div class="job must" data-job="sci">
+      <div class="fl">MUST</div>
+      <div class="who">GitHub · SCI-AIChat-Demo</div>
+      <p>CI 仍红。master 579183f。compileall + pytest。08-26 20:04Z，同一提交连红。</p>
+      <div class="more">要办：修 579183f，或确认是不是同一处 compileall。</div>
+    </div>
+    <div class="job good" data-job="grok">
+      <div class="fl">GOOD</div>
+      <div class="who">Cursor → Sheng · grok-bot@mail.cursor.com</div>
+      <p>Grok Bot 现已含在 Cursor Pro。独立用量池，不占原来的额度。08-26 17:37Z。</p>
+      <div class="more">官方同日：SuperGrok / Plus / Heavy，Cursor Pro / Pro+ / Ultra，Cursor Teams Standard 与 Premium。下载桌面或 iOS，把已在做的活交给 Bot。<br>https://x.ai/news/grok-bot-more-plans<br>https://docs.x.ai/grok-bot/</div>
+    </div>
+    <div class="job carry" data-job="manus">
+      <div class="fl">CARRY</div>
+      <div class="who">Manus · 不是今日新闻</div>
+      <p>恢复入口 08-25 08:00 SGT 已开，只能一次，用最新备份。本窗两封邮箱都没有新 Manus 邮。</p>
+      <div class="more">status.manus.im All Systems Operational。今日不把恢复当主线。<br>https://help.manus.im/en/articles/16147895-service-change-overview-how-to-restore-your-data</div>
+    </div>
+  </div>
+</button>
+
+<button id="peel" type="button">校对</button>
+<aside id="verso" aria-label="校对">
+  <h3>校对</h3>
+  <p class="row">数字只用来源页上的。超级形容词没写进官方稿的，标「报道称」。</p>
+  <div class="row"><div class="lab">官方 · NVDA</div>Q2 FY27 营收 $96.221B（页上写 $96.2B）。指引曾是 $91.0B ±2%。Q3 $108.0B ±2%，不算中国数据中心计算。<br><a href="https://nvidianews.nvidia.com/news/nvidia-announces-financial-results-for-second-quarter-fiscal-2027">NVIDIA Newsroom</a></div>
+  <div class="row"><div class="lab">官方 · AWS</div>2027–28 再部署 200 万块 Blackwell Ultra / Rubin / Rubin Ultra。<br><a href="https://nvidianews.nvidia.com/news/aws-and-nvidia-to-deliver-2-million-additional-gpus-and-next-generation-infrastructure-for-agentic-and-physical-ai">NVIDIA × AWS</a></div>
+  <div class="row"><div class="lab">官方 · BABA</div>完成，不是新的八百亿故事。710,000,000 股 @ HK$112.70；总额 HK$80.0B；净额约 HK$79.7B。约 60% / HK$47,871M 全球算力；约 40% / HK$31,914M 超大规模智算 + Agentic Cloud。SEC 6-K 签字 08-26。<br><a href="https://www.alibabagroup.com/en-US/document-2029365886510432256">Alibaba PR</a></div>
+  <div class="row"><div class="lab">官方 · GROK BOT</div>x.ai/news 08-26 + Cursor 致 Sheng 邮件 17:37Z。独立用量池。<br><a href="https://x.ai/news/grok-bot-more-plans">Grok Bot is now included with more plans</a></div>
+  <div class="row"><div class="lab">官方 · QWEN</div>Qwen3.8-Flash + 开源 Flash-Next。125B 主参，6B 激活/token，+51B n-gram。原生 262K，YaRN 到 1M。官方推定价 $0.16 / $0.47 每百万 in/out。「训练成本降 90% / 斩杀 / 超 Opus」= 报道称。<br><a href="https://qwen.ai/blog?id=qwen3.8-flash-next">qwen.ai</a> · <a href="https://huggingface.co/Qwen/Qwen3.8-Flash-Next">HF</a></div>
+  <div class="row"><div class="lab">官方 · GLM</div>GLM-5.3-Flash 开源。320B-A18B，原生多模态，百万上下文。官方写过匿测名 Ox-Alpha。列表价 $0.15 / $0.50；文档另有五折至 2026-09-09 24:00 SGT。OpenRouter「2× DeepSeek 用量」= 报道称。不要把匿测当今日发布。<br><a href="https://z.ai/blog/glm-5.3-flash">z.ai/blog</a></div>
+  <div class="row"><div class="lab">档案 · 非脊柱</div>OpenAI 08-26 发表 Hugging Face 代理入侵调查。事件在七月，不是今日新入侵。<br><a href="https://openai.com/index/the-hugging-face-incident-and-the-road-ahead/">OpenAI</a></div>
+</aside>
+
+<script>
+var ESSAY = '<p>昨夜美股盘后，英伟达把第二财季印了出来。指引中值九百一十亿，加减两个百分点；印版上是九百六十二点二一亿，同比翻倍有余，数据中心八百九十亿。毛利率百分之七十五，摊薄每股二点四六美元。黄仁勋说：人工智能到了拐点，算力就是收入。第三季再指引一千零八十亿，加减两个百分点，里面仍然不算中国数据中心计算。Vera Rubin 写进量产。同一天 AWS 官方把二〇二七到二八年的追加写成两百万块 Blackwell Ultra、Rubin、Rubin Ultra——叠在 GTC 那句「一百万块起」之上，不是新架构发布。</p>'
++ '<p>折晓把这一版做成对照印次，不是为了等一个开机画面。要走进宇宙，不要在门口看进度条。左边是指引的浅墨，右边是已印出的黑。滑杆是墨边。标题字用到 Impact 这一级，是为了这一幕，不是为了整套系统。九十六点二只对这一窗负责。</p>'
++ '<p>阿里也不是又一个八百亿故事。配售协议条件已满足，八月二十六日完成：七亿一千万股，每股一百一十二点七港元，总额八百亿，净额约七百九十七亿；约占当时已发行百分之三点七、扩大后百分之三点五七。大约六成、四百七十八亿七千一百万港元进全球算力；大约四成、三百一十九亿一千四百万港元进超大规模智算与智能体云。至少六个非美承配人。动词是完成。</p>'
++ '<p>Cursor 写给 Sheng 的那封信落在十七点三十七分（UTC）：Grok Bot 现已含在 Cursor Pro，独立用量池，不占原来的额度。官方同日写进 SuperGrok、Cursor Pro 全系和所有 Teams。这不是又一个聊天窗，是把活交给一个自己有电脑的同事。</p>'
++ '<p>开源这一侧也在同一块版上，只是字号小一号。通义把 Qwen3.8-Flash 送上云，把 Flash-Next 权重放到 Hugging Face：一千二百五十亿主参、每 token 六十亿激活，外加五百一十亿 n-gram 嵌入；原生二十六万二千，YaRN 到一百万。智谱把 GLM-5.3-Flash 开源，三千二百亿总参、一百八十亿激活，原生多模态，百万上下文；官方写过它曾以 Ox-Alpha 匿测。训练成本降九成、斩杀、超 Opus——那些是报道称。官方打开的是权重和价目。</p>'
++ '<p>北京六点，美股还停在昨天夜里。电话会十四点太平洋时间，刚好收在这一窗的尾巴。盘后报价、周四现金开盘，都在窗外，不当今日新闻。边缘计算七十二亿美元，回购加股息约二百六十亿——同一张官方稿上的邻格，不另开头条。</p>'
++ '<p>SCI 那条红还钉在 579183f，折角里是 MUST。Manus 的恢复入口昨天已经打开，本窗两封邮箱都没有新邮，只在折角记一笔 CARRY。不要把昨天的入口写成今天的新闻。OpenAI 同一天交出 Hugging Face 代理入侵的调查成稿——事件在七月，今日只是报告落地，不当新入侵。</p>'
++ '<p class="note">节奏来自邻格怎么垫彼此，不是强行一条基线。财报、配售完成、Bot、两家开源，贴在同一条墨边两侧。往左拖过「今」，旧版的数字会换上，壳还是这一副对照。</p>';
+
+var MINIS = '<div class="sideplates">'
++ '<div class="mini"><div class="t">Qwen · 官方 08-26</div><div class="n">3.8</div>'
++ '<p>Flash 上云，Flash-Next 开源。125B / 6B 激活。$0.16 / $0.47 每百万。超 Opus = 报道称。</p></div>'
++ '<div class="mini"><div class="t">Z.ai · 官方 08-26</div><div class="n">5.3</div>'
++ '<p>GLM-5.3-Flash 开源。320B-A18B。$0.15 / $0.50。不要把 Ox-Alpha 匿测当今日发布。</p></div>'
++ '</div>';
+
+var GALLEY = '<div class="galley">'
++ '<div class="g"><span class="tm">~13:20 PT 08-26</span><br>NVIDIA Q2：$96.2B；DC $89.0B；Q3 $108.0B ±2%。官方印出。</div>'
++ '<div class="g"><span class="tm">同日官方</span><br>AWS +200 万 GPU（2027–28）；10 万块走联邦安全区。不是新架构。</div>'
++ '<div class="g"><span class="tm">HK 08-26 / 第一财经 19:34</span><br>阿里配售完成。710M @ HK$112.70；总额 800 亿；净额约 797 亿。动词：完成。</div>'
++ '<div class="g"><span class="tm">17:37Z 邮件 · 官方 news</span><br>Grok Bot 含进 Cursor Pro / SuperGrok / Teams。独立池。致 Sheng。</div>'
++ '<div class="g"><span class="tm">08-26</span><br>Qwen3.8-Flash + Flash-Next 权重。新京报 23:04 北京。超级词 = 报道称。</div>'
++ '<div class="g"><span class="tm">08-26 / IT之家 22:21</span><br>GLM-5.3-Flash 开源。320B-A18B。匿测名 Ox-Alpha 是背景，不是主线。</div>'
++ '<div class="g"><span class="tm">20:04Z</span><br>SCI-AIChat-Demo CI 红，579183f，compileall + pytest。</div>'
++ '<div class="g"><span class="tm">Fortune 15:00 ET 08-26 · 非脊柱</span><br>OpenAI 发表 HF 代理入侵调查成稿。事件在七月，不是今日新入侵。<br>https://openai.com/index/the-hugging-face-incident-and-the-road-ahead/</div>'
++ '<div class="g"><span class="tm">补遗 · 窗前</span><br>Jalapeño 首份结果在 08-25 官方，落入上一窗。今日只作背景，不领。</div>'
++ '</div>';
+
+var ED = {
+  nvda:{pos:56, today:1, k:'NVDA Q2 FY27 · 官方印出', n:'96.2', u:'十亿美元',
+    gK:'NVDA Q2 · 指引还在', gN:'91.0', gU:'十亿美元 ±2%',
+    lede:'指引九百一十亿。印出来是九百六十二亿。',
+    gLede:'共识还停在九百一十亿加减两个百分点。盘后才有墨。',
+    facts:'营收 $96,221M（+18% 季 / +106% 年）。数据中心 $89.0B。边缘 $7.2B。GAAP / 非 GAAP 毛利率都是 75.0%。摊薄 EPS $2.46 / 非 GAAP $2.22。净利 $59.688B。回购+股息约 $26.0B。Q3 指引 $108.0B ±2%，毛利率 74.0% ±50bp，开支约 $9.2B / $9.0B。官方：指引不含中国数据中心计算。Huang：「compute is revenue。」Vera Rubin 量产。<br><a href="https://nvidianews.nvidia.com/news/nvidia-announces-financial-results-for-second-quarter-fiscal-2027">nvidianews</a>',
+    gFacts:'上一版写过：美股 08-26 盘后才出，北京 06:00 不要装结果。中值 $91.0B ±2%。这一窗，装上了。',
+    essay:ESSAY+MINIS, gEssay:ESSAY+MINIS, col:'印次正文'},
+  grok:{pos:64, today:1, k:'GROK BOT · 官方 + 致 Sheng 邮', n:'BOT', u:'已含进 Cursor Pro',
+    gK:'GROK BOT · 还只是测试', gN:'β', gU:'8 月 11 日公测',
+    lede:'Cursor Pro 现已含 Grok Bot。独立用量池，不占原来的额度。',
+    gLede:'八月十一日公测。这一窗才写进 Pro / Teams / SuperGrok。',
+    facts:'官方 08-26：SuperGrok、Plus、Heavy；Cursor Pro、Pro+、Ultra；Teams Standard 与 Premium。Bot 自带用量。致 Sheng（aimfllyys）邮件 2026-08-26 17:37Z，来自 grok-bot@mail.cursor.com。<br><a href="https://x.ai/news/grok-bot-more-plans">x.ai/news/grok-bot-more-plans</a>',
+    gFacts:'公测叙事到此为止。今日动词是「含进套餐」。',
+    essay:ESSAY, gEssay:ESSAY, col:'印次正文'},
+  baba:{pos:72, today:1, k:'BABA · 官方完成', n:'完成', u:'不是新的八百亿',
+    gK:'BABA · 还是「拟配售」', gN:'800', gU:'亿港元 · 08-23 定价',
+    lede:'配售完成。七亿一千万股，一百一十二点七港元。',
+    gLede:'八月二十三日是定价。不要把八百亿再当新闻领。',
+    facts:'条件已满足，完成日 2026-08-26。710,000,000 股 @ HK$112.70，≥6 个非美承配人（Reg S）。总额 HK$80.0B，净额约 HK$79.7B。约占当时已发行 3.70% / 扩大后 3.57%。用途现按完成重述：约 60% / HK$47,871M 全球算力；约 40% / HK$31,914M 超大规模智算 + Agentic Cloud（存储 / 库 / 网）。无人成为主要股东。SEC 6-K 签字 08-26。<br><a href="https://www.alibabagroup.com/en-US/document-2029365886510432256">Alibaba PR</a> · <a href="https://www.yicai.com/news/103335232.html">第一财经</a>',
+    gFacts:'08-23：拟向非美人配售，总对价八百亿港元，完成当时未保证。今日动词是完成。',
+    essay:ESSAY, gEssay:ESSAY, col:'印次正文'},
+  aws:{pos:80, today:1, k:'AWS × NVDA · 官方同日', n:'+2M', u:'GPU · 2027–28',
+    gK:'AWS × NVDA · GTC 旧数', gN:'+1M', gU:'starting 2026',
+    lede:'再加两百万块。叠在一百万块起之上，不是新架构。',
+    gLede:'GTC 2026 写过一百万块起。这一窗是追加。',
+    facts:'官方同日：2027–2028 在 AWS 再部署 200 万块 Blackwell Ultra / Rubin / Rubin Ultra。另有 Vera CPU 基础设施、NVLink Fusion + 定制 NVHBM（Annapurna / Trainium）、10 万块走联邦 / IL6+、Nemotron 上 Bedrock / SageMaker。<br><a href="https://nvidianews.nvidia.com/news/aws-and-nvidia-to-deliver-2-million-additional-gpus-and-next-generation-infrastructure-for-agentic-and-physical-ai">NVIDIA Newsroom</a>',
+    gFacts:'旧数是 GTC 的一百万块起。今日只把追加印上。',
+    essay:ESSAY, gEssay:ESSAY, col:'印次正文'},
+  galley:{pos:90, today:1, k:'24h.galley · 今日窗全量', n:'24h', u:'档案在轨道上，不是按钮墙',
+    gK:'24h.galley · 未分类', gN:'…', gU:'先看脊柱',
+    lede:'脊柱之外的一行一行。事件在七月的，不要写成今日入侵。',
+    gLede:'先把主线印清楚，再翻这叠校样。',
+    facts:'窗 = UTC 08-25 22:00 → 08-26 22:00。第一时间戳在窗外的，标补遗。',
+    gFacts:'补遗另栏。不要跟今日印次抢领。',
+    essay:GALLEY, gEssay:GALLEY, col:'今日校样'},
+  d26:{pos:46, k:'昨日印次 · 08-26', n:'30T', u:'报道称 · Anthropic TAM',
+    gK:'昨日印次 · 还在等财报', gN:'PEND', gU:'NVDA Q2 未出',
+    lede:'报道称三十万亿。Jetson 七十八 TOPS。Manus 入口已开。',
+    gLede:'财报还没字。不要装结果。',
+    facts:'08-26 窗：Musk 对 Cursor 全员会泄露放大；Jetson Orin Nano 2；Manus 恢复入口 08-25 08:00 SGT。今日这些都不当新领。',
+    gFacts:'当时 NVDA 盘后未出。这一版把它印上了。',
+    essay:'<p>这是昨天的印次。数字是报道称的天花板，不是今天的墨。</p>',
+    gEssay:'<p>这是昨天的印次。数字是报道称的天花板，不是今天的墨。</p>', col:'旧版'},
+  d24:{pos:38, k:'印次 · 08-24', n:'800', u:'亿港元 · 拟配售',
+    gK:'印次 · 08-24', gN:'91.0', gU:'NVDA 指引中值',
+    lede:'阿里拟配售八百亿，全部写进全栈 AI。当时未完成。',
+    gLede:'财报指引还是预告。',
+    facts:'定价 710,000,000 股 @ HK$112.70 已在 08-23 窗。08-24 早报把它写成闭幕说明书。今日是完成。',
+    gFacts:'$91.0B 是当时的预告，不是结果。',
+    essay:'<p>旧版把八百亿当拟。这一版改成完成。</p>',
+    gEssay:'<p>旧版把八百亿当拟。这一版改成完成。</p>', col:'旧版'},
+  d23:{pos:30, k:'印次 · 08-23', n:'ROLL', u:'接触印相',
+    gK:'印次 · 08-23', gN:'08', gU:'灯箱选帧',
+    lede:'周日薄窗。身份稿看完，价还没印。',
+    gLede:'选帧，不是结论。',
+    facts:'那一版是接触印相。今日不再用灯箱。',
+    gFacts:'那一版是接触印相。今日不再用灯箱。',
+    essay:'<p>旧版。今日不套灯箱。</p>', gEssay:'<p>旧版。今日不套灯箱。</p>', col:'旧版'},
+  d22:{pos:23, k:'印次 · 08-22', n:'34', u:'晚刊 VOL',
+    gK:'印次 · 08-22', gN:'SAT', gU:'粉钴',
+    lede:'周六晚刊。融资数字标报道称。',
+    gLede:'晚刊，不是早报脊柱。',
+    facts:'旧版 Risograph。今日不翻那本。',
+    gFacts:'旧版 Risograph。今日不翻那本。',
+    essay:'<p>旧版晚刊。</p>', gEssay:'<p>旧版晚刊。</p>', col:'旧版'},
+  d21:{pos:17, k:'印次 · 08-21', n:'0821', u:'值班',
+    gK:'印次 · 08-21', gN:'DUTY', gU:'看板已封',
+    lede:'值班那天。Grok 4.5 Fast 还在班上。',
+    gLede:'看板隐喻已封，不再套。',
+    facts:'旧版。今日不是值班看板。',
+    gFacts:'旧版。今日不是值班看板。',
+    essay:'<p>旧版值班。</p>', gEssay:'<p>旧版值班。</p>', col:'旧版'},
+  d20:{pos:12, k:'印次 · 08-20', n:'1H', u:'同一小时',
+    gK:'印次 · 08-20', gN:'1H', gU:'双幕',
+    lede:'同一小时里两件落下。',
+    gLede:'双幕已封。',
+    facts:'旧版。今日不拆两块幕。',
+    gFacts:'旧版。今日不拆两块幕。',
+    essay:'<p>旧版。</p>', gEssay:'<p>旧版。</p>', col:'旧版'},
+  d19:{pos:8, k:'印次 · 08-19', n:'限', u:'限速中',
+    gK:'印次 · 08-19', gN:'MED', gU:'羽升',
+    lede:'限速那天。维修站隐喻已封。',
+    gLede:'五缸已封。',
+    facts:'旧版。', gFacts:'旧版。',
+    essay:'<p>旧版。</p>', gEssay:'<p>旧版。</p>', col:'旧版'},
+  d18:{pos:5, k:'印次 · 08-18', n:'1050', u:'亿 · 一份契',
+    gK:'印次 · 08-18', gN:'DEED', gU:'年份滑杆已封',
+    lede:'一份一千零五十亿的契。年份滑杆不再用。',
+    gLede:'契据隐喻已封。',
+    facts:'旧版。今日滑杆是对照，不是年份。',
+    gFacts:'旧版。今日滑杆是对照，不是年份。',
+    essay:'<p>旧版契据。</p>', gEssay:'<p>旧版契据。</p>', col:'旧版'},
+  d17:{pos:2, k:'印次 · 08-17', n:'裂', u:'玻璃已经裂了',
+    gK:'印次 · 08-17', gN:'BOX', gU:'洁净室已封',
+    lede:'Cursor 交割进 SpaceX。玻璃已经裂了。',
+    gLede:'裂箱隐喻已封。',
+    facts:'旧版。今日不再裂箱。',
+    gFacts:'旧版。今日不再裂箱。',
+    essay:'<p>第一号早报的旧版。</p>', gEssay:'<p>第一号早报的旧版。</p>', col:'旧版'}
+};
+
+var ORDER = ['d17','d18','d19','d20','d21','d22','d23','d24','d26','nvda','grok','baba','aws','galley'];
+var TICKS = [
+  {id:'d17',l:'08-17',title:'08-17'},
+  {id:'d18',l:'18',title:'08-18'},
+  {id:'d19',l:'19',title:'08-19'},
+  {id:'d20',l:'20',title:'08-20'},
+  {id:'d21',l:'21',title:'08-21'},
+  {id:'d22',l:'22',title:'08-22'},
+  {id:'d23',l:'23',title:'08-23'},
+  {id:'d24',l:'24',title:'08-24'},
+  {id:'d26',l:'26',title:'08-26'},
+  {id:'nvda',l:'NVDA-Q2',title:'NVDA-Q2',named:1},
+  {id:'grok',l:'GROK-BOT',title:'GROK-BOT',named:1},
+  {id:'baba',l:'BABA',title:'BABA',named:1},
+  {id:'aws',l:'AWS',title:'AWS',named:1},
+  {id:'galley',l:'24h',title:'24h.galley',named:1}
+];
+
+var cur='nvda', wipe=58, sz=1, dragging=0;
+
+function paintLayer(el, e, actual){
+  var k = actual ? e.k : e.gK;
+  var n = actual ? e.n : e.gN;
+  var u = actual ? e.u : e.gU;
+  var ld = actual ? e.lede : e.gLede;
+  var f = actual ? e.facts : e.gFacts;
+  var es = actual ? e.essay : e.gEssay;
+  var col = e.col || '印次正文';
+  var klass = (actual?e.n:e.gN)==='96.2'||(actual?e.n:e.gN)==='91.0' ? 'num' : 'num sub';
+  el.innerHTML = '<div class="sheet">'
+    + '<div><div class="kicker">'+k+'</div>'
+    + '<div class="'+klass+'" data-sz="'+sz+'" title="点一下改字号">'+n+'</div>'
+    + '<div class="unit">'+u+'</div>'
+    + '<div class="lede">'+ld+'</div>'
+    + '<div class="facts">'+f+'</div></div>'
+    + '<div class="col"><h2>'+col+'</h2><div class="essay">'+es+'</div></div>'
+    + '</div>';
+}
+function render(){
+  var e = ED[cur];
+  paintLayer(document.getElementById('guide'), e, false);
+  paintLayer(document.getElementById('actual'), e, true);
+  document.querySelectorAll('.tick').forEach(function(t){
+    t.classList.toggle('on', t.getAttribute('data-id')===cur);
+  });
+  document.getElementById('rail-left').textContent =
+    (e.today ? '今日切口 · ' : '旧版 · ') + (TICKS.filter(function(t){return t.id===cur})[0]||{}).title;
+}
+function setWipe(v){
+  wipe = Math.max(0, Math.min(100, v));
+  document.documentElement.style.setProperty('--wipe', wipe+'%');
+  document.getElementById('wipe').value = String(Math.round(wipe));
+}
+function setEd(id, fromTick){
+  if(!ED[id]) return;
+  var prev=cur;
+  cur=id;
+  if(fromTick){
+    if(ED[id].today) setWipe(62);
+    else setWipe(55);
+  }
+  render();
+  if(prev!==id){
+    var nums=document.querySelectorAll('.num');
+    nums.forEach(function(n){ n.setAttribute('data-sz', sz); });
+  }
+}
+function nearestTick(p){
+  var best=null, bd=1e9;
+  TICKS.forEach(function(t){
+    var d=Math.abs(ED[t.id].pos - p);
+    if(d<bd){ bd=d; best=t.id; }
+  });
+  return best;
+}
+
+TICKS.forEach(function(t){
+  var b=document.createElement('button');
+  b.className='tick'+(t.named?' named':'');
+  b.type='button';
+  b.setAttribute('data-id', t.id);
+  b.style.left = ED[t.id].pos+'%';
+  b.title = t.title;
+  b.innerHTML = '<span class="full">'+t.l+'</span>';
+  b.addEventListener('click', function(ev){ ev.stopPropagation(); setEd(t.id, true); });
+  document.getElementById('ticks').appendChild(b);
+});
+
+render();
+setWipe(58);
+
+document.getElementById('wipe').addEventListener('input', function(){
+  var v=+this.value;
+  setWipe(v);
+  if(v<=1){
+    var i=ORDER.indexOf(cur);
+    if(i>0 && lastEdge){ setEd(ORDER[i-1], true); lastEdge=0; }
+  }else if(v>=99){
+    var j=ORDER.indexOf(cur);
+    if(j<ORDER.length-1 && lastEdge){ setEd(ORDER[j+1], true); lastEdge=0; }
+  }else lastEdge=1;
+});
+var lastEdge=1;
+
+var plate=document.getElementById('plate');
+function posFromX(x){
+  var r=plate.getBoundingClientRect();
+  return ((x-r.left)/r.width)*100;
+}
+plate.addEventListener('pointerdown', function(ev){
+  if(ev.target.closest('a,button,#ear,#peel,#verso,#rail')) return;
+  dragging=1; moved=0;
+  try{ plate.setPointerCapture(ev.pointerId); }catch(err){}
+  var p=posFromX(ev.clientX);
+  setWipe(p);
+  ev.preventDefault();
+});
+plate.addEventListener('pointermove', function(ev){
+  if(!dragging) return;
+  moved += 1;
+  var p=posFromX(ev.clientX);
+  if(p< -4){
+    var i=ORDER.indexOf(cur);
+    if(i>0){ setEd(ORDER[i-1], true); }
+    return;
+  }
+  if(p>104){
+    var j=ORDER.indexOf(cur);
+    if(j<ORDER.length-1){ setEd(ORDER[j+1], true); }
+    return;
+  }
+  setWipe(p);
+});
+['pointerup','pointercancel'].forEach(function(evn){
+  plate.addEventListener(evn, function(){ dragging=0; });
+});
+
+document.addEventListener('keydown', function(ev){
+  if(ev.target && /input|textarea/i.test(ev.target.tagName)) return;
+  if(ev.key==='ArrowLeft'){
+    if(wipe<=0){ var i=ORDER.indexOf(cur); if(i>0) setEd(ORDER[i-1], true); }
+    else setWipe(wipe-2);
+    ev.preventDefault();
+  }else if(ev.key==='ArrowRight'){
+    if(wipe>=100){ var j=ORDER.indexOf(cur); if(j<ORDER.length-1) setEd(ORDER[j+1], true); }
+    else setWipe(wipe+2);
+    ev.preventDefault();
+  }else if(ev.key==='Escape'){
+    document.getElementById('ear').classList.remove('open');
+    document.getElementById('ear').setAttribute('aria-expanded','false');
+    document.getElementById('verso').classList.remove('on');
+  }
+});
+
+var moved=0;
+document.getElementById('plate').addEventListener('click', function(ev){
+  var n=ev.target.closest('.num');
+  if(!n || moved>6) return;
+  sz = sz===1?2: sz===2?3:1;
+  document.querySelectorAll('.num').forEach(function(el){ el.setAttribute('data-sz', sz); });
+});
+
+var ear=document.getElementById('ear');
+ear.addEventListener('click', function(ev){
+  var job=ev.target.closest('.job');
+  if(job){
+    job.classList.toggle('on');
+    ev.stopPropagation();
+    return;
+  }
+  var open=!ear.classList.contains('open');
+  ear.classList.toggle('open', open);
+  ear.setAttribute('aria-expanded', open?'true':'false');
+});
+document.addEventListener('click', function(ev){
+  if(!ev.target.closest('#ear')){
+    ear.classList.remove('open');
+    ear.setAttribute('aria-expanded','false');
+  }
+  if(!ev.target.closest('#verso') && ev.target.id!=='peel'){
+    document.getElementById('verso').classList.remove('on');
+  }
+});
+document.getElementById('peel').addEventListener('click', function(ev){
+  ev.stopPropagation();
+  document.getElementById('verso').classList.toggle('on');
+});
+</script>
+</body>
+</html>
