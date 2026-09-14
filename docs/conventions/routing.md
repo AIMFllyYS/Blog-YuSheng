@@ -15,23 +15,26 @@
 | `/` | 首页 | 桌面端：3D 滚动叙事落地页 + 绳挂卷轴导航；移动端：经典卡片式板块入口（见第四节） |
 | `/blog/` | 文章列表 | 书架/书屋风（与首页 3D 书的世界观连贯）。视觉与交互 **1:1 对标** [blog-reader-prototype.html](../designs/blog-reader-prototype.html) |
 | `/blog/<slug>/` | 文章阅读页 | 三栏 + 整幅页尾评论区。视觉与交互 **1:1 对标** [blog-reader-prototype.html](../designs/blog-reader-prototype.html)；文字说明见 [blog-reader-design.md](../designs/blog-reader-design.md) |
-| `/notes/` | 随笔 | 建设中占位；正式内容落地时替换 `src/features/notes/` |
-| `/works/` | 作品集 | 建设中占位；正式内容落地时替换 `src/features/works/` |
+| `/daily/` | 小日报目录 | 纯 CSS 3D「报亭台历」：按月翻页、按周抽出；移动端 / coarse pointer / reduced-motion 降级为月→周→日清单。`#YYYY-MM` 记忆当前月 |
+| `/daily/<date>/` | 小日报阅读台 | `date` 为 `YYYY-MM-DD`；报头条 + 沙箱 iframe 嵌入 `/briefs/<date>.html` 原件；前后日按存在的日期跳转 |
+| `/briefs/<date>.html` | 日报原件 | 非路由，由 postbuild 从 `content/briefs/**` 原样复制到 `out/briefs/`；`edgeone.json` 为 `/briefs/*` 单独放开 `X-Frame-Options: SAMEORIGIN` |
+| `/works/` | 作品集 | 建设中占位，**路由文件保留**；首页卡片与绳挂目前直接外链到 `https://artifact.yusheng.husteread.com/`，不经过此页 |
 | `/_dev/*` | 调试页 | 仅开发环境，production 守卫 404 |
 
 ### 预留路由（已确定未来会做，现在留位不实现）
 
 | URL | 板块 | 说明 |
 |---|---|---|
-| `/notes/` | 短随笔/唠嗑 | 地址已挂上建设中页；正式内容是不成文的短内容、生活记录，按时间流展示 |
-| `/works/` | 作品集/项目展示 | 地址已挂上建设中页；正式内容是项目与作品，带演示链接 |
-| `/about/` | 关于我/电子分身 | 自我介绍，未来可能与右侧 Agent 打通为"电子分身"入口。不进绳挂 |
+| `/works/` | 作品集/项目展示 | 地址已挂上建设中页；正式内容是项目与作品，带演示链接。落地前入口走外链 |
+| `/about/` | 关于我/电子分身 | 自我介绍，未来可能与右侧 Agent 打通为"电子分身"入口。不进绳挂；落地前首页卡片外链到 `https://husteread.com` |
+
+历史地址：`/notes/`（短随笔）已并入 `/daily/`，由 `edgeone.json` 301 到 `/daily/`。
 
 预留规则：
 - 新板块一律用**平行一级路由**，不嵌套进 `/blog/`
-- 板块内的详情页沿用 `/<板块>/<slug>/` 模式（如 `/works/<slug>/`）
-- 绳挂导航桌面端已挂博客 / 随笔 / 作品集；关于我不进绳
-- `/about/` 未实现前，对应首页卡片显示“筹备中”并禁用跳转，不链接到 404
+- 板块内的详情页沿用 `/<板块>/<slug>/` 模式（如 `/works/<slug>/`、`/daily/<date>/`）
+- 绳挂导航桌面端已挂博客 / 日报 / 作品集（作品集为外链）；关于我不进绳
+- 预留板块未实现前，首页卡片要么外链到已有站点、要么显示“筹备中”并禁用跳转，不链接到 404
 
 ## 二、URL 规则
 
@@ -51,12 +54,12 @@
 | 音效开关 | 就地开关 | 否（挂件） |
 | 设置 | 就地弹出小面板（主题、音效等） | 否（面板，不设 `/settings/`；设置项增多后再评估升级为页面） |
 | 博客 | 跳转 | `/blog/` |
-| 随笔 | 跳转 | `/notes/`（建设中占位，正式内容后仍用此地址） |
-| 作品集 | 跳转 | `/works/`（建设中占位，正式内容后仍用此地址） |
+| 日报 | 跳转 | `/daily/` |
+| 作品集 | 新标签外链 | `https://artifact.yusheng.husteread.com/`（`/works/` 占位路由保留，正式内容落地后改回内链） |
 
-「关于我」不进绳挂，只留在首页卡片；对应 `/about/` 仍预留、本轮不实现。
+「关于我」不进绳挂，只留在首页卡片（目前外链到 `https://husteread.com`）；对应 `/about/` 仍预留、本轮不实现。
 
-首页 `/`、书架 `/blog/`、以及 `/notes/` `/works/` 入口页：桌面绳上同时挂博客、随笔、作品集（常显）。文章 `/blog/<slug>/` 隐藏随笔与作品集，羽升和博客回到阅读页左侧。移动端绳上不挂这三个板块。
+首页 `/`、书架 `/blog/`、以及 `/daily/*` `/works/` 入口页：桌面绳上同时挂博客、日报、作品集（常显）。文章 `/blog/<slug>/` 隐藏日报与作品集，羽升和博客回到阅读页左侧。移动端绳上不挂这三个板块。外链书签渲染为 `<a target="_blank" rel="noreferrer">`，不设 `aria-current`。
 
 阅读页顶部渐隐导航额外含：
 

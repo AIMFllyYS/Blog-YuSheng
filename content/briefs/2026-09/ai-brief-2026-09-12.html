@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>折晓早报 · 热键学徒 · 2026-09-12</title>
+<!--
+Design references (2026-09-12):
+1. Codrops — The Exat Microsite: Pushing a Typography Showcase to New Creative Extremes
+   https://tympanus.net/codrops/2026/04/10/the-exat-microsite-pushing-a-typography-showcase-to-new-creative-extremes/
+   Steal: typography as the interface; state = progress; calm then dense pacing.
+2. Awwwards — Interactive Command Line Navigation (Maxim Kich)
+   https://www.awwwards.com/inspiration/interactive-command-line-navigation-maxim-kich
+   Steal: terminal nav that is the page, not chrome around cards.
+3. It's Nice That — Form + Fidget is a digital playground designed purely for joy
+   https://www.itsnicethat.com/articles/noodle-form-fidget-digital-project-020625
+   Steal: low-instruction pokeable moments; behavior readable without a manual.
+Style × Interaction × Genre: Apple产品页留白 × 打字机/命令行 × 假产品 onboarding CLI（Junior Desk OS）
+Title metaphor: 热键学徒 — Alt+Space 召唤助手 vs 华尔街初级工位被写进产品说明 vs 旗舰还在炖。
+Do not reuse: 抽思价, 对花小刊, 异心关, 套架分, 闸口, 同日对开, 备胎传染, 晨间旗标, 可读半径, 半开蓝图, 侧线稿, 晒印.
+-->
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f5f5f7;--ink:#1d1d1f;--muted:#6e6e73;--line:rgba(0,0,0,.08);
+  --blue:#0071e3;--green:#34c759;--amber:#ff9f0a;--rose:#ff3b30;
+  --term:#0b0b0c;--term-fg:#e8e8ed;--term-dim:#8e8e93;--term-green:#30d158;
+  --paper:#fff;--radius:18px;
+}
+html,body{min-height:100%;background:var(--bg);color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  -webkit-font-smoothing:antialiased}
+body{overflow-x:hidden}
+.wrap{max-width:920px;margin:0 auto;padding:48px 24px 120px}
+.eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.hero{text-align:center;padding:56px 12px 40px}
+.hero h1{font-size:clamp(40px,9vw,72px);font-weight:700;letter-spacing:-.04em;line-height:1.05;margin:12px 0 8px}
+.hero .sub{font-size:19px;color:var(--muted);max-width:28em;margin:0 auto;line-height:1.45;font-weight:400}
+.hero .num{
+  display:inline-flex;align-items:center;gap:10px;margin-top:28px;
+  font-size:clamp(28px,6vw,48px);font-weight:600;letter-spacing:-.03em;
+  padding:14px 22px;border-radius:999px;background:#fff;border:1px solid var(--line);
+  box-shadow:0 1px 0 rgba(0,0,0,.04),0 12px 40px rgba(0,0,0,.06)
+}
+.hero .num kbd{
+  font:inherit;background:#1d1d1f;color:#fff;padding:4px 12px;border-radius:8px;
+  font-size:.72em;letter-spacing:0
+}
+.hero .num-label{display:block;margin-top:10px;font-size:13px;color:var(--muted);font-weight:500}
+.thesis{text-align:center;max-width:34em;margin:8px auto 0;font-size:17px;line-height:1.55;color:var(--ink)}
+
+/* Terminal shell */
+.shell{
+  margin:48px auto 0;background:var(--term);color:var(--term-fg);border-radius:22px;
+  overflow:hidden;box-shadow:0 24px 80px rgba(0,0,0,.18);border:1px solid #222
+}
+.shell-bar{
+  display:flex;align-items:center;gap:8px;padding:12px 16px;background:#161618;border-bottom:1px solid #2a2a2c
+}
+.shell-dot{width:10px;height:10px;border-radius:50%}
+.shell-dot.r{background:#ff5f57}.shell-dot.y{background:#febc2e}.shell-dot.g{background:#28c840}
+.shell-title{margin-left:8px;font-size:12px;color:var(--term-dim);flex:1}
+.shell-body{padding:20px 18px 22px;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:13.5px;line-height:1.65;min-height:280px}
+.line{white-space:pre-wrap;word-break:break-word}
+.line .p{color:var(--term-green)}.line .dim{color:var(--term-dim)}.line .hi{color:#fff;font-weight:600}
+.cursor{display:inline-block;width:.55em;height:1.05em;background:var(--term-green);vertical-align:-.15em;margin-left:2px;animation:blink 1s step-end infinite}
+@keyframes blink{50%{opacity:0}}
+.cmd-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;padding-top:14px;border-top:1px solid #2a2a2c}
+.cmd{
+  appearance:none;border:1px solid #3a3a3c;background:#1c1c1e;color:#f5f5f7;
+  border-radius:10px;padding:8px 12px;font:inherit;font-size:12px;cursor:pointer;
+  transition:border-color .15s,background .15s,transform .1s
+}
+.cmd:hover{border-color:#0071e3;background:#242426}
+.cmd:active{transform:scale(.98)}
+.cmd.done{opacity:.45;border-color:#2a2a2c}
+.cmd .k{color:var(--term-green);margin-right:6px}
+.panel{display:none;margin-top:18px;padding-top:4px}
+.panel.on{display:block}
+.panel h3{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif;font-size:15px;font-weight:600;color:#fff;margin:0 0 10px;letter-spacing:-.01em}
+.panel p,.panel li{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif;font-size:14px;line-height:1.6;color:#d1d1d6}
+.panel ul{margin:0 0 12px;padding-left:1.1em}
+.panel a{color:#64d2ff;text-decoration:none;border-bottom:1px solid rgba(100,210,255,.35)}
+.panel a:hover{border-bottom-color:#64d2ff}
+.card{
+  background:rgba(255,255,255,.04);border:1px solid #2c2c2e;border-radius:14px;
+  padding:14px 14px 12px;margin:0 0 10px
+}
+.card .t{font-size:12px;color:var(--term-dim);margin-bottom:4px;letter-spacing:.04em}
+.card .h{font-size:15px;font-weight:600;color:#fff;margin-bottom:6px;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif}
+.card .w{font-size:13.5px;color:#c7c7cc;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif;line-height:1.55}
+.tag{display:inline-block;font-size:10px;letter-spacing:.06em;text-transform:uppercase;
+  padding:2px 7px;border-radius:6px;margin-right:6px;vertical-align:1px}
+.tag.in{background:rgba(52,199,89,.15);color:#30d158}
+.tag.edge{background:rgba(255,159,10,.15);color:#ffd60a}
+.tag.arch{background:rgba(142,142,147,.15);color:#aeaeb2}
+
+/* Apple section below */
+.section{margin-top:64px}
+.section h2{font-size:28px;letter-spacing:-.03em;font-weight:700;margin-bottom:8px}
+.section .lead{color:var(--muted);font-size:16px;margin-bottom:22px;max-width:36em;line-height:1.5}
+.grid{display:grid;grid-template-columns:1fr;gap:12px}
+@media(min-width:720px){.grid.two{grid-template-columns:1fr 1fr}}
+.story{
+  background:var(--paper);border-radius:var(--radius);padding:22px 22px 18px;
+  border:1px solid var(--line);box-shadow:0 1px 0 rgba(0,0,0,.03)
+}
+.story .meta{font-size:12px;color:var(--muted);margin-bottom:8px;font-weight:600;letter-spacing:.04em}
+.story h3{font-size:18px;letter-spacing:-.02em;margin-bottom:8px;line-height:1.3}
+.story p{font-size:14.5px;line-height:1.6;color:#3a3a3c}
+.story .why{margin-top:10px;padding-top:10px;border-top:1px solid var(--line);font-size:13.5px;color:var(--muted)}
+.story a{color:var(--blue);text-decoration:none}
+.story a:hover{text-decoration:underline}
+.big-num{
+  text-align:center;padding:40px 20px;margin-top:28px;
+  background:var(--paper);border-radius:var(--radius);border:1px solid var(--line)
+}
+.big-num .n{font-size:clamp(48px,12vw,88px);font-weight:700;letter-spacing:-.05em;line-height:1}
+.big-num .l{margin-top:8px;font-size:15px;color:var(--muted)}
+
+.essay-box{
+  margin-top:28px;background:var(--paper);border-radius:var(--radius);
+  padding:28px 26px;border:1px solid var(--line)
+}
+.essay-box h3{font-size:20px;letter-spacing:-.02em;margin-bottom:14px}
+.essay-box p{font-size:15px;line-height:1.75;color:#3a3a3c;margin:0 0 1em}
+.essay-box p:last-child{margin:0}
+
+.archive{
+  margin-top:18px;background:#fff;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden
+}
+.arch-row{
+  display:grid;grid-template-columns:88px 1fr;gap:12px;padding:12px 16px;
+  border-bottom:1px solid var(--line);font-size:13px;align-items:start
+}
+.arch-row:last-child{border-bottom:0}
+.arch-row .when{color:var(--muted);font-variant-numeric:tabular-nums}
+.arch-row .fact{line-height:1.45;color:#3a3a3c}
+.arch-row .fact em{font-style:normal;color:var(--muted);display:block;margin-top:2px;font-size:12px}
+.sofia{
+  margin-top:22px;padding:16px 18px;border-radius:14px;
+  background:linear-gradient(135deg,#e8f1ff,#f5f5f7);border:1px solid #d6e4ff;
+  font-size:14.5px;line-height:1.55
+}
+.sofia strong{font-weight:600}
+.foot{margin-top:48px;text-align:center;color:var(--muted);font-size:13px;padding-bottom:24px}
+.foot .brand{font-weight:600;color:var(--ink)}
+
+/* Mail corner — sticky note in Apple chrome */
+.mail-corner{position:fixed;right:18px;bottom:18px;z-index:40}
+.mail-fab{
+  width:52px;height:52px;border-radius:16px;border:1px solid var(--line);
+  background:#fff;box-shadow:0 8px 28px rgba(0,0,0,.12);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;font-size:20px
+}
+.mail-fab:hover{transform:translateY(-1px)}
+.mail-fab .dot{
+  position:absolute;top:10px;right:12px;width:8px;height:8px;border-radius:50%;background:var(--rose)
+}
+.mail-panel{
+  display:none;position:absolute;right:0;bottom:62px;width:min(340px,calc(100vw - 32px));
+  background:#fffef8;border:1px solid #e8e0c8;border-radius:14px;
+  box-shadow:0 16px 48px rgba(0,0,0,.16);overflow:hidden;
+  font-family:"SF Pro Text",-apple-system,"PingFang SC",sans-serif
+}
+.mail-panel.open{display:block}
+.mail-panel .mh{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:12px 14px;background:#fff8e0;border-bottom:1px solid #efe6c8
+}
+.mail-panel .mh strong{font-size:13px}
+.mail-panel .mb{padding:10px 12px 14px;max-height:52vh;overflow:auto;font-size:12.5px;line-height:1.45}
+.mail-sec{margin-bottom:12px}
+.mail-sec .lab{font-size:10px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;margin-bottom:4px;color:var(--muted)}
+.mail-sec.action .lab{color:var(--rose)}
+.mail-sec.watch .lab{color:var(--amber)}
+.mail-sec ul{margin:0;padding-left:16px;color:#3a3a3c}
+.mail-sec li{margin:4px 0}
+.icon-btn{appearance:none;border:0;background:transparent;font-size:18px;cursor:pointer;color:var(--muted);line-height:1}
+.hint{text-align:center;margin-top:14px;font-size:12px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <div class="eyebrow">折晓早报 · 北京时间 2026-09-12</div>
+    <h1>热键学徒</h1>
+    <p class="sub">一键召唤助手，产品说明里改写初级工位；旗舰还在锅里炖。</p>
+    <div>
+      <div class="num" aria-label="Today number Alt+Space"><kbd>Alt</kbd><span>+</span><kbd>Space</kbd></div>
+      <span class="num-label">TODAY NUMBER · Gemini Windows 默认召唤键</span>
+    </div>
+    <p class="thesis" style="margin-top:22px">一边是 Altman 说愿「协同减速」（还要问反垄断绿灯），一边是热键、金融套装和 Agents API 继续往工位里塞入口；蒸馏指控同日撞上外交回应，燧原科创板募资约 61.19 亿——Grok 4.7 还在锅里炖。</p>
+  </header>
+
+  <section class="shell" aria-label="Junior Desk OS terminal">
+    <div class="shell-bar">
+      <span class="shell-dot r"></span><span class="shell-dot y"></span><span class="shell-dot g"></span>
+      <span class="shell-title">junior-desk-os — boot · 热键学徒</span>
+    </div>
+    <div class="shell-body">
+      <div id="boot" class="line"></div>
+      <div class="cmd-row" id="cmds" hidden>
+        <button type="button" class="cmd" data-cmd="hotkey"><span class="k">$</span>hotkey</button>
+        <button type="button" class="cmd" data-cmd="desk"><span class="k">$</span>desk</button>
+        <button type="button" class="cmd" data-cmd="cook"><span class="k">$</span>cook</button>
+        <button type="button" class="cmd" data-cmd="archive"><span class="k">$</span>archive</button>
+        <button type="button" class="cmd" data-cmd="essay"><span class="k">$</span>readme</button>
+        <button type="button" class="cmd" data-cmd="mail"><span class="k">$</span>mail</button>
+      </div>
+
+      <div class="panel" id="p-hotkey">
+        <h3>hotkey — 入口在抢键</h3>
+        <div class="card">
+          <div class="t"><span class="tag in">IN</span>Google · Sep 11</div>
+          <div class="h">Gemini Windows 独立应用：Alt+Space 盖过任意窗口</div>
+          <div class="w">Win10/11 独立客户端；挂 Gmail/Drive；Spark / Nano Banana / Omni 随计划开放。不是「第一次上 PC」，是把助手压进系统级召唤键，正面撞 Copilot。<br><a href="https://aiworldtoday.com/news/google-launches-gemini-app-for-windows-with-altspace-shortcut" target="_blank" rel="noopener">AI World Today</a></div>
+        </div>
+        <div class="card">
+          <div class="t"><span class="tag in">IN</span>xAI · Sep 11</div>
+          <div class="h">Grok Bot 可搜索并发送 Microsoft Teams 消息</div>
+          <div class="w">官方插件：读频道/聊天并代发。销售向 Salesforce/HubSpot/Gong 同一周铺开；Galaxy 直播 9/15–17。<br><a href="https://teslanorth.com/2026/09/11/grok-bot-microsoft-teams/" target="_blank" rel="noopener">Tesla North</a></div>
+        </div>
+      </div>
+
+      <div class="panel" id="p-desk">
+        <h3>desk — 初级工位写进产品说明</h3>
+        <div class="card">
+          <div class="t"><span class="tag edge">EDGE→IN</span>OpenAI · CNBC 更新至 Sep 11 12:06 EDT</div>
+          <div class="h">ChatGPT for Financial Services：对标初级投行分析师活</div>
+          <div class="w">与 Morgan Stanley、Evercore 共研；原生接 LSEG / PitchBook / Daloopa / Crunchbase；跑 GPT-6 Astra。Turley 提分析师「100 小时周」；高盛 Churchman 曾警告学徒任务被自动化会致「认知衰退」。<br>
+            <a href="https://www.cnbc.com/2026/09/10/openai-chatgpt-for-financial-services-targets-work-of-junior-bankers.html" target="_blank" rel="noopener">CNBC</a> ·
+            <a href="https://www.reuters.com/business/openai-launches-chatgpt-financial-services-industry-2026-09-10/" target="_blank" rel="noopener">Reuters</a> ·
+            <a href="https://www.forbes.com/sites/gabrielalinzainescu/2026/09/11/openai-targets-junior-banker-work-with-chatgpt-for-financial-services/" target="_blank" rel="noopener">Forbes 09-11</a>
+          </div>
+        </div>
+        <div class="card">
+          <div class="t"><span class="tag in">IN</span>OpenAI Changelog · ~Sep 10 22:56Z</div>
+          <div class="h">Agents API 公开 beta：托管 Codex harness</div>
+          <div class="w">会话编排、上下文压缩、恢复、MCP、托管/自建沙箱；无额外 API 费，按 token/工具计。US residency，暂不支持 ZDR。<br>
+            <a href="https://developers.openai.com/api/docs/changelog" target="_blank" rel="noopener">OpenAI Changelog</a> ·
+            <a href="https://developers.openai.com/api/docs/guides/agents-api/overview" target="_blank" rel="noopener">Agents overview</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel" id="p-cook">
+        <h3>cook — 旗舰还在炖</h3>
+        <div class="card">
+          <div class="t"><span class="tag in">IN</span>Elon Musk · Sep 11</div>
+          <div class="h">「Grok 4.7 needs a few more days to cook」</div>
+          <div class="w">怀疑 RL 过度惩罚回复长度：难题上过早放弃、自检不够严。产品/连接器在发，底座还在调「待多久、查几遍」。<br><a href="https://teslanorth.com/2026/09/11/grok-4-7-few-more-days/" target="_blank" rel="noopener">Tesla North</a></div>
+        </div>
+        <div class="card">
+          <div class="t"><span class="tag in">IN</span>中国具身 · Sep 11</div>
+          <div class="h">超维动力天使+超 5 亿；西湖机器人 A1 数亿</div>
+          <div class="w">Kinetix：数据–模型–本体；KAIBot 117 DoF。西湖：全身统一 WR1，资金投模型/商业化/人才。<br>
+            <a href="https://tech.cnr.cn/techph/20260911/t20260911_527810845.shtml" target="_blank" rel="noopener">央广网·超维</a> ·
+            <a href="https://finance.sina.com.cn/jjxw/2026-09-11/doc-inirmvzx5314641.shtml" target="_blank" rel="noopener">投资界·西湖</a>
+          </div>
+        </div>
+        <div class="card">
+          <div class="t"><span class="tag in">IN</span>Bloomberg / Reuters · Sep 11</div>
+          <div class="h">Altman：OpenAI 愿放缓前沿开发，并探询「协同定速」是否触反垄断</div>
+          <div class="w">全员会表态可与竞品 jointly set pace；二次报道称已向国会问 Sherman Act。Anthropic 对 Reuters 称有兴趣讨论发布节奏。安全话术的前提变成法律绿灯。<br>
+            <a href="https://www.bloomberg.com/news/articles/2026-09-11/openai-is-open-to-slowing-cutting-edge-ai-ceo-sam-altman-tells-staff" target="_blank" rel="noopener">Bloomberg</a> ·
+            <a href="https://www.reuters.com/business/altman-tells-staff-openai-is-open-slowing-ai-development-bloomberg-news-reports-2026-09-11/" target="_blank" rel="noopener">Reuters</a>
+          </div>
+        </div>
+        <div class="card">
+          <div class="t"><span class="tag in">IN</span>科创板 · Sep 11</div>
+          <div class="h">燧原科技（688801）上市，募资约 61.19 亿元</div>
+          <div class="w">发行价 142.18 元；报道称年内科创板靠前 IPO，盘中涨幅与市值叙事升温。国产云端 AI 芯片资本故事落地公开市场。<br>
+            <a href="https://finance.sina.com.cn/roll/2026-09-11/doc-inirnhrq6718726.shtml" target="_blank" rel="noopener">新浪财经</a>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="panel" id="p-archive">
+        <h3>archive — 24h 全量（窗口内为主）</h3>
+        <ul>
+          <li><span class="tag in">IN</span>Altman 愿协同减速 + 反垄断探询（Bloomberg/Reuters 09-11）</li>
+          <li><span class="tag in">IN</span>Anthropic 蒸馏指控：CNBC 09-11 推 1.51 亿阿里交互；外交部同日回应</li>
+          <li><span class="tag in">IN</span>Agents API public beta（Changelog Sep 10；~22:56Z 入窗）</li>
+          <li><span class="tag edge">EDGE</span>ChatGPT for Financial Services；CNBC 更新至 09-11</li>
+          <li><span class="tag in">IN</span>Gemini Windows Alt+Space；Grok 4.7 炖 + Teams</li>
+          <li><span class="tag in">IN</span>燧原科创板募资约 61.19 亿；超维&gt;5亿；西湖 A1</li>
+          <li><span class="tag arch">ARCH</span>DeepSeek V4.1 Flash 定价（昨主线，今日不领衔）</li>
+        </ul>
+      </div>
+
+      <div class="panel" id="p-essay">
+        <h3>readme — 长文塞在利用条款里</h3>
+        <p style="margin-bottom:10px">TERMS OF JUNIOR DESK OS（节选）</p>
+        <p>你按下的不是「聊天」，是把另一套注意力叠进当前窗口。热键把助手从标签页里拽出来；行业套装把初级分析师的周报、可比公司、pitchbook 写进功能列表；Agents API 则把 Codex 那套编排变成所有人可调的托管循环。</p>
+        <p>学徒制靠重复劳动长出判断。当产品说「像分析师一样研究并给论据」，判断被外包的风险不是失业口号，而是推理肌肉谁还练。高盛合伙人说的 cognitive atrophy，和 Musk 说的「过早放弃、自检不够」，其实是同一根弦的两端：一端怕人不再练，一端怕模型练歪了。</p>
+        <p>对学医又摸 AI 的你：病例推理也靠重复。工具可以拉检验、列鉴别，但「为什么排除这一条」仍要你亲手写。热键可以召助手，学徒仍是人。</p>
+      </div>
+
+      <div class="panel" id="p-mail">
+        <h3>mail — 角落便条（点右下角也可）</h3>
+        <p><strong>ACTION</strong> Slack Pro 试用 9/17 结束（sofiapintos190，续昨）。</p>
+        <p><strong>WATCH</strong> SCI-AIChat-Demo CI 仍红 master/579183f（09-11 20:59Z）；deepseek-harness E2E+Sandbox 仍红，提交已到 c291e79（09-11 10:xxZ）。</p>
+        <p><strong>INFO</strong> 09-11 00:11Z 前后 Vercel/Google Windows 新登录提示；16688 订单已发货（卡密另存，勿转发）。Grok Bot Galaxy 9/15–17。</p>
+        <p><strong>SKIP</strong> Vercel/NVIDIA GTC/Docker 等促销。</p>
+      </div>
+    </div>
+  </section>
+  <p class="hint">点命令推进判断 · 键盘可当配件 · 档案长在 <code>archive</code> / 长文在 <code>readme</code></p>
+
+  <section class="section">
+    <h2>主线展开</h2>
+    <p class="lead">先感到「今天是热键与工位的一天」，再钻细节。窗口：北京时间 09-11 06:00 → 09-12 06:00。</p>
+    <div class="big-num">
+      <div class="n">Alt+Space</div>
+      <div class="l">今日数字 · 桌面召唤键（Gemini Windows）· 次选叙事数字：100 小时周（投行分析师）</div>
+    </div>
+    <div class="grid two" style="margin-top:16px">
+      <article class="story">
+        <div class="meta">01 · PRODUCT / IDE</div>
+        <h3>Agents API：Codex 编排变成公共接口</h3>
+        <p>公开 beta 把长会话、工具、沙箱、MCP 收成托管 harness。写 Agent 少写胶水，也把「谁托管上下文」押给平台。</p>
+        <p class="why">为什么重要：智能体竞争从模型分，扩到托管运行时。</p>
+      </article>
+      <article class="story">
+        <div class="meta">02 · ENTERPRISE</div>
+        <h3>金融套装点名初级投行活</h3>
+        <p>Pitchbook / 研报 / 引用链进产品。效率叙事与学徒制冲突同时上场；CNBC 09-11 仍在更新讨论。</p>
+        <p class="why">为什么重要：垂直套装开始直接改写入门岗的训练菜单。</p>
+      </article>
+      <article class="story">
+        <div class="meta">03 · DISTRIBUTION</div>
+        <h3>Alt+Space 与 Teams 插件</h3>
+        <p>Gemini 抢 Windows 热键；Grok Bot 进 Teams 读写发送。入口仗在系统层和协作层同时开火。</p>
+        <p class="why">为什么重要：谁被一键召到，谁就先占注意力税。</p>
+      </article>
+      <article class="story">
+        <div class="meta">04 · MODEL</div>
+        <h3>Grok 4.7 还在炖</h3>
+        <p>RL 长度惩罚 → 过早放弃与自检不足。连接器可以先发，底座仍按「天」计。</p>
+        <p class="why">为什么重要：产品日历与训练日历脱节，是常态不是丑闻。</p>
+      </article>
+      <article class="story">
+        <div class="meta">05 · POLICY</div>
+        <h3>愿减速，先过反垄断门</h3>
+        <p>Altman 公开谈协同放缓；法律能不能一起慢，成了前提。同日蒸馏指控进入外交辞令。</p>
+        <p class="why">为什么重要：安全议程从实验室备忘录，推到国会与外交台面。</p>
+      </article>
+      <article class="story">
+        <div class="meta">06 · CHIPS</div>
+        <h3>燧原科创板约 61.19 亿</h3>
+        <p>云端 AI 芯片公司公开募资落地。具身侧超维、西湖同日融资，资本密度仍高。</p>
+        <p class="why">为什么重要：算力自主叙事有了可报价的 IPO 锚点。</p>
+      </article>
+    </div>
+
+    <div class="sofia">
+      <strong>给 Sofia：</strong>学医时别把「热键召助手」当成「判断已完成」。鉴别诊断可以让模型列清单，排除理由仍要你自己能讲清楚——跟华尔街怕的 cognitive atrophy 是同一课。
+    </div>
+
+    <div class="essay-box" id="essay-print">
+      <h3>利用条款 · 全文</h3>
+      <p>Junior Desk OS 假装你刚入职。开机画面不是仪表盘，是一条会打字的提示符：你得亲手点 <em>hotkey</em>、<em>desk</em>、<em>cook</em>，才把今天的判断拼出来。交互不是导航皮肤，是逼你承认——入口、工位、炖锅，是三件不同的事。</p>
+      <p>热键把助手叠进当前任务；行业套装把初级劳动写进功能表；托管 Agent 把编排外包给云。三者同窗，不等于同一故事。Altman 谈减速的同一天，热键与套装仍在发货；蒸馏数字进了外交回应，燧原把算力故事开上科创板。昨天的 Flash/蒸馏主线退居档案，今天的锋面是「谁被召唤、谁的学徒活被产品化、减速要不要先过反垄断、谁的旗舰还没出锅」。</p>
+      <p>页脚写着折晓。角落便利贴还在：Slack 试用倒数、两座仓库 CI 仍红。离线打开这一页，不需要再连一次网，也能把今天的键敲完。</p>
+    </div>
+
+    <h2 style="margin-top:40px;font-size:22px">档案抽屉</h2>
+    <div class="archive" id="archive-print">
+      <div class="arch-row"><div class="when">~22:56Z<br>09-10</div><div class="fact">OpenAI Agents API public beta（Changelog 同日条目）<em>留：托管 harness 公开</em></div></div>
+      <div class="arch-row"><div class="when">17:29Z<br>09-10</div><div class="fact">Reuters：ChatGPT for Financial Services 发布（窗口边缘）<em>留：初级投行活产品化</em></div></div>
+      <div class="arch-row"><div class="when">12:06 EDT<br>09-11</div><div class="fact">CNBC 更新金融套装报道；Forbes 同日讨论 junior banker / atrophy<em>留：学徒制争议升温</em></div></div>
+      <div class="arch-row"><div class="when">~12:40<br>09-11</div><div class="fact">Gemini Windows 应用，默认 Alt+Space<em>留：TODAY NUMBER</em></div></div>
+      <div class="arch-row"><div class="when">09-11</div><div class="fact">Musk：Grok 4.7 还要炖几天；Grok Bot Teams 连接器<em>留：底座 vs 插件分叉</em></div></div>
+      <div class="arch-row"><div class="when">09-11<br>中文</div><div class="fact">超维动力天使+超 5 亿；西湖机器人 A1 数亿<em>留：具身融资密度</em></div></div>
+      <div class="arch-row"><div class="when">昨主线</div><div class="fact">DeepSeek V4.1 Flash 官宣价 + Anthropic TI ~2 亿蒸馏交互<em>留：archive-only</em></div></div>
+      <div class="arch-row"><div class="when">~00:43Z<br>09-11</div><div class="fact">Bloomberg：Altman 向员工称愿放缓前沿开发并协同定速<em>留：安全×反垄断</em></div></div>
+      <div class="arch-row"><div class="when">09-11<br>CNBC+</div><div class="fact">蒸馏案 1.51 亿交互数字上头条；外交部回应「反对抹黑」<em>留：指控进外交层</em></div></div>
+      <div class="arch-row"><div class="when">09-11<br>19:36</div><div class="fact">燧原科技科创板上市，募资约 61.19 亿元<em>留：国产算力 IPO</em></div></div>
+      <div class="arch-row"><div class="when">邮件</div><div class="fact">SCI-AIChat / deepseek-harness CI 红；Slack Pro→9/17；Galaxy 9/15–17<em>留：便条</em></div></div>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <div>北京时间 2026-09-12 · 窗 09-11 06:00–09-12 06:00</div>
+    <div class="brand">折晓 早报</div>
+  </footer>
+</div>
+
+<div class="mail-corner">
+  <button type="button" class="mail-fab" id="mailFab" aria-expanded="false" aria-controls="mailPanel" title="角落便条">
+    <span aria-hidden="true">📝</span>
+    <span class="dot" aria-hidden="true"></span>
+  </button>
+  <div class="mail-panel" id="mailPanel" role="dialog" aria-label="邮件便条">
+    <div class="mh">
+      <strong>角落便条 · 两邮箱</strong>
+      <button type="button" class="icon-btn" id="mailClose" aria-label="关闭">×</button>
+    </div>
+    <div class="mb">
+      <div class="mail-sec action">
+        <div class="lab">Action</div>
+        <ul>
+          <li>sofiapintos190：Slack Pro 试用 <strong>9/17</strong> 结束（续昨，窗内无新信，截止仍有效）</li>
+        </ul>
+      </div>
+      <div class="mail-sec watch">
+        <div class="lab">Watch</div>
+        <ul>
+          <li>SCI-AIChat-Demo CI 失败 master/<code>579183f</code>（09-11 20:59Z）</li>
+          <li>deepseek-harness E2E + Sandbox 失败 master/<code>c291e79</code>（09-11 10:17/10:28Z；较昨 cd5ef81 有新提交仍红）</li>
+          <li>Grok Bot Galaxy 直播 <strong>9/15–17</strong></li>
+        </ul>
+      </div>
+      <div class="mail-sec">
+        <div class="lab">Info / Skip</div>
+        <ul>
+          <li>09-11 00:11Z 前后：Vercel 新登录 + Google Windows 安全提示（若是你本人可略）</li>
+          <li>16688「5x Pro」订单已发货（卡密勿外传）</li>
+          <li>SKIP：Vercel 部署营销、NVIDIA GTC Berlin、Docker/Cloudflare 等促销</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var boot = document.getElementById('boot');
+  var cmds = document.getElementById('cmds');
+  var lines = [
+    {html:'<span class="dim">Junior Desk OS 0.9.12</span>'},
+    {html:'<span class="p">boot</span>  checking apprenticeship modules…'},
+    {html:'<span class="dim">found:</span> hotkey · desk · cook · archive'},
+    {html:'<span class="hi">thesis</span>  热键能召唤助手；产品说明在改初级工位；旗舰还在炖。'},
+    {html:'<span class="dim">type or click a command</span> <span class="cursor"></span>'}
+  ];
+  var i = 0;
+  function typeLine(){
+    if(i >= lines.length){
+      cmds.hidden = false;
+      return;
+    }
+    var row = document.createElement('div');
+    row.className = 'line';
+    boot.appendChild(row);
+    var full = lines[i].html;
+    var plain = full.replace(/<[^>]+>/g,'');
+    var pos = 0;
+    var useType = i < lines.length - 1;
+    function tick(){
+      if(!useType){
+        row.innerHTML = full;
+        i++;
+        setTimeout(typeLine, 280);
+        return;
+      }
+      pos++;
+      // progressive reveal by slicing plain length approx via full string after delay
+      if(pos === 1){
+        row.innerHTML = '';
+      }
+      // simpler: show full after short delay per line
+      row.innerHTML = full;
+      i++;
+      setTimeout(typeLine, 420);
+    }
+    setTimeout(tick, 80);
+  }
+  typeLine();
+
+  var panels = {
+    hotkey: document.getElementById('p-hotkey'),
+    desk: document.getElementById('p-desk'),
+    cook: document.getElementById('p-cook'),
+    archive: document.getElementById('p-archive'),
+    essay: document.getElementById('p-essay'),
+    mail: document.getElementById('p-mail')
+  };
+  function show(name){
+    Object.keys(panels).forEach(function(k){
+      panels[k].classList.toggle('on', k === name);
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('.cmd'), function(b){
+      b.classList.toggle('done', b.getAttribute('data-cmd') === name);
+    });
+    if(name === 'mail'){
+      document.getElementById('mailPanel').classList.add('open');
+      document.getElementById('mailFab').setAttribute('aria-expanded','true');
+    }
+  }
+  Array.prototype.forEach.call(document.querySelectorAll('.cmd'), function(btn){
+    btn.addEventListener('click', function(){
+      var c = btn.getAttribute('data-cmd');
+      var echo = document.createElement('div');
+      echo.className = 'line';
+      echo.innerHTML = '<span class="p">$</span> ' + c;
+      boot.appendChild(echo);
+      show(c);
+    });
+  });
+
+  var fab = document.getElementById('mailFab');
+  var panel = document.getElementById('mailPanel');
+  var close = document.getElementById('mailClose');
+  function toggleMail(force){
+    var open = force !== undefined ? force : !panel.classList.contains('open');
+    panel.classList.toggle('open', open);
+    fab.setAttribute('aria-expanded', open ? 'true' : 'false');
+  }
+  fab.addEventListener('click', function(){ toggleMail(); });
+  close.addEventListener('click', function(){ toggleMail(false); });
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape') toggleMail(false);
+  });
+})();
+</script>
+</body>
+</html>

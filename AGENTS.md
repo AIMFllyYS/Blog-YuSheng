@@ -55,7 +55,7 @@ src/components/  纯 UI 组件（ui/ 子目录只放无业务逻辑的展示组�
 src/features/    业务领域模块（跨路由复用时才提升，不是长文件回收站）
 src/lib/         工具函数、通用 hooks
 src/server/      server-only 代码
-content/         正式内容仓库（index.md 是文章唯一权威源，文章资产共居）
+content/         正式内容仓库（index.md 是文章唯一权威源，文章资产共居；briefs/<YYYY-MM>/ 收 Bot 投递的小日报 HTML 原件）
 docs/            项目内部文档（规范/计划/运维/审计）
 scripts/         辅助脚本（setup/build/deploy/dev）
 public/          静态资源（不放 >25MB 文件）
@@ -180,6 +180,7 @@ public/          静态资源（不放 >25MB 文件）
 
 - [write-blog.md](docs/ops/write-blog.md) — 作者写作指南（文章包、frontmatter、正文语法、素材目录、预览与发布）
 - [deploy-edgeone.md](docs/ops/deploy-edgeone.md) — EdgeOne Pages 部署配置规范（字段规范、buildCommand 踩坑记录、cloudFunctions 迁移、检查清单、故障排查）
+- [publish-daily-brief.md](docs/ops/publish-daily-brief.md) — 小日报投递契约（Bot PR 路径与文件名、`<title>` / DESIGN LESSON 元数据、构建校验、`/briefs/*` 沙箱与响应头）
 
 <!-- BEGIN:nextjs-agent-rules -->
 

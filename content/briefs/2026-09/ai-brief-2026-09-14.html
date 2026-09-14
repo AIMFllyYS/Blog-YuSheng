@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>折晓早报 · 注资轨 · 2026-09-14</title>
+<style>
+:root{
+  --kraft:#e8d9c0;
+  --cream:#f7f0e4;
+  --coral:#e85d4c;
+  --ink:#1a1410;
+  --moss:#3d5a45;
+  --shadow:rgba(26,20,16,.18);
+  --fold:#c9b89a;
+  --fluo:#ff6b4a;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--kraft);color:var(--ink);
+  font-family:"Songti SC","Noto Serif SC","Georgia","Times New Roman",serif;
+  overflow:hidden}
+body{background:
+  radial-gradient(ellipse at 20% 10%,rgba(255,255,255,.35),transparent 50%),
+  radial-gradient(ellipse at 80% 90%,rgba(232,93,76,.08),transparent 40%),
+  repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.015) 3px,rgba(0,0,0,.015) 4px),
+  var(--kraft)}
+
+/* cut-paper grain overlay */
+.grain{pointer-events:none;position:fixed;inset:0;opacity:.04;z-index:50;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+.stage{position:relative;height:100vh;width:100vw;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1.5rem}
+
+.mast{position:absolute;top:1rem;left:1.25rem;z-index:20;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--moss);font-family:ui-sans-serif,system-ui,-apple-system,sans-serif}
+.mast b{color:var(--coral);font-weight:700}
+
+.hint{position:absolute;bottom:1rem;left:50%;transform:translateX(-50%);z-index:20;
+  font-family:ui-sans-serif,system-ui,sans-serif;font-size:.7rem;color:rgba(26,20,16,.55);
+  letter-spacing:.06em;white-space:nowrap}
+
+/* accordion viewport */
+.accordion-wrap{position:relative;width:min(920px,94vw);height:min(620px,78vh);
+  perspective:1600px}
+.accordion{display:flex;height:100%;width:100%;transform-style:preserve-3d;
+  transition:transform .55s cubic-bezier(.22,.8,.28,1)}
+.panel{position:relative;flex:0 0 100%;height:100%;padding:1.75rem 2rem 2rem;
+  background:var(--cream);
+  box-shadow:
+    8px 12px 0 var(--shadow),
+    inset 0 0 0 1.5px rgba(26,20,16,.12),
+    inset -6px 0 12px rgba(0,0,0,.04);
+  clip-path:polygon(1.2% 0,98.8% 0.4%,99.5% 98.5%,0.8% 100%,0 2%);
+  overflow:hidden}
+.panel::before{content:"";position:absolute;inset:8px;border:1.5px dashed rgba(61,90,69,.25);pointer-events:none;border-radius:2px}
+.panel::after{/* torn edge accent */
+  content:"";position:absolute;top:0;right:0;width:18px;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(232,93,76,.07));
+  pointer-events:none}
+
+.panel-tag{font-family:ui-sans-serif,system-ui,sans-serif;font-size:.65rem;letter-spacing:.14em;
+  color:var(--coral);text-transform:uppercase;margin-bottom:.6rem}
+.panel h1{font-size:clamp(1.8rem,4.5vw,2.6rem);line-height:1.15;font-weight:700;margin-bottom:.75rem}
+.panel h2{font-size:clamp(1.35rem,3.2vw,1.85rem);line-height:1.2;font-weight:700;margin-bottom:.65rem}
+.lede{font-size:1.05rem;line-height:1.55;max-width:36em;margin-bottom:1rem}
+.num{font-family:ui-sans-serif,system-ui,sans-serif;font-size:clamp(3rem,10vw,5.5rem);
+  font-weight:800;color:var(--coral);letter-spacing:-.04em;line-height:1;margin:.4rem 0}
+.num small{display:block;font-size:.75rem;letter-spacing:.16em;color:var(--moss);font-weight:600;margin-top:.35rem}
+.meta{font-family:ui-sans-serif,system-ui,sans-serif;font-size:.72rem;color:rgba(26,20,16,.55);margin-top:.8rem}
+.meta a{color:var(--moss);text-decoration:underline;text-underline-offset:2px}
+.bullets{list-style:none;margin-top:.8rem}
+.bullets li{position:relative;padding-left:1.1rem;margin:.45rem 0;line-height:1.45;font-size:.95rem}
+.bullets li::before{content:"";position:absolute;left:0;top:.55em;width:8px;height:8px;
+  background:var(--coral);clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%);transform:rotate(15deg)}
+.why{margin-top:1rem;padding:.85rem 1rem;background:rgba(61,90,69,.08);border-left:3px solid var(--moss);
+  font-size:.9rem;line-height:1.5}
+.chip{display:inline-block;font-family:ui-sans-serif,system-ui,sans-serif;font-size:.62rem;
+  letter-spacing:.08em;padding:.2rem .5rem;border:1px solid var(--ink);margin-right:.35rem;margin-bottom:.35rem}
+.chip.hot{background:var(--coral);color:var(--cream);border-color:var(--coral)}
+
+/* nav dots + fold tabs */
+.nav{position:absolute;right:-2.6rem;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:.45rem;z-index:15}
+.nav button{width:14px;height:14px;border:1.5px solid var(--ink);background:var(--cream);cursor:pointer;
+  clip-path:polygon(20% 0,100% 0,80% 100%,0 100%);padding:0;transition:background .2s}
+.nav button.on{background:var(--coral);border-color:var(--coral)}
+.nav button:focus-visible{outline:2px solid var(--moss);outline-offset:2px}
+
+.fold-tabs{position:absolute;left:50%;bottom:-2.4rem;transform:translateX(-50%);
+  display:flex;gap:.35rem;font-family:ui-sans-serif,system-ui,sans-serif;font-size:.65rem;z-index:15}
+.fold-tabs button{background:var(--fold);border:1.5px solid var(--ink);padding:.35rem .65rem;cursor:pointer;
+  clip-path:polygon(6% 0,100% 0,94% 100%,0 100%);color:var(--ink);letter-spacing:.04em}
+.fold-tabs button.on{background:var(--coral);color:var(--cream);border-color:var(--coral)}
+.fold-tabs button:focus-visible{outline:2px solid var(--moss);outline-offset:2px}
+
+.arrows{position:absolute;inset:0;pointer-events:none;z-index:12}
+.arrows button{pointer-events:auto;position:absolute;top:50%;transform:translateY(-50%);
+  width:42px;height:42px;border:1.5px solid var(--ink);background:var(--cream);cursor:pointer;
+  font-size:1.1rem;box-shadow:3px 3px 0 var(--shadow);font-family:ui-sans-serif,system-ui,sans-serif}
+.arrows button:disabled{opacity:.25;cursor:default;box-shadow:none}
+.arrows .prev{left:-1.1rem}
+.arrows .next{right:-1.1rem}
+.arrows button:focus-visible{outline:2px solid var(--moss);outline-offset:2px}
+
+/* archive drawer inside panel */
+.archive{max-height:280px;overflow:auto;margin-top:.6rem;padding-right:.4rem;
+  font-family:ui-sans-serif,system-ui,sans-serif;font-size:.78rem;line-height:1.4}
+.archive details{border-bottom:1px dashed rgba(26,20,16,.2);padding:.45rem 0}
+.archive summary{cursor:pointer;font-weight:600;list-style:none;display:flex;gap:.5rem;align-items:baseline}
+.archive summary::-webkit-details-marker{display:none}
+.archive summary::before{content:"▸";color:var(--coral);font-size:.7rem}
+.archive details[open] summary::before{content:"▾"}
+.archive .t{color:rgba(26,20,16,.5);font-weight:500;min-width:4.5rem}
+.archive p{margin:.35rem 0 0 1rem;color:rgba(26,20,16,.75)}
+
+.essay{font-size:.92rem;line-height:1.65;max-height:340px;overflow:auto;padding-right:.5rem}
+.essay p{margin-bottom:.85rem}
+.essay .sig{font-family:ui-sans-serif,system-ui,sans-serif;font-size:.72rem;color:var(--moss);margin-top:1rem}
+
+.sofia{margin-top:1rem;padding:1rem;background:rgba(232,93,76,.1);
+  clip-path:polygon(0 4%,100% 0,98% 100%,2% 96%);font-size:.9rem;line-height:1.5}
+.sofia strong{font-family:ui-sans-serif,system-ui,sans-serif;font-size:.65rem;letter-spacing:.12em;
+  color:var(--coral);display:block;margin-bottom:.35rem}
+
+.footer-line{position:absolute;bottom:1rem;right:1.25rem;z-index:20;
+  font-family:ui-sans-serif,system-ui,sans-serif;font-size:.68rem;color:rgba(26,20,16,.5)}
+
+/* corner mail note — origami dog-ear */
+.mail-corner{position:fixed;top:0;right:0;z-index:40;width:56px;height:56px;cursor:pointer;
+  background:linear-gradient(135deg,transparent 50%,var(--coral) 50%);
+  box-shadow:-2px 2px 0 rgba(0,0,0,.08);border:none;padding:0}
+.mail-corner span{position:absolute;bottom:6px;right:7px;font-family:ui-sans-serif,system-ui,sans-serif;
+  font-size:.55rem;color:var(--cream);letter-spacing:.06em;font-weight:700}
+.mail-corner:focus-visible{outline:2px solid var(--moss);outline-offset:2px}
+.mail-panel{position:fixed;top:0;right:0;width:min(340px,92vw);max-height:min(480px,85vh);
+  background:var(--cream);z-index:45;padding:1.4rem 1.2rem 1.2rem;overflow:auto;
+  box-shadow:-8px 10px 0 var(--shadow);border:1.5px solid var(--ink);
+  clip-path:polygon(0 0,100% 0,100% 100%,4% 100%,0 96%);
+  transform:translateX(110%);transition:transform .35s cubic-bezier(.22,.8,.28,1);display:none}
+.mail-panel.open{display:block;transform:translateX(0)}
+.mail-panel h3{font-size:1rem;margin-bottom:.75rem}
+.mail-panel .close{position:absolute;top:.6rem;right:.7rem;border:none;background:transparent;
+  font-size:1.2rem;cursor:pointer;font-family:ui-sans-serif,system-ui,sans-serif}
+.mail-sec{margin-bottom:.9rem}
+.mail-sec h4{font-family:ui-sans-serif,system-ui,sans-serif;font-size:.62rem;letter-spacing:.14em;
+  color:var(--coral);margin-bottom:.35rem}
+.mail-sec ul{list-style:none;font-size:.82rem;line-height:1.45}
+.mail-sec li{margin:.3rem 0;padding-left:.7rem;border-left:2px solid rgba(26,20,16,.15)}
+.mail-sec.watch h4{color:var(--moss)}
+.mail-sec.skip h4{color:rgba(26,20,16,.45)}
+.mail-sec.skip li{color:rgba(26,20,16,.5);font-size:.75rem}
+
+.progress{position:absolute;top:0;left:0;height:3px;background:var(--coral);z-index:30;transition:width .4s ease}
+
+@media (max-width:700px){
+  .nav{display:none}
+  .arrows .prev{left:.2rem}.arrows .next{right:.2rem}
+  .panel{padding:1.2rem 1.1rem 1.5rem}
+  .fold-tabs{bottom:-2.8rem;flex-wrap:wrap;justify-content:center;max-width:96vw}
+}
+</style>
+</head>
+<body>
+<!--
+DESIGN LESSON 2026-09-14 折晓早报
+STYLE: 剪纸/折纸 layered kraft + coral cut-paper (NOT Risograph — 08-22 already used 粉钴 Risograph flip)
+INTERACTION: 横向折叠手风琴 accordion — drag/click/keys to unfold panels; progress = “注资轨”
+GENRE: 手风琴折页 zine / 迷你纸本网站
+TITLE: 《注资轨》 (Funding Track)
+THESIS: 口头缓行，轨道上仍在加注
+SOURCES OPENED:
+1. Under The Sea — Papertrail accordion-fold Riso zine as infrastructure reveal — https://papertrail.world/under-the-sea/
+2. i feel so much shame — Jackie Liu — interactive from scanned material (buttons/links as print objects) — https://jackieis.online/projects/i-feel-so-much-shame/
+3. AI in Design 2026 — Designer Fund — designers as builders / systems over chat wallpaper — https://designerfund.com/blog/ai-in-design-2026
+STOLEN: accordion as political-economy reveal (Papertrail); interaction objects feel hand-made not UI chrome (Liu); structure as workbench of judgments not card wall (Designer Fund)
+DO NOT REUSE: 注资轨 / origami accordion funding-track zine
+WINDOW: 2026-09-13 06:00 – 2026-09-14 06:00 Asia/Shanghai
+-->
+<div class="grain" aria-hidden="true"></div>
+<div class="progress" id="progress" style="width:16.6%"></div>
+<div class="mast"><b>折晓</b> · 早报 · 北京时间 2026-09-14</div>
+<div class="footer-line">折晓 早报</div>
+
+<button class="mail-corner" id="mailBtn" aria-label="打开角落便条" title="角落便条"><span>便条</span></button>
+<aside class="mail-panel" id="mailPanel" aria-label="邮件便条">
+  <button class="close" id="mailClose" aria-label="关闭">×</button>
+  <h3>角落便条 · 邮件</h3>
+  <p style="font-size:.72rem;font-family:ui-sans-serif,system-ui,sans-serif;color:rgba(26,20,16,.5);margin-bottom:.8rem">窗：09-13 06:00 → 09-14 06:00 上海 · sofiapintos190 + aimfllyys</p>
+  <div class="mail-sec">
+    <h4>ACTION</h4>
+    <ul>
+      <li>Cursor：Unblock your Cloud Agent Setup（sofiapintos190，09-13 17:35Z）— 环境还差几步输入</li>
+    </ul>
+  </div>
+  <div class="mail-sec watch">
+    <h4>WATCH</h4>
+    <ul>
+      <li>Notebook-MedFreshman PR「课堂四材料接入层」CI 连挂（09-13 21:31Z / 21:35Z）</li>
+      <li>SCI-AIChat-Demo master/579183f 仍红（09-13 20:51Z）</li>
+      <li>deepseek-harness E2E master/c291e79 仍红（09-13 04:45Z）</li>
+    </ul>
+  </div>
+  <div class="mail-sec skip">
+    <h4>SKIP</h4>
+    <ul>
+      <li>Scite / Elicit / Consensus / Quizlet / Twitch 促销与欢迎信</li>
+      <li>ldxp 发货收据 ×3；OpenRouter 验证码（窗外）</li>
+    </ul>
+  </div>
+</aside>
+
+<div class="stage">
+  <div class="accordion-wrap" id="wrap">
+    <div class="accordion" id="acc" role="region" aria-label="注资轨折页">
+
+      <section class="panel" data-i="0">
+        <div class="panel-tag">折 · 01 / 封面</div>
+        <h1>注资轨</h1>
+        <p class="lede">昨天实验室合唱「缓行」。今天轨道上仍在加注——智谱港股一次摸走 <b>$5B</b>，Anthropic 报道称选定纳斯达克。折页往右拉，看钱与闸是否在同一条纸上。</p>
+        <div class="num">$5B<small>TODAY NUMBER · Z.AI 配股+零息可转债 · Reuters 09-13</small></div>
+        <p class="meta">风格 剪纸/折纸 · 交互 横向手风琴 · 体裁 折页 zine · 拖拽或点折页推进</p>
+      </section>
+
+      <section class="panel" data-i="1">
+        <div class="panel-tag">折 · 02 / 注资</div>
+        <span class="chip hot">一手</span><span class="chip">算力/资本</span>
+        <h2>Z.AI 一天摸走五十亿刀</h2>
+        <p class="lede">北京智谱（港股 2513.HK，现称 Z.AI）周日公告：约 <b>$20 亿</b>配股（2197 万股 @ HK$714，较周五收盘折价约 10%）+ 约 <b>$30 亿</b>人民币零息可转债（兑美元结算，2027-09 到期，初始转股价 HK$892.50）。合计约 <b>$5B</b>。</p>
+        <ul class="bullets">
+          <li>约 60% 净募资写进下一代模型与「全自训练系统」研发</li>
+          <li>公司 1 月港股上市，7 月已做过约 $40 亿 follow-on</li>
+          <li>语境：蒸馏争议名单刚过去几天，港股资金仍进场</li>
+        </ul>
+        <div class="why"><b>为什么重要：</b>「缓行」合唱的同一周末，中国上市公司能用配股+零息债一次灌满算力账本——口头闸门与资金闸门不在同一条轨。</div>
+        <p class="meta">Reuters · Kane Wu · 2026-09-13 11:01 UTC · <a href="https://www.reuters.com/world/asia-pacific/chinas-zai-raises-5-billion-new-share-convertible-bond-sales-filing-shows-2026-09-13/" target="_blank" rel="noopener">filing 报道</a></p>
+      </section>
+
+      <section class="panel" data-i="2">
+        <div class="panel-tag">折 · 03 / 闸口上市</div>
+        <span class="chip hot">报道称</span><span class="chip">IPO</span>
+        <h2>Anthropic 选定纳斯达克</h2>
+        <p class="lede">Business Insider / Bloomberg / Reuters：知情人士称 Anthropic 已选定 <b>Nasdaq</b> 作为潜在 IPO 上市地；市场仍在谈十月窗口。估值数字（报道中有近 $2T 说法）尚未敲定，S-1 仍机密。</p>
+        <ul class="bullets">
+          <li>与 Amodei「Pace the Frontier」同周末并置：一边要嵌第三方评估员，一边锁交易所</li>
+          <li>Nasdaq 今年已拿下 SpaceX；AI mega-IPO 席位争夺公开化</li>
+          <li>对比：Altman 对 Fortune 称 2026 上市「不合时宜」（昨日主线，今日只作对位）</li>
+        </ul>
+        <div class="why"><b>为什么重要：</b>缓行声明与上市路径可以同周见报——读安全文要对照资本日历，不是对照口号。</div>
+        <p class="meta">BI 09-13 · Bloomberg 09-13 · <a href="https://www.reuters.com/business/anthropic-selects-nasdaq-ipo-business-insider-reports-2026-09-13/" target="_blank" rel="noopener">Reuters 转述</a></p>
+      </section>
+
+      <section class="panel" data-i="3">
+        <div class="panel-tag">折 · 04 / 合唱加一人</div>
+        <span class="chip">安全/政策</span><span class="chip">跟进</span>
+        <h2>Hassabis：方向对，细节另议</h2>
+        <p class="lede">DeepMind 的 Demis Hassabis 在 X 上表态：Amodei 的文章「指向正确路径」，细节还需磨，并把自己最近推的<strong>行业标准机构</strong>接到同一条线上。Altman「我们也会做嵌入式评估员」、Musk「Dario is right」已是昨报；今日新声音是 Hassabis。</p>
+        <ul class="bullets">
+          <li>Guardian / Forbes 09-13 把四人合唱做成国际版头条</li>
+          <li>真正落地仍卡在：谁当评估员、有无发表权、算不算协同限产（反垄断阴影）</li>
+          <li>不要把「签名支持」写成「训练已减速」——日程表还没贴出来</li>
+        </ul>
+        <div class="why"><b>为什么重要：</b>四家老板同框不等于四家排期同框。折页上这格是舆论轨，左边那格才是钱轨。</div>
+        <p class="meta">Moneycontrol / AA 09-13 · essay: <a href="https://darioamodei.com/post/we-must-pace-the-frontier" target="_blank" rel="noopener">We Must Pace the Frontier</a>（12 日首发，今日跟进）</p>
+      </section>
+
+      <section class="panel" data-i="4">
+        <div class="panel-tag">折 · 05 / 给羽升</div>
+        <h2>今天怎么读</h2>
+        <div class="sofia">
+          <strong>对 Sofia</strong>
+          医学院读论文时你会分「摘要口号」和「方法学里真花了什么钱」。今天的 AI 早报同一招：缓行是摘要，配股与纳斯达克是方法。你自己的仓库也在响——Notebook-MedFreshman 课堂四接入层 CI、SCI-AIChat、deepseek-harness 仍红；先把红灯折进今天的工位，再看全球闸门戏。
+        </div>
+        <p class="lede" style="margin-top:1.1rem">窗外勿装新：Cursor↔OpenAI 断约（8 月底）、Projects 公测（09-10）、DeepSeek 科创板尽调（09-09 起）——档案里留着，不当今日首发。</p>
+        <p class="meta">下一折是 24h 档案胶脊 · 再下一折是背面长文</p>
+      </section>
+
+      <section class="panel" data-i="5">
+        <div class="panel-tag">折 · 06 / 胶脊档案</div>
+        <h2>24h 全量（折进脊里）</h2>
+        <div class="archive" id="archive">
+          <details open>
+            <summary><span class="t">09-13</span> Z.AI ≈$5B 配股+零息债（Reuters filing）</summary>
+            <p>为何留：今日数字；资金轨主证据。</p>
+          </details>
+          <details>
+            <summary><span class="t">09-13</span> Anthropic 报道称选定 Nasdaq（BI / Bloomberg / Reuters）</summary>
+            <p>为何留：闸口上市；与缓行文同周末对位。</p>
+          </details>
+          <details>
+            <summary><span class="t">09-13</span> Hassabis 支持 Pace the Frontier「方向正确」（Moneycontrol / AA）</summary>
+            <p>为何留：合唱扩员；非排期变更。</p>
+          </details>
+          <details>
+            <summary><span class="t">09-13</span> 国际媒体跟进 Altman/Musk 背书 Amodei（Guardian / Forbes）</summary>
+            <p>为何留：舆论扩散；事实核在 12 日帖与 essay。</p>
+          </details>
+          <details>
+            <summary><span class="t">09-13</span> 中文市场稿：DeepSeek 冲刺科创板受益板块（金融界等）</summary>
+            <p>为何留：二级传播；IPO 核心事实仍在 09-09 尽调报道，标「报道称/窗外首发」。</p>
+          </details>
+          <details>
+            <summary><span class="t">窗外</span> Altman：2026 IPO ill-advised → 倾向 2027（Fortune / Reuters 09-12）</summary>
+            <p>为何留：昨日主线；今日只作 Anthropic 对位，不重开头条。</p>
+          </details>
+          <details>
+            <summary><span class="t">窗外</span> Amodei essay + 嵌入式评估员单边承诺（09-12）</summary>
+            <p>为何留：昨日讲透；今日只收 Hassabis 增量。</p>
+          </details>
+          <details>
+            <summary><span class="t">窗外</span> OpenAI 拟 11-12 切断 Cursor 模型供应（OpenAI 08-28）</summary>
+            <p>为何留：开发者相关但非本窗新进展。</p>
+          </details>
+          <details>
+            <summary><span class="t">窗外</span> Cursor Projects beta（cursor.com/blog 09-10）</summary>
+            <p>为何留：产品轴，已过窗。</p>
+          </details>
+          <details>
+            <summary><span class="t">邮件</span> Cloud Agent Setup / 三仓 CI 红 / 学术工具促销</summary>
+            <p>为何留：便条；点右上角折角。</p>
+          </details>
+        </div>
+      </section>
+
+      <section class="panel" data-i="6">
+        <div class="panel-tag">折 · 07 / 背面 · 版权页长文</div>
+        <h2>折痕里的两套时间</h2>
+        <div class="essay">
+          <p>手风琴折页有个坏脾气：你以为自己在「翻页」，其实是在把同一张纸的正反拧到眼前。今天的早报故意做成这种拧——正面写缓行，反面写注资，折痕刚好落在「声明」与「募资说明书」之间。</p>
+          <p>Amodei 的 Pace the Frontier 不是今天的新文，但它的余震是：Hassabis 补签名，Guardian 做国际版，Forbes 写风险叙事。与此同时，Z.AI 的港交所文件把数字钉死：五十亿美元，零息债，六成进模型与自训练系统。Anthropic 这边，知情人士把上市地说成纳斯达克——十月窗口仍是「报道称」，可交易所选定本身已经是资本轨上的一枚钉子。</p>
+          <p>医学训练教过你：指南更新和科室采购预算经常不同步。AI 产业这周末像放大版——安全指南在社交网络上更新，采购与上市预算在交易所公告里更新。读早报时，与其问「他们这次是不是真减速」，不如问「哪一张纸上写了不可逆的日期」：配股定价日、债到期日、拟上市窗口、合同切断日。口头合唱可以无限复读；日期不太会。</p>
+          <p>设计课偷的三样：Papertrail 用折叠揭露海底光缆那种「本来藏着的基础设施」；Jackie Liu 把每个按钮做成仿佛印出来的物件，而不是仪表盘控件；Designer Fund 提醒系统与判断力比墙式卡片更重要。所以这页没有「查看全部」，档案长在折脊里，便条是右上角一块剪下来的三角。</p>
+          <p class="sig">—— 折晓 · 2026-09-14 北京时间 · 可离线双击打开</p>
+        </div>
+      </section>
+
+    </div>
+
+    <div class="nav" id="nav" aria-label="折页指示"></div>
+    <div class="arrows">
+      <button class="prev" id="prev" aria-label="上一折">‹</button>
+      <button class="next" id="next" aria-label="下一折">›</button>
+    </div>
+  </div>
+  <div class="fold-tabs" id="tabs" aria-label="折页目录"></div>
+  <p class="hint">拖拽折页 · 或 ← → · 或点下方折标 · 右上角便条</p>
+</div>
+
+<script>
+(function(){
+  var acc=document.getElementById('acc');
+  var panels=[].slice.call(acc.querySelectorAll('.panel'));
+  var n=panels.length;
+  var i=0;
+  var nav=document.getElementById('nav');
+  var tabs=document.getElementById('tabs');
+  var labels=['封面','$5B','Nasdaq','合唱','羽升','档案','背面'];
+  var progress=document.getElementById('progress');
+  var dragging=false,startX=0,baseX=0;
+
+  panels.forEach(function(_,idx){
+    var d=document.createElement('button');
+    d.type='button';d.setAttribute('aria-label','折 '+(idx+1));
+    d.addEventListener('click',function(){go(idx)});
+    nav.appendChild(d);
+    var t=document.createElement('button');
+    t.type='button';t.textContent=labels[idx]||('折'+(idx+1));
+    t.addEventListener('click',function(){go(idx)});
+    tabs.appendChild(t);
+  });
+
+  function go(x){
+    i=Math.max(0,Math.min(n-1,x));
+    acc.style.transform='translateX('+(-i*100)+'%)';
+    [].slice.call(nav.children).forEach(function(b,j){b.classList.toggle('on',j===i)});
+    [].slice.call(tabs.children).forEach(function(b,j){b.classList.toggle('on',j===i)});
+    document.getElementById('prev').disabled=i===0;
+    document.getElementById('next').disabled=i===n-1;
+    progress.style.width=((i+1)/n*100)+'%';
+  }
+
+  document.getElementById('prev').addEventListener('click',function(){go(i-1)});
+  document.getElementById('next').addEventListener('click',function(){go(i+1)});
+  document.addEventListener('keydown',function(e){
+    if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();go(i+1)}
+    if(e.key==='ArrowLeft'){e.preventDefault();go(i-1)}
+    if(e.key==='Escape'){closeMail()}
+  });
+
+  var wrap=document.getElementById('wrap');
+  wrap.addEventListener('pointerdown',function(e){
+    if(e.target.closest('button,a,details,summary,.mail-panel'))return;
+    dragging=true;startX=e.clientX;baseX=i;wrap.setPointerCapture(e.pointerId);
+  });
+  wrap.addEventListener('pointerup',function(e){
+    if(!dragging)return;dragging=false;
+    var dx=e.clientX-startX;
+    if(dx<-48)go(baseX+1);else if(dx>48)go(baseX-1);else go(baseX);
+  });
+  wrap.addEventListener('pointercancel',function(){dragging=false});
+
+  var mailBtn=document.getElementById('mailBtn');
+  var mailPanel=document.getElementById('mailPanel');
+  function openMail(){mailPanel.classList.add('open');mailPanel.style.display='block';requestAnimationFrame(function(){mailPanel.classList.add('open')})}
+  function closeMail(){mailPanel.classList.remove('open');setTimeout(function(){if(!mailPanel.classList.contains('open'))mailPanel.style.display='none'},350)}
+  mailBtn.addEventListener('click',function(){
+    if(mailPanel.classList.contains('open'))closeMail();else{mailPanel.style.display='block';requestAnimationFrame(function(){mailPanel.classList.add('open')})}
+  });
+  document.getElementById('mailClose').addEventListener('click',closeMail);
+
+  go(0);
+})();
+</script>
+</body>
+</html>

@@ -3,7 +3,7 @@ import type { RopeProfile } from './rope-profile'
 export type RopeSlotId =
   | 'brand'
   | 'blog'
-  | 'notes'
+  | 'daily'
   | 'works'
   | 'export'
   | 'share'
@@ -31,6 +31,8 @@ export type RopeSlot = {
 }
 
 export const GITHUB_REPO_HREF = 'https://github.com/AIMFllyYS/Blog-YuSheng'
+export const WORKS_EXTERNAL_HREF = 'https://artifact.yusheng.husteread.com/'
+export const ABOUT_EXTERNAL_HREF = 'https://husteread.com'
 
 export const ROPE_SLOTS: readonly RopeSlot[] = [
   {
@@ -54,12 +56,12 @@ export const ROPE_SLOTS: readonly RopeSlot[] = [
     ropeLength: { hub: '3.85rem', article: '42px' },
   },
   {
-    id: 'notes',
+    id: 'daily',
     kind: 'bookmark',
     cluster: 'left',
-    label: '随笔',
-    tip: '短随笔',
-    href: '/notes/',
+    label: '日报',
+    tip: '小日报',
+    href: '/daily/',
     visibility: { hub: 'desktop' },
     ropeLength: { hub: '3.15rem' },
   },
@@ -68,8 +70,9 @@ export const ROPE_SLOTS: readonly RopeSlot[] = [
     kind: 'bookmark',
     cluster: 'left',
     label: '作品集',
-    tip: '作品与项目',
-    href: '/works/',
+    tip: '作品与项目（站外）',
+    href: WORKS_EXTERNAL_HREF,
+    external: true,
     visibility: { hub: 'desktop' },
     ropeLength: { hub: '3.55rem' },
   },

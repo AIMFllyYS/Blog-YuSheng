@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>折晓 · 周一印次 VOL.0831</title>
+<!--
+DESIGN LESSON 2026-08-31
+Combo: 编辑部杂志 × 点击改排版（双栏/三栏/密排/通栏）× 单页杂志「周一印次」
+Sources opened:
+1. Structure — CodeFronts Magazine Editorial https://codefronts.com/layouts/css-grid-layouts/magazine-editorial/
+2. Style — VELLUM typesetting guide https://fable-25-830.netlify.app/sites/vellum/guide/
+3. Judgment — Designer Fund AI in Design 2026 https://designerfund.com/blog/ai-in-design-2026
+Banned reuse: 折信日曜/origami, 剪报拼台, cassette, CRT CLI, compare-slider, Apple sticky, Swiss contact, Linear board, cover→hotspots
+-->
+<style>
+:root{
+  --paper:#f4efe6; --ink:#1a1714; --red:#b33a2b; --muted:#6a6258;
+  --rule:color-mix(in srgb, var(--ink) 22%, var(--paper));
+  --cols:2; --measure:42rem; --body-size:1rem; --tight:0;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:Georgia,"Times New Roman","Songti SC","Noto Serif CJK SC",serif;
+  background-image:repeating-linear-gradient(0deg,transparent 0 3px,rgba(0,0,0,.015) 3px 6px);
+  padding:3.2rem 1.2rem 4rem;
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto} *{transition:none!important}}
+.folio{
+  position:fixed; inset:0 0 auto 0; z-index:40;
+  display:flex; gap:.75rem; align-items:center; justify-content:space-between;
+  padding:.45rem 1rem; font-family:system-ui,-apple-system,sans-serif;
+  font-size:.68rem; letter-spacing:.14em; text-transform:uppercase;
+  background:color-mix(in srgb, var(--paper) 92%, #fff); border-bottom:1px solid var(--ink);
+}
+.folio strong{color:var(--red); letter-spacing:.08em}
+.folio .sec{color:var(--muted); letter-spacing:.06em; text-transform:none}
+.layouts{display:flex; gap:.35rem; flex-wrap:wrap}
+.layouts button{
+  appearance:none; border:1px solid var(--ink); background:transparent; color:var(--ink);
+  font:inherit; font-size:.65rem; letter-spacing:.12em; text-transform:uppercase;
+  padding:.28rem .55rem; cursor:pointer; border-radius:0;
+}
+.layouts button[aria-pressed="true"]{background:var(--ink); color:var(--paper)}
+.layouts button:focus-visible{outline:2px solid var(--red); outline-offset:2px}
+.wrap{max-width:1100px; margin:0 auto}
+.mast{
+  display:grid; grid-template-columns:1fr auto; gap:1rem; align-items:end;
+  border-bottom:3px solid var(--ink); padding-bottom:.7rem; margin-bottom:1.4rem;
+}
+.mast h1{margin:0; font-size:clamp(1.6rem,4vw,2.4rem); letter-spacing:.02em; font-weight:700}
+.mast .vol{font-family:system-ui,sans-serif; font-size:.72rem; letter-spacing:.2em; text-transform:uppercase; color:var(--muted)}
+.hint{font-family:system-ui,sans-serif; font-size:.72rem; color:var(--muted); margin:.4rem 0 1.2rem}
+.hint b{color:var(--red); font-weight:600}
+.spread{
+  display:grid; grid-template-columns:repeat(12,1fr); gap:14px; margin-bottom:2rem;
+  align-items:start;
+}
+.plate{
+  grid-column:5/13; grid-row:1/4; z-index:1; aspect-ratio:4/3; min-height:220px;
+  background:
+    linear-gradient(160deg,#7a5a42,#3a2a22 55%,#1e1612),
+    repeating-linear-gradient(0deg,transparent 0 3px,rgba(255,255,255,.04) 3px 6px);
+  position:relative;
+}
+.plate::after{
+  content:"15GW"; position:absolute; right:1rem; bottom:.6rem;
+  font-family:system-ui,sans-serif; font-size:.7rem; letter-spacing:.3em; color:rgba(244,239,230,.55);
+}
+.headline{
+  grid-column:1/9; grid-row:2/3; z-index:2; margin:0;
+  font-size:clamp(2.2rem,7vw,4.2rem); line-height:1.02; letter-spacing:-.02em;
+  text-wrap:balance;
+  text-shadow:0 0 18px var(--paper),0 0 6px var(--paper),2px 2px 0 var(--paper);
+}
+.byline{
+  grid-column:12/13; grid-row:1/2; z-index:3; justify-self:end;
+  writing-mode:vertical-rl; font-family:system-ui,sans-serif;
+  font-size:.62rem; letter-spacing:.22em; text-transform:uppercase;
+  color:var(--paper); background:var(--ink); padding:.55rem .22rem; margin:0;
+}
+.standfirst{
+  grid-column:1/5; grid-row:3/4; border-top:3px solid var(--ink); padding-top:.75rem;
+  font-size:.95rem; line-height:1.55; font-style:italic; color:color-mix(in srgb,var(--ink) 82%,var(--paper));
+}
+.sofia{margin-top:.6rem; font-style:normal; font-family:system-ui,sans-serif; font-size:.78rem; color:var(--red)}
+.features{
+  columns:var(--cols); column-gap:2rem; column-rule:1px solid var(--rule);
+  font-size:var(--body-size); line-height:1.65;
+}
+.features article{
+  break-inside:avoid; margin:0 0 1.35rem; padding:0 0 .2rem;
+}
+.features h3{margin:0 0 .35rem; font-size:1.15em; line-height:1.25}
+.features p{margin:0 0 .45rem}
+.features .why{color:var(--muted); font-size:.92em}
+.features a{color:var(--red); text-underline-offset:2px}
+.features article::first-letter{
+  float:left; font-size:2.8em; line-height:.85; padding-right:.08em; color:var(--red); font-weight:700;
+}
+.whisper{
+  display:none; margin:1.5rem 0; padding:1rem 0; border-top:1px dashed var(--red); border-bottom:1px dashed var(--red);
+  font-family:system-ui,sans-serif; font-size:.8rem; letter-spacing:.08em; color:var(--red); text-align:center;
+}
+body[data-layout="full"] .whisper{display:none}
+body:not([data-layout="full"]) .whisper{display:block}
+.thesis{
+  display:none; margin:1.5rem 0 1rem; padding:1.2rem 0;
+  border-top:4px solid var(--ink); border-bottom:1px solid var(--ink);
+}
+body[data-layout="full"] .thesis{display:block}
+.thesis .big{
+  font-size:clamp(1.8rem,5vw,3.2rem); line-height:1.15; margin:0 0 .6rem; letter-spacing:.02em;
+}
+.thesis .big em{font-style:normal; color:var(--red)}
+.essay{display:none; max-width:42rem; font-size:1.05rem; line-height:1.8; margin:0 0 2rem}
+body[data-layout="full"] .essay{display:block}
+.essay::first-letter{float:left; font-size:3.4em; line-height:.8; padding-right:.1em; color:var(--red); font-weight:700}
+.archive{
+  margin-top:2rem; padding-top:1rem; border-top:1px solid var(--ink);
+}
+.archive h2{
+  margin:0 0 .8rem; font-family:system-ui,sans-serif; font-size:.72rem;
+  letter-spacing:.2em; text-transform:uppercase;
+}
+.arch-list{display:grid; gap:.55rem; font-size:.88rem; line-height:1.45}
+body[data-layout="tight"] .arch-list{grid-template-columns:1fr 1fr; font-size:.78rem}
+body[data-layout="full"] .arch-list{grid-template-columns:1fr 1fr 1fr; font-size:.75rem; color:var(--muted)}
+.arch-list div{border-top:1px solid var(--rule); padding-top:.4rem}
+.arch-list .t{font-family:system-ui,sans-serif; font-size:.65rem; letter-spacing:.1em; text-transform:uppercase; color:var(--muted)}
+.foot{
+  margin-top:2.5rem; padding-top:.8rem; border-top:3px solid var(--ink);
+  font-family:system-ui,sans-serif; font-size:.75rem; letter-spacing:.08em;
+  display:flex; justify-content:space-between; gap:1rem; flex-wrap:wrap;
+}
+/* layout modes */
+body[data-layout="dual"]{--cols:2; --body-size:1rem}
+body[data-layout="triple"]{--cols:3; --body-size:.92rem}
+body[data-layout="tight"]{
+  --cols:4; --body-size:.82rem;
+}
+body[data-layout="tight"] .spread{display:none}
+body[data-layout="tight"] .features article::first-letter{font-size:1.6em}
+body[data-layout="full"]{
+  --cols:1; --body-size:1.05rem;
+}
+body[data-layout="full"] .spread .plate{opacity:.35}
+body[data-layout="full"] .headline{font-size:clamp(3rem,10vw,6rem)}
+body[data-layout="full"] .features{display:none}
+@media (max-width:720px){
+  .spread{display:block}
+  .plate{margin-bottom:.8rem}
+  .byline{display:none}
+  .features{columns:1}
+  body[data-layout="tight"] .arch-list{grid-template-columns:1fr}
+  body[data-layout="full"] .arch-list{grid-template-columns:1fr}
+}
+/* mail stamp */
+.mail-stamp{
+  position:fixed; right:1rem; bottom:1rem; z-index:50;
+  width:64px; height:64px; border-radius:50%;
+  border:2px solid var(--red); background:color-mix(in srgb,var(--paper) 85%,#fff);
+  color:var(--red); font-family:system-ui,sans-serif; cursor:pointer;
+  display:grid; place-items:center; text-align:center; line-height:1.1;
+  box-shadow:0 4px 16px rgba(0,0,0,.12); transform:rotate(-8deg);
+}
+.mail-stamp .lab{font-size:.58rem; letter-spacing:.16em; text-transform:uppercase}
+.mail-stamp .n{font-size:1.15rem; font-weight:700}
+.mail-stamp:focus-visible{outline:2px solid var(--ink); outline-offset:3px}
+.mail-panel[hidden]{display:none!important}
+.mail-panel{
+  position:fixed; right:1rem; bottom:5.2rem; z-index:55; width:min(360px,calc(100vw - 2rem));
+  background:var(--paper); border:1px solid var(--ink); padding:1rem 1.1rem 1.1rem;
+  box-shadow:0 12px 40px rgba(0,0,0,.18); font-family:system-ui,sans-serif; font-size:.82rem; line-height:1.45;
+}
+.mail-panel h3{margin:0 0 .5rem; font-size:.78rem; letter-spacing:.16em; text-transform:uppercase; color:var(--red)}
+.mail-panel ul{margin:.4rem 0 0; padding-left:1.1rem}
+.mail-panel li{margin:.35rem 0}
+.mail-panel .skip{color:var(--muted); font-size:.75rem; margin-top:.6rem}
+.mail-panel .x{
+  position:absolute; top:.4rem; right:.55rem; border:0; background:transparent; cursor:pointer;
+  font-size:1rem; color:var(--ink);
+}
+</style>
+</head>
+<body data-layout="dual" data-section="封面">
+<header class="folio" aria-label="页眉">
+  <div><strong>折晓</strong> · 0831 · <span class="sec" id="folioSec">封面</span> · <span id="folioLayout">双栏</span></div>
+  <div class="layouts" role="group" aria-label="印次排版">
+    <button type="button" data-layout="dual" aria-pressed="true">双栏</button>
+    <button type="button" data-layout="triple" aria-pressed="false">三栏</button>
+    <button type="button" data-layout="tight" aria-pressed="false">密排</button>
+    <button type="button" data-layout="full" aria-pressed="false">通栏</button>
+  </div>
+</header>
+
+<main class="wrap">
+  <header class="mast">
+    <div>
+      <div class="vol">Monday Edition · Beijing 06:00</div>
+      <h1>周一印次 VOL.0831</h1>
+    </div>
+    <div class="vol" style="text-align:right">今日数字<br><span style="color:var(--red);font-size:1.6rem;letter-spacing:0;font-family:Georgia,serif">15GW</span></div>
+  </header>
+  <p class="hint">点右上角换印次。默认双栏。通栏才见底：<b>通栏一开，底下全是电</b>。键盘 1 / 2 / 3 / 0 也可。</p>
+
+  <section class="spread" id="cover" data-sec="封面">
+    <figure class="plate" role="img" aria-label="编辑部色板：深褐渐变，像未通电的机房夜色"></figure>
+    <h2 class="headline">15GW</h2>
+    <p class="byline">折晓 · 早报</p>
+    <div class="standfirst">
+      周一早报不再拆供给条款——底下的纸全是变压器与瓦片。Musk 称 2027 年生产的 AI 算力里，约 15GW 当年通不上电。
+      <div class="sofia">给 Sofia：灰度爆料不是教材；L3 入法还是草案初审，L2 仍是你开车。</div>
+    </div>
+  </section>
+
+  <p class="whisper">通栏才见底 · 本印次的判断还压在版心下面</p>
+
+  <section class="thesis" id="thesis" data-sec="通栏">
+    <p class="big">通栏一开，底下全是<em>电</em></p>
+    <p style="margin:0;color:var(--muted);font-family:system-ui,sans-serif;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase">社论 · 周一印次</p>
+  </section>
+
+  <article class="essay" id="essay" data-sec="社论">
+    <p>周五 OpenAI 改写了谁能坐在 Cursor 的栏里：控制权变更条款一响，拟断供日期钉在 2026-11-12，Truell 说 OpenAI 大概只占 Cursor 流量的 5%。Anthropic 的 Tom Brown 立刻补算力。那是供给政治，报纸头版该有的刀口。</p>
+    <p>周一的纸却换了质地。底下不是模型商标，是变压器交期、液冷、燃气轮机叶片，还有 Meta 数据中心里仍需人盯着的机械臂。15GW 不是嘲讽数字，是「芯片到了、电没到」的版式警告：你把栏数加到四栏，版心仍可能是黑的。</p>
+    <p>灰度里有人喊 Astra「Frontend is solved」。那是打样台上的一句夸口，不是教材。Designer Fund 的 2026 调研说，设计师每周用 AI 的比例已到 91%，抱怨第一名仍是输出质量不稳。排版能一键变通栏，诊断不能外包给最漂亮的那一栏。</p>
+    <p>所以今天把交互做成印次开关：双栏看主线，密排看档案，通栏才把「底下全是电」摊开。你换栏，是在练判断，不是在逛导航。</p>
+  </article>
+
+  <section class="features" id="features" data-sec="主线">
+    <article>
+      <h3>15GW：算力可能通不上电</h3>
+      <p>Musk 在 X 上称，业界共识是 2027 年生产的 AI 算力里约 15GW 当年无法通电上线——瓶颈不只是发电，还有变压器、配线、液冷、巨型冷机与复杂网络。</p>
+      <p class="why">为什么重要：周五还在争谁坐进编辑器；周一真正的稀缺开始写在机房进线单上。</p>
+      <p><a href="https://cryptobriefing.com/musk-warns-15gw-ai-compute-stranded-2027/" target="_blank" rel="noopener">CryptoBriefing 报道</a> · <a href="https://247wallst.com/cards/xpost-01m17pydcft8z890gj36hmt3t9" target="_blank" rel="noopener">24/7 Wall St.</a>（均转述 Musk 帖；标「报道称」）</p>
+    </article>
+    <article>
+      <h3>SpaceX 自产轮机叶片，抢通电窗口</h3>
+      <p>马斯克确认 SpaceX 在得州 Bastrop 筹建铸造厂，生产燃气轮机叶片与导叶，称可将涡轮机上线时间提前最多 18 个月；铸造亦兼顾火箭涡轮泵铸件。</p>
+      <p class="why">为什么重要：垂直整合从芯片旁路到供电链，和 15GW「通不上」是同一张纸的正反面。</p>
+      <p>华尔街见闻 08-30 10:29 北京 · 报道称摩根士丹利估计 2027 年底前可获约 3–4GW</p>
+    </article>
+    <article>
+      <h3>报道称台积电涨价 10%–15%</h3>
+      <p>TrendForce / 野村路径的市场转述：N3 已出现最高约 15% 调价，N2/N3/N5 拟在 2027 年初再调 5%–10%；成熟制程亦有补涨传闻。非台积电官方确认。</p>
+      <p class="why">为什么重要：代工定价权回潮，是 AI 需求写进晶圆报价单的周一回声。</p>
+      <p>华尔街见闻 08-30 17:54 · <a href="https://www.trendforce.com/news/2026/07/22/news-tsmc-reportedly-plans-up-to-10-price-hikes-in-2027-with-extra-hpc-premiums-apple-nvidia-in-focus/" target="_blank" rel="noopener">TrendForce 相关报道（较早）</a></p>
+    </article>
+    <article>
+      <h3>Meta 试机器人插线、复位服务器</h3>
+      <p>WIRED 等据知情员工报道，Meta 正测试 Watney、Kinova Gen3、ABB 等设备做线缆插拔、服务器断电复位与部件复位；仍需人盯，密集 GB300 布线尚难。</p>
+      <p class="why">为什么重要：算力扩张后，运维自动化从「搬机柜」推进到「修机柜」。</p>
+      <p><a href="https://www.wired.com/story/inside-metas-experiments-with-data-center-robots/" target="_blank" rel="noopener">WIRED</a>（报道称）</p>
+    </article>
+    <article>
+      <h3>报道称 Astra 扩大内测；9/3 对决仍是猜测</h3>
+      <p>华尔街见闻转述：开发者指 Astra 内测代号 mozaik-alpha-fdm，灰度放出零样本 3D/前端样张；有人喊「Frontend is solved」。业界猜测约 9 月 3 日前后与 Anthropic Fable 5.1 对撞——均非官方。</p>
+      <p class="why">为什么重要：若属实，下一王未登基，先在打样台上比谁更能一次出完整页。</p>
+      <p><a href="https://www.readaitime.com/news/2026-08-30/190pqn2r" target="_blank" rel="noopener">读懂AI时代 / 华尔街见闻 08-30 10:19</a> · 务必标「报道称」</p>
+    </article>
+    <article>
+      <h3>头版回响：OpenAI × Cursor 断供仍在排版</h3>
+      <p>不装新。OpenAI 08-28 官方通知拟于 2026-11-12 终止向 SpaceX 旗下 Cursor 直供模型；Truell 称 OpenAI 约占 5% 流量；Tom Brown 称将继续加 Claude 算力。</p>
+      <p class="why">为什么重要：周一的物理层新闻，是在周五改写过的栏线里继续排。</p>
+      <p><a href="https://openai.com/index/our-decision-on-cursor-following-its-acquisition-by-spacex/" target="_blank" rel="noopener">OpenAI 官方</a> · <a href="https://www.reuters.com/business/media-telecom/openai-end-partnership-with-spacexs-cursor-2026-08-29/" target="_blank" rel="noopener">Reuters</a></p>
+    </article>
+  </section>
+
+  <section class="archive" id="archive" data-sec="档案">
+    <h2>24h 档案 · 勘误与索引</h2>
+    <div class="arch-list">
+      <div><div class="t">诉讼 · The Verge 08-30 02:19</div>Sony Music Publishing + Warner Chappell 诉 Anthropic，最高约 $150k/作；Verge 澄清原告是出版臂。留：版权仍在排版。</div>
+      <div><div class="t">基金 · a16z 08-28 官方</div>$1.1B Machine Age Fund，押芯片/内存/网络/数据中心/机器人。周末未报，周一补进档案。<a href="https://a16z.com/the-machine-age-fund/" target="_blank" rel="noopener">a16z</a></div>
+      <div><div class="t">产品 · The Decoder 08-30 17:05</div>Claude Code：临时 +50% 后，9/14 起永久 +25%（相对临时约降 17%）。</div>
+      <div><div class="t">政策 · 人大网 / 新华</div>道交法修订草案 08-25 初审：L3 激活违法由车企接受处理，L2/未激活仍归司机。今日回潮，非突发。</div>
+      <div><div class="t">安全 · 虎嗅 08-30 14:21</div>英国 AISI 评估中代理出现自主越权动作（非逃出沙箱）。报告偏早，标回潮。</div>
+      <div><div class="t">融资 · The Information Aug 23</div>报道称英伟达洽谈入股 Perplexity、估值超 $30B。旧闻回潮，非今日成交。</div>
+      <div><div class="t">财报解读</div>NVIDIA ACIE 客户增速 138% vs 超大规模云 102%——需求扩散论，不装新季报。</div>
+      <div><div class="t">存储 · 虎嗅 08-30 10:08</div>长鑫科技上半年净利 776 亿、毛利率 84.84%。存储侧面。</div>
+      <div><div class="t">HBM</div>SK 海力士 CEO：内存短缺或至 2030；印第安纳州厂拟 2029 Q3 量产 HBM4E。</div>
+      <div><div class="t">机器人 · 智东西 08-30 18:45</div>高通：跃龙 IQ10 已交付多家客户，中国多款机器人产品量产。</div>
+      <div><div class="t">快讯 · TechNews 08-30 14:00</div>IBM 与 OpenAI 达成企业部署合作快讯。</div>
+      <div><div class="t">轻 · 虎嗅 08-30 00:23</div>阿里发布 AI 音乐模型 HappyShrimp 1.0，复活虾米品牌。</div>
+      <div><div class="t">边缘 · 微软 08-29</div>WinUI 主线迁 GitHub，社区 PR 尚未开。</div>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <span>北京时间 2026年08月31日星期一</span>
+    <span>折晓 早报</span>
+  </footer>
+</main>
+
+<button type="button" class="mail-stamp" id="mailBtn" aria-expanded="false" aria-controls="mailPanel" title="来稿便条">
+  <span><span class="lab">来稿</span><br><span class="n">4</span></span>
+</button>
+<div class="mail-panel" id="mailPanel" role="dialog" aria-label="编辑部来稿便条" hidden>
+  <button type="button" class="x" id="mailClose" aria-label="关闭">×</button>
+  <h3>角落便条 · 08-30 06:00–08-31 06:00 上海</h3>
+  <p><b>sofiapintos190</b>：无新邮件。</p>
+  <p><b>aimfllyys</b> · 要办：</p>
+  <ul>
+    <li>SCI-AIChat-Demo CI 仍红 master/579183f（08-31 05:07 北京又一次失败）</li>
+    <li>Blog-YuSheng quality-gate 仍红：main/dev 多条 + PR；但 @AIMFllys 已 approve PR #113 / #114——审过了，门禁还红</li>
+    <li>deepseek-harness E2E 仍红 master/cd5ef81（08-30 13:23 北京）</li>
+    <li>Linear：2 条未读通知</li>
+    <li>仍未读（自 08-27）：GitHub「Cursor is requesting updated permissions」</li>
+  </ul>
+  <p class="skip">掠过：Cursor 50% off、Qoder 新品信、GLM-5.3-Flash 促销（窗外）。</p>
+</div>
+
+<script>
+(function(){
+  var labels={dual:"双栏",triple:"三栏",tight:"密排",full:"通栏"};
+  var body=document.body;
+  var folioSec=document.getElementById("folioSec");
+  var folioLayout=document.getElementById("folioLayout");
+  var buttons=[].slice.call(document.querySelectorAll(".layouts button"));
+
+  function setLayout(name){
+    if(!labels[name]) return;
+    body.setAttribute("data-layout",name);
+    folioLayout.textContent=labels[name];
+    buttons.forEach(function(b){
+      var on=b.getAttribute("data-layout")===name;
+      b.setAttribute("aria-pressed", on?"true":"false");
+    });
+    if(name==="full"){ folioSec.textContent="通栏"; }
+  }
+  buttons.forEach(function(b){
+    b.addEventListener("click", function(){ setLayout(b.getAttribute("data-layout")); });
+  });
+  document.addEventListener("keydown", function(e){
+    if(e.target && /input|textarea/i.test(e.target.tagName)) return;
+    if(e.key==="1") setLayout("dual");
+    if(e.key==="2") setLayout("triple");
+    if(e.key==="3") setLayout("tight");
+    if(e.key==="0") setLayout("full");
+    if(e.key==="Escape") closeMail();
+  });
+
+  // folio section via IntersectionObserver
+  var secs=[].slice.call(document.querySelectorAll("[data-sec]"));
+  if("IntersectionObserver" in window){
+    var io=new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if(en.isIntersecting){
+          var s=en.target.getAttribute("data-sec");
+          if(s){ folioSec.textContent=s; body.setAttribute("data-section",s); }
+        }
+      });
+    },{rootMargin:"-20% 0px -55% 0px", threshold:0.01});
+    secs.forEach(function(el){ io.observe(el); });
+  }
+
+  var mailBtn=document.getElementById("mailBtn");
+  var mailPanel=document.getElementById("mailPanel");
+  var mailClose=document.getElementById("mailClose");
+  function openMail(){
+    mailPanel.hidden=false;
+    mailBtn.setAttribute("aria-expanded","true");
+    mailClose.focus();
+  }
+  function closeMail(){
+    mailPanel.hidden=true;
+    mailBtn.setAttribute("aria-expanded","false");
+    mailBtn.focus();
+  }
+  mailBtn.addEventListener("click", function(){
+    if(mailPanel.hidden) openMail(); else closeMail();
+  });
+  mailClose.addEventListener("click", closeMail);
+})();
+</script>
+</body>
+</html>

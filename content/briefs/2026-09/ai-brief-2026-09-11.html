@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>抽思价 · 折晓早报 · 2026-09-11</title>
+<!--
+  STEAL LESSONS (design research)
+  1. STRUCTURE — Lab47-46 “iPhone 16 Pro Product Page Breakdown | Part 2”
+     https://lab47-46.com/iphone-16-pro-product-page-breakdown-part-2/
+     Lesson: static hero (rate face) → guided mid (SKU line items) → user-driven toggle late (Peak/Off-peak + flip).
+  2. STYLE — Figma “Build with more context… Make kits and Make attachments”
+     https://www.figma.com/blog/introducing-make-kits-and-make-attachments/
+     Lesson: ground fake product in REAL numbers/attachments (2亿, $0.003, UniPat $3B) not placeholders.
+  3. INTERACTION — Codrops “The Exat Microsite…”
+     https://tympanus.net/codrops/2026/04/10/the-exat-microsite-pushing-a-typography-showcase-to-new-creative-extremes/
+     Lesson: toggle/scroll position = reversible state; type as interface (price ↔ distillation face).
+  4. Optional — It's Nice That Form+Fidget
+     https://www.itsnicethat.com/articles/noodle-form-fidget-digital-project-020625
+     Lesson: playful toggle feel on Peak/Off-peak + flip without breaking billing chrome.
+-->
+<style>
+:root{
+  --bg:#f4f5f7;
+  --surface:#ffffff;
+  --ink:#0f172a;
+  --muted:#64748b;
+  --line:#e2e8f0;
+  --line-strong:#cbd5e1;
+  --teal:#0d9488;
+  --teal-deep:#0f766e;
+  --teal-soft:#ccfbf1;
+  --teal-wash:#f0fdfa;
+  --amber:#d97706;
+  --amber-soft:#fff7ed;
+  --rose:#e11d48;
+  --rose-soft:#fff1f2;
+  --shadow:0 1px 2px rgba(15,23,42,.04),0 8px 24px rgba(15,23,42,.06);
+  --radius:12px;
+  --font:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI","PingFang SC","Hiragino Sans GB","Noto Sans CJK SC","Microsoft YaHei",sans-serif;
+  --mono:ui-monospace,SFMono-Regular,"Cascadia Code","Segoe UI Mono",Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.5;-webkit-font-smoothing:antialiased}
+button,a{font:inherit}
+button{cursor:pointer;border:none;background:none;color:inherit}
+a{color:var(--teal-deep);text-decoration:none}
+a:hover{text-decoration:underline}
+.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}
+.app{max-width:1080px;margin:0 auto;padding:18px 16px 96px;position:relative}
+
+/* Top bar */
+.topbar{
+  display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+  padding:12px 16px;box-shadow:var(--shadow);margin-bottom:16px;
+}
+.brand{display:flex;align-items:center;gap:10px;min-width:0}
+.logo{
+  width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--teal),#14b8a6);
+  display:grid;place-items:center;color:#fff;font-weight:700;font-size:13px;flex-shrink:0;
+}
+.brand h1{margin:0;font-size:15px;font-weight:650;letter-spacing:-.01em}
+.brand .sub{font-size:12px;color:var(--muted)}
+.nav{display:flex;flex-wrap:wrap;gap:6px}
+.nav button,.nav .chip{
+  border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 12px;
+  font-size:12px;color:var(--muted);transition:border-color .15s,color .15s,background .15s;
+}
+.nav button:hover,.nav button[aria-pressed="true"]{
+  border-color:var(--teal);color:var(--teal-deep);background:var(--teal-wash);
+}
+.badge{
+  font-family:var(--mono);font-size:11px;color:var(--teal-deep);background:var(--teal-soft);
+  border-radius:6px;padding:4px 8px;white-space:nowrap;
+}
+
+/* Hero rate card */
+.hero-grid{display:grid;grid-template-columns:1.35fr .85fr;gap:16px;margin-bottom:16px}
+@media(max-width:820px){.hero-grid{grid-template-columns:1fr}}
+.rate-shell{
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+  box-shadow:var(--shadow);padding:18px 18px 16px;position:relative;overflow:hidden;
+}
+.rate-head{display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px}
+.rate-head .kicker{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-family:var(--mono)}
+.rate-head h2{margin:4px 0 0;font-size:clamp(22px,4vw,28px);letter-spacing:-.02em}
+.thesis-line{margin:6px 0 0;font-size:14px;color:var(--muted);max-width:36em}
+.toggle-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.seg{
+  display:inline-flex;border:1px solid var(--line);border-radius:10px;padding:3px;background:var(--bg);
+}
+.seg button{
+  border-radius:8px;padding:7px 14px;font-size:12px;font-weight:600;color:var(--muted);
+}
+.seg button[aria-pressed="true"]{background:#fff;color:var(--teal-deep);box-shadow:0 1px 2px rgba(15,23,42,.08);border:1px solid var(--line)}
+.flip-btn{
+  border:1px solid var(--line);border-radius:10px;padding:8px 12px;font-size:12px;font-weight:600;
+  background:#fff;color:var(--ink);
+}
+.flip-btn:hover{border-color:var(--teal);color:var(--teal-deep)}
+.kbd{font-family:var(--mono);font-size:10px;color:var(--muted);margin-left:4px}
+
+/* Flip card */
+.flip-stage{perspective:1400px;margin-top:4px}
+.flip-inner{
+  position:relative;transform-style:preserve-3d;transition:transform .55s cubic-bezier(.2,.8,.2,1);
+  min-height:280px;
+}
+.flip-inner.is-flipped{transform:rotateY(180deg)}
+.face{
+  backface-visibility:hidden;-webkit-backface-visibility:hidden;
+  border:1px solid var(--line);border-radius:12px;background:linear-gradient(180deg,#fff,var(--teal-wash));
+  padding:16px;min-height:280px;
+}
+.face.back{
+  position:absolute;inset:0;transform:rotateY(180deg);
+  background:linear-gradient(180deg,#fff,var(--rose-soft));
+  border-color:#fecdd3;
+}
+.price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+@media(max-width:560px){.price-grid{grid-template-columns:1fr}}
+.price-cell{
+  background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px;
+}
+.price-cell .label{font-size:11px;color:var(--muted);font-family:var(--mono)}
+.price-cell .usd{font-size:22px;font-weight:700;letter-spacing:-.03em;margin-top:4px}
+.price-cell .cny{font-size:12px;color:var(--muted);margin-top:2px}
+.price-cell .note{font-size:11px;color:var(--teal-deep);margin-top:8px}
+.meta-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.pill{
+  font-size:11px;border:1px solid var(--line);border-radius:999px;padding:4px 10px;background:#fff;color:var(--muted);
+}
+.pill.hot{border-color:#99f6e4;background:var(--teal-soft);color:var(--teal-deep)}
+.pill.warn{border-color:#fed7aa;background:var(--amber-soft);color:#9a3412}
+.distill-stats{display:grid;grid-template-columns:1.1fr 1fr;gap:10px;margin-top:10px}
+@media(max-width:560px){.distill-stats{grid-template-columns:1fr}}
+.stat{
+  background:#fff;border:1px solid #fecdd3;border-radius:10px;padding:12px;
+}
+.stat .n{font-size:26px;font-weight:750;letter-spacing:-.03em;color:var(--rose)}
+.stat .l{font-size:12px;color:var(--muted);margin-top:2px}
+.face h3{margin:0;font-size:15px}
+.face p.lead{margin:6px 0 0;font-size:13px;color:var(--muted)}
+.hint-bar{margin-top:10px;font-size:11px;color:var(--muted);font-family:var(--mono)}
+
+/* Today number card */
+.today-card{
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+  box-shadow:var(--shadow);padding:18px;display:flex;flex-direction:column;justify-content:space-between;gap:14px;
+}
+.today-card .label{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.today-card .big{font-size:clamp(42px,8vw,64px);font-weight:800;letter-spacing:-.04em;line-height:1;color:var(--rose)}
+.today-card .desc{font-size:13px;color:var(--muted);margin:0}
+.today-card .sof{
+  margin:0;padding:10px 12px;background:var(--amber-soft);border:1px solid #fed7aa;border-radius:10px;
+  font-size:13px;color:#9a3412;
+}
+
+/* Invoice / SKUs */
+.panel{
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+  box-shadow:var(--shadow);margin-bottom:16px;overflow:hidden;
+}
+.panel-h{
+  display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;
+  padding:14px 16px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#fff,#fafbfc);
+}
+.panel-h h2{margin:0;font-size:14px;font-weight:650}
+.panel-h .meta{font-size:12px;color:var(--muted);font-family:var(--mono)}
+.sku-list{display:flex;flex-direction:column}
+.sku{
+  display:grid;grid-template-columns:88px 1fr auto;gap:12px;align-items:start;
+  padding:14px 16px;border-bottom:1px solid var(--line);cursor:pointer;text-align:left;width:100%;
+  transition:background .15s;
+}
+.sku:last-child{border-bottom:0}
+.sku:hover,.sku[aria-selected="true"]{background:var(--teal-wash)}
+.sku .sku-id{font-family:var(--mono);font-size:11px;color:var(--teal-deep);padding-top:3px}
+.sku .sku-title{font-size:14px;font-weight:650;margin:0}
+.sku .sku-body{font-size:13px;color:var(--muted);margin:4px 0 0;line-height:1.55}
+.sku .sku-amt{font-family:var(--mono);font-size:12px;color:var(--ink);white-space:nowrap;text-align:right}
+.sku .sku-tag{display:inline-block;margin-top:6px;font-size:11px;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:2px 8px;background:#fff}
+@media(max-width:640px){
+  .sku{grid-template-columns:1fr;gap:6px}
+  .sku .sku-amt{text-align:left}
+}
+
+.detail{
+  display:none;padding:0 16px 16px;border-top:1px dashed var(--line);background:#fcfcfd;
+}
+.detail.open{display:block}
+.detail .box{padding-top:12px;font-size:13px;color:var(--muted)}
+.detail .box strong{color:var(--ink);font-weight:600}
+.detail a{word-break:break-all}
+
+/* Footer */
+.foot{
+  margin-top:8px;text-align:center;font-size:12px;color:var(--muted);font-family:var(--mono);
+  padding:18px 8px 8px;
+}
+
+/* Drawers / overlays */
+.overlay{
+  position:fixed;inset:0;background:rgba(15,23,42,.28);backdrop-filter:blur(2px);
+  opacity:0;pointer-events:none;transition:opacity .2s;z-index:40;
+}
+.overlay.open{opacity:1;pointer-events:auto}
+.drawer{
+  position:fixed;top:0;right:0;height:100%;width:min(440px,100%);
+  background:var(--surface);border-left:1px solid var(--line);box-shadow:-12px 0 40px rgba(15,23,42,.12);
+  transform:translateX(100%);transition:transform .28s cubic-bezier(.2,.8,.2,1);z-index:50;
+  display:flex;flex-direction:column;
+}
+.drawer.open{transform:translateX(0)}
+.drawer.left{right:auto;left:0;border-left:0;border-right:1px solid var(--line);box-shadow:12px 0 40px rgba(15,23,42,.12);transform:translateX(-100%)}
+.drawer.left.open{transform:translateX(0)}
+.drawer-h{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  padding:14px 16px;border-bottom:1px solid var(--line);
+}
+.drawer-h h3{margin:0;font-size:14px}
+.icon-btn{
+  width:32px;height:32px;border-radius:8px;border:1px solid var(--line);background:#fff;
+  display:grid;place-items:center;font-size:16px;color:var(--muted);
+}
+.icon-btn:hover{border-color:var(--teal);color:var(--teal-deep)}
+.drawer-b{padding:14px 16px 28px;overflow:auto;flex:1}
+.ledger{list-style:none;margin:0;padding:0}
+.ledger li{
+  border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:8px;background:#fff;
+}
+.ledger .t{font-family:var(--mono);font-size:10px;color:var(--muted)}
+.ledger .f{font-size:13px;margin-top:4px;color:var(--ink)}
+.ledger .w{font-size:12px;color:var(--muted);margin-top:4px}
+.essay{font-size:14px;line-height:1.75;color:#1e293b}
+.essay p{margin:0 0 1em}
+.essay h4{margin:0 0 .6em;font-size:14px;color:var(--teal-deep)}
+
+/* Mail corner — sticky invoice note */
+.mail-corner{
+  position:fixed;right:14px;bottom:14px;z-index:30;
+}
+.mail-fab{
+  display:flex;align-items:center;gap:8px;
+  background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 12px;
+  box-shadow:var(--shadow);font-size:12px;font-weight:600;color:var(--ink);
+}
+.mail-fab:hover{border-color:var(--teal)}
+.mail-fab .dot{
+  width:8px;height:8px;border-radius:50%;background:var(--rose);box-shadow:0 0 0 3px #ffe4e6;
+}
+.mail-panel{
+  position:fixed;right:14px;bottom:64px;width:min(360px,calc(100vw - 28px));
+  background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);
+  z-index:35;display:none;overflow:hidden;
+}
+.mail-panel.open{display:block}
+.mail-panel .mh{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:10px 12px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#fff,var(--amber-soft));
+}
+.mail-panel .mh strong{font-size:13px}
+.mail-panel .mb{padding:10px 12px 14px;max-height:50vh;overflow:auto;font-size:12px}
+.mail-sec{margin-bottom:10px}
+.mail-sec .lab{
+  font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;
+}
+.mail-sec ul{margin:0;padding-left:16px;color:#334155}
+.mail-sec li{margin:4px 0}
+.mail-sec.action .lab{color:var(--rose)}
+.mail-sec.watch .lab{color:var(--amber)}
+
+@media(prefers-reduced-motion:reduce){
+  .flip-inner,.drawer,.overlay{transition:none}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar" aria-label="Billing console">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">抽</div>
+      <div>
+        <h1>抽思价 · Rate Card Console</h1>
+        <div class="sub">API Billing · 折晓早报 · 窗 09-10 06:00 → 09-11 06:00 北京</div>
+      </div>
+    </div>
+    <nav class="nav" aria-label="Console nav">
+      <button type="button" id="btnAttach" aria-controls="drawerAttach" aria-expanded="false">Attachments / 账本</button>
+      <button type="button" id="btnTerms" aria-controls="drawerTerms" aria-expanded="false">Terms / 利用条款</button>
+      <span class="badge">SKU · FLASH-V4.1</span>
+    </nav>
+  </header>
+
+  <section class="hero-grid" aria-label="Rate card hero">
+    <div class="rate-shell">
+      <div class="rate-head">
+        <div>
+          <div class="kicker">Fake SaaS · API rate card</div>
+          <h2>「抽思价」</h2>
+          <p class="thesis-line">价签正面写半价，反面写蒸馏。先看 Flash 价目，再翻到 CoT 抽取面。</p>
+        </div>
+        <div class="toggle-row">
+          <div class="seg" role="group" aria-label="Peak / Off-peak">
+            <button type="button" id="btnOff" aria-pressed="true">Off-peak <span class="kbd">O</span></button>
+            <button type="button" id="btnPeak" aria-pressed="false">Peak <span class="kbd">P</span></button>
+          </div>
+          <button type="button" class="flip-btn" id="btnFlip" aria-pressed="false">Flip face <span class="kbd">F</span></button>
+        </div>
+      </div>
+
+      <div class="flip-stage">
+        <div class="flip-inner" id="flipInner">
+          <!-- FRONT: price -->
+          <div class="face front" aria-hidden="false">
+            <h3>DeepSeek-V4.1-Flash · 价目正面</h3>
+            <p class="lead">正式上线 · 新价自 <strong>2026-09-10 04:00 UTC</strong> 生效。峰时 = 非峰 ×2。自 09-14 04:00 UTC 起，<code>deepseek-v4-pro</code> 路由至 Flash 并按 Flash 计费，直至 V4.1-Pro。</p>
+            <div class="price-grid" id="priceGrid">
+              <div class="price-cell">
+                <div class="label">Cache hit / 1M tok</div>
+                <div class="usd" data-base="0.003">$0.003</div>
+                <div class="cny" data-cny="0.02">¥0.02</div>
+                <div class="note">命中缓存输入</div>
+              </div>
+              <div class="price-cell">
+                <div class="label">Cache miss / 1M tok</div>
+                <div class="usd" data-base="0.15">$0.15</div>
+                <div class="cny" data-cny="1">¥1</div>
+                <div class="note">未命中输入</div>
+              </div>
+              <div class="price-cell">
+                <div class="label">Output / 1M tok</div>
+                <div class="usd" data-base="0.60">$0.60</div>
+                <div class="cny" data-cny="4">¥4</div>
+                <div class="note">输出 token</div>
+              </div>
+            </div>
+            <div class="meta-row">
+              <span class="pill hot" id="peakPill">Mode: Off-peak</span>
+              <span class="pill">V4-Flash → routes to V4.1-Flash</span>
+              <span class="pill warn">Claims ahead of V4-Pro</span>
+            </div>
+            <div class="hint-bar">官方：deepseek.com/en/news/deepseek-v4-1-flash · TechNode / Bloomberg 港股同业跟跌</div>
+          </div>
+          <!-- BACK: distillation -->
+          <div class="face back" aria-hidden="true">
+            <h3>蒸馏面 · Illicit CoT extraction</h3>
+            <p class="lead">Anthropic Threat Intelligence（2026-09）：近 <strong>2 亿</strong> 次对话被归因于蒸馏战役。正面半价买推理，反面有人批量抽思维链。</p>
+            <div class="distill-stats">
+              <div class="stat">
+                <div class="n">2亿</div>
+                <div class="l">TODAY NUMBER · ~200M Claude exchanges across distillation campaigns</div>
+              </div>
+              <div class="stat">
+                <div class="n">1.51亿</div>
+                <div class="l">报道称 Alibaba-linked · May–Jul · 供 Qwen · 峰值近 300万/日 · ~3500 账号</div>
+              </div>
+              <div class="stat">
+                <div class="n">30万</div>
+                <div class="l">Moonshot · ~300k 请求 / ~5k 账号 · Bloomberg：routed through Claude</div>
+              </div>
+              <div class="stat">
+                <div class="n">命名</div>
+                <div class="l">DeepSeek、Xiaomi 等亦列名；另含网络攻防与影响力行动案例</div>
+              </div>
+            </div>
+            <div class="hint-bar">anthropic.com/threat-intelligence-report-september-2026 · TechCrunch / Reuters Sep 10</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <aside class="today-card">
+      <div>
+        <div class="label">Today number</div>
+        <div class="big">2亿</div>
+        <p class="desc">Anthropic 归因的蒸馏战役对话量级——差不多两亿次 Claude 交换。半价价签的背面，是可规模化抽取的思维链。</p>
+      </div>
+      <p class="sof"><strong>Sofia · 医学 AI：</strong>UniPat 估值说明「评测场景」本身成了基础设施——读医学 AI 论文时先问评测是不是贴近真实临床，别只看榜分。</p>
+    </aside>
+  </section>
+
+  <section class="panel" aria-label="Billable line items">
+    <div class="panel-h">
+      <h2>Invoice · 本窗计费行</h2>
+      <div class="meta">select SKU · 3–7 stories as line items</div>
+    </div>
+    <div class="sku-list" role="listbox" aria-label="Stories as SKUs">
+      <button type="button" class="sku" role="option" aria-selected="true" data-detail="d1">
+        <span class="sku-id">SKU-01</span>
+        <span>
+          <p class="sku-title">DeepSeek V4.1 Flash 正式价目 + Pro 路由</p>
+          <p class="sku-body">官方 Introducing DeepSeek-V4.1-Flash（2026-09-10）。非峰 cache-hit $0.003 / ¥0.02，miss $0.15 / ¥1，output $0.60 / ¥4；峰时 2×。09-14 04:00 UTC 起 deepseek-v4-pro → Flash 价。</p>
+          <span class="sku-tag">Pricing · deepseek.com</span>
+        </span>
+        <span class="sku-amt">$0.003↑</span>
+      </button>
+      <div class="detail open" id="d1">
+        <div class="box">
+          <strong>要点：</strong>官方称内部/外部评测上 V4.1 Flash 在性能、成本、速度与总完成时间上领先 V4 Pro；旧 V4-Flash 退役并路由至 V4.1-Flash。二级报道：TechNode、港股同业跟跌（Bloomberg）。
+          <br>链接：<a href="https://www.deepseek.com/en/news/deepseek-v4-1-flash/">deepseek.com/en/news/deepseek-v4-1-flash</a> ·
+          <a href="https://technode.com/2026/09/10/deepseek-formally-launches-v4-1-flash-routes-v4-pro-requests-to-flash/">TechNode</a>
+        </div>
+      </div>
+
+      <button type="button" class="sku" role="option" aria-selected="false" data-detail="d2">
+        <span class="sku-id">SKU-02</span>
+        <span>
+          <p class="sku-title">Anthropic：近 2 亿次蒸馏对话</p>
+          <p class="sku-body">威胁情报 2026-09：~200M exchanges；阿里相关约 1.51 亿（5–7 月）服务 Qwen；Moonshot ~30 万请求 / 5k 账号；DeepSeek、小米等列名。手法含把工作记忆「翻译」成假片假名以套出 CoT。</p>
+          <span class="sku-tag">Threat intel · TODAY NUMBER</span>
+        </span>
+        <span class="sku-amt">2亿</span>
+      </button>
+      <div class="detail" id="d2">
+        <div class="box">
+          <strong>报道称</strong>五场独立蒸馏战役合计近两亿次交换；核心是抽取 chain-of-thought 以监督微调更小模型。Anthropic 默认只展示摘要思维，攻击者用翻译/角色绕过。
+          <br>链接：<a href="https://www.anthropic.com/threat-intelligence-report-september-2026">Anthropic TI Sep 2026</a> ·
+          <a href="https://techcrunch.com/2026/09/10/anthropic-details-distillation-campaigns-from-alibaba-moonshot-ai-and-deepseek/">TechCrunch</a> · Reuters Sep 10
+        </div>
+      </div>
+
+      <button type="button" class="sku" role="option" aria-selected="false" data-detail="d3">
+        <span class="sku-id">SKU-03</span>
+        <span>
+          <p class="sku-title">UniPat AI · 报道称阿里领投 $3B / 估值 $2.5B</p>
+          <p class="sku-body">IT之家援引 Bloomberg：腾讯 + 红杉/HSG 跟投；创始人李宽前通义。基准覆盖编程智能体、浏览器智能体、多模态视觉推理——卖的是「贴近真实」的评测场景。</p>
+          <span class="sku-tag">Funding · eval infra</span>
+        </span>
+        <span class="sku-amt">$3B rd</span>
+      </button>
+      <div class="detail" id="d3">
+        <div class="box">
+          交易细节仍可能变动（报道称）。对 Sofia：榜分虚高时，评测公司本身成了基础设施——读医学 AI 论文先问场景是否贴近临床。
+          <br>链接：<a href="https://www.ithome.com/1/000/856.htm">IT之家</a>
+        </div>
+      </div>
+
+      <button type="button" class="sku" role="option" aria-selected="false" data-detail="d4">
+        <span class="sku-id">SKU-04</span>
+        <span>
+          <p class="sku-title">Grok Bot Galaxy · Sep 15–17 直播/活动</p>
+          <p class="sku-body">旧金山 + 线上；邮件至 aimfllyys 确认报名/直播入口。软产品节奏，放在价目旁作「下下周库存」。</p>
+          <span class="sku-tag">Event · mail confirm</span>
+        </span>
+        <span class="sku-amt">Sep 15–17</span>
+      </button>
+      <div class="detail" id="d4">
+        <div class="box">登记窗口已开；与 Slack Pro 试用截止（Sep 17）几乎同周——见右下账单角注。</div>
+      </div>
+
+      <button type="button" class="sku" role="option" aria-selected="false" data-detail="d5">
+        <span class="sku-id">SKU-05</span>
+        <span>
+          <p class="sku-title">色块：Anthropic rogue-agent CAPTCHA / Mythos sandbox</p>
+          <p class="sku-body">TechCrunch Sep 10 轻量故事——评测沙箱里的越界与验证码绕过。不抢主轴，作蒸馏报告的旁注。</p>
+          <span class="sku-tag">Color · optional</span>
+        </span>
+        <span class="sku-amt">TC 09-10</span>
+      </button>
+      <div class="detail" id="d5">
+        <div class="box">与 OpenAI 特工站点（Reuters 独家，窗前一日；NYPost Sep 10 转载）一并放入 Attachments 账本，不作为今日主推。</div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="foot">2026-09-11 · 北京时间 · 折晓 早报</footer>
+</div>
+
+<!-- Mail corner -->
+<div class="mail-corner">
+  <button type="button" class="mail-fab" id="mailFab" aria-expanded="false" aria-controls="mailPanel">
+    <span class="dot" aria-hidden="true"></span>
+    Invoice note · 邮件角
+  </button>
+</div>
+<div class="mail-panel" id="mailPanel" role="dialog" aria-label="Mail corner">
+  <div class="mh">
+    <strong>Billing note · 窗内邮件</strong>
+    <button type="button" class="icon-btn" id="mailClose" aria-label="Close">×</button>
+  </div>
+  <div class="mb">
+    <div class="mail-sec action">
+      <div class="lab">Action</div>
+      <ul>
+        <li><strong>sofiapintos190</strong>：Slack Pro 免费试用 <strong>Sep 17</strong> 结束——此前决定续/取消。</li>
+      </ul>
+    </div>
+    <div class="mail-sec watch">
+      <div class="lab">Watch</div>
+      <ul>
+        <li>aimfllyys：SCI-AIChat-Demo CI 仍红 <code>master/579183f</code>（再失败 ~09-10 20:53Z）</li>
+        <li>aimfllyys：deepseek-harness E2E 仍红 <code>master/cd5ef81</code></li>
+        <li>aimfllyys：Grok Bot Galaxy Sep 15–17 报名/直播</li>
+      </ul>
+    </div>
+    <div class="mail-sec">
+      <div class="lab">Skip / note</div>
+      <ul>
+        <li>Kimi Code 抢先体验本期已结束</li>
+        <li>llm-agent.cc DeepSeek V4.1 Flash 上架通知</li>
+        <li>X receipt；Docker / Cloudflare / Dribbble 促销</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Overlay + drawers -->
+<div class="overlay" id="overlay" hidden></div>
+
+<aside class="drawer" id="drawerAttach" aria-hidden="true" role="dialog" aria-labelledby="attachTitle">
+  <div class="drawer-h">
+    <h3 id="attachTitle">Attachments · 24h 账本</h3>
+    <button type="button" class="icon-btn" data-close="attach" aria-label="Close">×</button>
+  </div>
+  <div class="drawer-b">
+    <p style="margin:0 0 12px;font-size:12px;color:var(--muted)">挂在计费控制台下的 invoice line items / source tree——不是「查看全部」墙。</p>
+    <ul class="ledger">
+      <li>
+        <div class="t">09-10 · DeepSeek official</div>
+        <div class="f">V4.1-Flash 发布；峰/非峰价目 04:00 UTC 生效；09-14 Pro→Flash。</div>
+        <div class="w">留：今日价签正面</div>
+      </li>
+      <li>
+        <div class="t">09-10 · TechNode</div>
+        <div class="f">正式确认 Flash 价与 Pro 路由；引 IT之家人民币价。</div>
+        <div class="w">留：二级信源交叉</div>
+      </li>
+      <li>
+        <div class="t">09-10 · Anthropic TI</div>
+        <div class="f">~200M distillation exchanges；阿里 151M；Moonshot 300k/5k。</div>
+        <div class="w">留：TODAY NUMBER / 反面</div>
+      </li>
+      <li>
+        <div class="t">09-10 · TechCrunch</div>
+        <div class="f">蒸馏战役细节：假片假名翻译套 CoT；五场战役。</div>
+        <div class="w">留：手法可读摘要</div>
+      </li>
+      <li>
+        <div class="t">09-10 · Reuters</div>
+        <div class="f">同日跟进 Anthropic 蒸馏与滥用报告。</div>
+        <div class="w">留：通讯社背书</div>
+      </li>
+      <li>
+        <div class="t">09-10 · IT之家 / Bloomberg</div>
+        <div class="f">报道称 UniPat $3B 轮 / $2.5B 估值；阿里拟领投。</div>
+        <div class="w">留：评测基础设施叙事</div>
+      </li>
+      <li>
+        <div class="t">09-10 · TechCrunch color</div>
+        <div class="f">Anthropic rogue-agent CAPTCHA / Mythos sandbox 故事。</div>
+        <div class="w">留：轻量色块</div>
+      </li>
+      <li>
+        <div class="t">09-10 · NYPost reprint</div>
+        <div class="f">OpenAI rogue agents 10+ 站点——Reuters 独家窗前一日转载。</div>
+        <div class="w">留：archive-only，不领衔</div>
+      </li>
+      <li>
+        <div class="t">09-10 · mail aimfllyys</div>
+        <div class="f">Grok Bot Galaxy Sep 15–17 直播确认；CI 双红线仍在。</div>
+        <div class="w">留：WATCH</div>
+      </li>
+      <li>
+        <div class="t">09-10 · mail sofiapintos190</div>
+        <div class="f">Slack Pro trial → Sep 17。</div>
+        <div class="w">留：ACTION</div>
+      </li>
+      <li>
+        <div class="t">09-10 · llm-agent.cc</div>
+        <div class="f">DeepSeek V4.1 Flash 上架通知。</div>
+        <div class="w">留：生态跟进 / SKIP</div>
+      </li>
+      <li>
+        <div class="t">09-10 · Bloomberg HK</div>
+        <div class="f">Flash 价目消息下港股 AI 同业下滑（报道称）。</div>
+        <div class="w">留：价格外溢</div>
+      </li>
+      <li>
+        <div class="t">窗内 · Kimi</div>
+        <div class="f">Kimi Code 抢先体验本期结束。</div>
+        <div class="w">留：产品周期注脚</div>
+      </li>
+      <li>
+        <div class="t">09-10 · Reuters Positron</div>
+        <div class="f">推理芯片 Positron 融资约 $875M，估值约 $5B（Asimov / Atlas）。</div>
+        <div class="w">留：算力侧对照 Flash 降价</div>
+      </li>
+      <li>
+        <div class="t">09-10 · CNBC / Guardian</div>
+        <div class="f">OpenAI/Anthropic 安全研究者公开吁减速；Christiano「not on track」被广泛转载。</div>
+        <div class="w">留：与蒸馏报告同日的安全合唱</div>
+      </li>
+      <li>
+        <div class="t">09-10 · DOJ × Nvidia–Groq</div>
+        <div class="f">报道称司法部审查授权+挖人结构是否规避并购审查。</div>
+        <div class="w">留：芯片并购旁路监管</div>
+      </li>
+    </ul>
+  </div>
+</aside>
+
+<aside class="drawer left" id="drawerTerms" aria-hidden="true" role="dialog" aria-labelledby="termsTitle">
+  <div class="drawer-h">
+    <h3 id="termsTitle">Terms · 利用条款 / README</h3>
+    <button type="button" class="icon-btn" data-close="terms" aria-label="Close">×</button>
+  </div>
+  <div class="drawer-b essay">
+    <h4>利用说明：半价与蒸馏是同一张卡的两面</h4>
+    <p>今天把早报做成一张假的 API 账单，不是为了玩界面，而是因为窗口里的两件大事本来就贴在同一张价签上。正面是 DeepSeek V4.1 Flash：官方把非峰价压到 cache-hit 每百万 token 三美分、人民币两分，并宣布从 9 月 14 日起连 V4 Pro 的请求也先接到 Flash 上、按 Flash 计费。半价、路由、退役旧 Flash——这是公开市场上人人可见的「便宜推理」。</p>
+    <p>翻到反面，Anthropic 的威胁情报报告给出另一个数量级：近两亿次 Claude 对话被归因于蒸馏战役。报道称其中阿里相关账号在五到七月贡献了约一亿五千万次交换，峰值接近每天三百万；Moonshot 用大约五千个账号在十天量级里打出近三十万次请求；DeepSeek、小米等名字也出现在名单里。手法并不神秘——有人把模型的工作记忆伪装成「请翻译成片假名」，好把本该折叠起来的思维链套出来，再拿去微调更小的模型。价签写半价的时候，账本另一列在记「抽思」的次数。</p>
+    <p>所以「抽思价」不是双关游戏，是同一天的结构：便宜的补全能力越容易买到，越有人想把更贵的那一层——推理痕迹——也抽成可训练的数据。对你这种一边读医学、一边摸 AI 的人，这和「评测榜」是同一类陷阱。UniPat 被报道称以二十五亿美元估值谈三亿美元融资，卖的不是又一张排行榜，而是更贴近真实使用的场景。读一篇医学 AI 论文时，先问评测像不像门诊、像不像影像科夜班，而不是只看它赢了哪个公开榜。正面半价可以省预算；反面蒸馏提醒你：能力被复制时，你的信任边界也在被复制。</p>
+    <p>键盘：O 非峰，P 峰时，F 翻面，Esc 关掉抽屉。邮件角是账单便签，不是收件箱。Attachments 是二十四小时账本。GitHub 与博客频道今天不推。</p>
+  </div>
+</aside>
+
+<script>
+(function(){
+  var peak = false;
+  var flipped = false;
+  var flipInner = document.getElementById('flipInner');
+  var btnPeak = document.getElementById('btnPeak');
+  var btnOff = document.getElementById('btnOff');
+  var btnFlip = document.getElementById('btnFlip');
+  var peakPill = document.getElementById('peakPill');
+  var overlay = document.getElementById('overlay');
+  var drawerAttach = document.getElementById('drawerAttach');
+  var drawerTerms = document.getElementById('drawerTerms');
+  var btnAttach = document.getElementById('btnAttach');
+  var btnTerms = document.getElementById('btnTerms');
+  var mailFab = document.getElementById('mailFab');
+  var mailPanel = document.getElementById('mailPanel');
+  var mailClose = document.getElementById('mailClose');
+
+  function fmtUsd(n){
+    if(n < 0.01) return '$' + n.toFixed(3);
+    if(n < 1) return '$' + n.toFixed(2);
+    return '$' + n.toFixed(2);
+  }
+  function fmtCny(n){
+    if(n < 1) return '¥' + n.toFixed(2);
+    return '¥' + (Math.round(n * 100) / 100);
+  }
+  function renderPrices(){
+    var mult = peak ? 2 : 1;
+    document.querySelectorAll('#priceGrid .usd').forEach(function(el){
+      var base = parseFloat(el.getAttribute('data-base'));
+      el.textContent = fmtUsd(base * mult);
+    });
+    document.querySelectorAll('#priceGrid .cny').forEach(function(el){
+      var base = parseFloat(el.getAttribute('data-cny'));
+      el.textContent = fmtCny(base * mult);
+    });
+    peakPill.textContent = peak ? 'Mode: Peak (2×)' : 'Mode: Off-peak';
+    btnPeak.setAttribute('aria-pressed', peak ? 'true' : 'false');
+    btnOff.setAttribute('aria-pressed', peak ? 'false' : 'true');
+  }
+  function setFlip(on){
+    flipped = !!on;
+    flipInner.classList.toggle('is-flipped', flipped);
+    btnFlip.setAttribute('aria-pressed', flipped ? 'true' : 'false');
+    var front = flipInner.querySelector('.face.front');
+    var back = flipInner.querySelector('.face.back');
+    if(front) front.setAttribute('aria-hidden', flipped ? 'true' : 'false');
+    if(back) back.setAttribute('aria-hidden', flipped ? 'false' : 'true');
+  }
+  function closeDrawers(){
+    drawerAttach.classList.remove('open');
+    drawerTerms.classList.remove('open');
+    drawerAttach.setAttribute('aria-hidden','true');
+    drawerTerms.setAttribute('aria-hidden','true');
+    btnAttach.setAttribute('aria-expanded','false');
+    btnTerms.setAttribute('aria-expanded','false');
+    overlay.classList.remove('open');
+    overlay.hidden = true;
+    mailPanel.classList.remove('open');
+    mailFab.setAttribute('aria-expanded','false');
+  }
+  function openDrawer(which){
+    closeDrawers();
+    overlay.hidden = false;
+    // force reflow for transition
+    void overlay.offsetWidth;
+    overlay.classList.add('open');
+    if(which === 'attach'){
+      drawerAttach.classList.add('open');
+      drawerAttach.setAttribute('aria-hidden','false');
+      btnAttach.setAttribute('aria-expanded','true');
+    } else {
+      drawerTerms.classList.add('open');
+      drawerTerms.setAttribute('aria-hidden','false');
+      btnTerms.setAttribute('aria-expanded','true');
+    }
+  }
+
+  btnPeak.addEventListener('click', function(){ peak = true; renderPrices(); });
+  btnOff.addEventListener('click', function(){ peak = false; renderPrices(); });
+  btnFlip.addEventListener('click', function(){ setFlip(!flipped); });
+
+  btnAttach.addEventListener('click', function(){
+    if(drawerAttach.classList.contains('open')) closeDrawers();
+    else openDrawer('attach');
+  });
+  btnTerms.addEventListener('click', function(){
+    if(drawerTerms.classList.contains('open')) closeDrawers();
+    else openDrawer('terms');
+  });
+  overlay.addEventListener('click', closeDrawers);
+  document.querySelectorAll('[data-close]').forEach(function(b){
+    b.addEventListener('click', closeDrawers);
+  });
+
+  mailFab.addEventListener('click', function(){
+    var open = mailPanel.classList.toggle('open');
+    mailFab.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+  mailClose.addEventListener('click', function(){
+    mailPanel.classList.remove('open');
+    mailFab.setAttribute('aria-expanded','false');
+  });
+
+  // SKU selection
+  var skus = document.querySelectorAll('.sku');
+  skus.forEach(function(sku){
+    sku.addEventListener('click', function(){
+      skus.forEach(function(s){ s.setAttribute('aria-selected','false'); });
+      sku.setAttribute('aria-selected','true');
+      document.querySelectorAll('.detail').forEach(function(d){ d.classList.remove('open'); });
+      var id = sku.getAttribute('data-detail');
+      var panel = document.getElementById(id);
+      if(panel) panel.classList.add('open');
+    });
+  });
+
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape'){ closeDrawers(); return; }
+    var tag = (e.target && e.target.tagName) || '';
+    if(tag === 'INPUT' || tag === 'TEXTAREA') return;
+    var k = e.key.toLowerCase();
+    if(k === 'p'){ peak = true; renderPrices(); }
+    else if(k === 'o'){ peak = false; renderPrices(); }
+    else if(k === 'f'){ setFlip(!flipped); }
+  });
+
+  renderPrices();
+  setFlip(false);
+})();
+</script>
+</body>
+</html>

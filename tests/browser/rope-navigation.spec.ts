@@ -1,4 +1,4 @@
-import { expect, test, type Page } from '@playwright/test'
+﻿import { expect, test, type Page } from '@playwright/test'
 
 async function skipJourneyIfPresent(page: Page) {
   const skip = page.getByRole('button', { name: /跳过/ })
@@ -22,7 +22,7 @@ test('桌面首页与书架绳上挂三个板块，没有关于我', async ({ pa
   await skipJourneyIfPresent(page)
   const homeNav = rope(page)
   await expect(homeNav.getByRole('link', { name: '博客' })).toBeVisible()
-  await expect(homeNav.getByRole('link', { name: '随笔' })).toBeVisible()
+  await expect(homeNav.getByRole('link', { name: '日报' })).toBeVisible()
   await expect(homeNav.getByRole('link', { name: '作品集' })).toBeVisible()
   await expect(homeNav.getByText('关于我')).toHaveCount(0)
   await expect(homeNav.locator('[data-tip]').first()).toBeVisible()
@@ -58,7 +58,7 @@ test('桌面首页与书架绳上挂三个板块，没有关于我', async ({ pa
   })
   const blogNav = rope(page)
   await expect(blogNav.getByRole('link', { name: '博客' })).toBeVisible()
-  await expect(blogNav.getByRole('link', { name: '随笔' })).toBeVisible()
+  await expect(blogNav.getByRole('link', { name: '日报' })).toBeVisible()
   await expect(blogNav.getByRole('link', { name: '作品集' })).toBeVisible()
   await expect(blogNav.getByText('关于我')).toHaveCount(0)
 })
@@ -70,25 +70,26 @@ test('移动端首页绳上不挂三个板块', async ({ page }) => {
   await expect(page.getByTestId('mobile-home')).toBeVisible()
   await expect(navigation.getByText('羽升')).toBeVisible()
   await expect(navigation.getByRole('link', { name: '博客' })).toHaveCount(0)
-  await expect(navigation.getByRole('link', { name: '随笔' })).toHaveCount(0)
+  await expect(navigation.getByRole('link', { name: '日报' })).toHaveCount(0)
   await expect(navigation.getByRole('link', { name: '作品集' })).toHaveCount(0)
 })
 
-test('随笔和作品集进入建设中占位页', async ({ page }) => {
+test('日报进入台历目录，作品集是新标签外链', async ({ page }) => {
   await page.goto('/')
   await skipJourneyIfPresent(page)
-  await rope(page).getByRole('link', { name: '随笔' }).click()
-  await expect(page).toHaveURL(/\/notes\/$/)
-  await expect(page.getByRole('heading', { name: '随笔' })).toBeVisible()
-  await expect(page.getByText('建设中')).toBeVisible()
+  const works = rope(page).getByRole('link', { name: '作品集' })
+  await expect(works).toHaveAttribute(
+    'href',
+    'https://artifact.yusheng.husteread.com/',
+  )
+  await expect(works).toHaveAttribute('target', '_blank')
 
-  await rope(page).getByRole('link', { name: '作品集' }).click()
-  await expect(page).toHaveURL(/\/works\/$/)
-  await expect(page.getByRole('heading', { name: '作品集' })).toBeVisible()
-  await expect(page.getByText('建设中')).toBeVisible()
+  await rope(page).getByRole('link', { name: '日报' }).click()
+  await expect(page).toHaveURL(/\/daily\/$/)
+  await expect(page.getByRole('heading', { name: '小日报', level: 1 })).toBeVisible()
 })
 
-test('文章页隐藏随笔和作品集，保留导出', async ({ page }) => {
+test('文章页隐藏日报和作品集，保留导出', async ({ page }) => {
   await page.goto('/blog/p0-kitchen-sink/')
   await expect(page.locator('[data-reader-boot-veil]')).toHaveCount(0, {
     timeout: 3_000,
@@ -101,7 +102,7 @@ test('文章页隐藏随笔和作品集，保留导出', async ({ page }) => {
   await expect(navigation).toHaveAttribute('data-nav-visible', 'true')
   await expect(navigation.getByRole('link', { name: '博客' })).toBeVisible()
   await expect(navigation.getByText('羽升')).toBeVisible()
-  await expect(navigation.getByRole('link', { name: '随笔' })).toHaveCount(0)
+  await expect(navigation.getByRole('link', { name: '日报' })).toHaveCount(0)
   await expect(navigation.getByRole('link', { name: '作品集' })).toHaveCount(0)
   await expect(page.getByRole('button', { name: '导出' })).toBeVisible()
 })

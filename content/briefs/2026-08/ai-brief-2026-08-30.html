@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>折信日曜 · 2026-08-30 · 折晓</title>
+<!--
+  折晓 · 2026-08-30 早报 — 折信日曜 (single file, offline)
+  window: Beijing 2026-08-29 06:00 → 2026-08-30 06:00
+        = UTC  2026-08-28 22:00 → 2026-08-29 22:00
+
+  OPENED DESIGN SOURCES (used, not listed-only):
+  1. Hearst Exhibit 2026
+     https://www.awwwards.com/sites/hearst-exhibit-2026
+     steal: 纸有厚度，翻开即入口 — envelope lid IS the entrance
+  2. 茶颜悦色莲花折纸
+     https://www.zcool.com.cn/work/ZNjMxNjk4OTI=.html
+     steal: 闲时折纸，折痕变花样 — creases as the pattern, not decoration
+  3. CSS scroll-triggered animations
+     https://developer.chrome.com/blog/scroll-triggered-animations
+     steal: 越过阈值才 play-forwards 展开；IO 降级；禁止 sticky scrub
+  4. Linear · Output isn’t design
+     https://linear.app/now/output-isn-t-design
+     steal: 判断靠折开，不是生成一墙输出 — thesis gated on both main folds
+
+  structure = 斜放信封 → 抽出横向折叠长卷 → 点折痕铰链展开
+  style     = 剪纸/折纸 · 宣纸 #F4EFE6/#EDE6D9 · 折痕虚线 #C4B8A5
+              · 墨 #2A241C · 朱印 #B5402E · 信封 #D8C7A8 / 内衬 #CBB896
+  interaction = 盖舌 rotateX 开封 → 抽信 → 折痕 rotateY 铰链（移动端 rotateX）
+  genre     = 一封可展开的星期日信
+-->
+<style>
+:root{
+  --rice:#F4EFE6;--rice2:#EDE6D9;--crease:#C4B8A5;--ink:#2A241C;
+  --zhu:#B5402E;--env:#D8C7A8;--lin:#CBB896;--desk:#CDBFA8;
+  --mute:#6F675C;--old:#8A8174;
+  --song:"Songti SC","STSong","Noto Serif CJK SC","SimSun",serif;
+  --geo:Georgia,ui-serif,serif;
+  --ui:system-ui,-apple-system,"Segoe UI","PingFang SC",sans-serif;
+  --ease:cubic-bezier(.2,.8,.2,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%;background:var(--desk);color:var(--ink)}
+body{
+  font-family:var(--song);font-size:16px;line-height:1.55;
+  background-image:
+    radial-gradient(ellipse 70% 42% at 50% -8%,rgba(255,252,245,.45),transparent 58%),
+    radial-gradient(ellipse 36% 28% at 92% 100%,rgba(181,64,46,.07),transparent 70%),
+    repeating-linear-gradient(82deg,transparent 0 13px,rgba(42,36,28,.028) 13px 14px);
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--zhu);text-underline-offset:3px}
+a:hover{background:var(--zhu);color:var(--rice);text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+:focus-visible{outline:2px solid var(--zhu);outline-offset:3px}
+.grain{position:fixed;inset:0;pointer-events:none;z-index:80;opacity:.14;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='.5'/></svg>")}
+
+/* mast */
+.mast{
+  display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;
+  padding:10px 22px 8px;border-bottom:1px solid rgba(42,36,28,.18);
+  background:rgba(244,239,230,.55);
+  font-family:var(--ui);font-size:11px;letter-spacing:.18em;
+}
+.mast b{font-family:var(--song);font-size:15px;letter-spacing:.42em;font-weight:600}
+.mast .d{letter-spacing:.12em;color:var(--mute)}
+.mast em{font-style:normal;color:var(--zhu);letter-spacing:.2em}
+
+/* desk scene */
+#desk{position:relative;width:min(1120px,100%);margin:0 auto;padding:18px 14px 28px;min-height:calc(100vh - 88px)}
+.still{position:relative;height:268px;display:flex;align-items:center;justify-content:center;
+  perspective:1200px;overflow:visible}
+.hint{position:absolute;left:50%;top:8px;transform:translateX(-50%);
+  font-family:var(--ui);font-size:11px;letter-spacing:.28em;color:var(--mute);pointer-events:none}
+
+/* lotus still-life */
+.lotus{position:absolute;left:7%;bottom:28px;width:72px;height:72px;opacity:.78;pointer-events:none}
+.lotus i{position:absolute;left:22px;top:18px;width:26px;height:34px;
+  background:linear-gradient(#F4EFE6,#E2D3C0);clip-path:polygon(50% 0,100% 100%,0 100%);
+  filter:drop-shadow(0 1px 0 rgba(42,36,28,.12))}
+.lotus i:nth-child(1){transform:rotate(-48deg) translateY(4px)}
+.lotus i:nth-child(2){transform:rotate(-18deg)}
+.lotus i:nth-child(3){transform:rotate(18deg)}
+.lotus i:nth-child(4){transform:rotate(48deg) translateY(4px)}
+.lotus i:nth-child(5){left:28px;top:28px;width:16px;height:22px;background:#B5402E;opacity:.55;transform:none;clip-path:polygon(50% 8%,100% 100%,0 100%)}
+.knife{position:absolute;right:9%;top:42px;width:86px;height:8px;border-radius:3px;
+  background:linear-gradient(90deg,#E8DCC8,#C4B8A5 70%,#A89880);transform:rotate(18deg);
+  box-shadow:0 1px 0 rgba(42,36,28,.12);pointer-events:none}
+.knife:after{content:"";position:absolute;right:-10px;top:-3px;width:18px;height:14px;
+  background:#D8C7A8;clip-path:polygon(0 30%,100% 0,100% 100%,0 70%)}
+
+/* envelope — thickness as entrance */
+.env{
+  position:relative;width:340px;height:214px;transform:rotate(-7deg);
+  transform-style:preserve-3d;flex-shrink:0;
+  filter:drop-shadow(2px 10px 14px rgba(42,36,28,.18));overflow:visible;
+}
+.env:before{content:"";position:absolute;inset:-3px -4px -5px -3px;background:#C4B49A;z-index:-1;border-radius:2px}
+.env-back{position:absolute;inset:0;background:var(--env);
+  background-image:linear-gradient(180deg,rgba(255,255,255,.14),transparent 40%);
+  box-shadow:inset 0 0 0 1px rgba(42,36,28,.12)}
+.env-lin{position:absolute;inset:10px 12px 48px;background:var(--lin);
+  background-image:repeating-linear-gradient(90deg,transparent 0 8px,rgba(42,36,28,.04) 8px 9px);
+  display:flex;align-items:center;justify-content:center}
+.env-lin button{
+  font-family:var(--song);font-size:15px;letter-spacing:.5em;
+  color:rgba(42,36,28,.38);padding:8px 10px;min-height:44px;
+  border:1px dashed rgba(42,36,28,.18);
+}
+.env-lin button:hover{color:var(--zhu);border-color:var(--zhu)}
+.env-face{position:absolute;left:0;right:0;bottom:0;height:118px;background:var(--env);
+  background-image:linear-gradient(180deg,rgba(42,36,28,.06),transparent 18%,rgba(255,255,255,.1));
+  box-shadow:0 -1px 0 rgba(42,36,28,.08);padding:16px 22px 12px;z-index:2}
+.to{font-size:28px;letter-spacing:.18em;line-height:1.1}
+.from{margin-top:10px;font-family:var(--ui);font-size:11px;letter-spacing:.22em;color:var(--mute)}
+.close-flap{display:none;margin-top:8px;font-family:var(--ui);font-size:10px;letter-spacing:.2em;color:var(--mute);min-height:32px;padding:2px 0}
+.env.opened .close-flap{display:inline-block}
+.close-flap:hover{color:var(--zhu)}
+.peek{position:absolute;left:50%;top:52px;width:72%;height:64px;transform:translateX(-50%);
+  background:var(--rice);border:1px dashed var(--crease);z-index:1;
+  font-family:var(--song);letter-spacing:.32em;font-size:14px;
+  display:none;align-items:center;justify-content:center;min-height:44px;
+  box-shadow:0 2px 0 #E4D9C8}
+.env.opened .peek{display:flex}
+.env.drawn .peek{display:none}
+
+/* flap 3D lid */
+.flap{position:absolute;left:0;right:0;top:0;height:124px;z-index:4;
+  transform-origin:top center;transform-style:preserve-3d;
+  transform:rotateX(0deg);transition:transform .6s var(--ease);cursor:pointer}
+.env.opened .flap{transform:rotateX(168deg)}
+.flap-o,.flap-i{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;
+  clip-path:polygon(0 0,100% 0,100% 38px,50% 100%,0 38px)}
+.flap-o{background:linear-gradient(#E5D6BC,#D8C7A8);box-shadow:inset 0 0 0 1px rgba(42,36,28,.1)}
+.flap-i{transform:rotateX(180deg);background:linear-gradient(#D4C19A,#CBB896)}
+.stamp{position:absolute;right:14px;top:8px;width:72px;height:72px;border-radius:50%;
+  border:1.5px solid var(--zhu);color:var(--zhu);background:rgba(244,239,230,.55);
+  font-family:var(--ui);font-size:8px;letter-spacing:.16em;text-transform:uppercase;
+  line-height:1.25;display:flex;align-items:center;justify-content:center;text-align:center;
+  box-shadow:inset 0 0 0 5px rgba(244,239,230,.5),inset 0 0 0 6.5px var(--zhu);
+  transform:rotate(12deg);min-width:44px;min-height:44px;z-index:7}
+.stamp.open{background:rgba(181,64,46,.12)}
+.tape{position:absolute;left:352px;top:18px;width:248px;background:#E6D3A0;
+  border:1px dashed rgba(42,36,28,.2);padding:8px 10px 10px;font-family:var(--ui);
+  font-size:11px;line-height:1.45;letter-spacing:.02em;color:var(--ink);
+  display:none;z-index:8;max-height:210px;overflow:auto;text-align:left;
+  box-shadow:3px 4px 0 rgba(42,36,28,.08);transform:rotate(7deg)}
+.tape.on{display:block}
+.tape b{color:var(--zhu);font-weight:600}
+.tape .skip{color:var(--old)}
+.tape ul{margin:4px 0 0 14px}
+.tape li{margin:2px 0}
+
+/* archive mini-folds pulled from lining */
+#archive{display:none;gap:7px;flex-wrap:wrap;width:min(720px,96%);margin:6px auto 14px;
+  justify-content:center;z-index:6}
+#archive.out{display:flex}
+.mini{width:34px;min-width:34px;min-height:44px;height:96px;background:var(--rice);
+  border:1px dashed var(--crease);writing-mode:vertical-rl;letter-spacing:.18em;
+  font-size:12px;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:width .45s var(--ease),height .45s var(--ease),writing-mode .2s;
+  box-shadow:2px 2px 0 rgba(42,36,28,.06);padding:8px 4px;text-align:center}
+.mini.open{width:220px;height:auto;min-height:96px;writing-mode:horizontal-tb;
+  letter-spacing:0;align-items:flex-start;justify-content:flex-start;text-align:left;
+  padding:10px 12px;font-size:12.5px;line-height:1.45}
+.mini.old{opacity:.58;color:var(--old);background:var(--rice2)}
+.mini small{display:none;font-family:var(--ui);font-size:10px;letter-spacing:.04em;color:var(--mute)}
+.mini.open small{display:block;margin-top:6px}
+.mini .one{display:none}
+.mini.open .one{display:block}
+.mini.open .lab{font-weight:600;margin-bottom:4px;letter-spacing:.08em}
+
+/* letter card */
+#card{margin-top:8px;position:relative;transform-style:preserve-3d;
+  transition:transform .8s var(--ease);min-height:0}
+#card.flip{transform:rotateY(180deg)}
+.recto,.verso{backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.letter{opacity:0;max-height:0;overflow:hidden;pointer-events:none;
+  transform:translateY(28px) scale(.97);transition:transform .4s var(--ease),opacity .4s var(--ease)}
+.letter.out{opacity:1;max-height:2400px;overflow:visible;pointer-events:auto;transform:translateY(0) scale(1)}
+.scroll{
+  display:flex;flex-direction:row;align-items:stretch;
+  overflow-x:auto;overflow-y:hidden;height:528px;padding:10px 12px 18px;
+  background:var(--rice2);
+  background-image:
+    repeating-linear-gradient(90deg,transparent 0 4px,rgba(42,36,28,.02) 4px 5px),
+    linear-gradient(180deg,rgba(255,255,255,.28),transparent 22%);
+  border:1px solid var(--crease);
+  box-shadow:6px 6px 0 #C4B49A, 7px 7px 0 #B7A78E, inset 0 0 0 1px rgba(255,255,255,.35);
+  perspective:1400px;transform-style:preserve-3d;touch-action:pan-x;
+}
+.cover{flex:0 0 248px;background:var(--rice);margin:6px 4px 6px 0;padding:22px 18px;
+  box-shadow:3px 0 0 #E4D9C8;position:relative;
+  background-image:repeating-linear-gradient(0deg,transparent 0 27px,rgba(196,184,165,.28) 27px 28px)}
+.cover h2{font-size:22px;letter-spacing:.4em;font-weight:600}
+.cover .when{font-family:var(--ui);font-size:11px;letter-spacing:.14em;color:var(--mute);margin:8px 0 16px}
+.cover p{font-size:15px;line-height:1.7}
+.cover .how{margin-top:18px;font-family:var(--ui);font-size:11px;letter-spacing:.12em;color:var(--mute);line-height:1.6}
+
+.unit{display:flex;flex-direction:row;align-items:stretch;transform-style:preserve-3d;flex:0 0 auto}
+.crease{position:relative;flex:0 0 48px;width:48px;min-width:48px;min-height:44px;
+  background:linear-gradient(90deg,#E8DFD0,#D9D0C2);
+  writing-mode:vertical-rl;letter-spacing:.28em;font-size:13px;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  border-left:1px dashed var(--crease);border-right:1px dashed var(--crease);
+  color:var(--ink);cursor:pointer}
+.crease .mark{color:var(--zhu);letter-spacing:.12em;font-family:var(--ui);font-size:10px;writing-mode:horizontal-tb}
+.unit.seen .crease{box-shadow:inset 0 0 0 1px rgba(181,64,46,.25)}
+.leaf-clip{width:0;overflow:hidden;transform-style:preserve-3d;transition:width .68s var(--ease)}
+.unit.open .leaf-clip{width:var(--w,400px)}
+.leaf{width:var(--w,400px);height:100%;transform-origin:left center;
+  transform:rotateY(-88deg);transition:transform .68s var(--ease);
+  background:var(--rice);position:relative;
+  box-shadow:4px 0 0 #E4D9C8,inset 12px 0 16px -12px rgba(42,36,28,.16);
+  background-image:repeating-linear-gradient(0deg,transparent 0 27px,rgba(196,184,165,.22) 27px 28px)}
+.unit.open .leaf{transform:rotateY(0)}
+.leaf-inner{height:100%;overflow-y:auto;padding:16px 18px 22px}
+.leaf-inner > *{opacity:.12;transform:translateX(-6px);transition:opacity .4s var(--ease),transform .4s var(--ease)}
+.unit.open .leaf-inner > *{opacity:1;transform:none}
+.unit.open .leaf-inner > *:nth-child(1){transition-delay:120ms}
+.unit.open .leaf-inner > *:nth-child(2){transition-delay:150ms}
+.unit.open .leaf-inner > *:nth-child(3){transition-delay:180ms}
+.unit.open .leaf-inner > *:nth-child(n+4){transition-delay:200ms}
+.unit:not(.open) .leaf-inner > *{transition-delay:0s}
+.kicker{font-family:var(--ui);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--zhu)}
+.leaf h3{font-size:18px;letter-spacing:.08em;font-weight:600;margin:4px 0 10px;line-height:1.35}
+.leaf p,.leaf li{font-size:14.5px;line-height:1.62;margin:0 0 8px}
+.leaf ul{margin:0 0 8px 1.1em}
+.leaf .src{font-family:var(--ui);font-size:11px;line-height:1.5;word-break:break-all}
+.leaf .note{margin-top:10px;padding-top:8px;border-top:1px dashed var(--crease);color:var(--ink)}
+.leaf q,.quote{display:block;margin:8px 0;padding:6px 0 6px 10px;border-left:2px solid var(--zhu);
+  font-family:var(--geo);font-size:13px;line-height:1.5;color:#3a3228}
+.tag{display:inline-block;font-family:var(--ui);font-size:10px;letter-spacing:.14em;
+  border:1px solid var(--crease);padding:1px 6px;margin-right:4px;color:var(--mute)}
+
+/* 5% 朱印负形 */
+.zhu{float:right;width:142px;height:142px;margin:0 0 8px 10px;border-radius:50%;
+  background:var(--zhu);color:var(--rice);display:flex;flex-direction:column;
+  align-items:center;justify-content:center;transform:rotate(-11deg);
+  mix-blend-mode:multiply;
+  box-shadow:inset 0 0 0 7px var(--rice),inset 0 0 0 9px var(--zhu);
+  font-family:var(--geo);line-height:1}
+.zhu b{font-size:54px;font-weight:700;letter-spacing:-.04em}
+.zhu span{font-family:var(--ui);font-size:8px;letter-spacing:.18em;text-transform:uppercase;margin-top:4px;opacity:.9}
+
+#thesis{flex:0 0 0;width:0;opacity:0;overflow:hidden;writing-mode:vertical-rl;
+  letter-spacing:.42em;color:var(--zhu);font-size:16px;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(90deg,transparent,rgba(181,64,46,.08),transparent);
+  transition:width .5s var(--ease),opacity .5s var(--ease),flex-basis .5s var(--ease)}
+#thesis.on{flex-basis:48px;width:48px;opacity:1}
+
+.fliprow{display:flex;justify-content:flex-end;padding:8px 4px 0}
+#to-verso,#to-recto{min-height:44px;padding:8px 14px;letter-spacing:.2em;font-size:13px;
+  border:1px dashed var(--crease);background:var(--rice)}
+#to-verso:hover,#to-recto:hover{border-color:var(--zhu);color:var(--zhu)}
+
+.verso{position:absolute;inset:0;transform:rotateY(180deg);overflow:auto;
+  background:var(--rice);
+  background-image:repeating-linear-gradient(0deg,transparent 0 31px,rgba(196,184,165,.3) 31px 32px);
+  padding:36px 42px 48px;border:1px solid var(--crease);box-shadow:6px 6px 0 #C4B49A}
+.verso .who{font-size:14px;letter-spacing:.2em;color:var(--mute);margin-bottom:18px}
+.verso p{font-size:16.5px;line-height:1.85;margin:0 0 1.15em;text-align:justify}
+.verso .sig{margin-top:28px;text-align:right;letter-spacing:.18em;line-height:1.8}
+
+.foot{padding:10px 18px 18px;text-align:center;font-family:var(--ui);
+  font-size:11px;letter-spacing:.16em;color:var(--mute)}
+.help{position:fixed;right:12px;bottom:12px;font-family:var(--ui);font-size:11px;
+  background:var(--rice);border:1px dashed var(--crease);padding:8px 10px;max-width:240px;
+  display:none;z-index:20;line-height:1.5}
+.help.on{display:block}
+
+html.rm .flap,html.rm .leaf,html.rm .letter,html.rm #card,html.rm #archive,html.rm .mini,html.rm .leaf-clip,html.rm #thesis{
+  transition:none!important;animation:none!important}
+html.rm .leaf{transform:none}
+html.rm .flap{transform:none}
+html.rm .env.opened .flap{display:none}
+html.rm .leaf-inner > *{opacity:1;transform:none}
+
+@media (max-width:740px){
+  .still{height:300px}
+  .env{transform:rotate(-3deg) scale(.9)}
+  .scroll{flex-direction:column;overflow-x:hidden;overflow-y:auto;height:min(68vh,640px);touch-action:pan-y}
+  .cover{flex:0 0 auto;width:100%}
+  .unit{flex-direction:column;width:100%}
+  .crease{writing-mode:horizontal-tb;width:100%;min-width:100%;flex:0 0 48px;height:48px;letter-spacing:.32em}
+  .leaf-clip{width:100%!important;max-height:0}
+  .unit.open .leaf-clip{max-height:760px;width:100%!important}
+  .leaf{width:100%;transform-origin:top center;transform:rotateX(-85deg)}
+  .unit.open .leaf{transform:rotateX(0)}
+  #thesis{writing-mode:horizontal-tb;width:100%;flex-basis:0;height:0;letter-spacing:.28em}
+  #thesis.on{flex-basis:44px;width:100%;height:44px}
+  .verso{padding:24px 18px 36px}
+  .zhu{width:100px;height:100px}
+  .zhu b{font-size:36px}
+  #archive{width:94vw}
+  .tape{left:8px;right:8px;top:auto;bottom:-8px;width:auto;transform:none}
+  .still{height:auto;min-height:280px;padding-bottom:24px}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .flap,.leaf,.letter,#card,#archive,.mini,.leaf-clip,#thesis,.leaf-inner > *{transition:none!important;animation:none!important}
+}
+</style>
+</head>
+<body>
+<div class="grain" aria-hidden="true"></div>
+<header class="mast">
+  <b>折信日曜</b>
+  <span class="d">2026年8月30日 星期日 北京时间</span>
+  <em>今日数字 5%</em>
+</header>
+<main id="desk">
+  <p class="hint" id="hint">点盖舌开封</p>
+  <div class="still">
+    <div class="lotus" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="knife" aria-hidden="true"></div>
+    <div class="env" id="env">
+      <div class="env-back"></div>
+      <div class="env-lin" id="lining">
+        <button type="button" id="arch-pull" title="抽出余折小叠">昨日折痕</button>
+      </div>
+      <button type="button" class="peek" id="draw">抽出信笺</button>
+      <div class="env-face">
+        <div class="to">致 Sofia</div>
+        <div class="from">折晓 · 北京日曜</div>
+        <button type="button" class="close-flap" id="close-flap">合上盖舌</button>
+      </div>
+      <button type="button" class="stamp" id="stamp" aria-expanded="false" title="邮戳便条">折晓<br>· 日曜 ·<br>北京 · 30</button>
+      <div class="flap" id="flap" role="button" tabindex="0" aria-expanded="false" aria-label="开封盖舌">
+        <div class="flap-o"></div>
+        <div class="flap-i"></div>
+      </div>
+      <div class="tape" id="tape" hidden>
+        <b>sofiapintos190@gmail.com</b>：本窗（08-29 06:00–08-30 06:00 上海）无新信。<br>
+        <b>aimfllyys@gmail.com ACTION</b>：
+        <ul>
+          <li>SCI-AIChat-Demo CI 仍红 master/579183f（本窗两次：08-29 09:46 北京；08-30 04:56 北京）</li>
+          <li>deepseek-harness E2E 仍红 master/cd5ef81（08-29 15:03 北京）</li>
+          <li>仍未读：Blog-YuSheng CI quality-gate 红 dev/87729e9（昨窗起）；GitHub App Cursor 要加权限（08-27 起未读）</li>
+        </ul>
+        <span class="skip">SKIP：z.ai GLM-5.3-Flash 两周五折促销等。红 = ACTION，灰 = SKIP。</span>
+      </div>
+    </div>
+  </div>
+
+  <div id="archive" aria-label="余折小叠 · 24小时档案">
+    <button type="button" class="mini" data-i="0"><span class="lab">主戏</span><span class="one">OpenAI 拟 11/12 断供 Cursor。变更控制 + 不信任 SpaceX ToS；Astra 不供给。</span><small>openai.com + Reuters · Fri night / 08-29</small></button>
+    <button type="button" class="mini" data-i="1"><span class="lab">5%</span><span class="one">Truell：OpenAI 模型约占 Cursor 用户流量 5%，仍在谈。</span><small>BI 引 X · Fri night</small></button>
+    <button type="button" class="mini" data-i="2"><span class="lab">回应</span><span class="one">Musk 周六早：「I couldn't care less.」</span><small>Reuters 引 X · Sat early</small></button>
+    <button type="button" class="mini" data-i="3"><span class="lab">算力</span><span class="one">Tom Brown：将继续增加算力支持 Cursor 内 Claude。</span><small>IT之家 08-29 14:48 北京</small></button>
+    <button type="button" class="mini" data-i="4"><span class="lab">版权</span><span class="one">Sony / Warner 出版臂诉 Anthropic。主张每件故意侵权最高 $150,000。</span><small>TC 11:41 AM PDT 08-29；立案 late Fri</small></button>
+    <button type="button" class="mini" data-i="5"><span class="lab">周末</span><span class="one">WikiSkill：持久 wiki + skill。论文约 08-27 首发 OUT，Decoder 08-29 解读 IN。</span><small>arXiv:2608.27454 · Decoder 08-29</small></button>
+    <button type="button" class="mini" data-i="6"><span class="lab">通稿</span><span class="one">中文通稿写明 11/12、5%、自备 Key。</span><small>网易 / IT之家 08-29</small></button>
+    <button type="button" class="mini old" data-i="7"><span class="lab">窗外</span><span class="one">混元 Hy4 770B 预览。昨日已折 / 不重卖。</span><small>08-28 · 昨日已折</small></button>
+    <button type="button" class="mini old" data-i="8"><span class="lab">窗外</span><span class="one">Rita Lin 裁定五角大楼对 Anthropic 的供应链风险标签违法。昨日已折 / 不重卖。</span><small>08-28 · 昨日已折</small></button>
+    <button type="button" class="mini old" data-i="9"><span class="lab">窗外</span><span class="one">报道称 NVDA–HF 约 $12.9B（未签约）。昨日已折 / 不重卖。</span><small>昨窗 · 昨日已折</small></button>
+  </div>
+
+  <div id="card">
+    <div class="recto letter" id="letter">
+      <div class="scroll" id="scroll">
+        <section class="cover">
+          <h2>折信日曜</h2>
+          <div class="when">2026年8月30日 星期日</div>
+          <p>点折痕，才看见今天。合拢的瓣，不写进主叙事。</p>
+          <p class="how">折痕 ≥44px 热区 · Enter / Space 折开焦点<br>两道主折都展开后，中缝才浮现判断。<br>横向滑卷，无吸附、无刮擦。</p>
+        </section>
+
+        <div class="unit" id="foldA" style="--w:488px">
+          <button type="button" class="crease" aria-expanded="false" aria-controls="leafA">主折甲<span class="mark">供给</span></button>
+          <div class="leaf-clip"><div class="leaf" id="leafA">
+            <div class="leaf-inner">
+              <div class="zhu" title="Cursor 用户流量中 OpenAI 模型约占 5%"><b>5%</b><span>of traffic</span></div>
+              <div class="kicker">Main fold A · must open</div>
+              <h3>OpenAI 拟终止向 SpaceX 旗下 Cursor 直接供模</h3>
+              <p>OpenAI 官方周五通知 SpaceX：拟终止向 Cursor 提供模型，建议关停日 <b>2026年11月12日</b>（November 12, 2026，官方 proposed shutoff / maximum notice），给予最长通知。后续模型（含即将推出的 Astra）不再供给 Cursor。</p>
+              <p class="quote">“We are making this choice because we cannot be confident that SpaceX will use our technology within our terms of service, based on our experience with Elon Musk's companies violating contracts.” <span>— Reuters / 官方</span></p>
+              <p>未指控 Cursor 本身违约（BI）。点名 X/Twitter 收购后违约，以及马斯克宣誓 xAI 曾违反 OpenAI ToS（BI 转述官方）。合同：change of control 后有限窗口可取消。</p>
+              <p>背景——非今日成交：SpaceX 收购 Anysphere/Cursor 约 $60B 全股票，2026-08-14 完成（SEC 8-K / Reuters）。</p>
+              <p>Musk 周六早 X：「I couldn't care less.」（Reuters）</p>
+              <p>Michael Truell（Cursor 联合创始人）周五夜 X，BI 引全文：</p>
+              <p class="quote">“We're sorry to see that OpenAI put out a note saying they plan to block Cursor users from accessing OpenAI models in three months. OpenAI models serve about 5% of Cursor user traffic, and we're speaking with the OpenAI team to resolve this.”</p>
+              <p>CNBC 另引：Cursor was one of the very first users of OpenAI… trusted their platform to be neutral infrastructure.</p>
+              <p class="note"><b>对 Sofia：</b>11/12 前 Cursor 里现有 GPT 仍可用；之后官方直连没了，可自备 API Key / 扩展。Chat/Agent 可插 Key，Tab / Auto / 云端 Agent 依赖平台调度会受影响。Grok / Claude / Google 仍在 Cursor。</p>
+              <p>时间：官方 Friday / BI「Friday night」；周六回应明确落入 08-29 06:00–08-30 06:00 上海窗。不是「昨日已报」。</p>
+              <p class="src">
+                <a href="https://openai.com/index/our-decision-on-cursor-following-its-acquisition-by-spacex/" target="_blank" rel="noopener">openai.com 官方博文</a><br>
+                <a href="https://www.reuters.com/business/media-telecom/openai-end-partnership-with-spacexs-cursor-2026-08-29/" target="_blank" rel="noopener">Reuters 2026-08-29</a><br>
+                <a href="https://www.businessinsider.com/openai-ends-cursor-contract-elon-musk-spacex-sam-altman-feud-2026-8" target="_blank" rel="noopener">Business Insider</a>
+              </p>
+            </div>
+          </div></div>
+        </div>
+
+        <div id="thesis" aria-hidden="true">供给一折，阵营见骨</div>
+
+        <div class="unit" id="foldB" style="--w:428px">
+          <button type="button" class="crease" aria-expanded="false" aria-controls="leafB">主折乙<span class="mark">版权</span></button>
+          <div class="leaf-clip"><div class="leaf" id="leafB">
+            <div class="leaf-inner">
+              <div class="kicker">Main fold B · must open</div>
+              <h3>Sony Music Publishing + Warner Chappell 等起诉 Anthropic</h3>
+              <p>加州北区，late Friday Aug 28 立案；TechCrunch 2026-08-29 11:41 AM PDT。</p>
+              <p>被告：Anthropic PBC、Dario Amodei、Benjamin Mann。</p>
+              <p>指控 brazen campaign of illegally torrenting, scraping, and downloading copyrighted works 训练 Claude。</p>
+              <p><span class="tag">主张</span>诉状 / MBW / Verge，不是判决：每件故意侵权最高 $150,000 法定赔偿；移除版权管理信息每项最高 $25,000。Verge：tens of thousands of works，<b>若按上限</b>或达数十亿美元。</p>
+              <p class="quote">“We disagree with the publishers' claims and we intend to defend ourselves robustly in court.” <span>— Anthropic 对 TechCrunch</span></p>
+              <p>MBW：三大厂牌出版臂现均在诉 Claude 方。Bartz $1.5B 和解是背景（作者案，非今日新判）。</p>
+              <p class="note"><b>对 Sofia：</b>生成式输出引用歌词/长文仍有法律雷区；训练数据来源已从争论变成可计价诉请。</p>
+              <p class="src">
+                <a href="https://techcrunch.com/2026/08/29/sony-music-warner-sue-anthropic-alleging-a-brazen-campaign-of-intellectual-property-theft/" target="_blank" rel="noopener">TechCrunch</a><br>
+                <a href="https://www.musicbusinessworldwide.com/now-sony-music-publishing-and-warner-chappell-sue-anthropic-in-multi-billion-dollar-lawsuit-one-of-the-largest-and-most-blatant-ongoing-thefts-of-intellectual-property-in-history/" target="_blank" rel="noopener">Music Business Worldwide</a><br>
+                <a href="https://www.theverge.com/ai-artificial-intelligence/986438/sony-music-warner-chappell-anthropic-lawsuit-copyright" target="_blank" rel="noopener">The Verge</a>
+              </p>
+            </div>
+          </div></div>
+        </div>
+
+        <div class="unit" id="foldC" style="--w:318px">
+          <button type="button" class="crease" aria-expanded="false" aria-controls="leafC">次折丙<span class="mark">算力</span></button>
+          <div class="leaf-clip"><div class="leaf" id="leafC">
+            <div class="leaf-inner">
+              <div class="kicker">Side fold C</div>
+              <h3>Tom Brown：加算力支持 Cursor 内 Claude</h3>
+              <p>IT之家 2026/8/29 14:48 北京。自 Sonnet 3.5 起 Cursor 是可信伙伴；将继续增加算力支持 Cursor 平台中的 Claude；期待与 SpaceX 后续合作。</p>
+              <p>Reuters 亦报 Anthropic will increase compute support for Claude models in Cursor.</p>
+              <p class="src"><a href="https://www.ithome.com/0/995/913.htm" target="_blank" rel="noopener">ithome.com/0/995/913.htm</a></p>
+            </div>
+          </div></div>
+        </div>
+
+        <div class="unit" id="foldD" style="--w:348px">
+          <button type="button" class="crease" aria-expanded="false" aria-controls="leafD">次折丁<span class="mark">周末</span></button>
+          <div class="leaf-clip"><div class="leaf" id="foldDleaf">
+            <div class="leaf-inner">
+              <div class="kicker">Side fold D · 非今日首发</div>
+              <h3>WikiSkill：经验编成可进化技能</h3>
+              <p>Google Research，arXiv:2608.27454。论文约 08-27 首发 OUT；THE DECODER 08-29 解读 IN。</p>
+              <p>标题：WikiSkill: Compiling Agent Experience into Persistent Knowledge for Skill Evolution。</p>
+              <p>三层：Raw / Wiki / Skill + validation gating。</p>
+              <p><span class="tag">论文报告</span>Decoder 转：Gemini-3.5-Flash 均分 49.5%→68.1%；LiveMath 33.0%→72.6%。</p>
+              <p class="note"><b>对 Sofia：</b>比追新参数更贴近「怎么给助手写可复用 SOP」。</p>
+              <p class="src">
+                <a href="https://arxiv.org/abs/2608.27454" target="_blank" rel="noopener">arxiv.org/abs/2608.27454</a><br>
+                <a href="https://the-decoder.com/google-gives-ai-agents-their-own-wiki-so-they-can-learn-from-mistakes-and-successes/" target="_blank" rel="noopener">THE DECODER 08-29</a>
+              </p>
+            </div>
+          </div></div>
+        </div>
+
+        <div class="unit" id="foldE" style="--w:176px">
+          <button type="button" class="crease" aria-expanded="false" aria-controls="leafE">11/12<span class="mark">日期</span></button>
+          <div class="leaf-clip"><div class="leaf" id="leafE">
+            <div class="leaf-inner">
+              <div class="kicker">小数字瓣 · 非新新闻</div>
+              <h3>11/12</h3>
+              <p>OpenAI 给 SpaceX / Cursor 的建议关停日。从主折甲里单独折出，好记。不是一条新消息。</p>
+            </div>
+          </div></div>
+        </div>
+      </div>
+      <div class="fliprow"><button type="button" id="to-verso" hidden>翻到信背</button></div>
+    </div>
+    <article class="verso" id="verso">
+      <div class="who">信背 · 致 Sofia</div>
+      <p>Sofia，周日早晨把一天折进一封信，比摊开一张仪表盘更诚实。纸不会替你决定哪条值得展开；折痕在那里，手要自己碰。</p>
+      <p>昨夜到今晨的窗口很薄。薄的日子更容易看见结构。OpenAI 用变更控制条款，把「谁买下了 Cursor」写成「还能不能接到模型」。官方博文把理由写在 SpaceX、X、xAI 的履约史上，同时写明没有指控 Cursor 本身违约。Truell 回了一句当事人数字：OpenAI 模型大约只占 Cursor 用户流量的百分之五，还在谈。马斯克说 couldn't care less。Tom Brown 说会继续给 Cursor 里的 Claude 加算力。同一窗里，Sony 与 Warner 的出版臂把 Anthropic 拖进北加州法庭，主张每件作品最高十五万美元法定赔偿——这是诉状里的上限，不是判决。</p>
+      <p>两道折痕对上，判断就出来了：模型供给第一次被公开当作阵营武器来使。一边是合同，一边是版权。一边决定你在编辑器里还能点开哪家的名字，一边决定训练语料还能不能被当成「已经付过的成本」。对学医也在学 AI 的你，这两件事并不远。你在 Cursor 里若还靠 GPT，十一月十二日前不必慌；之后要把 Claude、Grok 和自备 Key 的路径分清楚——聊天可以插钥匙，Tab 和云端 Agent 往往走平台调度。写笔记、写综述时，歌词和长文的生成式引用仍然有法律雷区；「数据从哪来」已经从实验室闲聊变成可计价的诉请。</p>
+      <p>Google 那篇 WikiSkill 不是今天首发，是周末被人重新折开：不改权重，把失败和成功写成持久的 wiki，再炼成可回滚的 skill。对你更有用的也许不是新分数，而是那三层——原始痕迹、可积累的知识、可执行的步骤。早报也是这样：把一天折进纸里，不是为了堆输出，是为了让判断有折痕。</p>
+      <p class="sig">折晓<br>北京时间 2026年8月30日</p>
+      <p style="text-align:right;margin-top:18px"><button type="button" id="to-recto">回到信面</button></p>
+    </article>
+  </div>
+</main>
+<footer class="foot">北京时间 2026年8月30日 · 折晓 早报</footer>
+<div class="help" id="help">盖舌开封 · 抽信 · 点折痕展开 · 双主折见中缝 · 信背长文 · 内衬余折 · 邮戳便条。Esc 退回。? 开关此条。</div>
+<noscript><style>.env.opened .flap{display:none}.peek{display:none}.letter{opacity:1;max-height:none;overflow:visible;pointer-events:auto;transform:none}.leaf-clip{width:var(--w,400px)}.leaf{transform:none}#thesis{opacity:1;width:48px;flex-basis:48px}#to-verso{display:none}#archive{display:flex}</style></noscript>
+<script>
+(function(){
+  var rm = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if(rm) document.documentElement.classList.add("rm");
+  var env=document.getElementById("env"), flap=document.getElementById("flap"),
+      draw=document.getElementById("draw"), letter=document.getElementById("letter"),
+      stamp=document.getElementById("stamp"), tape=document.getElementById("tape"),
+      arch=document.getElementById("archive"), card=document.getElementById("card"),
+      thesis=document.getElementById("thesis"), toV=document.getElementById("to-verso"),
+      toR=document.getElementById("to-recto"), hint=document.getElementById("hint"),
+      foldA=document.getElementById("foldA"), foldB=document.getElementById("foldB");
+
+  function openFlap(on){
+    env.classList.toggle("opened", on);
+    flap.setAttribute("aria-expanded", on?"true":"false");
+    hint.textContent = on ? (env.classList.contains("drawn") ? "" : "抽出信笺") : "点盖舌开封";
+    if(!on){ stamp.classList.remove("open"); stamp.setAttribute("aria-expanded","false"); tape.classList.remove("on"); tape.hidden=true; }
+  }
+  flap.addEventListener("click", function(e){
+    if(e.target.closest("#stamp") || e.target.closest("#tape")) return;
+    openFlap(!env.classList.contains("opened"));
+  });
+  flap.addEventListener("keydown", function(e){
+    if(e.target!==flap) return;
+    if(e.key==="Enter"||e.key===" "){ e.preventDefault(); openFlap(!env.classList.contains("opened")); }
+  });
+  stamp.addEventListener("click", function(e){
+    e.stopPropagation();
+    if(!env.classList.contains("opened")) openFlap(true);
+    var on=!stamp.classList.contains("open");
+    stamp.classList.toggle("open", on);
+    stamp.setAttribute("aria-expanded", on?"true":"false");
+    tape.hidden=!on; tape.classList.toggle("on", on);
+  });
+  document.getElementById("close-flap").addEventListener("click", function(e){
+    e.stopPropagation();
+    openFlap(false);
+  });
+  draw.addEventListener("click", function(e){
+    e.stopPropagation();
+    letter.classList.add("out");
+    env.classList.add("drawn");
+    hint.textContent="";
+  });
+  function checkThesis(){
+    var on=foldA.classList.contains("open") && foldB.classList.contains("open");
+    thesis.classList.toggle("on", on);
+    thesis.setAttribute("aria-hidden", on?"false":"true");
+  }
+  var flipT=null;
+  function checkFlip(){
+    var a=foldA.classList.contains("open");
+    if(!a){ toV.hidden=true; return; }
+    if(rm){ toV.hidden=false; return; }
+    toV.hidden=true;
+    clearTimeout(flipT);
+    flipT=setTimeout(function(){ if(foldA.classList.contains("open")) toV.hidden=false; }, 700);
+  }
+  function toggleFold(unit){
+    if(!unit) return;
+    unit.classList.toggle("open");
+    var c=unit.querySelector(".crease");
+    if(c) c.setAttribute("aria-expanded", unit.classList.contains("open")?"true":"false");
+    checkThesis(); checkFlip();
+  }
+  document.querySelectorAll(".unit").forEach(function(u){
+    var c=u.querySelector(".crease");
+    c.addEventListener("click", function(){ toggleFold(u); });
+    u.querySelector(".leaf").addEventListener("transitionend", function(e){
+      if(e.propertyName==="transform" && u===foldA) checkFlip();
+    });
+  });
+  toV.addEventListener("click", function(){ card.classList.add("flip"); document.getElementById("verso").scrollTop=0; });
+  toR.addEventListener("click", function(){ card.classList.remove("flip"); });
+  document.getElementById("arch-pull").addEventListener("click", function(e){
+    e.stopPropagation();
+    if(!env.classList.contains("opened")) openFlap(true);
+    arch.classList.toggle("out");
+  });
+  document.querySelectorAll(".mini").forEach(function(m){
+    m.addEventListener("click", function(){ m.classList.toggle("open"); });
+  });
+  if("IntersectionObserver" in window){
+    var io=new IntersectionObserver(function(entries){
+      entries.forEach(function(en){ if(en.isIntersecting) en.target.classList.add("seen"); });
+    }, {threshold:0.45, root:document.getElementById("scroll")});
+    document.querySelectorAll(".unit").forEach(function(u){ io.observe(u); });
+  } else {
+    document.querySelectorAll(".unit").forEach(function(u){ u.classList.add("seen"); });
+  }
+  var help=document.getElementById("help");
+  document.addEventListener("keydown", function(e){
+    if(e.target && (e.target.tagName==="INPUT"||e.target.tagName==="TEXTAREA")) return;
+    if(e.key==="Escape"){
+      if(card.classList.contains("flip")) card.classList.remove("flip");
+      else if(arch.classList.contains("out")) arch.classList.remove("out");
+      else if(stamp.classList.contains("open")){ stamp.classList.remove("open"); tape.classList.remove("on"); tape.hidden=true; stamp.setAttribute("aria-expanded","false"); }
+      else if(env.classList.contains("opened") && !env.classList.contains("drawn")) openFlap(false);
+    } else if(e.key==="?"||(e.key==="/"&&e.shiftKey)){
+      help.classList.toggle("on");
+    }
+  });
+  if(rm){
+    openFlap(true);
+    letter.classList.add("out"); env.classList.add("drawn");
+    document.querySelectorAll(".unit").forEach(function(u){ u.classList.add("open"); var c=u.querySelector(".crease"); if(c) c.setAttribute("aria-expanded","true"); });
+    arch.classList.add("out");
+    checkThesis(); checkFlip();
+    hint.textContent="";
+  }
+})();
+</script>
+</body>
+</html>

@@ -28,7 +28,9 @@
 │   │               └── assets/
 │   ├── pages/                            # 未来独立内容源预留；不自动映射 /pages/* 路由
 │   │   └── <slug>/index.md
-│   ├── notes/                            # 未来 /notes/ 短随笔
+│   ├── briefs/                           # 小日报原件：Grok Bot 每日投递的自包含单文件 HTML
+│   │   └── <YYYY-MM>/                    # 按月归档（推荐；发现逻辑同样容忍平铺）
+│   │       └── ai-brief-<YYYY-MM-DD>.html  # 文件名末尾的日期即路由参数；同日重复即构建失败
 │   └── works/                            # 未来 /works/ 作品内容
 │
 ├── src/
@@ -46,8 +48,12 @@
 │   │   │   └── [slug]/
 │   │   │       ├── loading.tsx           # 书架进入文章时的书册遮罩
 │   │   │       └── page.tsx              # /blog/<slug>/；generateStaticParams 全量静态化
-│   │   ├── notes/                        # /notes/ 随笔；现为可替换的建设中页
-│   │   ├── works/                        # /works/ 作品集；现为可替换的建设中页
+│   │   ├── daily/
+│   │   │   ├── page.tsx                  # /daily/ 小日报台历目录
+│   │   │   └── [date]/
+│   │   │       ├── loading.tsx           # 复用博客的书册遮罩
+│   │   │       └── page.tsx              # /daily/<date>/；dynamicParams=false + generateStaticParams
+│   │   ├── works/                        # /works/ 作品集；现为可替换的建设中页（入口暂走外链）
 │   │   ├── about/                        # 未来预留
 │   │   └── _dev/                         # 隔离调试页；production 必须 notFound()
 │   │
@@ -156,7 +162,18 @@
 │   │   ├── reader-layout/                 # 三栏/抽屉、面板收展、分栏拉动
 │   │   ├── toc/                           # 左目录树与图形骨架缩略模式
 │   │   ├── blog-index/                    # /blog/ 列表页书架形态
-│   │   ├── notes/                         # /notes/ 随笔入口（现为建设中页，整页可替换）
+│   │   ├── daily-brief/                   # /daily/ 小日报：报亭台历目录 + 展报阅读台
+│   │   │   ├── daily-brief-index.tsx      # Server 外壳（绳挂 + 页头 + 空状态）
+│   │   │   ├── daily-brief-index-view.tsx # 台历 / 清单切换与降级判定（同博客目录）
+│   │   │   ├── desk-calendar.tsx          # 纯 CSS 3D 台历：月翻页、索引页签、周抽出、折叠小报
+│   │   │   ├── front-page-hero.tsx        # 今日头版：两半绕中缝展开
+│   │   │   ├── brief-list.tsx             # 月 → 周 → 日清单（移动端 / reduced-motion）
+│   │   │   ├── brief-reader.tsx           # 详情页报头条 + 前后日 + 原件外链
+│   │   │   ├── brief-frame.tsx            # 折翼展开 + 沙箱 iframe + 全屏 + 超时降级
+│   │   │   ├── group-briefs.ts            # 纯函数：月页 / ISO 周行 / 日格
+│   │   │   ├── brief-date.ts              # 日期解析、ISO 周与中文日期格式
+│   │   │   ├── types.ts                   # BriefEntry（无 server-only，可进客户端）
+│   │   │   └── daily-brief.module.css
 │   │   ├── works/                         # /works/ 作品集入口（现为建设中页，整页可替换）
 │   │   ├── navigation/                    # 绳挂导航与阅读页顶部动作
 │   │   ├── settings/                      # 主题、音效
@@ -172,13 +189,19 @@
 │   │   └── download/                      # 浏览器 Blob 下载等通用工具
 │   │
 │   └── server/
-│       └── content/                       # 仅构建期运行；必须 import 'server-only'
-│           ├── discover-posts.ts
-│           ├── read-post.ts
-│           ├── validate-frontmatter.ts
-│           ├── validate-assets.ts
-│           ├── create-anchor-manifest.ts
-│           └── create-static-params.ts
+│       ├── content/                       # 仅构建期运行；必须 import 'server-only'
+│       │   ├── discover-posts.ts
+│       │   ├── read-post.ts
+│       │   ├── validate-frontmatter.ts
+│       │   ├── validate-assets.ts
+│       │   ├── create-anchor-manifest.ts
+│       │   └── create-static-params.ts
+│       └── briefs/                        # 小日报构建期读取与落位；必须 import 'server-only'
+│           ├── brief-paths.ts             # content/briefs 根、out/briefs/<date>.html、/daily/<date>/
+│           ├── discover-briefs.ts         # 递归扫描、日期 / <title> / DESIGN LESSON 解析、重复与大小校验
+│           ├── parse-brief-source.ts      # 纯字符串抽取元数据，不改写原件
+│           ├── build-brief-assets.ts      # postbuild 复制到 out/briefs/；开发态镜像到 public/briefs/
+│           └── create-brief-metadata.ts   # generateMetadata / generateStaticParams
 │
 ├── docs/
 │   ├── plans/                             # 路线图、优先级、里程碑
@@ -288,6 +311,14 @@ content/posts/<slug>/
 
 `media/` 与 `data/` 无此约束，按文章包就近落位即可。
 - 第三方网页 URL 不下载进仓库，只保存经过 schema 验证的链接和降级元信息。
+
+### `content/briefs/`（小日报原件）
+
+- 权威源是 `content/briefs/<YYYY-MM>/ai-brief-<YYYY-MM-DD>.html`：自包含单文件 HTML，由 Grok Bot 通过 PR 投递；投递契约见 [publish-daily-brief.md](../ops/publish-daily-brief.md)。
+- 构建期只做静态校验（文件名日期合法且唯一、UTF-8、≤ 25 MB、`<title>` 可选回退），**不改写原件**；postbuild 原样复制到 **`out/briefs/<date>.html`**，公开 URL `/briefs/<date>.html`。
+- 阅读页 `/daily/<date>/` 用 `sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox"` 的 iframe 嵌入原件，不给 `allow-same-origin`；与文章 `embeds/` 的 nonce 握手协议**互不复用**——日报原件不实现握手，走的是独立、无通信的沙箱路径。
+- `/briefs/*` 同样受「单一 `*` 前缀」约束：`edgeone.json` 为它单独放开 `X-Frame-Options: SAMEORIGIN` 并声明 `frame-ancestors 'self'`，其余路径仍是全站 `DENY`。不得把日报放到 `/daily/` 之下，否则响应头规则会连带放开路由页。
+- 开发态由 `mirrorBriefsForDev()` 镜像到 `public/briefs/`（已 gitignore），`next dev` 直接可访问。
 
 ### `public/`
 

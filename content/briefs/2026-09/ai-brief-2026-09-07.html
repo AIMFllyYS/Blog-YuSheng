@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>套架分 · 折晓早报 2026-09-07</title>
+<!--
+Design lesson 2026-09-07 《套架分》 (alt: Harness Score / 脚手架分)
+STYLE 编辑部杂志 — warm off-white #f0efef × white cards × ink #2b2b2b × graphite #676767 × faint #c2c2c2 × violet #8147ff chips × hi-vis #ffd519 tags
+INTERACTION 擦除显影 — scratch-off / wipe-reveal hero scorecard (99.9% silver → 62.7% standard harness)
+GENRE 功能 demo / 假评测成绩刮刮卡 — ARC-style scorecard + editorial magazine feed
+
+Design sources (titles + URLs):
+1. Itsnicethat design system | Refero — https://styles.refero.design/style/3e70af05-a07f-4c11-98ca-6ecb4765e967
+2. Stripe Spent a Year Redesigning Its Homepage… (custom wave tool / dial-in-context) — https://ain3xt.com/en/posts/20260503-stripe-homepage-redesign-craft/
+3. The internal AI tool that’s transforming how Stripe designs products | Owen Williams — https://www.lennysnewsletter.com/p/the-internal-ai-tool-thats-transforming
+Stolen: structure=quiet editorial chrome + loud content; style=wide-tracked display / achromatic UI / violet signal; interaction=dial/reveal in real context (scratch reveal of harness truth).
+-->
+<style>
+:root{
+  --canvas:#f0efef; --card:#fff; --ink:#2b2b2b; --graph:#676767;
+  --line:#c2c2c2; --violet:#8147ff; --hivis:#ffd519;
+  --silver1:#c8c8c8; --silver2:#9a9a9a; --silver3:#e8e8e8;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{
+  font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans SC",
+    "Segoe UI",system-ui,-apple-system,sans-serif;
+  background:var(--canvas); color:var(--ink);
+  line-height:1.55; font-size:15px;
+  min-height:100vh;
+}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+a{color:inherit}
+.wrap{max-width:920px;margin:0 auto;padding:0 1rem 4rem}
+
+/* quiet editorial chrome */
+.mast{
+  display:flex; justify-content:space-between; align-items:baseline;
+  padding:1.1rem 0 .85rem; border-bottom:1px solid var(--line);
+  gap:1rem; flex-wrap:wrap;
+}
+.mast .brand{
+  font-size:.72rem; letter-spacing:.14em; text-transform:uppercase; color:var(--graph);
+}
+.mast .brand b{color:var(--ink); font-weight:600; letter-spacing:.1em}
+.mast .issue{font-size:.72rem; color:var(--graph); letter-spacing:.04em}
+
+.display{
+  font-weight:700; letter-spacing:.08em; line-height:1.05;
+  font-size:clamp(2.4rem, 9vw, 4.6rem);
+}
+.display .en{
+  display:block; font-size:clamp(.85rem,2.4vw,1.05rem);
+  font-weight:500; letter-spacing:.16em; color:var(--graph);
+  margin-top:.55rem; text-transform:uppercase;
+}
+.lede{
+  margin:1.1rem 0 0; max-width:36em; color:var(--graph); font-size:.95rem;
+}
+.thesis{
+  margin:1.4rem 0 0; padding:1rem 0; border-top:1px solid var(--line); border-bottom:1px solid var(--line);
+  font-size:1.15rem; font-weight:600; letter-spacing:.02em; line-height:1.45;
+}
+.thesis em{font-style:normal; color:var(--violet)}
+
+/* tags / pills */
+.tag{
+  display:inline-block; padding:.18rem .7rem; border-radius:75px;
+  font-size:.65rem; letter-spacing:.08em; font-weight:600;
+  background:var(--hivis); color:var(--ink); vertical-align:middle;
+}
+.chip{
+  display:inline-flex; align-items:center; gap:.35rem;
+  padding:.4rem 1rem; border-radius:75px;
+  border:1px solid var(--violet); color:var(--violet);
+  font-size:.78rem; letter-spacing:.04em; background:var(--card);
+  transition:background .15s, color .15s;
+}
+.chip:hover,.chip:focus-visible{background:var(--violet); color:#fff; outline:none}
+.chip:disabled{opacity:.45; cursor:default}
+.chip:disabled:hover{background:var(--card); color:var(--violet)}
+
+/* hero scorecard */
+.score-block{margin:1.8rem 0 2.2rem}
+.score-head{
+  display:flex; justify-content:space-between; align-items:flex-end;
+  gap:1rem; flex-wrap:wrap; margin-bottom:.75rem;
+}
+.score-head h2{
+  font-size:.78rem; letter-spacing:.14em; text-transform:uppercase; color:var(--graph); font-weight:600;
+}
+.score-card{
+  position:relative; background:var(--card); border:1px solid var(--line);
+  border-radius:2px; overflow:hidden; min-height:280px;
+  user-select:none; -webkit-user-select:none; touch-action:none;
+}
+.score-under{
+  padding:1.6rem 1.4rem 1.4rem; min-height:280px;
+  display:grid; grid-template-columns:1fr 1fr; gap:1.2rem;
+  align-items:stretch;
+}
+@media (max-width:640px){
+  .score-under{grid-template-columns:1fr}
+}
+.score-col{display:flex; flex-direction:column; gap:.35rem}
+.score-col .lab{
+  font-size:.68rem; letter-spacing:.1em; text-transform:uppercase; color:var(--graph);
+}
+.score-col .big{
+  font-size:clamp(2.8rem,10vw,4.2rem); font-weight:700; letter-spacing:.04em; line-height:1;
+}
+.score-col .big.truth{color:var(--ink)}
+.score-col .big.market{color:var(--graph); text-decoration:line-through; text-decoration-thickness:2px; opacity:.55}
+.score-col .meta{font-size:.78rem; color:var(--graph); margin-top:.2rem}
+.score-col .note{
+  margin-top:auto; padding-top:.8rem; font-size:.75rem; color:var(--graph);
+  border-top:1px solid var(--line); line-height:1.45;
+}
+.score-banner{
+  grid-column:1/-1; display:flex; flex-wrap:wrap; gap:.5rem; align-items:center;
+  padding-top:.4rem; border-top:1px solid var(--line); margin-top:.2rem;
+}
+.score-banner strong{font-size:.85rem; letter-spacing:.02em}
+
+/* scratch overlay */
+.scratch-layer{
+  position:absolute; inset:0; z-index:5; cursor:crosshair;
+  border-radius:2px;
+}
+.scratch-layer.done{pointer-events:none; opacity:0; transition:opacity .45s ease}
+.scratch-canvas{display:block; width:100%; height:100%; touch-action:none}
+.scratch-hint{
+  position:absolute; inset:0; z-index:6; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:.75rem; pointer-events:none;
+  text-align:center; padding:1.5rem;
+  transition:opacity .3s;
+}
+.scratch-hint.hide{opacity:0}
+.scratch-hint .silver-label{
+  font-size:clamp(2.2rem,8vw,3.6rem); font-weight:700; letter-spacing:.06em;
+  color:rgba(43,43,43,.55); text-shadow:0 1px 0 rgba(255,255,255,.4);
+}
+.scratch-hint p{font-size:.85rem; color:rgba(43,43,43,.7); max-width:18em; letter-spacing:.04em}
+.scratch-controls{
+  position:relative; z-index:8; display:flex; gap:.6rem; flex-wrap:wrap;
+  margin-top:.85rem; align-items:center;
+}
+.scratch-controls .pct{
+  font-size:.72rem; color:var(--graph); letter-spacing:.06em; margin-left:auto;
+}
+
+/* sections */
+.sec{margin:2.4rem 0}
+.sec-h{
+  display:flex; align-items:baseline; gap:.75rem; flex-wrap:wrap;
+  margin-bottom:1rem; padding-bottom:.55rem; border-bottom:1px solid var(--line);
+}
+.sec-h h2{
+  font-size:1.05rem; letter-spacing:.08em; font-weight:700;
+}
+.sec-h .sub{font-size:.72rem; color:var(--graph); letter-spacing:.06em}
+
+.tier{margin:1.2rem 0}
+.tier-label{
+  font-size:.68rem; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--graph); margin-bottom:.55rem; font-weight:600;
+}
+.card{
+  background:var(--card); border:1px solid var(--line); border-radius:2px;
+  padding:1.05rem 1.15rem; margin-bottom:.65rem;
+}
+.card h3{font-size:.95rem; letter-spacing:.02em; margin-bottom:.4rem; font-weight:650}
+.card p{font-size:.88rem; color:var(--ink); line-height:1.6}
+.card .src{
+  margin-top:.55rem; font-size:.7rem; color:var(--graph); letter-spacing:.02em;
+  word-break:break-all;
+}
+.card .src a{text-decoration:underline; text-underline-offset:2px}
+.card.watch{border-left:3px solid var(--line)}
+.card.skip{opacity:.72; border-style:dashed}
+
+.side-grid{
+  display:grid; grid-template-columns:1fr 1fr; gap:.65rem;
+}
+@media (max-width:640px){.side-grid{grid-template-columns:1fr}}
+
+/* soft note (mail corner) */
+.note-clip{
+  margin:2.2rem 0; position:relative;
+}
+.note-tab{
+  display:inline-flex; align-items:center; gap:.4rem;
+  padding:.45rem 1rem; border-radius:75px; border:1px solid var(--line);
+  background:var(--card); font-size:.78rem; letter-spacing:.04em;
+}
+.note-tab::before{
+  content:""; width:8px; height:8px; border-radius:50%; background:var(--hivis);
+  border:1px solid var(--ink);
+}
+.note-panel{
+  display:none; margin-top:.65rem; background:#fffef8;
+  border:1px solid var(--line); border-radius:2px; padding:1rem 1.1rem;
+  transform:rotate(-0.3deg);
+}
+.note-panel.open{display:block}
+.note-panel h3{
+  font-size:.78rem; letter-spacing:.1em; text-transform:uppercase;
+  margin-bottom:.7rem; color:var(--graph);
+}
+.note-panel ul{list-style:none; font-size:.82rem; line-height:1.55}
+.note-panel li{padding:.35rem 0; border-bottom:1px dotted var(--line)}
+.note-panel li:last-child{border-bottom:none}
+.note-panel .k{font-weight:650; letter-spacing:.04em; font-size:.7rem; margin-right:.35rem}
+.k-watch{color:#b8860b}
+.k-action{color:var(--violet)}
+.k-skip{color:var(--graph)}
+
+/* archive drawer — grows after reveal / footer tiny */
+.archive-gate{
+  margin:2rem 0 0; padding-top:1rem; border-top:1px solid var(--line);
+  display:none;
+}
+.archive-gate.show{display:block}
+.archive-gate summary,
+footer .arch-link{
+  font-size:.72rem; letter-spacing:.12em; text-transform:uppercase;
+  color:var(--graph); cursor:pointer; list-style:none;
+}
+.archive-gate summary::-webkit-details-marker{display:none}
+.archive-gate summary::before{content:"底片匣 · "; color:var(--ink)}
+.arch-list{margin-top:.85rem; font-size:.8rem}
+.arch-item{
+  display:grid; grid-template-columns:7.5rem 1fr; gap:.5rem .75rem;
+  padding:.55rem 0; border-bottom:1px solid var(--line);
+}
+@media (max-width:560px){.arch-item{grid-template-columns:1fr}}
+.arch-item .t{color:var(--graph); font-size:.7rem; letter-spacing:.04em}
+.arch-item .f{line-height:1.45}
+.arch-item .why{color:var(--graph); font-size:.72rem; margin-top:.2rem}
+
+/* essay drawer as README / 利用条款 */
+.essay-drawer{
+  margin:2.2rem 0; border:1px solid var(--line); background:var(--card); border-radius:2px;
+}
+.essay-drawer summary{
+  padding:.85rem 1.1rem; cursor:pointer; font-size:.78rem;
+  letter-spacing:.1em; text-transform:uppercase; color:var(--graph);
+  list-style:none; border-bottom:1px solid transparent;
+}
+.essay-drawer[open] summary{border-bottom-color:var(--line); color:var(--ink)}
+.essay-drawer summary::-webkit-details-marker{display:none}
+.essay-drawer summary::after{content:" ⌄"; float:right; color:var(--graph)}
+.essay-body{padding:1.2rem 1.15rem 1.4rem; font-size:.9rem; line-height:1.75; max-width:40em}
+.essay-body h3{font-size:1rem; letter-spacing:.04em; margin-bottom:.8rem}
+.essay-body p{margin-bottom:.85rem}
+.essay-body .to-sofia{
+  margin-top:1.2rem; padding:.85rem 1rem; border-left:3px solid var(--violet);
+  background:var(--canvas); font-size:.88rem;
+}
+
+footer{
+  margin-top:3rem; padding:1.2rem 0 2rem; border-top:1px solid var(--line);
+  display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:.5rem;
+  font-size:.72rem; letter-spacing:.08em; color:var(--graph);
+}
+footer b{color:var(--ink); font-weight:600}
+footer .arch-link{text-decoration:underline; text-underline-offset:3px}
+
+.feel{
+  margin:1.2rem 0 0; font-size:.88rem; color:var(--graph); font-style:italic;
+}
+.rule{height:1px; background:var(--line); margin:1.6rem 0; border:0}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="mast">
+    <div class="brand"><b>折晓</b> · 早报</div>
+    <div class="issue">北京时间 2026-09-07 · Vol. 套架分</div>
+  </header>
+
+  <section style="padding:1.8rem 0 0">
+    <span class="tag">显影日</span>
+    <h1 class="display" style="margin-top:.7rem">套架分
+      <span class="en">Harness Score</span>
+    </h1>
+    <p class="lede">营销层的 AGI 数字像一层银色涂层。今天不读 headline，先把它擦开。</p>
+    <p class="thesis">登顶的分数来自<em>套架</em>，不是模型。</p>
+    <p class="feel">今天是显影日——先刮，再信。</p>
+  </section>
+
+  <section class="score-block" aria-label="ARC 刮刮卡">
+    <div class="score-head">
+      <h2>ARC-AGI-3 · Astra 成绩刮刮卡</h2>
+      <span style="font-size:.72rem;color:var(--graph);letter-spacing:.06em">假评测成绩单 · 可玩</span>
+    </div>
+    <div class="score-card" id="scoreCard">
+      <div class="score-under" id="scoreUnder" aria-hidden="true">
+        <div class="score-col">
+          <div class="lab">Standard harness · max reasoning</div>
+          <div class="big truth">62.7%</div>
+          <div class="meta">成本 $26,098 · 公允对照线</div>
+          <div class="note">同一协议下，对 Sol 7.8% 的跃迁才成立。ARC Prize：「not claiming AGI」。</div>
+        </div>
+        <div class="score-col">
+          <div class="lab">Provider Adapter · high reasoning</div>
+          <div class="big market">99.9%</div>
+          <div class="meta">成本 $18,817 · 流传 headline</div>
+          <div class="note">Adapter 推理档设为 none 仍 96.7%，反超标准套架满推理约 34 分。</div>
+        </div>
+        <div class="score-banner">
+          <span class="tag">TODAY 62.7</span>
+          <strong>显影完成 · 标准套架才是判断</strong>
+          <span style="font-size:.75rem;color:var(--graph)">Mike Knoop：仍缺 AGI 证据</span>
+        </div>
+      </div>
+      <div class="scratch-layer" id="scratchLayer">
+        <canvas class="scratch-canvas" id="scratchCanvas"></canvas>
+        <div class="scratch-hint" id="scratchHint">
+          <div class="silver-label">99.9%</div>
+          <p>按住拖曳擦除银色涂层<br>显影标准套架分数</p>
+        </div>
+      </div>
+    </div>
+    <div class="scratch-controls">
+      <button type="button" class="chip" id="revealBtn" aria-label="一键显影">一键显影</button>
+      <button type="button" class="chip" id="resetBtn" style="display:none" aria-label="重新遮盖">重新遮盖</button>
+      <span class="pct" id="wipePct">涂层完整 · 0% 显影</span>
+    </div>
+  </section>
+
+  <section class="sec" id="spine">
+    <div class="sec-h">
+      <h2>今日脊柱</h2>
+      <span class="sub">窗口 北京 09-06 06:00 → 09-07 06:00</span>
+    </div>
+
+    <div class="tier">
+      <div class="tier-label">Must-know</div>
+      <article class="card">
+        <h3>1 · ARC-AGI-3 双套架：62.7% 才是标准线</h3>
+        <p>OpenAI GPT-6 Astra 在 ARC-AGI-3 上走出两套成绩：Standard harness 满推理 <strong>62.7%</strong>（$26,098）；Provider Adapter 高推理 <strong>99.9%</strong>（$18,817）。Adapter 即便把推理档设为 none，仍拿下 96.7%，反超标准套架满推理约 34 个百分点。ARC Prize 明确「not claiming AGI」；Mike Knoop 表示仍缺乏 AGI 证据。登顶叙事若只贴 99.9%，等于把脚手架分数写成模型本体。</p>
+        <div class="src">一手 · ARC Prize · <a href="https://arcprize.org/results/openai-gpt-6-astra">arcprize.org/results/openai-gpt-6-astra</a><br>TNW 2026-09-06 12:23 UTC · <a href="https://thenextweb.com/news/openai-astra-arc-agi-3-harness-62-7-vs-99-9-benchmark-revisions">thenextweb.com/…/harness-62-7-vs-99-9</a></div>
+      </article>
+      <article class="card">
+        <h3>2 · 传播数字错位：99.9% 对 Sol 7.8% 不是同套架</h3>
+        <p>流传对比把 Adapter 的 99.9% 直接压在 Sol 的 7.8% 上——协议不同，落差被放大成神话。公允并排是 <strong>62.7% vs 7.8%</strong>：仍是巨大跃迁，但不再假装银涂层等于真相。此后双方成绩应同框公布，而不是挑好看的那一列。</p>
+        <div class="src">对照 · ARC Prize 结果页 + TNW 修订报道</div>
+      </article>
+      <article class="card">
+        <h3>3 · 发布后改数：博客下线重发与 benchmaxxing 指控</h3>
+        <p>Fortune 与 IT之家（9月6日中文）追踪到：发布博客一度下线重发；幻觉率在 4.2%→2%→回 4.2% 之间摆动；Fable 5.1 FrontierMath 87.8→78→83；Sol ExploitBench 5.5→11.5（非商用推理档）；禁运草稿 ARC 98.6→直播 99.99%。斯坦福研究者称其为 benchmaxxing——数字在发布后仍可被脚手架拧动。</p>
+        <div class="src">Fortune · <a href="https://fortune.com/2026/09/04/openai-quietly-boosts-some-of-astras-evaluation-metrics-amid-rare-delay-in-publication-of-the-modeblog-post-announcement/">fortune.com/2026/09/04/…</a><br>IT之家 · <a href="https://www.ithome.com/0/998/927.htm">ithome.com/0/998/927.htm</a></div>
+      </article>
+      <article class="card">
+        <h3>4 · 定义权 × 资本：AGI 口号与招股时间表错位</h3>
+        <p>Brockman「欢迎来到 AGI 时代」与 Altman「AGI 是无关紧要的营销词」同屏出现。据 21财经 / 钛媒体（9月6日）：Anthropic 招股书公开从9月中旬推迟至下旬，路演盯10月中，挂牌瞄11月中期选举前。Astra 循环深度让思考轨迹更不可读——定义权争夺与资本窗口并行，分数只是其中一块银皮。</p>
+        <div class="src">21财经 · <a href="https://m.21jingji.com/article/20260906/herald/bc4166cc7beaf98ae1afdeae550eabd8.html">m.21jingji.com/…/bc4166cc…</a></div>
+      </article>
+    </div>
+
+    <div class="tier">
+      <div class="tier-label">Watch · 侧栏冷静画像（勿当今日新主线）</div>
+      <div class="side-grid">
+        <article class="card watch">
+          <h3>5 · Artificial Analysis 独立画像</h3>
+          <p>Coding ~67，与 Opus / Fable 大致平齐；Intelligence ~61，平 Sol、落后 Fable。可作侧证，部分属更早窗口——昨日闸口已谈过的 AA Index 4.2 / IPO $2T 不装新。</p>
+        </article>
+        <article class="card watch">
+          <h3>邮件 CI 侧证</h3>
+          <p>SCI-AIChat-Demo、Blog-YuSheng、deepseek-harness 仍红。脚手架在自家仓库里也会掉漆——见角落便签。</p>
+        </article>
+      </div>
+    </div>
+
+    <div class="tier">
+      <div class="tier-label">Skip</div>
+      <article class="card skip">
+        <h3>窗外勿扰</h3>
+        <p>sofiapintos190 Grok Bot usage reset（09-05）；贵州 Astra 上架 / GPT-5.4 下架通知（09-05）；OTP。均在窗口外，不进今日判断。</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="note-clip" id="mailNote">
+    <button type="button" class="note-tab" id="noteTab" aria-expanded="false" aria-controls="notePanel">编辑部便签 · 邮件窗</button>
+    <div class="note-panel" id="notePanel" role="region" hidden>
+      <h3>Clip · 北京 09-06 06:00 → 09-07 06:00</h3>
+      <ul>
+        <li><span class="k k-watch">WATCH</span> aimfllyys · SCI-AIChat-Demo CI 仍红 master/579183f（09-06 20:25Z ≈ 北京 09-07 04:25）</li>
+        <li><span class="k k-watch">WATCH</span> Blog-YuSheng CI 多次失败（main + PR feat/home galaxy）· 09-06</li>
+        <li><span class="k k-watch">WATCH</span> deepseek-harness E2E 仍红 master/cd5ef81（09-06 04:36Z）</li>
+        <li><span class="k k-action">ACTION</span> 无新待回</li>
+        <li><span class="k k-skip">SKIP</span> sofiapintos190 Grok Bot usage reset（09-05 18:52Z，窗外）；贵州 Astra 上架 / GPT-5.4 下架（09-05，窗外）；OTP</li>
+      </ul>
+    </div>
+  </section>
+
+  <details class="essay-drawer" id="essay">
+    <summary>评测脚注 / README / 利用条款</summary>
+    <div class="essay-body">
+      <h3>分数是脚手架写的</h3>
+      <p>医学院教你读论文时，第一课往往不是「这个 p 值漂不漂亮」，而是研究设计：纳入排除、对照组、终点定义、随访是否完整。少了协议，数字只是印刷在摘要里的装饰。今天的 AI 排行榜，其实在重复同一堂课——只是装饰换成了百分之九十九点九的银色涂层。</p>
+      <p>ARC-AGI-3 把这件事撕开给看：同一模型，换一套 harness，分数可以从 62.7% 跳到 99.9%。Adapter 甚至在推理档关掉时仍能压过标准套架的满推理。这不是在贬低进步——62.7% 对 7.8% 仍是跃迁——而是提醒：headline 百分比常常回答的是「这套脚手架允许多高」，不是「智能本体有多高」。</p>
+      <p>发布后改数让教训更刺耳。幻觉率来回拧、FrontierMath 与 ExploitBench 在博客下线重发之间漂移、草稿里的 ARC 与直播数字对不上。斯坦福研究者说 benchmaxxing；更朴素的说法是：评测协议若可被事后调节，分数就接近营销文案。Brockman 喊欢迎来到 AGI 时代，Altman 又说 AGI 是无关紧要的词——定义权本身也在搭脚手架。</p>
+      <p>对医学生而言，这与循证医学同构。看到一篇「某方案有效率 90%」，你会先问：有效怎么定义？和谁比？意向性分析还是符合方案集？AI 榜同理：先问标准套架还是 provider adapter，温度与工具调用是否写明，成本与轮次是否可比。抄 headline % 很容易；核对 harness 才像在读方法学部分。</p>
+      <p>所以今天的显影不是扫兴，是把银皮揭掉。脚手架会继续存在——好的 harness 让比较成为可能；坏的 harness 让神话成为可能。你要做的，是每次伸手去记一个分数之前，先摸一下那层皮还在不在。</p>
+      <div class="to-sofia">给 Sofia：学 AI 时先核对 harness / 协议，再记分数。</div>
+    </div>
+  </details>
+
+  <details class="archive-gate" id="archiveGate">
+    <summary>源码脚注 · 24h 档案</summary>
+    <div class="arch-list">
+      <div class="arch-item">
+        <div class="t">≈09-06 20:23 北京<br>TNW</div>
+        <div class="f">Astra ARC-AGI-3：62.7% vs 99.9% 套架修订报道上线（原文 12:23 UTC）。<div class="why">留：今日显影主证据链。</div></div>
+      </div>
+      <div class="arch-item">
+        <div class="t">持续更新<br>ARC Prize</div>
+        <div class="f">官方结果页并排 Standard / Adapter；声明 not claiming AGI。<div class="why">留：一手分数与免责。</div></div>
+      </div>
+      <div class="arch-item">
+        <div class="t">09-06 中文圈<br>IT之家</div>
+        <div class="f">追踪博客下线重发与多项评测数字回摆。<div class="why">留：改数时间线中文入口。</div></div>
+      </div>
+      <div class="arch-item">
+        <div class="t">09-04→06 发酵<br>Fortune</div>
+        <div class="f">Quietly boosts evaluation metrics；发布延迟与指标上修。<div class="why">留：英文调查稿对照。</div></div>
+      </div>
+      <div class="arch-item">
+        <div class="t">09-06<br>21财经</div>
+        <div class="f">AGI 定义拉扯 + Anthropic 招股窗口推迟报道。<div class="why">留：定义权×资本脊柱。</div></div>
+      </div>
+      <div class="arch-item">
+        <div class="t">侧栏<br>钛媒体等</div>
+        <div class="f">招股书下旬 / 路演十月 / 选举前挂牌叙事同步流转。<div class="why">留：资本日历旁证。</div></div>
+      </div>
+      <div class="arch-item">
+        <div class="t">更早窗口<br>Artificial Analysis</div>
+        <div class="f">Coding~67 / Intelligence~61 冷静画像；非今日新主线。<div class="why">留：防把旧 AA 当新爆点。</div></div>
+      </div>
+      <div class="arch-item">
+        <div class="t">09-07 04:25 北京<br>邮件 CI</div>
+        <div class="f">SCI-AIChat-Demo 仍红 master/579183f（20:25Z）。<div class="why">留：自家脚手架也在掉漆。</div></div>
+      </div>
+      <div class="arch-item">
+        <div class="t">09-06<br>邮件 CI</div>
+        <div class="f">Blog-YuSheng main + PR feat/home galaxy 多次失败。<div class="why">留：WATCH，不催开渠道。</div></div>
+      </div>
+      <div class="arch-item">
+        <div class="t">09-06 12:36 北京<br>邮件 CI</div>
+        <div class="f">deepseek-harness E2E 仍红 master/cd5ef81（04:36Z）。<div class="why">留：名字就叫 harness 的红灯。</div></div>
+      </div>
+      <div class="arch-item">
+        <div class="t">声部<br>Mike Knoop</div>
+        <div class="f">lack evidence for AGI claim amid headline scores。<div class="why">留：官方侧「别宣布奇点」。</div></div>
+      </div>
+      <div class="arch-item">
+        <div class="t">窗外 SKIP<br>邮件</div>
+        <div class="f">Grok usage reset / 贵州上架下架 / OTP 均 09-05 或窗外。<div class="why">留：边界清晰，防噪声进脊柱。</div></div>
+      </div>
+    </div>
+  </details>
+
+  <footer>
+    <div><b>折晓 早报</b> · 北京时间 2026-09-07</div>
+    <button type="button" class="arch-link" id="footerArch">archive</button>
+  </footer>
+</div>
+
+<script>
+(function(){
+  var card = document.getElementById('scoreCard');
+  var canvas = document.getElementById('scratchCanvas');
+  var layer = document.getElementById('scratchLayer');
+  var hint = document.getElementById('scratchHint');
+  var under = document.getElementById('scoreUnder');
+  var pctEl = document.getElementById('wipePct');
+  var revealBtn = document.getElementById('revealBtn');
+  var resetBtn = document.getElementById('resetBtn');
+  var archiveGate = document.getElementById('archiveGate');
+  var ctx = canvas.getContext('2d');
+  var drawing = false;
+  var revealed = false;
+  var total = 0, cleared = 0;
+  var dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+
+  function sizeCanvas(){
+    var r = card.getBoundingClientRect();
+    var w = Math.max(1, Math.floor(r.width));
+    var h = Math.max(1, Math.floor(r.height));
+    canvas.width = Math.floor(w * dpr);
+    canvas.height = Math.floor(h * dpr);
+    canvas.style.width = w + 'px';
+    canvas.style.height = h + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    paintSilver(w, h);
+    total = w * h;
+    cleared = 0;
+  }
+
+  function paintSilver(w, h){
+    var g = ctx.createLinearGradient(0, 0, w, h);
+    g.addColorStop(0, '#d4d4d4');
+    g.addColorStop(0.35, '#b0b0b0');
+    g.addColorStop(0.55, '#e2e2e2');
+    g.addColorStop(0.75, '#9e9e9e');
+    g.addColorStop(1, '#cfcfcf');
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, w, h);
+    /* matte noise lines */
+    ctx.strokeStyle = 'rgba(255,255,255,0.18)';
+    ctx.lineWidth = 1;
+    for (var i = 0; i < h; i += 3) {
+      ctx.beginPath();
+      ctx.moveTo(0, i + (i % 7) * 0.2);
+      ctx.lineTo(w, i);
+      ctx.stroke();
+    }
+    ctx.fillStyle = 'rgba(43,43,43,0.12)';
+    ctx.font = '700 ' + Math.min(72, w * 0.18) + 'px system-ui,sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('99.9%', w / 2, h / 2 - 8);
+    ctx.font = '500 13px system-ui,sans-serif';
+    ctx.fillStyle = 'rgba(43,43,43,0.35)';
+    ctx.fillText('ADAPTER HEADLINE · SCRATCH TO DEVELOP', w / 2, h / 2 + 36);
+  }
+
+  function pos(e){
+    var r = canvas.getBoundingClientRect();
+    var x, y;
+    if (e.touches && e.touches[0]) {
+      x = e.touches[0].clientX - r.left;
+      y = e.touches[0].clientY - r.top;
+    } else {
+      x = e.clientX - r.left;
+      y = e.clientY - r.top;
+    }
+    return {x:x, y:y};
+  }
+
+  function scratch(x, y){
+    if (revealed) return;
+    ctx.globalCompositeOperation = 'destination-out';
+    ctx.beginPath();
+    ctx.arc(x, y, 28, 0, Math.PI * 2);
+    ctx.fill();
+    hint.classList.add('hide');
+    sample();
+  }
+
+  function sample(){
+    try {
+      var w = canvas.width, h = canvas.height;
+      var step = 8 * dpr;
+      var data = ctx.getImageData(0, 0, w, h).data;
+      var empty = 0, n = 0;
+      for (var y = 0; y < h; y += step) {
+        for (var x = 0; x < w; x += step) {
+          n++;
+          if (data[(y * w + x) * 4 + 3] < 40) empty++;
+        }
+      }
+      var ratio = n ? empty / n : 0;
+      pctEl.textContent = '显影 ' + Math.min(100, Math.round(ratio * 100)) + '%';
+      if (ratio > 0.52) finishReveal(false);
+    } catch (err) { /* ignore */ }
+  }
+
+  function finishReveal(instant){
+    if (revealed) return;
+    revealed = true;
+    under.setAttribute('aria-hidden', 'false');
+    hint.classList.add('hide');
+    if (instant) {
+      layer.classList.add('done');
+    } else {
+      /* clear rest gently */
+      ctx.globalCompositeOperation = 'destination-out';
+      ctx.fillStyle = 'rgba(0,0,0,1)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      layer.classList.add('done');
+    }
+    pctEl.textContent = '显影完成 · 62.7% 标准套架';
+    revealBtn.disabled = true;
+    resetBtn.style.display = 'inline-flex';
+    archiveGate.classList.add('show');
+  }
+
+  function onDown(e){
+    if (revealed) return;
+    drawing = true;
+    var p = pos(e);
+    scratch(p.x, p.y);
+    e.preventDefault();
+  }
+  function onMove(e){
+    if (!drawing || revealed) return;
+    var p = pos(e);
+    scratch(p.x, p.y);
+    e.preventDefault();
+  }
+  function onUp(){ drawing = false; }
+
+  canvas.addEventListener('mousedown', onDown);
+  window.addEventListener('mousemove', onMove);
+  window.addEventListener('mouseup', onUp);
+  canvas.addEventListener('touchstart', onDown, {passive:false});
+  canvas.addEventListener('touchmove', onMove, {passive:false});
+  canvas.addEventListener('touchend', onUp);
+
+  revealBtn.addEventListener('click', function(){ finishReveal(true); });
+  resetBtn.addEventListener('click', function(){
+    revealed = false;
+    layer.classList.remove('done');
+    hint.classList.remove('hide');
+    under.setAttribute('aria-hidden', 'true');
+    revealBtn.disabled = false;
+    resetBtn.style.display = 'none';
+    sizeCanvas();
+    pctEl.textContent = '涂层完整 · 0% 显影';
+    archiveGate.classList.remove('show');
+    archiveGate.open = false;
+  });
+
+  /* mail clip */
+  var noteTab = document.getElementById('noteTab');
+  var notePanel = document.getElementById('notePanel');
+  noteTab.addEventListener('click', function(){
+    var open = notePanel.classList.toggle('open');
+    notePanel.hidden = !open;
+    noteTab.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+
+  document.getElementById('footerArch').addEventListener('click', function(){
+    archiveGate.classList.add('show');
+    archiveGate.open = true;
+    archiveGate.scrollIntoView({behavior:'smooth', block:'start'});
+  });
+
+  sizeCanvas();
+  window.addEventListener('resize', function(){
+    if (!revealed) sizeCanvas();
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>折晓 早报 · 2026-08-24 · 闭幕说明书</title>
+<!--
+Design lesson 2026-08-24 (used, not listed):
+1. STRUCTURE — The Pudding, “Easier scrollytelling with position sticky”
+   https://pudding.cool/process/scrollytelling-sticky/
+   Steal: sticky graphic + scrolling steps; CSS position:sticky; JS only flips copy.
+2. STYLE — WebKit, “A guide to Scroll-driven Animations with just CSS”
+   https://webkit.org/blog/17101/a-guide-to-scroll-driven-animations-with-just-css/
+   Steal: Apple-grade whitespace, one number in the frame, animation-timeline:scroll()
+   progress bar, prefers-reduced-motion.
+3. INTERACTION — 优设《写给新手的滚动视差设计指南（附7个教科书级案例）》
+   https://www.uisdc.com/beginner-guide-to-scrollytelling
+   Steal: one idea per beat, fade, a progress cue so the reader is not lost.
+Style: Apple product-page whitespace. Interaction: scrollytelling. Genre: 闭幕说明书.
+Banned: terrarium / deed+year / F1 pit / dual curtains / hotel / Linear board /
+risograph zine / contact sheet / factory hotspots / dark dashboard / card wall.
+Window: Beijing 2026-08-23 06:00 → 2026-08-24 06:00 = UTC 2026-08-22 22:00 → 2026-08-23 22:00.
+-->
+<style>
+:root{
+  --paper:#f5f5f7;--ink:#1d1d1f;--mute:#6e6e73;--line:rgba(0,0,0,.08);
+  --blue:#0071e3;--red:#b8002a;--stage:#ececef;
+  --sans:-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue","PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",sans-serif;
+  --serif:"Songti SC","Noto Serif SC","Source Han Serif SC",Georgia,serif;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--paper);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+a{color:var(--blue);text-decoration:none;border-bottom:1px solid rgba(0,113,227,.28)}
+a:hover{border-bottom-color:var(--blue)}
+:focus-visible{outline:2px solid var(--blue);outline-offset:3px}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+
+#progress{position:fixed;top:0;left:0;height:2px;width:100%;z-index:60;pointer-events:none}
+#progress>i{display:block;height:100%;width:0;background:var(--ink)}
+@supports (animation-timeline:scroll()){
+  #progress>i{width:100%;transform:scaleX(0);transform-origin:left;animation:grow linear both;animation-timeline:scroll()}
+  @keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+}
+
+.top{position:sticky;top:0;z-index:20;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  padding:14px 28px 12px;background:rgba(245,245,247,.88);backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--line);font-family:var(--mono);font-size:11px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--mute)}
+.top b{color:var(--ink);font-weight:600;letter-spacing:.2em}
+
+.hero{min-height:86vh;display:flex;flex-direction:column;justify-content:flex-end;
+  padding:12vh 8vw 10vh;max-width:1180px}
+.kicker{font-family:var(--mono);font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--mute)}
+.hero h1{font-size:clamp(40px,9vw,104px);line-height:.92;letter-spacing:-.045em;font-weight:600;margin:18px 0 22px;max-width:12ch}
+.hero .lead{font-size:clamp(18px,2.1vw,24px);line-height:1.45;color:var(--mute);max-width:28em}
+.numhint{margin-top:36px;font-family:var(--mono);font-size:13px;letter-spacing:.08em}
+.numhint strong{font-size:20px;letter-spacing:-.02em}
+
+.scrolly{display:grid;grid-template-columns:minmax(240px,42vw) minmax(0,1fr);align-items:start}
+.sticky{position:sticky;top:52px;height:calc(100vh - 52px);display:flex;align-items:center;padding:0 8vw}
+.stage{width:min(100%,560px);min-height:320px;background:var(--stage);border-radius:28px;
+  display:flex;flex-direction:column;justify-content:flex-end;padding:36px;position:relative}
+.stage:before{content:"";position:absolute;top:18px;left:18px;width:7px;height:7px;border-radius:50%;background:#86868b}
+.stage .lbl{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--mute)}
+.stage .big{font-size:clamp(42px,7vw,84px);line-height:.9;letter-spacing:-.05em;font-weight:600;margin:12px 0 10px;max-width:8ch}
+.stage .sub{font-size:15px;line-height:1.45;color:var(--mute);max-width:22em}
+.steps{padding:18vh 7vw 36vh 4vw}
+.step{min-height:70vh;display:flex;flex-direction:column;justify-content:center;max-width:38em;padding:24px 0 48px;opacity:.28;transition:opacity .25s ease}
+.step.on{opacity:1}
+.step .em{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--mute);margin-bottom:10px}
+.step h2{font-size:clamp(22px,3vw,32px);letter-spacing:-.03em;line-height:1.15;font-weight:600;margin:10px 0 14px}
+.step p{font-size:16px;line-height:1.65;color:#3a3a3c;margin-bottom:12px}
+.step .why{color:var(--mute);font-size:14px}
+.step .src{margin-top:14px;font-family:var(--mono);font-size:11px;word-break:break-all}
+.tag{display:inline-block;font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+  border:1px solid var(--line);padding:3px 8px;border-radius:99px;color:var(--mute);margin:0 6px 8px 0}
+.tag.warn{border-color:#e4b4c0;color:var(--red)}
+
+@media (max-width:860px){
+  .scrolly{grid-template-columns:1fr}
+  .sticky{position:relative;top:auto;height:auto;padding:24px 6vw 8px}
+  .stage{width:100%;min-height:220px;border-radius:20px}
+  .steps{padding:8px 6vw 12vh}
+  .step{min-height:auto;padding:28px 0 36px;opacity:1}
+}
+
+.credits{background:#1d1d1f;color:#f5f5f7;padding:12vh 8vw 10vh}
+.credits h2{font-size:clamp(28px,5vw,48px);letter-spacing:-.04em;margin:12px 0 8px}
+.credits .kicker,.credits .intro,.row .w,.row .t{color:#a1a1a6}
+.credits .intro{max-width:38em;margin:0 0 36px;line-height:1.6}
+.filter{width:min(100%,420px);padding:12px 14px;border-radius:12px;border:1px solid #3a3a3c;
+  background:#2c2c2e;color:#f5f5f7;font:inherit;margin-bottom:28px}
+.row{padding:16px 0;border-top:1px solid #3a3a3c;font-size:14px;line-height:1.55;max-width:820px}
+.row .t{font-family:var(--mono);font-size:11px;letter-spacing:.08em;margin-bottom:4px}
+.row .w{font-size:13px;margin-top:4px}
+.row a{color:#6cb4ff;border-bottom-color:rgba(108,180,255,.35)}
+
+.verso{padding:12vh 8vw 14vh;max-width:720px}
+.verso h2{font-size:clamp(28px,4vw,40px);letter-spacing:-.035em;margin:10px 0 24px}
+.verso p{font-family:var(--serif);font-size:18px;line-height:1.85;margin-bottom:1.15em}
+.verso .sign{font-family:var(--sans);font-size:13px;color:var(--mute);letter-spacing:.08em;margin-top:2em}
+
+.foot{padding:28px 8vw 48px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
+
+#tab{position:fixed;right:0;bottom:28px;z-index:40;width:44px;writing-mode:vertical-rl;
+  background:#1d1d1f;color:#f5f5f7;padding:16px 12px;border-radius:10px 0 0 10px;
+  font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase}
+#tab .n{display:inline-block;writing-mode:horizontal-tb;background:var(--red);color:#fff;border-radius:99px;
+  min-width:16px;height:16px;line-height:16px;text-align:center;font-size:10px;margin-top:8px;letter-spacing:0}
+#slip{position:fixed;right:0;bottom:0;top:0;width:min(420px,100vw);z-index:45;background:#fff;
+  box-shadow:-16px 0 40px rgba(0,0,0,.12);transform:translateX(104%);transition:transform .28s ease;
+  overflow:auto;padding:28px 28px 80px}
+#slip.open{transform:none}
+#slip h3{font-size:22px;letter-spacing:-.03em;margin:8px 0 6px}
+#slip .meta{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);margin-bottom:16px}
+#slip h4{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--mute);margin:22px 0 8px}
+#slip .item{padding:12px 0;border-top:1px solid var(--line);font-size:14px;line-height:1.55}
+#slip .when{font-family:var(--mono);font-size:11px;color:var(--mute);margin-bottom:4px}
+#slip .x{position:absolute;top:16px;right:16px;width:36px;height:36px;border-radius:50%;background:var(--paper);font-size:18px}
+#veil{position:fixed;inset:0;background:rgba(0,0,0,.28);z-index:44;opacity:0;pointer-events:none;transition:opacity .2s}
+#veil.on{opacity:1;pointer-events:auto}
+
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  #progress>i,#slip,.step{transition:none;animation:none}
+  .step{opacity:1}
+}
+</style>
+</head>
+<body>
+<div id="progress" aria-hidden="true"><i id="bar"></i></div>
+<header class="top">
+  <span><b>折晓</b> · 早报</span>
+  <span>2026-08-24 · 北京时间</span>
+  <span>窗 08-23 06:00 → 08-24 06:00</span>
+</header>
+
+<section class="hero">
+  <div class="kicker">Monday · closing paper</div>
+  <h1>闭幕日<br>就是账单日。</h1>
+  <p class="lead">展馆关了灯。港股配售进账。Cursor Auto 改按模型计价。Manus 还在删除窗里。往下滚，左边的数字会换。</p>
+  <div class="numhint">今日数字　<strong>800亿港元</strong></div>
+</section>
+
+<div class="scrolly" id="scrolly">
+  <aside class="sticky" aria-hidden="true">
+    <div class="stage">
+      <div class="lbl" id="slbl">今日数字</div>
+      <div class="big" id="sbig">800亿</div>
+      <div class="sub" id="ssub">港元。阿里配售，全部写进全栈 AI。</div>
+    </div>
+  </aside>
+  <div class="steps">
+
+    <article class="step on" data-n="800亿" data-l="今日数字 · 资本" data-s="港元。阿里配售，全部写进全栈 AI。">
+      <div class="em">01 · 资本</div>
+      <div><span class="tag">窗内</span></div>
+      <h2>阿里配售 800 亿港元，七年第一次，全部进 AI。</h2>
+      <p>2026-08-23，阿里巴巴宣布向美国境外的非美国人士配售新股，总额 800 亿港元。这是它 2019 年港股上市以来首次新股配售。官方新闻稿（Hong Kong, 23 Aug）：拟向美国境外非美国人士配售新发行普通股，总对价 800 亿港元，视市场及其他条件而定。净额 100% 用于全栈 AI 能力，包括扩建和增强 AI 基础设施。Reg S。稿件写明完成并无保证。</p>
+      <p>路透等报道称约 7.10 亿股、定价 112.70 港元（较周五收盘折让约 3.6%）、获超额认购。这些数字不在公司稿里，标「报道称」，不当今日数字。</p>
+      <p class="why">为什么重要：算力竞赛已经是资产负债表竞赛。香港在这里当非美资金的管子。路透把它写成今年全球第三大一级增发（Alphabet、Intel 之后）——那是路透的口径。</p>
+      <p class="src"><a href="https://www.alibabagroup.com/en-US/document-2028246284372017152">Alibaba 官方 2026-08-23</a> · <a href="https://www.cs.com.cn/ssgs/01/2026/08/23/detail_2026082310033309.html">中证报</a></p>
+    </article>
+
+    <article class="step" data-n="44" data-l="闭幕 · 机器人" data-s="项新技术、新方案。世界机器人大会散场。">
+      <div class="em">02 · 中国 · 机器人</div>
+      <div><span class="tag">窗内</span></div>
+      <h2>世界机器人大会闭幕。一天交出 44 项。</h2>
+      <p>新京报 8 月 23 日 22:09：2026 世界机器人大会当日闭幕。大会发布具身世界模型、绳驱灵巧手、柔性触觉数采设备、大小脑融合芯片等 44 项新技术、新方案。</p>
+      <p>同一口径：373 家企业、3000 余件产品、首发新品 311 件；配套消费节售出机器人及相关智能产品超 14 万件。另宣布成立中国电子学会世界模型专家委员会。</p>
+      <p class="why">为什么重要：议程从「看它走路」转到「看它交货」。落地仍要看订单。</p>
+      <p class="src"><a href="https://www.bjnews.com.cn/detail/1787494064129187.html">新京报 2026-08-23 22:09</a></p>
+    </article>
+
+    <article class="step" data-n="160亿" data-l="产品 · 具身" data-s="参数。章鱼动力 SYNWorld 0.5，世界模型当场交卷。">
+      <div class="em">03 · 产品 · 具身</div>
+      <div><span class="tag">窗内</span></div>
+      <h2>章鱼动力交了一份 160 亿参数的世界模型。</h2>
+      <p>21 世纪经济报道 8 月 23 日 15:07：大会期间，具身公司章鱼动力发布 SYNWorld 0.5（160 亿参数具身原生世界模型）。其中 ACWM 按给定动作预测环境变化，用于合成数据与闭环仿真；WAM 在理解状态的同时直接生成运动轨迹。</p>
+      <p>配套交了手和数据：OctoH-Hand，28 个独立执行器、23 个主动自由度、超过 1900 个触觉单元，MTBF 设计目标 1000 小时，年底前拟量产——可靠性目前来自企业自测。OctoSense：鱼眼头环 + 肌电手环 + 外骨骼同构手套。</p>
+      <p>公司 2026 年 1 月成立，数月累计融资近 10 亿元。地平线创始人余凯以股东身份出席；数据处理与训练在百度智能云。计划 10 月 200 亿参数，明年升至千亿级以上。</p>
+      <p class="why">为什么重要：脑、手、数据捆在同一家，是重资产全栈。真机一致性「超过 80%」是公司自述。</p>
+      <p class="src"><a href="https://www.21jingji.com/article/20260823/herald/0a57543b273a7c251474dc10d249bfb0.html">21财经 2026-08-23 15:07</a></p>
+    </article>
+
+    <article class="step" data-n="Auto" data-l="产品 · Cursor" data-s="今天起，按实际路由到的模型计价。一口价结束。">
+      <div class="em">04 · Cursor · 生效日</div>
+      <div><span class="tag warn">对你</span><span class="tag">不是新发布</span></div>
+      <h2>Cursor Auto 今天改按模型计价。</h2>
+      <p>Cursor Team 邮件写明：2026-08-24 起，Auto 不再使用单一一口价，改为按这次请求实际路由到的模型费率计。公司措辞：多数请求的费率会高于当前一口价。Cursor Models（含 Auto）的包含用量上调，计入当前账期。路由逻辑不变。</p>
+      <p>截至本报截稿，Cursor 博客与定价页没有对应的正式 changelog。邮件里也没写新的数字限额。以 Settings → Billing 为准。</p>
+      <p class="why">对 Sofia：不是「Auto 被砍」，是补贴收口。去 Billing 看新额度。长会话尤其看 cache read。</p>
+    </article>
+
+    <article class="step" data-n="25日" data-l="状态 · Manus" data-s="08:00 新加坡时间。删除窗还在走，恢复入口明天开。">
+      <div class="em">05 · 状态 · Manus</div>
+      <div><span class="tag warn">对你</span><span class="tag">不是新公告</span></div>
+      <h2>Manus 还在删除窗。恢复要等到明天。</h2>
+      <p>官方时间表没有改。受影响账户：备份截止已过（2026-08-23 07:59 SGT）。删除作业自 8 月 23 日 08:00 SGT 开始，至 8 月 25 日 07:59 SGT。恢复入口 8 月 25 日 08:00 SGT 开放（北京时间约 08:00）。本报截稿时，你正在这段不能登录的两天里。</p>
+      <p>官方说明：这是与 Meta 分拆、满足特定司法辖区监管要求的一部分，不是数据泄露。未受影响用户可照常使用。本窗 aimfllyys 没有新的 Manus 信。</p>
+      <p class="why">对 Sofia：不要反复点登录。日历写 25 日上午。若 23 日 07:59 前没有备份，官方写明指定数据将被永久删除。</p>
+      <p class="src"><a href="https://manus.im/zh-cn/blog/a-note-to-our-users">manus.im · 致用户的一封信</a></p>
+    </article>
+
+    <article class="step" data-n="$13B+" data-l="报道称 · 并购" data-s="Hugging Face 在探出售。没有成交。">
+      <div class="em">06 · 并购 · 报道称</div>
+      <div><span class="tag">报道称</span></div>
+      <h2>Hugging Face 在探出售。估值写着 130 亿美元以上。</h2>
+      <p>Business Insider（Katie Roof）2026-08-23 19:01 UTC：Hugging Face「一直在探索出售」，估值可能达到 130 亿美元或更高；正与投行评估买家兴趣。没有达成交易。上次公开估值是 2023 年的 45 亿美元。路透转述同一篇；公司未在工作时间外回应。</p>
+      <p class="why">为什么重要：开源模型超市如果被买走，分发层会跟着换东家。还没成交，不要写成收购完成。</p>
+      <p class="src"><a href="https://www.businessinsider.com/hugging-face-could-be-acquired-13-billion-2026-8">Business Insider 2026-08-23</a></p>
+    </article>
+
+    <article class="step" data-n="$91.0B" data-l="预告 · 芯片" data-s="NVIDIA 指引中值。财报在后天盘后。">
+      <div class="em">07 · 预告 · 不是今天新闻</div>
+      <div><span class="tag">预告</span></div>
+      <h2>NVIDIA 财报在周三盘后。指引写着 910 亿美元。</h2>
+      <p>NVIDIA 将于 2026-08-26 美股盘后发布 2027 财年第二季度结果，电话会 14:00 PT。公司自己的营收指引约 910 亿美元（$91.0B），上下 2%。指引口径不含中国大陆数据中心计算收入。</p>
+      <p>这是日历，不是业绩。上一窗「报道称 AI 服务器涨逾 15%」仍未获公司证实，本报不重开。</p>
+      <p class="src"><a href="https://investor.nvidia.com/events-and-presentations/events-and-presentations/default.aspx">NVIDIA IR · Q2 FY27</a></p>
+    </article>
+
+  </div>
+</div>
+
+<section class="credits" id="archive">
+  <div class="kicker">片尾字幕 · 24h 档案</div>
+  <h2>这一天还留下什么。</h2>
+  <p class="intro">档案长在滚动里，不是按钮墙。输入时间、事实或 URL 可滤。窗外的条目标出来，避免装新。</p>
+  <input class="filter" id="q" type="search" placeholder="检索时间 / 事实 / URL" autocomplete="off">
+  <div id="roll"></div>
+</section>
+
+<section class="verso" id="essay">
+  <div class="kicker">说明书 · 背面</div>
+  <h2>闭幕日就是账单日</h2>
+  <p>星期一早上通常有两种假象。一种是周末什么都没发生，一种是把上周的新闻再贴一遍，当成今天的。这两种我们都不做。过去二十四小时其实很吵：北京的展馆关灯，香港的认购簿翻开，Cursor 的一口价在邮件里到期，Manus 的删除作业已经开始。把它们放在同一张纸上，不是为了热闹，是因为它们在做同一件事——把「还能假装便宜」的阶段往前推一格。</p>
+  <p>阿里配售 800 亿港元，并且写明全部进全栈 AI 与基建。七年里第一次用港股配售来做这件事，本身就是一句产品说明：模型发布会解决不了电和机柜，要到资本市场去搬砖。报道称一小时超额认购。即便把「知情人士」三个字留在括号里，方向也清楚：长线钱现在认的是算力回收周期，不是又一个聊天窗口。</p>
+  <p>同一天下午到夜里，世界机器人大会用「44 项新技术、新方案」给自己写了闭幕词。具身世界模型、绳驱灵巧手、柔性触觉、大小脑芯片——名词堆在一起很容易像软文。但议程已经从「看它走路」变成「看它交货」。章鱼动力把脑、手、数据一次交齐，成立半年融资近十亿，训练放在百度智能云。这是全栈，也是重资产。世界模型能不能替代真机，要看那句「评估一致性超过 80%」出了发布会还能不能站住。在那之前，它只是闭幕日的一张成绩单。</p>
+  <p>对你更硬的两件事不在展馆。Cursor Auto 从今天起按实际路由到的模型计费。邮件写得很直：多数请求会比一口价贵；包含用量上调；路由方式不变。没有官方博客，没有新的数字表。所以唯一可执行的动作是打开 Billing。Manus 更硬：备份窗已过，删除正在发生，恢复入口写在 25 日 08:00 新加坡时间。点登录没有用。日历比按钮重要。</p>
+  <p>开源分发层也在标价。Business Insider 写 Hugging Face 在探出售，估值写到 130 亿美元以上，没有成交。OpenAI 的 Lehane 同一天对卫报说：网络攻击会持续，并要美国联邦强制部署前安全法。匿名模型还在演——Ox Alpha 继续被指认智谱，官方不认。有人在论坛写 ChatGPT 点了 GPT-5.6 Sol、服务端落到 5.5-mini。你看见的名字，不一定是跑起来的那一层。</p>
+  <p>所以这一页做成说明书，而不是展台。往下滚，数字换；滚到底，字幕出。闭幕不是结束，是把价格写在纸上。44 项技术可以明天再读。今天先看两格：Cursor 的额度，Manus 的 25 日。</p>
+  <p class="sign">折晓 · 2026-08-24 北京</p>
+</section>
+
+<footer class="foot">
+  <span>2026-08-24 北京时间 · 折晓 早报</span>
+  <span>j / k 换段 · 便条在右下角</span>
+</footer>
+
+<button type="button" id="tab" aria-expanded="false" aria-controls="slip">便条 <span class="n">3</span></button>
+<div id="veil" hidden></div>
+<aside id="slip" role="dialog" aria-labelledby="slip-t" hidden>
+  <button type="button" class="x" id="cx" aria-label="关闭">×</button>
+  <div class="meta">角落里的便条 · 不是收件箱</div>
+  <h3 id="slip-t">三张要办的单</h3>
+  <p class="meta">aimfllyys@gmail.com · 窗内 UTC 08-22 22:00 → 08-23 22:00<br>sofiapintos190@gmail.com 本窗无新信</p>
+
+  <h4>要办</h4>
+  <div class="item">
+    <div class="when">2026-08-23 18:49:50Z · GitHub</div>
+    <div><strong>SCI-AIChat-Demo</strong> CI 再红。master 579183f，compileall + pytest。</div>
+  </div>
+  <div class="item">
+    <div class="when">2026-08-23 14:48–18:29Z · GitHub / EdgeOne</div>
+    <div><strong>test-check-gpt</strong> main 上 CI 与 EdgeOne Pages 部署连红（38c576f … fa12d01）。收成一条：部署和质量门都红。</div>
+  </div>
+
+  <h4>状态 / 截止</h4>
+  <div class="item">
+    <div class="when">进行中 · 恢复 2026-08-25 08:00 SGT</div>
+    <div><strong>Manus 羽升</strong> 备份已过。删除窗至 08-25 07:59 SGT。此刻不能登录。无新邮件。</div>
+  </div>
+  <div class="item">
+    <div class="when">2026-08-25 00:00 SGT</div>
+    <div><strong>Qoder Pro</strong> 自动续费。金额信中未写。</div>
+  </div>
+  <div class="item">
+    <div class="when">24 Aug 2026</div>
+    <div><strong>Amazon Quick Plus</strong> 试用结束日是今天，之后回 Free（1 user / 1 GB，以原信为准）。</div>
+  </div>
+
+  <h4>一笔带过</h4>
+  <div class="item">贵州大模型算力平台验证码故障后已恢复（约 08:02 UTC）。OTP / 收据 / Dribbble 已略过。</div>
+</aside>
+
+<script>
+(function(){
+  var rows=[
+    {t:'2026-08-23 北京',f:'阿里巴巴向美国境外非美国人士配售新股，总额 800 亿港元；2019 年港股上市以来首次；净额 100% 用于全栈 AI 与基建。',w:'今日数字。',u:'https://www.cs.com.cn/ssgs/01/2026/08/23/detail_2026082310033309.html'},
+    {t:'2026-08-23 官方',f:'Alibaba 新闻稿：拟配售新股，总对价 HK$80bn，视条件而定；净额 100% 全栈 AI / 基建。Reg S。完成并无保证。',w:'一手。今日数字只取 800 亿港元。',u:'https://www.alibabagroup.com/en-US/document-2028246284372017152'},
+    {t:'2026-08-23 报道称',f:'路透等：约 7.10 亿股、HK$112.70、较周五收盘折让约 3.6%、超额认购。不在公司稿。',w:'定价细节。',u:'https://asia.nikkei.com/business/technology/alibaba-to-raise-10bn-via-new-hong-kong-shares-to-fund-ai-investments'},
+    {t:'2026-08-23 19:01 UTC',f:'报道称 BI：Hugging Face 探索出售，估值 $13B 或更高；无成交。上次公开估值 $4.5B（2023）。',w:'分发层并购。',u:'https://www.businessinsider.com/hugging-face-could-be-acquired-13-billion-2026-8'},
+    {t:'2026-08-23 卫报',f:'OpenAI Chris Lehane：应预期持续的 AI 网络攻击；开源模型「落后前沿几个月」，他点到许多在中国开发。呼吁美国联邦强制部署前安全法。Astra 关键网络能力未排除。18 日暂停本身不重开。',w:'政策/安全。',u:'https://www.theguardian.com/technology/2026/aug/23/openai-cyber-attacks-threat-chris-lehane'},
+    {t:'2026-08-23 周日美东晨间',f:'德州州长 Abbott 在 ABC This Week：数据中心开发商「自掘坟墓」。3 Aug 冻结本身不重开。',w:'算力选址政治。',u:'https://www.washingtonexaminer.com/policy/technology/4697747/greg-abbott-texas-data-center-developers/'},
+    {t:'2026-08-23 17:45 UTC FT',f:'FT：Fable 5 需求见顶，约占 Anthropic 工具支出约 11%；Opus 5 已超过它。Ramp 指数页日期是 8 月 12 日，11.4% 不是今天新公布的数。',w:'实验室单位经济。',u:'https://www.ft.com/content/5ee49718-c258-4f01-aa32-7e5b76ae5245'},
+    {t:'2026-08-23 报道称',f:'中证报援引知情人士：配售一小时内超额认购，主权财富基金等长线需求强劲。',w:'认购节奏未读到交易所原文。',u:'https://www.cs.com.cn/ssgs/01/2026/08/23/detail_2026082310033309.html'},
+    {t:'2026-08-23 22:09 北京',f:'新京报：世界机器人大会闭幕。44 项新技术/新方案；373 家、3000 余件、首发 311；消费节售出超 14 万件。',w:'闭幕口径。',u:'https://www.bjnews.com.cn/detail/1787494064129187.html'},
+    {t:'2026-08-23 15:07 北京',f:'21财经：章鱼动力 SYNWorld 0.5（160亿参数）、OctoH-Hand、OctoSense。成立 2026-01，累计融资近 10 亿元。余凯股东出席。训练在百度智能云。10 月拟 200 亿，明年千亿。',w:'大会期间的产品交卷。',u:'https://www.21jingji.com/article/20260823/herald/0a57543b273a7c251474dc10d249bfb0.html'},
+    {t:'生效日 2026-08-24',f:'Cursor Auto 从一口价改为按路由模型计价；包含用量上调；路由不变。官方博客未见。',w:'对 Sofia：Billing。',u:''},
+    {t:'状态 · SGT',f:'Manus 删除窗 08-23 08:00–08-25 07:59；恢复入口 08-25 08:00。本窗无新信。',w:'人的开关。',u:'https://manus.im/zh-cn/blog/a-note-to-our-users'},
+    {t:'2026-08-23 13:30 北京',f:'凤凰网：Ox Alpha 继续被猜智谱（tokenizer / 报错码）。官方未认。Abacus.AI 称低于预期。',w:'续，不是揭牌。',u:'https://tech.ifeng.com/c/8vp9fAOdVuP'},
+    {t:'预告 2026-08-26 14:00 PT',f:'NVIDIA Q2 FY27 盘后。公司指引营收约 $91.0B ±2%。',w:'日历。',u:'https://investor.nvidia.com/events-and-presentations/events-and-presentations/default.aspx'},
+    {t:'2026-08-23 社区',f:'报道称 ChatGPT 部分 Plus 请求 GPT-5.6 Sol，服务端解析为 GPT-5.5-mini。开发者论坛帖，非官方。',w:'层的名字不等于层。',u:'https://community.openai.com/t/chatgpt-web-requests-gpt-5-6-sol-but-server-resolves-gpt-5-5-mini-on-plus-accounts/1391809'},
+    {t:'2026-08-23 18:49:50Z',f:'SCI-AIChat-Demo CI 失败，master 579183f，compileall+pytest。',w:'邮件。',u:''},
+    {t:'2026-08-23 14:48–18:29Z',f:'test-check-gpt CI 与 EdgeOne Pages 部署连红。',w:'邮件，收成一条。',u:''},
+    {t:'PRIOR / 窗外，不重开',f:'Grok 4.6（08-12）· Harvey II（08-18）· OpenAI 内部约 2000 万 agent 周活 / CNBC 08-19 · Pinecone Nexus GA 08-06 · DeepSeek-V4-Flash-Vision-Exp 08-21 · 报道称 Nvidia 服务器涨逾 15%（08-22 彭博）· Grok 4.6 Vertex。',w:'已见。不装新。',u:''},
+    {t:'窗外 新华社 08-22 夜',f:'「人形机器人出口同比增长 210%」见稿于 08-23 00:42 北京，对应 UTC 08-22 16:42，早于本窗。',w:'附录，不进主线。',u:'https://www.news.cn/fortune/20260823/c6eca108c36a4a0497a43f9e4b180bf7/c.html'}
+  ];
+  var roll=document.getElementById('roll');
+  function paint(q){
+    q=(q||'').toLowerCase();
+    var hit=rows.filter(function(r){return !q || (r.t+r.f+r.w+r.u).toLowerCase().indexOf(q)>-1;});
+    roll.innerHTML=hit.map(function(r){
+      var a=r.u?'<br><a href="'+r.u+'">'+r.u+'</a>':'';
+      return '<div class="row"><div class="t">'+r.t+'</div>'+r.f+'<div class="w">留：'+r.w+'</div>'+a+'</div>';
+    }).join('') || '<div class="row">无匹配字幕。</div>';
+  }
+  paint('');
+  document.getElementById('q').addEventListener('input',function(){paint(this.value);});
+
+  var steps=[].slice.call(document.querySelectorAll('.step'));
+  var slbl=document.getElementById('slbl');
+  var sbig=document.getElementById('sbig');
+  var ssub=document.getElementById('ssub');
+  var cur=0;
+  function apply(i){
+    if(i<0||i>=steps.length) return;
+    cur=i;
+    steps.forEach(function(s,n){s.classList.toggle('on',n===i);});
+    var s=steps[i];
+    slbl.textContent=s.getAttribute('data-l');
+    sbig.textContent=s.getAttribute('data-n');
+    ssub.textContent=s.getAttribute('data-s');
+  }
+  if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(ents){
+      var vis=ents.filter(function(e){return e.isIntersecting;})
+        .sort(function(a,b){return b.intersectionRatio-a.intersectionRatio;})[0];
+      if(!vis) return;
+      apply(steps.indexOf(vis.target));
+    },{threshold:[0.35,0.6], rootMargin:'-12% 0px -35% 0px'});
+    steps.forEach(function(s){io.observe(s);});
+  } else {
+    steps.forEach(function(s){s.classList.add('on');});
+  }
+
+  var bar=document.getElementById('bar');
+  var supportScroll=false;
+  try{supportScroll=CSS.supports('animation-timeline','scroll()');}catch(e){}
+  function onscroll(){
+    if(supportScroll) return;
+    var h=document.documentElement;
+    var p=h.scrollHeight-h.clientHeight;
+    bar.style.width=(p?Math.min(100,(h.scrollTop||document.body.scrollTop)/p*100):0)+'%';
+  }
+  if(!supportScroll){
+    document.addEventListener('scroll',onscroll,{passive:true});
+    onscroll();
+  }
+
+  document.addEventListener('keydown',function(e){
+    var t=e.target;
+    if(t && (t.tagName==='INPUT'||t.tagName==='TEXTAREA')) return;
+    if(e.key==='j'||e.key==='J'||e.key==='ArrowDown'){
+      e.preventDefault();
+      var n=Math.min(steps.length-1,cur+1);
+      steps[n].scrollIntoView({behavior:'smooth',block:'center'});
+      apply(n);
+    } else if(e.key==='k'||e.key==='K'||e.key==='ArrowUp'){
+      e.preventDefault();
+      var p=Math.max(0,cur-1);
+      steps[p].scrollIntoView({behavior:'smooth',block:'center'});
+      apply(p);
+    }
+  });
+
+  var slip=document.getElementById('slip');
+  var veil=document.getElementById('veil');
+  var tab=document.getElementById('tab');
+  function open(){
+    slip.hidden=false;veil.hidden=false;
+    requestAnimationFrame(function(){slip.classList.add('open');veil.classList.add('on');});
+    tab.setAttribute('aria-expanded','true');
+  }
+  function close(){
+    slip.classList.remove('open');veil.classList.remove('on');
+    tab.setAttribute('aria-expanded','false');
+    setTimeout(function(){if(!slip.classList.contains('open')){slip.hidden=true;veil.hidden=true;}},280);
+  }
+  tab.addEventListener('click',function(){ slip.classList.contains('open')?close():open(); });
+  document.getElementById('cx').addEventListener('click',close);
+  veil.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape') close(); });
+})();
+</script>
+</body>
+</html>
