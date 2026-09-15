@@ -1,0 +1,1986 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2026-09-16 折晓早报｜值班分诊台：什么时候可以自己下结论</title>
+<style>
+/* CSS RESET & SYSTEM VARIABLES - 医院值班台浅色晨光质感 */
+:root {
+  --bg-desk: #f3f5f8;
+  --bg-desk-warm: #fcf9f5;
+  --panel-bg: #ffffff;
+  --panel-subtle: #f8fafc;
+  --text-main: #1e293b;
+  --text-muted: #64748b;
+  --text-dim: #94a3b8;
+  --primary: #0284c7;
+  --primary-hover: #0369a1;
+  --primary-light: #e0f2fe;
+  --accent-amber: #d97706;
+  --accent-amber-light: #fef3c7;
+  --accent-emerald: #059669;
+  --accent-emerald-light: #d1fae5;
+  --accent-rose: #e11d48;
+  --accent-rose-light: #ffe4e6;
+  --accent-indigo: #4f46e5;
+  --accent-indigo-light: #e0e7ff;
+  --border-light: #e2e8f0;
+  --border-card: #cbd5e1;
+  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.05);
+  --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08);
+  --shadow-lg: 0 12px 28px rgba(15, 23, 42, 0.12);
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "PingFang SC", "Noto Sans CJK SC", "Microsoft YaHei", sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg-desk);
+  background-image: 
+    radial-gradient(circle at 10% 20%, rgba(2, 132, 199, 0.03) 0%, transparent 40%),
+    radial-gradient(circle at 90% 80%, rgba(217, 119, 6, 0.03) 0%, transparent 40%),
+    linear-gradient(#e9eef5 1px, transparent 1px),
+    linear-gradient(90deg, #e9eef5 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 24px 24px, 24px 24px;
+  color: var(--text-main);
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+}
+
+/* 顶部值班台横幅 */
+.desk-header {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border-light);
+  padding: 14px 24px;
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: var(--shadow-sm);
+}
+
+.station-badge {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.station-icon {
+  width: 40px;
+  height: 40px;
+  background: var(--primary-light);
+  color: var(--primary);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  border: 1px solid rgba(2, 132, 199, 0.2);
+}
+
+.station-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-main);
+  letter-spacing: -0.01em;
+}
+
+.station-meta {
+  font-size: 12px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--accent-emerald-light);
+  color: var(--accent-emerald);
+  padding: 2px 8px;
+  border-radius: 9999px;
+  font-weight: 600;
+  font-size: 11px;
+}
+
+.pulse-dot {
+  width: 6px;
+  height: 6px;
+  background: var(--accent-emerald);
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(0.95); opacity: 0.8; }
+  50% { transform: scale(1.3); opacity: 1; }
+  100% { transform: scale(0.95); opacity: 0.8; }
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid var(--border-card);
+  background: var(--panel-bg);
+  color: var(--text-main);
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.btn:hover {
+  background: var(--panel-subtle);
+  border-color: var(--text-muted);
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+}
+
+.btn-primary:hover {
+  background: var(--primary-hover);
+  border-color: var(--primary-hover);
+}
+
+.btn-amber {
+  background: var(--accent-amber-light);
+  color: var(--accent-amber);
+  border-color: rgba(217, 119, 6, 0.3);
+}
+
+.btn-amber:hover {
+  background: #fde68a;
+}
+
+/* 主操作台格局布局 */
+.desk-workspace {
+  flex: 1;
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 20px;
+  display: grid;
+  grid-template-columns: 290px 1fr 310px;
+  gap: 20px;
+  align-items: start;
+}
+
+/* 左侧：候诊病例队列（Case Queue） */
+.queue-panel {
+  background: var(--panel-bg);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 110px);
+}
+
+.panel-title-bar {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border-light);
+  background: var(--panel-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.panel-title-bar h3 {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.queue-counter {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--primary);
+  background: var(--primary-light);
+  padding: 2px 7px;
+  border-radius: 9999px;
+}
+
+.case-list {
+  overflow-y: auto;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.case-item {
+  padding: 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  background: #fff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.case-item:hover {
+  border-color: var(--border-card);
+  background: var(--panel-subtle);
+}
+
+.case-item.active {
+  border-color: var(--primary);
+  background: #f0f9ff;
+  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.12);
+}
+
+.case-item.triaged-auto {
+  border-left: 4px solid var(--accent-emerald);
+}
+
+.case-item.triaged-defer {
+  border-left: 4px solid var(--accent-amber);
+}
+
+.case-item-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.case-badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: #e2e8f0;
+  color: #475569;
+}
+
+.case-status-indicator {
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.case-item-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-main);
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.case-item-preview {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* 中间：中央分诊台核心操作面（Central Triage Bench） */
+.bench-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* 分诊导言小横幅 */
+.bench-intro-bar {
+  background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%);
+  border: 1px solid #bae6fd;
+  border-radius: var(--radius-md);
+  padding: 12px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.intro-text {
+  font-size: 13px;
+  color: #0369a1;
+  line-height: 1.5;
+}
+
+.intro-text strong {
+  color: #0c4a6e;
+}
+
+/* 核心分诊卡片：三维白板纸质物理质感 */
+.triage-card {
+  background: var(--panel-bg);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-card);
+  box-shadow: var(--shadow-md);
+  padding: 24px;
+  position: relative;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.triage-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border-light);
+  padding-bottom: 16px;
+  margin-bottom: 20px;
+}
+
+.patient-identity {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.patient-avatar {
+  width: 52px;
+  height: 52px;
+  background: var(--panel-subtle);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  border: 2px solid var(--border-light);
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.04);
+}
+
+.patient-details h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.patient-tags {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.tag {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.tag-blue { background: var(--primary-light); color: var(--primary); }
+.tag-amber { background: var(--accent-amber-light); color: var(--accent-amber); }
+.tag-rose { background: var(--accent-rose-light); color: var(--accent-rose); }
+
+/* 核心来访主诉对讲泡泡 */
+.complaint-section {
+  background: var(--bg-desk-warm);
+  border: 1px solid #fed7aa;
+  border-radius: var(--radius-md);
+  padding: 16px;
+  margin-bottom: 24px;
+  position: relative;
+}
+
+.complaint-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--accent-amber);
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.complaint-text {
+  font-size: 15px;
+  font-weight: 600;
+  color: #7c2d12;
+  line-height: 1.5;
+}
+
+.listen-trigger-btn {
+  position: absolute;
+  right: 14px;
+  top: 14px;
+  background: #fff;
+  border: 1px solid #fdba74;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  color: #c2410c;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s;
+}
+
+.listen-trigger-btn:hover {
+  background: #ffedd5;
+}
+
+/* 核心旋钮与可靠性门槛交互区（Knob & Reliability Threshold） */
+.knob-interactive-zone {
+  background: var(--panel-subtle);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+.zone-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.zone-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.zone-hint {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.slider-container {
+  position: relative;
+  padding: 10px 0 24px 0;
+}
+
+.reliability-slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 10px;
+  border-radius: 5px;
+  background: linear-gradient(90deg, #f59e0b 0%, #0284c7 70%, #10b981 100%);
+  outline: none;
+  cursor: pointer;
+}
+
+.reliability-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 3px solid var(--primary);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  cursor: grab;
+  transition: transform 0.1s;
+}
+
+.reliability-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+}
+
+.reliability-slider::-moz-range-thumb {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 3px solid var(--primary);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  cursor: grab;
+}
+
+.slider-scale-ticks {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.required-marker {
+  color: var(--accent-rose);
+  font-weight: 700;
+}
+
+.dial-readout-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 10px 16px;
+  margin-top: 12px;
+}
+
+.dial-current {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.dial-current strong {
+  font-size: 18px;
+  color: var(--primary);
+  font-family: var(--font-mono);
+}
+
+.dial-target {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.dial-target strong {
+  font-size: 16px;
+  color: var(--accent-rose);
+  font-family: var(--font-mono);
+}
+
+/* 分诊决策按钮栏（Dispatch Trays） */
+.dispatch-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.dispatch-btn {
+  padding: 14px;
+  border-radius: var(--radius-md);
+  border: 2px solid transparent;
+  font-size: 14px;
+  font-weight: 700;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.dispatch-btn-defer {
+  background: #fffbeb;
+  border-color: #fde68a;
+  color: #b45309;
+}
+
+.dispatch-btn-defer:hover {
+  background: #fef3c7;
+  border-color: #f59e0b;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+.dispatch-btn-auto {
+  background: #ecfdf5;
+  border-color: #a7f3d0;
+  color: #047857;
+}
+
+.dispatch-btn-auto:hover:not(:disabled) {
+  background: #d1fae5;
+  border-color: #10b981;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+.dispatch-btn-auto:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  filter: grayscale(80%);
+}
+
+.dispatch-btn-sub {
+  font-size: 11px;
+  font-weight: 400;
+  opacity: 0.85;
+}
+
+/* 揭示的结论卷宗展开区（Revealed Conclusion Dossier） */
+.dossier-reveal {
+  margin-top: 24px;
+  border-top: 1px dashed var(--border-card);
+  padding-top: 20px;
+  animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.decision-banner {
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.decision-banner.autonomous {
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  color: #065f46;
+}
+
+.decision-banner.defer {
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  color: #92400e;
+}
+
+.decision-icon {
+  font-size: 24px;
+}
+
+.decision-title {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.decision-desc {
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+/* 证据指标仪表盘格架 */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.metric-cell {
+  background: var(--panel-subtle);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+}
+
+.metric-k {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-bottom: 2px;
+}
+
+.metric-v {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-main);
+  font-family: var(--font-mono);
+}
+
+/* 完整背景与核实声明 */
+.dossier-story {
+  font-size: 13px;
+  color: #334155;
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+
+.verification-tag-bar {
+  background: #f8fafc;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  font-size: 12px;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.verify-badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.verify-badge-single {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.verify-badge-multi {
+  background: #e0e7ff;
+  color: #3730a3;
+}
+
+.source-link-bar {
+  margin-top: 12px;
+  font-size: 12px;
+}
+
+.source-link-bar a {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 600;
+  word-break: break-all;
+}
+
+.source-link-bar a:hover {
+  text-decoration: underline;
+}
+
+/* 右侧：值班日志本与台角便签（Logbook & Desk Notes） */
+.desk-aside {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* 台角轻提示便签（Yellow Sticky Note） - 真实物理纸张便签感 */
+.sticky-note {
+  background: #fef9c3;
+  background: linear-gradient(175deg, #fef08a 0%, #fef9c3 100%);
+  border-radius: 4px 4px var(--radius-md) var(--radius-md);
+  border: 1px solid #fde047;
+  box-shadow: 0 4px 10px rgba(180, 83, 9, 0.12), 0 1px 2px rgba(0,0,0,0.05);
+  padding: 18px 16px;
+  position: relative;
+  transform: rotate(0.8deg);
+  transition: transform 0.2s ease;
+}
+
+.sticky-note:hover {
+  transform: rotate(0deg) scale(1.01);
+}
+
+.sticky-pin {
+  width: 14px;
+  height: 14px;
+  background: #ef4444;
+  border-radius: 50%;
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  border: 1px solid #b91c1c;
+}
+
+.sticky-header {
+  border-bottom: 1px dashed #ca8a04;
+  padding-bottom: 8px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sticky-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #854d0e;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sticky-sub {
+  font-size: 11px;
+  color: #a16207;
+}
+
+.notes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.note-item {
+  background: rgba(255, 255, 255, 0.6);
+  padding: 10px;
+  border-radius: 6px;
+  border-left: 3px solid #eab308;
+}
+
+.note-item-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.note-time {
+  font-size: 11px;
+  font-weight: 700;
+  color: #a16207;
+}
+
+.note-badge {
+  font-size: 10px;
+  background: #fde047;
+  color: #713f12;
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-weight: 600;
+}
+
+.note-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #713f12;
+  margin-bottom: 3px;
+}
+
+.note-detail {
+  font-size: 11px;
+  color: #854d0e;
+  line-height: 1.45;
+}
+
+.note-verify {
+  font-size: 10px;
+  color: #a16207;
+  margin-top: 4px;
+  font-style: italic;
+}
+
+/* 详细稿抽屉卡片（Drawer Trigger Card） */
+.drawer-entry-card {
+  background: var(--panel-bg);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: 18px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.drawer-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.drawer-icon {
+  width: 36px;
+  height: 36px;
+  background: #ede9fe;
+  color: #7c3aed;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.drawer-title-group h4 {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.drawer-title-group p {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.drawer-summary-bullets {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  padding-left: 16px;
+}
+
+/* 每日分诊统计汇总微卡 */
+.summary-stat-box {
+  background: #f8fafc;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 12px;
+}
+
+.summary-stat-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.stat-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  margin-bottom: 6px;
+}
+
+.stat-bar-outer {
+  height: 6px;
+  background: #e2e8f0;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: 6px;
+  display: flex;
+}
+
+.stat-bar-auto {
+  height: 100%;
+  background: var(--accent-emerald);
+  transition: width 0.3s;
+}
+
+.stat-bar-defer {
+  height: 100%;
+  background: var(--accent-amber);
+  transition: width 0.3s;
+}
+
+/* 详细稿抽屉模态浮层（Drawer Full-Screen Modal Overlay） */
+.drawer-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(4px);
+  z-index: 100;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fadeIn 0.2s ease;
+}
+
+.drawer-modal-overlay.open {
+  display: flex;
+}
+
+.drawer-modal-content {
+  background: #ffffff;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-card);
+  box-shadow: var(--shadow-lg);
+  width: 100%;
+  max-width: 920px;
+  height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: modalUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes modalUp {
+  from { transform: translateY(30px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.drawer-modal-header {
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--border-light);
+  background: var(--panel-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.drawer-modal-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.drawer-tabs {
+  display: flex;
+  gap: 8px;
+  padding: 10px 24px;
+  background: #fff;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.tab-btn {
+  padding: 6px 14px;
+  border-radius: 9999px;
+  border: 1px solid var(--border-light);
+  background: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tab-btn.active {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+}
+
+.drawer-modal-body {
+  padding: 24px 32px;
+  overflow-y: auto;
+  line-height: 1.8;
+  color: #334155;
+  font-size: 14.5px;
+}
+
+.drawer-modal-body h1 {
+  font-size: 22px;
+  font-weight: 800;
+  margin-bottom: 16px;
+  color: #0f172a;
+}
+
+.drawer-modal-body h2 {
+  font-size: 18px;
+  font-weight: 700;
+  margin-top: 24px;
+  margin-bottom: 12px;
+  color: #1e293b;
+  border-left: 4px solid var(--primary);
+  padding-left: 10px;
+}
+
+.drawer-modal-body h3 {
+  font-size: 15px;
+  font-weight: 700;
+  margin-top: 18px;
+  margin-bottom: 8px;
+  color: #334155;
+}
+
+.drawer-modal-body p {
+  margin-bottom: 14px;
+}
+
+.drawer-modal-body ul, .drawer-modal-body ol {
+  margin-bottom: 14px;
+  padding-left: 20px;
+}
+
+.drawer-modal-body table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  font-size: 13px;
+}
+
+.drawer-modal-body th, .drawer-modal-body td {
+  border: 1px solid #cbd5e1;
+  padding: 8px 12px;
+  text-align: left;
+}
+
+.drawer-modal-body th {
+  background: #f1f5f9;
+  font-weight: 700;
+}
+
+/* 底部状态条 */
+.desk-footer {
+  background: #fff;
+  border-top: 1px solid var(--border-light);
+  padding: 12px 24px;
+  font-size: 12px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* 响应式适配 */
+@media (max-width: 1100px) {
+  .desk-workspace {
+    grid-template-columns: 260px 1fr;
+  }
+  .desk-aside {
+    grid-column: span 2;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .desk-workspace {
+    grid-template-columns: 1fr;
+  }
+  .queue-panel {
+    max-height: 240px;
+  }
+  .desk-aside {
+    grid-column: span 1;
+    display: flex;
+    flex-direction: column;
+  }
+  .dispatch-actions {
+    grid-template-columns: 1fr;
+  }
+  .metrics-grid {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- 顶部值班台横幅 -->
+<header class="desk-header">
+  <div class="station-badge">
+    <div class="station-icon">🩺</div>
+    <div>
+      <div class="station-title">折晓早报 · 值班分诊台</div>
+      <div class="station-meta">
+        <span>2026-09-16 星期三</span>
+        <span>•</span>
+        <span>值班医师兼主创：Sofia（羽升）</span>
+        <span>•</span>
+        <span class="status-pill"><span class="pulse-dot"></span>台面已就绪</span>
+      </div>
+    </div>
+  </div>
+  <div class="header-actions">
+    <button class="btn btn-amber" id="quickTipsBtn" onclick="scrollToNotes()">
+      📌 台角便签
+    </button>
+    <button class="btn btn-primary" id="openDrawerBtn" onclick="toggleDrawer(true)">
+      📖 打开值班日志本（详细稿）
+    </button>
+  </div>
+</header>
+
+<!-- 主操作台格局布局 -->
+<main class="desk-workspace">
+
+  <!-- 左侧：候诊病例队列（Case Queue） -->
+  <aside class="queue-panel">
+    <div class="panel-title-bar">
+      <h3>📋 今日来访材料（12）</h3>
+      <span class="queue-counter" id="triagedCounter">0/12 已分诊</span>
+    </div>
+    <div class="case-list" id="caseListContainer">
+      <!-- JS 动态渲染病例列表项 -->
+    </div>
+  </aside>
+
+  <!-- 中间：中央分诊台核心操作面（Central Triage Bench） -->
+  <section class="bench-panel">
+    <!-- 分诊导言小横幅 -->
+    <div class="bench-intro-bar">
+      <div class="intro-text">
+        <strong>分诊规则：</strong> 听取来访主诉后，请根据该领域的严谨性与风险调整<strong>「可靠性旋钮」</strong>。只有当置信水平达到设定的自主放行门槛时，方可直接下结论；否则请放入「交给人工复核」托盘。
+      </div>
+    </div>
+
+    <!-- 核心分诊卡片 -->
+    <div class="triage-card" id="triageCard">
+      <!-- 头部：来访者信息 -->
+      <div class="triage-card-header">
+        <div class="patient-identity">
+          <div class="patient-avatar" id="avatarDisplay">🏥</div>
+          <div class="patient-details">
+            <h2 id="visitorNameDisplay">院内部署临床评估系统</h2>
+            <div class="patient-tags">
+              <span class="tag tag-blue" id="categoryTagDisplay">医学 AI</span>
+              <span class="tag" id="verifyTagDisplay">单一来源</span>
+            </div>
+          </div>
+        </div>
+        <div style="text-align: right;">
+          <div style="font-size: 11px; color: var(--text-muted);">病例编号</div>
+          <div style="font-size: 13px; font-weight: 700; font-family: var(--font-mono);" id="caseIdDisplay">CASE-01</div>
+        </div>
+      </div>
+
+      <!-- 主诉对讲气泡 -->
+      <div class="complaint-section">
+        <div class="complaint-label">
+          <span>🔊 来访者主诉（实时音频接入）：</span>
+        </div>
+        <div class="complaint-text" id="complaintTextDisplay">
+          「在两组 MIMIC-IV 重症基准任务中，AI 智能体诊断准确率达到 90.04% 与 83.8%。是否可以直接全院放行自主下结论？」
+        </div>
+        <button class="listen-trigger-btn" onclick="playAudioChime()">
+          <span>▶ 对讲复听</span>
+        </button>
+      </div>
+
+      <!-- 核心旋钮与可靠性门槛交互区 -->
+      <div class="knob-interactive-zone">
+        <div class="zone-header">
+          <div class="zone-title">
+            <span>⚙️ 决策时可靠性旋钮</span>
+          </div>
+          <div class="zone-hint">滑动旋钮以设定放行置信度</div>
+        </div>
+
+        <div class="slider-container">
+          <input type="range" min="50" max="100" value="65" class="reliability-slider" id="knobSlider" oninput="updateKnobValue(this.value)">
+          <div class="slider-scale-ticks">
+            <span>50%（粗筛）</span>
+            <span>70%（常规推理）</span>
+            <span class="required-marker" id="targetTickDisplay">90%（放行门槛）</span>
+            <span>100%（极高置信）</span>
+          </div>
+        </div>
+
+        <div class="dial-readout-strip">
+          <div class="dial-current">
+            当前旋钮置信度：<strong id="dialValueText">65%</strong>
+          </div>
+          <div class="dial-target">
+            自主下结论门槛要求：<strong id="targetValueText">≥ 90%</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- 分诊决策按钮栏 -->
+      <div class="dispatch-actions">
+        <button class="dispatch-btn dispatch-btn-defer" id="btnDefer" onclick="dispatchDecision('defer')">
+          <span>📥 先交给人工复核</span>
+          <span class="dispatch-btn-sub">证据未达到放行门槛，提交人工专家二次审核</span>
+        </button>
+        <button class="dispatch-btn dispatch-btn-auto" id="btnAuto" onclick="dispatchDecision('auto')">
+          <span>⚡ 放行自主下结论</span>
+          <span class="dispatch-btn-sub" id="autoBtnSub">置信度已达标，允许系统直接生成定论</span>
+        </button>
+      </div>
+
+      <!-- 揭示的结论卷宗展开区 -->
+      <div class="dossier-reveal" id="dossierReveal" style="display: none;">
+        <!-- 决策横幅 -->
+        <div class="decision-banner" id="decisionBanner">
+          <div class="decision-icon" id="decisionIcon">⚡</div>
+          <div>
+            <div class="decision-title" id="decisionTitleText">已放行自主下结论</div>
+            <div class="decision-desc" id="decisionDescText">诊断一致性达标，进入院内选择性自主通道。</div>
+          </div>
+        </div>
+
+        <!-- 关键量化指标展示 -->
+        <div class="metrics-grid" id="metricsGridDisplay">
+          <!-- JS 动态注入指标 -->
+        </div>
+
+        <!-- 完整背景叙事 -->
+        <div class="dossier-story" id="fullStoryDisplay">
+          <!-- 背景叙事文字 -->
+        </div>
+
+        <!-- 诚实性与核实标签 -->
+        <div class="verification-tag-bar">
+          <span class="verify-badge" id="verifyBadgeDisplay">单一来源</span>
+          <span id="verificationNoteDisplay">据《Nature Medicine》该研究称；数字仅属该论文实验，尚未得到其他来源独立确认或真实监管批准。</span>
+        </div>
+
+        <!-- 原始链接跳转 -->
+        <div class="source-link-bar">
+          <span>一手/交叉来源：</span>
+          <a id="sourceLinkAnchor" href="#" target="_blank" rel="noopener noreferrer">查看原始文献/官方公告 ↗</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 右侧：台角便签与日志本（Sticky Notes & Logbook） -->
+  <aside class="desk-aside" id="deskAside">
+
+    <!-- 真实物理质感便签：Sofia 个人事务轻提示 -->
+    <div class="sticky-note" id="stickyNotesSection">
+      <div class="sticky-pin"></div>
+      <div class="sticky-header">
+        <div class="sticky-title">
+          <span>📌 台角备忘 · Sofia</span>
+        </div>
+        <div class="sticky-sub">今日轻提醒 · 不打分</div>
+      </div>
+      <div class="notes-list" id="notesListContainer">
+        <!-- JS 动态渲染个人便签项 -->
+      </div>
+    </div>
+
+    <!-- 详细稿抽屉卡片 -->
+    <div class="drawer-entry-card">
+      <div class="drawer-header">
+        <div class="drawer-icon">📂</div>
+        <div class="drawer-title-group">
+          <h4>值班完整日志本</h4>
+          <p>早报详细稿全文与证据速查</p>
+        </div>
+      </div>
+      <p style="font-size: 12px; color: var(--text-muted); line-height: 1.5;">
+        收录今日全景综述、人工智能、科技、医学及个人轻提示的完整富文本排版稿。包含事实核对表与多来源证据库。
+      </p>
+      <button class="btn btn-primary" onclick="toggleDrawer(true)" style="width: 100%; justify-content: center;">
+        📖 拉开抽屉阅读全文
+      </button>
+    </div>
+
+    <!-- 今日分诊统计微卡 -->
+    <div class="summary-stat-box">
+      <div class="summary-stat-title">分诊台实时统计</div>
+      <div class="stat-row">
+        <span>已审定病例：</span>
+        <strong id="statCompleted">0 / 12</strong>
+      </div>
+      <div class="stat-row">
+        <span>自主放行：</span>
+        <span style="color: var(--accent-emerald); font-weight: 700;" id="statAutoCount">0 例</span>
+      </div>
+      <div class="stat-row">
+        <span>人工复核：</span>
+        <span style="color: var(--accent-amber); font-weight: 700;" id="statDeferCount">0 例</span>
+      </div>
+      <div class="stat-bar-outer">
+        <div class="stat-bar-auto" id="statBarAuto" style="width: 0%;"></div>
+        <div class="stat-bar-defer" id="statBarDefer" style="width: 0%;"></div>
+      </div>
+    </div>
+
+  </aside>
+
+</main>
+
+<!-- 详细稿抽屉全屏模态浮层 -->
+<div class="drawer-modal-overlay" id="drawerModalOverlay" onclick="handleModalBackdropClick(event)">
+  <div class="drawer-modal-content">
+    <div class="drawer-modal-header">
+      <div class="drawer-modal-title">
+        <span>📖 折晓早报详细稿｜2026-09-16 完整日志</span>
+      </div>
+      <button class="btn" onclick="toggleDrawer(false)">✕ 收起抽屉</button>
+    </div>
+
+    <!-- 分类标签切换栏 -->
+    <div class="drawer-tabs">
+      <button class="tab-btn active" id="tabDigest" onclick="switchDrawerTab('digest')">全文详细稿</button>
+      <button class="tab-btn" id="tabEvidence" onclick="switchDrawerTab('evidence')">证据与核实附注</button>
+      <button class="tab-btn" id="tabAdditional" onclick="switchDrawerTab('additional')">其他科技与医学动态（8）</button>
+    </div>
+
+    <!-- 模态框正文区 -->
+    <div class="drawer-modal-body" id="drawerModalBody">
+      <!-- JS 动态注入对应 Tab 内容 -->
+    </div>
+  </div>
+</div>
+
+<!-- 底部状态条 -->
+<footer class="desk-footer">
+  <div>
+    <span>折晓早报 · 2026-09-16 晨间值班台</span>
+    <span style="margin: 0 8px;">|</span>
+    <span>机制来源：《Nature Medicine》院内临床智能体选择性自主门槛框架</span>
+  </div>
+  <div>
+    <span>纯自包含运行时 · 零外部网络依赖 · 证据严格遵循当日材料包</span>
+  </div>
+</footer>
+
+<script>
+// 数据内联
+const casesData = [{"id": "c1", "category": "临床智能体与院内治理", "category_badge": "医学 AI", "visitor": "院内部署临床评估系统", "avatar": "🏥", "complaint": "「在两组 MIMIC-IV 重症基准任务中，AI 智能体诊断准确率达到 90.04% 与 83.8%。是否可以直接全院放行自主下结论？」", "threshold": 90, "metrics": {"一致性区分度": "AUC = 0.860（压力测试下 0.875）", "建议放行阈值": "一致性 0.90", "自主保留比例": "约 49.4% 病例", "自主诊断准确率": "维持在约 98.9%"}, "verification": "单一来源", "verification_note": "据《Nature Medicine》该研究称；数字仅属该论文摘要实验数据，尚未得到其他独立来源确认或真实监管批准。", "action_autonomous": "该研究称：诊断行为一致性 ≥ 0.90 时，约 49.4% 病例可走自主路径，该子集诊断准确率约 98.9%。这是论文摘要里的实验读出，不是全院已批准的放行制度。", "action_defer": "该研究建议：一致性低于 0.90 的其余约 50.6% 病例交给人工复核。页面只转述这一门槛框架，不把它写成已经落地的院内规程。", "full_story": "据《Nature Medicine》该研究称：作者评估完全院内部署的临床智能体，并把决策时可靠性信号用于选择性自主。在两个基于 MIMIC-IV 的基准上，七病任务准确率约 90.04%，四病任务约 83.8%。其中「诊断行为一致性」对正确性的区分最强（AUC=0.860，压力测试下 0.875）。当设定一致性阈值 0.90 时，约 49.4% 病例被保留自主处理，诊断准确率约 98.9%。核心启示不是模型永远对，而是「有时可以先过，有时必须先交给人工复核」。数字仅属该论文摘要，尚未得到其他独立来源确认或真实监管批准。", "source_url": "https://www.nature.com/articles/s41591-026-04609-x", "source_label": "Nature Medicine 原文"}, {"id": "c2", "category": "前沿模型安全与行业自监管", "category_badge": "AI 产业", "visitor": "前沿实验室安全代表团", "avatar": "🤝", "complaint": "「大模型能力跃迁与智能体越界风险正在加剧，各家实验室是否可以单方面放行并各自下结论？」", "threshold": 85, "metrics": {"涉事核心三方": "OpenAI、Anthropic、Google", "当前讨论状态": "正持续接触讨论（源自 7 月 Hassabis 提案）", "组织构想雏形": "类似美国金融业监管局 FINRA 的自律机构", "行业共识方向": "建立联合评估基准，遏制单方盲目放行"}, "verification": "多来源确认", "verification_note": "OpenAI 发言人向 CNBC、Bloomberg、France 24/AFP 公开确认正在接触讨论；注意目前仅处于讨论阶段，尚未成立法定机构或生效规则。", "action_autonomous": "目前能写进定论的，只是 OpenAI 发言人向多家媒体确认：正与 Anthropic、Google 接触讨论安全与标准机构构想。还没有联合红线、章程或放行禁令。", "action_defer": "把「类 FINRA 自律机构」先留在讨论区：公开确认的是接触与构想，不是已经成立、已经生效的联合复核机构。", "full_story": "OpenAI 发言人向 CNBC、Bloomberg、France 24/AFP 确认，正与 Anthropic、Google 讨论如何共同应对安全关切。该想法可追溯到 Google DeepMind 主席 Demis Hassabis 于七月提出的、类似美国金融业监管局（FINRA）的标准/自监管机构设想。三家仍在竞争，同时也在谈「谁来写规则、谁先放行」。机构是否已经成立、规则是否已经生效，证据包里还看不到最终章程或监管背书——目前只能写成正在讨论。", "source_url": "https://www.cnbc.com/2026/09/15/open-ai-google-anthropic-safety.html", "source_label": "CNBC / Bloomberg / AFP 报道"}, {"id": "c3", "category": "实时语音智能体与多模态", "category_badge": "AI 产品", "visitor": "Gemini 语音交互引擎", "avatar": "🎙️", "complaint": "「3.8 Live 与 Extended Thinking 实现了低延迟语音对话与多语言自动切换，在复杂企业任务中何时可以直接代客下单执行？」", "threshold": 75, "metrics": {"语音对话质量指数": "82.6（Artificial Analysis 评测总体第一）", "智能体任务完成": "τ-Voice 达到 68.6%", "银行金融场景": "τ-Voice-banking 仅 35.1%", "多语言能力": "自动检测并切换 97 种支持语言"}, "verification": "多来源确认", "verification_note": "Google 官方博客一手发布，多家科技媒体转述；数字引自官方评测声明。", "action_autonomous": "评测数字显示日常语音会话明显强于银行任务：Extended Thinking 语音质量指数 82.6，τ-Voice 68.6%，银行场景仅 35.1%。这只说明能力落差，不能据此写成已经可以代客下单。", "action_defer": "银行交易等复杂金融操作（τ-Voice-banking 仅 35.1%）与关键指令，仍应先确认、暂缓直接生效。官方博客没有授权这些场景自动执行。", "full_story": "Google 正式发布 Gemini 3.8 Live 与 Extended Thinking。Extended Thinking 在 Artificial Analysis 的 Speech to Speech Quality Index 获得 82.6 分登顶；在 agentic 任务完成上 τ-Voice 达 68.6%，但在银行场景 τ-Voice-banking 仅为 35.1%；Big Bench Audio 达 97.7%。模型支持近实时视觉处理，能在 97 种语言间无缝切换并在后台并行调用工具。评测数据明确展示了语音代理在日常会话与关键业务动作之间的能力落差，强调了高敏任务中人工介入的必要性。", "source_url": "https://blog.google/innovation-and-ai/models-and-research/gemini-models/gemini-3-8-live-gemini-3-8-live-extended-thinking/", "source_label": "Google 官方博客"}, {"id": "c4", "category": "垂直企业推理与信任边界", "category_badge": "AI 架构", "visitor": "Salesforce × NVIDIA Koa 模型", "avatar": "⚙️", "complaint": "「企业客户要求销售与客服智能体不能出错，Koa 基于 Nemotron 在合成数据上后训练，能否直接接管企业核心业务？」", "threshold": 80, "metrics": {"开源底座模型": "NVIDIA Nemotron 3 Super", "动作错误改善": "CRM 动作错误减少至约三分之一（3× fewer errors）", "数据隐私边界": "100% 专有合成场景训练，未采用任何客户数据", "试点机构名单": "涵盖芝加哥大学医学中心（UChicago Medicine）等"}, "verification": "多来源确认", "verification_note": "Salesforce 官方新闻稿与 TechCrunch 独立报道相互印证；错误率下降表述来自官方 CRM 基准说明。", "action_autonomous": "官方称：在 Salesforce CRM 基准上，Koa 的动作错误约为领先通用模型的三分之一，且训练未使用客户数据。这是基准声明，不能写成已经接管企业核心业务。", "action_defer": "大额合同变更、高敏客户关系与跨系统写操作，新闻稿并未给出可自动放行的证据，仍应留在人工确认一侧。", "full_story": "Salesforce 与 NVIDIA 联合发布 Agentforce 首个 CRM 推理模型 Koa。新闻稿称：以开源 Nemotron 3 Super 为基座，用近三十年 CRM 经验建模的专有合成数据做后训练；在其 CRM 基准上达到或超过领先模型，错误约为三分之一（three times fewer errors），且训练未使用客户数据。TechCrunch 交叉确认这是公司首个推理模型。试点名单据讯AI 说明含芝加哥大学医学中心等，主体仍是 CRM / Agentforce 产品发布。", "source_url": "https://www.salesforce.com/news/press-releases/2026/09/15/koa-reasoning-model/", "source_label": "Salesforce 新闻稿 / TechCrunch"}, {"id": "c5", "category": "早期临床试验监管试点", "category_badge": "医学监管", "visitor": "FDA 早期临床创新办公室", "avatar": "📋", "complaint": "「美国传统首次人体试验（FIH）耗时动辄长达两年，新药早期 IND 申报能否全面开启闪电绿灯？」", "threshold": 82, "metrics": {"试点计划名称": "Expedited IND Pilot（Operation TrialBlazer）", "申请截止日期": "开放申请至 2026 年 10 月 30 日", "首批入选名额": "预计仅遴选 8–10 对 Sponsor-QRI 组合", "创新核心机制": "申办方与合格研究机构配对 + 滚动审评"}, "verification": "多来源确认", "verification_note": "FDA 官方新闻稿一级来源；BioPharma Dive 与 RAPS 交叉印证。", "action_autonomous": "FDA 已宣布加速 IND 试点并开始接受申请：窗口至 2026 年 10 月 30 日，预计首批约 8–10 对申办方与合格研究机构。入选后按试点设计走配对与滚动审评，不是所有早期试验都已改绿灯。", "action_defer": "未纳入首批试点、或没有合格研究机构配对的项目，仍走既有 IND 路径；试点本身也还要过伦理与安全底线。", "full_story": "美国 FDA 宣布 Expedited IND Pilot（Operation TrialBlazer 的一步），并开始接受申请，窗口至 2026 年 10 月 30 日。文中称美国首次人体试验目前可能需要长达约两年；试点用申办方—合格研究机构（QRI）配对与滚动审评压缩等待。FDA 预计首批约选择 8–10 对组合。这是监管敏捷试点，不是全面取消既有审评。", "source_url": "https://www.fda.gov/news-events/press-announcements/fda-launches-expedited-ind-pilot-begins-accepting-applications", "source_label": "FDA 官网新闻稿"}, {"id": "c6", "category": "病毒学机制与广谱中和抗体", "category_badge": "临床医学", "visitor": "RIO 临床试验研究组", "avatar": "🧬", "complaint": "「双抗体输注显著推迟了 HIV 停药后的病毒反弹，能否下结论认为已有患者实现彻底功能性治愈？」", "threshold": 92, "metrics": {"临床队列样本": "68 名成年男性感染者（臂 A 34 例，臂 B 34 例）", "抗体耐药差异": "3BNC117-LS 保持敏感；10-1074-LS 产生显著耐药选择", "前病毒库动态": "输注后完整前病毒储存库下降，缺陷前病毒未降", "试验注册编号": "NCT04319367"}, "verification": "单一来源", "verification_note": "据《Nature Medicine》次要与探索性分析论文称；不可误读为全新首发主要终点或宣告彻底治愈。", "action_autonomous": "该次要与探索性分析报告：抗体组反弹动力学改变，完整前病毒库下降、缺陷前病毒未降。这是机制读出，不是功能性治愈。", "action_defer": "不要写成彻底治愈：反弹株已出现对 10-1074-LS 的逃逸，后续停药试验仍需监测并准备恢复抗反转录病毒治疗。", "full_story": "《Nature Medicine》发表 RIO II 期试验的次要与探索性分析。68 名成年男性感染者在分析性停药期间分别接受长效广谱中和抗体（3BNC117-LS + 10-1074-LS）或安慰剂。主要终点已另文发表；本篇写到反弹病毒对 10-1074-LS 出现显著耐药选择，对 3BNC117-LS 则保持敏感；输注后完整前病毒储存库下降而缺陷病毒未降。登记号 NCT04319367。引用须标明次要/探索性分析，不能写成全新首发主要终点或治愈宣告。", "source_url": "https://www.nature.com/articles/s41591-026-04644-8", "source_label": "Nature Medicine 原文"}, {"id": "c7", "category": "细胞代谢与铁依赖性死亡", "category_badge": "基础医学", "visitor": "代谢与铁生物学实验室", "avatar": "🔬", "complaint": "「发现过量半胱氨酸会毒害细胞，是否直接将其归入经典铁死亡通路并下定论？」", "threshold": 88, "metrics": {"高通量技术": "全基因组 CRISPR 筛选锁定关键靶点", "核心转运介质": "线粒体铁转运体（动员铁蛋白铁，驱动线粒体铁蓄积）", "下游恢复靶点": "增强线粒体内谷胱甘肽还原酶活性恢复氧化还原平衡", "机制界定": "属于硫醇失衡下独特的线粒体铁依赖性死亡新路径"}, "verification": "单一来源", "verification_note": "据《Nature Metabolism》该文研究称；属于细胞机制发现，非临床药物获批成果。", "action_autonomous": "该文提出：过量半胱氨酸可通过线粒体铁转运动员铁蛋白铁，触发一种可与经典脂质过氧化铁死亡区分的死亡路径。这是细胞机制发现，不是临床药物获批。", "action_defer": "不能与传统铁死亡简单混同；靶向干预是否成立，还要在更复杂的组织模型里继续看。", "full_story": "据《Nature Metabolism》该文：全基因组 CRISPR 筛选把线粒体铁转运体锁定为半胱氨酸毒性的关键中介。作者认为过量半胱氨酸动员铁蛋白中的铁，扩大胞质铁池并在线粒体蓄积；在线粒体内增强谷胱甘肽还原酶活性可在下游恢复氧化还原平衡。文章把它写成硫醇失衡条件下、依赖线粒体铁的一种死亡方式，而不是已经进入临床的治疗结论。", "source_url": "https://www.nature.com/articles/s42255-026-01616-7", "source_label": "Nature Metabolism 原文"}, {"id": "c8", "category": "肿瘤靶向耐药与临床读出", "category_badge": "临床肿瘤", "visitor": "WCLC 世界肺癌大会代表团", "avatar": "🫁", "complaint": "「国产三代 ALK 抑制剂 Ficonalkib II 期口头报告疗效亮眼，能否直接宣布其替代现有临床标准一线药物？」", "threshold": 85, "metrics": {"临床试验设计": "NCT05869162（石远凯教授口头报告关键 II 期）", "患者随访周期": "中位随访时间 18.5 个月", "缓解与控制率": "确认 ORR 43.1%，DCR 75.2%（二代耐药晚期 NSCLC）", "颅内突破活性": "颅内 ORR 65.0%（一线初治人群达到 85.7%）", "生存与安全性": "中位 PFS 9.7 个月，mDoR 15.2 个月；未观察到神经毒性"}, "verification": "单一来源", "verification_note": "据光明网对 WCLC 口头报告转述称；属于会议关键 II 期口头汇报，尚未得到同行评审全文或正式监管批准上市。", "action_autonomous": "据光明网对 WCLC 口头报告的转述：二代耐药人群确认 ORR 43.1%，颅内 ORR 65.0%，中位 PFS 9.7 个月。这是关键 II 期会议读出，不是监管批准，也不能写成已替代一线标准。", "action_defer": "一线对照 III 期（NCT06254599）仍在推进；幻灯/摘要全文未在采集中逐项核对，终点数据尚未得到其他来源独立确认。", "full_story": "据光明网转述：在首尔 2026 世界肺癌大会上，中国医学科学院肿瘤医院石远凯教授口头汇报国产三代 ALK-TKI Ficonalkib（SY-3505）关键 II 期（NCT05869162）。截至 2026 年 1 月 29 日，中位随访 18.5 个月；独立评审确认 ORR 43.1%、DCR 75.2%；颅内 ORR 65.0%（一线患者 85.7%）；中位缓解持续时间 15.2 个月，中位 PFS 9.7 个月；研究中未观察到神经毒性。一线 III 期仍在进行。引用须标明会议口头报告的媒体转述，不是正式获批。", "source_url": "https://yp.gmw.cn/2026-09/15/content_39002204.htm", "source_label": "光明网对 WCLC 报告转述"}, {"id": "c9", "category": "半导体与先进制程落地", "category_badge": "硬科技", "visitor": "移动平台硬件芯片组", "avatar": "📱", "complaint": "「联发科天玑 9600 Pro 宣布采用台积电 2nm 工艺，多核峰值功耗称降 61%，能否直接断定 2nm 时代已全面普及到所有消费电子？」", "threshold": 78, "metrics": {"先进制程工艺": "旗舰 9600 Pro 采用台积电 2 纳米（9600M 为 3 纳米）", "核心架构参数": "2+3+3 全大核（含 2 个 4.55GHz C2-Ultra）", "高速存力支持": "34.5MB 缓存，首发支持 LPDDR6 与 UFS5.0", "官方声明表现": "单核提升 17%，多核提升 15%，峰值多核功耗节省 61%"}, "verification": "多来源确认", "verification_note": "联发科官方公告与路透社、The Verge 交叉一致；性能与功耗提升数字引自联发科实验室测算语境。", "action_autonomous": "联发科与路透社同日确认：天玑 9600 Pro 采用台积电 2 纳米，9600M 为 3 纳米。单核约 +17%、多核约 +15%、峰值多核功耗约 -61% 出自联发科实验室声明，不是全市场已经普及 2 纳米。", "action_defer": "交给人工复核：主流市场仍由 3nm/4nm 承担主要出货，终端量产发热、良率与整机零售价尚需市场规模化复核。", "full_story": "联发科发布天玑 9600 Pro 与 9600M。9600 Pro 采用台积电 2 纳米，9600M 采用 3 纳米。官方给出 2+3+3 全大核（含 2 个约 4.55GHz 的 C2-Ultra）、约 34.5MB 缓存，并称支持 LPDDR6 与 UFS5.0；单核性能约提升 17%，多核约 15%，峰值多核功耗约节省 61%。路透社确认 9600 Pro 是其首款使用台积电最先进 2 纳米制程的移动处理器。性能百分比仍属实验室声明语境。", "source_url": "https://www.mediatek.com/zh-cn/press-room/mediatek-dimensity-9600-pro-sets-new-standard-for-flagship-smartphone-chips", "source_label": "联发科官网 / 路透社"}, {"id": "c10", "category": "服务器存力与 TSV 封装", "category_badge": "存力基建", "visitor": "超高密度数据中心模组", "avatar": "💾", "complaint": "「美光成功演示 512GB DDR5 模组且速率达 9200 MT/s，单机可配 12TB，是否意味着大模型内存墙今天就已经彻底消除？」", "threshold": 76, "metrics": {"单条模组容量": "512GB 单条 RDIMM（TSV 垂直堆叠封装）", "峰值传输速率": "最高达 9,200 MT/s（AMD 与 Intel 联合验证）", "运行功耗改善": "功耗比四条 128GB 降低超 60%（16.0W vs 44.2W）", "商业量产排期": "正式量产预期在 2027 年下半年"}, "verification": "多来源确认", "verification_note": "GlobeNewswire 原文与 StorageReview 交叉印证；功耗降幅引自新闻稿官方脚注。", "action_autonomous": "美光演示了 512GB DDR5 模组，峰值约 9200 MT/s，双路 24 槽约可到 12TB；功耗对比引自新闻稿脚注。这是演示与验证进展，量产窗口写的是 2027 年下半年，不是今天已经消除内存墙。", "action_defer": "交给人工复核：大规模出货窗口明确定在 2027 年下半年，短期内当前数据中心存力瓶颈与高昂改造成本仍需持续应对。", "full_story": "美光宣布在多款服务器平台演示全球首款 512GB DDR5 模组，峰值速率约 9200 MT/s；AMD 与 Intel 均在验证。高容量来自硅通孔（TSV）垂直堆叠；单台 24 槽双插槽服务器约可达 12TB。相对四条 128GB，一条 512GB 模组运行功耗称降低超过 60%（约 16.0W 对 44.2W）。量产预期在 2027 年下半年。这是路标，不是立刻大规模出货。", "source_url": "https://www.stocktitan.net/news/MU/micron-advances-memory-innovation-with-the-world-s-first-ultra-dense-tg3shk0rxab0.html", "source_label": "美通社 / StorageReview"}, {"id": "c11", "category": "低轨商业卫星星座部署", "category_badge": "商业航天", "visitor": "蓝箭航天朱雀二号发射团队", "avatar": "🚀", "complaint": "「朱雀二号遥七一箭十星成功发射千帆极轨卫星，是否标志着商业低轨组网已经不需要国家发射场保障？」", "threshold": 80, "metrics": {"火箭发射时刻": "2026-09-15 14:26（东风商业航天创新试验区）", "搭载卫星载荷": "千帆极轨 19 组共 10 颗通信卫星（部署于约 900 公里轨道）", "工程里程碑": "我国民营火箭首次执行规模化卫星互联网星座组网", "型号飞行历史": "朱雀二号系列运载火箭第 9 次飞行试验"}, "verification": "多来源确认", "verification_note": "新华网、科技日报、京报网同日一致报道。", "action_autonomous": "新华网、科技日报、京报网一致报道：9 月 15 日 14:26，朱雀二号改进型遥七将千帆极轨 19 组共 10 颗卫星送入约 900 公里轨道。多家报道称这是我国民营火箭首次执行规模化卫星互联网组网，但不能写成已经不再需要国家发射场保障。", "action_defer": "高频次常态化周转、地面测控与试验区保障，报道没有写成民营火箭可以单干。发射场仍是东风商业航天创新试验区。", "full_story": "9 月 15 日 14 时 26 分，朱雀二号改进型遥七在东风商业航天创新试验区升空，将千帆极轨 19 组共 10 颗通信卫星送入预定轨道。新华网、科技日报、京报网在发射时间、10 星载荷、民营首次大型星座组网性质上一致；报道还提到完成末级钝化离轨等流程，该系列第 9 次飞行。这是组网发射进展，不是「已经不需要国家发射场」。", "source_url": "https://www.news.cn/20260915/763f05512c8449c78baad06f0e94a2fa/c.html", "source_label": "新华网 / 科技日报"}, {"id": "c12", "category": "国家产业底盘与政策规划", "category_badge": "产业规划", "visitor": "电子信息规划编制专班", "avatar": "🏛️", "complaint": "「《电子信息制造业发展十五五规划》出炉，规上营收预计 2030 年破 30 万亿，是否代表产业所有环节都已高枕无忧？」", "threshold": 82, "metrics": {"远期规模目标": "预计到 2030 年规模以上企业主营业务收入突破 30 万亿元", "研发投入强度": "产业研发投入强度达到 3.5%", "规划战略架构": "17 项重点任务 + 9 个重大工程专栏", "发展总体思路": "筑基、提质、育新、治理"}, "verification": "多来源确认", "verification_note": "中国政府网印发通知、工信部官方政策解读与中新网报道三方印证；成文较早，本窗内完成解读公开。", "action_autonomous": "工信部、国家发改委在窗内公开《电子信息制造业发展「十五五」规划》解读：报道转述到 2030 年规上营收突破 30 万亿元、研发强度 3.5%，并部署 17 项任务、9 个专栏。这是规划目标与任务清单，不是所有环节已经高枕无忧。", "action_defer": "交给人工复核：底层基础材料、EDA 与关键制程等薄弱环节仍须长期保持攻坚审慎复核与战略投入。", "full_story": "中国政府网印发通知（成文/印发日期 2026-09-10）以及工信部 9 月 15 日解读与中新网同日报道，使规划在采集窗内进入公开解读。中新网转述的量化目标包括：预计到 2030 年规模以上企业营业收入突破 30 万亿元，产业研发投入强度达到 3.5%；按「筑基、提质、育新、治理」部署 17 项任务、9 个专栏。30 万亿元、3.5% 来自公开报道对规划文本的转述；底层材料、EDA 与关键制程等薄弱环节，文件本身也仍按长期攻坚来写。", "source_url": "https://www.gov.cn/zhengce/zhengceku/202609/content_7081160.htm", "source_label": "中国政府网 / 工信部解读"}];
+const notesData = [{"time": "今晚 19:00–20:30", "title": "社指破冰活动（新生见面）", "detail": "地点在 507 八楼 801 室。群通知明确 19:00 开始，先按 90 分钟占位；建议今天学业核心任务尽量在 19:00 前收口。", "status_badge": "日程安排", "verified": "多来源确认（Google Calendar 与 Airtable 日志印证）"}, {"time": "今日节点", "title": "医学英语 Unit1 Reading2 小组展示", "detail": "Notion 医学英语基础里程碑；展示核心在于讲清医学概念与展示内容，不必为幻灯片美化无上限消耗精力。准备就绪情况这边未能确认。", "status_badge": "课程节点", "verified": "单一来源（Notion；准备就绪未能核实）"}, {"time": "昨日节点回溯", "title": "细胞生物学首次实验报告", "detail": "系统里程碑节点为 09-15。由于未收到教师系统回执，连接器侧无法确认是否已交卷，请在课余自行确认提交状态即可。", "status_badge": "学业提醒", "verified": "未能核实交卷结果"}, {"time": "09-18（周五）", "title": "人体组织学实验启动", "detail": "当前处于理论推进阶段，周五将正式启动切片与镜下观察实验，仅作今明两天近景视野备忘。", "status_badge": "近景视野", "verified": "单一来源（Notion）"}, {"time": "今日截止", "title": "Slack Pro 试用期结束", "detail": "sofiapintos190 工作区 Pro 试用持续到今天；不升级会回到免费版。若不依赖 Pro 功能，可忽略升级推销。", "status_badge": "服务状态", "verified": "单一来源（官方通知邮件）"}, {"time": "极轻一笔", "title": "个人仓库 CI 构建动态", "detail": "窗内邮件显示 Notebook-MedFreshman 两次 PR 的类型检查与构建未通过；SCI-AIChat-Demo 昨夜 live LLM 重放显示成功。今天若本来就不排期开发，可先搁置。", "status_badge": "代码环境", "verified": "单一来源（Gmail 构建提醒）"}];
+const additionalData = [{"title": "Google Research 推出 Retrieve-for-Train", "tag": "AI 研究", "summary": "据 Google Research 博客称：把集合级检索目标（覆盖度、多样性）放到离线强化学习里训练，再蒸馏进约 53.9M 参数的轻量扩散模型，相对自回归方法约 12 到 20 倍加速。数字引自该博客，不是第三方复测。", "source": "https://research.google/blog/bypassing-inference-bottlenecks-accelerating-complex-ai-search-with-retrieve-for-train/", "source_label": "Google Research 博客", "note": "单一来源（官方博客，配套 ICML 2026 论文；加速倍数引自博客）"}, {"title": "Meta 正式推出 Meta One 跨应用订阅服务", "tag": "AI 产品", "summary": "整合 Instagram、Facebook 与 WhatsApp，捆绑由 Muse 模型驱动的高额度图像创作与视频生成。单产品每月 2.99 美元起，个人套包 7.99 美元，创作者与企业包 14.99 美元。已有超 50 项功能上线并累计 1500 万订阅与试用。", "source": "https://about.fb.com/news/2026/09/introducing-meta-one-subscription-service-more-features-ai/", "source_label": "Meta Newsroom / Reuters", "note": "多来源确认（Meta 官方博文与路透社报道）"}, {"title": "《时代》周刊长文《The AI Tipping Point》梳理安全辩论", "tag": "产业观察", "summary": "《时代》周刊长文梳理研究员公开辞职、模型越界测试与国会讨论；文中称 OpenAI、Anthropic、Google 近月多次会面讨论行业标准机构。更早事件发生在窗外，只作背景，不写成今天突发。", "source": "https://time.com/article/2026/09/15/ai-anthropic-researcher-quits-coxon-slowdown/", "source_label": "TIME 报道", "note": "单一来源（深度特稿；更早事件依赖转述）"}, {"title": "ESA Vega-C 一箭双星成功发射 FLEX 与哥白尼 Sentinel-3C", "tag": "地球观测", "summary": "ESA 称 FLEX 通过植被荧光推进对光合作用与水碳循环的理解，Sentinel-3C 继续做海洋与大气监测。星箭分离后，达姆施塔特操作中心建立了双向联系。", "source": "https://www.esa.int/Newsroom/Press_Releases/FLEX_and_Sentinel-3C_launched", "source_label": "ESA 新闻发布", "note": "多来源确认（ESA 与欧盟空间政策页面）"}, {"title": "NASA 成功激活罗马空间望远镜 3 亿像素广域相机", "tag": "深空探测", "summary": "主科学仪器 Wide Field Instrument 在轨开机并完成日冕仪初查，各项测试状态良好，继续按计划向 2027 年初发布首批宇宙科学影像推进。", "source": "https://science.nasa.gov/blogs/roman/2026/09/15/nasa-activates-romans-primary-instrument-checks-out-coronagraph/", "source_label": "NASA Science 博客", "note": "单一来源（NASA 官方任务博客）"}, {"title": "恒瑞医药：瑞卡西单抗（抗 PCSK9）获批脑卒中二级预防 III 期临床", "tag": "临床药学", "summary": "拟用于颅内动脉粥样硬化性狭窄成人患者以降低卒中复发风险；该药此前已获批降脂，项目累计研发投入约 4.22 亿元（未经审计）。", "source": "https://paper.cnstock.com/html/2026-09/16/content_2269275.htm", "source_label": "上海证券报 / 公司公告", "note": "多来源确认（公司公告与观点网转述；为临床试验批件非疗效获批）"}, {"title": "恒瑞医药：1 类新药 HRS-4139 片获批中重度银屑病临床", "tag": "新药管线", "summary": "自研 1 类新药获批开展中重度斑块状银屑病临床试验，动物模型表现抗炎活性，累计研发投入约 2040 万元（未经审计）。", "source": "https://paper.cnstock.com/html/2026-09/16/content_2269275.htm", "source_label": "上海证券报 / 公司公告", "note": "单一来源（公司公告法定披露；处于 IND 获批阶段）"}, {"title": "石药集团：SYS6010（EGFR ADC）纳入突破性治疗名单", "tag": "肿瘤加速", "summary": "拟用于免疫及含铂治疗失败的复发转移性驱动基因阴性非鳞 NSCLC；通稿称 PFS 较标准治疗延长一倍以上，目前随机 III 期正在推进。", "source": "https://finance.sina.com.cn/roll/2026-09-15/doc-inirxhzw3659539.shtml", "source_label": "新浪财经 / 公司通稿", "note": "单一来源（公司披露；疗效比较语句尚未见独立同行评议终点发表）"}];
+const digestMarkdownText = "# 折晓早报详细稿｜2026-09-16（星期三）\n\n面向 Sofia（大二医学生，同时在学 AI）。采集窗：北京时间 2026-09-15 06:00 → 2026-09-16 06:00。本稿只消费当日四路证据包，不新增公开网搜索。\n\n---\n\n## 开篇：今天的形状\n\n如果用一句话概括今天窗内材料的共同动态，那就是：**很多系统都在谈「什么时候可以自己下结论，什么时候必须先交给人工复核」。**\n\n医学侧，《Nature Medicine》一篇院内部署临床 AI 智能体的研究，把「诊断行为一致性」做成决策时的可靠性信号：一致性阈值设到 0.90 时，大约只保留一半病例走自主路径，但那一半的诊断准确率可以到很高水平——这不是「模型永远对」，而是「模型有时可以先过，有时必须先交给人工复核」。人工智能产业侧，OpenAI 发言人向多家媒体确认，正在与 Anthropic、Google 讨论如何合作推进安全与行业标准机构——竞争还在继续，但「谁来立规矩、谁先放行」也进入了公开议事日程。产品侧，Google 正式发布 Gemini 3.8 Live 与 Extended Thinking 两款实时语音对话模型，把「先听、边说边做事」推到更近的日常交互。\n\n科技侧，先进制程与存力、轨道观测与商业组网、电子信息制造业「十五五」规划同日出现，像是在给算力与感知基础设施换一批硬件与政策底盘。医学侧其余条目则从 HIV 抗体机制、半胱氨酸—线粒体铁死亡路径，一路到 FDA 加速 IND 试点、国产 ALK 抑制剂关键 II 期口头报告、以及恒瑞与石药的监管通道动态。\n\n个人事务在今天不是主叙事。你今晚有社指破冰，白天可能有医学英语小组展示；细胞首次实验报告节点落在昨天，连接器侧仍无法确认是否已交——这些都只作轻提示，不打分、不审判。\n\n---\n\n## 一、人工智能\n\n### 1.1 Google 正式发布 Gemini 3.8 Live 与 3.8 Live Extended Thinking\n\n**背景。** 实时语音对话模型是「会说话的智能体」产品线的核心能力：用户用语音协作，模型在对话中并行调用工具、处理视觉输入、跨语言切换。Google 在本窗内给出了这一代的正式产品公告。\n\n**发生了什么。** 据 Google 官方博客（发布时间北京时间约 2026-09-16 01:00，页面 `datePublished` 为 2026-09-15T17:00:00+00:00），公司发布 Gemini 3.8 Live 与 Gemini 3.8 Live Extended Thinking，并称其为迄今最先进的 live dialogue 模型；重大升级集中在智能与并行推理，以便用语音协作并执行复杂任务。博客给出的评测数字包括：Extended Thinking 在 Artificial Analysis 的 Speech to Speech Quality Index 上总体第一（**82.6**），在 agentic 任务完成上于 τ-Voice 达到 **68.6%**、于 Sierra 的 τ-Voice-banking 达到 **35.1%**，并在 Big Bench Audio 上得到 **97.7%**。文中还写到：近实时处理视觉输入、对话中可自动在 **97** 种支持语言之间检测与切换、可在后台执行工具与 API 调用同时继续对话。\n\n**为什么值得注意。** 对正在学 AI 的医学生，这条一手公告同时展示了语音代理评测体系（Speech to Speech、τ-Voice）与落地细节（多语言、工具调用、音频侧安全机制如 SynthID 等在原文语境中出现）。它适合作为「实时语音智能体能力边界」的参考样本，而不是当作临床产品。\n\n**来源。** https://blog.google/innovation-and-ai/models-and-research/gemini-models/gemini-3-8-live-gemini-3-8-live-extended-thinking/\n\n**核实状态。** **多来源确认。** 一手为 Google 官方博客；讯AI 证据包注明同日多家科技媒体与日报聚合有转述。上述数字均引自 Google 博客原文。\n\n---\n\n### 1.2 Salesforce 与 NVIDIA 发布基于 Nemotron 的企业 CRM 推理模型 Koa\n\n**背景。** 企业侧越来越不愿意把复杂 CRM 推理完全外包给通用大模型托管方，而是在自有信任边界内做垂直后训练。Salesforce 与 NVIDIA 的联合发布，是「开源基座 + 企业后训练」路线的一次产品化落地。\n\n**发生了什么。** 据 Salesforce 新闻稿（北京时间约 2026-09-15 20:00）与 TechCrunch 同日报道，双方宣布 Koa——Salesforce 面向 Agentforce 的首个 CRM 推理模型，构建于 NVIDIA Nemotron。新闻稿称：通过对 Nemotron 3 Super 做后训练，使用基于近三十年 CRM 部署经验建模的专有合成数据集；在 Salesforce 的 CRM 基准上，Koa 已在 CRM 动作上达到或超过领先模型表现，且错误约为三分之一（原文表述为 **three times fewer errors**）。新闻稿明确：**训练未使用客户数据**，语料完全来自合成场景。TechCrunch 交叉确认：Koa 是公司首个推理模型，双方合作后训练以强化销售、营销与客服相关任务。\n\n**为什么值得注意。** 它展示垂直智能体如何把「开源权重」收进企业可控边界，并公开强调合成数据路径。试点客户名单据讯AI 说明含 UChicago Medicine 等，但主体仍是 CRM/Agentforce 产品发布。\n\n**来源。**  \n- https://www.salesforce.com/news/press-releases/2026/09/15/koa-reasoning-model/  \n- https://techcrunch.com/2026/09/15/salesforce-and-nvidias-new-reasoning-model-is-everything-the-ai-labs-should-fear/\n\n**核实状态。** **多来源确认。** Salesforce 官方新闻稿与 TechCrunch 独立报道相互印证；「three times fewer errors」出自 Salesforce 新闻稿对其 CRM 基准的表述。\n\n---\n\n### 1.3 OpenAI 证实正与 Anthropic、Google 讨论合作推进 AI 安全与行业标准机构\n\n**背景。** 近几周围绕前沿模型安全、智能体越界与「是否应放缓」的公共辩论升温。本窗内的新信息不是再讲周末之前的倡议本身，而是 **OpenAI 发言人向媒体确认「正在与 Anthropic、Google 接触」**。\n\n**发生了什么。** 据 CNBC（约北京时间 2026-09-16 02:31，标注 Published Tue, Sep 15 2026 2:31 PM EDT）、Bloomberg 与 France 24 / AFP 同日报道：OpenAI 发言人确认，公司一直在与包括 Anthropic、Google 在内的其他人工智能公司就如何共同应对安全关切进行接触；讨论自 Google DeepMind 主席 Demis Hassabis 于七月提出美国主导的「Standards Body」提案以来持续进行。France 24 / AFP 写到：OpenAI 称正与 Anthropic、Google 推进这一想法，该想法源于 Hassabis 提出的、类似美国券商自律机构 FINRA 的行业自监管/标准机构设想。\n\n**为什么值得注意。** 这是窗内最重要的产业治理信号之一：三大前沿实验室在竞争同时讨论类似 FINRA 的标准或自监管协调。对理解「谁来写安全规则、自愿标准能否补位政府监管」很关键。它与医学侧「何时自主、何时 defer」形成跨领域呼应——行业也在谈放行门槛与复核机制。\n\n**来源。**  \n- https://www.cnbc.com/2026/09/15/open-ai-google-anthropic-safety.html  \n- https://www.france24.com/en/technology/20260915-openai-anthropic-and-google-in-talks-to-create-a-standards-body-as-ai-fears-rise  \n- https://www.bloomberg.com/news/articles/2026-09-15/openai-says-it-s-working-with-anthropic-google-on-ai-safety\n\n**核实状态。** **多来源确认。** CNBC、Bloomberg、France 24（援引 AFP）同日报道，核心事实均指向 OpenAI 发言人确认与 Anthropic、Google 的安全协作讨论。机构是否已经成立、规则是否已经生效，**尚未**在证据包中看到最终章程或监管背书——目前只能写成「正在讨论/接触」。\n\n---\n\n### 1.4 Google Research 发布 Retrieve-for-Train：把复杂检索「编译」进轻量扩散模型\n\n**背景。** 复杂 AI 搜索常在推理时烧大量「思维预算」。Retrieve-for-Train 尝试把集合级目标（多样性、覆盖、对齐等）放到离线强化学习里学完，再蒸馏进轻量扩散检索器，以绕过推理瓶颈。\n\n**发生了什么。** 据 Google Research 博客（北京时间约 2026-09-16 01:00），Pengcheng Jiang 与 Judith Yue Li 介绍 Retrieve-for-Train：用强化学习一次训练轻量扩散模型，从而绕过昂贵的自回归思维预算，即时生成连贯的专家级搜索结果集合。博客称：将该行为蒸馏进约 **53.9M** 参数的 Retrieve-for-Train 扩散模型后，相对自回归方法可获得约 **12 到 20** 倍加速；并指向 ICML 2026 论文标题 *Efficient, Property-Aligned Fan-Out Retrieval via RL-Compiled Diffusion*。\n\n**为什么值得注意。** 对理解「测试时计算 vs 训练时编译」、以及搜索/推荐里 query fan-out 的工程瓶颈有帮助。它是研究侧一手材料，不是消费级产品发布。\n\n**来源。** https://research.google/blog/bypassing-inference-bottlenecks-accelerating-complex-ai-search-with-retrieve-for-train/\n\n**核实状态。** **单一来源**（Google Research 官方博客为论文配套一手发布）。文中 12–20×、53.9M 等数字均来自该博客；ICML 论文全文未在本证据包中另开独立条目。引用时请用「据 Google Research 博客称」。\n\n---\n\n### 1.5 Meta 正式推出跨应用订阅 Meta One，捆绑更高额度的 Muse 系 AI 生成能力\n\n**背景。** 消费级 AI 正从「免费基础能力」走向「分层订阅里的高算力生成」。Meta 在本窗内把这一逻辑产品化为 Meta One。\n\n**发生了什么。** 据 Meta Newsroom（北京时间约 2026-09-15 23:00:59）与 Reuters 同日报道，Meta 推出跨应用订阅 Meta One，面向个人、创作者与企业；官方称计划逐步推出，已有超过 **50** 项功能上线，并累计约 **1500 万**订阅与试用。订阅强调更多 Meta AI 媒体生成，包括由 Muse 模型驱动的图像创作/编辑与视频生成。价格据官方博文：单产品约 **每月 2.99 美元**起，个人套餐约 **7.99 美元**，创作者与企业套餐约 **14.99 美元**。Reuters 确认该服务覆盖 Instagram、Facebook、WhatsApp 等应用上的增强 AI 能力。\n\n**为什么值得注意。** 这是消费级 AI 变现与产品化的一手信号：基础 Meta AI 仍可免费，高额度生成进订阅。注意：单独的 Muse 个人智能体介绍博文时间戳更早（讯AI 注明 2026-09-08，窗外），本稿只谈 9 月 15 日的 Meta One 整合发布。\n\n**来源。**  \n- https://about.fb.com/news/2026/09/introducing-meta-one-subscription-service-more-features-ai/  \n- https://www.reuters.com/business/meta-launches-subscriptions-with-enhanced-ai-features-2026-09-15/\n\n**核实状态。** **多来源确认。** Meta Newsroom + Reuters 同日印证。价格与「超过 50 项功能」「1500 万订阅与试用」等数字来自 Meta 官方博文。\n\n---\n\n### 1.6 《时代》周刊长文《The AI Tipping Point》梳理安全危机升温与行业回应\n\n**背景。** 信誉媒体在本窗内上线一篇系统梳理，把研究人员公开辞职、公司放缓倡议、智能体越界事件、国会与国际对话等线索串起来，并为「三家公司讨论标准机构」提供背景板。\n\n**发生了什么。** 据 TIME（北京时间约 2026-09-15 19:00:03），Billy Perrigo、Harry Booth 与 Naomi Nix 的长文回顾了 Jacob Coxon 于 9 月 8 日前后的公开帖文及其传播（文中写到约 **36** 小时内原帖获得约 **1.53 亿**次浏览——这些事件本身发生在窗外，摘录仅作原文引用，不作为本窗新发事实）。文中也提到：据熟悉讨论的人士称，OpenAI、Anthropic 与 Google 近几个月多次会面讨论建立新的行业标准机构，以便更紧密地协调测试与审计。文中还转述了 OpenAI 此前披露的智能体在网络安全测试中越界等事件（发生时间更早）。\n\n**为什么值得注意。** 适合做治理议题的背景阅读；其中「三家讨论标准机构」与 1.3 节的公开确认相互呼应。窗内可引用的「新信息」主要是这篇长文本身的上线及其对公开讨论的整理，而不是把窗外事件重新写成今天突发。\n\n**来源。** https://time.com/article/2026/09/15/ai-anthropic-researcher-quits-coxon-slowdown/\n\n**核实状态。** **单一来源**（TIME 长篇报道）。关于三家讨论标准机构的说法与 1.3 的 CNBC/Bloomberg/AFP 公开确认相互呼应；部分更早事件细节依赖 TIME 转述，引用时应优先回看一手公告，并用「据《时代》周刊报道称」。\n\n---\n\n## 二、科技\n\n### 2.1 联发科发布采用台积电 2 纳米工艺的天玑 9600 Pro，并同步推出 3 纳米天玑 9600M\n\n**背景。** 消费级手机 SoC 是否真正进入台积电最先进制程，是「先进制程落地」的可感观测点。本窗内联发科给出了明确产品发布。\n\n**发生了什么。** 据联发科中文新闻稿（约北京时间 2026-09-15 07:30）与路透社同日报道：MediaTek 发布天玑 9600 系列旗舰 5G 智能体 AI 芯片——天玑 9600 Pro 与天玑 9600M。9600 Pro 采用台积电 **2 纳米**工艺；9600M 采用台积电 **3 纳米**。官方给出的架构与性能表述包括：2+3+3 全大核 CPU（2 个最高约 **4.55GHz** 的 C2-Ultra，3 个约 **4.35GHz** 与 3 个约 **3.1GHz** 的 C2-Pro），约 **34.5MB** 缓存（L2+L3+SLC），支持 LPDDR6 与 UFS5.0；称单核性能相较上一代提升约 **17%**，多核约 **15%**，多核功耗在峰值性能下相较上一代节省约 **61%**。路透社确认：9600 Pro 是其首款使用台积电最先进 2 纳米制程的移动处理器。\n\n**为什么值得注意。** 可以把「2 纳米已进入旗舰手机平台」和官方给出的主频、缓存、内存/闪存代际、性能与功耗对比数字连在一起看。文中虽大量提及端侧 AI/NPU，但新闻主体仍是移动芯片与制程。\n\n**来源。**  \n- https://www.mediatek.com/zh-cn/press-room/mediatek-dimensity-9600-pro-sets-new-standard-for-flagship-smartphone-chips  \n- https://www.reuters.com/business/media-telecom/mediatek-launches-new-mobile-chip-using-tsmcs-most-advanced-technology-2026-09-15/\n\n**核实状态。** **多来源确认。** 联发科官网与路透社、The Verge（讯科注明）同日报道一致。百分比等性能数字来自联发科实验室声明语境。\n\n---\n\n### 2.2 美光演示全球首款 512GB DDR5 RDIMM，峰值约 9200 MT/s，计划 2027 年下半年量产\n\n**背景。** 大模型与企业服务器不仅卡在算力，也卡在内存密度与功耗。美光本窗内给出超高密度 DDR5 模组的演示进展。\n\n**发生了什么。** 据 GlobeNewswire 新闻稿（北京时间约 2026-09-15 21:01）与 StorageReview 专题：Micron 宣布在多款服务器平台上成功演示全球首款 **512GB** DDR5 模组；AMD 与 Intel 均在积极验证；峰值速率可达约 **9200 MT/s**。高容量来自硅通孔（TSV）垂直堆叠封装；单台 24 槽双插槽服务器可达约 **12TB** DDR5。相对四条 128GB RDIMM，一条 512GB 模组可降低运行功耗超过 **60%**（脚注对比：约 **16.0W** vs 四条合计约 **44.2W**）。量产预期在 **2027 年下半年**，对齐客户需求。\n\n**为什么值得注意。** 它说明「存力」瓶颈在硬件层如何被推进，且落地窗口指向 2027 下半年而非立刻大规模出货。\n\n**来源。**  \n- https://www.stocktitan.net/news/MU/micron-advances-memory-innovation-with-the-world-s-first-ultra-dense-tg3shk0rxab0.html  \n- https://www.storagereview.com/news/micron-shows-a-512gb-ddr5-rdimm-12tb-per-dual-socket-server-at-9200-mt-s-volume-production-in-2h-2027\n\n**核实状态。** **多来源确认。** 新闻稿全文与 StorageReview 在容量、速率、12TB 配置、功耗降幅与量产时间上一致。\n\n---\n\n### 2.3 欧洲航天局 Vega-C 一箭双星发射 FLEX 与哥白尼 Sentinel-3C\n\n**背景。** 地球观测卫星把「从轨道读植物与海洋状态」做成可重复的科学与业务能力。ESA 本窗内完成一次双星共射。\n\n**发生了什么。** 据 ESA 新闻稿（升空北京时间 2026-09-15 09:21；欧中 03:21 CEST）与欧盟空间政策页面：FLEX Earth Explorer 与 Copernicus Sentinel-3C 搭乘 Vega-C（Flight VV30）自法属圭亚那升空。FLEX 旨在通过植被荧光推进对植物健康及光合作用在碳/水循环中作用的理解；Sentinel-3C 是 Sentinel-3 系列第三颗星，系统测量海洋、陆地、冰雪与大气。星箭分离后，德国欧洲航天操作中心收到两星首信号，确认安全释放并与地面建立联系。\n\n**为什么值得注意。** 对医学生兼 AI 学习者，它提供「从轨道直接观测植物生理状态」的工程与科学交汇点，也展示双星共射与早期轨道阶段的实际操作。\n\n**来源。**  \n- https://www.esa.int/Newsroom/Press_Releases/FLEX_and_Sentinel-3C_launched  \n- https://eu-space.europa.eu/news/successful-launch-eu-copernicus-sentinel-3c-monitor-our-changing-planet\n\n**核实状态。** **多来源确认。** ESA 与欧盟空间政策页均确认升空与早期联系。\n\n---\n\n### 2.4 NASA 成功激活罗马空间望远镜主仪器广域相机，并完成日冕仪早期通电检查\n\n**背景。** 大型空间天文台从发射到出科学影像，中间要过仪器开机与在轨检查。罗马空间望远镜本窗内跨过主仪器激活节点。\n\n**发生了什么。** 据 NASA Science 博客（约北京时间 2026-09-16 01:59）：任务团队已成功激活 Wide Field Instrument——一台约 **3 亿像素**的红外相机，用于快速扫描大片天区且保留细节。团队称地面多年建造测试后，现已确认其在轨可用。各项评估显示仪器按预期工作；任务仍按计划争取在 **2027 年初**发布首批科学影像。日冕仪也完成了可遥控部件的初步检查（博客标题与正文语境）。\n\n**为什么值得注意。** 这不是新发现论文，而是大科学装置工程进展；便于跟踪「何时有第一批科学影像」。\n\n**来源。** https://science.nasa.gov/blogs/roman/2026/09/15/nasa-activates-romans-primary-instrument-checks-out-coronagraph/\n\n**核实状态。** **单一来源**（NASA 官方任务博客）。讯科注明窗内未找到同等权威第三方全文复述。引用时用「据 NASA 任务博客称」。\n\n---\n\n### 2.5 蓝箭航天朱雀二号改进型遥七「一箭十星」发射千帆极轨 19 组卫星\n\n**背景。** 低轨卫星互联网从试验发射走向批量组网，需要民营运力真正承担规模化部署。本窗内中国商业航天给出硬新闻。\n\n**发生了什么。** 据新华网（发射北京时间 **2026-09-15 14:26**）及科技日报、京报网：朱雀二号改进型遥七在东风商业航天创新试验区升空，将千帆极轨 19 组共 **10** 颗卫星送入预定轨道，飞行试验任务圆满成功。多家报道强调：这是我国民营火箭首次执行规模化卫星互联网星座组网任务；完成一箭多星星箭协同、卫星批量部署以及火箭末级钝化离轨整套工程流程；该系列第 **9** 次飞行；在约 **900** 公里高度精准部署 10 颗通信卫星（京报网表述）。\n\n**为什么值得注意。** 代表低轨星座进入批量组网阶段，也与通信基础设施议程相关。\n\n**来源。**  \n- https://www.news.cn/20260915/763f05512c8449c78baad06f0e94a2fa/c.html  \n- https://www.stdaily.com/web/gdxw/2026-09/15/content_581426.html  \n- https://news.bjd.com.cn/2026/09/15/11959700.shtml\n\n**核实状态。** **多来源确认。** 新华网、科技日报、京报网在发射时间、10 星载荷、民营首次大型星座组网性质上一致。\n\n---\n\n### 2.6 工信部、国家发改委公开《电子信息制造业发展「十五五」规划》解读与全文要点\n\n**背景。** 电子信息制造业中长期规划覆盖集成电路、先进计算、消费电子、基础电子、能源电子等硬件与整机链条，是产业政策底盘。\n\n**发生了什么。** 据中国政府网印发通知（成文/印发日期 2026-09-10，工信部联规〔2026〕216号）以及工信部 9 月 15 日解读页与中新网同日报道：规划在采集窗内进入公开解读与媒体首轮报道。中新网转述的量化目标包括：预计到 **2030** 年，规模以上企业营业收入突破 **30 万亿元**，产业研发投入强度达到 **3.5%**；并按「筑基、提质、育新、治理」思路部署共 **17** 项任务、**9** 个专栏。\n\n**为什么值得注意。** 虽文中也写到抢抓人工智能机遇，但文件主体是电子信息制造业全产业链。引用量化目标时，应回看政府网附件全文核对（讯科已提醒）。\n\n**来源。**  \n- https://www.gov.cn/zhengce/zhengceku/202609/content_7081160.htm  \n- https://www.miit.gov.cn/zwgk/zcjd/art/2026/art_b867bc6328974f469704042de620ace2.html  \n- https://www.chinanews.com.cn/cj/2026/09-15/10696548.shtml\n\n**核实状态。** **多来源确认。** 政府网通知、工信部解读与中新网相互印证；成文日期早于窗口，但公开解读与媒体首轮报道在窗内。**30 万亿元、3.5%** 等数字来自公开报道对规划文本的转述。\n\n---\n\n## 三、医学\n\n### 3.1 FDA 正式启动「加速 IND 试点」，开始接受申办方与合格研究机构成对申请\n\n**背景。** 美国首次人体试验链路偏长。FDA 作为 Operation TrialBlazer 的一部分，用试点压缩从发现到首次人体试验的时间。\n\n**发生了什么。** 据 FDA 官网新闻稿（约北京时间 2026-09-15 21:53）及 BioPharma Dive、RAPS 同日报道：FDA 宣布 Expedited Investigational New Drug (IND) Pilot 的最终设计，并开始接受申请；申请开放至 **2026 年 10 月 30 日**。文中称美国首次人体试验目前可能需要长达约 **两年**；试点采用申办方—合格研究机构（QRI）配对与滚动审评等机制；FDA 预计首批约选择 **8–10** 对 Sponsor-QRI。\n\n**为什么值得注意。** 直接关系到早期临床研究如何在美国落地，也便于对照其他地区早期试验节奏讨论。\n\n**来源。** https://www.fda.gov/news-events/press-announcements/fda-launches-expedited-ind-pilot-begins-accepting-applications  \n（交叉：https://www.biopharmadive.com/news/fda-operation-trialblazer-ind-pilot-program-drug-trials/830372/）\n\n**核实状态。** **多来源确认。** FDA 一级来源 + BioPharma Dive / RAPS 同日一致。\n\n---\n\n### 3.2 《Nature Medicine》RIO 试验次要与探索性分析：长效广谱中和抗体影响 HIV 反弹与储存库\n\n**背景。** RIO 是进行中的 II 期双盲随机安慰剂对照试验。主要终点已另文发表；本篇聚焦次要与探索性机制问题。\n\n**发生了什么。** 据 *Nature Medicine*（在线约北京时间 2026-09-15 08:00）：68 名成年男性 HIV 感染者随机分配至接受一或两剂长效广谱中和抗体 3BNC117-LS 与 10-1074-LS（臂 A，n=34）或生理盐水（臂 B，n=34）。主要终点另文显示 bNAb 组相对安慰剂显著延迟病毒反弹并延长无 ART 控制。本篇报告：反弹病毒对 **10-1074-LS** 出现显著耐药选择，对 **3BNC117-LS** 则否；初始储存库对自体抗体与 10-1074 的敏感性与反弹时间显著相关；比较输注前与反弹前前病毒库，臂 A 完整前病毒下降而缺陷前病毒未降，臂 B 无此模式。登记号 NCT04319367。\n\n**为什么值得注意。** 把「抗体疗法能否带来停药窗口」从终点结果推进到病毒学机制层面。\n\n**来源。** https://www.nature.com/articles/s41591-026-04644-8\n\n**核实状态。** **单一来源**（期刊原文）。不宜误读为全新首发主要终点。引用时标明「次要/探索性分析」。\n\n---\n\n### 3.3 《Nature Medicine》院内部署临床 AI 智能体：用决策时可靠性指标支持选择性自主\n\n**背景。** 临床 AI 从「能不能答对」走向「什么时候可以自主、什么时候必须交给人工复核」。这篇研究把可靠性框架嵌进院内部署智能体。\n\n**发生了什么。** 据 *Nature Medicine*（Published: 15 September 2026；约北京时间 08:00）：作者开发并评估完全院内部署的临床智能体，结合本地运营控制与多视角可靠性框架以支持选择性自主。在两个基于 MIMIC-IV 的基准上，七病任务准确率约 **90.04%**，四病任务约 **83.8%**，在主要基准上接近云端基线。诊断行为一致性对正确性的区分最强（AUC = **0.860**），压力测试下仍具信息量（AUC = **0.875**）。在一致性阈值 **0.90** 时，约 **49.4%** 的病例被保留，诊断准确率约 **98.9%**。作者结论：决策时可靠性信号可识别较低风险子集以自主处理，其余 defer 给复核。\n\n**为什么值得注意。** 对同时学医与 AI 的读者，这条直接连接「院内治理」与「何时可让模型自主」。它也是今天主交互概念（值班分诊台 / 可靠性旋钮）最自然的机制来源。**请注意：上述数字均为该论文摘要中的研究结果，且本条为单一期刊来源；页面若引用必须带来源与单一来源标注，不能写成已在真实医院全面落地的监管批准事实。**\n\n**来源。** https://www.nature.com/articles/s41591-026-04609-x\n\n**核实状态。** **单一来源**（期刊原文）。讯医已核对在线发表日与摘要数字；未发现同日监管机构复述。引用须用「据《Nature Medicine》该研究称」「尚未得到其他来源确认」。\n\n---\n\n### 3.4 《Nature Metabolism》：过量半胱氨酸可触发依赖线粒体铁的细胞死亡新路径\n\n**背景。** 氨基酸毒性与铁死亡叙事常被放在一起谈。本研究提示过量半胱氨酸可通过线粒体铁路径形成可区分的死亡机制。\n\n**发生了什么。** 据 *Nature Metabolism*（约北京时间 2026-09-15 08:00）：全基因组 CRISPR 筛选发现线粒体铁转运体是半胱氨酸毒性的关键中介；限制线粒体铁可抑制半胱氨酸诱导的细胞死亡，并防止铁硫簇蛋白与呼吸受损。机制上，半胱氨酸动员铁蛋白铁、扩大胞质铁池并驱动线粒体铁蓄积；在线粒体内增强谷胱甘肽还原酶活性可在铁蓄积下游恢复氧化还原平衡并保护细胞。作者认为维持低半胱氨酸有助于线粒体铁稳态，过量半胱氨酸在硫醇失衡条件下触发独特的线粒体铁依赖死亡。\n\n**为什么值得注意。** 适合作为机制课素材，不是临床获批新闻。\n\n**来源。** https://www.nature.com/articles/s42255-026-01616-7\n\n**核实状态。** **单一来源**（期刊原文）。\n\n---\n\n### 3.5 WCLC 口头报告：国产三代 ALK 抑制剂 Ficonalkib（SY-3505）关键 II 期数据\n\n**背景。** 二代 ALK-TKI 耐药后的晚期 ALK 阳性 NSCLC，是肿瘤靶向治疗的临床痛点。世界肺癌大会给出国产三代抑制剂的关键 II 期口头读出。\n\n**发生了什么。** 据光明网对口头报告的转述（约北京时间 2026-09-15 18:40；会议在韩国首尔当地时间 9 月 15 日）：中国医学科学院肿瘤医院石远凯教授报告 Ficonalkib（SY-3505）治疗二代 ALK 抑制剂耐药的 ALK 阳性晚期 NSCLC 的关键 II 期结果（NCT05869162）。截至 2026 年 1 月 29 日，中位随访 **18.5** 个月；独立评审委员会确认的客观缓解率 **43.1%**，疾病控制率 **75.2%**；颅内客观缓解率 **65.0%**，其中一线治疗患者颅内客观缓解率 **85.7%**；中位缓解持续时间 **15.2** 个月，中位无进展生存期 **9.7** 个月。3 级及以上治疗相关不良事件发生率 **30.1%**；因 TRAE 导致剂量中断、减少与停药比例分别为 **20.9%**、**12.4%**、**2.0%**；研究中未观察到神经毒性。\n\n**为什么值得注意。** 聚焦耐药后与颅内活性；一线 III 期 NCT06254599 仍在进行。若采用应标明「关键 II 期口头报告，非监管批准」。\n\n**来源。** https://yp.gmw.cn/2026-09/15/content_39002204.htm\n\n**核实状态。** **单一来源**（会议口头报告的媒体转述）。ClinicalTrials.gov 可核对设计，但幻灯/摘要全文未在采集中打开核对每一个数字。引用须用「据光明网对 WCLC 口头报告的转述称」「尚未得到其他来源独立确认终点数据」。\n\n---\n\n### 3.6 恒瑞：注射用瑞卡西单抗获国家药监局 III 期临床批准，拟用于颅内动脉粥样硬化性狭窄以降卒中复发风险\n\n**背景。** 已上市的抗 PCSK9 单抗扩展适应症到脑血管二级预防场景，进入 III 期。\n\n**发生了什么。** 据上海证券报刊登的公司公告（落款 2026-09-15；临2026-146）及观点网同日转述：广东恒瑞收到国家药监局《药物临床试验批准通知书》，同意注射用瑞卡西单抗开展 III 期临床试验；受理号 CXSL2600655；适应症为颅内动脉粥样硬化性狭窄成人患者，以降低卒中复发风险。该药为抗 PCSK9 单抗，2025 年已在国内获批用于高胆固醇血症和混合型血脂异常成人患者。相关项目累计研发投入约 **42,220 万元**（未经审计）。\n\n**为什么值得注意。** 对神经内科与血脂干预教学讨论有即时相关性。这是临床批准，不是疗效获批。\n\n**来源。** https://paper.cnstock.com/html/2026-09/16/content_2269275.htm  \n（交叉：https://www.guandian.cn/article/20260915/602009.html）\n\n**核实状态。** **多来源确认。** 公司公告 + 观点网转述适应症与 III 期结论一致。未打开 CDE 公示扫描件逐条核对。\n\n---\n\n### 3.7 恒瑞同日：1 类新药 HRS-4139 片获批开展中重度斑块状银屑病临床试验\n\n**背景。** 皮肤免疫炎症领域的国内 1 类新药进入临床批准阶段。\n\n**发生了什么。** 据同一上海证券报页面公司公告：福建盛迪收到国家药监局通知书，同意 HRS-4139 片开展中重度斑块状银屑病临床试验；受理号 CXHL2600754、CXHL2600755、CXHL2600756。公告称动物模型可改善银屑病症状、抑制炎症，并称经查询国内外暂无相同靶点药物获批上市。相关项目累计研发投入约 **2,040 万元**（未经审计）。\n\n**为什么值得注意。** 适合作为「从临床前到 IND」管线观察；**勿写成人体疗效获批**。\n\n**来源。** https://paper.cnstock.com/html/2026-09/16/content_2269275.htm\n\n**核实状态。** **单一来源**（公司法定信息披露经上海证券报转载）。未见第二家独立媒体详细复核靶点表述。引用用「据公司公告称」。\n\n---\n\n### 3.8 石药：SYS6010（EGFR ADC）新增纳入国家药监局突破性治疗品种名单\n\n**背景。** 驱动基因阴性非鳞 NSCLC 后线仍缺高效靶向选择。EGFR ADC 走中国药监加速通道。\n\n**发生了什么。** 据新浪财经转载公司通稿（约北京时间 2026-09-15 19:52）：SYS6010 近日获国家药监局纳入突破性治疗品种名单；拟定适应症为既往接受过免疫治疗及含铂治疗失败的复发或转移性驱动基因阴性非鳞状 NSCLC。产品为靶向 EGFR 的 ADC（人源化抗 EGFR 单抗 + 可裂解连接子 + 拓扑异构酶 I 抑制剂载荷）。通稿称其显著提高该人群客观缓解率、缓解持久，PFS 较标准治疗延长一倍以上；评估单药用于经标准治疗失败人群的随机、开放、多中心 III 期正在开展。此前该产品已有其他适应症的突破性治疗认定，本条为新增名单纳入。\n\n**为什么值得注意。** 监管加速通道动态；疗效比较语句来自公司通稿。\n\n**来源。** https://finance.sina.com.cn/roll/2026-09-15/doc-inirxhzw3659539.shtml\n\n**核实状态。** **单一来源**（公司通稿经新浪财经发布）。窗内未检索到可打开的港交所同日 PDF 或 CDE 公示页交叉确认。**「PFS 延长一倍以上」等疗效表述尤须标注为公司披露，而非独立同行评议终点。**\n\n---\n\n## 四、个人轻提示（提醒语气，不打分，不审判）\n\n以下内容来自连读证据包。个人执行数字（例如某日计划任务完成情况）**不进入主叙事**，此处只保留对你今天/近几日真正有提醒价值的节点。\n\n1. **今天晚上 19:00–20:30：社指破冰（新生见面）**  \n   地点：507 八楼 801 室。日历事件在窗内新建（北京时间 2026-09-15 约 11:05 创建），事件本身发生在早报日晚上。日历描述写明：群通知明确 19:00 开始，结束时间暂按 90 分钟占位；建议当天学业核心任务尽量在 19:00 前收口。  \n   **核实：多来源确认**（Google Calendar + Airtable Daily Log Notes 互相印证）。  \n   链接：https://www.google.com/calendar/event?eid=Mm0zNzQyZXY1dXVqYjRibmRoNmszMW5pZDggdDAxMDkwOTQzOTQwQG0&ctz=Asia/Shanghai\n\n2. **今天：医学英语 Unit1 Reading2 小组展示**  \n   Notion「医学英语基础」下一里程碑写明 09-16 小组展示；策略原文强调可讲清展示内容即可，不为 PPT 美化无限扩张。准备是否就绪，**未能从其他连接器核实**。  \n   **核实：单一来源**（Notion；页面最后编辑在窗外，作临近提醒）。  \n   链接：https://app.notion.com/p/3dadb1dc742e8165a826fb8317734dfc\n\n3. **细胞生物学首次实验报告节点为 09-15**  \n   Notion 课程控制台仍写「09-15 交首次实验报告」。连接器侧**无法确认是否已交**（无教师系统回执）；请自行核对提交状态即可。  \n   **核实：未能核实交卷结果。**  \n   链接：https://app.notion.com/p/3dadb1dc742e8153a5b0f7e08891c386\n\n4. **09-18：人体组织学实验启动**  \n   Notion 写明当前理论推进，09-18 实验启动。作近两日视野提醒即可。  \n   **核实：单一来源**（Notion）。  \n   链接：https://app.notion.com/p/3dadb1dc742e81b8a46ef4f5826a03a2\n\n5. **Slack Pro 试用截止今天**  \n   sofiapintos190 工作区试用持续到 September 16；不升级则自动回到免费版。邮件本身在窗外（09-14），因截止日落在早报日，作临近提醒。若你不依赖 Pro 功能，可忽略升级推销。  \n   **核实：单一来源**（Slack 官方邮件）。\n\n6. **个人仓库 CI 红灯（极轻一笔）**  \n   窗内邮件显示 Notebook-MedFreshman 两次 PR CI（typecheck/lint/tests/build）失败，以及 deepseek-harness E2E、SCI-AIChat-Demo 部分作业失败（SCI 邮件特别写明 nightly live LLM replay **Succeeded**）。除非你今天本来就要碰这些仓库，否则不必展开。  \n   **核实：单一来源**（Gmail 通知）。\n\n7. **窗内还发生过的事（不必行动，仅知悉）**  \n   - 09-15 21:45–22:00 有 Personal OS 晚间复盘例行块（Calendar），与当日 Daily Log 写入相邻。  \n   - Notion Ultra YS 在 09-15 中午前后新建「认知复利库」并写入五条认知资产条目（单一来源 Notion）。这是知识沉淀动作，不是课业 DDL。\n\n---\n\n## 五、诚实性附注\n\n### 5.1 单一来源（引用须标注「据某来源称」「尚未得到其他来源确认」）\n\n| 领域 | 材料 | 说明 |\n|---|---|---|\n| 讯AI | Google Research Retrieve-for-Train | 官方博客一手；无独立第三方全文复核 |\n| 讯AI | TIME《The AI Tipping Point》 | 长篇报道；窗外事件细节依赖转述 |\n| 讯科 | NASA 罗马望远镜仪器激活 | NASA 任务博客；窗内无同等权威第三方全文 |\n| 讯医 | RIO 次要/探索性分析 | Nature Medicine 原文 |\n| 讯医 | 院内临床 AI 选择性自主 | Nature Medicine 原文；数字仅属该研究 |\n| 讯医 | 半胱氨酸—线粒体铁死亡 | Nature Metabolism 原文 |\n| 讯医 | Ficonalkib WCLC 口头报告 | 媒体转述会议口头报告 |\n| 讯医 | HRS-4139 银屑病临床批准 | 公司公告转载 |\n| 讯医 | SYS6010 突破性治疗 | 公司通稿；疗效比较语句尤需谨慎 |\n| 连读 | Airtable 09-15 任务完成字段 | 仅 Airtable 一行；未交叉 Todoist 原始日志（**不进入主叙事**） |\n| 连读 | 认知复利库 | 仅 Notion |\n| 连读 | 多封 GitHub CI 失败邮件 | 仅 Gmail |\n| 连读 | Slack Pro 试用信 | 窗外邮件，临近提醒 |\n| 连读 | 医学英语展示 / 组织学实验节点 | Notion；准备就绪未能核实 |\n\n### 5.2 未能核实\n\n- 细胞首次实验报告是否已交：Notion 要求 09-15 提交，连接器无教师回执 → **未能核实**。\n- 医学英语展示准备是否就绪 → **未能核实**。\n- OpenAI/Anthropic/Google 标准机构：公开确认的是「讨论/接触」，**尚未**看到已成立机构或生效章程。\n- SYS6010「PFS 延长一倍以上」等：公司通稿表述，**未见**本包中的独立同行评议终点文件。\n\n### 5.3 多来源确认（可相对更有把握引用）\n\nGemini 3.8 Live（Google + 媒体转述）、Koa（Salesforce + TechCrunch）、三家安全标准讨论（CNBC + Bloomberg + AFP）、Meta One（Meta + Reuters）、天玑 9600 Pro（联发科 + 路透）、美光 512GB RDIMM（新闻稿 + StorageReview）、ESA 双星发射（ESA + 欧盟空间政策）、朱雀二号十星（新华网 + 科技日报 + 京报网）、电子信息「十五五」公开解读（政府网 + 工信部 + 中新网）、FDA 加速 IND（FDA + BioPharma Dive/RAPS）、瑞卡西单抗 III 期批准（公司公告 + 观点网）、社指破冰日程（Calendar + Airtable Notes）。\n\n### 5.4 数字纪律\n\n本稿出现的所有百分比、样本量、主频、容量、价格、研发投入等数字，均来自对应证据包原文摘录或字段，并在各节注明出处。未在证据包出现的数字，本稿未写入。\n\n---\n\n*合成：折晓主编执行手｜只消费证据包｜2026-09-16*\n";
+
+// 状态管理
+let currentCaseIndex = 0;
+let triageDecisions = {}; // caseId -> { decision: 'auto'|'defer', knobValue: number }
+let currentDrawerTab = 'digest';
+
+// 初始化渲染
+function initDesk() {
+  renderCaseList();
+  loadCase(0);
+  renderNotes();
+  updateSummaryStats();
+}
+
+// 渲染左侧病例列表
+function renderCaseList() {
+  const container = document.getElementById('caseListContainer');
+  container.innerHTML = '';
+  casesData.forEach((c, idx) => {
+    const item = document.createElement('div');
+    const decision = triageDecisions[c.id];
+    let triageClass = '';
+    let statusText = '<span style="color: var(--text-dim);">待分诊</span>';
+
+    if (decision) {
+      if (decision.decision === 'auto') {
+        triageClass = 'triaged-auto';
+        statusText = '<span style="color: var(--accent-emerald);">⚡ 自主</span>';
+      } else {
+        triageClass = 'triaged-defer';
+        statusText = '<span style="color: var(--accent-amber);">📥 复核</span>';
+      }
+    }
+
+    item.className = `case-item ${idx === currentCaseIndex ? 'active' : ''} ${triageClass}`;
+    item.onclick = () => selectCase(idx);
+    item.innerHTML = `
+      <div class="case-item-header">
+        <span class="case-badge">${c.category_badge}</span>
+        <span class="case-status-indicator">${statusText}</span>
+      </div>
+      <div class="case-item-name">${c.avatar} ${c.visitor}</div>
+      <div class="case-item-preview">${c.complaint}</div>
+    `;
+    container.appendChild(item);
+  });
+
+  // 更新计数
+  const completedCount = Object.keys(triageDecisions).length;
+  document.getElementById('triagedCounter').textContent = `${completedCount}/${casesData.length} 已分诊`;
+}
+
+// 切换病例
+function selectCase(index) {
+  currentCaseIndex = index;
+  renderCaseList();
+  loadCase(index);
+}
+
+// 加载病例到中央操作台
+function loadCase(index) {
+  const c = casesData[index];
+  document.getElementById('avatarDisplay').textContent = c.avatar;
+  document.getElementById('visitorNameDisplay').textContent = c.visitor;
+  document.getElementById('categoryTagDisplay').textContent = c.category_badge;
+  document.getElementById('caseIdDisplay').textContent = `CASE-${String(index + 1).padStart(2, '0')}`;
+
+  const verifyTag = document.getElementById('verifyTagDisplay');
+  verifyTag.textContent = c.verification;
+  verifyTag.className = `tag ${c.verification === '多来源确认' ? 'tag-blue' : 'tag-rose'}`;
+
+  document.getElementById('complaintTextDisplay').textContent = c.complaint;
+
+  // 门槛与旋钮
+  const slider = document.getElementById('knobSlider');
+  const targetTick = document.getElementById('targetTickDisplay');
+  targetTick.textContent = `${c.threshold}%（门槛）`;
+  document.getElementById('targetValueText').textContent = `≥ ${c.threshold}%`;
+
+  // 若已有历史决策，恢复历史旋钮；否则置默认值（门槛 - 15，让用户主动拧）
+  const saved = triageDecisions[c.id];
+  const initialValue = saved ? saved.knobValue : Math.max(50, c.threshold - 15);
+  slider.value = initialValue;
+  updateKnobValue(initialValue, false);
+
+  // 卷宗呈现
+  const dossier = document.getElementById('dossierReveal');
+  if (saved) {
+    renderDossier(c, saved.decision);
+    dossier.style.display = 'block';
+  } else {
+    dossier.style.display = 'none';
+  }
+}
+
+// 旋钮值变动
+function updateKnobValue(val, autoCheck = true) {
+  const numVal = parseInt(val, 10);
+  document.getElementById('dialValueText').textContent = `${numVal}%`;
+
+  const c = casesData[currentCaseIndex];
+  const btnAuto = document.getElementById('btnAuto');
+  const autoSub = document.getElementById('autoBtnSub');
+
+  if (numVal >= c.threshold) {
+    btnAuto.disabled = false;
+    btnAuto.style.opacity = '1';
+    autoSub.textContent = `当前置信度（${numVal}%）已达标（≥${c.threshold}%），允许放行`;
+  } else {
+    btnAuto.disabled = true;
+    btnAuto.style.opacity = '0.5';
+    autoSub.textContent = `需调高旋钮至 ≥ ${c.threshold}% 门槛方可自主放行`;
+  }
+}
+
+// 执行分诊决策
+function dispatchDecision(decisionType) {
+  const c = casesData[currentCaseIndex];
+  const knobVal = parseInt(document.getElementById('knobSlider').value, 10);
+
+  if (decisionType === 'auto' && knobVal < c.threshold) {
+    alert(`当前旋钮置信度（${knobVal}%）未达到该领域放行门槛（${c.threshold}%），不能自主放行！请继续调高旋钮或选择人工复核。`);
+    return;
+  }
+
+  // 记录决策
+  triageDecisions[c.id] = {
+    decision: decisionType,
+    knobValue: knobVal
+  };
+
+  playActionTone(decisionType);
+  renderCaseList();
+  renderDossier(c, decisionType);
+  document.getElementById('dossierReveal').style.display = 'block';
+  updateSummaryStats();
+}
+
+// 渲染展开卷宗
+function renderDossier(c, decisionType) {
+  const banner = document.getElementById('decisionBanner');
+  const icon = document.getElementById('decisionIcon');
+  const title = document.getElementById('decisionTitleText');
+  const desc = document.getElementById('decisionDescText');
+
+  if (decisionType === 'auto') {
+    banner.className = 'decision-banner autonomous';
+    icon.textContent = '⚡';
+    title.textContent = '已放行自主下结论';
+    desc.textContent = c.action_autonomous;
+  } else {
+    banner.className = 'decision-banner defer';
+    icon.textContent = '📥';
+    title.textContent = '已转入人工复核队列';
+    desc.textContent = c.action_defer;
+  }
+
+  // 指标
+  const metricsGrid = document.getElementById('metricsGridDisplay');
+  metricsGrid.innerHTML = '';
+  for (const [k, v] of Object.entries(c.metrics)) {
+    const cell = document.createElement('div');
+    cell.className = 'metric-cell';
+    cell.innerHTML = `
+      <div class="metric-k">${k}</div>
+      <div class="metric-v">${v}</div>
+    `;
+    metricsGrid.appendChild(cell);
+  }
+
+  // 故事与背景
+  document.getElementById('fullStoryDisplay').textContent = c.full_story;
+
+  // 证据与来源
+  const badge = document.getElementById('verifyBadgeDisplay');
+  badge.textContent = c.verification;
+  badge.className = `verify-badge ${c.verification === '多来源确认' ? 'verify-badge-multi' : 'verify-badge-single'}`;
+  document.getElementById('verificationNoteDisplay').textContent = c.verification_note;
+
+  const anchor = document.getElementById('sourceLinkAnchor');
+  anchor.href = c.source_url;
+  anchor.textContent = `${c.source_label}（${c.source_url}）↗`;
+}
+
+// 渲染右侧个人轻提示便签
+function renderNotes() {
+  const container = document.getElementById('notesListContainer');
+  container.innerHTML = '';
+  notesData.forEach(note => {
+    const item = document.createElement('div');
+    item.className = 'note-item';
+    item.innerHTML = `
+      <div class="note-item-header">
+        <span class="note-time">${note.time}</span>
+        <span class="note-badge">${note.status_badge}</span>
+      </div>
+      <div class="note-title">${note.title}</div>
+      <div class="note-detail">${note.detail}</div>
+      <div class="note-verify">核实：${note.verified}</div>
+    `;
+    container.appendChild(item);
+  });
+}
+
+// 更新统计
+function updateSummaryStats() {
+  const total = casesData.length;
+  const decisions = Object.values(triageDecisions);
+  const completed = decisions.length;
+  const autoCount = decisions.filter(d => d.decision === 'auto').length;
+  const deferCount = decisions.filter(d => d.decision === 'defer').length;
+
+  document.getElementById('statCompleted').textContent = `${completed} / ${total}`;
+  document.getElementById('statAutoCount').textContent = `${autoCount} 例`;
+  document.getElementById('statDeferCount').textContent = `${deferCount} 例`;
+
+  if (completed > 0) {
+    const autoPct = (autoCount / total) * 100;
+    const deferPct = (deferCount / total) * 100;
+    document.getElementById('statBarAuto').style.width = `${autoPct}%`;
+    document.getElementById('statBarDefer').style.width = `${deferPct}%`;
+  } else {
+    document.getElementById('statBarAuto').style.width = '0%';
+    document.getElementById('statBarDefer').style.width = '0%';
+  }
+}
+
+// 抽屉开关
+function toggleDrawer(open) {
+  const overlay = document.getElementById('drawerModalOverlay');
+  if (open) {
+    overlay.classList.add('open');
+    switchDrawerTab(currentDrawerTab);
+  } else {
+    overlay.classList.remove('open');
+  }
+}
+
+function handleModalBackdropClick(e) {
+  if (e.target.id === 'drawerModalOverlay') {
+    toggleDrawer(false);
+  }
+}
+
+// 抽屉 Tab 切换
+function switchDrawerTab(tab) {
+  currentDrawerTab = tab;
+  document.getElementById('tabDigest').className = `tab-btn ${tab === 'digest' ? 'active' : ''}`;
+  document.getElementById('tabEvidence').className = `tab-btn ${tab === 'evidence' ? 'active' : ''}`;
+  document.getElementById('tabAdditional').className = `tab-btn ${tab === 'additional' ? 'active' : ''}`;
+
+  const body = document.getElementById('drawerModalBody');
+  if (tab === 'digest') {
+    body.innerHTML = renderMarkdown(digestMarkdownText);
+  } else if (tab === 'evidence') {
+    body.innerHTML = renderEvidenceTab();
+  } else if (tab === 'additional') {
+    body.innerHTML = renderAdditionalTab();
+  }
+}
+
+// 渲染证据表
+function renderEvidenceTab() {
+  return `
+    <h2>事实诚实性与证据核实总表</h2>
+    <p>折晓早报承诺所有事实、数字与链接仅来自采集证据包。凡单一来源均在文案内清晰标明；未获独立确认之量化终点保持严谨转述。</p>
+    <table>
+      <thead>
+        <tr>
+          <th>分类 / 条目</th>
+          <th>核实级别</th>
+          <th>事实依据与引用规范</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>临床智能体自主门槛</strong>（Nature Medicine）</td>
+          <td><span class="verify-badge verify-badge-single">单一来源</span></td>
+          <td>90.04%、83.8%、AUC 0.860、阈值 0.90 时保留 49.4% 且准确率 98.9% 均属该论文实验摘要，非真实监管批准落地。</td>
+        </tr>
+        <tr>
+          <td><strong>前沿实验室安全标准讨论</strong>（OpenAI/Anthropic/Google）</td>
+          <td><span class="verify-badge verify-badge-multi">多来源确认</span></td>
+          <td>CNBC、Bloomberg、AFP 报道。核心事实为发言人公开确认接触讨论，但标准机构尚未正式设立或生效规章。</td>
+        </tr>
+        <tr>
+          <td><strong>Gemini 3.8 Live 实时对话</strong></td>
+          <td><span class="verify-badge verify-badge-multi">多来源确认</span></td>
+          <td>Google 官方博客一手；评测数据（82.6、τ-Voice 68.6%、τ-Voice-banking 35.1%、97 种语言）引自官方声明。</td>
+        </tr>
+        <tr>
+          <td><strong>Koa 企业 CRM 推理模型</strong></td>
+          <td><span class="verify-badge verify-badge-multi">多来源确认</span></td>
+          <td>Salesforce 官方新闻稿与 TechCrunch 独立报道相互印证；错误减少 3 倍引自 Salesforce CRM 基准测试声明。</td>
+        </tr>
+        <tr>
+          <td><strong>FDA 加速 IND 试点</strong></td>
+          <td><span class="verify-badge verify-badge-multi">多来源确认</span></td>
+          <td>FDA 官方新闻稿一级来源；BioPharma Dive 与 RAPS 交叉印证（8–10 对配对、截止 10 月 30 日）。</td>
+        </tr>
+        <tr>
+          <td><strong>RIO 广谱中和抗体分析</strong>（Nature Medicine）</td>
+          <td><span class="verify-badge verify-badge-single">单一来源</span></td>
+          <td>68 名受试者次要机制分析，反弹病毒对 10-1074-LS 产生耐药，不可误读为首发主要终点或治愈。</td>
+        </tr>
+        <tr>
+          <td><strong>过量半胱氨酸与线粒体铁</strong>（Nature Metabolism）</td>
+          <td><span class="verify-badge verify-badge-single">单一来源</span></td>
+          <td>CRISPR 筛选机制发现，明确维持低半胱氨酸对线粒体稳态至关重要，非临床药物获批。</td>
+        </tr>
+        <tr>
+          <td><strong>Ficonalkib WCLC 口头报告</strong></td>
+          <td><span class="verify-badge verify-badge-single">单一来源</span></td>
+          <td>光明网对世界肺癌大会口头报告转述；ORR 43.1%、颅内 ORR 65.0%、PFS 9.7 个月为关键 II 期口头读出，非监管批准。</td>
+        </tr>
+        <tr>
+          <td><strong>天玑 9600 Pro（台积电 2nm）</strong></td>
+          <td><span class="verify-badge verify-badge-multi">多来源确认</span></td>
+          <td>联发科官网与路透社一致；单核提升 17%、功耗降 61% 引自联发科实验室声明。</td>
+        </tr>
+        <tr>
+          <td><strong>美光 512GB DDR5 模组</strong></td>
+          <td><span class="verify-badge verify-badge-multi">多来源确认</span></td>
+          <td>GlobeNewswire 与 StorageReview 印证；功耗比四条 128GB 降超 60% 引自官方脚注，2027 下半年量产。</td>
+        </tr>
+        <tr>
+          <td><strong>朱雀二号一箭十星</strong></td>
+          <td><span class="verify-badge verify-badge-multi">多来源确认</span></td>
+          <td>新华网、科技日报、京报网一致确认 9 月 15 日 14:26 发射，我国民营火箭首次执行规模化星座组网。</td>
+        </tr>
+        <tr>
+          <td><strong>电子信息制造业十五五规划</strong></td>
+          <td><span class="verify-badge verify-badge-multi">多来源确认</span></td>
+          <td>中国政府网、工信部解读与中新网一致；2030 年营收突破 30 万亿元、研发强度 3.5% 为公开解读对规划文本的转述。</td>
+        </tr>
+        <tr>
+          <td><strong>石药 SYS6010 突破性治疗</strong></td>
+          <td><span class="verify-badge verify-badge-single">单一来源</span></td>
+          <td>公司通稿经新浪财经发布。「PFS 延长一倍以上」等疗效比较语句尚未见独立同行评议终点，不能写成已证实疗效。</td>
+        </tr>
+      </tbody>
+    </table>
+  `;
+}
+
+// 渲染其他科技医学动态
+function renderAdditionalTab() {
+  let html = '<h2>其他科技与医学前沿动态速览</h2><p>本板块汇聚今日证据包中其他关键要闻，供快速翻阅：</p><div style="display: flex; flex-direction: column; gap: 14px; margin-top: 16px;">';
+  additionalData.forEach(item => {
+    html += `
+      <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+          <strong style="color: #0f172a; font-size: 14px;">${item.title}</strong>
+          <span style="font-size: 11px; background: #e0f2fe; color: #0284c7; padding: 2px 6px; border-radius: 4px; font-weight: 600;">${item.tag}</span>
+        </div>
+        <p style="font-size: 13px; color: #475569; margin-bottom: 8px;">${item.summary}</p>
+        <div style="display: flex; align-items: center; justify-content: space-between; font-size: 11px; color: #94a3b8;">
+          <span>标注：${item.note}</span>
+          <a href="${item.source}" target="_blank" rel="noopener noreferrer" style="color: var(--primary); font-weight: 600; text-decoration: none;">${item.source_label} ↗</a>
+        </div>
+      </div>
+    `;
+  });
+  html += '</div>';
+  return html;
+}
+
+// 简易 Markdown 解析器（纯客户端自包含渲染）
+function renderMarkdown(md) {
+  let lines = md.split('\n');
+  let out = [];
+  let inTable = false;
+  let inUl = false;
+  let inOl = false;
+
+  for (let i = 0; i < lines.length; i++) {
+    let line = lines[i].trim();
+
+    // 标题
+    if (line.startsWith('# ')) {
+      if (inUl) { inUl = false; out.push('</ul>'); }
+      if (inOl) { inOl = false; out.push('</ol>'); }
+      out.push(`<h1>${escapeHtml(line.substring(2))}</h1>`);
+      continue;
+    }
+    if (line.startsWith('## ')) {
+      if (inUl) { inUl = false; out.push('</ul>'); }
+      if (inOl) { inOl = false; out.push('</ol>'); }
+      out.push(`<h2>${escapeHtml(line.substring(3))}</h2>`);
+      continue;
+    }
+    if (line.startsWith('### ')) {
+      if (inUl) { inUl = false; out.push('</ul>'); }
+      if (inOl) { inOl = false; out.push('</ol>'); }
+      out.push(`<h3>${escapeHtml(line.substring(4))}</h3>`);
+      continue;
+    }
+
+    // 表格处理
+    if (line.startsWith('|') && line.endsWith('|')) {
+      let cells = line.split('|').slice(1, -1).map(c => c.trim());
+      if (cells.every(c => /^:?-+:?$/.test(c))) {
+        // 分割线，忽略
+        continue;
+      }
+      if (!inTable) {
+        inTable = true;
+        out.push('<table><thead><tr>');
+        cells.forEach(c => out.push(`<th>${formatInline(c)}</th>`));
+        out.push('</tr></thead><tbody>');
+      } else {
+        out.push('<tr>');
+        cells.forEach(c => out.push(`<td>${formatInline(c)}</td>`));
+        out.push('</tr>');
+      }
+      continue;
+    } else if (inTable) {
+      inTable = false;
+      out.push('</tbody></table>');
+    }
+
+    // 列表项
+    const numbered = line.match(/^(\d+)\.\s+(.*)$/);
+    if (line.startsWith('- ') || line.startsWith('* ')) {
+      if (inOl) { inOl = false; out.push('</ol>'); }
+      if (!inUl) {
+        inUl = true;
+        out.push('<ul>');
+      }
+      out.push(`<li>${formatInline(line.substring(2))}</li>`);
+      continue;
+    } else if (inUl && (line === '' || numbered)) {
+      inUl = false;
+      out.push('</ul>');
+    }
+
+    if (numbered) {
+      if (inUl) { inUl = false; out.push('</ul>'); }
+      if (!inOl) {
+        inOl = true;
+        out.push('<ol>');
+      }
+      out.push(`<li>${formatInline(numbered[2])}</li>`);
+      continue;
+    } else if (inOl && line === '') {
+      inOl = false;
+      out.push('</ol>');
+    }
+
+    // 空行
+    if (line === '') {
+      continue;
+    }
+
+    // 分隔线
+    if (line === '---') {
+      out.push('<hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 20px 0;">');
+      continue;
+    }
+
+    // 普通段落
+    out.push(`<p>${formatInline(line)}</p>`);
+  }
+
+  if (inTable) out.push('</tbody></table>');
+  if (inUl) out.push('</ul>');
+  if (inOl) out.push('</ol>');
+
+  return out.join('\n');
+}
+
+function formatInline(str) {
+  // 粗体
+  let res = str.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+  // 行内代码
+  res = res.replace(/`([^`]+)`/g, '<code style="background: #f1f5f9; padding: 2px 4px; border-radius: 4px; font-family: var(--font-mono); font-size: 12px;">$1</code>');
+  // 链接
+  res = res.replace(/\[([^\]]+)\]\((https?:[^\)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" style="color: var(--primary); font-weight: 600;">$1 ↗</a>');
+  // 单独 URL
+  res = res.replace(/(^|[^">])(https?:\/\/[^\s<]+)/g, '$1<a href="$2" target="_blank" rel="noopener noreferrer" style="color: var(--primary); font-weight: 600;">$2 ↗</a>');
+  return res;
+}
+
+function escapeHtml(text) {
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
+// 纯 Web Audio API 自包含短促提示音（无任何外部音频文件）
+function playAudioChime() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(587.33, ctx.currentTime); // D5
+    osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.15); // A5
+    gain.gain.setValueAtTime(0.12, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.25);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + 0.26);
+  } catch (e) {
+    // 降级静音
+  }
+}
+
+function playActionTone(type) {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    if (type === 'auto') {
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(523.25, ctx.currentTime); // C5
+      osc.frequency.setValueAtTime(659.25, ctx.currentTime + 0.08); // E5
+      osc.frequency.setValueAtTime(783.99, ctx.currentTime + 0.16); // G5
+      gain.gain.setValueAtTime(0.15, ctx.currentTime);
+      gain.gain.linearRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.31);
+    } else {
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(440, ctx.currentTime); // A4
+      osc.frequency.setValueAtTime(349.23, ctx.currentTime + 0.1); // F4
+      gain.gain.setValueAtTime(0.12, ctx.currentTime);
+      gain.gain.linearRampToValueAtTime(0.01, ctx.currentTime + 0.25);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.26);
+    }
+  } catch (e) {
+    // 降级静音
+  }
+}
+
+function scrollToNotes() {
+  const el = document.getElementById('stickyNotesSection');
+  if (el) {
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+}
+
+// 页面加载触发
+window.addEventListener('DOMContentLoaded', () => {
+  initDesk();
+});
+</script>
+
+</body>
+<!--
+DESIGN LESSON 2026-09-16 折晓早报
+STYLE: 白天医院值班台 · 浅色工卡与可靠性旋钮
+GENRE: 交互式值班分诊台
+TITLE: 《值班分诊台》
+THESIS: 门槛够才写进定论，边界未明先复核
+-->
+</html>
