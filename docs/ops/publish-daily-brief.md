@@ -82,7 +82,7 @@ pnpm preview                                          # 9982，打开 /daily/ �
 ## 5. Bot PR 规范
 
 - 基线：从**最新** `origin/main` 切分支，不要从过期的本地 `main` / `dev` 切。
-- 分支：`chore/brief-<YYYY-MM-DD>`；只改动**一个新增文件**（当天的 HTML）。
+- 分支：`content/brief-<YYYY-MM-DD>`（内容投递用 `content/`，与 Conventional Commit 的 `content(briefs):` 一致；同一天补投可加短后缀如 `-gate`）。只改动**一个**当日 HTML 文件（新增或替换）。
 - Commit / PR 标题：`content(briefs): add 2026-09-14 daily brief`（Conventional Commits，scope 固定 `briefs`）。
 - PR **base 必须是 `main`**。正文附 `<title>` 与 THESIS 一行，便于人眼扫。
 - 不改 `src/`、`docs/`、锁文件、`edgeone.json`；不删除历史日报。历史地址一经发布不改，改名需先在 `edgeone.json` 配 redirect。
