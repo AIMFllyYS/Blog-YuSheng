@@ -56,7 +56,7 @@ describe('live catalog classification', () => {
       'fullstack-learning': 4,
       'ai-mflly-notes': 2,
       'yu-studies': 5,
-      'yu-reflections': 1,
+      'yu-reflections': 2,
       'yu-reviews': 7,
       'yu-essays': 11,
       other: 4,
