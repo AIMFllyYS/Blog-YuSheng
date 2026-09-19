@@ -1540,6 +1540,51 @@ body { overflow: hidden; }
     mountCards();
     bindChrome();
     selectTab("open");
+    if (/(?:[?#].*)(?:autotest=1|#autotest)/.test(location.href) || location.hash === "#autotest") {
+      window.setTimeout(runAutotest, 60);
+    }
+  }
+
+  function runAutotest() {
+    var lines = [];
+    function ok(name, cond) {
+      lines.push((cond ? "PASS " : "FAIL ") + name);
+    }
+    ok("desk exists", !!$(".desk"));
+    ok("reader closed first", !els.reader.classList.contains("open"));
+    var first = $(".card[data-where='pile']");
+    ok("pile has cards", !!first);
+    if (first) first.click();
+    ok("card flipped", first && first.classList.contains("flipped"));
+    var shared = $("#tray-shared");
+    if (shared) shared.click();
+    ok("first placement", placedCount() >= 1);
+    var guard = 0;
+    while (placedCount() < 8 && guard < 20) {
+      var next = $(".card[data-where='pile']");
+      if (!next) break;
+      next.click();
+      var bins = ["shared", "indep", "dispute"];
+      var tray = $("#tray-" + bins[placedCount() % 3]);
+      if (tray) tray.click();
+      var cont = $("button[data-act='close']");
+      if (cont) cont.click();
+      guard += 1;
+    }
+    ok("eight placed", placedCount() >= 8);
+    ok("next slips shown", els.nextRow.classList.contains("show"));
+    els.stickyToggle.click();
+    ok("sticky opened", els.stickies.classList.contains("open"));
+    ok("sticky mentions Cursor", /Cursor/.test(els.stickies.textContent));
+    openReader();
+    ok("digest opened after click", els.reader.classList.contains("open"));
+    ok("digest has Gemini section", /谷歌确认 Gemini/.test(els.reader.textContent));
+    document.title = (lines.some(function (line) { return line.indexOf("FAIL") === 0; }) ? "AUTOTEST FAIL" : "AUTOTEST PASS") + " · " + document.title;
+    var box = document.createElement("pre");
+    box.id = "autotest-log";
+    box.setAttribute("style", "position:fixed;left:8px;bottom:8px;z-index:80;background:#fff;padding:8px;font-size:12px;max-width:46vw;white-space:pre-wrap;");
+    box.textContent = lines.join("\n");
+    document.body.appendChild(box);
   }
 
   if (document.readyState === "loading") {
