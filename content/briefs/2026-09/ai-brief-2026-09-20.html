@@ -204,6 +204,25 @@ body { overflow: hidden; }
   height: 40%;
   z-index: 6;
 }
+.pile-hint {
+  position: absolute;
+  left: 6%;
+  top: 18.4%;
+  z-index: 7;
+  font-size: 11px;
+  color: #5a4030;
+  background: rgba(255,250,241,0.82);
+  padding: 2px 8px;
+  border-radius: 999px;
+  pointer-events: none;
+}
+.card.top-card {
+  animation: glow-hint 1.8s ease-in-out 3;
+}
+@keyframes glow-hint {
+  0%, 100% { box-shadow: 4px 10px 18px rgba(60,35,12,0.16); }
+  50% { box-shadow: 6px 16px 26px rgba(196, 92, 62, 0.28); }
+}
 .card {
   position: absolute;
   width: min(240px, 86%);
@@ -647,6 +666,7 @@ body { overflow: hidden; }
         <span>很多关键判断这几天都卡在同一道工序上：先把「看起来像一串独立失控或独立高潮」的材料拆开核对，看它到底是共享半径里的同一故障、各自真正独立的趋势，还是口径还没对齐的监测争议，再决定下一步该改合同与测评边界、改产品节奏，还是改随访与通报规则。</span>
       </aside>
 
+      <p id="pile-hint" class="pile-hint">还没核对的事件卡</p>
       <div id="pile" class="pile" aria-label="还没分拣的事件卡"></div>
 
       <div class="trays">
@@ -1196,14 +1216,20 @@ body { overflow: hidden; }
 
   function layoutPile() {
     var pileCards = $all(".card[data-where='pile']");
+    var remaining = pileCards.length;
+    if (els.pileHint) {
+      els.pileHint.textContent = remaining ? ("还没核对的事件卡 · " + remaining + " 张") : "这一叠已经分完了";
+    }
     pileCards.forEach(function (node, index) {
-      var rot = -8 + (index % 5) * 3.4;
-      var x = 10 + (index % 4) * 14;
-      var y = 8 + Math.floor(index / 4) * 10;
+      var fromTop = remaining - 1 - index;
+      var rot = -14 + index * 2.4;
+      var x = 8 + index * 11;
+      var y = 18 + index * 6;
       node.style.left = x + "px";
       node.style.top = y + "px";
       node.style.transform = "rotate(" + rot + "deg)";
       node.style.zIndex = String(6 + index);
+      node.classList.toggle("top-card", fromTop === 0);
     });
   }
 
@@ -1500,6 +1526,7 @@ body { overflow: hidden; }
 
   function init() {
     els.pile = $("#pile");
+    els.pileHint = $("#pile-hint");
     els.reveal = $("#reveal");
     els.nextRow = $("#next-row");
     els.progress = $("#progress");
