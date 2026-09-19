@@ -157,9 +157,9 @@ body { overflow: hidden; }
 .blotter {
   position: absolute;
   left: 4.5%;
-  top: 8%;
+  top: 18%;
   width: 34%;
-  height: 58%;
+  height: 50%;
   background:
     radial-gradient(circle at 20% 18%, rgba(255,255,255,0.35), transparent 46%),
     repeating-linear-gradient(0deg, rgba(255,255,255,0.08) 0 2px, transparent 2px 7px),
@@ -169,15 +169,16 @@ body { overflow: hidden; }
 }
 .rule-slip {
   position: absolute;
-  left: 5.6%;
-  top: 7.2%;
-  width: min(340px, 33%);
-  max-height: 21%;
-  overflow: auto;
-  padding: 9px 11px 10px;
-  background: var(--paper);
-  transform: rotate(-1.8deg);
-  box-shadow: 3px 8px 14px rgba(0,0,0,0.1);
+  left: 4.8%;
+  right: 4.8%;
+  top: 4.6%;
+  width: auto;
+  max-height: none;
+  overflow: visible;
+  padding: 8px 14px 9px;
+  background: #fffaf1;
+  transform: rotate(-0.4deg);
+  box-shadow: 2px 6px 12px rgba(0,0,0,0.08);
   border: 1px solid rgba(80,50,20,0.08);
   z-index: 5;
   pointer-events: none;
@@ -185,22 +186,22 @@ body { overflow: hidden; }
 .rule-slip strong {
   display: block;
   font-family: var(--serif);
-  font-size: 14px;
-  margin-bottom: 4px;
+  font-size: 13px;
+  margin-bottom: 3px;
 }
 .rule-slip span {
   display: block;
   font-size: 11px;
-  line-height: 1.5;
+  line-height: 1.45;
   color: var(--ink-soft);
 }
 
 .pile {
   position: absolute;
   left: 6%;
-  top: 30%;
+  top: 22%;
   width: 32%;
-  height: 34%;
+  height: 40%;
   z-index: 6;
 }
 .card {
@@ -283,9 +284,9 @@ body { overflow: hidden; }
 .trays {
   position: absolute;
   right: 4.5%;
-  top: 10%;
+  top: 18%;
   width: 58%;
-  height: 54%;
+  height: 48%;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   gap: 10px;
@@ -1292,6 +1293,7 @@ body { overflow: hidden; }
     var dy = event.clientY - state.drag.startY;
     if (Math.abs(dx) + Math.abs(dy) > 8) state.drag.moved = true;
     if (!state.drag.moved) return;
+    state.drag.node.style.pointerEvents = "none";
     state.drag.node.style.transform = "translate(" + dx + "px," + dy + "px) rotate(2deg) scale(1.04)";
     state.drag.node.style.zIndex = "50";
     var target = document.elementFromPoint(event.clientX, event.clientY);
@@ -1304,6 +1306,7 @@ body { overflow: hidden; }
     if (!state.drag) return;
     var drag = state.drag;
     drag.node.classList.remove("held");
+    drag.node.style.pointerEvents = "";
     drag.node.removeEventListener("pointermove", onPointerMove);
     drag.node.removeEventListener("pointerup", onPointerUp);
     drag.node.removeEventListener("pointercancel", onPointerUp);
