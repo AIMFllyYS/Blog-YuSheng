@@ -29,8 +29,8 @@
   --shadow: rgba(60, 40, 18, 0.18);
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
   --pop: cubic-bezier(0.34, 1.18, 0.64, 1);
-  --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Songti SC", "STSong", "Noto Serif CJK SC", Georgia, serif;
-  --sans: "PingFang SC", "Hiragino Sans GB", "Noto Sans CJK SC", "Microsoft YaHei", "Segoe UI", system-ui, sans-serif;
+  --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Songti SC", "STSong", "Noto Serif CJK SC", "WenQuanYi Zen Hei", "Droid Sans Fallback", Georgia, serif;
+  --sans: "PingFang SC", "Hiragino Sans GB", "Noto Sans CJK SC", "Microsoft YaHei", "WenQuanYi Micro Hei", "Droid Sans Fallback", "Segoe UI", system-ui, sans-serif;
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; height: 100%; color: var(--ink); font-family: var(--sans); background: #d6c8b2; }
@@ -71,25 +71,28 @@ body { overflow: hidden; }
 
 .stage {
   position: absolute; left: 50%; bottom: 0; transform: translateX(-50%);
-  width: min(1180px, 100vw); height: min(86vh, 820px);
-  transform-style: preserve-3d; perspective: 1600px;
+  width: min(1180px, 100vw); height: min(88vh, 860px);
 }
 .desk {
-  position: absolute; left: 4%; right: 4%; bottom: 0; height: 78%;
-  transform: rotateX(11deg); transform-origin: 50% 100%;
+  position: absolute; left: 3%; right: 3%; bottom: 0; height: 82%;
   background:
-    linear-gradient(180deg, rgba(255,255,255,.22), transparent 18%),
-    repeating-linear-gradient(90deg, rgba(120,80,40,.04) 0 2px, transparent 2px 14px),
-    linear-gradient(180deg, var(--desk) 0%, var(--desk-deep) 100%);
-  border-radius: 18px 18px 0 0;
-  box-shadow: 0 -18px 50px var(--shadow), inset 0 1px 0 rgba(255,255,255,.45);
-  border: 1px solid rgba(140,100,60,.18);
+    linear-gradient(180deg, rgba(255,255,255,.28), transparent 16%),
+    repeating-linear-gradient(90deg, rgba(120,80,40,.055) 0 2px, transparent 2px 13px),
+    linear-gradient(180deg, #ead7bb 0%, #e2d0b6 22%, #cdae88 100%);
+  border-radius: 22px 22px 0 0;
+  box-shadow: 0 -18px 50px var(--shadow), inset 0 1px 0 rgba(255,255,255,.55);
+  border: 1px solid rgba(140,100,60,.22);
   border-bottom: 0;
 }
+.desk::before {
+  content: ""; position: absolute; left: 8%; right: 8%; top: 10px; height: 10px;
+  border-radius: 999px; background: rgba(255,255,255,.28);
+  pointer-events: none;
+}
 .desk::after {
-  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 18px;
-  background: linear-gradient(180deg, transparent, rgba(90,55,25,.18));
-  border-radius: 0;
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 22px;
+  background: linear-gradient(180deg, transparent, rgba(90,55,25,.22));
+  pointer-events: none;
 }
 
 .guide {
@@ -100,8 +103,8 @@ body { overflow: hidden; }
 .guide span { display: block; margin-top: .35em; font-size: 13px; color: var(--ink-soft); line-height: 1.5; }
 
 .clip {
-  position: absolute; top: 11%; left: 50%; transform: translateX(-50%);
-  width: min(420px, 78%); z-index: 8;
+  position: absolute; top: 9.5%; left: 50%; transform: translateX(-50%);
+  width: min(440px, 78%); z-index: 8;
 }
 .slip {
   position: relative; min-height: 118px; padding: 16px 18px 18px;
@@ -117,8 +120,8 @@ body { overflow: hidden; }
   background: linear-gradient(180deg, #d8c07a, var(--brass-deep));
   border-radius: 2px 2px 6px 6px; box-shadow: 0 4px 8px rgba(80,50,10,.2);
 }
-.slip .who { margin: 8px 0 0; font-size: 11px; letter-spacing: .08em; color: var(--ink-faint); }
-.slip .quote { margin: 8px 0 0; font-family: var(--serif); font-size: clamp(15px, 2vw, 18px); line-height: 1.55; }
+.slip .who { margin: 8px 0 0; font-size: 11px; letter-spacing: .04em; color: var(--ink-faint); line-height: 1.45; }
+.slip .quote { margin: 8px 0 0; font-family: var(--serif); font-size: clamp(15px, 2vw, 18px); line-height: 1.55; overflow-wrap: anywhere; }
 .slip .hint { margin: 10px 0 0; font-size: 12px; color: var(--ink-soft); min-height: 1.4em; }
 .slip.wobble { animation: wobble .55s var(--pop); }
 @keyframes wobble {
@@ -128,11 +131,12 @@ body { overflow: hidden; }
 }
 
 .dial-wrap {
-  position: absolute; top: 38%; left: 50%; transform: translateX(-50%);
-  width: min(340px, 72vw); height: min(340px, 72vw); z-index: 7;
+  position: absolute; top: 34%; left: 50%; transform: translateX(-50%);
+  width: min(300px, 64vw); z-index: 7;
+  display: flex; flex-direction: column; align-items: center; gap: 12px;
 }
 .dial {
-  position: relative; width: 100%; height: 100%; border-radius: 50%;
+  position: relative; width: min(300px, 64vw); height: min(300px, 64vw); border-radius: 50%;
   background:
     radial-gradient(circle at 50% 42%, #fffdf8 0%, #f3eee4 58%, #e4d8c4 100%);
   border: 10px solid #c9a15a;
@@ -140,7 +144,7 @@ body { overflow: hidden; }
     0 18px 36px var(--shadow),
     inset 0 8px 18px rgba(255,255,255,.45),
     inset 0 -10px 18px rgba(90,60,20,.08);
-  touch-action: none; user-select: none;
+  touch-action: none; user-select: none; cursor: grab;
 }
 .dial .ring {
   position: absolute; inset: 16px; border-radius: 50%;
@@ -153,18 +157,15 @@ body { overflow: hidden; }
 .tick.g { transform: translateX(-50%) rotate(-55deg); background: var(--guard); }
 .tick.b { transform: translateX(-50%) rotate(0deg); background: var(--ban); }
 .tick.f { transform: translateX(-50%) rotate(55deg); background: var(--fast); }
-.gear-lab {
-  position: absolute; width: 92px; text-align: center; font-size: 12px; line-height: 1.35;
-  color: var(--ink-soft); font-weight: 600;
+.gears { display: flex; gap: 8px; width: min(420px, 92vw); justify-content: center; }
+.gears button {
+  flex: 1; border: 1px solid rgba(90,70,40,.16); border-radius: 999px;
+  padding: 8px 8px; font-size: 12px; font-weight: 650; line-height: 1.3;
+  background: var(--paper-2); color: var(--ink); box-shadow: 0 4px 10px rgba(60,40,18,.08);
 }
-.gear-lab button {
-  display: block; width: 100%; border: 0; background: transparent; color: inherit;
-  font-weight: 600; font-size: 12px; line-height: 1.35; padding: 0;
-}
-.gear-lab.g { left: 2%; top: 62%; color: #4d6674; }
-.gear-lab.b { left: 50%; top: 4%; transform: translateX(-50%); color: #7a6232; }
-.gear-lab.f { right: 2%; top: 62%; color: #3f6d5c; }
-.gear-lab.on b { display: inline-block; }
+.gears button[data-gear="guardrail"] { background: var(--guard-soft); color: #3d5460; }
+.gears button[data-gear="ban"] { background: var(--ban-soft); color: #6a5224; }
+.gears button[data-gear="fast"] { background: var(--fast-soft); color: #2f5a49; }
 .needle {
   position: absolute; left: 50%; bottom: 50%; width: 8px; height: 38%;
   margin-left: -4px; transform-origin: 50% 100%;
@@ -189,8 +190,10 @@ body { overflow: hidden; }
 .hub:disabled { opacity: .55; cursor: default; }
 .hub:not(:disabled):hover { transform: scale(1.04); }
 
+.desk.is-matched .gears { display: none; }
+.desk.is-matched .dial-wrap { top: 31%; }
 .tracks {
-  position: absolute; left: 6%; right: 6%; bottom: 4%; display: flex; gap: 10px;
+  position: absolute; left: 6%; right: 6%; bottom: 5%; display: flex; gap: 10px;
   z-index: 6; opacity: 0; transform: translateY(16px); pointer-events: none;
   transition: opacity .6s var(--ease), transform .6s var(--ease);
 }
@@ -307,8 +310,8 @@ hr { border: 0; border-top: 1px solid rgba(90,70,40,.12); margin: 1.2em 0; }
   .window { display: none; }
   .mast { position: relative; top: auto; right: auto; text-align: left; max-width: none; padding: 16px 16px 0; }
   .guide { position: relative; top: auto; margin: 10px auto 0; }
-  .clip { position: relative; top: auto; margin: 16px auto 0; }
-  .dial-wrap { position: relative; top: auto; margin: 18px auto 0; }
+  .clip { position: relative; top: auto; margin: 16px auto 0; transform: none; left: auto; }
+  .dial-wrap { position: relative; top: auto; margin: 18px auto 0; transform: none; left: auto; }
   .tracks { position: relative; left: auto; right: auto; bottom: auto; margin: 18px 12px 0; flex-direction: column; }
   .manual { position: relative; left: auto; bottom: auto; margin: 16px 12px 0; display: flex; align-items: flex-end; gap: 10px; width: auto; }
   .manual .spine { height: 72px; writing-mode: horizontal-tb; width: auto; padding: 8px 12px; }
@@ -352,9 +355,11 @@ hr { border: 0; border-top: 1px solid rgba(90,70,40,.12); margin: 1.2em 0; }
           <div class="needle" id="needle"></div>
           <button type="button" class="hub" id="hub">对表</button>
         </div>
-        <div class="gear-lab g"><button type="button" data-gear="guardrail">护栏谈判档</button></div>
-        <div class="gear-lab b"><button type="button" data-gear="ban">能力禁令档</button></div>
-        <div class="gear-lab f"><button type="button" data-gear="fast">全速推进档</button></div>
+        <div class="gears">
+          <button type="button" data-gear="guardrail">护栏谈判档</button>
+          <button type="button" data-gear="ban">能力禁令档</button>
+          <button type="button" data-gear="fast">全速推进档</button>
+        </div>
       </div>
 
       <div class="tracks" id="tracks">
@@ -854,6 +859,7 @@ hr { border: 0; border-top: 1px solid rgba(90,70,40,.12); margin: 1.2em 0; }
       els.hint.textContent = "台面深处的三条轨道已经升起。用手推开一节车厢，看看对表之后该跟进什么。";
       els.hub.disabled = true;
       els.tracks.classList.add("show");
+      document.querySelector(".desk").classList.add("is-matched");
     } else {
       var slip = currentSlip();
       els.who.textContent = slip.who;
@@ -937,7 +943,8 @@ hr { border: 0; border-top: 1px solid rgba(90,70,40,.12); margin: 1.2em 0; }
     });
     els.hub.addEventListener("click", confirmMatch);
     $all("[data-gear]").forEach(function (btn) {
-      btn.addEventListener("click", function () {
+      btn.addEventListener("click", function (event) {
+        event.preventDefault();
         setNeedle(GEARS[btn.getAttribute("data-gear")].deg, true);
       });
     });
@@ -1047,6 +1054,7 @@ hr { border: 0; border-top: 1px solid rgba(90,70,40,.12); margin: 1.2em 0; }
     if (state.done.length >= 3) {
       state.index = 3;
       els.tracks.classList.add("show");
+      document.querySelector(".desk").classList.add("is-matched");
     }
     setNeedle(0, true);
     renderSlip();
