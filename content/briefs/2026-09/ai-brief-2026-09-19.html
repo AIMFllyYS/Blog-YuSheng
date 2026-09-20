@@ -292,31 +292,29 @@ body { overflow: hidden; }
   appearance: none;
   border: 0;
   padding: 0;
-  width: 78px;
-  height: 168px;
+  width: 86px;
+  height: 176px;
   position: relative;
   background: transparent;
-  transform-style: preserve-3d;
-  transform: rotateY(-18deg) rotateX(4deg);
-  transform-origin: bottom center;
+  transform: none;
   transition: transform 0.28s var(--ease), filter 0.28s var(--ease);
   filter: drop-shadow(6px 10px 8px rgba(40,20,8,0.22));
 }
 .book:hover, .book:focus-visible {
-  transform: rotateY(-8deg) rotateX(2deg) translateY(-16px);
+  transform: translateY(-14px);
   z-index: 2;
 }
 .book.done {
-  transform: rotateY(-18deg) translateY(8px) scale(0.96);
-  filter: grayscale(0.15) drop-shadow(4px 6px 6px rgba(40,20,8,0.16));
+  transform: translateY(6px) scale(0.97);
+  filter: grayscale(0.12) drop-shadow(4px 6px 6px rgba(40,20,8,0.16));
 }
 .book.done .tick { opacity: 1; }
 .book.pulse:not(.done) {
   animation: pulse 1.8s ease-in-out 2;
 }
 @keyframes pulse {
-  0%, 100% { transform: rotateY(-18deg) translateY(0); }
-  50% { transform: rotateY(-10deg) translateY(-12px); }
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
 }
 .book .cloth {
   position: absolute;
@@ -327,6 +325,9 @@ body { overflow: hidden; }
     linear-gradient(180deg, rgba(255,255,255,0.16), transparent 30%),
     var(--cloth, #6d4a3a);
   box-shadow: inset -8px 0 0 rgba(0,0,0,0.12);
+  transform: perspective(420px) rotateY(-12deg);
+  transform-origin: left center;
+  pointer-events: none;
 }
 .book .foil {
   position: absolute;
@@ -747,7 +748,8 @@ body { overflow: hidden; }
     flex-wrap: wrap;
     justify-content: flex-start;
   }
-  .book { transform: none; width: 70px; height: 148px; }
+  .book { transform: none; width: 72px; height: 150px; }
+  .book .cloth { transform: none; }
   .sticky { left: 12px; bottom: 70px; }
   .logbook { position: relative; left: auto; transform: none; display: block; width: calc(100% - 32px); margin: 12px 16px 24px; }
   .progress { position: relative; right: auto; bottom: auto; display: block; padding: 0 16px 20px; }
