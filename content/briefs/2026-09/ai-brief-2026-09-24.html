@@ -99,7 +99,7 @@ a { color: #2f5f73; }
   transition: transform .26s var(--flip), width .4s var(--ease), height .4s var(--ease);
 }
 .tag.is-turning { transform: rotateY(-90deg); }
-.tag.is-turning, .tag.is-flipped { width: min(460px, 94vw); height: min(400px, 58vh); }
+.tag.is-turning, .tag.is-flipped { width: min(440px, 92vw); height: min(352px, 46vh); }
 .bay[data-phase="ready"] .tag,
 .bay[data-phase="open"] .tag { width: min(380px, 92vw); height: 148px; }
 .bay[data-phase="ready"] .back h2,
@@ -126,15 +126,23 @@ a { color: #2f5f73; }
   border-radius: 4px 16px 14px 12px;
   box-shadow: 0 12px 26px rgba(44,47,51,.1), inset 0 0 0 1px rgba(44,47,51,.06);
 }
+.tag::after {
+  content: "";
+  position: absolute; left: 50%; bottom: 8px; z-index: 3;
+  width: 12px; height: 12px; transform: translateX(-50%);
+  border-radius: 50%; background: #d7e4e6;
+  box-shadow: inset 0 0 0 3px #c9c3b6;
+  pointer-events: none;
+}
 .front {
   border: 0; width: 100%; text-align: left; color: inherit;
   background:
-    linear-gradient(135deg, var(--warm) 0 16px, transparent 16px),
+    linear-gradient(135deg, var(--warm) 0 18px, transparent 18px),
     var(--paper);
-  display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-end;
-  gap: 8px; padding: 28px 16px 16px;
+  display: flex; flex-direction: column; align-items: flex-start; justify-content: center;
+  gap: 8px; padding: 18px 16px 28px;
 }
-.back { background: var(--paper-2); padding: 16px 14px 14px; }
+.back { background: var(--paper-2); padding: 14px 14px 12px; }
 .tag:not(.is-flipped) .back { visibility: hidden; }
 .tag.is-flipped .front { visibility: hidden; }
 .eyebrow { font-size: 12px; color: #a15b3a; }
@@ -143,8 +151,8 @@ a { color: #2f5f73; }
 .flipcue { margin-top: 8px; color: #2f5f73; font-size: 15px; }
 .back h2 { margin: 0 0 4px; font-family: var(--serif); font-size: 20px; font-weight: 650; }
 .echo { margin: 0 0 12px; color: var(--muted); font-size: 13px; line-height: 1.45; }
-.check { margin: 0 0 14px; }
-.q { margin: 0 0 8px; font-size: 16px; line-height: 1.45; }
+.check { margin: 0 0 10px; }
+.q { margin: 0 0 6px; font-size: 16px; line-height: 1.4; }
 .choices { display: flex; gap: 8px; }
 .choice {
   flex: 1; min-height: 48px; border-radius: 12px;
@@ -164,7 +172,7 @@ a { color: #2f5f73; }
 .bay[data-phase="open"] .dockline { display: block; }
 .bay.show-checks .check { display: block; }
 .bay.show-checks[data-phase="ready"] .tag,
-.bay.show-checks[data-phase="open"] .tag { height: min(400px, 58vh); }
+.bay.show-checks[data-phase="open"] .tag { height: min(328px, 44vh); }
 .reopen {
   margin-top: 8px; border: 0; background: transparent; color: #2f5f73;
   padding: 0; font-size: 14px; display: none;
@@ -175,9 +183,16 @@ a { color: #2f5f73; }
 .string { width: 2px; height: 16px; background: #c9c4ba; }
 
 .case {
-  width: min(320px, 86vw); height: 178px; position: relative;
+  width: min(300px, 82vw); height: 168px; position: relative;
   perspective: 800px;
-  filter: drop-shadow(0 16px 16px rgba(44,47,51,.12));
+  filter: drop-shadow(0 18px 16px rgba(44,47,51,.16));
+}
+.case::after {
+  content: "";
+  position: absolute; right: -12px; top: 28px; bottom: 12px; width: 14px;
+  background: color-mix(in srgb, var(--shell) 62%, #8d867c);
+  border-radius: 0 8px 10px 0;
+  transform: skewY(-12deg);
 }
 .lid, .body {
   position: absolute; left: 0; right: 0;
@@ -234,7 +249,16 @@ a { color: #2f5f73; }
   box-shadow: 0 16px 32px rgba(44,47,51,.12), inset 0 0 0 1px rgba(44,47,51,.05);
   position: relative; z-index: 2;
 }
-.slip { animation: slipOut .52s var(--ease); max-height: min(380px, 50vh); overflow: auto; }
+.slip {
+  animation: slipOut .52s var(--ease);
+  max-height: min(360px, 48vh);
+  overflow: hidden;
+  margin-top: -118px;
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+}
+.slip-scroll { overflow: auto; min-height: 0; }
 @keyframes slipOut {
   0% { transform: translateY(28px) rotate(-1deg); opacity: 0; }
   70% { transform: translateY(-6px) rotate(-1.6deg) scale(1.02); opacity: 1; }
@@ -251,7 +275,7 @@ a { color: #2f5f73; }
 .nextbtn { border: 0; background: #2c2f33; color: #fffef9; }
 
 .book {
-  position: absolute; left: 0; bottom: 28px; z-index: 4;
+  position: fixed; left: 16px; bottom: 16px; z-index: 8;
   width: 118px; height: 148px; border: 0; padding: 16px 12px 12px; text-align: left;
   color: var(--ink);
   background:
@@ -269,7 +293,7 @@ a { color: #2f5f73; }
 .book-title { display: block; font-family: var(--serif); font-size: 20px; font-weight: 650; }
 .book-sub { display: block; margin-top: 6px; color: var(--muted); font-size: 13px; line-height: 1.4; }
 
-.stickies { position: absolute; right: 0; top: 0; width: 138px; height: 132px; z-index: 5; }
+.stickies { position: fixed; right: 16px; top: 64px; width: 138px; height: 132px; z-index: 8; }
 .sticky { position: absolute; width: 128px; }
 .sticky:nth-child(1) { top: 0; right: 6px; rotate: -7deg; }
 .sticky:nth-child(2) { top: 22px; right: 0; rotate: 4deg; }
@@ -328,13 +352,20 @@ summary { cursor: pointer; font-family: var(--serif); font-size: 18px; line-heig
 }
 
 @media (max-width: 760px) {
-  .sign { padding-top: 48px; }
-  .book { width: 92px; height: 116px; bottom: 12px; }
+  .sign { padding: 16px 16px 0; }
+  .book { width: 84px; height: 104px; left: 10px; bottom: 12px; }
   .book-title { font-size: 16px; }
-  .stickies { width: 112px; }
-  .sticky { width: 108px; }
-  .sticky > button { font-size: 13px; min-height: 52px; }
-  .bay { min-height: 460px; padding-bottom: 140px; }
+  .stickies {
+    top: auto; bottom: 14px; right: 8px; width: auto; height: auto;
+    display: flex; gap: 6px;
+  }
+  .sticky, .sticky:nth-child(1), .sticky:nth-child(2), .sticky:nth-child(3) {
+    position: relative; top: auto; right: auto; width: 86px; rotate: 0deg;
+  }
+  .sticky > button { font-size: 12px; min-height: 56px; padding: 6px 7px; }
+  .sticky-body { top: auto; bottom: calc(100% + 8px); right: 0; width: min(280px, 88vw); }
+  .bay { min-height: 420px; padding-bottom: 24px; }
+  .slip { max-height: 230px; margin-top: -64px; margin-bottom: 8px; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
@@ -407,7 +438,7 @@ summary { cursor: pointer; font-family: var(--serif); font-size: 18px; line-heig
       <p>如果用一句话收今天，就是：许多热闹其实卡在同一道判断上。先核对真正让事情过关的条件有没有满足——试验终点有没有改善、新发现的功能有没有被说清、监管授权有没有落地、官方报名或发射窗口有没有真正打开——再决定该不该把「又多了一招」「又缩短了疗程」「又宣布了一次」「良率又涨了一截」当成已经过关。</p>
       <p>人工智能这边，同一天几乎是「协作呼吁」和「主权监管」放在一起。OpenAI 的 Sam Altman 与 Anthropic 的 Dario Amodei 在安理会呼吁国际协作和共同测试标准；美方则拒绝全球人工智能治理架构。Anthropic 公布 Claude 挖到一套新的酶系统 ART，功能还没完全说清。Google 发布能用大约 30 秒样本复制声纹的语音模型，同时写了同意校验、水印和凭证。DeepMind 推进加密的服务端持久记忆，密钥留在设备上。OpenAI 把网络防御工具 Daybreak 免费给乌克兰政府。</p>
       <p>科技这边，共同点是「宣布了一次」还不等于窗口开了。产业链称英特尔 EMIB 基板良率大约到了 45%。ShinyHunters 宣称攻破 FBI 招聘门户，联邦调查局在查，规模没有完全核实。泊车机器人签了约，展厅先放两套。星舰第十四次飞行完成全箭堆叠，目标不早于 9 月 28 日，仍要等航空管理局。还有云联盟、做空观点，以及尚未得到苹果确认的音箱代码线索。</p>
-      <p>医学这边，最清楚的是终点和授权。取栓前加替奈普酶，九十天功能独立没有更好。苯硝唑把疗程缩短到 30 天，二 b 期非劣，作者写明还要三期才能进指南。一份论文写清了一类肠炎的黏膜机制，治疗观察只有两例。世界卫生组织的避孕指南一边扩展已有方法，一边明确不推荐另一部分。血培养药敏的许可据公司稿称落在 6 月，9 月 23 日是通报日。</p>
+      <p>医学这边，最清楚的是终点和授权。取栓前加替奈普酶，九十天功能独立没有更好。苯硝唑把疗程缩短到 30 天，2b 期非劣，作者写明还要三期才能进指南。一份论文写清了一类肠炎的黏膜机制，治疗观察只有两例。世界卫生组织的避孕指南一边扩展已有方法，一边明确不推荐另一部分。血培养药敏的许可据公司稿称落在 6 月，9 月 23 日是通报日。</p>
       <h3>核实约定</h3>
       <p>两家及以上信誉来源对关键事实一致的，用肯定的说法。只有一家来源的，写成「据某来源称」，并说明尚未得到其他来源确认。官方没有确认的，不补编。</p>
       <p>试验终点没有改善，不是把技术全盘否定。缩短疗程并且非劣，也不是已经写进指南。发现候选酶，不是功能已经说清。公司或产业宣布，不是监管窗口已经打开。良率上升，不是瓶颈消失。黑客自己说的规模，不是已经核实的全库影响。日历上的计划，不是已经做完。报名窗口锁定，不是已经报名。</p>
@@ -618,11 +649,11 @@ summary { cursor: pointer; font-family: var(--serif); font-size: 18px; line-heig
         <summary>TESEO：苯硝唑 30 天非劣于 60 天，指南还要等三期</summary>
         <p class="status">多家报道对得上。PubMed 摘要数字，与 Newswise、EurekAlert 的机构通稿一致。解禁时刻按美国东部时间换算后落在窗内。</p>
         <h3>背景</h3>
-        <p>玻利维亚三个中心、六臂、开放标签的非劣效二 b 期试验（NCT03981523）。主要疗效终点是 4 到 36 个月持续 PCR 阴性。</p>
+        <p>玻利维亚三个中心、六臂、开放标签的非劣效 2b 期试验（NCT03981523）。主要疗效终点是 4 到 36 个月持续 PCR 阴性。</p>
         <h3>发生了什么</h3>
         <p>据《柳叶刀·传染病》摘要、PubMed、Newswise（2026 年 9 月 22 日 18:30 美国东部时间，大约北京时间 9 月 23 日 06:30）和 EurekAlert：改良意向性治疗人群 435 人里，持续寄生虫学清除到 36 个月：苯硝唑 60 天标准组 73 人里 69 人（95%），30 天组 72 人里 68 人（94%）。药物相关不良事件：30 天组 75 人里 28 人（37%），60 天组 75 人里 45 人（60%）；风险差 −23 个百分点（95% 置信区间 −38 到 −7；校正 p=0.022）。作者称，苯硝唑 150 mg、一天一次、共 30 天，显示非劣效，而且相关不良事件率最低；并明确说，还需要跨虫株、跨场景的长期疗效三期试验，才能支持写入治疗指南。通稿另提示，多数不良事件出现在用药后 10 到 14 天，和疗程长短关系不大，监测更值得放在用药早期。</p>
         <h3>过关条件</h3>
-        <p class="pass">非劣、相关不良事件更少，过的是二 b 这一关。写进指南还差三期。缩短疗程不能写成已经过关。</p>
+        <p class="pass">非劣、相关不良事件更少，过的是 2b 这一关。写进指南还差三期。缩短疗程不能写成已经过关。</p>
         <h3>来源</h3>
         <ul class="srcs">
           <li><a href="https://www.thelancet.com/journals/laninf/article/PIIS1473-3099(26)00436-6/abstract" target="_blank" rel="noopener noreferrer">柳叶刀·传染病摘要</a></li>
@@ -795,7 +826,7 @@ summary { cursor: pointer; font-family: var(--serif); font-size: 18px; line-heig
       ledger: "m-attention",
       loud: "又多了一招",
       line: "取栓之前，再加一剂替奈普酶",
-      shell: "#f6e6e1",
+      shell: "#f0cfc4",
       strap: "#e8a87c",
       checks: [
         {
@@ -827,28 +858,28 @@ summary { cursor: pointer; font-family: var(--serif); font-size: 18px; line-heig
       ledger: "m-teseo",
       loud: "又缩短了疗程",
       line: "恰加斯病，苯硝唑改成三十天",
-      shell: "#e5efe8",
+      shell: "#d5e7db",
       strap: "#7d9a90",
       checks: [
         {
-          q: "三十天、一天一次，在二 b 期里非劣于六十天了吗？",
+          q: "三十天、一天一次，在 2b 期里非劣于六十天了吗？",
           met: true,
           hit: "对上了。这一条满足了。持续清除大约 94% 对 95%。相关不良事件 37% 对 60%。",
-          miss: "这一条其实是满足的。短疗程在二 b 期非劣，相关不良事件也更少。"
+          miss: "这一条其实是满足的。短疗程在 2b 期非劣，相关不良事件也更少。"
         },
         {
           q: "已经可以写进治疗指南了吗？",
           met: false,
           hit: "对上了。还不行。作者写明，还要做跨虫株、跨场景的三期，才能支持写进指南。",
-          miss: "这面先记成还没满足。缩短疗程过了二 b，指南还要等三期。"
+          miss: "这面先记成还没满足。缩短疗程过了 2b，指南还要等三期。"
         }
       ],
       slipTitle: "短疗程过了二期，指南还没过",
       slip: [
-        "TESEO 看的是慢性恰加斯病。苯硝唑 150 毫克、一天一次、30 天，对照标准的 60 天。玻利维亚三个中心的二 b 期。",
+        "TESEO 看的是慢性恰加斯病。苯硝唑 150 毫克、一天一次、30 天，对照标准的 60 天。玻利维亚三个中心的 2b 期。",
         "持续清除到 36 个月：60 天组 69/73（95%），30 天组 68/72（94%）。相关不良事件：30 天组 28/75（37%），60 天组 45/75（60%），风险差 −23 个百分点。通稿还说，多数不良事件出在用药后 10 到 14 天。"
       ],
-      judgment: "「又缩短了疗程」过了二 b，还没过指南。",
+      judgment: "「又缩短了疗程」过了 2b，还没过指南。",
       links: [
         ["https://pubmed.ncbi.nlm.nih.gov/42772313/", "PubMed"],
         ["https://www.thelancet.com/journals/laninf/article/PIIS1473-3099(26)00436-6/abstract", "柳叶刀摘要"]
@@ -859,7 +890,7 @@ summary { cursor: pointer; font-family: var(--serif); font-size: 18px; line-heig
       ledger: "m-art",
       loud: "发现了新酶",
       line: "噬菌体里的 ART，功能还没说清",
-      shell: "#ede8f2",
+      shell: "#ddd3ea",
       strap: "#b7a7c9",
       checks: [
         {
@@ -891,7 +922,7 @@ summary { cursor: pointer; font-family: var(--serif); font-size: 18px; line-heig
       ledger: "m-council",
       loud: "又呼吁了一次协作",
       line: "安理会上，两家公司请大家一起立标准",
-      shell: "#e4eef3",
+      shell: "#d4e4ee",
       strap: "#7ba7bc",
       checks: [
         {
@@ -923,7 +954,7 @@ summary { cursor: pointer; font-family: var(--serif); font-size: 18px; line-heig
       ledger: "m-phast",
       loud: "又宣布了一次",
       line: "血培养药敏，大约一百分钟出结果",
-      shell: "#f3eadd",
+      shell: "#ead7b8",
       strap: "#d2b48c",
       checks: [
         {
@@ -955,7 +986,7 @@ summary { cursor: pointer; font-family: var(--serif); font-size: 18px; line-heig
       ledger: "m-emib",
       loud: "良率又涨了一截",
       line: "英特尔 EMIB 基板，不是成品",
-      shell: "#e7e9ef",
+      shell: "#d5dae4",
       strap: "#9aa3b2",
       checks: [
         {
@@ -1113,14 +1144,14 @@ summary { cursor: pointer; font-family: var(--serif); font-size: 18px; line-heig
           "</div></div>" +
         '<div class="body"><span class="strap s1"></span><span class="strap s2"></span><span class="pocket"></span></div>' +
       "</div>" +
-      '<article class="slip" hidden><h2></h2><div class="slip-body"></div><p class="judge"></p><p class="srcs"></p>' +
+      '<article class="slip" hidden><div class="slip-scroll"><h2></h2><div class="slip-body"></div><p class="judge"></p><p class="srcs"></p></div>' +
         '<div class="slip-actions">' +
           '<button type="button" class="textbtn" data-action="slip-ledger">在登记簿里看全文</button>' +
           '<button type="button" class="nextbtn" data-action="next"></button>' +
         "</div></article>";
     stage.querySelector(".loud").textContent = bag.loud;
     stage.querySelector(".line").textContent = bag.line;
-    stage.querySelector(".echo").textContent = "牌正面写着「" + bag.loud + "」。先别把它当成已经过关。";
+    stage.querySelector(".echo").textContent = "正面写着「" + bag.loud + "」。先核对，再决定算不算过关。";
     var qs = stage.querySelectorAll(".q");
     bag.checks.forEach(function (item, i) { qs[i].textContent = item.q; });
     stage.querySelector(".slip h2").textContent = bag.slipTitle;
