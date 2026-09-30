@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>窄跳板放下了，日历才算数 · 折晓早报 · 2026-10-01</title>
+<style>
+  :root {
+    --ink: #24312d;
+    --muted: #5c675f;
+    --paper: #fffdf8;
+    --sage: #1f6b52;
+    --sage-soft: #e7f4ee;
+    --coral: #a33b2c;
+    --line: rgba(70, 55, 30, 0.12);
+    --ease: cubic-bezier(0.16, 1, 0.3, 1);
+    --sans: "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Noto Sans CJK SC", "Noto Sans SC", "Microsoft YaHei", "WenQuanYi Micro Hei", "Droid Sans Fallback", sans-serif;
+    --serif: "Iowan Old Style", Palatino, "Palatino Linotype", "Songti SC", "STSong", "Noto Serif CJK SC", "PingFang SC", "Microsoft YaHei", "WenQuanYi Micro Hei", serif;
+    --boat-x: 28px;
+    --boat-y: -228px;
+  }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html { color-scheme: light; }
+  body {
+    margin: 0;
+    min-height: 100dvh;
+    color: var(--ink);
+    font-family: var(--sans);
+    background:
+      radial-gradient(520px 240px at 78% -4%, rgba(255, 214, 176, 0.85), transparent 62%),
+      linear-gradient(180deg, #f6f1e6 0%, #e7f3f0 42%, #d5ebe6 100%);
+  }
+  body.reading { overflow: hidden; }
+  button, input { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  a { color: var(--sage); }
+  :focus-visible { outline: 2px solid var(--sage); outline-offset: 3px; }
+  ::selection { background: #f6dcc4; }
+  .sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+  .stage {
+    width: min(680px, calc(100% - 20px));
+    margin: 0 auto;
+    padding: 14px 0 36px;
+  }
+  .top { padding: 2px 6px 10px; }
+  .kicker {
+    margin: 0;
+    font-size: 0.82rem;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+  }
+  h1 {
+    margin: 2px 0 0;
+    font-family: var(--serif);
+    font-size: clamp(1.35rem, 4vw, 1.85rem);
+    font-weight: 700;
+    line-height: 1.25;
+  }
+  .scene {
+    position: relative;
+    height: clamp(420px, 62dvh, 520px);
+    border-radius: 28px;
+    overflow: hidden;
+    background: linear-gradient(#f7f2e8 0%, #e5f2ef 48%, #d7ebe6 100%);
+    box-shadow: 0 18px 40px rgba(70, 90, 80, 0.12);
+  }
+  .sea {
+    position: absolute;
+    inset: 0 0 46% 0;
+    overflow: hidden;
+    background: linear-gradient(180deg, #f4efe4 0%, #d7f0ea 42%, #8fcfc4 100%);
+  }
+  .sun {
+    position: absolute;
+    width: 78px;
+    height: 78px;
+    left: 44%;
+    top: 22px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 40% 40%, #fff7ec, #ffd7b0 62%, rgba(255, 215, 176, 0) 72%);
+  }
+  .wave {
+    position: absolute;
+    left: -20%;
+    right: -20%;
+    bottom: 22px;
+    height: 18px;
+    background: radial-gradient(circle at 14px 0, transparent 10px, rgba(255, 255, 255, 0.78) 11px, transparent 13px) 0 0 / 28px 18px repeat-x;
+    animation: drift 8s linear infinite;
+  }
+  .wave.two { bottom: 8px; opacity: 0.85; animation-duration: 11s; animation-direction: reverse; }
+  @keyframes drift { to { transform: translateX(-26px); } }
+  .lane-label {
+    position: absolute;
+    z-index: 5;
+    margin: 0;
+    max-width: 46%;
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: rgba(255, 253, 248, 0.88);
+    font-size: 0.78rem;
+    line-height: 1.35;
+    color: #1d4a42;
+  }
+  .lane-label.left { left: 12px; top: 8%; }
+  .lane-label.right { right: 12px; top: 18%; text-align: right; }
+  .plank-narrow {
+    position: absolute;
+    z-index: 3;
+    left: 5%;
+    bottom: 49%;
+    width: 42%;
+    height: 24px;
+    border-radius: 8px;
+    transform-origin: right center;
+    transform: rotate(34deg);
+    transition: transform 0.8s var(--ease);
+    background: linear-gradient(#f6e2c2 0 52%, #c48945 53% 100%);
+    box-shadow: 0 8px 0 rgba(40, 80, 70, 0.16);
+    border: 2px solid #7a4e22;
+  }
+  .scene.is-boat .plank-narrow { transform: rotate(8deg); }
+  .scene.is-boat .boat {
+    transform: translate(var(--boat-x), var(--boat-y));
+    transition: transform 0.8s var(--ease);
+    z-index: 6;
+  }
+  .scene.is-boat #boat-name { opacity: 0; }
+  .wide-hit {
+    position: absolute;
+    z-index: 4;
+    right: 4%;
+    bottom: 47%;
+    width: 34%;
+    height: 46%;
+    padding: 0;
+    border: 0;
+    background: transparent;
+  }
+  .plank-wide {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 24px;
+    border-radius: 8px;
+    transform-origin: left center;
+    transform: rotate(-68deg);
+    background: linear-gradient(#f6e2c2 0 52%, #c48945 53% 100%);
+    box-shadow: 0 8px 0 rgba(40, 80, 70, 0.16);
+    border: 2px solid #7a4e22;
+  }
+  .rope {
+    position: absolute;
+    left: 10px;
+    bottom: 14px;
+    width: 78%;
+    height: 12px;
+    border-radius: 8px;
+    background: repeating-linear-gradient(90deg, #c45a42 0 8px, #9a4634 8px 11px);
+    transform-origin: left center;
+    transform: rotate(-68deg);
+    box-shadow: 0 0 0 2px rgba(255, 253, 248, 0.45);
+  }
+  .rope::after {
+    content: "";
+    position: absolute;
+    left: -6px;
+    top: -5px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #c45a42;
+    box-shadow: inset 0 0 0 3px #f4d2c6;
+  }
+  .wide-hit.bump { animation: bump 0.45s var(--ease); }
+  @keyframes bump {
+    0%, 100% { transform: translateX(0); }
+    40% { transform: translateX(-8px); }
+    70% { transform: translateX(5px); }
+  }
+  .buoy {
+    position: absolute;
+    z-index: 5;
+    left: 8%;
+    bottom: 66%;
+    margin: 0;
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: #fffdf8;
+    color: var(--sage);
+    font-size: 0.75rem;
+    box-shadow: 0 6px 0 rgba(90, 70, 40, 0.06);
+  }
+  .present {
+    position: absolute;
+    z-index: 5;
+    top: 12px;
+    right: 12px;
+    width: 86px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    text-align: center;
+  }
+  .present .box {
+    display: block;
+    position: relative;
+    height: 40px;
+    border-radius: 5px;
+    background: linear-gradient(#f8ead2, #efd7b4);
+    box-shadow: 0 8px 0 rgba(90, 70, 40, 0.1);
+    overflow: hidden;
+  }
+  .present .box::before,
+  .present .box::after {
+    content: "";
+    position: absolute;
+    background: #d26a52;
+  }
+  .present .box::before { left: 50%; top: 0; bottom: 0; width: 9px; transform: translateX(-50%); }
+  .present .box::after { top: 50%; left: 0; right: 0; height: 9px; transform: translateY(-50%); }
+  .present .lid {
+    display: block;
+    position: relative;
+    z-index: 1;
+    height: 12px;
+    margin: 0 1px -5px;
+    border-radius: 4px 4px 2px 2px;
+    background: #e8c892;
+    transform-origin: left center;
+    transition: transform 0.6s var(--ease);
+  }
+  .present .lid::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: -7px;
+    width: 16px;
+    height: 11px;
+    transform: translateX(-50%);
+    border-radius: 8px 8px 2px 2px;
+    background: #d26a52;
+  }
+  .present .bow { display: none; }
+  .present-state {
+    display: block;
+    margin-top: 6px;
+    font-size: 0.72rem;
+    line-height: 1.3;
+    color: var(--muted);
+  }
+  .scene.is-done .present .lid { transform: translateY(-8px) rotate(-18deg); }
+  .wharf {
+    position: absolute;
+    z-index: 4;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 46%;
+    padding: 12px 12px 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    background:
+      repeating-linear-gradient(90deg, rgba(120, 80, 30, 0.05) 0 2px, transparent 2px 9px),
+      linear-gradient(#f8f1e4, #eddcc4);
+    border-top: 8px solid #e6d3b6;
+  }
+  .desk {
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr 0.9fr;
+    gap: 8px;
+    align-items: stretch;
+    min-height: 0;
+  }
+  .boat, .sheet, .cal {
+    border: 0;
+    border-radius: 16px;
+    text-align: left;
+  }
+  .boat {
+    background: transparent;
+    padding: 4px 4px 0;
+  }
+  .boat svg { display: block; width: min(112px, 100%); height: auto; margin: 0 auto; }
+  .obj-name, .obj-do, .obj-kicker, .cal-line, .cal-month {
+    display: block;
+  }
+  .obj-kicker, .cal-month {
+    font-size: 0.72rem;
+    color: var(--muted);
+  }
+  .obj-name {
+    margin-top: 2px;
+    font-size: 0.86rem;
+    font-weight: 700;
+    line-height: 1.35;
+  }
+  .obj-do, .cal-line {
+    margin-top: 4px;
+    font-size: 0.75rem;
+    line-height: 1.35;
+    color: #3e534b;
+  }
+  .sheet, .cal {
+    background: var(--paper);
+    box-shadow: 4px 5px 0 #f4ecdf, 0 10px 0 rgba(80, 60, 30, 0.05);
+    padding: 10px 10px 8px;
+  }
+  .sheet { box-shadow: 0 1px 0 #f6f0e6, 4px 5px 0 #f3ebdf, 8px 9px 0 rgba(80, 60, 30, 0.05); }
+  .cal { text-align: center; padding-top: 16px; position: relative; }
+  .spiral {
+    position: absolute;
+    top: 5px;
+    left: 12px;
+    right: 12px;
+    height: 8px;
+    background: radial-gradient(circle, #c9b89a 2.2px, transparent 2.8px) 0 0 / 16px 8px repeat-x;
+  }
+  .cal-day {
+    display: block;
+    margin: 2px auto 0;
+    font-family: var(--serif);
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1.05;
+  }
+  .cal.is-stamped .cal-day {
+    width: 2.5rem;
+    height: 2.5rem;
+    line-height: 2.35rem;
+    border-radius: 50%;
+    color: var(--coral);
+    box-shadow: inset 0 0 0 2px #e07a68;
+  }
+  .cal.flipping .cal-day { transform: rotateX(70deg); }
+  .hint {
+    margin: 8px 2px 0;
+    text-align: center;
+    font-size: 0.95rem;
+    line-height: 1.45;
+    font-weight: 700;
+  }
+  .nudge { animation: bump 0.45s var(--ease); }
+  body.step-boat .boat,
+  body.step-pledge .sheet,
+  body.step-date .cal {
+    animation: glow 1.8s ease-in-out infinite;
+  }
+  @keyframes glow {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(31, 107, 82, 0.28); }
+    50% { box-shadow: 0 0 0 8px rgba(31, 107, 82, 0); }
+  }
+  body.step-boat .boat { background: rgba(255, 253, 248, 0.78); }
+  .roll {
+    position: relative;
+    display: block;
+    width: 100%;
+    margin: 12px 0 0;
+    padding: 14px 16px 14px 54px;
+    border: 0;
+    border-radius: 16px 28px 28px 16px;
+    text-align: left;
+    background:
+      radial-gradient(14px 22px at 0 50%, transparent 11px, #fffdf8 12px),
+      linear-gradient(#fffdf8, #f4ecdf);
+    box-shadow: 0 12px 0 rgba(210, 190, 160, 0.45);
+  }
+  .roll::before {
+    content: "";
+    position: absolute;
+    left: 16px;
+    top: 12px;
+    bottom: 12px;
+    width: 16px;
+    border-radius: 6px;
+    background: #2f7d62;
+  }
+  .roll-title { display: block; font-weight: 800; font-size: 1.05rem; }
+  .roll-sub { display: block; margin-top: 3px; color: var(--muted); font-size: 0.82rem; }
+  .again {
+    margin: 8px 0 0;
+    text-align: center;
+  }
+  .again button, .drawer-toggle {
+    border: 0;
+    background: transparent;
+    color: var(--sage);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    padding: 6px;
+  }
+  .slips { display: grid; gap: 8px; margin-top: 12px; }
+  .slip {
+    margin: 0;
+    padding: 12px 14px;
+    background: var(--paper);
+    border-radius: 14px;
+    box-shadow: 0 8px 20px rgba(70, 60, 40, 0.06);
+    line-height: 1.65;
+  }
+  .slip h2 {
+    margin: 0 0 4px;
+    font-size: 1rem;
+    font-family: var(--serif);
+  }
+  .slip p { margin: 0; }
+  .drawer-body {
+    margin-top: 8px;
+    padding: 12px 14px;
+    background: #f8fbf9;
+    border-radius: 14px;
+    line-height: 1.65;
+  }
+  .notes {
+    display: grid;
+    gap: 8px;
+    margin: 14px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .note-btn {
+    width: 100%;
+    text-align: left;
+    border: 0;
+    border-radius: 12px 12px 12px 4px;
+    background: #fff6d8;
+    padding: 10px 12px;
+    box-shadow: 0 8px 0 rgba(210, 180, 90, 0.18);
+  }
+  .note-panel {
+    margin: 6px 0 0;
+    padding: 0 4px 2px;
+    color: #4e4632;
+    font-size: 0.92rem;
+    line-height: 1.6;
+  }
+  .digest {
+    position: fixed;
+    inset: 0;
+    z-index: 30;
+    display: none;
+    background: rgba(36, 49, 45, 0.28);
+    padding: 18px 12px;
+  }
+  .digest.is-open { display: flex; }
+  .sheet-read {
+    width: min(760px, 100%);
+    margin: 0 auto;
+    background: #fffdf8;
+    border-radius: 18px;
+    display: flex;
+    flex-direction: column;
+    max-height: 100%;
+    box-shadow: 0 20px 50px rgba(30, 40, 30, 0.16);
+  }
+  .read-bar {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: flex-end;
+    padding: 16px 18px 10px;
+    border-bottom: 1px solid var(--line);
+  }
+  .read-bar h2 { margin: 0; font-family: var(--serif); font-size: 1.35rem; }
+  .read-bar p { margin: 4px 0 0; color: var(--muted); font-size: 0.85rem; }
+  .bar-actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+  .bar-actions button {
+    border: 1px solid var(--line);
+    background: #fff;
+    border-radius: 999px;
+    padding: 7px 12px;
+  }
+  .toc {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding: 10px 18px;
+    border-bottom: 1px solid var(--line);
+  }
+  .toc a {
+    text-decoration: none;
+    background: var(--sage-soft);
+    color: var(--sage);
+    border-radius: 999px;
+    padding: 4px 10px;
+    font-size: 0.82rem;
+  }
+  .digest-scroll { overflow: auto; padding: 8px 8px 28px; }
+  .digest-body {
+    width: min(40rem, calc(100% - 28px));
+    margin: 0 auto;
+    padding-bottom: 24px;
+    font-family: var(--serif);
+    font-size: 1.05rem;
+    line-height: 1.75;
+  }
+  .digest-body h2 {
+    font-size: 1.35rem;
+    margin: 1.6rem 0 0.6rem;
+  }
+  .digest-body h3 { font-size: 1.12rem; margin: 1.4rem 0 0.4rem; line-height: 1.4; }
+  .digest-body p { margin: 0 0 0.85rem; }
+  .digest-body .lead { font-size: 1.12rem; }
+  .chip {
+    display: inline-block;
+    margin: 0 0 0.45rem;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: var(--sage-soft);
+    color: var(--sage);
+    font-family: var(--sans);
+    font-size: 0.78rem;
+  }
+  .chip.one { background: #fff1e4; color: #8a4b22; }
+  .check {
+    padding: 0.35rem 0 0.35rem 0.75rem;
+    border-left: 3px solid #7dbea4;
+  }
+  .src { font-family: var(--sans); font-size: 0.88rem; color: var(--muted); }
+  .src a { margin-right: 0.6rem; }
+  .keynums {
+    background: #f6f3ec;
+    border-radius: 12px;
+    padding: 10px 12px;
+    font-family: var(--sans);
+    font-size: 0.92rem;
+  }
+  body.scan .digest-body p:not(.check):not(.lead) { opacity: 0.34; }
+  body.scan .digest-body .check { background: #e8f6ef; opacity: 1; }
+  @media (max-width: 560px) {
+    .desk { grid-template-columns: 1fr 1fr; }
+    .boat { grid-column: 1 / -1; }
+    .lane-label { font-size: 0.72rem; max-width: 48%; }
+    :root { --boat-x: 4px; --boat-y: -214px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation: none !important;
+      transition: none !important;
+    }
+  }
+</style>
+</head>
+<body>
+<main class="stage">
+  <header class="top">
+    <p class="kicker">折晓早报 · 2026年10月1日 · 星期四</p>
+    <h1>窄跳板放下了，日历才算数</h1>
+  </header>
+  <p class="sr">这是清晨的一座小渡口。左边的窄跳板可以放下，右边的宽跳板用绳子系着。先把试用小船推向窄跳板。</p>
+  <section class="scene" id="scene" aria-label="清晨渡口">
+    <div class="sea" aria-hidden="true">
+      <div class="sun"></div>
+      <div class="wave"></div>
+      <div class="wave two"></div>
+    </div>
+    <p class="lane-label left" id="narrow-label">窄跳板先给可信的一侧</p>
+    <p class="lane-label right" id="wide-label">宽跳板还没有放行</p>
+    <div class="plank-narrow" aria-hidden="true"></div>
+    <button type="button" class="wide-hit" id="wide" aria-label="宽跳板还系着绳子，按一下也不会放下">
+      <span class="plank-wide"></span>
+      <span class="rope"></span>
+    </button>
+    <p class="buoy" id="buoy" hidden>小船只走到这里</p>
+    <button type="button" class="present" id="present" aria-describedby="present-state">
+      <span class="lid" aria-hidden="true"></span>
+      <span class="bow" aria-hidden="true"></span>
+      <span class="box" aria-hidden="true"></span>
+      <span class="present-state" id="present-state">绳子还系着</span>
+    </button>
+    <div class="wharf">
+      <div class="desk">
+        <button type="button" class="boat" id="boat" aria-describedby="hint">
+          <svg viewBox="0 0 140 78" aria-hidden="true">
+            <path d="M18 46 L70 20 L122 46 L104 66 L36 66 Z" fill="#fffdf8" stroke="#e0c9a4" stroke-width="2"/>
+            <path d="M36 46 H104" stroke="#e7d3b4" stroke-width="2"/>
+            <path d="M70 20 V44" stroke="#d7c09a" stroke-width="2"/>
+            <path d="M70 8 V24" stroke="#c4553d" stroke-width="2"/>
+            <path d="M70 10 H96 L86 16 L96 22 H70 Z" fill="#f4c7ba" stroke="#c4553d" stroke-width="1"/>
+          </svg>
+          <span class="obj-name" id="boat-name">可信一侧的试用票</span>
+        </button>
+        <button type="button" class="sheet" id="pledge" aria-expanded="false">
+          <span id="pledge-front">
+            <span class="obj-kicker">桌上的一叠纸</span>
+            <span class="obj-name">前沿责任联合承诺</span>
+            <span class="obj-do">翻开这张承诺纸</span>
+          </span>
+          <span id="pledge-back" hidden>
+            <span class="obj-name">处罚这一栏空着</span>
+            <span class="obj-do">没有截止日期。宽跳板不会因此放下。</span>
+          </span>
+        </button>
+        <button type="button" class="cal" id="calendar" aria-pressed="false">
+          <span class="spiral" aria-hidden="true"></span>
+          <span class="cal-month" id="cal-month">九月</span>
+          <span class="cal-day" id="cal-day">30</span>
+          <span class="cal-line" id="cal-line">还没翻到算数的那一页</span>
+        </button>
+      </div>
+      </div>
+  </section>
+  <p class="hint" id="hint">把这艘小船推向旁边的窄跳板。点一下也可以。</p>
+  <button type="button" class="roll" id="open-digest" aria-expanded="false" aria-controls="digest">
+    <span class="roll-title">打开今天的详细稿</span>
+    <span class="roll-sub">这一卷默认合着，打开就能读完全文</span>
+  </button>
+  <p class="again"><button type="button" id="replay" hidden>再看一遍这三下</button></p>
+  <div class="slips">
+    <section class="slip" id="slip-wide" hidden>
+      <h2>宽跳板没有放下</h2>
+      <p>这道跳板用绳子系着。按下去，它也不会放平。全员通行还没有打开。</p>
+    </section>
+    <section class="slip" id="slip-boat" hidden>
+      <h2>窄跳板放下了</h2>
+      <p>Google 今天发布了 Gemini 4 Argon。官方写明，先通过 Fairwind 计划向一组可信网络防御方放出，之后才扩到付费接口和 Google AI Ultra。输出上限扩到了一百万 token。窄跳板因此放下了，宽跳板的绳子还系着。试用名单上的名字，不等于全员通行证。</p>
+    </section>
+    <section class="slip" id="slip-pledge" hidden>
+      <h2>这张纸没有处罚</h2>
+      <p>「前沿责任联合承诺」写了四层：内控、内部团队、外部审计，以及董事会里的独立委员会。多家报道强调，它自称道德上有约束力，没有处罚条款，也没有实施截止日期。纸翻开了，宽跳板不会因此放下。同一天，联邦贸易委员会已经确认，就产品风险正式调查 OpenAI、Anthropic 等公司。纸上的承诺，不等于强制义务今天起算数。</p>
+    </section>
+    <section class="slip" id="slip-date" hidden>
+      <h2>日历翻到了十月一日</h2>
+      <p>据 National Law Review 的合规解读，康涅狄格州《人工智能责任与透明法》从 2026 年 10 月 1 日起分阶段生效。今天开始算的，包括大规模裁员通知里要说明是否与人工智能有关。人工智能伴侣的那部分义务要到 2027 年 1 月 1 日。法案编号可以对照公开文本，并非每一款都在今天生效。这页日历管的是义务从哪一天起算，不是把全员通行证发出去。宽跳板仍然抬着。</p>
+    </section>
+    <section class="slip" id="slip-gift" hidden>
+      <h2>今天留下的一句</h2>
+      <p>先给可信的一侧试一把，不等于全员已经通行。纸上的责任承诺，不等于强制义务今天起算数。其余材料按同一套核对，写在今天的详细稿里。</p>
+    </section>
+  </div>
+  <p class="again"><button type="button" class="drawer-toggle" id="drawer-toggle" hidden aria-expanded="false" aria-controls="drawer-body">拉开医学审评的抽屉</button></p>
+  <div class="drawer-body" id="drawer-body" hidden>
+    <p>医学这边今天多数停在受理、优先审评、附条件批准、试验许可、器械许可，或者再提交。Camzyos 的儿童适应证已经获批，但仍有心衰风险的黑框警告，而且只能通过风险管控项目拿到。这些都还不是全面、无条件的上市已经完成。数字和出处在详细稿里。</p>
+  </div>
+  <ul class="notes">
+    <li>
+      <button type="button" class="note-btn" id="note-a" aria-expanded="false" aria-controls="note-a-body">昨天的早报已经合进主分支</button>
+      <p class="note-panel" id="note-a-body" hidden>那一期叫《头牌按住了，侧廊还亮着》，已经合进博客主分支，开发分支也对齐了。部署日志这轮没有另查，所以合上不等于每一层回执都亲手点开过。</p>
+    </li>
+    <li>
+      <button type="button" class="note-btn" id="note-b" aria-expanded="false" aria-controls="note-b-body">课堂材料合上了，那封红信不是现在的结论</button>
+      <p class="note-panel" id="note-b-body" hidden>生化第 23 到 24 节、医英第 9 到 10 节已经合入。中间来过一封失败邮件，同一条记录现在的结论是成功。看最终状态就好。</p>
+    </li>
+    <li>
+      <button type="button" class="note-btn" id="note-c" aria-expanded="false" aria-controls="note-c-body">有三件日程，轻轻看一眼就好</button>
+      <p class="note-panel" id="note-c-body" hidden>今天 Google One 会取消。OpenCode 的支付宝要在 10 月 17 日前重新授权。Elicit 的旧提醒到 10 月 31 日停用。贵数上架了新模型，邮件自己写着：平台未必做完同等能力验证。旁边两个仓库的检查还是红的，跟早报主链无关。</p>
+    </li>
+  </ul>
+</main>
+<div class="digest" id="digest" aria-hidden="true">
+  <div class="sheet-read" id="sheet">
+    <header class="read-bar">
+      <div>
+        <h2 id="digest-title" tabindex="-1">今天的详细稿</h2>
+        <p>2026-10-01 · 星期四 · 采集窗到今天早上六点</p>
+      </div>
+      <div class="bar-actions">
+        <button type="button" id="scan" aria-pressed="false">把核对句染出来</button>
+        <button type="button" id="close-digest">回到渡口</button>
+      </div>
+    </header>
+    <nav class="toc" aria-label="详细稿章节">
+      <a href="#shape">今天的形状</a>
+      <a href="#ai">人工智能</a>
+      <a href="#tech">科技</a>
+      <a href="#med">医学</a>
+      <a href="#life">轻提示</a>
+      <a href="#ahead">还没到的事</a>
+    </nav>
+    <div class="digest-scroll">
+      <article class="digest-body">
+        <p class="lead">今天可以收成一句核对：先给可信的一侧试一把，不等于全员已经通行；纸上的责任承诺，不等于强制义务今天起算数。</p>
+        <p>Google 把新一代旗舰 Gemini 4 Argon 先向 Fairwind 可信网络防御方小范围开放。这是先给可信的一侧试一把，不等于全员接口和 Google AI Ultra 已经放行。白宫主导的「前沿责任联合承诺」自称道德上有约束力，全文没有处罚条款。这是纸上的责任承诺，不等于强制义务今天起算数。真正要核对的是：开放是不是还停在试用名单上，义务是不是已经写进生效日。</p>
+        <p class="check">同日，联邦贸易委员会正式确认对 OpenAI、Anthropic 等公司启动产品风险调查。康涅狄格州《人工智能责任与透明法》的义务从 2026 年 10 月 1 日起分阶段生效。一边是道德便签，一边是调查和州法生效日。</p>
+        <p>采集窗是北京时间 2026 年 9 月 30 日 06:00 到 10 月 1 日 06:00。下面每条都来自这窗里的材料。右上角「把核对句染出来」会把判断句留亮，方便先扫一遍，再回到整段。</p>
+        <div class="keynums">
+          <p>多家来源对得上，是指至少两家靠得住的来源把关键事实说一致了。只看到一家来源时，正文会写「据某来源称」或「尚未得到其他来源确认」。窗口之外的日程会单独标明。</p>
+        </div>
+
+        <h2 id="shape">今天的形状</h2>
+        <p>渡口上那三下，就是这句核对。窄跳板可以先放下，宽跳板仍然系着。承诺纸可以翻开，处罚栏仍然空着。日历翻到十月一日，写进日期的义务才开始算。账本里的其他材料，也按同一把尺子量。</p>
+        <ul>
+          <li class="check">先向可信防御方试运行，不等于付费接口和 Google AI Ultra 已经对所有人放行。</li>
+          <li class="check">自称道德上有约束力、又没有处罚的联合承诺，不等于强制义务已经落地。</li>
+          <li class="check">阻断蒸馏活动，不等于把模型能力本身从市场上拿下来。</li>
+          <li class="check">DevDay 的媒体汇总落在本窗更新，不等于官方首发时刻也在本窗。</li>
+          <li class="check">工厂优先的商业化路线，不等于家庭助手已经量产到家。</li>
+          <li class="check">评估扩产，不等于最终敲定。</li>
+          <li class="check">漏洞披露的那一天，不等于在野利用还没发生。</li>
+          <li class="check">受理、优先审评、附条件批准、试验许可、器械许可、再提交，都不等于全面无条件上市已经完成。</li>
+          <li class="check">拉取请求合入并且检查最终成功，不等于过程中那封失败邮件从未出现。</li>
+          <li class="check">平台上架通知，不等于平台已经完成同等能力验证。</li>
+        </ul>
+
+        <h2 id="ai">人工智能</h2>
+
+        <h3>Google 发布 Gemini 4 Argon，先向可信网络防御方小范围开放</h3>
+        <p class="chip">多家来源对得上</p>
+        <p>这是采集窗里最清楚的一手模型发布。Google 把新一代旗舰命名为 Gemini 4 Argon，强调长程推理、编码和防御性网络安全，并把输出上限扩到 100 万 token。官方同时写明，先走 Fairwind 可信防御方和政府预发布，再扩到付费接口和 Google AI Ultra。对正在学人工智能的人，这条把「前沿能力」和「分阶段放行」写在同一篇公告里。</p>
+        <p>据 Google 官方博客（datePublished 为 2026-09-30T20:00:00+00:00，北京时间 2026 年 10 月 1 日 04:00；9to5Google 标为太平洋时间 9 月 30 日下午 1:00；The Verge 标为 9 月 30 日 20:41 UTC）：Google 宣布新前沿模型 Gemini 4 Argon，正通过 Fairwind 计划向一组可信网络防御方滚动放出。文中说，Argon 为在复杂、长程工作流里维持深度推理而建，在真实世界软件工程、法律与金融等企业知识工作，以及网络安全防御上给出前沿表现。为了更长、更复杂的用法，输出 token 上限从先前的 6.4 万显著扩到 100 万。引入价是每百万输入 token 2 美元、每百万输出 token 10 美元，缓存输入享受输入价 95% 的折扣；引入期结束后是每百万输入 4 美元、输出 20 美元。基准方面：DeepSWE v1.1 为 77.9%，文中称为当前最好；AutomationBench 以 51.3% 排在第一；LVBench 长视频理解为 91.7%，文中称为当前最好。</p>
+        <p class="check">热闹的说法是「Gemini 4 发布了」。要核对的是开放停在哪一层名单上。官方把 Fairwind 可信防御方和政府预发布写在前面，付费接口和 Ultra 写在后面。能力的灯亮了，全员通行证还没发。</p>
+        <p class="src">来源：<a href="https://blog.google/innovation-and-ai/models-and-research/gemini-models/gemini-4-argon/" target="_blank" rel="noopener noreferrer">Google 官方博客</a><a href="https://9to5google.com/2026/09/30/gemini-4-argon-announcement/" target="_blank" rel="noopener noreferrer">9to5Google</a><a href="https://www.theverge.com/tech/1002980/google-gemini-4-argon" target="_blank" rel="noopener noreferrer">The Verge</a></p>
+
+        <h3>OpenAI 披露并阻断针对受保护推理链的协同蒸馏</h3>
+        <p class="chip">多家来源对得上</p>
+        <p>OpenAI 首次在官方博客里点名：有人用跨会话的手法，逼模型复现「受保护推理」。峰值两天大约 1.6 万次相关请求。公司称已在 7 月 28 日前全面阻断。核心簇被归因到月之暗面（Kimi）相关人员，同时强调并非全体操作者都能归到同一个主体。文中还写明，已经通过前沿模型论坛和政府渠道分享。</p>
+        <p>据 OpenAI 官网（页面标为 2026 年 9 月 30 日；The Next Web 标为 9 月 30 日 17:53 UTC，大约北京时间 10 月 1 日 01:53；The Verge 标为 9 月 30 日 18:56 UTC）：OpenAI 称近期识别并阻断了一场旨在提取受保护推理的协同活动。最早观察到的活动在 7 月第一周。该活动和对抗性蒸馏一致，也就是系统化、未经授权地使用一个模型的输出或推理，来帮助训练、复现或改进另一个模型。操作者没有破解加密、入侵数据库，或直接读取存下来的用户对话，而是操纵模型交互，让受保护推理以请求方看得见的形式、以违反服务条款的规模被复现。活动从 7 月 1 日的低量开始，7 月 24 日到 25 日出现高峰：来自逾 4000 名用户的 16000 次相关提取请求。进一步调查识别出逾 15000 名用户的相关提示模式集群，并在 7 月 28 日前全面阻断。文中说，还不清楚相关时段的所有操作者是否来自单一主体，但把核心簇归因于与 Moonshot AI（Kimi 的开发者）相关的个人。</p>
+        <p class="check">热闹的说法是「OpenAI 抓到蒸馏、点名月之暗面」。要核对的是：阻断的是蒸馏活动和违反条款的路径，不是把模型能力本身从市场上拿下来。</p>
+        <p class="src">来源：<a href="https://openai.com/index/disrupting-a-coordinated-model-distillation-campaign/" target="_blank" rel="noopener noreferrer">OpenAI 官网</a><a href="https://thenextweb.com/news/openai-moonshot-distillation-campaign-hidden-reasoning" target="_blank" rel="noopener noreferrer">The Next Web</a><a href="https://www.theverge.com/ai-artificial-intelligence/1002854/openai-claims-moonshot-extracted-its-data-to-train-ai-models" target="_blank" rel="noopener noreferrer">The Verge</a></p>
+
+        <h3>联邦贸易委员会确认就产品风险调查 OpenAI、Anthropic 等公司</h3>
+        <p class="chip">多家来源对得上</p>
+        <p>在自愿安全协议广泛流传的同时，联邦贸易委员会发言人确认，对 OpenAI、Anthropic 等公司就产品潜在危险启动调查，并可能依据联邦贸易委员会法评估不公平或欺骗性做法。CBS 还写到，会向包括安全评测组织 METR 在内的对象索取信息。这说明「道德约束的自我监管」和「既有消费者保护法下的正式调查」正在并行。</p>
+        <p>据 CNBC（美东 2026 年 9 月 30 日上午 11:27，大约北京时间 10 月 1 日 01:27）：联邦贸易委员会已就 OpenAI、Anthropic 及其他人工智能公司产品的潜在危险启动调查，发言人向 CNBC 确认。发言人拒绝点名其他被调查公司。《纽约邮报》最先报道这项调查。CBS News（美东 9 月 30 日中午 12:04，大约北京时间 02:04）补充：作为调查的一部分，联邦贸易委员会计划向包括非营利研究组织 METR 在内的对象索取信息。官员正在调查公司行为是否违反旨在保护消费者、促进公平竞争的联邦贸易委员会法。ABC News 等同日报道相互印证。华盛顿邮报同日也有报道，这里不另造那条链接。</p>
+        <p class="check">热闹的说法是「联邦贸易委员会在查人工智能公司」。要核对的是：这是正式调查和信息索取，不是自愿承诺的自我执行。一边是没有处罚的道德便签，一边是消费者保护法框架下的正式调查。</p>
+        <p class="src">来源：<a href="https://www.cnbc.com/2026/09/30/ftc-ai-probe-openai-anthropic.html" target="_blank" rel="noopener noreferrer">CNBC</a><a href="https://www.cbsnews.com/news/ftc-investigation-openai-anthropic-ai-safety/" target="_blank" rel="noopener noreferrer">CBS News</a><a href="https://abcnews.com/Politics/ftc-opens-probe-safety-ai-including-anthropic-open/story?id=136896227" target="_blank" rel="noopener noreferrer">ABC News</a></p>
+
+        <h3>「前沿责任联合承诺」全文广泛流传，没有处罚条款</h3>
+        <p class="chip">多家来源对得上</p>
+        <p>协议签署人包括特朗普、Anthropic 的 Dario Amodei、Google 的 Sundar Pichai、Meta 的 Mark Zuckerberg、OpenAI 的 Greg Brockman、Nvidia 的 Jensen Huang，以及 xAI／SpaceX 的 Elon Musk。全文把监控重点写到网络、生物和化学威胁，以及模型「以没预料到的方式进入系统」。多家报道强调，它自称道德上有约束力，没有执法机制，也没有实施截止日期。</p>
+        <p>据《纽约邮报》刊登的全文（太平洋时间 2026 年 9 月 29 日下午 3:10，大约 UTC 22:10、北京时间 9 月 30 日 06:10，刚进入本窗；The Verge 的解读在 9 月 30 日 12:24 UTC，大约北京时间 20:24；CoinDesk 在美东 9 月 30 日上午 6:43，大约北京时间 18:43）。美联社和 PBS 的首发大约在北京时间 04:55，落在上一采集窗。本条收的是窗内出现的全文和机制解读。《联合承诺》列了四条。第一，在训练和部署期间，就网络安全、生物安全、化学威胁等领域做稳健内控，监控模型能力和对齐，并确保模型不以没预料到的方式入侵或访问技术系统。第二，授权内部团队确保控制、监控和检测按预期运行，并补救问题。第三，与独立的外部审计或评估方合作，就这些控制是否按预期运行做独立评估。第四，指定董事会里的独立委员会监督，接收控制团队和内外部审计的报告，并确保发现问题得到补救。文中还说，随着时间推移，把这些步骤写进法律或监管或许有意义。The Verge 同日强调：协议概述了四条规则，没有提到任何违反协议的处罚。</p>
+        <p class="check">热闹的说法是「白宫签了前沿责任承诺」。要核对的是：道德约束力，加上没有处罚、没有实施截止日期，算不算强制义务今天起算数。把这张纸和同窗的联邦贸易委员会调查、以及康涅狄格州法律从 10 月 1 日起分阶段生效并排放。</p>
+        <p class="src">来源：<a href="https://nypost.com/2026/09/29/us-news/trumps-morally-binding-artificial-intelligence-pledge-signed-by-tech-leaders-read-in-full/" target="_blank" rel="noopener noreferrer">纽约邮报全文</a><a href="https://www.theverge.com/ai-artificial-intelligence/1002584/trump-us-ai-safety-deal-self-regulation-tech-execs" target="_blank" rel="noopener noreferrer">The Verge</a><a href="https://www.coindesk.com/tech/2026/09/30/openai-google-and-meta-pledge-outside-ai-audits-under-voluntary-white-house-deal" target="_blank" rel="noopener noreferrer">CoinDesk</a></p>
+
+        <h3>康涅狄格州人工智能责任与透明法从今天起分阶段生效</h3>
+        <p class="chip one">主要是一家来源，法案文本可对编号</p>
+        <p>这是美国州级、口径比较宽的人工智能立法进入实施的节点。条款覆盖就业自动化决策工具、人工智能伴侣、前沿开发者、生成内容溯源，以及未成年人的社交媒体推荐。对医学生来说，人工智能伴侣要识别自杀和自伤风险并转介求助，以及裁员是否与人工智能有关的披露，都贴近健康和劳动场景。</p>
+        <p>据 National Law Review（2026 年 9 月 30 日）：康涅狄格州已经颁布迄今口径最宽的州级人工智能法之一。开发或部署会影响该州雇员、消费者或未成年人的自动化工具的公司，应当开始评估是否适用，因为义务从 2026 年 10 月 1 日起分阶段生效。州长 Ned Lamont 于 2026 年 5 月 27 日签署 Substitute Senate Bill 5，成为 Public Act No. 26-15。立法者称之为 Connecticut Artificial Intelligence Responsibility and Transparency Act，也就是 CART Act。运营「人工智能伴侣」的系统，若具有自然语言界面、能对用户输入给出自适应的类人响应，并能跨多次交互维持关系，则从 2027 年 1 月 1 日起面临安全和披露义务。对运营方知道或有理由相信是未成年人的用户，法律禁止伴侣鼓励自伤、劝阻求助、进行浪漫或露骨的性互动，或部署操纵性的参与策略。面向消费者、月活超过一百万的生成式人工智能系统提供者，须在人工智能生成的音频、图像和视频里嵌入溯源数据。从 2026 年 10 月 1 日起，依照联邦 WARN 法发出大规模裁员通知的雇主，还须向康涅狄格州劳工部披露裁员是否与雇主使用人工智能或其他技术变革有关。康涅狄格州议会的公开 PDF 可以核对法案编号和文本。本条没有逐条对照每一款的生效日，单款日期以法案文本为准。</p>
+        <p class="check">热闹的说法是「康州人工智能法生效」。要核对的是：义务写进了生效日。它和同窗那份没有处罚、没有截止日期的联合承诺，不是同一层东西。</p>
+        <p class="src">来源：<a href="https://natlawreview.com/article/sb-5-preparing-connecticuts-artificial-intelligence-responsibility-and-transparency" target="_blank" rel="noopener noreferrer">National Law Review</a><a href="https://www.cga.ct.gov/2026/ACT/PA/PDF/2026PA-00015-R00SB-00005-PA.PDF" target="_blank" rel="noopener noreferrer">康涅狄格州议会法案 PDF</a></p>
+
+        <h3>The Verge 更新了 DevDay 要点，官方首发在窗前</h3>
+        <p class="chip one">只看到一家媒体汇总</p>
+        <p>在 Gemini 4 发布前夕，媒体把 OpenAI DevDay 的产品线重新钉成一张清单：常驻智能体 Dots（对标 Meta 的 Muse，但起点价位更高）、更便宜的近旗舰 GPT-6.1 Sol、宣称 ChatGPT 周活大约 12 亿，以及每月 500 美元的新 Pro 档。活动本身和官方博客的首发在本窗之前。媒体汇总的更新落在窗内，不能写成窗内的一手首发。</p>
+        <p>据 The Verge（更新于 2026 年 9 月 30 日 18:07 UTC，大约北京时间 10 月 1 日 02:07）。OpenAI 官方「介绍 Dots」页面的时间大约是 2026-09-29T10:00，早于本窗起点，所以本条只把窗内更新的媒体汇总当作材料。文中说，OpenAI 于 9 月 29 日在旧金山举办年度 DevDay。直播主题演讲里，首席执行官 Sam Altman 揭示了多项更新，包括对标 Meta 近期上线的 Muse 的人工智能体产品 Dots。与可以免费使用的 Muse 不同，Dots 最初面向 ChatGPT Pro、Business Premium 和 Enterprise 的付费订阅者。公司还揭示了 GPT-6.1 Sol，称 ChatGPT 现在每周大约有 12 亿用户，并宣布每月 500 美元的新 ChatGPT Pro 档。CNBC 同日的分析稿（美东 9 月 30 日上午 8:00，大约北京时间 20:00）可以旁证 Dots 和 Muse 的产品竞赛，但不能代替 OpenAI 的官方首发。</p>
+        <p class="check">热闹的说法是「DevDay 又发了 Dots 和 Sol」。要核对的是：媒体汇总的更新在本窗，官方首发在窗前。详细稿必须把这层时间分开，避免把窗前的首发写成窗内的一手发布。</p>
+        <p class="src">来源：<a href="https://www.theverge.com/ai-artificial-intelligence/1001681/openai-devday-2026-biggest-news-announcements" target="_blank" rel="noopener noreferrer">The Verge 更新稿</a><a href="https://www.cnbc.com/2026/09/30/openai-follows-meta-into-the-red-hot-market-for-personal-agents.html" target="_blank" rel="noopener noreferrer">CNBC 旁证</a></p>
+
+        <h2 id="tech">科技</h2>
+        <p>这一侧要把协议通稿、漏洞披露、产品开售、路线表态和评估消息分成不同的层来读。</p>
+
+        <h3>Synopsys 与亚马逊达成逾 10 亿美元的多年期定制硅知识产权协议</h3>
+        <p class="chip">多家来源对得上</p>
+        <p>这是 Synopsys 经 PR Newswire 发出的一手公告。核心是亚马逊成为其「面向应用优化的硅知识产权」业务的领先客户，协议金额超过 10 亿美元，并转向许可加版税的模式。协议同时扩大亚马逊对 Synopsys 电子设计自动化、仿真分析和智能体式工程工具的使用，Synopsys 则改用 AWS 的计算、存储和 Amazon Bedrock。</p>
+        <p>据 PR Newswire（美东 2026 年 9 月 30 日 09:00，大约北京时间 21:00）：多年期协议标志着 Synopsys 硅知识产权业务的扩展，服务对应用优化知识产权的增长需求，并以亚马逊为领先客户。商业模式演进为许可加版税，打算随产量增长为双方创造价值。亚马逊继续建设专用芯片组合，包括 Nitro（云上的安全、网络和存储）、Graviton（通用计算）和 Trainium（人工智能训练与推理）。路透社（经由 Investing.com 转载）和 Quartz 的同日报道，在金额和「领先客户」的表述上与官方稿一致。这里不另造那两篇的链接。</p>
+        <p class="check">热闹的说法是「超过十亿美元的硅知识产权大单」。要核对的是：协议通稿是商业合作的信号，不等于产能立刻满产。签字和放量不是同一天。</p>
+        <p class="src">来源：<a href="https://www.prnewswire.com/news-releases/synopsys-and-amazon-announce-strategic-multi-year-ip-agreement-for-custom-silicon-collaboration-also-extends-to-cloud-and-ai-powered-engineering-302894418.html" target="_blank" rel="noopener noreferrer">PR Newswire</a></p>
+
+        <h3>思科披露 CVE-2026-76504，并确认已经遭到在野利用</h3>
+        <p class="chip">多家来源对得上</p>
+        <p>这是思科产品安全事件响应团队的一手公告。漏洞编号 CVE-2026-76504，影响 Catalyst SD-WAN Manager，与具体配置无关。未经认证的远程攻击者可以通过篡改 URI 编码绕过认证规则，以管理员身份访问接口。官方给出 CVSS 9.8，并写明 2026 年 9 月已经观察到在野利用。没有变通方案，需要升级到修复版本。</p>
+        <p>据思科安全公告（首次发布于 2026 年 9 月 30 日 13:00 GMT，大约北京时间 21:00）：问题出在基于会话的认证管理。HTTP 请求里的 URI 编码处理不当，使请求得以绕过本来用来限制特定接口端点的认证规则。攻击者可以向受影响系统的接口发送特制 HTTP 请求。成功利用后，可以绕过认证并以管理员用户访问接口。CVSS 3.1 基础分 9.8，向量为 AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H。2026 年 9 月，思科获知该漏洞遭到活跃利用，强烈建议客户升级到修复版本。云托管的 20.15.605 已经修复，用户无需操作。修复版本的例子包括 20.9.10.1、20.12.8.2 和 20.15.6.1。The Hacker News 同日跟进，在编号、评分、在野利用和修复版本上与官方一致。</p>
+        <p class="check">热闹的说法是「思科披露了高危漏洞」。要核对的是：披露当天，在野利用已经发生。披露不等于「还没被打」。公告是一层，威胁是否已在野外是另一层，补丁是否已经升级合上是第三层。</p>
+        <p class="src">来源：<a href="https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-sdwan-webauth-xr8beuuU" target="_blank" rel="noopener noreferrer">思科安全公告</a><a href="https://thehackernews.com/2026/09/cisco-warns-of-attackers-exploiting.html" target="_blank" rel="noopener noreferrer">The Hacker News</a></p>
+
+        <h3>三星发布 Galaxy Tab S12 Ultra 和 Tab S12+，10 月 7 日起开售</h3>
+        <p class="chip">多家来源对得上</p>
+        <p>这是三星全球新闻室的一手产品发布。两款平板都搭载联发科 Dimensity 9500，系统为 Android 17 和 One UI 9。Ultra 厚 5.1 毫米、14.6 英寸、电池 11600 毫安时。Plus 为 12.6 英寸、10600 毫安时。两款都支持 45 瓦充电和 IP68。开售日写的是 10 月 7 日。</p>
+        <p>据三星全球新闻室（韩国时间 2026 年 9 月 30 日；SamMobile 更新于 UTC+2 的 14:01，大约北京时间 20:01）：Ultra 被称作迄今最薄的 Galaxy Tab，同时给出迄今最强的性能。3 纳米处理器相对 Tab S11 Ultra，神经网络处理最高大约快 61%，中央处理器大约快 19%，图形处理器大约快 17%。两款都是 Dynamic AMOLED 2X，峰值亮度最高大约 1600 尼特。系列从 10 月 7 日起在部分市场开售，有灰色和银色。据 SamMobile 报道，起步价 Ultra 为 1399 美元，Plus 为 1199 美元。GSMArena 在型号、芯片和开售日上与官方稿、SamMobile 一致，这里不另造链接。</p>
+        <p class="check">开售日写进了 10 月 7 日。和同窗机器人「工厂优先，再进家庭」对照，更能看出「日期写明了」和「路线表态还没到家」的差别。</p>
+        <p class="src">来源：<a href="https://news.samsung.com/global/samsung-introduces-galaxy-tab-s12-series-the-ultimate-productivity-powerhouse-built-for-growth" target="_blank" rel="noopener noreferrer">三星全球新闻室</a><a href="https://www.sammobile.com/news/galaxy-tab-s12-plus-ultra-release-date-price/" target="_blank" rel="noopener noreferrer">SamMobile</a></p>
+
+        <h3>三星在人工智能论坛上说：机器人先走工厂，再谈家庭助手</h3>
+        <p class="chip">多家来源对得上</p>
+        <p>材料的主体是三星机器人体验事业推进室公布的落地路线：先提高一百多座工厂和产线的自动化，再走向家用助手机器人。家电产线的自动化还不到一半，产线要求 99.99% 的成功率。这些是硬件和可靠性的门槛。</p>
+        <p>据 Yonhap Infomax（韩国时间 2026 年 9 月 30 日 16:49，大约北京时间 15:49；论坛当天在首尔西草社屋举行）：三星电子机器人体验事业推进室负责人 Chris Hauser 在 Samsung AI Forum 2026 上说，从工业应用看，目标是提升工厂自动化、降低设备制造成本；最终会从工业机器人走向消费级机器人。他解释，家电领域有大量任务难以用既有机器人技术自动化。冰箱等家电制造流程里，自动化任务的占比不到一半。要成功把机器人引进实际产线，需要 99.99% 的成功率，任务处理速度也要达到和人类工人相当的预期。EDAILY 补充了硬件成本的量级，大约每台资本开支 10 万美元、每年运维大约 2 万美元，并提到三层机器人基础模型栈。三星韩国新闻室同日确认，论坛于 9 月 30 日在西草社屋召开，并设有物理人工智能和机器人基础模型的环节。</p>
+        <p class="check">热闹的说法是「三星要做家庭机器人」。要核对的是：路线是工厂优先，家庭助手是「最终」方向，不是今天已经量产到家。先落地能控的一侧，不等于每个场景都已经通行。</p>
+        <p class="src">来源：<a href="https://en.infomaxai.com/news/articleView.html?idxno=141360" target="_blank" rel="noopener noreferrer">Yonhap Infomax</a><a href="https://en.edaily.co.kr/news/eda202609305586/" target="_blank" rel="noopener noreferrer">EDAILY</a></p>
+
+        <h3>研究团队公开 Branch Target Reuse，一种针对即时编译的 Spectre-v2 变体</h3>
+        <p class="chip">多家来源对得上</p>
+        <p>这是阿姆斯特丹自由大学等机构在 CCS 2026 论文和官网项目页上同步公开的硬件侧信道研究。主体是处理器分支预测和即时编译（包括 Linux 的 cBPF）怎样相互作用。作者称，在英特尔系统上平均大约 3 到 5 分钟可以泄漏 root 密码哈希。Linux 已经合入基于 IBPB 的缓解，编号为 CVE-2026-64507 和 CVE-2026-64508。这是研究公开加上缓解合入，和思科那条「已经确认在野利用」不是同一层。</p>
+        <p>据 oss-security（太平洋时间 2026 年 9 月 29 日 17:41:03，大约北京时间 9 月 30 日 08:41）：团队提出 Branch Target Reuse，一种针对即时编译的新 Spectre-v2 攻击。它影响浏览器、语言运行时和操作系统内核里的即时编译引擎，跨多个处理器厂商。论文分析了 Linux cBPF、Oracle GraalVM 和 SpiderMonkey（Firefox 的即时编译）的攻击面，并做了两个针对 Linux 内核的端到端利用。关键观察是：现代处理器在自修改之后会恢复架构层的代码一致性，但不一定让过时的间接分支预测失效。在即时编译引擎里，这些过时目标可以在原代码失效后仍然留下来，并在代码缓存再次填充时被复用，形成推测执行之后的释放后使用。端到端利用在 Raptor Cove 和 Lion Cove 上评估，平均分别大约 3 分钟和 5 分钟泄漏密码。Linux 已合入的缓解是：CVE-2026-64507，在 BPF 即时编译分配时启用 IBPB 刷新；CVE-2026-64508，为对抗即时编译喷射提供加固。BleepingComputer 也有跟进，但首发略早于本窗起点，这里以窗内的 oss-security、项目页和论文为准，不另造链接。</p>
+        <p class="check">研究公开和内核缓解合入，是补丁层的动作。设备和发行版有没有更新，仍是另一层。披露日本身不能告诉你，利用是否已经发生。</p>
+        <p class="src">来源：<a href="https://www.openwall.com/lists/oss-security/2026/09/30/1" target="_blank" rel="noopener noreferrer">oss-security</a><a href="https://www.vusec.net/projects/btr/" target="_blank" rel="noopener noreferrer">VUSec 项目页</a><a href="https://download.vusec.net/papers/btr_ccs26.pdf" target="_blank" rel="noopener noreferrer">CCS 论文 PDF</a></p>
+
+        <h3>韩国第五枚努里火箭定于 10 月 7 日发射</h3>
+        <p class="chip one">只看到一家来源</p>
+        <p>这是韩联社对韩国航天厅厅长吴泰锡的直接引述。第五枚国产努里火箭计划 10 月 7 日在罗老航天中心发射，载荷共 15 颗卫星：5 颗 NEONSAT 主载荷和 10 颗立方星。厅长强调，多轨部署能力对商业发射服务很重要。韩国航空宇宙研究院同日还发布了三级组装的画面。据韩联社称，准备按计划推进。尚未得到其他国际通讯社在同日的独立复述。</p>
+        <p>据韩联社（2026 年 9 月 30 日 11:55，按韩国标准时间大约北京时间 10:55）：厅长在面向记者的会面中说，第五次发射准备按计划推进，定于下周发射。发射地点在距首尔大约 473 公里以南的高兴罗老航天中心。载荷是该国首个国产发射微卫星星座的一部分，五颗 New-space Earth Observation Satellite Constellations for National Safety 主载荷，加上十颗立方星次载荷。</p>
+        <p class="check">发射日写进了 10 月 7 日，和同日平板开售巧合同一天。日程写明了，不等于今天已经入轨。发射还没有执行。</p>
+        <p class="src">来源：<a href="https://en.yna.co.kr/view/AEN20260930005100320" target="_blank" rel="noopener noreferrer">韩联社</a></p>
+
+        <h3>路透称台积电在评估得州追加投资，尚未最终敲定</h3>
+        <p class="chip one">只看到一家来源</p>
+        <p>路透援引两名匿名知情人士称，台积电正在评估于得州追加投资，以扩大在美国的晶圆产能，而且这将是亚利桑那州已经承诺的 2650 亿美元之外的增量。方案尚未最终敲定，公司暂未回应置评请求。据路透援引知情人士称，方案还没定。尚未得到台积电确认。不宜写成已经落地的投资。台湾媒体本周也有类似的未具名报道，这里不另造链接。</p>
+        <p>据 MarketScreener 转载的路透稿（香港时间 2026 年 9 月 30 日下午 5:20，大约北京时间 17:20）：其中一名信源称，潜在投资是已承诺的亚利桑那 2650 亿美元之外的增量。信源称计划尚未最终敲定，因未经授权对媒体发言而要求匿名。台积电没有立即回应路透的置评请求。文中的 2650 亿美元和亚利桑那厂区规模，来自台积电此前公开扩产表态的背景复述。</p>
+        <p class="check">热闹的说法是「台积电要在得州扩产」。要核对的确定程度是：还在评估，没有敲定，公司没有确认。意向信号不等于已经落地的投资。</p>
+        <p class="src">来源：<a href="https://hk.marketscreener.com/news/tsmc-evaluates-potential-texas-investment-sources-say-ce785ad2dc8ef72c" target="_blank" rel="noopener noreferrer">MarketScreener 转载路透</a></p>
+
+        <h2 id="med">医学</h2>
+        <p>今天最清楚的对照是：受理、优先审评、附条件批准、试验许可、器械许可、再提交，都不等于全面无条件上市已经完成。把每一条按监管阶段分开，用的是和渡口同一套核对。</p>
+
+        <h3>FDA 批准 Camzyos 扩展到符合体重的儿童梗阻性肥厚型心肌病</h3>
+        <p class="chip">多家来源对得上</p>
+        <p>这是第一个获美国食品药品监督管理局批准、用于儿童症状性梗阻性肥厚型心肌病的心脏肌球蛋白抑制剂。成人适应证从 2022 年就有了。这是批准，外层许可合上了一种，但仍附黑框警告和风险管控项目。批准不等于无条件、无限制地使用。</p>
+        <p>据 FDA 和百时美施贵宝同日公告（美东工作时段对应北京时间 9 月 30 日晚间到 10 月 1 日凌晨，落在采集窗内）：FDA 批准 Camzyos（mavacamten）胶囊，作为第一个用于改善儿童症状性梗阻性肥厚型心肌病功能容量和症状的治疗。现批准用于体重至少 30 公斤（大约 66 磅）的症状性患者，成人和儿科都包括在内。疗效在 SCOUT-HCM（NCT-06253221）里评估：三期、随机、双盲、安慰剂对照、多中心国际研究，44 名 12 到 18 岁的患者。Camzyos 有心衰风险的黑框警告，只能通过 Camzyos 风险管控项目提供。第 28 周，Valsalva 左室流出道梯度相对安慰剂的最小二乘均值差为 −48.0 毫米汞柱（95% 置信区间 −67.7 到 −28.3；P 小于 0.0001）。试验期间没有患者的左室射血分数降到 50% 以下。HCPLive 等同日报道交叉印证了关键疗效数字，这里不另造链接。</p>
+        <p class="check">儿科梗阻性肥厚型心肌病第一次有靶向肌球蛋白抑制剂获批，是外层许可合上的强信号。黑框和风险管控项目说明，风险管控这一层仍然强制存在。通行打开了，但不是无条件的全员使用。</p>
+        <p class="src">来源：<a href="https://www.fda.gov/drugs/news-events-human-drugs/fda-approves-first-drug-improve-functional-capacity-and-symptoms-children-rare-inherited-heart" target="_blank" rel="noopener noreferrer">FDA</a><a href="https://news.bms.com/news/corporate-financial/2026/U-S--Food-and-Drug-Administration-Approves-Expanded-Indication-for-Bristol-Myers-Squibbs-CAMZYOS-mavacamten-for-the-Treatment-of-Symptomatic-Obstructive-Hypertrophic-Cardiomyopathy-oHCM-in-Adults-and-Pediatric-Patients/default.aspx" target="_blank" rel="noopener noreferrer">百时美施贵宝</a></p>
+
+        <h3>罗氏：FDA 受理 fenebrutinib 用于复发型和原发进展型多发性硬化的优先审评申请</h3>
+        <p class="chip">多家来源对得上</p>
+        <p>这是受理，不是批准。公司称，若获批，fenebrutinib 会成为第一个同时覆盖复发型多发性硬化和原发进展型多发性硬化的高疗效口服 BTK 抑制剂。优先审评的受理，不等于全面无条件上市已经完成。</p>
+        <p>据罗氏官网（巴塞尔，2026 年 9 月 30 日；GlobeNewswire 标为美东 9 月 30 日 01:00，大约北京时间 13:00）：FDA 已受理 fenebrutinib 用于上述两种多发性硬化的新药申请，并给予优先审评。Fenebrutinib 是研究性的非共价布鲁顿酪氨酸激酶抑制剂。在 FENhance 1 和 FENhance 2 里，相对特立氟胺，96 周内年化复发率分别降低 51.1%（p 小于 0.001）和 58.5%（p 小于 0.00001）。FENtrepid 的原发进展型研究显示，相对 Ocrevus（ocrelizumab）达到了非劣效的主要终点。按 12 周确认的残疾进展起算，数值上降低进展风险 12%（风险比 0.88；95% 置信区间 0.75 到 1.03）。安全数据库超过 2700 名受试者。三期里报告了死亡失衡，需要关注后续审评怎么披露。</p>
+        <p class="check">热闹的说法是「罗氏的 BTK 抑制剂在冲刺双适应证」。要核对的是：优先审评受理是审评加速的入口，不是获批。此刻仍停在受理层。</p>
+        <p class="src">来源：<a href="https://www.roche.com/media/releases/med-cor-2026-09-30" target="_blank" rel="noopener noreferrer">罗氏官网</a><a href="https://www.globenewswire.com/news-release/2026/09/30/3371506/0/en/roche-s-fenebrutinib-is-the-first-btk-inhibitor-to-receive-u-s-fda-filing-acceptance-in-both-relapsing-and-primary-progressive-multiple-sclerosis.html" target="_blank" rel="noopener noreferrer">GlobeNewswire</a></p>
+
+        <h3>国家药监局附条件批准赞赋，用于复发难治多发性骨髓瘤</h3>
+        <p class="chip">多家来源对得上</p>
+        <p>这是全球第一个口服 CELMoD（cereblon 调节性蛋白降解剂）在中国的附条件上市。适应证是既往至少一线治疗（含一种蛋白酶体抑制剂和一种免疫调节剂）的成人多发性骨髓瘤，联合达雷妥尤单抗和地塞米松。附条件批准不等于全面无条件上市已经完成。</p>
+        <p>据百时美施贵宝中国经美通社发布的稿件（上海，2026 年 9 月 30 日，大约北京时间 19:15；新浪转载中国食品药品网的相关播报为当天 16:46）：赞赋（盐酸艾泊度胺胶囊，iberdomide）获国家药品监督管理局附条件批准。中位随访 16 个月时，41% 的 IberDd 组患者在任意时间达到微小残留病阴性的完全缓解，显著优于 DVd 组的 21%（p 小于 0.0001），达到双主要终点之一。接受 IberDd 的患者中，中性粒细胞减少和感染的发生率分别为 90.2% 和 78.9%，但因此终止治疗的比率较低，分别为 1% 和 1.5%。因不良反应导致的停药率为 7.8%。另一个双主要终点无进展生存仍在随访。机制来自泛素–蛋白酶体降解路径。</p>
+        <p class="check">附条件批准打开了中国上市的入口，但仍然是「附条件」。后续的确证和限制还在。蛋白降解剂进入骨髓瘤早线的深度缓解指标，适合当作教学场景，同时要记住附条件不等于无条件全面上市。</p>
+        <p class="src">来源：<a href="https://www.prnasia.com/story/550185-1.shtml" target="_blank" rel="noopener noreferrer">美通社</a><a href="https://finance.sina.com.cn/jjxw/2026-09-30/doc-initqzkv6895553.shtml" target="_blank" rel="noopener noreferrer">新浪转载中国食品药品网</a></p>
+
+        <h3>CeleCor：FDA 受理心梗溶栓前皮下注射药 zalunfiban 的新药申请</h3>
+        <p class="chip one">只看到一家来源</p>
+        <p>这是受理和审评目标日的公告，不是批准。药物设计为在第一次医疗接触时就可以皮下注射的血小板糖蛋白 IIb/IIIa 抑制剂，面向最重的 ST 段抬高型心梗。据该公司称，FDA 已经受理并指定了审评目标日。尚未得到同日 FDA 官网新闻稿的确认。</p>
+        <p>据 CeleCor 经 PR Newswire 发布的稿件（美东 2026 年 9 月 30 日 10:45，大约北京时间 10 月 1 日 00:45）：FDA 已受理 zalunfiban（Disaggpro）的新药申请，并按处方药用户费法把目标审评日定为 2027 年 6 月 18 日。公司称 6 月 24 日完成递交。此前于 2025 年 11 月在美国心脏协会科学年会报告了 CeleBrate 三期的阳性结果，并同步发表于 The New England Journal of Medicine Evidence。公司称，三期显示在首次接触点快速给药可以降低随后 30 天的心血管事件风险。具体效应量的百分比需要回看期刊原文，证据材料没有重述未经核验的百分比，这里也不补。</p>
+        <p class="check">第一次接触点的皮下给药如果成立，对急诊路径的教学意义很大。此刻仍是受理加上一个审评目标日，不是获批。</p>
+        <p class="src">来源：<a href="https://www.prnewswire.com/news-releases/fda-accepts-new-drug-application-for-celecors-investigational-heart-attack-drug-302889940.html" target="_blank" rel="noopener noreferrer">PR Newswire</a></p>
+
+        <h3>Pharmazz 获得试验许可，启动 sovateltide 治疗急性创伤性脑损伤的三期试验</h3>
+        <p class="chip one">只看到一家来源</p>
+        <p>Sovateltide 是选择性内皮素 B 受体激动剂。印度已批准用于缺血性卒中，并在全球三期 RESPECT-ETB 中入组卒中患者。这次的试验许可把适应证扩到急性中重度创伤性脑损伤。目前还没有获批的创伤性脑损伤神经保护或再生药物，未满足需求很高，但这仍是启动试验，不是疗效结论。据该公司称，FDA 已许可这项研究性新药申请。尚未见到同期期刊论文或 FDA 公开新闻稿。</p>
+        <p>据 Pharmazz 经 GlobeNewswire 发布的稿件（美东 2026 年 9 月 30 日 07:00，大约北京时间 19:00）：FDA 已许可公司推进评估 sovateltide（IRL-1620）治疗急性创伤性脑损伤的关键三期试验。患者 214 人，1 比 1 随机，接受 sovateltide 加标准重症监护，或匹配安慰剂加标准重症监护，每组 107 人。主要终点是伤后第 90 天，按扩展格拉斯哥结局量表达到良好功能恢复的患者比例。</p>
+        <p class="check">试验许可打开的是试验入口，不是疗效读出，也不是上市。扩展格拉斯哥结局量表的 90 天终点，是神经重症教学里熟悉的量表。能开试，和已经上市，要分开。</p>
+        <p class="src">来源：<a href="https://www.globenewswire.com/news-release/2026/09/30/3371737/0/en/pharmazz-inc-receives-u-s-fda-ind-clearance-to-initiate-phase-3-clinical-trial-of-sovateltide-in-traumatic-brain-injury.html" target="_blank" rel="noopener noreferrer">GlobeNewswire</a></p>
+
+        <h3>Ceribell 获得 510(k) 许可，为床旁脑电图增加定量趋势和振幅整合分析</h3>
+        <p class="chip one">只看到一家来源</p>
+        <p>这是器械软件的 510(k) 许可。公司脚注引用许可信 K261712。它把复杂的长时间脑电图转成床旁可读的趋势，覆盖从新生儿重症监护病房的早产儿到成人重症监护，没有年龄限制。许可不等于新功能已经装进每一台设备。据该公司称，FDA 已经许可。尚未见到同日独立媒体的深挖复核。</p>
+        <p>据 Ceribell 经 GlobeNewswire 发布的稿件（美东 2026 年 9 月 30 日 07:00，大约北京时间 19:00）：软件更新为平台增加三项能力，Alpha-Delta 比值和相对 Alpha 趋势、爆发抑制监测，以及振幅整合脑电图。公司称预计在 2027 年上半年通过自动软件更新整合这些功能。</p>
+        <p class="check">许可已经合上，功能落地要等到 2027 年上半年的更新。许可日不等于功能已经在每台设备上线。</p>
+        <p class="src">来源：<a href="https://www.globenewswire.com/news-release/2026/09/30/3371750/0/en/ceribell-receives-fda-510-k-clearance-for-quantitative-eeg-trending-and-amplitude-integrated-eeg-analysis.html" target="_blank" rel="noopener noreferrer">GlobeNewswire</a></p>
+
+        <h3>Pierre Fabre 和 Atara 向 FDA 再提交 tabelecleucel 的生物制品许可申请</h3>
+        <p class="chip">多家来源对得上</p>
+        <p>这是再提交，不是批准。Tabelecleucel 是异体、现货型的 EB 病毒特异性 T 细胞疗法。欧盟已以 EBVALLO 获批。美国曾经遭到拒绝。基于 2026 年 4 月的 Type A 会议反馈，补充了 ALLELE 数据和欧洲商业经验之后重新申报。</p>
+        <p>据 Pierre Fabre Pharmaceuticals 经 PR Newswire 发布的稿件（美东 2026 年 9 月 30 日 08:00，大约北京时间 20:00；Atara 标为美东上午 8:05）：拟适应证为单药治疗至少接受过一种既往治疗、2 岁及以上的成人和儿童 EB 病毒阳性移植后淋巴增殖性疾病。本次提交包含正在进行的关键单臂三期 ALLELE 研究的更新数据，有额外患者和更长随访，也包含扩大可及项目、另一项临床研究和欧洲商业经验。公司援引初治失败后，造血细胞移植和实体器官移植患者的中位生存大约分别是 3 周和 4.1 个月，用来说明未满足需求极高。Atara 称，若获批可获得 3100 万美元的里程碑付款。双方同日新闻稿互相印证了再提交这件事。</p>
+        <p class="check">欧盟已经获批，美国是再提交。监管路径的分层很清楚。再提交是又进了一次审评的门，不是已经在美国上市通行。</p>
+        <p class="src">来源：<a href="https://www.prnewswire.com/news-releases/pierre-fabre-pharmaceuticals-resubmits-tabelecleucel-biologics-license-application-for-treatment-of-epstein-barr-virus-positive-post-transplant-lymphoproliferative-disease-to-the-fda-302893397.html" target="_blank" rel="noopener noreferrer">PR Newswire</a><a href="https://investors.atarabio.com/news-events/press-releases/detail/389/atara-biotherapeutics-reports-that-the-tabelecleucel" target="_blank" rel="noopener noreferrer">Atara 投资者新闻稿</a></p>
+
+        <h3>Nature Immunology：肠上皮可以呈递送进胞质的细菌抗原，并影响屏障免疫记忆</h3>
+        <p class="chip one">只看到一家来源</p>
+        <p>这是基础免疫学的同行评议论文。它用小鼠致病菌模型说明，抗原待在细胞的哪一层，会决定黏膜 CD4 反应的幅度和组织驻留记忆的走向，并强调肠上皮这种非专职抗原呈递细胞的作用。对理解黏膜免疫、疫苗设计，以及「上皮也可以呈递抗原」，有教学意义。它还不是临床终点。发表不等于临床上市或人体疗效结论。</p>
+        <p>据 Nature Immunology（2026 年 9 月 30 日发表）：研究者追踪针对在柠檬酸杆菌不同毒力蛋白之间穿梭的同一个表位的克隆 CD4 T 细胞反应，发现反应的幅度和质量取决于抗原位置。留在细菌内部的抗原只引起有限反应。经三型分泌系统注入结肠上皮细胞胞质的抗原，可以产生稳健的黏膜 CD4 T 细胞反应，并促进上皮驻留记忆 T 细胞形成。这个过程需要被感染上皮细胞的直接呈递。文中报告，胞质递送的抗原诱导的结肠 SMARTA T 细胞积累，可以比细菌表面抗原高一个数量级。例如 nleA、espZ 相对 intimin，大约是 28 倍和 47 倍。对黏膜疫苗的启示是：把抗原靶向到上皮细胞胞质，或许可以增强保护性黏膜免疫。</p>
+        <p class="check">「上皮也可以呈递抗原」会改写黏膜免疫课本里的印象。这是机制层的读出，不是人体试验终点，也不是监管批件。</p>
+        <p class="src">来源：<a href="https://www.nature.com/articles/s41590-026-02656-7" target="_blank" rel="noopener noreferrer">Nature Immunology</a></p>
+
+        <h2 id="life">轻提示</h2>
+        <p>个人事务只轻轻提一下，不评分，也不替你假定已经做完。这一路只用了邮箱和 GitHub 上看得见的记录。</p>
+
+        <h3>昨天的早报已经合进主分支</h3>
+        <p class="chip">多家来源对得上</p>
+        <p>据 GitHub 的拉取请求记录：第 151 号大约在北京时间 2026 年 9 月 30 日 07:08 开出（created_at 为 2026-09-29T23:08:51Z），大约 07:14 以压缩合并进入主分支（merged_at 为 2026-09-29T23:14:45Z）。标题是 content(briefs): 2026-09-30 头牌按住了，侧廊还亮着。基线是 main，头分支是 content/brief-2026-09-30。增加 1334 行，删除 0 行，改动 1 个文件，1 个提交。合并提交是 b8e74109492f4836fdd9ad69711a2de6093c0af3。文件是 content/briefs/2026-09/ai-brief-2026-09-30.html。云端主创会话可见为 bc-48bf07b1-76af-56ed-b548-89be79b0d6a5。推送到 main 的检查结论是成功。本轮没有另查 Pages 的部署日志。</p>
+        <p class="check">合进主分支并且检查成功，是通行写进了合并记录。没有另查部署日志，不等于每一层回执都已经亲手点开。</p>
+        <p class="src">来源：<a href="https://github.com/AIMFllyYS/Blog-YuSheng/pull/151" target="_blank" rel="noopener noreferrer">拉取请求 151</a><a href="https://github.com/AIMFllyYS/Blog-YuSheng/actions/runs/36644146026" target="_blank" rel="noopener noreferrer">对应的检查</a></p>
+
+        <h3>主分支同步进了开发分支</h3>
+        <p class="chip">多家来源对得上</p>
+        <p>据 GitHub：第 152 号的开出和合并都大约在北京时间 2026 年 9 月 30 日 07:14（created_at 为 2026-09-29T23:14:50Z，merged_at 为 2026-09-29T23:14:55Z）。标题是 sync: main → dev after 2026-09-30 brief。正文写明用普通合并，不要压缩。同样增加 1334 行，删除 0 行，改动 1 个文件。合并提交是 3dbf52a5e0b03f1a654a3b8c48fcfc1141610b33。推送到 dev 的检查结论是成功。</p>
+        <p class="check">开发分支已经和上线内容对齐。这里不往下延伸解读。</p>
+        <p class="src">来源：<a href="https://github.com/AIMFllyYS/Blog-YuSheng/pull/152" target="_blank" rel="noopener noreferrer">拉取请求 152</a><a href="https://github.com/AIMFllyYS/Blog-YuSheng/actions/runs/36644161682" target="_blank" rel="noopener noreferrer">对应的检查</a></p>
+
+        <h3>生化第 23 到 24 节和医英第 9 到 10 节已经合入</h3>
+        <p class="chip">多家来源对得上</p>
+        <p>据 GitHub：Notebook-MedFreshman 第 167 号大约在北京时间 2026 年 9 月 30 日 19:59 开出（created_at 为 2026-09-30T11:59:08Z），大约 20:18 合并（merged_at 为 2026-09-30T12:18:35Z）。标题是 feat(content): 生化23-24节 + 医英9-10节课堂四材料（2026-09-30）。头分支是 feat/lecture-daily-2026-10-01，基线是 master。增加 2349 行，删除 0 行，14 个文件，1 个提交。合并提交是 69e8eca380fc0eb5b16755f179d42d68e5aa50c9。生化第 23 到 24 节是糖代谢总复习，11 道题，其中基础 4、中等 5、提高 2。医英第 9 到 10 节是第五单元膀胱外翻，8 道题，其中基础 3、中等 3、提高 2。正文自报的闸门是：单元测试 1806 项通过，内容测试 2311 项通过，界面测试 829 项通过，构建成功。合并推送到 master 的检查结论是成功。</p>
+        <p class="check">课堂材料和期末复习直接相关。合入并且闸门最终是绿的，材料已经在仓库里。</p>
+        <p class="src">来源：<a href="https://github.com/AIMFllyYS/Notebook-MedFreshman/pull/167" target="_blank" rel="noopener noreferrer">拉取请求 167</a><a href="https://github.com/AIMFllyYS/Notebook-MedFreshman/actions/runs/36713864439" target="_blank" rel="noopener noreferrer">合并后的检查</a></p>
+
+        <h3>同一份课堂材料，中间来过一封失败邮件</h3>
+        <p class="chip">多家来源对得上</p>
+        <p>据邮箱 aimfllyys：失败邮件大约在北京时间 2026 年 9 月 30 日 20:06（date 为 2026-09-30T12:06:26Z，邮件称完成于 12:06:06 UTC）。主题是 Notebook-MedFreshman 的拉取请求检查失败，提交 771d149。工作流 ci 跑了 6 分 55 秒。类型检查、规范、测试和构建当时失败，有 15 条标注。邮件指向的运行编号是 36711899991。随后再查询时，同一条运行的结论已经是成功，而且第 167 号合并推送的运行 36713864439 也是成功。中间可能重跑过，通知和最终结论不是同一时刻。</p>
+        <p class="check">合入成功，不等于过程中那封失败邮件从未出现。宜以检查页面的最终状态为准。收件箱里的红信，不等于现在还是红的。</p>
+        <p class="src">来源：<a href="https://mail.google.com/mail/?authuser=aimfllyys@gmail.com#all/thread-f:1877758430910503380" target="_blank" rel="noopener noreferrer">那封邮件</a><a href="https://github.com/AIMFllyYS/Notebook-MedFreshman/actions/runs/36711899991" target="_blank" rel="noopener noreferrer">当时指向的检查</a></p>
+
+        <h3>贵数上架了 jev-latest，并同步 gpt-6.1-sol 和 LongCat-2.5</h3>
+        <p class="chip one">只看到一家来源</p>
+        <p>据邮箱 aimfllyys（大约北京时间 2026 年 9 月 30 日 14:37，date 为 2026-09-30T06:37:45Z，发件人 qqx1599@llm-agent.cc）：主题是 JEV 判断模型重点推荐，GPT-6.1-Sol 以 3 倍率同步上架。jev-latest 为 2 倍率，只对输入计费，输出免费。邮件称 Jev 是 TypeSafe AI 推出的 System One 判断模型，能力包括 Choice、Score 和 Noul。调用入口是 POST https://api.llm-token.cn/v1/systemone ，模型名用 jev-latest。同步上架的还有 gpt-6.1-sol，3 倍率；美团龙猫 LongCat-2.5，2 倍率。官网是 https://www.llm-token.cn/ 。倍率以平台实际记录为准。这封是平台通知，没有另查控制台的实时价目。</p>
+        <p class="check">上架通知是个人工具栈里的一个信号。没有核对控制台，就不把它写成已经完成验证。</p>
+        <p class="src">来源：<a href="https://mail.google.com/mail/?authuser=aimfllyys@gmail.com#all/thread-f:1877737755110148494" target="_blank" rel="noopener noreferrer">贵数的上架邮件</a></p>
+
+        <h3>贵数又上架了 MiniMax-M3.1，邮件自己写了限定</h3>
+        <p class="chip one">只看到一家来源</p>
+        <p>据邮箱 aimfllyys（大约北京时间 2026 年 9 月 30 日 22:02，date 为 2026-09-30T14:02:19Z）：MiniMax-M3.1-flash 为 1 倍率，MiniMax-M3.1 为 2 倍率。邮件说 Flash 面向日常代码修改、页面原型和长文档；M3.1 可以用相同任务和 Flash 对比。邮件还称，官方文档里的 M3.1-Flash-Preview 支持 100 万 token 上下文，以及文本、图像和视频输入，并写明：以上是官方 Flash Preview 的能力描述，不代表平台全部调用路径都已经完成相同的能力验证。</p>
+        <p class="check">引用的时候要留下这句限定。上架了，不等于每一条调用路径都验过。</p>
+        <p class="src">来源：<a href="https://mail.google.com/mail/?authuser=aimfllyys@gmail.com#all/thread-f:1877765724533183862" target="_blank" rel="noopener noreferrer">MiniMax 上架邮件</a></p>
+
+        <h3>Elicit 新增了 Routines，旧的 Alerts 将在 10 月 31 日停用</h3>
+        <p class="chip one">只看到一家来源</p>
+        <p>据邮箱 aimfllyys（大约北京时间 2026 年 10 月 1 日 03:00，date 为 2026-09-30T19:00:27Z，发件人 kadir.annamalai@elicit.com）：Elicit 的研究助手现在可以主动做事，例如监测新证据、更新产物、发送摘要。Routines 面向 Pro 档及以上。Find Papers 和 Extract Data 作为助手里的技能运行。既有的 Alerts 还会再跑几周，并在 2026 年 10 月 31 日停用。创建入口是 https://elicit.com/routines 。这封是产品经理署名的广播，没有登录账户去核对套餐档位。</p>
+        <p class="check">新产品能力在窗内开放给 Pro 及以上。旧提醒的停用日写进了 10 月 31 日，那个日子在窗外。</p>
+        <p class="src">来源：<a href="https://mail.google.com/mail/?authuser=aimfllyys@gmail.com#all/thread-f:1877784477291766225" target="_blank" rel="noopener noreferrer">Elicit 的产品信</a></p>
+
+        <h3>OpenCode 的支付宝自动扣款已经失效</h3>
+        <p class="chip one">只看到一家来源</p>
+        <p>据邮箱 aimfllyys（大约北京时间 2026 年 10 月 1 日 05:28，date 为 2026-09-30T21:28:21Z，发件人 team@opencode.ai）：OpenCode Go 订阅绑定的支付宝自动扣款授权已经失效。为避免订阅在 2026 年 10 月 17 日到期时中断，要在此之前重新授权。邮件说大约一分钟，续费日之前不会扣款。授权失效的通知在窗内，到期日在窗外。这里不展开账单后台的字段。</p>
+        <p class="check">通知到了，不等于已经重新授权。真正要核对的是 10 月 17 日之前有没有做完。</p>
+        <p class="src">来源：<a href="https://mail.google.com/mail/?authuser=aimfllyys@gmail.com#all/thread-f:1877793781842953279" target="_blank" rel="noopener noreferrer">OpenCode 的通知</a></p>
+
+        <h3>Mobbin 本周收录了 Square、Browserbase 和 DoorDash Merchant</h3>
+        <p class="chip one">只看到一家来源</p>
+        <p>据邮箱 aimfllyys（大约北京时间 2026 年 9 月 30 日 19:17，date 为 2026-09-30T11:17:10Z，发件人 newsletter@mobbin.com）：本周网页收录包括 Square、Browserbase 和 DoorDash Merchant。邮件把 Browserbase 描述为构建和部署能像人一样浏览并与网页交互的智能体的平台。另外还列了 Variant、Zara 等。入口是 https://mobbin.com 。这只是设计素材的周更，不代替任何实测。</p>
+        <p class="check">周刊把参考名单点亮了。名单在，不等于视觉功课已经做完。</p>
+        <p class="src">来源：<a href="https://mail.google.com/mail/?authuser=aimfllyys@gmail.com#all/thread-f:1877755329106099384" target="_blank" rel="noopener noreferrer">Mobbin 周刊</a></p>
+
+        <h3>旁边的 SCI-AIChat-Demo 检查又红了</h3>
+        <p class="chip one">只看到一家来源</p>
+        <p>据邮箱 aimfllyys（大约北京时间 2026 年 9 月 30 日 06:16，date 为 2026-09-29T22:16:45Z，完成于 22:16:25 UTC）：SCI-AIChat-Demo 的 master 检查失败，提交 579183f，跑了大约 1 分 6 秒。规范、类型检查和测试失败，有 3 条标注。夜间的真实模型回放成功，有 2 条标注。编译和 pytest 失败，有 3 条标注。运行编号是 36638462553。没有下钻每一条标注。这和早报主链无关。</p>
+        <p class="check">旁路仓库的红灯还在。主链当天是绿的，不等于这条旁路已经修好。</p>
+        <p class="src">来源：<a href="https://mail.google.com/mail/?authuser=aimfllyys@gmail.com#all/thread-f:1877706231961304204" target="_blank" rel="noopener noreferrer">失败通知</a><a href="https://github.com/AIMFllyYS/SCI-AIChat-Demo/actions/runs/36638462553" target="_blank" rel="noopener noreferrer">对应的检查</a></p>
+
+        <h3>deepseek-harness 的真实接口端到端测试又失败了</h3>
+        <p class="chip one">只看到一家来源</p>
+        <p>据邮箱 aimfllyys（大约北京时间 2026 年 9 月 30 日 13:30，date 为 2026-09-30T05:30:58Z，完成于 05:30:38 UTC）：deepseek-harness 的真实 DeepSeek 接口端到端测试在 master 上失败，提交 c291e79，跑了 44 秒，端到端任务失败，有 3 条标注。运行编号是 36673671958。同一套测试在窗外更早也失败过。这仍是旁路工程，不必和早报投递或课堂材料混在一起说。</p>
+        <p class="check">红灯还在。这里不把它扩成主链的问题。</p>
+        <p class="src">来源：<a href="https://mail.google.com/mail/?authuser=aimfllyys@gmail.com#all/thread-f:1877733549485072010" target="_blank" rel="noopener noreferrer">失败通知</a><a href="https://github.com/AIMFllyYS/deepseek-harness/actions/runs/36673671958" target="_blank" rel="noopener noreferrer">对应的检查</a></p>
+
+        <h2 id="ahead">还没到的事</h2>
+        <p>下面这些日子落在窗外，或者通知本身早于本窗起点。只作日程提醒，标明不在窗内。</p>
+
+        <h3>Google One 会在今天取消</h3>
+        <p class="chip one">只看到一家来源，而且通知不在窗内</p>
+        <p>截止写的是 2026 年 10 月 1 日。邮件原文是：来自 Google LLC、经由 Google Play 的 Google One 订阅将于 2026 年 10 月 1 日取消，不退款。订单号是 SOP.3388-5767-6882-73867。来源邮箱是 sofiapintos190，邮件时间 2026-09-29T21:12:19Z，早于本窗 UTC 22:00 的起点。通知本身不在窗内，但取消日正好是今天。如果还要保留存储或家庭共享，需要自己确认要不要续订或导出。</p>
+        <p class="src">来源：<a href="https://mail.google.com/mail/?authuser=sofiapintos190@gmail.com#all/thread-f:1877702176225324803" target="_blank" rel="noopener noreferrer">Google Play 的通知</a></p>
+
+        <h3>OpenCode 要在 10 月 17 日前重新授权支付宝</h3>
+        <p class="chip one">只看到一家来源</p>
+        <p>订阅到期日是 2026 年 10 月 17 日，要在此之前重新授权。授权失效的通知在窗内，到期日在窗外。详见上面的 OpenCode 一节。</p>
+        <p class="src">来源：<a href="https://mail.google.com/mail/?authuser=aimfllyys@gmail.com#all/thread-f:1877793781842953279" target="_blank" rel="noopener noreferrer">同一封 OpenCode 邮件</a></p>
+
+        <h3>Elicit 的旧提醒在 10 月 31 日停用</h3>
+        <p class="chip one">只看到一家来源</p>
+        <p>邮件原文写，Alerts 将于 2026 年 10 月 31 日停用。产品更新在窗内，停用日在窗外。没有转成 Routines 的提醒，到期后会停止运行。既有提醒的回顾入口是 https://elicit.com/alerts 。</p>
+        <p class="src">来源：<a href="https://mail.google.com/mail/?authuser=aimfllyys@gmail.com#all/thread-f:1877784477291766225" target="_blank" rel="noopener noreferrer">同一封 Elicit 邮件</a><a href="https://elicit.com/alerts" target="_blank" rel="noopener noreferrer">既有提醒</a></p>
+
+        <h2>收在同一句上</h2>
+        <p>Gemini 4 Argon 先向 Fairwind 可信网络防御方小范围开放。试用名单亮了，全员接口和 Ultra 的通行证还没发。联合承诺把四层内控写得很整齐，却没有处罚，也没有实施截止日期。同日，联邦贸易委员会的正式调查已经启动，康涅狄格州法律的义务从 2026 年 10 月 1 日起分阶段生效。真正写进生效日和调查程序的，才是强制义务那一层。</p>
+        <p>OpenAI 阻断的是蒸馏活动，不是把模型能力下架。DevDay 的媒体汇总落在窗内，官方首发在窗前。三星机器人是工厂优先，家庭助手还没到家。台积电的得州仍是评估，没有敲定。思科漏洞在披露当天已经遭到利用。医学各条按受理、附条件、试验许可、器械许可、再提交和批准分开，没有一条可以换成「全面无条件上市已经完成」。</p>
+        <p class="check">先给可信的一侧试一把，不等于全员已经通行。纸上的责任承诺，不等于强制义务今天起算数。</p>
+      </article>
+    </div>
+  </div>
+</div>
+<p class="sr" id="live" aria-live="polite"></p>
+<noscript>
+  <style>
+    #digest { display: block !important; position: static !important; background: transparent !important; padding: 0 12px 24px !important; }
+    #digest .sheet-read { max-height: none !important; box-shadow: none !important; }
+    #digest .digest-scroll { overflow: visible !important; }
+  </style>
+  <p style="width:min(680px,calc(100% - 20px));margin:12px auto;font-family:sans-serif;">脚本没有运行。下面直接展开今天的详细稿。渡口上的小船需要脚本才能推。</p>
+</noscript>
+<script>
+(function () {
+  var state = { boat: false, pledge: false, date: false, wide: false };
+  var locks = { date: false };
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var scene = document.getElementById('scene');
+  var live = document.getElementById('live');
+  var hint = document.getElementById('hint');
+  var digest = document.getElementById('digest');
+  var boat = document.getElementById('boat');
+  var lastFocus = null;
+  var drag = null;
+  var pointerDid = false;
+
+  function say(text) {
+    live.textContent = '';
+    window.setTimeout(function () { live.textContent = text; }, 30);
+  }
+
+  function current() {
+    if (!state.boat) return 'boat';
+    if (!state.pledge) return 'pledge';
+    if (!state.date) return 'date';
+    return 'done';
+  }
+
+  function show(id) {
+    document.getElementById(id).hidden = false;
+  }
+
+  function render() {
+    var step = current();
+    document.body.classList.remove('step-boat', 'step-pledge', 'step-date', 'step-done');
+    document.body.classList.add('step-' + step);
+    scene.classList.toggle('is-boat', state.boat);
+    scene.classList.toggle('is-pledge', state.pledge);
+    scene.classList.toggle('is-date', state.date);
+    scene.classList.toggle('is-done', step === 'done');
+    var hintText = {
+      boat: '把这艘小船推向旁边的窄跳板。点一下也可以。',
+      pledge: '窄跳板放下了，宽跳板还系着。再翻开这张没有处罚栏的承诺纸。',
+      date: '承诺纸翻开了。把日历翻到十月一日，看义务从哪一页开始算。',
+      done: '宽跳板还是抬着。试用名单和纸上的承诺，都还不是今天对所有人算数的那一页。'
+    };
+    hint.textContent = hintText[step];
+    document.getElementById('replay').hidden = step !== 'done';
+    document.getElementById('drawer-toggle').hidden = !state.date;
+    document.getElementById('buoy').hidden = !state.boat;
+    document.getElementById('pledge').setAttribute('aria-expanded', state.pledge ? 'true' : 'false');
+    document.getElementById('calendar').setAttribute('aria-pressed', state.date ? 'true' : 'false');
+    if (state.pledge) {
+      document.getElementById('pledge-front').hidden = true;
+      document.getElementById('pledge-back').hidden = false;
+    }
+    if (state.date) {
+      document.getElementById('cal-month').textContent = '十月';
+      document.getElementById('cal-day').textContent = '1';
+      document.getElementById('cal-line').textContent = '义务从今天起分阶段生效';
+      document.getElementById('calendar').classList.add('is-stamped');
+    }
+    if (state.boat) {
+      document.getElementById('narrow-label').textContent = '窄跳板已经放下，只到试运行';
+      document.getElementById('boat-name').textContent = '小船停在试运行这里';
+    }
+    if (step === 'done') {
+      document.getElementById('present-state').textContent = '绳子松开了';
+      show('slip-gift');
+    }
+  }
+
+  function poke(id) {
+    var el = document.getElementById(id);
+    el.classList.remove('nudge');
+    void el.offsetWidth;
+    el.classList.add('nudge');
+  }
+
+  function launch() {
+    if (state.boat) return;
+    state.boat = true;
+    show('slip-boat');
+    say('窄跳板放下了。宽跳板还抬着。试用名单上的名字，不等于全员通行证。');
+    render();
+    document.getElementById('slip-boat').scrollIntoView({ block: 'nearest', behavior: reduce ? 'auto' : 'smooth' });
+  }
+
+  function openPledge() {
+    if (state.pledge) return;
+    if (current() !== 'pledge') {
+      poke('pledge');
+      say(hint.textContent);
+      return;
+    }
+    state.pledge = true;
+    show('slip-pledge');
+    say('这张纸没有处罚条款，也没有截止日期。宽跳板不会因此放下。');
+    render();
+  }
+
+  function flipDate() {
+    if (state.date || locks.date) return;
+    if (current() !== 'date') {
+      poke('calendar');
+      say(hint.textContent);
+      return;
+    }
+    locks.date = true;
+    document.getElementById('calendar').classList.add('flipping');
+    window.setTimeout(function () {
+      state.date = true;
+      show('slip-date');
+      say('日历翻到十月一日。写进生效日的义务，从这一页开始算。宽跳板仍然抬着。');
+      render();
+      document.getElementById('calendar').classList.remove('flipping');
+    }, reduce ? 0 : 280);
+  }
+
+  function tryWide() {
+    var wide = document.getElementById('wide');
+    wide.classList.remove('bump');
+    void wide.offsetWidth;
+    wide.classList.add('bump');
+    if (!state.wide) {
+      state.wide = true;
+      show('slip-wide');
+    }
+    say('宽跳板没有放下。全员通行还没有打开。');
+  }
+
+  function openDigest() {
+    lastFocus = document.activeElement;
+    digest.classList.add('is-open');
+    digest.setAttribute('aria-hidden', 'false');
+    digest.setAttribute('role', 'dialog');
+    digest.setAttribute('aria-modal', 'true');
+    digest.setAttribute('aria-labelledby', 'digest-title');
+    document.getElementById('open-digest').setAttribute('aria-expanded', 'true');
+    document.body.classList.add('reading');
+    document.getElementById('digest-title').focus();
+  }
+
+  function closeDigest() {
+    digest.classList.remove('is-open');
+    digest.setAttribute('aria-hidden', 'true');
+    digest.removeAttribute('role');
+    digest.removeAttribute('aria-modal');
+    document.getElementById('open-digest').setAttribute('aria-expanded', 'false');
+    document.body.classList.remove('reading');
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+
+  boat.addEventListener('pointerdown', function (event) {
+    if (state.boat) return;
+    if (event.pointerType === 'mouse' && event.button !== 0) return;
+    drag = { id: event.pointerId, x: event.clientX, y: event.clientY, moved: false };
+    if (boat.setPointerCapture) boat.setPointerCapture(event.pointerId);
+  });
+  boat.addEventListener('pointermove', function (event) {
+    if (!drag || drag.id !== event.pointerId) return;
+    var dx = event.clientX - drag.x;
+    var dy = event.clientY - drag.y;
+    if (Math.abs(dx) + Math.abs(dy) > 8) drag.moved = true;
+    if (drag.moved) boat.style.transform = 'translate(' + dx + 'px,' + dy + 'px)';
+  });
+  function endDrag(event) {
+    if (!drag || drag.id !== event.pointerId) return;
+    var dx = event.clientX - drag.x;
+    var dy = event.clientY - drag.y;
+    var moved = drag.moved;
+    drag = null;
+    boat.style.transform = '';
+    if (!moved) return;
+    pointerDid = true;
+    window.setTimeout(function () { pointerDid = false; }, 450);
+    if (dx > 70 && Math.abs(dx) > Math.abs(dy)) tryWide();
+    else launch();
+  }
+  boat.addEventListener('pointerup', endDrag);
+  boat.addEventListener('pointercancel', function (event) {
+    if (!drag || drag.id !== event.pointerId) return;
+    drag = null;
+    boat.style.transform = '';
+  });
+  boat.addEventListener('click', function () {
+    if (pointerDid) {
+      pointerDid = false;
+      return;
+    }
+    launch();
+  });
+  boat.style.touchAction = 'none';
+
+  document.getElementById('pledge').addEventListener('click', openPledge);
+  document.getElementById('calendar').addEventListener('click', flipDate);
+  document.getElementById('wide').addEventListener('click', tryWide);
+  document.getElementById('present').addEventListener('click', function () {
+    if (current() !== 'done') {
+      poke('present');
+      say('绳子还系着。先把小船推向窄跳板。');
+      return;
+    }
+    say('绳子松开了。留下的是今天这句核对。');
+    document.getElementById('slip-gift').scrollIntoView({ block: 'nearest', behavior: reduce ? 'auto' : 'smooth' });
+  });
+  document.getElementById('open-digest').addEventListener('click', openDigest);
+  document.getElementById('close-digest').addEventListener('click', closeDigest);
+  digest.addEventListener('click', function (event) {
+    if (event.target === digest) closeDigest();
+  });
+  document.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape' && digest.classList.contains('is-open')) closeDigest();
+  });
+  document.getElementById('scan').addEventListener('click', function () {
+    var on = document.body.classList.toggle('scan');
+    this.setAttribute('aria-pressed', on ? 'true' : 'false');
+    this.textContent = on ? '恢复整段阅读' : '把核对句染出来';
+  });
+  document.querySelectorAll('.toc a').forEach(function (link) {
+    link.addEventListener('click', function (event) {
+      event.preventDefault();
+      var target = document.getElementById(link.getAttribute('href').slice(1));
+      var scroller = document.querySelector('.digest-scroll');
+      var top = target.getBoundingClientRect().top - scroller.getBoundingClientRect().top + scroller.scrollTop - 8;
+      scroller.scrollTo({ top: top, behavior: reduce ? 'auto' : 'smooth' });
+    });
+  });
+  document.querySelectorAll('.note-btn').forEach(function (button) {
+    button.addEventListener('click', function () {
+      var panel = document.getElementById(button.getAttribute('aria-controls'));
+      var open = button.getAttribute('aria-expanded') === 'true';
+      button.setAttribute('aria-expanded', open ? 'false' : 'true');
+      panel.hidden = open;
+    });
+  });
+  document.getElementById('drawer-toggle').addEventListener('click', function () {
+    var body = document.getElementById('drawer-body');
+    var open = this.getAttribute('aria-expanded') === 'true';
+    this.setAttribute('aria-expanded', open ? 'false' : 'true');
+    body.hidden = open;
+    this.textContent = open ? '拉开医学审评的抽屉' : '推回医学审评的抽屉';
+  });
+  document.getElementById('replay').addEventListener('click', function () {
+    state.boat = false;
+    state.pledge = false;
+    state.date = false;
+    state.wide = false;
+    locks.date = false;
+    ['slip-wide', 'slip-boat', 'slip-pledge', 'slip-date', 'slip-gift', 'drawer-body'].forEach(function (id) {
+      document.getElementById(id).hidden = true;
+    });
+    document.getElementById('drawer-toggle').setAttribute('aria-expanded', 'false');
+    document.getElementById('drawer-toggle').textContent = '拉开医学审评的抽屉';
+    document.getElementById('pledge-front').hidden = false;
+    document.getElementById('pledge-back').hidden = true;
+    document.getElementById('cal-month').textContent = '九月';
+    document.getElementById('cal-day').textContent = '30';
+    document.getElementById('cal-line').textContent = '还没翻到算数的那一页';
+    document.getElementById('calendar').classList.remove('is-stamped', 'flipping');
+    document.getElementById('narrow-label').textContent = '窄跳板先给可信的一侧';
+    document.getElementById('boat-name').textContent = '可信一侧的试用票';
+    document.getElementById('present-state').textContent = '绳子还系着';
+    document.querySelectorAll('.note-btn').forEach(function (button) {
+      button.setAttribute('aria-expanded', 'false');
+      document.getElementById(button.getAttribute('aria-controls')).hidden = true;
+    });
+    boat.style.transform = '';
+    render();
+    say('回到开始。宽跳板仍然抬着。');
+    scene.scrollIntoView({ block: 'start', behavior: reduce ? 'auto' : 'smooth' });
+  });
+
+  render();
+})();
+</script>
+</body>
+<!--
+DESIGN LESSON 2026-10-01 折晓早报
+STYLE: 浅色清晨渡口，窄跳板可以放下，宽跳板用绳子系着
+GENRE: 把试用小船推上窄跳板，再翻承诺纸和日历的晨间小世界
+TITLE: 《窄跳板放下了，日历才算数》
+THESIS: 先给一侧试一把，不等于全员通行；纸上承诺，不等于今天起算的义务。
+-->
+</html>
