@@ -35,6 +35,9 @@
   button, summary { cursor: pointer; }
   a { color: var(--sage); }
   :focus-visible { outline: 2px solid var(--sage); outline-offset: 3px; }
+  .lane:focus,
+  .lane:focus-visible { outline: none; }
+  .lane.key { box-shadow: inset 0 0 0 2px rgba(63, 107, 86, 0.55); }
   ::selection { background: #f6d7b4; }
   .sr {
     position: absolute;
@@ -113,7 +116,7 @@
   .station {
     width: 52px;
     text-align: center;
-    color: #9a9188;
+    color: #6d655c;
   }
   .station svg { display: block; margin: 0 auto; overflow: visible; }
   .glyph {
@@ -310,8 +313,8 @@
     transition: transform 0.5s var(--ease), box-shadow 0.5s var(--ease);
   }
   .world.arrived .slip {
-    transform: rotate(0deg) translateY(-4px);
-    box-shadow: 0 14px 22px rgba(80, 52, 24, 0.12);
+    transform: rotate(0deg) translateY(-8px);
+    box-shadow: 0 16px 24px rgba(80, 52, 24, 0.16);
   }
   .slip p { margin: 0; }
   .slip-k { font-size: 0.72rem; color: var(--muted); }
@@ -328,29 +331,25 @@
     margin-bottom: 3px !important;
   }
   .slip-note { margin-top: 6px !important; font-size: 0.78rem; color: var(--cool-ink); }
-  .dish {
+  .payoff {
     display: flex;
-    gap: 8px;
-    align-items: center;
-    padding: 4px 2px 0;
+    gap: 10px;
+    align-items: flex-start;
+    margin: 4px 6px 0;
   }
   .valve {
-    width: 28px;
-    height: 28px;
+    width: 34px;
+    height: 34px;
+    margin-top: 2px;
     border-radius: 50%;
     flex: none;
     background:
-      radial-gradient(circle, transparent 0 7px, #d5e3ea 8px 11px, transparent 12px),
-      #f7f4ee;
-    box-shadow: inset 0 0 0 1.5px #b7c6cf;
+      radial-gradient(circle, transparent 0 8px, #d5e3ea 9px 13px, #f7f4ee 14px);
+    box-shadow: inset 0 0 0 1.5px #b7c6cf, inset 0 6px 8px rgba(90, 110, 120, 0.12);
   }
   .world.arrived .valve {
-    box-shadow: inset 0 0 0 1.5px #7ea38d, 0 0 0 4px rgba(196, 123, 42, 0.18);
+    box-shadow: inset 0 0 0 1.5px #7ea38d, 0 0 0 4px rgba(196, 123, 42, 0.2);
   }
-  .dish p { margin: 0; font-size: 0.75rem; line-height: 1.4; color: var(--muted); }
-  .dish-read { display: none; }
-  .world.arrived .dish-wait { display: none; }
-  .world.arrived .dish-read { display: block; color: var(--ink); }
   .reading {
     min-height: 4.8em;
     margin: 26px 6px 0;
@@ -358,7 +357,7 @@
     line-height: 1.65;
   }
   .dish-line {
-    margin: 0 6px;
+    margin: 0;
     min-height: 1.4em;
     color: var(--sage);
     font-size: 0.95rem;
@@ -536,14 +535,11 @@
     .endcap {
       display: grid;
       grid-template-columns: auto 1fr;
-      grid-template-areas:
-        "bulb slip"
-        "dish dish";
+      grid-template-areas: "bulb slip";
       align-items: center;
     }
     .bulb { grid-area: bulb; }
     .slip { grid-area: slip; }
-    .dish { grid-area: dish; }
     .nudge { display: none; }
     .layers, .pairs li { grid-template-columns: 1fr; }
     .paper { padding: 8px 16px 48px; }
@@ -570,9 +566,10 @@
           <div class="station" data-at="0.16">
             <div class="glyph">
               <svg viewBox="0 0 48 48" width="36" height="36">
-                <rect x="18" y="6" width="12" height="8" rx="2" fill="currentColor" opacity="0.45"/>
-                <rect x="21" y="14" width="6" height="10" fill="currentColor"/>
-                <ellipse cx="24" cy="32" rx="11" ry="6" fill="none" stroke="currentColor" stroke-width="2"/>
+                <rect x="14" y="5" width="20" height="6" rx="2" fill="currentColor"/>
+                <rect x="21" y="11" width="6" height="8" fill="currentColor"/>
+                <ellipse cx="24" cy="30" rx="13" ry="7" fill="none" stroke="currentColor" stroke-width="2.2"/>
+                <ellipse cx="24" cy="30" rx="7" ry="3.2" fill="none" stroke="currentColor" stroke-width="1.4"/>
               </svg>
             </div>
             <div class="dot"></div>
@@ -580,11 +577,13 @@
           <div class="station" data-at="0.32">
             <div class="glyph">
               <svg viewBox="0 0 48 48" width="36" height="36">
-                <rect x="18" y="18" width="12" height="12" rx="2" fill="currentColor"/>
-                <circle class="tpu" cx="12" cy="18" r="2.4" fill="currentColor"/>
-                <circle class="tpu" cx="36" cy="18" r="2.4" fill="currentColor"/>
-                <circle class="tpu" cx="12" cy="30" r="2.4" fill="currentColor"/>
-                <circle class="tpu" cx="36" cy="30" r="2.4" fill="currentColor"/>
+                <rect x="2" y="18" width="11" height="8" rx="1" fill="none" stroke="currentColor" stroke-width="1.6"/>
+                <rect x="35" y="18" width="11" height="8" rx="1" fill="none" stroke="currentColor" stroke-width="1.6"/>
+                <rect x="16" y="12" width="16" height="20" rx="3" fill="currentColor"/>
+                <circle cx="20.5" cy="18" r="1.7" fill="#fffaf3"/>
+                <circle cx="27.5" cy="18" r="1.7" fill="#fffaf3"/>
+                <circle cx="20.5" cy="25" r="1.7" fill="#fffaf3"/>
+                <circle cx="27.5" cy="25" r="1.7" fill="#fffaf3"/>
               </svg>
             </div>
             <div class="dot"></div>
@@ -646,7 +645,7 @@
         <div class="endcap">
           <button class="bulb" id="bulb" type="button" aria-describedby="reading">
             <span class="glass" aria-hidden="true"></span>
-            <span class="bulb-label">主终点的灯，现在不亮</span>
+            <span class="bulb-label">主终点的灯<br>现在不亮</span>
           </button>
           <div class="slip" id="slip">
             <p class="slip-k">终点这张条子</p>
@@ -656,16 +655,14 @@
             <p class="blank">签章 ________</p>
             <p class="slip-note">还没有人填写。</p>
           </div>
-          <div class="dish" id="dish">
-            <div class="valve" aria-hidden="true"></div>
-            <p class="dish-wait">推到布条旁边，再读这只碟子。</p>
-            <p class="dish-read">这只已经拿到批准，请单独读。</p>
-          </div>
         </div>
       </div>
     </div>
     <p class="reading" id="reading" aria-live="polite">样机停在起点。按住它，往右边的布条推。走到哪一盏灯，就停在哪一层。</p>
-    <p class="dish-line" id="dish-line"></p>
+    <div class="payoff" id="dish">
+      <div class="valve" aria-hidden="true"></div>
+      <p class="dish-line" id="dish-line">推到布条旁边，再读这只碟子。</p>
+    </div>
   </section>
 
   <details class="drawer" id="drawer">
@@ -699,7 +696,7 @@
             <li><span class="near">原型星升空，在轨验证开始</span><span class="far">太空数据中心还没有运行</span></li>
             <li><span class="near">目标写到 2027 年</span><span class="far">今天还没有覆盖多数工程师</span></li>
             <li><span class="near">自家接口已经封住蒸馏</span><span class="far">据报道，云端入口曾经仍能复现</span></li>
-            <li><span class="near">第一座模组开业</span><span class="far">五座模组还没有满</span></li>
+            <li><span class="near">第一座模组已经开业</span><span class="far">五座模组还没有满</span></li>
             <li><span class="near">得州多厂仍是早期评估</span><span class="far">投资还没有敲定，官方不予置评</span></li>
             <li><span class="near">园区本月启动建设</span><span class="far">首座厂还没有量产</span></li>
             <li><span class="near">漏洞公告和修复版本已经给出</span><span class="far">不是所有部署都已经打上补丁</span></li>
@@ -1240,7 +1237,7 @@
     world.classList.toggle("arrived", arrived);
     var line = custom || lineFor(p);
     if (reading.textContent !== line) reading.textContent = line;
-    var extra = arrived && !custom ? dishText : "";
+    var extra = arrived ? dishText : "推到布条旁边，再读这只碟子。";
     if (dishLine.textContent !== extra) dishLine.textContent = extra;
     var now = Math.round(Math.max(0, Math.min(100, p * 100)));
     lane.setAttribute("aria-valuenow", String(now));
@@ -1285,6 +1282,7 @@
     if (event.pointerType === "mouse" && event.button !== 0) return;
     dragging = true;
     custom = null;
+    lane.classList.remove("key");
     world.classList.add("played");
     if (frame) cancelAnimationFrame(frame);
     try { lane.setPointerCapture(event.pointerId); } catch (err) { /* 沙箱里捕获失败时仍跟随指针 */ }
@@ -1321,6 +1319,7 @@
     else if (event.key === "End") target = maxX;
     else return;
     event.preventDefault();
+    lane.classList.add("key");
     custom = null;
     world.classList.add("played");
     springTo(target);
