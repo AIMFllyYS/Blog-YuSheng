@@ -1,0 +1,1365 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>第一步的灯亮了，放行条还空着 · 折晓早报 · 2026-10-02</title>
+<style>
+  :root {
+    --ink: #2a2622;
+    --muted: #5c554c;
+    --paper: #fffdf8;
+    --honey: #c47b2a;
+    --honey-soft: #fff3e2;
+    --sage: #3f6b56;
+    --cool: #e7edf2;
+    --cool-ink: #3e4a57;
+    --line: rgba(70, 48, 24, 0.12);
+    --ease: cubic-bezier(0.16, 1, 0.3, 1);
+    --sans: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", "Noto Sans SC", "WenQuanYi Zen Hei", "WenQuanYi Micro Hei", "Segoe UI", sans-serif;
+    --serif: "Iowan Old Style", Palatino, "Palatino Linotype", "Songti SC", "STSong", "Noto Serif CJK SC", "PingFang SC", "Microsoft YaHei", "WenQuanYi Micro Hei", serif;
+  }
+  * { box-sizing: border-box; }
+  html { color-scheme: light; }
+  body {
+    margin: 0;
+    min-height: 100dvh;
+    color: var(--ink);
+    font-family: var(--sans);
+    background:
+      radial-gradient(540px 220px at 8% -10%, rgba(255, 220, 180, 0.75), transparent 60%),
+      linear-gradient(180deg, #f6f1e6 0%, #e7f2ec 55%, #dceadf 100%);
+  }
+  button, summary { font: inherit; color: inherit; }
+  button, summary { cursor: pointer; }
+  a { color: var(--sage); }
+  :focus-visible { outline: 2px solid var(--sage); outline-offset: 3px; }
+  ::selection { background: #f6d7b4; }
+  .sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+  .stage {
+    width: min(820px, calc(100% - 20px));
+    margin: 0 auto;
+    padding: 16px 0 28px;
+  }
+  .top { padding: 0 6px 8px; }
+  .kicker {
+    margin: 0;
+    font-size: 0.82rem;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+  }
+  h1 {
+    margin: 4px 0 0;
+    font-family: var(--serif);
+    font-weight: 700;
+    font-size: clamp(1.28rem, 3.4vw, 1.85rem);
+    line-height: 1.28;
+    letter-spacing: 0;
+  }
+  .world {
+    margin-top: 12px;
+    padding: 14px 14px 12px;
+    border-radius: 28px;
+    background:
+      radial-gradient(280px 120px at 18% 0%, rgba(255, 244, 224, 0.95), transparent 70%),
+      linear-gradient(180deg, rgba(255, 252, 247, 0.55), rgba(255, 252, 247, 0.15));
+  }
+  .hint {
+    margin: 0 4px 10px;
+    font-size: 1.02rem;
+    line-height: 1.55;
+  }
+  .bench {
+    position: relative;
+    padding: 14px 12px 16px;
+    border-radius: 22px;
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.35), transparent 28%),
+      repeating-linear-gradient(90deg, rgba(120, 78, 36, 0.035) 0 2px, transparent 2px 11px),
+      linear-gradient(180deg, #f4e6d2, #e8d2b6);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.75),
+      0 14px 0 #d8bc9c,
+      0 26px 32px rgba(92, 62, 32, 0.12);
+  }
+  .bench-top {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 168px;
+    grid-template-areas:
+      "stations end"
+      "lane end";
+    gap: 8px 12px;
+    align-items: stretch;
+  }
+  .stations {
+    grid-area: stations;
+    display: flex;
+    justify-content: space-between;
+    gap: 4px;
+    min-height: 74px;
+    padding: 0 8px 0 2px;
+  }
+  .station {
+    width: 52px;
+    text-align: center;
+    color: #9a9188;
+  }
+  .station svg { display: block; margin: 0 auto; overflow: visible; }
+  .glyph {
+    width: 46px;
+    height: 46px;
+    margin: 0 auto;
+    border-radius: 16px;
+    background: rgba(255, 252, 247, 0.45);
+    display: grid;
+    place-items: center;
+    transition: background 0.45s var(--ease), transform 0.45s var(--ease), color 0.45s var(--ease);
+  }
+  .station.on { color: var(--honey); }
+  .station.on .glyph {
+    background: var(--honey-soft);
+    transform: translateY(-3px);
+  }
+  .dot {
+    width: 6px;
+    height: 6px;
+    margin: 6px auto 0;
+    border-radius: 50%;
+    background: transparent;
+  }
+  .station.on .dot { background: var(--honey); }
+  .station .needle-hot { opacity: 0; }
+  .station.on .needle-rest { opacity: 0; }
+  .station.on .needle-hot { opacity: 1; }
+  .station.on .b1 { fill: currentColor; }
+  .station.on .ring { fill: currentColor; fill-opacity: 0.18; }
+  .lane {
+    grid-area: lane;
+    position: relative;
+    height: 96px;
+    border-radius: 18px;
+    background: linear-gradient(#efe2cf, #f8f1e6);
+    box-shadow: inset 0 2px 7px rgba(90, 58, 28, 0.13);
+    touch-action: none;
+    user-select: none;
+    cursor: ew-resize;
+  }
+  .groove {
+    position: absolute;
+    left: 12px;
+    right: 26px;
+    bottom: 22px;
+    height: 7px;
+    border-radius: 99px;
+    background: rgba(92, 62, 30, 0.12);
+  }
+  .dashes {
+    position: absolute;
+    left: 16px;
+    right: 30px;
+    top: 18px;
+    height: 0;
+    border-top: 2px dashed rgba(120, 86, 48, 0.28);
+  }
+  .cart {
+    position: absolute;
+    left: 0;
+    bottom: 12px;
+    width: 78px;
+    height: 64px;
+    z-index: 2;
+    --roll: 0turn;
+  }
+  .chassis {
+    position: absolute;
+    left: 8px;
+    right: 8px;
+    bottom: 16px;
+    height: 28px;
+    background: #fffaf4;
+    border: 1.6px solid #2c2824;
+    border-radius: 9px;
+    box-shadow: 0 6px 0 rgba(80, 52, 24, 0.06);
+  }
+  .cargo {
+    position: absolute;
+    left: 24px;
+    bottom: 42px;
+    width: 26px;
+    height: 13px;
+    background: #f3e2cc;
+    border: 1.6px solid #2c2824;
+    border-radius: 4px;
+  }
+  .cargo span {
+    position: absolute;
+    top: 3px;
+    width: 3px;
+    height: 3px;
+    border-radius: 1px;
+    background: #cbb59a;
+  }
+  .cargo span:nth-child(1) { left: 5px; }
+  .cargo span:nth-child(2) { left: 11px; }
+  .cargo span:nth-child(3) { left: 17px; }
+  .wheel {
+    position: absolute;
+    bottom: 2px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #2c2824;
+    transform: rotate(var(--roll));
+  }
+  .wheel::after {
+    content: "";
+    position: absolute;
+    inset: 4px;
+    border-radius: 50%;
+    background: #f6f1e7;
+  }
+  .wheel::before {
+    content: "";
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: #f6f1e7;
+    left: 6px;
+    top: 1px;
+  }
+  .w1 { left: 14px; }
+  .w2 { right: 14px; }
+  .nudge {
+    position: absolute;
+    left: 84px;
+    bottom: 28px;
+    font-size: 0.78rem;
+    color: #8a5a2a;
+    white-space: nowrap;
+    animation: nudge 1.5s ease-in-out infinite;
+    pointer-events: none;
+  }
+  .world.played .nudge { display: none; }
+  @keyframes nudge {
+    0%, 100% { transform: translateX(0); opacity: 0.55; }
+    50% { transform: translateX(8px); opacity: 1; }
+  }
+  .tape {
+    position: absolute;
+    right: 7px;
+    top: 10px;
+    bottom: 10px;
+    width: 12px;
+    border-radius: 3px;
+    background: repeating-linear-gradient(#fffefb 0 5px, #f2ddc2 5px 7px);
+    box-shadow: 0 0 0 1px rgba(120, 80, 40, 0.16);
+    z-index: 3;
+    transition: transform 0.18s var(--ease);
+  }
+  .tape.push { transform: translateX(4px) scaleX(0.9); }
+  .endcap {
+    grid-area: end;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+  }
+  .bulb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px;
+    border: 0;
+    border-radius: 14px;
+    background: transparent;
+    text-align: left;
+  }
+  .glass {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 38% 34%, #f7f9fb, #c5ced6 62%, #9aa6b2);
+    box-shadow: inset 0 -4px 6px rgba(60, 70, 80, 0.25), 0 0 0 3px #d9c3a8;
+    flex: none;
+  }
+  .bulb.nope .glass { animation: shake 0.42s ease; }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    30% { transform: translateX(-3px) rotate(-6deg); }
+    60% { transform: translateX(3px) rotate(6deg); }
+  }
+  .bulb-label { font-size: 0.78rem; line-height: 1.35; color: var(--cool-ink); }
+  .slip {
+    padding: 8px 10px 10px;
+    border-radius: 10px;
+    background: #fffdf9;
+    box-shadow: 0 8px 16px rgba(80, 52, 24, 0.08);
+    transform: rotate(-1.5deg);
+    transition: transform 0.5s var(--ease), box-shadow 0.5s var(--ease);
+  }
+  .world.arrived .slip {
+    transform: rotate(0deg) translateY(-4px);
+    box-shadow: 0 14px 22px rgba(80, 52, 24, 0.12);
+  }
+  .slip p { margin: 0; }
+  .slip-k { font-size: 0.72rem; color: var(--muted); }
+  .slip-title {
+    font-family: var(--serif);
+    font-size: 1rem;
+    margin: 1px 0 6px !important;
+  }
+  .blank {
+    font-size: 0.78rem;
+    color: #7a736b;
+    border-bottom: 1px solid rgba(80, 60, 40, 0.18);
+    padding: 2px 0 3px;
+    margin-bottom: 3px !important;
+  }
+  .slip-note { margin-top: 6px !important; font-size: 0.78rem; color: var(--cool-ink); }
+  .dish {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    padding: 4px 2px 0;
+  }
+  .valve {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    flex: none;
+    background:
+      radial-gradient(circle, transparent 0 7px, #d5e3ea 8px 11px, transparent 12px),
+      #f7f4ee;
+    box-shadow: inset 0 0 0 1.5px #b7c6cf;
+  }
+  .world.arrived .valve {
+    box-shadow: inset 0 0 0 1.5px #7ea38d, 0 0 0 4px rgba(196, 123, 42, 0.18);
+  }
+  .dish p { margin: 0; font-size: 0.75rem; line-height: 1.4; color: var(--muted); }
+  .dish-read { display: none; }
+  .world.arrived .dish-wait { display: none; }
+  .world.arrived .dish-read { display: block; color: var(--ink); }
+  .reading {
+    min-height: 4.8em;
+    margin: 26px 6px 0;
+    font-size: 1.02rem;
+    line-height: 1.65;
+  }
+  .dish-line {
+    margin: 0 6px;
+    min-height: 1.4em;
+    color: var(--sage);
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+  .drawer { margin-top: 8px; }
+  .drawer > summary {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    border-radius: 16px;
+    background: linear-gradient(#fffaf3, #f4e6d2);
+    box-shadow: 0 10px 0 #e3c9aa, 0 18px 28px rgba(90, 60, 30, 0.1);
+  }
+  .drawer > summary::-webkit-details-marker { display: none; }
+  .handle {
+    width: 48px;
+    height: 8px;
+    border-radius: 99px;
+    background: #c9a27c;
+    flex: none;
+  }
+  .when-open { display: none; }
+  .drawer[open] {
+    position: fixed;
+    inset: 0;
+    z-index: 8;
+    margin: 0;
+    overflow: auto;
+    background: rgba(54, 40, 28, 0.34);
+    padding: 12px 12px 40px;
+  }
+  .drawer[open] > summary {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    width: min(720px, 100%);
+    margin: 0 auto;
+    border-radius: 16px 16px 0 0;
+    box-shadow: none;
+    background: #fffdf8;
+    border-bottom: 1px solid var(--line);
+  }
+  .drawer[open] .when-closed { display: none; }
+  .drawer[open] .when-open { display: inline; }
+  .paper {
+    display: none;
+  }
+  .drawer[open] .paper {
+    display: block;
+    width: min(720px, 100%);
+    margin: 0 auto 24px;
+    padding: 8px 22px 56px;
+    background: var(--paper);
+    border-radius: 0 0 18px 18px;
+    box-shadow: 0 24px 40px rgba(40, 28, 16, 0.12);
+  }
+  .prose { max-width: 38em; }
+  .paper h2 {
+    font-family: var(--serif);
+    font-size: 1.55rem;
+    line-height: 1.3;
+    margin: 0.6em 0 0.3em;
+  }
+  .dek { color: var(--muted); margin-top: 0; }
+  .toc {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 12px 0 18px;
+  }
+  .toc a {
+    text-decoration: none;
+    background: #f6f1e8;
+    border-radius: 999px;
+    padding: 6px 10px;
+    font-size: 0.88rem;
+  }
+  .paper p, .paper li {
+    font-family: var(--serif);
+    font-size: 1.05rem;
+    line-height: 1.85;
+  }
+  .paper p { margin: 0 0 0.85em; }
+  .paper h3 {
+    font-family: var(--serif);
+    font-size: 1.22rem;
+    line-height: 1.45;
+    margin: 0 0 0.45em;
+  }
+  .item {
+    padding-top: 1.15em;
+    margin-top: 0.4em;
+    border-top: 1px solid var(--line);
+  }
+  .eyebrow {
+    margin: 0 0 0.25em;
+    font-family: var(--sans);
+    font-size: 0.8rem;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+  }
+  .layers {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin: 0 0 0.9em;
+  }
+  .layers div {
+    border-radius: 12px;
+    padding: 10px 12px 4px;
+    background: var(--honey-soft);
+  }
+  .layers div.far { background: var(--cool); }
+  .lk {
+    margin: 0 0 0.2em;
+    font-family: var(--sans);
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
+  .layers p { font-size: 0.98rem; line-height: 1.6; }
+  .src { font-family: var(--sans); font-size: 0.9rem; line-height: 1.6; color: var(--muted); overflow-wrap: anywhere; }
+  .src a { overflow-wrap: anywhere; }
+  .pairs { list-style: none; padding: 0; margin: 0 0 1.2em; }
+  .pairs li {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin: 0 0 8px;
+    font-size: 0.98rem;
+  }
+  .near, .far {
+    border-radius: 10px;
+    padding: 8px 10px;
+  }
+  .near { background: var(--honey-soft); }
+  .far { background: var(--cool); }
+  .notes {
+    list-style: none;
+    padding: 14px 2px 0;
+    margin: 0;
+    display: grid;
+    gap: 8px;
+  }
+  .notes li {
+    margin: 0;
+    padding: 10px 12px;
+    border-radius: 4px 12px 12px 8px;
+    background: #fff4cc;
+    box-shadow: 0 8px 16px rgba(90, 70, 20, 0.06);
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+  .notes li:nth-child(2) { background: #fde7d6; }
+  .notes li:nth-child(3) { background: #e8f3e4; }
+  .note-k {
+    display: block;
+    margin-bottom: 2px;
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+  @media (max-width: 720px) {
+    .bench-top {
+      grid-template-columns: 1fr;
+      grid-template-areas:
+        "stations"
+        "lane"
+        "end";
+    }
+    .stations { padding-right: 0; }
+    .station { width: auto; flex: 1; }
+    .glyph { width: 40px; height: 40px; border-radius: 14px; }
+    .endcap {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      grid-template-areas:
+        "bulb slip"
+        "dish dish";
+      align-items: center;
+    }
+    .bulb { grid-area: bulb; }
+    .slip { grid-area: slip; }
+    .dish { grid-area: dish; }
+    .nudge { display: none; }
+    .layers, .pairs li { grid-template-columns: 1fr; }
+    .paper { padding: 8px 16px 48px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation: none !important;
+      transition: none !important;
+    }
+  }
+</style>
+</head>
+<body>
+<main class="stage">
+  <header class="top">
+    <p class="kicker">折晓早报 · 2026年10月2日 · 星期五</p>
+    <h1>第一步的灯亮了，放行条还空着</h1>
+  </header>
+  <section class="world" id="world">
+    <p class="hint" id="hint">按住样机，朝右边的布条推。看哪些灯会亮，再看终点那张放行条有没有字。</p>
+    <div class="bench">
+      <div class="bench-top">
+        <div class="stations" aria-hidden="true">
+          <div class="station" data-at="0.16">
+            <div class="glyph">
+              <svg viewBox="0 0 48 48" width="36" height="36">
+                <rect x="18" y="6" width="12" height="8" rx="2" fill="currentColor" opacity="0.45"/>
+                <rect x="21" y="14" width="6" height="10" fill="currentColor"/>
+                <ellipse cx="24" cy="32" rx="11" ry="6" fill="none" stroke="currentColor" stroke-width="2"/>
+              </svg>
+            </div>
+            <div class="dot"></div>
+          </div>
+          <div class="station" data-at="0.32">
+            <div class="glyph">
+              <svg viewBox="0 0 48 48" width="36" height="36">
+                <rect x="18" y="18" width="12" height="12" rx="2" fill="currentColor"/>
+                <circle class="tpu" cx="12" cy="18" r="2.4" fill="currentColor"/>
+                <circle class="tpu" cx="36" cy="18" r="2.4" fill="currentColor"/>
+                <circle class="tpu" cx="12" cy="30" r="2.4" fill="currentColor"/>
+                <circle class="tpu" cx="36" cy="30" r="2.4" fill="currentColor"/>
+              </svg>
+            </div>
+            <div class="dot"></div>
+          </div>
+          <div class="station" data-at="0.48">
+            <div class="glyph">
+              <svg viewBox="0 0 48 48" width="36" height="36">
+                <path d="M8 32a16 16 0 0 1 32 0" fill="none" stroke="currentColor" stroke-width="2"/>
+                <line class="needle-rest" x1="24" y1="32" x2="16" y2="22" stroke="currentColor" stroke-width="2"/>
+                <line class="needle-hot" x1="24" y1="32" x2="34" y2="20" stroke="currentColor" stroke-width="2"/>
+                <circle cx="24" cy="32" r="2.2" fill="currentColor"/>
+              </svg>
+            </div>
+            <div class="dot"></div>
+          </div>
+          <div class="station" data-at="0.64">
+            <div class="glyph">
+              <svg viewBox="0 0 48 48" width="36" height="36">
+                <circle class="ring" cx="20" cy="22" r="10" fill="none" stroke="currentColor" stroke-width="2"/>
+                <rect x="30" y="28" width="12" height="12" fill="none" stroke="#8b95a3" stroke-width="1.6"/>
+              </svg>
+            </div>
+            <div class="dot"></div>
+          </div>
+          <div class="station" data-at="0.78">
+            <div class="glyph">
+              <svg viewBox="0 0 48 48" width="36" height="36">
+                <rect class="b1" x="4" y="26" width="7" height="14" fill="none" stroke="currentColor" stroke-width="1.4"/>
+                <rect x="13" y="26" width="7" height="14" fill="none" stroke="currentColor" stroke-width="1.4" opacity="0.45"/>
+                <rect x="22" y="26" width="7" height="14" fill="none" stroke="currentColor" stroke-width="1.4" opacity="0.45"/>
+                <rect x="31" y="26" width="7" height="14" fill="none" stroke="currentColor" stroke-width="1.4" opacity="0.45"/>
+                <rect x="40" y="26" width="6" height="14" fill="none" stroke="currentColor" stroke-width="1.4" opacity="0.45"/>
+              </svg>
+            </div>
+            <div class="dot"></div>
+          </div>
+          <div class="station" data-at="0.92">
+            <div class="glyph">
+              <svg viewBox="0 0 48 48" width="36" height="36">
+                <rect x="12" y="8" width="24" height="30" rx="2" fill="#fffdf8" stroke="currentColor" stroke-width="1.6"/>
+                <text x="24" y="27" text-anchor="middle" font-size="9" fill="currentColor" font-family="sans-serif">2027</text>
+              </svg>
+            </div>
+            <div class="dot"></div>
+          </div>
+        </div>
+        <div class="lane" id="lane" tabindex="0" role="slider" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-valuetext="样机停在起点。按住它，往右边的布条推。" aria-label="把样机沿着试车道往前推。推到布条前面会停住，放行条不会被填上。">
+          <div class="dashes"></div>
+          <div class="groove"></div>
+          <div class="cart" id="cart">
+            <div class="cargo" aria-hidden="true"><span></span><span></span><span></span></div>
+            <div class="chassis" aria-hidden="true"></div>
+            <i class="wheel w1" aria-hidden="true"></i>
+            <i class="wheel w2" aria-hidden="true"></i>
+          </div>
+          <div class="nudge" aria-hidden="true">按住它，往前推</div>
+          <div class="tape" id="tape" aria-hidden="true"></div>
+        </div>
+        <div class="endcap">
+          <button class="bulb" id="bulb" type="button" aria-describedby="reading">
+            <span class="glass" aria-hidden="true"></span>
+            <span class="bulb-label">主终点的灯，现在不亮</span>
+          </button>
+          <div class="slip" id="slip">
+            <p class="slip-k">终点这张条子</p>
+            <p class="slip-title">放行条</p>
+            <p class="blank">日期 ________</p>
+            <p class="blank">结论 ________</p>
+            <p class="blank">签章 ________</p>
+            <p class="slip-note">还没有人填写。</p>
+          </div>
+          <div class="dish" id="dish">
+            <div class="valve" aria-hidden="true"></div>
+            <p class="dish-wait">推到布条旁边，再读这只碟子。</p>
+            <p class="dish-read">这只已经拿到批准，请单独读。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="reading" id="reading" aria-live="polite">样机停在起点。按住它，往右边的布条推。走到哪一盏灯，就停在哪一层。</p>
+    <p class="dish-line" id="dish-line"></p>
+  </section>
+
+  <details class="drawer" id="drawer">
+    <summary>
+      <span class="handle" aria-hidden="true"></span>
+      <span class="when-closed">打开抽屉，读今天的详细稿</span>
+      <span class="when-open">合上抽屉，回到试车道</span>
+    </summary>
+    <article class="paper" id="paper">
+      <div class="prose">
+        <h2>今天的详细稿</h2>
+        <p class="dek">2026年10月2日，星期五。采集窗是北京时间 10 月 1 日早上 6 点到 10 月 2 日早上 6 点。稿子只使用这一窗里的四路材料，不另补链接，也不另编数字。</p>
+        <nav class="toc" aria-label="详细稿目录">
+          <a href="#foreword">开篇</a>
+          <a href="#ai">人工智能</a>
+          <a href="#tech">科技与产业</a>
+          <a href="#med">医学与健康</a>
+          <a href="#personal">个人提醒</a>
+          <a href="#ahead">窗外两件</a>
+        </nav>
+
+        <section id="foreword">
+          <h2>开篇</h2>
+          <p>如果把今天窗里的材料收成一句话，就是：第一步已经迈出去，不等于整条路已经走完；次要读数亮了，不等于主终点已经过关。</p>
+          <p>更白话一点：加州司法部长向 OpenAI 送达了调查传票，正式的执法工具已经发出，这不等于责任已经定罪。Google 的 Project Suncatcher 原型星带着 TPU 升空，在轨验证开始了，这不等于太空数据中心已经运行。REMODEL 里肾动脉阻力指数和尿白蛋白肌酐比等次要读数改善了，但三项磁共振的共同主要终点没有达到显著。罗氏把 giredestrant 的详细数据刊上《新英格兰医学杂志》，并给出了审评目标日；欧洲药品管理局受理了 D-PLEX。受理和审评日，不等于批准已经落章。台积电得州多厂仍是早期评估，官方不予置评。英飞凌曼谷后端启用的是第一座模组，以后可以扩到五座。Anthropic 与巴克莱把目标写到 2027 年覆盖多数工程师。蒸馏在自家接口上已经封住，据一篇报道称，云端入口曾经仍能复现。</p>
+          <p>真正要核对的是：这一步停在哪一层。是传票、原型、次要终点、受理、开业，还是目标年。主线有没有走完。</p>
+          <p>昨天的核心是「先给可信的一侧试一把，不等于全员已经通行；纸上的责任承诺，不等于强制义务今天起算数」。今天不重复那句话。</p>
+          <p>读的时候可以带着这张对照。左边是已经迈出的一步，右边是还不能当成已经走完的那一层。</p>
+          <ul class="pairs">
+            <li><span class="near">调查传票已经送达</span><span class="far">责任还没有被定罪</span></li>
+            <li><span class="near">原型星升空，在轨验证开始</span><span class="far">太空数据中心还没有运行</span></li>
+            <li><span class="near">目标写到 2027 年</span><span class="far">今天还没有覆盖多数工程师</span></li>
+            <li><span class="near">自家接口已经封住蒸馏</span><span class="far">据报道，云端入口曾经仍能复现</span></li>
+            <li><span class="near">第一座模组开业</span><span class="far">五座模组还没有满</span></li>
+            <li><span class="near">得州多厂仍是早期评估</span><span class="far">投资还没有敲定，官方不予置评</span></li>
+            <li><span class="near">园区本月启动建设</span><span class="far">首座厂还没有量产</span></li>
+            <li><span class="near">漏洞公告和修复版本已经给出</span><span class="far">不是所有部署都已经打上补丁</span></li>
+            <li><span class="near">次要读数改善了</span><span class="far">三项磁共振共同主要终点没有过关</span></li>
+            <li><span class="near">详细数据、审评日、受理</span><span class="far">批准还没有落章</span></li>
+            <li><span class="near">可生长肺动脉瓣已经获批</span><span class="far">这是批准层，不要和受理混着读</span></li>
+            <li><span class="near">非动物方法得到联合声明</span><span class="far">全生命周期还没有全部替代</span></li>
+            <li><span class="near">初步高缓解、II 期、IV 期，或刚启动下一期</span><span class="far">还不是确证性 III 期完成并获批</span></li>
+          </ul>
+          <p>核实用语按这个约定：两家及以上来源对上了关键事实，文中会说多家来源一致。只有一家来源时，会写「据某来源称」，需要时补上「尚未得到其他来源确认」。官方没有确认的，不编造补齐。</p>
+        </section>
+
+        <section id="ai">
+          <h2>人工智能</h2>
+
+          <section class="item" id="ai-subpoena">
+            <p class="eyebrow">多家来源一致</p>
+            <h3>加州司法部长向 OpenAI 送达调查传票</h3>
+            <div class="layers">
+              <div><p class="lk">已经迈出的一步</p><p>调查传票已经送达。这是正式的执法工具。</p></div>
+              <div class="far"><p class="lk">还没有走完</p><p>责任还没有被定罪，案件也没有结束。</p></div>
+            </div>
+            <p>这是州级执法机关从口头上的调查，推进到正式传票的动作，挂在 Hugging Face 事件和更广的网络安全风险上。司法部长 Rob Bonta 同时强调两件事可以并存：前沿模型可以是网络防御的合法工具；开发并提供这些模型的公司，也有道德和法律责任，确保它们在测试、开发或投入服务之后，不实施、也不促成网络攻击。做不到的开发者可以被追究法律责任。</p>
+            <p>加州司法部长官网新闻稿标注 Thursday, October 1, 2026。新闻稿写明 “yesterday served”，也就是送达发生在美西周三，官方对外宣布落在这个采集窗里。Investing.com 标注 2026 年 10 月 1 日下午 1:27（美东），大约是北京时间 10 月 2 日凌晨 1:27。Reuters 标注 2026 年 10 月 1 日 18:11 UTC，大约是北京时间凌晨 2:11。上月，Bonta 已经宣布司法部正在对 Hugging Face 事件做正式调查，并更广泛地监测人工智能行业是否遵守加州法律。办公室正在就网络安全事件与风险向 OpenAI 追加提问。</p>
+            <p>热闹的说法会变成「加州查了 OpenAI，传票也发了」。要并排看的是：传票送到，不等于定罪完成。</p>
+            <p class="src">来源：<a href="https://oag.ca.gov/news/press-releases/part-ongoing-investigation-attorney-general-bonta-serves-investigative-subpoena" target="_blank" rel="noopener noreferrer">加州司法部长官网新闻稿</a>；<a href="https://www.investing.com/news/stock-market-news/california-ag-serves-subpoena-to-openai-over-cyber-incidents-4928017" target="_blank" rel="noopener noreferrer">Investing.com</a>；<a href="https://www.reuters.com/legal/litigation/california-attorney-general-issues-investigative-subpoena-openai-2026-10-01/" target="_blank" rel="noopener noreferrer">Reuters</a>。官网与 Investing.com 的链接在编写详细稿时重新打开过，仍然有效。</p>
+          </section>
+
+          <section class="item" id="ai-suncatcher">
+            <p class="eyebrow">多家来源一致</p>
+            <h3>Project Suncatcher 的原型星带着四颗 TPU 升空</h3>
+            <div class="layers">
+              <div><p class="lk">已经迈出的一步</p><p>原型星升空，在轨验证开始了。</p></div>
+              <div class="far"><p class="lk">还没有走完</p><p>太空数据中心还没有运行。</p></div>
+            </div>
+            <p>这不是一篇概念博客，是一次真实发射。冰箱大小的原型星带着四颗张量处理单元（Tensor Processing Units，TPU），与 Planet 合作，由 SpaceX 的运力送入近地轨道。先验证的是辐射、振动和真空里的散热，后面才谈互联。芯片会运行公司 Gemma 模型的一个版本，每次大约 15 分钟，因为要管住散热。任务目标是运行大约一年。</p>
+            <p>Scientific American 写明，10 月 1 日大约美东下午 2:32，一枚 SpaceX 火箭把这颗实验卫星送入近地轨道。这个时刻大约是 UTC 18:32，北京时间 10 月 2 日凌晨 2:32。NPR 标注的是 10 月 1 日下午 2:41（美东），并补充了四颗 TPU、Gemma 的短时运行和一年的任务目标。Google 较早的工程说明写于 9 月 24 日，只当作技术背景，不作为这一窗的首发依据。</p>
+            <p>热闹的说法会变成「Google 的太空数据中心起飞了」。此刻完成的是原型升空和在轨验证的开始，不是运营级数据中心已经开工，也不是地面机房已经被替代。</p>
+            <p class="src">来源：<a href="https://www.scientificamerican.com/article/googles-project-suncatcher-ai-data-center-test-has-officially-launched-to-space-aboard-spacex-rocket/" target="_blank" rel="noopener noreferrer">Scientific American</a>；<a href="https://www.npr.org/2026/10/01/nx-s1-5983697/project-suncatcher-google-ai-data-center-space" target="_blank" rel="noopener noreferrer">NPR</a>。背景（不是本窗首发）：<a href="https://blog.google/innovation-and-ai/models-and-research/google-research/google-project-suncatcher-facts/" target="_blank" rel="noopener noreferrer">Google 工程说明</a>。</p>
+          </section>
+
+          <section class="item" id="ai-vision">
+            <p class="eyebrow">多家来源一致 · 不抢主核对</p>
+            <h3>Gemini Live 上线 Guided Vision，官方写明它不是医疗器械</h3>
+            <div class="layers">
+              <div><p class="lk">已经迈出的一步</p><p>面向视障和低视力用户的实时视觉辅助上线了。</p></div>
+              <div class="far"><p class="lk">还没有走完</p><p>它不是医疗器械，也不是导盲替代。</p></div>
+            </div>
+            <p>Google 在兼容的 Android 设备上，于 Gemini Live 推出 Guided Vision。视障、低视力，或需要直观视觉辅助的人，可以用语音为主的方式听描述、跟读小字、找物品，也有口头的 reframing 提示，帮人把画面对准。为了训练这种对话式的真实世界语境，Google 与 Aira 合作，视觉解读数据累计达到数万小时，逾 1000 名 Aira Trusted Tester 参与了压力测试和模型打磨。现已在 Android 9 及以上、Gemini Live 支持的地区和语言可用。</p>
+            <p>官方把边界写在同一篇公告里：和任何生成式技术一样，它是辅助工具，可能出错。它不是医疗器械，不是行动辅助，不是白手杖的替代，也不用于导航、安全出行指导或障碍物检测。Google The Keyword 标注 Oct 01, 2026。The Verge 标注 2026 年 10 月 1 日 19:47 UTC，大约是北京时间凌晨 3:47。两篇对能力范围和安全免责的说法一致。</p>
+            <p class="src">来源：<a href="https://blog.google/innovation-and-ai/products/gemini-app/guided-vision-gemini-live/" target="_blank" rel="noopener noreferrer">Google The Keyword</a>；<a href="https://www.theverge.com/ai-artificial-intelligence/1003756/google-gemini-live-guided-vision" target="_blank" rel="noopener noreferrer">The Verge</a>。</p>
+          </section>
+
+          <section class="item" id="ai-barclays">
+            <p class="eyebrow">据 Anthropic 称 · 尚未见到巴克莱独立新闻稿</p>
+            <h3>Anthropic 与巴克莱扩大合作，目标写到 2027 年</h3>
+            <div class="layers">
+              <div><p class="lk">已经迈出的一步</p><p>合作在扩大，渗透目标的年份写出来了。</p></div>
+              <div class="far"><p class="lk">还没有走完</p><p>今天还没有覆盖多数工程师。</p></div>
+            </div>
+            <p>据 Anthropic 官网 2026 年 10 月 1 日的文章称，英国银行巴克莱扩大与 Anthropic 的协作，把 Claude 扩展到全行，用来加速软件开发、更新遗留系统、提高运营效率。该能力自 2025 年起上线，由检索增强生成架构驱动。逾 16000 名同事已经使用这个助手，并处理逾一百万次搜索。在全球市场业务里，平台每天处理大约 120000 封邮件。</p>
+            <p>同一篇通稿给出的是目标，不是已经完成的覆盖：Claude Code 的采用率到 2026 年底达到开发者群体的 50%，到 2027 年升至多数软件工程师。行业媒体同日有转述，详细稿附上的链接是 Anthropic 官网。未见到巴克莱自己的新闻稿原文，所以不以「多家一手来源已经确认」来称呼这组渗透目标。</p>
+            <p>已有的 16000 名同事和每天的邮件处理，是已经发生的采用。2027 年覆盖多数工程师，是还没走完的目标。</p>
+            <p class="src">来源：<a href="https://www.anthropic.com/news/barclays-scales-claude" target="_blank" rel="noopener noreferrer">Anthropic 官网</a>。官网链接在编写详细稿时核实过仍然有效。</p>
+          </section>
+
+          <section class="item" id="ai-distill">
+            <p class="eyebrow">单一来源 · 据 THE DECODER 报道称</p>
+            <h3>蒸馏在自家接口上已经封住，云端入口据报曾经仍能复现</h3>
+            <div class="layers">
+              <div><p class="lk">已经迈出的一步</p><p>OpenAI 和 Anthropic 的自有接口上，攻击已被阻断。</p></div>
+              <div class="far"><p class="lk">还没有走完</p><p>据报道，微软 Azure 等云端入口曾经仍能走通。关住自家的门，不等于所有门外都关上了。</p></div>
+            </div>
+            <p>据 THE DECODER 2026 年 10 月 1 日的报道称，这是对研究更新的跟进。报道写到：团队在 9 月 13 日复测时，攻击在 OpenAI 与 Anthropic 的自有接口上已经被阻断。在微软 Azure 上，则对尝试过的每一个 OpenAI 模型都奏效，包括报道中写到的 GPT-6 Astra，并对 Anthropic 的模型直至 Sonnet 5 奏效。报道称，单次尝试就足以逐字抽出推理。</p>
+            <p>据这篇报道里的时间线，OpenAI 直到 9 月 27 日才为 Azure 端点加上防护；Anthropic 的模型自 9 月 28 日起，在 Azure 上据报无法再复现这种提取。报道还写了更简单的第二种方法：给模型一个虚拟记事本工具，让它把推理写在那里。研究者称，这对每一个 OpenAI 模型以及 Opus 4.8、Sonnet 5 奏效；只有 Opus 5、Fable 5 和 Fable 5.1 没有泄露推理。</p>
+            <p>这篇报道转述的是 Schaeffer 团队的更新。编写详细稿时链接可以打开，但没有另外逐字对读原始论文更新页，所以标成单一来源。尚未得到其他来源确认。安全声明要问的是部署路径：实验室自己的接口、云端入口、工具旁路，是不是同一天、同一层都合上了。</p>
+            <p class="src">来源：<a href="https://the-decoder.com/openai-says-it-stopped-a-campaign-to-steal-its-models-reasoning-but-the-trick-still-worked-on-azure/" target="_blank" rel="noopener noreferrer">THE DECODER</a>。</p>
+          </section>
+
+          <section class="item" id="ai-copilot">
+            <p class="eyebrow">单一来源 · 据 The Verge 报道称</p>
+            <h3>微软把 Copilot 重定位成「工作操作系统」</h3>
+            <div class="layers">
+              <div><p class="lk">已经迈出的一步</p><p>产品叙事和界面被重新放在一起讲了。</p></div>
+              <div class="far"><p class="lk">还没有走完</p><p>企业里的代理治理，报道自己也写成还没解开。</p></div>
+            </div>
+            <p>据 The Verge 报道，标注时间是 2026 年 10 月 1 日 16:00 UTC，大约是北京时间 10 月 2 日 0 点。上周，微软首席执行官 Satya Nadella 为部分关键企业客户的高管办了一场闭门活动，把这一轮助手的重新思考定位成「工作操作系统」。报道称，微软正在把编码和代理能力直接加进 Copilot，并第一次把 Office 的完整能力带进 Copilot。新的应用更接近商业版，有聊天、编码和新的 Autopilot 代理等分栏。原相关应用进入维护模式，云端版本更名为 Autopilot。</p>
+            <p>报道转述 Andreou 的话：代理「几乎不可能带进企业」，因为它们需要企业通常会抗拒的自主和灵活。「这是它们的超能力，也正是让信息技术管理员极度恐惧的同一件事。」微软官方介绍新 Copilot 的博客更早，写在 9 月 25 日，只作背景。这一条以 10 月 1 日 The Verge 对「工作操作系统」的表述和 Autopilot 更名细节为准。宣布重定位，不等于企业代理治理已经走完。</p>
+            <p class="src">来源：<a href="https://www.theverge.com/tech/1003365/microsoft-copilot-os-for-work-notepad" target="_blank" rel="noopener noreferrer">The Verge</a>。背景：<a href="https://blogs.microsoft.com/blog/2026/09/25/introducing-the-new-copilot-with-home-code-and-autopilot/" target="_blank" rel="noopener noreferrer">微软 9 月 25 日博客</a>。</p>
+          </section>
+
+          <section class="item" id="ai-intune">
+            <p class="eyebrow">单一来源 · 据 9to5Mac 称</p>
+            <h3>Grok for Intune 作为企业版应用上架</h3>
+            <div class="layers">
+              <div><p class="lk">已经迈出的一步</p><p>面向 Microsoft Intune 的独立应用已经放上应用商店。</p></div>
+              <div class="far"><p class="lk">还没有走完</p><p>上架不等于某个组织里的人已经全部部署、策略已经全部走完。</p></div>
+            </div>
+            <p>据 9to5Mac 报道，时间是 2026 年 10 月 1 日上午 11:16（太平洋时间），大约是 UTC 18:16、北京时间 10 月 2 日凌晨 2:16。新的企业专用应用叫 Grok for Intune。报道引述 SpaceXAI 的说法：这是面向用 Intune 管理应用与数据的组织的 Grok 微软 Intune 版。它支持 Intune 的移动应用管理，遵守组织的应用保护策略，用工作邮箱登录，没有应用内购，由信息技术团队通过 Microsoft Intune 部署和配置，包括保存、分享和数据传输的限制。报道称它现已在 App Store 可用。</p>
+            <p>编写详细稿时这条链接可以打开。没有找到 xAI 自己的长篇新闻稿，所以标成单一来源。据该报道称，这款企业版已经上架。</p>
+            <p class="src">来源：<a href="https://9to5mac.com/2026/10/01/spacexai-releases-a-separate-grok-ios-app-for-enterprise-users/" target="_blank" rel="noopener noreferrer">9to5Mac</a>。</p>
+          </section>
+        </section>
+
+        <section id="tech">
+          <h2>科技与产业</h2>
+
+          <section class="item" id="tech-infineon">
+            <p class="eyebrow">多家来源一致 · 数字以英飞凌通稿为准</p>
+            <h3>英飞凌曼谷后端启用第一座模组</h3>
+            <div class="layers">
+              <div><p class="lk">已经迈出的一步</p><p>位于北榄府的新后端基地正式启用，现在运转的是 Module A。</p></div>
+              <div class="far"><p class="lk">还没有走完</p><p>五座模组还没有满，大约 1000 人也还是爬坡之后的预期。</p></div>
+            </div>
+            <p>据英飞凌经 PR Newswire 发出的通稿，地点写的是曼谷，时间是 2026 年 10 月 1 日，原文标注 03:54（美东），大约是北京时间 15:54。Infineon Technologies AG 与泰国总理 Anutin Charnvirakul、英飞凌首席运营官 Alexander Gorski 一起，正式启用位于曼谷北榄府（Samut Prakan）的新后端制造基地。基地用来加强并分散全球制造足迹，也为以后的增长准备产能。设施最高可以扩到五座模组，曼谷有机会随时间变成英飞凌最大的后端基地之一。目前大约雇佣 350 人，随着第一座建筑（Module A）爬坡，预计增至大约 1000 人。基地有先进洁净室、组装和测试能力，自动化程度高，覆盖半导体后端全流程和晶圆测试，以 100% 绿色电力运行，含雨水收集、水循环和现场太阳能组件。</p>
+            <p>泰国 Nation 同日报道了启用仪式，并提到大约 14 亿美元投资和更大规模的就业预期。投资总额并不是英飞凌通稿直接写明的数字，详细稿不以它作为已核实的主数字。开业回执不等于扩容已经走完。</p>
+            <p class="src">来源：<a href="https://www.prnewswire.com/news-releases/infineon-opens-new-backend-manufacturing-hub-in-thailand-adding-resilient-capacity-for-future-growth-302895721.html" target="_blank" rel="noopener noreferrer">英飞凌经 PR Newswire 的通稿</a>。</p>
+          </section>
+
+          <section class="item" id="tech-tsmc">
+            <p class="eyebrow">单一来源 · 据彭博援引知情人士称 · 官方不予置评</p>
+            <h3>台积电据报在评估得州的多厂园区</h3>
+            <div class="layers">
+              <div><p class="lk">已经出现的信号</p><p>据报道，公司在早期评估得州的追加投资。</p></div>
+              <div class="far"><p class="lk">还没有走完</p><p>投资还没有敲定。台积电对市场传闻不予置评。</p></div>
+            </div>
+            <p>据 Business Times 转载的报道，Bloomberg Law 的时间标注是 2026 年 10 月 1 日 13:03 UTC，大约是北京时间 21:03。报道称，台湾积体电路制造公司正在权衡在得州新建园区，为多年期的赴美晶圆制造再追加数十亿美元。台积电已经承诺在亚利桑那的厂址投入大约 2650 亿美元，正在开发多座晶圆厂。设想中的得州投资，据其中一名人士称，也会涉及多座晶圆厂。若最终决定投资，据其中一名人士称，每座成本至少大约 200 亿美元。相关人士提醒计划仍处早期，并要求匿名，因为细节还没有公开。台积电在短信中称：「我们对市场传闻不予置评。」</p>
+            <p>这是彭博匿名知情人士的链条，多家媒体转载的是同源说法，台积电没有确认。评估不等于敲定。知情人士给出的数字，和公司自己的确认，要分开读。</p>
+            <p class="src">来源：<a href="https://www.businesstimes.com.sg/companies-markets/tsmc-mulls-multibillion-dollar-texas-campus-more-ai-chips" target="_blank" rel="noopener noreferrer">Business Times</a>。</p>
+          </section>
+
+          <section class="item" id="tech-yongin">
+            <p class="eyebrow">单一来源 · 据 Korea Times 称</p>
+            <h3>龙仁国家半导体园区本月启动建设</h3>
+            <div class="layers">
+              <div><p class="lk">已经迈出的一步</p><p>国家产业园区定于本月启动建设，厂址整备指向 2028 年。</p></div>
+              <div class="far"><p class="lk">还没有走完</p><p>三星的首座厂还没有量产，开工目标仍写在 2028 年。</p></div>
+            </div>
+            <p>据 Korea Times 报道，发表时间是 2026 年 10 月 1 日中午 12 点（韩国标准时间），大约是北京时间 11 点。京畿道龙仁半导体集群的国家产业园区定于本月启动建设。韩国土地住宅公社（LH）的目标，是在时间上完成厂址整备，以便三星电子的首座晶圆厂于 2028 年前开工。国家园区总面积 7.78 平方公里，第一建设区 3.45 平方公里，里面包含三星的首座厂址。由大宇建设牵头的联合体中标，标的 8686 亿韩元（大约 6.4 亿美元），负责厂址开发和基础设施。LH 龙仁项目部补偿营销组总经理 Yoon Ki-jong 称，应补偿的私有土地中，99% 已经完成补偿程序或进入结算阶段。</p>
+            <p>报道同时写到征地补偿争议和快速通道的工期压力。这篇是现场和发布会报道，含具名引语，未见同期官方英文通稿交叉，所以标成单一来源。启动建设是第一步，量产是还没走完的主线。</p>
+            <p class="src">来源：<a href="https://www.koreatimes.co.kr/business/companies/20261001/yongin-national-chip-cluster-construction-begins-this-month-amid-compensation-fast-track-risks" target="_blank" rel="noopener noreferrer">Korea Times</a>。</p>
+          </section>
+
+          <section class="item" id="tech-crew">
+            <p class="eyebrow">多家来源一致</p>
+            <h3>Crew-13 从卡纳维拉尔角升空</h3>
+            <div class="layers">
+              <div><p class="lk">已经迈出的一步</p><p>载人飞船已经升空，追赶空间站的时间表已经公布。</p></div>
+              <div class="far"><p class="lk">不要误读的那一层</p><p>任务执行不等于同日的原型算力星已经变成运营级数据中心。</p></div>
+            </div>
+            <p>据 Spaceflight Now 报道，Crew-13 指令长 Jessica Watkins、飞行员 Luke Delaney、俄罗斯宇航员 Sergey Teteryatnikov 和加拿大宇航员 Joshua Kutryk，搭乘 SpaceX Crew Dragon，于卡纳维拉尔角太空军基地 40 号工位、美东上午 11:10 升空。美东夏令时的 11:10 大约是北京时间 23:10。此次飞船追赶国际空间站大约需要八小时，报道称之为美国国家航空航天局（NASA）的纪录，并计划于晚上 7 点自动对接至空间站 Harmony 模块的前向对接口。对接在这篇报道里写的是计划，详细稿不把它改写成已经对接完成。</p>
+            <p>NASA 近地轨道任务理事会主任 Dana Weigel 称，任务期间乘组会研究源自人类干细胞的组织，帮助对抗心脏病和帕金森病，用来改进药物、疾病建模和药品测试。这是任务载荷的说明。NASA 空间站博客和 Reuters 等对同一次发射的升空时间与人员说法一致。发射完成，不要读成「太空数据中心已经开张」。</p>
+            <p class="src">来源：<a href="https://spaceflightnow.com/2026/10/01/fresh-crew-takes-off-for-six-month-stay-aboard-space-station/" target="_blank" rel="noopener noreferrer">Spaceflight Now</a>。</p>
+          </section>
+
+          <section class="item" id="tech-transporter">
+            <p class="eyebrow">多家来源一致</p>
+            <h3>Transporter-18 一次送上去大约 130 个载荷</h3>
+            <div class="layers">
+              <div><p class="lk">已经迈出的一步</p><p>拼车发射和部署序列已经完成。</p></div>
+              <div class="far"><p class="lk">还没有走完</p><p>运载完成不等于 Suncatcher 的数据中心已经运行。</p></div>
+            </div>
+            <p>据 Via Satellite 报道，发射大约在太平洋时间上午 11:32，大约是北京时间 10 月 2 日凌晨 2:32。SpaceX 在 10 月 1 日的专用拼车任务上发射大约 130 个有效载荷。Transporter-18 属于当天尝试一日三射的一部分：先有佛罗里达的 Crew-13（美东 11:10），再有加州范登堡的这次拼车（太平洋时间 11:32）。SpaceX 于美东下午 3:41 确认拼车部署序列结束，这个时刻仍在采集窗内。Planet Labs 发射了 Project Suncatcher 的原型星，用来测试 Google 的模型和 TPU 在太空中的运行。任务还包括 Varda Space Industries 的两艘再入飞行器，以及四艘轨道转移器，稍后部署 41 个载荷。</p>
+            <p>Via Satellite 也写到当晚的 NRO Falcon Heavy。那个目标窗口大约在美东深夜，换算后可能落在采集窗外，所以这一条只收录已经确认完成的 Transporter-18。Space.com 等对这次任务的发射预告和任务描述有交叉。Suncatcher 在这里是载荷之一。运载成功是原型验证的载体，不是运营完成。</p>
+            <p class="src">来源：<a href="https://www.satellitetoday.com/launch/2026/10/01/the-first-mission-milestones-onboard-spacexs-transporter-18-rideshare-launch/" target="_blank" rel="noopener noreferrer">Via Satellite</a>。</p>
+          </section>
+
+          <section class="item" id="tech-atlas">
+            <p class="eyebrow">多家来源一致</p>
+            <h3>波士顿动力公布 Atlas 的新一代四指手</h3>
+            <div class="layers">
+              <div><p class="lk">已经迈出的一步</p><p>新的手公布了，也做了工具操作的演示。</p></div>
+              <div class="far"><p class="lk">还没有走完</p><p>发布和演示不等于已经量产、送进家里。</p></div>
+            </div>
+            <p>据 Boston Dynamics 官方博客，The Verge 的转述标注时间是 2026 年 10 月 1 日 15:54 UTC，大约是北京时间 23:54。新一代 Atlas 的手被写成「高灵巧」和「可量产」之间的一种权衡：13 个自由度，直接驱动，为高保真仿真和从仿真到真实的强化学习而建，从零为灵巧的体力工作设计。它是新一代 Atlas 的配套。这台人形机器人的载荷超过 100 磅，并按大规模制造需要的简洁来做。手改成四指，含更灵巧的拇指，一共 13 个自由度，关节保持高透明的直接驱动，而且是单一执行器类型。力量与前代接近，能够搬运装载超过 100 磅的迷你冰箱。四指和 13 个自由度已经能做手内重定向、从滑动抓握中恢复，以及握着工具按下扳机。没有小指，因为团队判断多出来的灵巧不值得额外三个自由度带来的复杂度、体积和故障点。</p>
+            <p>The Verge 和 IEEE Spectrum 同日跟进，并提到换钻头的演示。发布不等于家庭助手已经到家。</p>
+            <p class="src">来源：<a href="https://bostondynamics.com/blog/robot-hands-for-modern-ai-and-real-work/" target="_blank" rel="noopener noreferrer">Boston Dynamics 官方博客</a>。</p>
+          </section>
+
+          <section class="item" id="tech-armatura">
+            <p class="eyebrow">一手官方公告 · CISA</p>
+            <h3>CISA 发布 Armatura One 门禁系统的安全公告</h3>
+            <div class="layers">
+              <div><p class="lk">已经迈出的一步</p><p>公告发出了，修复版本也写出来了。</p></div>
+              <div class="far"><p class="lk">还没有走完</p><p>公告日不等于现场每一套门禁都已经打上补丁。</p></div>
+            </div>
+            <p>据美国网络安全和基础设施安全局（CISA）的工业控制系统公告，发布日是 2026 年 10 月 1 日，按发布日计入采集窗。成功利用这些漏洞，可能让攻击者未经授权访问数据库，以最高权限在主机上执行任意代码，或控制物理门禁系统。受影响版本是 Armatura One 低于 4.7.2，以及美国版本低于 4.6.1。修复版本是 4.7.2 和 4.6.1_USA。</p>
+            <p>Armatura One 嵌入了 Apache ActiveMQ，默认在网络上暴露 OpenWire 协议监听器。该嵌入版本受 CVE-2023-46604 影响，这是一个反序列化缺陷，在 CVSS 3.1 下评分为 9.8，可以导致以最高权限在主机操作系统上执行任意代码。公告还涵盖 CVE-2026-94591 至 CVE-2026-94594。CISA 称，尚不知道有专门针对 Armatura One、与这些漏洞相关的利用。CVE-2023-46604 已经列入已知被利用漏洞目录，并曾用于针对其他 Apache ActiveMQ 部署的勒索软件活动。公告和修复版本是第一步，现场有没有全部升级是另一层。</p>
+            <p class="src">来源：<a href="https://www.cisa.gov/news-events/ics-advisories/icsa-26-274-01" target="_blank" rel="noopener noreferrer">CISA 工业控制系统公告 ICSA-26-274-01</a>。</p>
+          </section>
+
+          <section class="item" id="tech-foreman">
+            <p class="eyebrow">多家来源一致</p>
+            <h3>Red Hat 公开 Foreman 的 CVE-2026-96658，基础分 9.9</h3>
+            <div class="layers">
+              <div><p class="lk">已经迈出的一步</p><p>漏洞公开了，严重程度和修复公告也指向了。</p></div>
+              <div class="far"><p class="lk">还没有走完</p><p>公开不等于所有 Satellite 部署都已经修好。</p></div>
+            </div>
+            <p>据 Red Hat 客户门户的漏洞页，以及 CVE.org、OpenCVE 的发布记录，公开时间是 2026-10-01T16:23:23.688Z，大约是北京时间 10 月 2 日 0:23，仍在采集窗结束之前。Foreman 里的缺陷允许低权限的认证攻击者绕过模板引擎里的 safemode 沙箱，实现远程代码执行。由于对委托方法处理不当，攻击者可以把未授权的函数追加到允许执行的列表，从而在托管服务器上运行任意命令。</p>
+            <p>Red Hat 产品安全将其评为 Critical。只需要最低读取权限的认证用户，就可以在底层 Satellite 服务器上实现任意远程代码执行。向量是 CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:H/I:H/A:H，基础分 9.9。修复指向 RHSA-2026:74503。影响表述指向 Red Hat Satellite 6.19 的相关组件。公开和评级是第一步，现场有没有升级是另一层。</p>
+            <p class="src">来源：<a href="https://access.redhat.com/security/cve/CVE-2026-96658" target="_blank" rel="noopener noreferrer">Red Hat CVE-2026-96658</a>。</p>
+          </section>
+
+          <section class="item" id="tech-honda">
+            <p class="eyebrow">单一来源 · 据美国本田经 PR Newswire 称</p>
+            <h3>本田与 Redwire 在探索空间站上的科研机器人</h3>
+            <div class="layers">
+              <div><p class="lk">已经迈出的一步</p><p>概念和合作探索被写进了通稿。</p></div>
+              <div class="far"><p class="lk">还没有走完</p><p>飞行硬件还没有交付，也还没有在轨服役。</p></div>
+            </div>
+            <p>据 American Honda Motor 经 PR Newswire 的通稿，地点是加州托伦斯，时间是 2026 年 10 月 1 日，原文 07:30（美东），大约是北京时间 19:30。本田宣布正在为未来的商业空间站开发机器人方案，用来减少宇航员在轨做实验和实验室操作的时间。为推进这个概念，美国本田的太空开发团队正在与 Redwire（纽约证券交易所代码 RDW）的专家接触。概念是把本田的多指机器人手，与 Redwire 的 STAARK 机械臂和实验柜技术放在一起，用于在轨科研。多指手结合主动控制的关节，以及指尖和掌部的力觉、触觉，用来做精确的接触检测和精细操作。近期测试演示了 STAARK 机械臂能够自主跟踪并抓取动态物体。</p>
+            <p>双方代表将出席 2026 年 10 月 5 日至 9 日在土耳其安塔利亚举行的国际宇航大会，讨论潜在应用。通稿写的是概念和伙伴接触，面向国际空间站退役之后的商业空间站。未见同期第三方的独立实测。据该公司称，这件事还在探索。探索不等于交付。</p>
+            <p class="src">来源：<a href="https://www.prnewswire.com/news-releases/honda-explores-robotics-solution-to-support-research-aboard-future-commercial-space-stations-302895805.html" target="_blank" rel="noopener noreferrer">美国本田经 PR Newswire 的通稿</a>。</p>
+          </section>
+        </section>
+
+        <section id="med">
+          <h2>医学与健康</h2>
+
+          <section class="item" id="med-autus">
+            <p class="eyebrow">多家来源一致 · 这一条已经走到批准</p>
+            <h3>FDA 批准可随儿童生长扩张的肺动脉瓣</h3>
+            <div class="layers">
+              <div><p class="lk">已经走到的一层</p><p>美国食品药品管理局已经批准这款器械。</p></div>
+              <div class="far"><p class="lk">不要混读</p><p>这是批准层的例子。它不是「还在受理」的那一条，长期随访仍然要另看。</p></div>
+            </div>
+            <p>据美国食品药品管理局 2026 年 10 月 1 日的新闻稿，Autus Size-Adjustable Valve 获批。这是一种手术植入的肺动脉瓣，用于先天性肺动脉瓣疾病的儿科患者，或可减少这些儿童重复开胸的需要。它是第一个设计成术后还可以扩张、以便跟上儿童生长的心脏瓣膜，也是美国第一个内瓣叶采用聚合物、而不是动物源性组织的获批瓣膜。获批路径是上市前批准，并出自总产品生命周期咨询计划与突破性器械通道。文中载明 Edwards Lifesciences 与 Autus Valve Technologies。</p>
+            <p>批准基于一项临床研究：12 个美国中心，入组 62 名儿科患者。初始植入直径大约 13 毫米，可扩至大约 22 毫米。六个月随访时，前 60 例患者显示可接受的血流动力学表现，返流不超过轻度。研究中所有患者手术成功，没有死亡，没有需要额外治疗的血栓，没有卒中或其他血栓相关并发症。专业媒体同日的转述与官方要点一致。试车道旁边的那只碟子指的就是这一条：它已经走过批准这一层，不要和下面还停在受理、审评日的条目放成同一层。</p>
+            <p class="src">来源：<a href="https://www.fda.gov/news-events/press-announcements/fda-approves-first-heart-valve-designed-grow-children" target="_blank" rel="noopener noreferrer">FDA 新闻稿</a>。</p>
+          </section>
+
+          <section class="item" id="med-remodel">
+            <p class="eyebrow">多家来源一致 · 今天最清楚的医学对照</p>
+            <h3>REMODEL：次要读数改善了，三项磁共振的共同主要终点没有过关</h3>
+            <div class="layers">
+              <div><p class="lk">已经亮起的读数</p><p>肾动脉阻力指数、尿白蛋白肌酐比、肌酐清除率这些次要结局有改善。</p></div>
+              <div class="far"><p class="lk">还没有过关</p><p>三项磁共振成像的共同主要终点没有达到显著。</p></div>
+            </div>
+            <p>REMODEL（临床试验登记 NCT04865770）是 FLOW 结局试验的机制同伴研究，用肾脏的多参数磁共振、活检组织学、单核和空间转录组，看司美格鲁肽的肾脏保护机制。Nature Medicine 于 2026 年 10 月 1 日发表。这是一项 52 周的随机试验，皮下司美格鲁肽 1 毫克、每周一次，对照安慰剂。入组 106 人（司美格鲁肽 71 人，安慰剂 35 人；其中女性 25 人，男性 81 人），参与者是 2 型糖尿病合并慢性肾脏病。</p>
+            <p>共同主要磁共振结局没有显著改变。这三项是：R2* 氧合、全局灌注，以及 T1 mapping 所反映的组织炎症。次要结局里，相对安慰剂，司美格鲁肽与肾动脉阻力指数显著降低相关，ETR 为 0.96，P 值为 0.008；也与表观扩散系数的稳定化相关，提示纤维化进展被抑制。尿白蛋白肌酐比降低 40%，ETR 为 0.60，95% 置信区间 0.41 到 0.88，P 值为 0.008。24 小时尿肌酐清除率在司美格鲁肽组更高，ETD 为每分钟 12 毫升，95% 置信区间 0.7 到 23.3，P 值为 0.038。活检亚组里，可见肾小球内皮细胞的转录改变，以及邻近免疫细胞减少。讨论明确对接已经发表的 FLOW 结局数据。ClinicalTrials.gov 的标识与摘要一致。</p>
+            <p>热闹的说法容易写成「司美格鲁肽保护肾脏，又添了一条机制证据」。主终点没有过，次要读数再亮，也不能换成「主要终点成功」。这是读临床论文时要先摆上桌的两列。</p>
+            <p class="src">来源：<a href="https://www.nature.com/articles/s41591-026-04674-2" target="_blank" rel="noopener noreferrer">Nature Medicine</a>。</p>
+          </section>
+
+          <section class="item" id="med-giredestrant">
+            <p class="eyebrow">多家来源一致</p>
+            <h3>giredestrant 的详细数据刊上《新英格兰医学杂志》，审评日已经写出</h3>
+            <div class="layers">
+              <div><p class="lk">已经迈出的一步</p><p>III 期详细数据发表了，两个处方药用户费法案目标日也公布了。</p></div>
+              <div class="far"><p class="lk">还没有走完</p><p>总生存还没有成熟，批准还没有落章。</p></div>
+            </div>
+            <p>据罗氏官网 2026 年 10 月 1 日的稿件，GlobeNewswire 的同文时间是当天 01:00（美东），大约是北京时间 13:00。口服选择性雌激素受体降解剂 giredestrant 联合依维莫司，用在 CDK4/6 抑制剂和内分泌治疗之后的雌激素受体阳性晚期乳腺癌。试验是 III 期 evERA。在 ESR1 突变人群中，中位无进展生存是 10.0 个月，对照臂 5.5 个月，分层风险比 0.38，95% 置信区间 0.27 到 0.54，p 小于 0.001。在意向治疗人群中，中位无进展生存是 8.8 个月对 5.5 个月，风险比 0.56，95% 置信区间 0.44 到 0.71，p 小于 0.001。进展或死亡的风险大约分别降低 44% 和 62%。</p>
+            <p>总生存数据在分析时仍未成熟。意向治疗人群的风险比是 0.69，95% 置信区间 0.47 到 1.00；ESR1 突变人群是 0.62，95% 置信区间 0.38 到 1.02。两个方向都看到正向趋势，但还不能当成已经成熟的总生存结论。罗氏稿给出两个日期：晚期申请的决定预计在 2026 年 12 月 18 日；早期辅助（lidERA）的处方药用户费法案目标日是 2026 年 11 月 30 日。文中给出《新英格兰医学杂志》的标识 DOI:10.1056/NEJMoa2602457（Mayer 等）。详细数据和审评日都很亮，批准还没有落下来。</p>
+            <p class="src">来源：<a href="https://www.roche.com/media/releases/med-cor-2026-10-01" target="_blank" rel="noopener noreferrer">罗氏官网</a>。</p>
+          </section>
+
+          <section class="item" id="med-icmra">
+            <p class="eyebrow">据 EMA 新闻页称</p>
+            <h3>药品监管机构呼吁推进非动物方法</h3>
+            <div class="layers">
+              <div><p class="lk">已经迈出的一步</p><p>国际监管联盟的联合声明得到欧洲药品管理局背书，长期目标写清楚了。</p></div>
+              <div class="far"><p class="lk">还没有走完</p><p>这不是全生命周期的动物试验已经全部被替代。</p></div>
+            </div>
+            <p>据欧洲药品管理局 2026 年 10 月 1 日的新闻页，该机构背书国际药品监管机构联盟的联合声明，呼吁药品开发者、生产商、监管机构和国家检定实验室继续推进并实施替代动物试验的方法，贯穿人用药品的全生命周期，并在可能且尽快的地方落实。声明强调替代、减少和优化，由欧洲药品管理局、英国药品和健康产品管理局、爱尔兰健康产品监管局和 Swissmedic 牵头起草，经联盟全会通过。长期目标覆盖候选筛选、早期开发、临床前和非临床测试、许可和上市后，也包括批签发环节的体外方法。文中称，2015 年到 2023 年，药用监管用途的动物使用量总体大约减少一半。</p>
+            <p>这是监管政策的导向，不是某一个产品的批准。声明由多家监管机构共同背书，但详细稿没有见到同日的期刊论文复述全文，来源页以欧洲药品管理局的新闻为一家一手页面。声明是政策上的第一步，「已经全部替代」是还没走完的长期目标。</p>
+            <p class="src">来源：<a href="https://www.ema.europa.eu/en/news/global-regulators-call-advancing-alternatives-animal-testing-across-medicine-lifecycle" target="_blank" rel="noopener noreferrer">欧洲药品管理局新闻页</a>。</p>
+          </section>
+
+          <section class="item" id="med-dplex">
+            <p class="eyebrow">单一来源 · 据 PolyPid 公司稿称</p>
+            <h3>D-PLEX₁₀₀ 的欧洲上市申请被确认受理</h3>
+            <div class="layers">
+              <div><p class="lk">已经迈出的一步</p><p>欧洲完成了完整性确认，正式审评启动；美国仍处优先审评，目标日已经写出。</p></div>
+              <div class="far"><p class="lk">还没有走完</p><p>欧洲和美国的批准都还没有落章。</p></div>
+            </div>
+            <p>据 PolyPid 经 GlobeNewswire 在 2026 年 10 月 1 日 09:15（美东）发布的公司稿，大约是北京时间 21:15。欧洲药品管理局已经确认（validated）公司近期提交的 D-PLEX₁₀₀ 上市许可申请。这个候选产品在手术部位局部缓释多西环素大约 30 天，用于预防腹部手术后的切口感染。申请由临床开发项目支持，其中包括关键 III 期 SHIELD II 的阳性结果：达到主要终点和全部关键次要终点，相对标准治疗，手术部位感染的相对风险降低 60%，p 值为 0.0013。美国食品药品管理局已经受理新药申请并给予优先审评，处方药用户费法案目标日是 2026 年 11 月 28 日。</p>
+            <p>编写详细稿时打开了公司稿核对。没有见到同日欧洲药品管理局自己的新闻稿复述这件事，所以标成单一来源。据该公司称，欧洲已经进入正式审评。受理和审评日都是路径上的节点，不是批准。</p>
+            <p class="src">来源：<a href="https://www.globenewswire.com/de/news-release/2026/10/01/3373005/0/en/european-medicines-agency-validates-polypid-s-marketing-authorization-application-for-d-plex.html" target="_blank" rel="noopener noreferrer">PolyPid 经 GlobeNewswire 的公司稿</a>。</p>
+          </section>
+
+          <section class="item" id="med-ubama">
+            <p class="eyebrow">公司新闻稿经多家页面转载，数字一致</p>
+            <h3>ubamatamab 在复发低级别浆液性卵巢癌里的初步高缓解</h3>
+            <div class="layers">
+              <div><p class="lk">已经迈出的一步</p><p>I／II 期里看到了初步的高缓解，公司启动了潜在可注册的队列。</p></div>
+              <div class="far"><p class="lk">还没有走完</p><p>样本量小，置信区间宽。确证性 III 期还没有完成，也还没有获批。</p></div>
+            </div>
+            <p>ubamatamab 是靶向 MUC16 和 CD3 的双特异性抗体。数据来自一项进行中的 I／II 期研究，在 2026 年国际妇科癌症学会的全体大会上做晚期突破口头报告。据 Regeneron 经 GlobeNewswire 发布、并由 Markets Insider 等页面转载的公司稿，时间是 2026 年 10 月 1 日上午 11:35（美东），大约是北京时间 23:35。接受 800 毫克单药的 11 例患者中，客观缓解率 73%，95% 置信区间 39.0 到 94.0，全部是部分缓解。中位缓解持续大约 9 个月，中位无进展生存大约 11 个月。安全性在低级别浆液性卵巢癌亚组的全部 19 例患者中评估。细胞因子释放综合征发生在 90% 的参与者（17 人），均为 1 级或 2 级。</p>
+            <p>公司称已经在入组一项单臂、潜在可注册的试验，并计划在未来数月与美国食品药品管理局讨论数据，同时计划启动确证性随机对照 III 期。高缓解是第一步读数，不是获批结论。</p>
+            <p class="src">来源：<a href="https://markets.businessinsider.com/news/stocks/ubamatamab-muc16xcd3-shows-a-high-rate-of-durable-responses-in-initial-study-of-patients-with-advanced-low-grade-serous-ovarian-cancer-lgsoc-1036590136" target="_blank" rel="noopener noreferrer">Markets Insider 转载的 Regeneron 公司稿</a>。</p>
+          </section>
+
+          <section class="item" id="med-tilre">
+            <p class="eyebrow">多家来源一致</p>
+            <h3>tilrekimig 公布 II 期详细结果，并启动 III 期</h3>
+            <div class="layers">
+              <div><p class="lk">已经迈出的一步</p><p>II 期的皮肤清除数据公布了，III 期已经启动。</p></div>
+              <div class="far"><p class="lk">还没有走完</p><p>启动下一期，不等于 III 期已经完成，也不等于已经获批。</p></div>
+            </div>
+            <p>tilrekimig（PF-07275315）同时以高亲和力结合白细胞介素 4、白细胞介素 13 和胸腺基质淋巴生成素，设计半衰期大约 37 天，用来支持每月给药。据辉瑞经 Business Wire 发布、BioSpace 转载的稿件，披露声明写明截至 2026 年 10 月 1 日，并在维也纳的欧洲皮肤病与性病学会大会做口头报告。第一阶段里，接受 450 毫克、每两周一次的患者有 62.5% 达到湿疹面积和严重度指数改善至少 75%（EASI-75），安慰剂组是 19.9%，p 值为 0.0008。第二阶段里，每月一次的三档剂量达到 EASI-75 的比例分别是 58.5%（400 毫克）、61.0%（200 毫克）和 47.8%（50 毫克），安慰剂是 9.1%，均 p 小于 0.003。稿件称没有报告与药物相关的严重不良事件。</p>
+            <p>基于这些结果，公司已经启动特应性皮炎和哮喘的 III 期，并推进慢性阻塞性肺疾病的 IIb／III 期。Dermatology Times 和 HCPLive 等同日的会议报道交叉印证了主要终点的方向，详细稿附上的是辉瑞稿的转载页。II 期数字和 III 期启动是路径上亮的一步，不是 III 期已经走完。</p>
+            <p class="src">来源：<a href="https://www.biospace.com/press-releases/pfizers-tilrekimig-shows-significant-skin-clearance-in-phase-2-atopic-dermatitis-study" target="_blank" rel="noopener noreferrer">BioSpace 转载的辉瑞稿</a>。</p>
+          </section>
+
+          <section class="item" id="med-vyepti">
+            <p class="eyebrow">多家来源一致 · 开放标签，解读要留余地</p>
+            <h3>VYEPTI 的 IV 期 THRIVE 读出主要终点</h3>
+            <div class="layers">
+              <div><p class="lk">已经迈出的一步</p><p>IV 期的主要终点有了前瞻性读数。</p></div>
+              <div class="far"><p class="lk">还没有走完</p><p>这是开放标签研究，不是新的对照试验获批结论。部分次要细节还等着大会和同行评议。</p></div>
+            </div>
+            <p>THRIVE（NCT06701526）是第一项专门评估这种情况的干预性试验：既往一种靶向降钙素基因相关肽的预防治疗应答不足之后，改用静脉 eptinezumab。据 Lundbeck 经 Cision 在 2026 年 10 月 1 日 08:00（欧洲中部时间）发布的稿件，大约是北京时间 14:00。参与者在基线接受 100 毫克，第 12 周升至 300 毫克。第 12 周，仍留在试验中的参与者有 44% 在患者总体印象改变上报告「明显改善」或「非常明显改善」。第 24 周的主要终点上，仍留在试验中的参与者有 60% 这样报告。研究入组 164 名成人，每月偏头痛日至少 8 天，既往接受过皮下抗降钙素基因相关肽单抗或预防性 gepant，且没有接受过 eptinezumab。84%（138／164）完成试验。总体耐受良好，这一人群里没有识别出新的安全信号。每月偏头痛日等次要终点的细节，还等待大会和同行评议发表。PR Newswire 的同文交叉印证了日期和主要终点数字。</p>
+            <p>开放标签，加上「仍留在试验中」这个口径，读的时候要留余地。IV 期读出是序贯治疗的一块证据，不是一份新的对照获批结论。</p>
+            <p class="src">来源：<a href="https://news.cision.com/h--lundbeck-a-s/r/lundbeck-announces-headline-results-from-phase-iv-thrive-trial-evaluating-vyepti---eptinezumab--foll,c4403038" target="_blank" rel="noopener noreferrer">Lundbeck 经 Cision 的稿件</a>。</p>
+          </section>
+        </section>
+
+        <section id="personal">
+          <h2>个人提醒</h2>
+          <p>下面这些只是温和地提一下，不评分，也不替你决定要不要做。这一窗能读到的个人材料来自邮箱和 GitHub。没有用 Notion、Airtable、日历或网盘来编内容。</p>
+
+          <section class="item" id="p-153">
+            <p class="eyebrow">多家来源一致 · GitHub 与自动检查</p>
+            <h3>昨天的早报已经合进主分支</h3>
+            <div class="layers">
+              <div><p class="lk">已经迈出的一步</p><p>第 153 号拉取请求已经合入，针对主分支的自动检查通过了。</p></div>
+              <div class="far"><p class="lk">还没有另做的那一层</p><p>没有再逐项打开页面部署日志。</p></div>
+            </div>
+            <p>据 GitHub 的拉取请求记录，第 153 号大约在北京时间 2026 年 10 月 1 日 7:04 打开（created_at 为 2026-09-30T23:04:57Z），大约 7:08 以压缩合并的方式合入（merged_at 为 2026-09-30T23:08:39Z）。标题是 content(briefs): 2026-10-01 窄跳板放下了，日历才算数。基线是 main，头分支是 content/brief-2026-10-01。增加 1250 行，删除 0 行，改动 1 个文件，1 个提交。合并提交是 7b66f1e266f3d5cdc6411b861d19219eb1671cc2。文件是 content/briefs/2026-10/ai-brief-2026-10-01.html。那一则想说的是：先给一侧试一把，不等于全员通行；纸上承诺，不等于今天起算的义务。推送到 main 的自动检查结论是成功。云端主创会话可见为 bc-e75d44b5-6421-58da-82b9-4d3b12670ba7。aimfllyys 的收件箱里没有另中这一则的独立邮件。合入成功，不等于每一层外部回执都已经人工点开确认。</p>
+            <p class="src">来源：<a href="https://github.com/AIMFllyYS/Blog-YuSheng/pull/153" target="_blank" rel="noopener noreferrer">第 153 号拉取请求</a>；<a href="https://github.com/AIMFllyYS/Blog-YuSheng/actions/runs/36789521807" target="_blank" rel="noopener noreferrer">自动检查 36789521807</a>。</p>
+          </section>
+
+          <section class="item" id="p-154">
+            <p class="eyebrow">多家来源一致</p>
+            <h3>主分支随即同步进了 dev</h3>
+            <div class="layers">
+              <div><p class="lk">已经迈出的一步</p><p>第 154 号把 main 同步进 dev，自动检查通过了。</p></div>
+              <div class="far"><p class="lk">还没有走完</p><p>分支对齐完成，不等于今天这一份新早报已经合入。</p></div>
+            </div>
+            <p>据 GitHub 记录，第 154 号的打开和合并都在北京时间 2026 年 10 月 1 日大约 7:08（created_at 为 2026-09-30T23:08:43Z，merged_at 为 2026-09-30T23:08:49Z）。标题是 sync: main → dev after 2026-10-01 brief。正文写明用普通合并，不要压缩。同样是增加 1250 行、删除 0 行、1 个文件。合并提交是 073fb253627758671287d096c772c79cf5838295。推送到 dev 的自动检查结论是成功。</p>
+            <p class="src">来源：<a href="https://github.com/AIMFllyYS/Blog-YuSheng/pull/154" target="_blank" rel="noopener noreferrer">第 154 号拉取请求</a>；<a href="https://github.com/AIMFllyYS/Blog-YuSheng/actions/runs/36789535794" target="_blank" rel="noopener noreferrer">自动检查 36789535794</a>。</p>
+          </section>
+
+          <section class="item" id="p-gpro">
+            <p class="eyebrow">据 Google 发给 sofiapintos190 的邮件称</p>
+            <h3>Google AI Pro 的结束通知到了</h3>
+            <div class="layers">
+              <div><p class="lk">已经发生的事实</p><p>计划结束的通知已经送达。</p></div>
+              <div class="far"><p class="lk">稿子不代作的那一层</p><p>要不要续订，是你自己的决定。</p></div>
+            </div>
+            <p>前一天窗外提到的「Google One 将于 2026 年 10 月 1 日取消」，在这一窗里落到了正式通知。收件箱是 sofiapintos190。邮件时间 2026-10-01T07:03:21Z，大约是北京时间 15:03，发件人是 googleone-noreply@google.com。主题写的是计划已经结束。正文称，Google AI Pro 计划已经结束；已经失去 Gemini in Pro、其他下一代 Google 人工智能功能，以及 5 TB 可共享存储等权益；可以通过续订快速恢复。列举的失效权益还有：Google Flow in Pro；带 Gemini 3 Pro 模型和 Deep Search 的 Google 搜索人工智能模式；Gmail、Docs、Vids 里的 Gemini；5 TB 存储和其他 Google One 权益。这里只转述邮件，不判断你该不该续。</p>
+            <p class="src">来源：<a href="https://mail.google.com/mail/?authuser=sofiapintos190@gmail.com#all/thread-f:1877829957296501769" target="_blank" rel="noopener noreferrer">sofiapintos190 邮箱里的那封通知</a>。</p>
+          </section>
+
+          <section class="item" id="p-consensus">
+            <p class="eyebrow">据 Consensus 的产品信称 · 没有登录账户核对套餐</p>
+            <h3>Consensus 九月的功能信到了</h3>
+            <div class="layers">
+              <div><p class="lk">已经迈出的一步</p><p>产品信说九月的一批功能已经可用。</p></div>
+              <div class="far"><p class="lk">还没有走完</p><p>上线通知不等于你自己的套餐和工作流已经验证过。</p></div>
+            </div>
+            <p>据 aimfllyys 邮箱里的产品信，时间 2026-10-01T07:45:42Z，大约是北京时间 15:45，发件人 info@mail.consensus.app。主题是搜索结果里的图表、应用程序接口仪表板和新的产物等。信里写的是 2026 年 9 月的第一辑。9 月 1 日：可以创建自己的应用程序接口密钥。9 月 7 日：可以从 Copilot、Word、Excel 和 PowerPoint 搜索逾 2.2 亿篇同行评议论文。9 月 21 日：研究空白矩阵，用来看一个主题上哪些地方还薄。9 月 24 日：在结果里直接查看被引论文的图表。没有登录账户去核对你的套餐档位。</p>
+            <p class="src">来源：<a href="https://mail.google.com/mail/?authuser=aimfllyys@gmail.com#all/thread-f:1877832622539033388" target="_blank" rel="noopener noreferrer">产品信</a>；<a href="https://consensus.app/home/fall-field-notes" target="_blank" rel="noopener noreferrer">Field Notes</a>。</p>
+          </section>
+
+          <section class="item" id="p-sciai">
+            <p class="eyebrow">邮件和自动检查一致 · 旁路仓库，不和早报主链混读</p>
+            <h3>SCI-AIChat-Demo 的定时检查再次失败</h3>
+            <div class="layers">
+              <div><p class="lk">已经看见的状态</p><p>lint、类型检查和测试仍是红的。</p></div>
+              <div class="far"><p class="lk">不要看成整条都绿</p><p>夜间的真实模型回放仍是绿的，不等于整条检查走完了。</p></div>
+            </div>
+            <p>据 aimfllyys 的邮件和自动检查记录，邮件时间 2026-09-30T22:17:26Z，大约是北京时间 10 月 1 日 6:17，结束于 22:17:06 UTC。主题是主分支定时 ci 失败，提交 579183f。事件是 schedule，耗时 1 分 3 秒。lint、类型检查和 vitest 失败；夜间的真实模型回放成功；compileall 和 pytest 失败。自动检查的结论仍是失败。运行编号 36784560533。这是旁路演示仓库，和早报、Notebook 当天的主链不是同一件事。</p>
+            <p class="src">来源：<a href="https://mail.google.com/mail/?authuser=aimfllyys@gmail.com#all/thread-f:1877796871152901188" target="_blank" rel="noopener noreferrer">失败邮件</a>；<a href="https://github.com/AIMFllyYS/SCI-AIChat-Demo/actions/runs/36784560533" target="_blank" rel="noopener noreferrer">自动检查 36784560533</a>。</p>
+          </section>
+
+          <section class="item" id="p-deepseek">
+            <p class="eyebrow">邮件和自动检查一致 · 旁路仓库</p>
+            <h3>deepseek-harness 的真实接口端到端测试再次失败</h3>
+            <div class="layers">
+              <div><p class="lk">已经看见的状态</p><p>定时的真实 DeepSeek 接口测试仍是失败。</p></div>
+              <div class="far"><p class="lk">不要误读</p><p>失败通知不等于已经修好。</p></div>
+            </div>
+            <p>据 aimfllyys 的邮件和自动检查，邮件时间 2026-10-01T05:49:59Z，大约是北京时间 13:49，结束于 05:49:38 UTC。主题是主分支上「E2E (real DeepSeek API)」失败，提交 c291e79。事件是 schedule，耗时 44 秒，e2e 失败。运行编号 36821593305，结论是失败。前一天窗外和这一窗里都有失败。它是旁路工程，不必和早报投递或 Notebook 的课堂合入放在一起看。</p>
+            <p class="src">来源：<a href="https://mail.google.com/mail/?authuser=aimfllyys@gmail.com#all/thread-f:1877825343056003562" target="_blank" rel="noopener noreferrer">失败邮件</a>；<a href="https://github.com/AIMFllyYS/deepseek-harness/actions/runs/36821593305" target="_blank" rel="noopener noreferrer">自动检查 36821593305</a>。</p>
+          </section>
+
+          <section class="item" id="p-studysolo">
+            <p class="eyebrow">两封邮件和两次自动检查一致</p>
+            <h3>StudySolo 把身份校验收到 Account 之后，前后端检查都还是红的</h3>
+            <div class="layers">
+              <div><p class="lk">已经迈出的一步</p><p>鉴权改走 Account 的提交已经推上去了。</p></div>
+              <div class="far"><p class="lk">还没有走完</p><p>前端和后端的检查在这一窗里都失败了。</p></div>
+            </div>
+            <p>据 aimfllyys 的两封邮件，前端失败大约在北京时间 2026 年 10 月 1 日 21:03（2026-10-01T13:03:04Z），后端失败大约在同一分钟（2026-10-01T13:03:43Z）。触发的推送大约在 21:02（UTC 13:02）。提交 cfa5f60 写明：StudyFlow 通过 Account 验证身份，工作流代理改在后端运行。后端依赖、中间件和前端的鉴权服务现在调用 Account 的 introspect 端点，不再自己解码 Supabase 的令牌；同时退役了 stream-chat 的服务端事件流，新增了 /api/agent/chat。前端的 lint 和类型检查失败，耗时 19 秒；后端同样失败，耗时 59 秒。两次运行都是失败，编号 36865870501 和 36865870604。这一窗里没有看到随后的成功重跑。合入不等于检查变绿。</p>
+            <p class="src">来源：<a href="https://mail.google.com/mail/?authuser=aimfllyys@gmail.com#all/thread-f:1877852589889245359" target="_blank" rel="noopener noreferrer">前端失败邮件</a>；<a href="https://mail.google.com/mail/?authuser=aimfllyys@gmail.com#all/thread-f:1877852631601022512" target="_blank" rel="noopener noreferrer">后端失败邮件</a>；<a href="https://github.com/AIMFllyYS/StudySolo-Dev/actions/runs/36865870501" target="_blank" rel="noopener noreferrer">前端检查</a>；<a href="https://github.com/AIMFllyYS/StudySolo-Dev/actions/runs/36865870604" target="_blank" rel="noopener noreferrer">后端检查</a>。</p>
+          </section>
+
+          <section class="item" id="p-notebook">
+            <p class="eyebrow">失败和恢复两次检查都对得上</p>
+            <h3>Notebook 的鉴权先红后绿，当前以绿灯为准</h3>
+            <div class="layers">
+              <div><p class="lk">已经走到的一层</p><p>浏览器不再持有刷新令牌之后，主分支的检查恢复成功。</p></div>
+              <div class="far"><p class="lk">不要扩读</p><p>过程中的失败邮件不是最终状态，也不等于 StudySolo 同时变绿。</p></div>
+            </div>
+            <p>据邮件和自动检查，失败邮件大约在北京时间 2026 年 10 月 1 日 21:09（2026-10-01T13:09:41Z，结束于 13:09:21 UTC）。失败运行对应提交 81df95b，大约在 20:52 到 21:02 之间。类型检查、lint、测试和构建失败，18 条标注，耗时 6 分 31 秒。那次提交写的是：本地开发使用本地 Account，登录时通知会话钩子。运行编号 36865921724。</p>
+            <p>随后的提交 d908e9f 写明：浏览器不再保存刷新令牌，续期留在服务端。/api/account/session 现在只返回 1 小时的访问令牌。恢复成功的运行是 36896151930，大约在北京时间 10 月 2 日 1:00 创建（2026-10-01T17:00:13Z），事件是推送到 master，结论是成功。过程里的红，不等于最终仍是红。</p>
+            <p class="src">来源：<a href="https://mail.google.com/mail/?authuser=aimfllyys@gmail.com#all/thread-f:1877853006825255957" target="_blank" rel="noopener noreferrer">失败邮件</a>；<a href="https://github.com/AIMFllyYS/Notebook-MedFreshman/actions/runs/36865921724" target="_blank" rel="noopener noreferrer">失败的检查</a>；<a href="https://github.com/AIMFllyYS/Notebook-MedFreshman/actions/runs/36896151930" target="_blank" rel="noopener noreferrer">恢复的检查</a>；<a href="https://github.com/AIMFllyYS/Notebook-MedFreshman/commit/d908e9fbb544e0c7261776fe6c7c2dd394741322" target="_blank" rel="noopener noreferrer">恢复时的提交</a>。</p>
+          </section>
+
+          <section class="item" id="p-claude">
+            <p class="eyebrow">据 GitHub 官方邮件称</p>
+            <h3>已安装的 Claude 应用请求更新权限</h3>
+            <div class="layers">
+              <div><p class="lk">已经到达的一步</p><p>权限更新的请求进了收件箱。</p></div>
+              <div class="far"><p class="lk">还没有代作</p><p>接受还是忽略，稿子不替你选。忽略的话，现有权限保持不变。</p></div>
+            </div>
+            <p>据 aimfllyys 的邮件，时间 2026-10-01T14:53:49Z，大约是北京时间 22:53，发件人 noreply@github.com。主题是 Claude 正在请求更新权限。正文称，安装在账户上的 GitHub 应用 Claude 正在请求更新权限。可以打开审查页接受或忽略。如果忽略，Claude 保持现有权限。这不是密码重置。邮件正文没有列出具体的权限差异，这里也不补写。</p>
+            <p class="src">来源：<a href="https://mail.google.com/mail/?authuser=aimfllyys@gmail.com#all/thread-f:1877859557899471940" target="_blank" rel="noopener noreferrer">通知邮件</a>；<a href="https://github.com/settings/installations/164547125/permissions/update" target="_blank" rel="noopener noreferrer">审查页（安装编号 164547125）</a>。</p>
+          </section>
+
+          <section class="item" id="p-docs">
+            <p class="eyebrow">据 GitHub 提交记录称</p>
+            <h3>Notebook 同日还合入了两份文档</h3>
+            <div class="layers">
+              <div><p class="lk">已经迈出的一步</p><p>执行规格和一处文档修正写进了仓库。</p></div>
+              <div class="far"><p class="lk">还没有走完</p><p>规格写下来，不等于记忆和性能的优化已经做完。</p></div>
+            </div>
+            <p>据提交记录，13746a4 和 3d2133f 的作者时间都在 2026-10-01T16:59Z 一带，大约是北京时间 10 月 2 日 0:59。13746a4 修正了 markdown 插件列表和内容路由的注释，使之与 lib/markdown/plugins.ts 一致，并写明 dynamicParams 为 false。3d2133f 增加了记忆和性能优化的执行规格，包含四个资源域和带预算的必要事项。证据边界钉在当时的 HEAD 81df95b7 加上工作树，并声明不重置、也不擅自采纳进行中的鉴权和同步工作。没有另外的独立邮件。这是文档层，不是课堂内容的拉取请求。</p>
+            <p class="src">来源：<a href="https://github.com/AIMFllyYS/Notebook-MedFreshman/commit/13746a4e0b7f240b4e5786e87f568823f2a117e1" target="_blank" rel="noopener noreferrer">13746a4</a>；<a href="https://github.com/AIMFllyYS/Notebook-MedFreshman/commit/3d2133fcd2133be245835069b22dae871b3e6982" target="_blank" rel="noopener noreferrer">3d2133f</a>。</p>
+          </section>
+
+          <section class="item" id="p-parallel">
+            <p class="eyebrow">两仓提交说明，加上上面已经核对过的检查结果</p>
+            <h3>StudySolo 和 Notebook 同一天下午都在把身份校验收到 Account</h3>
+            <div class="layers">
+              <div><p class="lk">已经迈出的一步</p><p>两个仓库都推进了「身份由 Account 统一判定」。</p></div>
+              <div class="far"><p class="lk">走完的程度不一样</p><p>Notebook 的检查已经恢复绿色。StudySolo 的前后端在这一窗里仍是红色。</p></div>
+            </div>
+            <p>据 GitHub，StudySolo 的提交时间大约是北京时间 2026 年 10 月 1 日 20:53（2026-10-01T12:53:25Z）。Notebook 的 81df95b 大约是 20:52（作者时间 2026-10-01T12:52:09Z）。StudySolo 的说明是：后端依赖、中间件和前端鉴权服务改为调用 Account 的 introspect，不再自己解码 Supabase 令牌。Notebook 的说明是：localhost 映射到 account-local，并始终转发到本地 Account 后端，会话钩子在登录事件上重新恢复。两边的提交都标注由 Devin 生成。这不是第三条独立事故，而是把上面两条并在一起读：同一步迈出去了，并不等于两条主线同时走完。</p>
+            <p class="src">来源：StudySolo 见上面那一节；Notebook 的相关提交是 <a href="https://github.com/AIMFllyYS/Notebook-MedFreshman/commit/81df95b789e20d837bac9899d6cd820482559d87" target="_blank" rel="noopener noreferrer">81df95b</a>。</p>
+          </section>
+        </section>
+
+        <section id="ahead">
+          <h2>窗外两件</h2>
+          <p>下面两封信不在采集窗里。窗是北京时间 10 月 1 日 6 点到 10 月 2 日 6 点。它们单独放在这里，避免和窗内的事实混读。语气仍然只是提醒。</p>
+
+          <section class="item" id="ahead-opencode">
+            <p class="eyebrow">不在采集窗内 · 据 OpenCode 的邮件称</p>
+            <h3>10 月 17 日前，OpenCode Go 需要重新授权支付宝</h3>
+            <p>邮件时间是 2026-09-30T21:28:21Z，比这一窗的起点（UTC 22:00）早大约 32 分钟。主题请你在 2026 年 10 月 17 日前重新授权支付宝。正文称，关联到 OpenCode Go 订阅的支付宝自动扣款授权已经不再有效。为了避免订阅在 2026 年 10 月 17 日到期时中断，请在此之前重新授权。大约只需要一分钟，续订日之前不会扣款。前一天的材料记过同一件事。到期日还临近，所以再标一次。不代办。</p>
+            <p class="src">来源：<a href="https://mail.google.com/mail/?authuser=aimfllyys@gmail.com#all/thread-f:1877793781842953279" target="_blank" rel="noopener noreferrer">aimfllyys 邮箱里的那封信</a>。</p>
+          </section>
+
+          <section class="item" id="ahead-wiley">
+            <p class="eyebrow">不在采集窗内 · 据 Wiley 的邮件称</p>
+            <h3>Wiley Scholar Gateway 的连接器更新了，ChatGPT 那边需要重连</h3>
+            <p>邮件时间是 2026-10-01T22:01:36Z，比这一窗的终点晚大约一分钟。Wiley 已经更新 Scholar Gateway 连接器。新版本每次结果会返回更多信息，包括文章是否开放获取、是否已经撤稿。如果用的是 ChatGPT，邮件请你立即重连：2026 年 9 月 28 日之前建立的连接需要重连，否则会报错。如果用的是 Claude，邮件建议切到新连接器；当前连接仍可用，但鼓励在试点版本退役前切换。如果用的是 Vibe（Mistral），无需操作。邮件里带追踪参数的深链这里不收录。若你平时用 ChatGPT 调 Wiley，需要自己重连。</p>
+            <p class="src">来源：<a href="https://mail.google.com/mail/?authuser=aimfllyys@gmail.com#all/thread-f:1877886567510410291" target="_blank" rel="noopener noreferrer">aimfllyys 邮箱里的那封信</a>。</p>
+          </section>
+        </section>
+
+        <section class="item" id="close">
+          <h2>收束</h2>
+          <p>今天窗里的材料共同指向同一道核对：第一步已经迈出去，不等于整条路已经走完；次要读数亮了，不等于主终点已经过关。</p>
+          <p>传票、原型星、次要终点、受理和审评日、第一座模组的开业、写进通稿的目标年、自家接口上的封门，都是真实迈出的一步。要问的是这一步停在哪一层，主线有没有走完。可生长的那只肺动脉瓣已经走到批准，它是对照，不是把其他条目一起提升一层的理由。昨天那句关于试用名单和纸上承诺的话，今天不重复。</p>
+        </section>
+      </div>
+    </article>
+  </details>
+
+  <ul class="notes">
+    <li><span class="note-k">顺手记一下</span>昨天那份早报已经合进主分支，自动检查也通过了。我没有再去逐项打开页面部署日志。</li>
+    <li><span class="note-k">顺手记一下</span>Google AI Pro 结束的通知到了，续不续由你决定。Notebook 的鉴权先红后绿，现在是绿灯。StudySolo 前后端的检查还是红的。两边都在把身份校验收到 Account，走完的程度不一样。</li>
+    <li><span class="note-k">顺手记一下</span>Consensus 九月的功能信到了。Claude 请求更新 GitHub 权限，可以去看，也可以先放着。窗外还有两件，不在今天的采集窗里：10 月 17 日前给 OpenCode 重新授权支付宝；Wiley 的连接器更新之后，ChatGPT 那边需要重连。</li>
+  </ul>
+</main>
+<script>
+(function () {
+  var world = document.getElementById("world");
+  var lane = document.getElementById("lane");
+  var cart = document.getElementById("cart");
+  var tape = document.getElementById("tape");
+  var reading = document.getElementById("reading");
+  var dishLine = document.getElementById("dish-line");
+  var bulb = document.getElementById("bulb");
+  var drawer = document.getElementById("drawer");
+  var stations = Array.prototype.slice.call(document.querySelectorAll(".station"));
+  var lines = [
+    { at: 0.16, text: "加州司法部长已经把调查传票送到 OpenAI。这一步迈出去了，责任还没有被定罪。" },
+    { at: 0.32, text: "Project Suncatcher 的原型星带着四颗 TPU 升空，在轨验证开始了。太空数据中心还没有运行。" },
+    { at: 0.48, text: "REMODEL 里，肾动脉阻力指数降了，尿白蛋白肌酐比降了 40%。三项磁共振的共同主要终点没有达到显著。次要读数亮了，主终点还没有过关。" },
+    { at: 0.64, text: "giredestrant 的详细数据刊上了《新英格兰医学杂志》，审评日期也写出来了。批准还没有落章。据 PolyPid 公司稿称，D-PLEX 的欧洲上市申请已被受理，美国仍在优先审评。" },
+    { at: 0.78, text: "英飞凌曼谷后端的第一座模组启用了，现在大约 350 人。五座模组还没有满。台积电得州多厂据报道仍是早期评估，官方不予置评。" },
+    { at: 0.92, text: "据 Anthropic 称，巴克莱把覆盖多数工程师写到 2027 年。今天还没有覆盖。自家接口已经封住蒸馏；据一篇报道称，云端入口曾经仍能复现，尚未得到其他来源确认。" }
+  ];
+  var startText = "样机停在起点。按住它，往右边的布条推。走到哪一盏灯，就停在哪一层。";
+  var finishText = "样机停在布条前面，再推也会弹回来。放行条还是空白，主终点的灯没有亮。第一步已经迈出去，不等于整条路已经走完。";
+  var bulbText = "这盏是主终点的灯。次要读数亮了，也不等于它过关。今天按它，它也不会亮。";
+  var dishText = "碟子里这只可生长的肺动脉瓣是单独的一层：美国食品药品管理局已经批准。不要把它和还停在受理、审评日的章放在一起读。";
+  var maxX = 120;
+  var x = 0;
+  var dragging = false;
+  var custom = null;
+  var frame = 0;
+  var reduce = false;
+  try {
+    reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  } catch (err) {
+    reduce = false;
+  }
+
+  function measure() {
+    maxX = lane.clientWidth - cart.offsetWidth - tape.offsetWidth - 10;
+    if (maxX < 36) maxX = 36;
+  }
+
+  function lineFor(p) {
+    if (p >= 0.985) return finishText;
+    var text = startText;
+    for (var i = 0; i < lines.length; i += 1) {
+      if (p + 0.02 >= lines[i].at) text = lines[i].text;
+    }
+    return text;
+  }
+
+  function render() {
+    var p = maxX > 0 ? x / maxX : 0;
+    if (p < 0) p = 0;
+    cart.style.transform = "translateX(" + x + "px)";
+    cart.style.setProperty("--roll", (x / 46) + "turn");
+    for (var i = 0; i < stations.length; i += 1) {
+      var at = Number(stations[i].getAttribute("data-at"));
+      stations[i].classList.toggle("on", p + 0.02 >= at);
+    }
+    var arrived = p >= 0.985;
+    world.classList.toggle("arrived", arrived);
+    var line = custom || lineFor(p);
+    if (reading.textContent !== line) reading.textContent = line;
+    var extra = arrived && !custom ? dishText : "";
+    if (dishLine.textContent !== extra) dishLine.textContent = extra;
+    var now = Math.round(Math.max(0, Math.min(100, p * 100)));
+    lane.setAttribute("aria-valuenow", String(now));
+    lane.setAttribute("aria-valuetext", line);
+  }
+
+  function springTo(target) {
+    if (frame) cancelAnimationFrame(frame);
+    if (reduce) {
+      x = target;
+      render();
+      return;
+    }
+    var from = x;
+    var t0 = performance.now();
+    function tick(now) {
+      var t = Math.min(1, (now - t0) / 460);
+      var ease = 1 - Math.pow(1 - t, 3);
+      x = from + (target - from) * ease;
+      render();
+      if (t < 1) frame = requestAnimationFrame(tick);
+      else frame = 0;
+    }
+    frame = requestAnimationFrame(tick);
+  }
+
+  function pointX(event) {
+    var rect = lane.getBoundingClientRect();
+    var next = event.clientX - rect.left - cart.offsetWidth / 2;
+    if (next < 0) next = 0;
+    if (next > maxX) {
+      var extra = next - maxX;
+      next = maxX + Math.min(16, extra * 0.28);
+      tape.classList.add("push");
+    } else {
+      tape.classList.remove("push");
+    }
+    return next;
+  }
+
+  function onDown(event) {
+    if (event.pointerType === "mouse" && event.button !== 0) return;
+    dragging = true;
+    custom = null;
+    world.classList.add("played");
+    if (frame) cancelAnimationFrame(frame);
+    try { lane.setPointerCapture(event.pointerId); } catch (err) { /* 沙箱里捕获失败时仍跟随指针 */ }
+    lane.focus();
+    x = pointX(event);
+    render();
+  }
+
+  function onMove(event) {
+    if (!dragging) return;
+    x = pointX(event);
+    render();
+  }
+
+  function onUp() {
+    if (!dragging) return;
+    dragging = false;
+    tape.classList.remove("push");
+    if (x > maxX) springTo(maxX);
+    else render();
+  }
+
+  lane.addEventListener("pointerdown", onDown);
+  lane.addEventListener("pointermove", onMove);
+  lane.addEventListener("pointerup", onUp);
+  lane.addEventListener("pointercancel", onUp);
+
+  lane.addEventListener("keydown", function (event) {
+    var step = Math.max(24, maxX * 0.08);
+    var target = null;
+    if (event.key === "ArrowRight") target = Math.min(maxX, x + step);
+    else if (event.key === "ArrowLeft") target = Math.max(0, x - step);
+    else if (event.key === "Home") target = 0;
+    else if (event.key === "End") target = maxX;
+    else return;
+    event.preventDefault();
+    custom = null;
+    world.classList.add("played");
+    springTo(target);
+  });
+
+  bulb.addEventListener("click", function () {
+    custom = bulbText;
+    bulb.classList.add("nope");
+    render();
+    window.setTimeout(function () { bulb.classList.remove("nope"); }, 460);
+  });
+
+  drawer.addEventListener("toggle", function () {
+    if (drawer.open) drawer.scrollTop = 0;
+  });
+
+  document.addEventListener("keydown", function (event) {
+    if (event.key === "Escape" && drawer.open) {
+      drawer.open = false;
+      drawer.querySelector("summary").focus();
+    }
+  });
+
+  window.addEventListener("resize", function () {
+    var p = maxX ? x / maxX : 0;
+    measure();
+    x = Math.min(maxX, Math.max(0, p * maxX));
+    render();
+  });
+
+  measure();
+  render();
+})();
+</script>
+<!--
+DESIGN LESSON 2026-10-02 折晓早报
+STYLE: 浅色桦木试车道，样机推到未剪开的布条前，次要的灯会亮，主终点的灯不亮
+GENRE: 把样机沿着试车道往前推，看它停在空白放行条前面的早晨小世界
+TITLE: 《第一步的灯亮了，放行条还空着》
+THESIS: 第一步迈出去，不等于整条路走完；次要亮了，不等于主终点过关。
+-->
+</html>
