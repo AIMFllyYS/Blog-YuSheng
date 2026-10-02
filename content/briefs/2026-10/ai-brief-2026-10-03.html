@@ -106,7 +106,7 @@
     align-items: center;
     gap: 14px;
   }
-  .hoop-wrap { order: 1; width: min(86vw, 340px); text-align: center; }
+  .hoop-wrap { order: 1; width: min(76vw, 340px); text-align: center; }
   .slip-obj { order: 2; }
   .dial-wrap { order: 3; }
   .stamp-obj { order: 4; }
@@ -125,16 +125,17 @@
     stroke-dashoffset: 90;
     transition: stroke-dashoffset 0.55s var(--ease);
   }
-  .hoop.got-s1 #thread-s1,
-  .hoop.got-s2 #thread-s2,
-  .hoop.got-s3 #thread-s3 { stroke-dashoffset: 0; }
+  .hoop.got-s1 .stitch-s1 .thread,
+  .hoop.got-s2 .stitch-s2 .thread,
+  .hoop.got-s3 .stitch-s3 .thread { stroke-dashoffset: 0; }
   .knot { fill: var(--sage); opacity: 0; transition: opacity 0.3s var(--ease); }
-  .hoop.got-s1 .knot-s1,
-  .hoop.got-s2 .knot-s2,
-  .hoop.got-s3 .knot-s3 { opacity: 1; }
-  .opening-fill, .opening-edge { transition: opacity 0.6s var(--ease), stroke 0.6s var(--ease); }
-  .hoop.closed .opening-fill { opacity: 0; }
-  .hoop.closed .opening-edge { stroke: var(--sage); opacity: 0.55; }
+  .hoop.got-s1 .stitch-s1 .knot,
+  .hoop.got-s2 .stitch-s2 .knot,
+  .hoop.got-s3 .stitch-s3 .knot { opacity: 1; }
+  .opening-fill, .fray, .loose { transition: opacity 0.6s var(--ease); }
+  .hoop.closed .opening-fill,
+  .hoop.closed .fray,
+  .hoop.closed .loose { opacity: 0; }
   .hoop.ready .opening-fill { animation: breath 1.8s ease-in-out infinite; }
   @keyframes breath {
     0%, 100% { opacity: 1; }
@@ -163,9 +164,9 @@
     white-space: nowrap;
     box-shadow: 0 6px 12px rgba(40, 30, 20, 0.08);
   }
-  #hole-s1 { top: 34%; left: 50%; }
-  #hole-s2 { top: 50%; left: 50%; }
-  #hole-s3 { top: 66%; left: 50%; }
+  #hole-s1 { top: 32%; left: 73%; }
+  #hole-s2 { top: 50%; left: 73%; }
+  #hole-s3 { top: 68%; left: 73%; }
   .hole[hidden] { display: none !important; }
   .hoop.ready .hole { animation: pulse 1.8s var(--ease) infinite; }
   @keyframes pulse {
@@ -561,7 +562,7 @@
     color: var(--ink);
   }
   .digest[hidden] { display: none !important; }
-  .digest-inner { width: min(42rem, calc(100% - 28px)); margin: 0 auto; padding: 8px 0 64px; }
+  .digest-inner { width: min(42rem, calc(100% - 28px)); margin: 0 auto; padding: 0 0 64px; }
   .digest-bar {
     position: sticky;
     top: 0;
@@ -571,9 +572,14 @@
     gap: 8px;
     align-items: center;
     flex-wrap: wrap;
-    padding: 10px 0 12px;
-    background: rgba(247, 243, 236, 0.94);
+    padding: 14px 0 12px;
+    background: #f7f3ec;
+    box-shadow: 0 12px 14px #f7f3ec;
   }
+  .digest h2,
+  .digest h3,
+  .digest .sec,
+  .digest article { scroll-margin-top: 76px; }
   .digest-bar button, .quiet {
     border: 1px solid var(--line);
     background: var(--paper);
@@ -667,7 +673,7 @@
     <p class="kicker">折晓早报 · 2026年10月3日 · 星期六</p>
     <button type="button" class="sound" id="sound" aria-pressed="false">声音关着</button>
   </header>
-  <p class="hint" id="hint" aria-live="polite">先把这三张回执处理完。点一下就行。中间的开口先别缝。</p>
+  <p class="hint" id="hint" aria-live="polite">先把这三张回执处理完。开口先别缝。</p>
   <section class="scene" aria-label="晨间书桌上的绣绷">
     <div class="bench">
       <div class="slip-obj">
@@ -705,18 +711,35 @@
               <circle cx="160" cy="158" r="112" fill="url(#clothg)"/>
               <circle cx="160" cy="158" r="112" fill="url(#weave)"/>
               <g id="opening">
-                <path class="opening-fill" d="M160 52 C188 90 194 126 182 158 C194 194 186 230 160 266 C134 230 126 194 138 158 C126 126 132 90 160 52 Z" fill="#e7a8ae"/>
-                <path class="opening-fill" d="M160 74 C176 106 178 136 170 158 C178 184 176 214 160 244 C144 214 142 184 150 158 C142 136 144 106 160 74 Z" fill="#c45d68"/>
-                <path class="opening-edge" d="M160 62 C174 102 176 140 168 158 C176 188 174 224 160 256" fill="none" stroke="#8e3d48" stroke-width="1.6" stroke-linecap="round"/>
-                <path class="opening-edge" d="M160 62 C146 102 144 140 152 158 C144 188 146 224 160 256" fill="none" stroke="#8e3d48" stroke-width="1.6" stroke-linecap="round"/>
+                <path class="opening-fill" fill="#cbb9a4" d="M151 62 L159 80 L147 98 L160 116 L148 134 L159 152 L147 170 L160 188 L149 206 L158 224 L148 242 L170 246 L163 224 L175 206 L162 188 L176 170 L163 152 L175 134 L162 116 L176 98 L161 80 L169 62 Z"/>
+                <g class="fray" fill="none" stroke="#f7f3ee" stroke-width="1.3" stroke-linecap="round">
+                  <path d="M147 96 L132 90"/>
+                  <path d="M146 132 L128 138"/>
+                  <path d="M147 178 L130 172"/>
+                  <path d="M148 220 L134 228"/>
+                  <path d="M174 104 L190 96"/>
+                  <path d="M175 150 L194 156"/>
+                  <path d="M174 198 L192 206"/>
+                </g>
+                <g class="loose" fill="none" stroke="#c45d68" stroke-width="1.7" stroke-linecap="round">
+                  <path d="M158 74 C148 86 170 92 156 108"/>
+                  <path d="M166 214 C180 226 154 236 168 248"/>
+                </g>
               </g>
-              <g>
-                <path id="thread-s1" class="thread" d="M124 112 H196"/>
-                <path id="thread-s2" class="thread" d="M120 160 H200"/>
-                <path id="thread-s3" class="thread" d="M124 208 H196"/>
-                <circle class="knot knot-s1" cx="124" cy="112" r="3.4"/>
-                <circle class="knot knot-s2" cx="120" cy="160" r="3.4"/>
-                <circle class="knot knot-s3" cx="124" cy="208" r="3.4"/>
+              <g class="stitch stitch-s1">
+                <path class="thread" d="M108 100 H186"/>
+                <path class="thread" d="M108 110 H186"/>
+                <circle class="knot" cx="108" cy="105" r="3.3"/>
+              </g>
+              <g class="stitch stitch-s2">
+                <path class="thread" d="M104 152 H190"/>
+                <path class="thread" d="M104 162 H190"/>
+                <circle class="knot" cx="104" cy="157" r="3.3"/>
+              </g>
+              <g class="stitch stitch-s3">
+                <path class="thread" d="M108 204 H186"/>
+                <path class="thread" d="M108 214 H186"/>
+                <circle class="knot" cx="108" cy="209" r="3.3"/>
               </g>
             </g>
           </svg>
@@ -1292,7 +1315,7 @@
       return "继续缝。回执那一边已经做完，布还没有被线拉拢。";
     }
     var left = 3 - (state.slip ? 1 : 0) - (state.dial ? 1 : 0) - (state.stamp ? 1 : 0);
-    if (left === 3) return "先把这三张回执处理完。点一下就行。中间的开口先别缝。";
+    if (left === 3) return "先把这三张回执处理完。开口先别缝。";
     return "桌上还有回执。开口仍然开着。";
   }
   function hideNotes() {
@@ -1356,7 +1379,7 @@
     document.getElementById("dial-after").hidden = !state.dial;
     var keys = ["s1", "s2", "s3"];
     for (var i = 0; i < keys.length; i++) {
-      document.getElementById("hole-" + keys[i]).hidden = !receiptsDone();
+      document.getElementById("hole-" + keys[i]).hidden = !receiptsDone() || stitchesDone();
     }
     if (stitchesDone()) gap.textContent = "这道口是用线缝上的。";
     else if (receiptsDone()) gap.textContent = "开口还在。把线从亮起的针脚缝上去。";
