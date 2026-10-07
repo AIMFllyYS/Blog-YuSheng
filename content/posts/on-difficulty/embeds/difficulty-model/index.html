@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>困难不是一个东西 · 羽升的困难模型</title>
+<style>
+:root{
+  --bg:#F6F8FB; --surface:#FFFFFF; --surface-2:#F0F3F7; --ink:#15181D; --ink-2:#434953; --ink-3:#7E8591; --line:#D9DEE5;
+  --L:#0A8A62; --L-soft:#DDF3EA;
+  --C:#2B4BE0; --C-soft:#E2E7FD;
+  --O:#E4531A; --O-soft:#FDE5DA;
+  --good:#0A8A62; --bad:#D23B2A;
+  --serif:"Noto Serif SC","Songti SC","STSong","SimSun",serif;
+  --sans:"Noto Sans SC","PingFang SC","Microsoft YaHei","Helvetica Neue",Arial,sans-serif;
+  --shadow:0 1px 0 rgba(21,24,29,.04),0 12px 32px -12px rgba(21,24,29,.14);
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0F1216; --surface:#171B21; --surface-2:#1E232B; --ink:#EEF1F5; --ink-2:#B7BEC9; --ink-3:#7C8491; --line:#2A313B;
+    --L:#2FD39C; --L-soft:#10302A; --C:#7C93FF; --C-soft:#1B2350; --O:#FF7A42; --O-soft:#3A2016;
+    --good:#2FD39C; --bad:#FF6B5A; --shadow:0 12px 32px -12px rgba(0,0,0,.6); color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0F1216; --surface:#171B21; --surface-2:#1E232B; --ink:#EEF1F5; --ink-2:#B7BEC9; --ink-3:#7C8491; --line:#2A313B;
+  --L:#2FD39C; --L-soft:#10302A; --C:#7C93FF; --C-soft:#1B2350; --O:#FF7A42; --O-soft:#3A2016;
+  --good:#2FD39C; --bad:#FF6B5A; --shadow:0 12px 32px -12px rgba(0,0,0,.6); color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.7;-webkit-font-smoothing:antialiased}
+img,svg{max-width:100%}
+button{font-family:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible{outline:2px solid var(--C);outline-offset:2px}
+.wrap{max-width:1040px;margin:0 auto;padding:0 88px 0 32px}
+.tL{color:var(--L)} .tC{color:var(--C)} .tO{color:var(--O)}
+
+/* ---------- hero ---------- */
+.hero{min-height:100vh;display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center;padding-top:40px;padding-bottom:40px}
+.hero h1{font-family:var(--serif);font-weight:900;font-size:clamp(44px,7vw,88px);line-height:1.08;margin:0 0 24px;letter-spacing:-.01em}
+.hero .lede{font-size:19px;color:var(--ink-2);max-width:30em;margin:0 0 32px}
+.hero .motto{font-family:var(--serif);font-weight:600;font-size:22px;border-left:4px solid var(--ink);padding:4px 0 4px 16px;margin:0 0 28px}
+.hero-steps{display:flex;gap:10px;flex-wrap:wrap}
+.hero-steps span{padding:6px 14px;border-radius:999px;background:var(--surface);border:1px solid var(--line);font-size:14px;font-weight:500}
+.shape-card{background:var(--surface);border-radius:28px;padding:24px;box-shadow:var(--shadow);text-align:center}
+.shape-card svg{display:block;margin:0 auto}
+.shape-cap{font-size:15px;color:var(--ink-2);margin:8px 0 14px;min-height:3.4em}
+.shape-cap b{color:var(--ink)}
+.btn{border:1.5px solid var(--ink);background:var(--ink);color:var(--bg);padding:10px 20px;border-radius:999px;font-size:15px;font-weight:700;transition:transform .15s}
+.btn:hover{transform:translateY(-1px)}
+.btn.ghost{background:transparent;color:var(--ink)}
+.btn:disabled{opacity:.35;cursor:not-allowed;transform:none}
+
+/* ---------- section skeleton ---------- */
+.sec{padding:96px 0 40px;scroll-margin-top:10px}
+.sec-head{display:grid;grid-template-columns:64px 1fr;gap:4px 20px;margin-bottom:28px}
+.idx{grid-row:span 2;font-family:var(--serif);font-weight:900;font-size:40px;line-height:1;color:var(--ink-3);padding-top:6px}
+.claim{font-family:var(--serif);font-weight:900;font-size:clamp(28px,4vw,42px);line-height:1.25;margin:0}
+.sub{margin:10px 0 0;color:var(--ink-2);font-size:17px;max-width:40em}
+.stage{background:var(--surface);border-radius:24px;padding:28px;box-shadow:var(--shadow);margin-left:84px}
+.stage + .stage{margin-top:18px}
+.stage-t{font-weight:700;font-size:15px;margin:0 0 16px;display:flex;align-items:center;gap:8px}
+.stage-t::before{content:"";width:8px;height:8px;border-radius:2px;background:var(--ink);transform:rotate(45deg)}
+.takes{margin:20px 0 0 84px;display:grid;gap:10px}
+.take{background:transparent;border-left:3px solid var(--ink);padding:6px 0 6px 16px;font-family:var(--serif);font-weight:600;font-size:19px}
+.take.soft{border-color:var(--line);font-family:var(--sans);font-weight:400;font-size:16px;color:var(--ink-2)}
+.tag-add{display:inline-block;font-size:12px;font-weight:700;padding:1px 8px;border-radius:6px;background:var(--surface-2);border:1px dashed var(--ink-3);color:var(--ink-2);margin-left:6px;vertical-align:2px;font-family:var(--sans)}
+.scroll-x{overflow-x:auto}
+input[type=range]{width:100%;accent-color:var(--ink)}
+
+/* ---------- dock ---------- */
+.dock{position:fixed;right:18px;top:50%;transform:translateY(-50%);z-index:50;background:color-mix(in srgb,var(--surface) 88%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid var(--line);border-radius:22px;padding:10px 8px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:2px;align-items:center}
+.dock a{position:relative;display:flex;align-items:center;justify-content:center;width:38px;height:34px;border-radius:12px;text-decoration:none;color:var(--ink-3);font-weight:700;font-size:13px;transition:background .2s,color .2s}
+.dock a:hover{background:var(--surface-2);color:var(--ink)}
+.dock a.on{background:var(--ink);color:var(--bg)}
+.dock a .lbl{position:absolute;right:48px;white-space:nowrap;background:var(--ink);color:var(--bg);padding:4px 10px;border-radius:8px;font-size:13px;font-weight:500;opacity:0;pointer-events:none;transform:translateX(6px);transition:.18s}
+.dock a:hover .lbl,.dock a:focus-visible .lbl{opacity:1;transform:none}
+.dock .prog{width:22px;height:3px;border-radius:3px;background:var(--line);margin:6px 0;overflow:hidden}
+.dock .prog i{display:block;height:100%;width:0;background:var(--ink)}
+.dock .theme{border:none;background:none;width:38px;height:34px;border-radius:12px;font-size:16px}
+.dock .theme:hover{background:var(--surface-2)}
+
+/* ---------- 01 unzip ---------- */
+.unzip{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:center}
+.zipbox{position:relative;height:260px;border-radius:18px;background:var(--surface-2);cursor:pointer;overflow:hidden}
+.zipbox .blob{position:absolute;left:50%;top:50%;width:140px;height:140px;margin:-70px 0 0 -70px;border-radius:18px;background:var(--ink);color:var(--bg);display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-weight:900;font-size:36px;transition:transform .6s cubic-bezier(.2,.8,.2,1),opacity .4s}
+.zipbox .part{position:absolute;left:50%;top:50%;width:112px;height:76px;margin:-38px 0 0 -56px;border-radius:14px;color:#fff;font-weight:700;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:15px;line-height:1.3;opacity:0;transform:scale(.3);transition:transform .7s cubic-bezier(.2,.8,.2,1),opacity .4s}
+.zipbox .part small{font-weight:400;font-size:12px;opacity:.9}
+.p1{background:var(--L)}.p2{background:var(--C)}.p3{background:var(--O)}
+.zipbox.open .blob{transform:scale(.2);opacity:0}
+.zipbox.open .part{opacity:1}
+.zipbox.open .p1{transform:translate(-130px,-40px)}
+.zipbox.open .p2{transform:translate(0,50px)}
+.zipbox.open .p3{transform:translate(130px,-40px)}
+.zipbox .hint{position:absolute;bottom:12px;left:0;right:0;text-align:center;font-size:13px;color:var(--ink-3)}
+.abs-col{display:grid;gap:12px}
+.abs{border:1.5px solid var(--line);border-radius:14px;padding:14px 16px;transition:.4s}
+.abs h4{margin:0 0 4px;font-size:15px}
+.abs p{margin:0;color:var(--ink-2);font-size:15px}
+.abs ul{margin:6px 0 0;padding-left:18px;font-size:15px;color:var(--ink-2)}
+.abs.lit{border-color:var(--ink);background:var(--surface-2)}
+.abs.dim{opacity:.45}
+
+/* ---------- 02 dims ---------- */
+.dims{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.dim{border-radius:16px;padding:18px;border-top:6px solid}
+.dim.L{background:var(--L-soft);border-color:var(--L)}
+.dim.C{background:var(--C-soft);border-color:var(--C)}
+.dim.O{background:var(--O-soft);border-color:var(--O)}
+.dim h3{margin:0;font-family:var(--serif);font-size:22px}
+.dim .ess{font-weight:700;margin:6px 0 10px;font-size:15px}
+.dim .row{font-size:13px;color:var(--ink-3);margin-top:10px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.chips span{font-size:13px;background:var(--surface);border-radius:999px;padding:2px 10px}
+.game{display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center}
+.gcard{font-family:var(--serif);font-weight:900;font-size:30px;padding:26px;border-radius:16px;background:var(--surface-2);text-align:center;min-height:110px;display:flex;align-items:center;justify-content:center;transition:transform .25s}
+.gcard.shake{animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.gbtns{display:grid;gap:8px}
+.gbtns button{border:none;border-radius:12px;padding:10px 20px;font-weight:700;color:#fff;font-size:15px;min-width:150px}
+.gbtns .bL{background:var(--L)}.gbtns .bC{background:var(--C)}.gbtns .bO{background:var(--O)}
+.gfb{grid-column:1/-1;min-height:3.2em;font-size:15px;color:var(--ink-2)}
+.gfb b.ok{color:var(--good)} .gfb b.no{color:var(--bad)}
+.gbar{grid-column:1/-1;display:flex;justify-content:space-between;font-size:13px;color:var(--ink-3)}
+
+/* ---------- 03 visibility ---------- */
+.vis-ctrl{display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center;margin-bottom:10px}
+.vis-ctrl label{font-size:14px;font-weight:700}
+.readout{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
+.ro{background:var(--surface-2);border-radius:12px;padding:12px 14px}
+.ro small{display:block;color:var(--ink-3);font-size:13px}
+.ro b{font-size:26px;font-family:var(--serif)}
+.layers{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+.layer{border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;text-align:left;background:none;font-size:14px;line-height:1.5}
+.layer b{display:block;font-size:15px}
+.layer.on{border-color:var(--O);background:var(--O-soft)}
+.obs{transition:opacity .5s,transform .5s;transform-box:fill-box;transform-origin:center}
+.obs.hide{opacity:0;transform:scale(.4)}
+.obs.fade{opacity:.18}
+.obs.hl .shape{stroke:var(--ink);stroke-width:3}
+
+/* ---------- 04 anatomy ---------- */
+.seg{display:inline-flex;background:var(--surface-2);border-radius:999px;padding:4px;gap:4px;margin-bottom:12px;flex-wrap:wrap}
+.seg button{border:none;background:none;padding:8px 16px;border-radius:999px;font-weight:700;font-size:14px;color:var(--ink-2)}
+.seg button.on{background:var(--ink);color:var(--bg)}
+#anat circle{transition:fill .8s}
+#anat.mA circle{fill:var(--O)} #anat.mB circle{fill:var(--L)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:10px}
+.stat{background:var(--surface-2);border-radius:12px;padding:12px 14px}
+.stat small{color:var(--ink-3);font-size:13px;display:block}
+.stat b{font-family:var(--serif);font-size:22px}
+.meter{height:10px;border-radius:10px;background:var(--line);margin-top:8px;overflow:hidden}
+.meter i{display:block;height:100%;background:var(--O);transition:width .8s}
+.quote{font-family:var(--serif);font-size:18px;font-weight:600;margin:14px 0 0;padding:14px 18px;border-radius:12px;background:var(--surface-2)}
+
+/* ---------- 05 matrix ---------- */
+.mx{display:grid;grid-template-columns:1.2fr 1fr;gap:24px;align-items:start}
+.grid{display:grid;grid-template-columns:70px repeat(3,1fr);gap:6px}
+.grid .h{font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;text-align:center;padding:6px 2px;border-radius:8px}
+.grid .h.L{color:var(--L)}.grid .h.C{color:var(--C)}.grid .h.O{color:var(--O)}
+.grid .corner{font-size:12px;color:var(--ink-3);font-weight:500}
+.cell{aspect-ratio:1.25;border:1.5px solid var(--line);border-radius:12px;background:var(--surface);font-size:13px;font-weight:700;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:4px;transition:.2s}
+.cell .ar{font-size:18px}
+.cell.diag{background:var(--surface-2);color:var(--ink-3)}
+.cell.orig{border-color:var(--ink)}
+.cell.add{border-style:dashed}
+.cell.sel{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.cell:hover{transform:translateY(-2px)}
+.mx-legend{font-size:13px;color:var(--ink-3);margin-top:10px;display:flex;gap:16px;flex-wrap:wrap}
+.mx-legend i{display:inline-block;width:14px;height:10px;border:1.5px solid var(--ink);border-radius:3px;margin-right:4px;vertical-align:0}
+.mx-legend i.d{border:1.5px dashed var(--ink-3)}
+.detail{background:var(--surface-2);border-radius:16px;padding:20px;min-height:260px}
+.flow{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.pill{padding:4px 12px;border-radius:999px;color:#fff;font-weight:700;font-size:14px}
+.pill.L{background:var(--L)}.pill.C{background:var(--C)}.pill.O{background:var(--O)}
+.detail h4{font-family:var(--serif);font-size:20px;margin:0 0 8px}
+.detail p{margin:0 0 8px;color:var(--ink-2);font-size:15px}
+.detail .ex{font-size:14px;background:var(--surface);border-radius:10px;padding:10px 12px;margin-top:10px}
+
+/* ---------- 06 chain + lab ---------- */
+.oldq{font-family:var(--serif);font-size:20px;color:var(--ink-3);text-decoration:line-through;text-decoration-thickness:2px;margin:0 0 14px}
+.chain{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;counter-reset:q}
+.q{position:relative;border-radius:14px;padding:14px;background:var(--surface-2);font-weight:700;font-size:15px;line-height:1.45;counter-increment:q}
+.q::before{content:counter(q);display:inline-flex;width:22px;height:22px;border-radius:50%;background:var(--ink);color:var(--bg);align-items:center;justify-content:center;font-size:12px;margin-bottom:6px}
+.q:not(:last-child)::after{content:"";position:absolute;right:-9px;top:50%;width:8px;height:8px;border-top:2px solid var(--ink-3);border-right:2px solid var(--ink-3);transform:translateY(-50%) rotate(45deg)}
+.lab{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+.presets{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+.presets button{border:1.5px solid var(--line);background:none;border-radius:999px;padding:4px 12px;font-size:13px;font-weight:500}
+.presets button.on{border-color:var(--ink);background:var(--ink);color:var(--bg)}
+.sl-group{margin-bottom:14px}
+.sl-group h5{margin:0 0 6px;font-size:14px}
+.sl{display:grid;grid-template-columns:72px 1fr 28px;gap:10px;align-items:center;font-size:14px}
+.sl b{text-align:right;font-family:var(--serif)}
+.sl.L input{accent-color:var(--L)}.sl.C input{accent-color:var(--C)}.sl.O input{accent-color:var(--O)}
+.bars{display:grid;gap:6px;margin:6px 0 12px}
+.bar{display:grid;grid-template-columns:72px 1fr 40px;gap:10px;align-items:center;font-size:13px}
+.bar .track{height:12px;background:var(--surface-2);border-radius:12px;overflow:hidden}
+.bar .fill{height:100%;border-radius:12px;transition:width .3s}
+.total{display:flex;justify-content:space-between;align-items:baseline;border-top:1px solid var(--line);padding-top:10px}
+.total b{font-family:var(--serif);font-size:30px}
+.verdict{background:var(--surface-2);border-radius:12px;padding:12px 14px;font-size:15px;margin:12px 0}
+.lab-btns{display:flex;gap:8px;flex-wrap:wrap}
+
+/* ---------- 07 compare ---------- */
+.cmp-top{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px}
+.cmp-top .box{border-radius:14px;padding:16px;background:var(--surface-2);text-align:center}
+.cmp-top .box h4{margin:6px 0 2px;font-size:16px}
+.cmp-top .box p{margin:0;font-size:14px;color:var(--ink-2)}
+.case{border-top:1px solid var(--line);padding:16px 0 4px}
+.case-h{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.case-h h4{margin:0;font-size:16px}
+.case .say{font-family:var(--serif);font-size:19px;font-weight:600;margin:10px 0 0;padding:12px 16px;border-radius:12px;transition:background .3s}
+.case .say.bad{background:var(--surface-2);color:var(--ink-3);text-decoration:line-through;text-decoration-color:var(--bad)}
+.case .say.good{background:var(--L-soft)}
+
+/* ---------- 08 threshold ---------- */
+.th-ctrl{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:12px}
+.th-ctrl label{font-size:14px;font-weight:700;display:flex;justify-content:space-between}
+.formula{font-family:var(--serif);font-size:20px;text-align:center;padding:18px;border-radius:14px;background:var(--surface-2);margin-bottom:18px;line-height:1.6}
+.formula small{display:block;font-family:var(--sans);font-size:13px;color:var(--ink-3)}
+
+/* ---------- 09 note ---------- */
+.note{background:var(--surface);border-radius:6px 24px 24px 6px;border-left:6px solid var(--ink);padding:28px 32px;box-shadow:var(--shadow);margin-left:84px}
+.note h3{font-family:var(--serif);font-size:28px;margin:0 0 12px}
+.note p{margin:0 0 12px;font-size:17px}
+.note .last{font-family:var(--serif);font-weight:900;font-size:22px;margin-top:18px}
+.note-foot{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:18px;padding-top:16px;border-top:1px solid var(--line);font-size:14px;color:var(--ink-3)}
+footer{padding:80px 0 60px;text-align:center}
+footer p{font-family:var(--serif);font-size:clamp(20px,3vw,28px);font-weight:900;max-width:22em;margin:0 auto;line-height:1.5}
+
+@media (max-width:860px){
+  .wrap{padding:0 64px 0 18px}
+  .hero{grid-template-columns:1fr;min-height:auto;padding-top:48px}
+  .stage,.takes,.note{margin-left:0}
+  .sec-head{grid-template-columns:1fr}
+  .idx{grid-row:auto;font-size:28px}
+  .unzip,.mx,.lab,.th-ctrl,.cmp-top{grid-template-columns:1fr}
+  .dims,.chain,.readout,.layers,.stats{grid-template-columns:1fr}
+  .q:not(:last-child)::after{display:none}
+  .game{grid-template-columns:1fr}
+  .gbtns{grid-template-columns:repeat(3,1fr)}
+  .gbtns button{min-width:0;padding:10px 6px}
+  .stage{padding:18px}
+  .dock{right:8px;padding:8px 4px}
+  .dock a{width:32px;height:30px}
+  .dock a .lbl{display:none}
+}
+@media (prefers-reduced-motion:reduce){
+  *{transition:none!important;animation:none!important}
+  html{scroll-behavior:auto}
+}
+</style>
+</head>
+<body>
+
+<nav class="dock" aria-label="章节导航">
+  <a href="#s0" data-s="s0"><span>起</span><span class="lbl">困难不是一个东西</span></a>
+  <a href="#s1" data-s="s1"><span>1</span><span class="lbl">过度压缩的词</span></a>
+  <a href="#s2" data-s="s2"><span>2</span><span class="lbl">三个维度</span></a>
+  <a href="#s3" data-s="s3"><span>3</span><span class="lbl">障碍的三层</span></a>
+  <a href="#s4" data-s="s4"><span>4</span><span class="lbl">困难转换原则</span></a>
+  <a href="#s5" data-s="s5"><span>5</span><span class="lbl">六条转换路径</span></a>
+  <a href="#s6" data-s="s6"><span>6</span><span class="lbl">决策框架与实验台</span></a>
+  <a href="#s7" data-s="s7"><span>7</span><span class="lbl">不是扬长避短</span></a>
+  <a href="#s8" data-s="s8"><span>8</span><span class="lbl">切到阈值以下</span></a>
+  <a href="#s9" data-s="s9"><span>✓</span><span class="lbl">带走一条认知</span></a>
+  <div class="prog"><i id="prog"></i></div>
+  <button class="theme" id="themeBtn" aria-label="切换明暗">◐</button>
+</nav>
+
+<main class="wrap">
+
+<!-- ================= HERO ================= -->
+<header class="hero" id="s0">
+  <div>
+    <h1>困难<br>不是一个东西</h1>
+    <p class="lede">“困难”是一个被过度压缩的词。把它拆开，它就不再是压在头上的黑盒子，而是一个可以拆、可以搬、可以重新分配重量的结构。</p>
+    <p class="motto">目标可以不变，困难的形状可以改变。</p>
+    <div class="hero-steps"><span>拆开：三个维度</span><span>识别：哪个是短板</span><span>转换：搬到强项上</span></div>
+  </div>
+  <div class="shape-card">
+    <svg id="heroTri" viewBox="0 0 320 290" width="320" height="290" aria-label="困难形状示意"></svg>
+    <p class="shape-cap" id="heroCap"></p>
+    <button class="btn" id="heroBtn">改变困难的形状</button>
+  </div>
+</header>
+
+<!-- ================= 01 ================= -->
+<section class="sec" id="s1">
+  <div class="sec-head">
+    <div class="idx">01</div>
+    <h2 class="claim">“困难”只告诉你不好办，不告诉你怎么办</h2>
+    <p class="sub">一句“这件事很难”，里面可能混着完全不同性质的问题：要坚持很久、不知道怎么做、或者什么都知道就是迈不出那一步。</p>
+  </div>
+  <div class="stage">
+    <p class="stage-t">点开这个黑盒子</p>
+    <div class="unzip">
+      <div class="zipbox" id="zip" role="button" tabindex="0" aria-label="展开困难">
+        <div class="blob">困难</div>
+        <div class="part p1">长期积累<small>要坚持很久</small></div>
+        <div class="part p2">认知建设<small>不知道怎么做</small></div>
+        <div class="part p3">眼前障碍<small>迈不出那一步</small></div>
+        <div class="hint" id="zipHint">点击展开</div>
+      </div>
+      <div class="abs-col">
+        <div class="abs lit" id="absA"><h4>描述性抽象</h4><p>只能告诉你：现在不好办。</p></div>
+        <div class="abs dim" id="absB"><h4>可操作抽象</h4>
+          <ul><li>这是长期性、认知性，还是眼前障碍性困难？</li><li>哪一种占主导？</li><li>哪一种恰好是我的弱项？</li><li>能不能转移？</li></ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="takes">
+    <div class="take">用一个新的抽象，把原来过度浓缩的抽象重新展开。</div>
+  </div>
+</section>
+
+<!-- ================= 02 ================= -->
+<section class="sec" id="s2">
+  <div class="sec-head">
+    <div class="idx">02</div>
+    <h2 class="claim">困难有三个基本方向</h2>
+    <p class="sub">每个方向要求的能力完全不同。认错方向，就会用错力气。</p>
+  </div>
+  <div class="stage">
+    <div class="dims">
+      <div class="dim L"><h3 class="tL">长期性困难</h3><div class="ess">需要时间累积，单次努力无法解决</div>
+        <div class="row">典型表现</div><div class="chips"><span>背几百个结构</span><span>减脂</span><span>学语言</span><span>科研积累</span><span>长期做内容</span></div>
+        <div class="row">真正要求的能力</div><div class="chips"><span>持续</span><span>重复</span><span>习惯</span><span>复利</span></div></div>
+      <div class="dim C"><h3 class="tC">认知性困难</h3><div class="ess">不知道什么是对的，不知道下一步在哪</div>
+        <div class="row">典型表现</div><div class="chips"><span>新领域</span><span>复杂项目</span><span>人生选择</span><span>科研</span><span>产品设计</span></div>
+        <div class="row">真正要求的能力</div><div class="chips"><span>学习</span><span>判断</span><span>试错</span><span>反馈</span><span>建立模型</span></div></div>
+      <div class="dim O"><h3 class="tO">眼前障碍性困难</h3><div class="ess">道路可能已知，但执行那一下很难</div>
+        <div class="row">典型表现</div><div class="chips"><span>开始背解剖</span><span>第一次联系别人</span><span>提交作品</span><span>面对失败</span><span>开始一个大任务</span></div>
+        <div class="row">真正要求的能力</div><div class="chips"><span>启动</span><span>行动</span><span>承受不适</span><span>面对障碍</span></div></div>
+    </div>
+  </div>
+  <div class="stage">
+    <p class="stage-t">分拣练习：这件事主要难在哪？</p>
+    <div class="game">
+      <div class="gcard" id="gCard">—</div>
+      <div class="gbtns">
+        <button class="bL" data-a="L">长期积累</button>
+        <button class="bC" data-a="C">认知建设</button>
+        <button class="bO" data-a="O">眼前障碍</button>
+      </div>
+      <div class="gfb" id="gFb">选一个方向。现实任务往往是混合的，这里只判断主导维度。</div>
+      <div class="gbar"><span id="gProg">第 1 题</span><span id="gScore">得分 0</span></div>
+    </div>
+  </div>
+  <div class="takes">
+    <div class="take">不是“能不能做到”，而是“难在哪个方向”。</div>
+  </div>
+</section>
+
+<!-- ================= 03 ================= -->
+<section class="sec" id="s3">
+  <div class="sec-head">
+    <div class="idx">03</div>
+    <h2 class="claim">眼前障碍有三层，有的你还看不见</h2>
+    <p class="sub">成功并没有突然变难。是随着经历增加，原本不可见的困难逐渐变得可见。</p>
+  </div>
+  <div class="stage">
+    <div class="vis-ctrl">
+      <div><label for="expR">拖动你的经历</label><input type="range" id="expR" min="0" max="100" value="0"></div>
+      <button class="btn ghost" id="lookBtn">直视那些绕过去的</button>
+    </div>
+    <div class="scroll-x"><svg id="road" viewBox="0 0 800 220" style="min-width:640px;width:100%" aria-label="道路上的障碍"></svg></div>
+    <div class="readout">
+      <div class="ro"><small>真实存在的障碍</small><b>11</b></div>
+      <div class="ro"><small>你看见并正视的</small><b id="roSeen">0</b></div>
+      <div class="ro"><small>“成功”在你眼里</small><b id="roFeel">很容易</b></div>
+    </div>
+    <div class="layers">
+      <button class="layer" data-l="k"><b>① 已经知道的</b>知道怕什么、卡在哪，但不愿意碰</button>
+      <button class="layer" data-l="h"><b>② 隐约知道、选择视而不见的</b>大概知道存在，一直绕过去</button>
+      <button class="layer" data-l="u"><b>③ 尚未意识到的</b>还没进入认知范围，所以觉得“应该没那么难”</button>
+    </div>
+  </div>
+  <div class="takes">
+    <div class="take">觉得越来越难，往往是一种认知增长。</div>
+    <div class="take soft">第②层是最值得先处理的：它已经被看见，只差被承认。<span class="tag-add">补充</span></div>
+  </div>
+</section>
+
+<!-- ================= 04 ================= -->
+<section class="sec" id="s4">
+  <div class="sec-head">
+    <div class="idx">04</div>
+    <h2 class="claim">困难可以转换形态</h2>
+    <p class="sub">困难转换原则：当一种困难恰好落在短板上，就重新设计任务，把它转移到相对擅长的维度。</p>
+  </div>
+  <div class="stage">
+    <p class="stage-t">解剖学运动系统：同样 300 个结构</p>
+    <div class="seg" role="tablist">
+      <button class="on" data-m="A">今晚坐下来狠狠干完</button>
+      <button data-m="B">每次一个局部，持续三周</button>
+    </div>
+    <div class="scroll-x"><svg id="anat" class="mA" viewBox="0 0 800 270" style="min-width:600px;width:100%" aria-label="解剖学任务的两种形状"></svg></div>
+    <div class="stats">
+      <div class="stat"><small>知识总量</small><b>300 个结构</b><div style="font-size:13px;color:var(--ink-3)">没有消失，一个都没少</div></div>
+      <div class="stat"><small>单次启动阻力</small><b id="stStart">巨大</b><div class="meter"><i id="stMeter" style="width:100%"></i></div></div>
+      <div class="stat"><small>主导困难</small><b id="stDom" class="tO">眼前障碍</b><div style="font-size:13px;color:var(--ink-3)" id="stDomNote">正压在你的短板上</div></div>
+    </div>
+    <p class="quote">大量的启动困难，被转换成了长期积累困难。而长期，恰好是你历史上相对更擅长的东西。</p>
+  </div>
+  <div class="takes">
+    <div class="take">不是降低目标，而是改变困难的承载方式。</div>
+  </div>
+</section>
+
+<!-- ================= 05 ================= -->
+<section class="sec" id="s5">
+  <div class="sec-head">
+    <div class="idx">05</div>
+    <h2 class="claim">三个维度之间，有六条转换路径</h2>
+    <p class="sub">行是困难原本的位置，列是你想把它搬去的位置。点任意格子看怎么搬。</p>
+  </div>
+  <div class="stage">
+    <div class="mx">
+      <div>
+        <div class="grid" id="mxGrid"></div>
+        <div class="mx-legend"><span><i></i>原对话中的路径</span><span><i class="d"></i>补充的路径</span></div>
+      </div>
+      <div class="detail" id="mxDetail"></div>
+    </div>
+  </div>
+  <div class="takes">
+    <div class="take">不只是解决困难，而是重新设计困难。</div>
+  </div>
+</section>
+
+<!-- ================= 06 ================= -->
+<section class="sec" id="s6">
+  <div class="sec-head">
+    <div class="idx">06</div>
+    <h2 class="claim">先问“难在哪”，再问“能不能搬”</h2>
+    <p class="sub">遇到“这件事好难”，第一反应换一个问题。</p>
+  </div>
+  <div class="stage">
+    <p class="oldq">我能不能克服它？</p>
+    <div class="chain">
+      <div class="q">它到底难在哪个维度？</div>
+      <div class="q">哪一种占主导？</div>
+      <div class="q">这个维度是不是我的弱项？</div>
+      <div class="q">能不能转换到另一个维度？</div>
+    </div>
+  </div>
+  <div class="stage">
+    <p class="stage-t">困难实验台：调出一件事的形状，再试着搬动它</p>
+    <div class="lab">
+      <div>
+        <div class="presets" id="presets"></div>
+        <div class="sl-group"><h5>这件事在各维度上的困难量</h5>
+          <div class="sl L"><span>长期积累</span><input type="range" min="0" max="10" data-k="tL"><b></b></div>
+          <div class="sl C"><span>认知建设</span><input type="range" min="0" max="10" data-k="tC"><b></b></div>
+          <div class="sl O"><span>眼前障碍</span><input type="range" min="0" max="10" data-k="tO"><b></b></div>
+        </div>
+        <div class="sl-group"><h5>你在各维度上的能力（默认：长期强、启动弱，可调）</h5>
+          <div class="sl L"><span>长期积累</span><input type="range" min="0" max="10" data-k="aL"><b></b></div>
+          <div class="sl C"><span>认知建设</span><input type="range" min="0" max="10" data-k="aC"><b></b></div>
+          <div class="sl O"><span>眼前障碍</span><input type="range" min="0" max="10" data-k="aO"><b></b></div>
+        </div>
+      </div>
+      <div>
+        <svg id="labTri" viewBox="0 0 300 250" width="100%" style="max-width:320px;display:block;margin:0 auto" aria-label="主观难度形状"></svg>
+        <div class="bars" id="labBars"></div>
+        <div class="total"><span style="font-size:14px;color:var(--ink-3)">主观难度 = Σ 困难量 × 短板系数</span><b id="labTotal">0</b></div>
+        <div class="verdict" id="labVerdict"></div>
+        <div class="lab-btns"><button class="btn" id="convBtn">转换一次</button><button class="btn ghost" id="resetBtn">还原</button></div>
+      </div>
+    </div>
+  </div>
+  <div class="takes">
+    <div class="take">困难的重量是客观的，压在哪根骨头上，是可以设计的。</div>
+    <div class="take soft">实验台里的数字是示意，用来感受“同一件事、不同形状”，不是精确测量。<span class="tag-add">补充</span></div>
+  </div>
+</section>
+
+<!-- ================= 07 ================= -->
+<section class="sec" id="s7">
+  <div class="sec-head">
+    <div class="idx">07</div>
+    <h2 class="claim">这不是扬长避短：目标不逃避</h2>
+    <p class="sub">扬长避短容易被理解成“不擅长就不做”。困难转换说的是：目标不变，改变完成目标所依赖的能力结构。</p>
+  </div>
+  <div class="stage">
+    <div class="cmp-top">
+      <div class="box">
+        <svg viewBox="0 0 200 70" width="200" height="70"><circle cx="30" cy="35" r="10" fill="var(--ink)"/><line x1="44" y1="35" x2="120" y2="35" stroke="var(--ink-3)" stroke-width="3" stroke-dasharray="5 5"/><circle cx="165" cy="35" r="20" fill="none" stroke="var(--ink-3)" stroke-width="3"/><line x1="150" y1="20" x2="180" y2="50" stroke="var(--bad)" stroke-width="4"/><line x1="180" y1="20" x2="150" y2="50" stroke="var(--bad)" stroke-width="4"/></svg>
+        <h4>误读的扬长避短</h4><p>换掉目标</p>
+      </div>
+      <div class="box">
+        <svg viewBox="0 0 200 70" width="200" height="70"><circle cx="30" cy="35" r="10" fill="var(--ink)"/><rect x="88" y="18" width="16" height="34" rx="3" fill="var(--O)"/><path d="M44 35 C70 35 70 64 96 64 C122 64 122 35 142 35" fill="none" stroke="var(--L)" stroke-width="4"/><circle cx="165" cy="35" r="20" fill="none" stroke="var(--L)" stroke-width="4"/><circle cx="165" cy="35" r="7" fill="var(--L)"/></svg>
+        <h4>困难转换</h4><p>目标不变，换一条自己走得动的路</p>
+      </div>
+    </div>
+    <div class="case" data-case="0">
+      <div class="case-h"><h4>解剖学：启动能力暂时是短板</h4><div class="seg"><button data-v="bad">误读</button><button class="on" data-v="good">本意</button></div></div>
+      <p class="say good"></p>
+    </div>
+    <div class="case" data-case="1">
+      <div class="case-h"><h4>社交：不擅长临场陌生社交</h4><div class="seg"><button data-v="bad">误读</button><button class="on" data-v="good">本意</button></div></div>
+      <p class="say good"></p>
+    </div>
+  </div>
+  <div class="takes">
+    <div class="take">把不擅长的东西变得少少的，把擅长的东西变得多多的。</div>
+    <div class="take soft">这一步让模型从“解释模型”推进成了“策略模型”。</div>
+  </div>
+</section>
+
+<!-- ================= 08 ================= -->
+<section class="sec" id="s8">
+  <div class="sec-head">
+    <div class="idx">08</div>
+    <h2 class="claim">转换不消灭困难，只把它压到阈值以下<span class="tag-add">补充</span></h2>
+    <p class="sub">切小以后，每一片仍然是一次启动。转换真正做的，是让每一次启动都小到跨得过去。</p>
+  </div>
+  <div class="stage">
+    <div class="formula">主观难度 ≈ 困难量 × 它所在维度的短板系数<small>总量基本守恒，变的是分布；所以同一个目标，主观难度可以急剧下降</small></div>
+    <div class="th-ctrl">
+      <div><label for="thN"><span>把 300 个结构切成几片</span><b id="thNv">1</b></label><input type="range" id="thN" min="1" max="40" value="1"></div>
+      <div><label for="thT"><span>此刻你跨得过去的最大启动</span><b id="thTv">30</b></label><input type="range" id="thT" min="8" max="120" value="30"></div>
+    </div>
+    <div class="scroll-x"><svg id="thSvg" viewBox="0 0 760 240" style="min-width:560px;width:100%" aria-label="切片与启动阈值"></svg></div>
+    <div class="readout">
+      <div class="ro"><small>每一片的启动量</small><b id="thEach">300</b></div>
+      <div class="ro"><small>需要重新触发的次数</small><b id="thCount">1</b></div>
+      <div class="ro"><small>状态</small><b id="thState">跨不过去</b></div>
+    </div>
+    <div class="verdict" id="thVerdict"></div>
+  </div>
+  <div class="takes">
+    <div class="take">切多细，看此刻的阈值；再碎，只是把更多重量搬去了“长期”。</div>
+    <div class="take soft">阈值不是固定值，状态差时会变低，所以切片的粒度跟着当下的自己调。</div>
+  </div>
+</section>
+
+<!-- ================= 09 ================= -->
+<section class="sec" id="s9">
+  <div class="sec-head">
+    <div class="idx">✓</div>
+    <h2 class="claim">记成一条短认知，而不是一套要维护的理论</h2>
+    <p class="sub">写进 Notion 时，就这么短，再放上解剖学的例子。</p>
+  </div>
+  <article class="note" id="noteText">
+    <h3>困难不是一个东西。</h3>
+    <p>困难至少可以拆成长期积累、认知建设和眼前障碍三个维度。</p>
+    <p>面对困难时，不只考虑“如何克服”，还要考虑“如何转换”。当某种困难恰好落在自己的短板上，可以重新设计路径，把更多难度转移到自己更擅长的维度。</p>
+    <p style="color:var(--ink-2)">例：解剖学运动系统。“今晚一口气干完”把难度全压在启动上；改成每次只背一个局部、持续三周、第二天再认、见到标本再强化，300 个结构一个没少，主导困难从眼前障碍变成了长期积累。</p>
+    <p class="last">目标可以不变，困难的形状可以改变。</p>
+    <div class="note-foot"><span>羽升的困难模型</span><button class="btn" id="copyBtn">复制这条认知</button></div>
+  </article>
+</section>
+
+<footer>
+  <p>不要总想着把自己变成一个什么困难都能正面硬吃的人；<br>先学会改变困难的形状。</p>
+</footer>
+</main>
+
+<script>
+(function(){
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const NS="http://www.w3.org/2000/svg";
+const el=(t,a={},p)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e};
+const NAME={L:"长期积累",C:"认知建设",O:"眼前障碍"};
+const COL={L:"var(--L)",C:"var(--C)",O:"var(--O)"};
+const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+function tween(dur,fn,done){
+  if(reduce){fn(1);done&&done();return}
+  const s=performance.now();
+  function f(n){const r=Math.min(1,(n-s)/dur);const p=r<.5?4*r*r*r:1-Math.pow(-2*r+2,3)/2;fn(p);if(r<1)requestAnimationFrame(f);else done&&done()}
+  requestAnimationFrame(f);
+}
+const lerp=(a,b,t)=>a+(b-a)*t;
+
+/* ---------- theme ---------- */
+$("#themeBtn").onclick=()=>{
+  const r=document.documentElement;
+  const dark=r.dataset.theme?r.dataset.theme==="dark":matchMedia("(prefers-color-scheme: dark)").matches;
+  r.dataset.theme=dark?"light":"dark";
+  
+};
+
+
+/* ---------- dock ---------- */
+const links=$$(".dock a");
+const io=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){links.forEach(a=>a.classList.toggle("on",a.dataset.s===e.target.id))}})},{rootMargin:"-45% 0px -50% 0px"});
+$$("#s0,.sec").forEach(s=>io.observe(s));
+addEventListener("scroll",()=>{const h=document.documentElement;$("#prog").style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+"%"},{passive:true});
+
+/* ---------- triangle helper ---------- */
+function triPts(cx,cy,R,max,v){ // v: {L,C,O}; L top, C bottom-left, O bottom-right
+  const ang={L:-90,C:150,O:30};
+  return ["L","O","C"].map(k=>{const a=ang[k]*Math.PI/180,r=R*Math.max(.04,v[k]/max);return[cx+r*Math.cos(a),cy+r*Math.sin(a)]});
+}
+function drawAxes(svg,cx,cy,R,labels){
+  const ang={L:-90,C:150,O:30};
+  [1,.66,.33].forEach(f=>{const p=["L","O","C"].map(k=>{const a=ang[k]*Math.PI/180;return (cx+R*f*Math.cos(a))+","+(cy+R*f*Math.sin(a))});el("polygon",{points:p.join(" "),fill:"none",stroke:"var(--line)","stroke-width":1},svg)});
+  for(const k of ["L","C","O"]){const a=ang[k]*Math.PI/180;el("line",{x1:cx,y1:cy,x2:cx+R*Math.cos(a),y2:cy+R*Math.sin(a),stroke:"var(--line)"},svg);
+    if(labels){const lx=cx+(R+18)*Math.cos(a),ly=cy+(R+18)*Math.sin(a);const t=el("text",{x:lx,y:ly+5,"text-anchor":k==="L"?"middle":(k==="C"?"end":"start"),"font-size":14,"font-weight":700,fill:COL[k]},svg);t.textContent=NAME[k]}}
+}
+
+/* ---------- hero ---------- */
+(function(){
+  const svg=$("#heroTri");const cx=160,cy=160,R=110;
+  drawAxes(svg,cx,cy,R,true);
+  const poly=el("polygon",{fill:"var(--O)","fill-opacity":.22,stroke:"var(--O)","stroke-width":3,"stroke-linejoin":"round"},svg);
+  const A={L:2.5,C:3,O:9.5},B={L:9.5,C:3.4,O:2.2};
+  let cur=A,state=0;
+  const set=v=>poly.setAttribute("points",triPts(cx,cy,R,10,v).map(p=>p.join(",")).join(" "));
+  const caps=["同一个目标。困难的重量<b>几乎全压在眼前障碍上</b>，也就是你的短板。","还是同一个目标。重量被<b>搬到了长期积累</b>，那是你更擅长的维度。"];
+  set(A);$("#heroCap").innerHTML=caps[0];
+  $("#heroBtn").onclick=()=>{
+    const from=cur,to=state?A:B;state=1-state;
+    tween(900,p=>{const v={L:lerp(from.L,to.L,p),C:lerp(from.C,to.C,p),O:lerp(from.O,to.O,p)};set(v);cur=v});
+    poly.setAttribute("fill",state?"var(--L)":"var(--O)");poly.setAttribute("stroke",state?"var(--L)":"var(--O)");
+    $("#heroCap").innerHTML=caps[state];$("#heroBtn").textContent=state?"变回原来的形状":"改变困难的形状";
+  };
+})();
+
+/* ---------- 01 unzip ---------- */
+(function(){
+  const z=$("#zip");
+  const tog=()=>{const o=z.classList.toggle("open");$("#absA").classList.toggle("lit",!o);$("#absA").classList.toggle("dim",o);$("#absB").classList.toggle("lit",o);$("#absB").classList.toggle("dim",!o);$("#zipHint").textContent=o?"点击收回":"点击展开"};
+  z.onclick=tog;z.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();tog()}};
+})();
+
+/* ---------- 02 game ---------- */
+(function(){
+  const items=[["背几百个结构","L"],["减脂","L"],["学一门语言","L"],["科研积累","L"],["长期做内容","L"],
+    ["进入一个新领域","C"],["复杂项目","C"],["人生选择","C"],["产品设计","C"],
+    ["开始背解剖","O","注意：“背几百个结构”是长期，“开始背”是眼前。同一件事，切法不同，困难的形状就不同，这正是第 04 节。"],
+    ["第一次联系别人","O"],["提交作品","O"],["面对失败","O"],["开始一个大任务","O"]];
+  let deck,i,score,locked;
+  const reset=()=>{deck=items.slice().sort(()=>Math.random()-.5);i=0;score=0;locked=false;show()};
+  const show=()=>{
+    if(i>=deck.length){$("#gCard").textContent=`${score} / ${deck.length}`;$("#gFb").innerHTML=`完成。<b class="ok">关键不是分对，而是养成先问“难在哪”的反射。</b> 再点任意按钮重来。`;$("#gProg").textContent="结束";return}
+    $("#gCard").textContent=deck[i][0];$("#gProg").textContent=`第 ${i+1} / ${deck.length} 题`;$("#gScore").textContent=`得分 ${score}`;
+  };
+  $$(".gbtns button").forEach(b=>b.onclick=()=>{
+    if(i>=deck.length){reset();$("#gFb").textContent="选一个方向。现实任务往往是混合的，这里只判断主导维度。";return}
+    if(locked)return;locked=true;
+    const [name,ans,note]=deck[i];const ok=b.dataset.a===ans;
+    if(ok)score++;else{const c=$("#gCard");c.classList.remove("shake");void c.offsetWidth;c.classList.add("shake")}
+    $("#gFb").innerHTML=(ok?`<b class="ok">对。</b>`:`<b class="no">主导的其实是${NAME[ans]}。</b>`)+" "+(note||`「${name}」主要要求的是：${ans==="L"?"持续、重复、习惯、复利":ans==="C"?"学习、判断、试错、反馈、建立模型":"启动、行动、承受不适、面对障碍"}。`);
+    $("#gScore").textContent=`得分 ${score}`;
+    setTimeout(()=>{i++;locked=false;show()},note?2600:1300);
+  });
+  reset();
+})();
+
+/* ---------- 03 visibility ---------- */
+(function(){
+  const svg=$("#road");
+  const O=[
+    [110,"k",0,"内容太多"],[170,"u",15,"方法本身不对"],[230,"h",0,"不知道怎么复习"],[290,"k",0,"怕开头就卡住"],
+    [350,"u",35,"目标其实很模糊"],[410,"h",0,"怕做得差被看见"],[470,"u",52,"反馈周期太长"],[530,"k",0,"时间不够"],
+    [590,"u",70,"缺一个前置能力"],[650,"h",0,"一直没开口问人"],[710,"u",88,"环境在拖后腿"]];
+  el("line",{x1:30,y1:170,x2:760,y2:170,stroke:"var(--line)","stroke-width":14,"stroke-linecap":"round"},svg);
+  el("line",{x1:30,y1:170,x2:760,y2:170,stroke:"var(--surface)","stroke-width":2,"stroke-dasharray":"10 10"},svg);
+  el("circle",{cx:30,cy:170,r:10,fill:"var(--ink)"},svg);
+  const ft=el("text",{x:30,y:205,"text-anchor":"middle","font-size":13,fill:"var(--ink-3)"},svg);ft.textContent="你";
+  el("line",{x1:770,y1:170,x2:770,y2:120,stroke:"var(--ink)","stroke-width":3},svg);
+  el("polygon",{points:"770,120 796,130 770,140",fill:"var(--L)"},svg);
+  const gt=el("text",{x:770,y:205,"text-anchor":"middle","font-size":13,fill:"var(--ink-3)"},svg);gt.textContent="目标";
+  let defs=el("defs",{},svg);
+  const pat=el("pattern",{id:"hatch",width:6,height:6,patternUnits:"userSpaceOnUse",patternTransform:"rotate(45)"},defs);
+  el("rect",{width:6,height:6,fill:"var(--O-soft)"},pat);el("line",{x1:0,y1:0,x2:0,y2:6,stroke:"var(--O)","stroke-width":3},pat);
+  const nodes=O.map((o,n)=>{
+    const [x,l,th,lab]=o;const g=el("g",{class:"obs"},svg);
+    const ly=n%2?78:112;
+    el("line",{x1:x,y1:ly+6,x2:x,y2:150,stroke:"var(--ink-3)","stroke-width":1},g);
+    if(l==="k")el("rect",{class:"shape",x:x-13,y:150,width:26,height:26,rx:4,fill:"var(--O)"},g);
+    else if(l==="h")el("rect",{class:"shape",x:x-13,y:150,width:26,height:26,rx:4,fill:"url(#hatch)",stroke:"var(--O)","stroke-width":2,"stroke-dasharray":"4 3"},g);
+    else el("polygon",{class:"shape",points:`${x},146 ${x+15},178 ${x-15},178`,fill:"var(--surface)",stroke:"var(--O)","stroke-width":2.5},g);
+    const t=el("text",{x,y:ly,"text-anchor":"middle","font-size":13,"font-weight":500,fill:"var(--ink)"},g);t.textContent=lab;
+    return {g,l,th};
+  });
+  let look=false,hl=null;
+  const upd=()=>{
+    const e=+$("#expR").value;let seen=0;
+    nodes.forEach(n=>{
+      const vis=n.l!=="u"||e>=n.th;n.g.classList.toggle("hide",!vis);
+      const fade=n.l==="h"&&!look;n.g.classList.toggle("fade",vis&&fade);
+      n.g.classList.toggle("hl",hl===n.l);
+      if(vis&&!fade)seen++;
+    });
+    $("#roSeen").textContent=seen;
+    $("#roFeel").textContent=seen<=3?"很容易":seen<=6?"有点难":seen<=9?"挺难的":"真的难";
+  };
+  $("#expR").oninput=upd;
+  $("#lookBtn").onclick=()=>{look=!look;$("#lookBtn").textContent=look?"继续绕过去":"直视那些绕过去的";upd()};
+  $$(".layer").forEach(b=>b.onclick=()=>{hl=hl===b.dataset.l?null:b.dataset.l;$$(".layer").forEach(x=>x.classList.toggle("on",x.dataset.l===hl));if(hl==="h"&&!look){look=true;$("#lookBtn").textContent="继续绕过去"}if(hl==="u"&&+$("#expR").value<100){$("#expR").value=100}upd()});
+  upd();
+})();
+
+/* ---------- 04 anatomy ---------- */
+(function(){
+  const svg=$("#anat");const N=300,D=21;
+  const posA=i=>[128+(i%20)*11,40+Math.floor(i/20)*12.5];
+  const per=N/D;
+  const posB=i=>{const d=Math.min(D-1,Math.floor(i/per));const k=i-Math.round(d*per);return[72+d*33+(k%2)*10,196-Math.floor(k/2)*12]};
+  // mode A decor
+  const gA=el("g",{},svg);
+  el("rect",{x:70,y:34,width:30,height:186,rx:6,fill:"var(--O)"},gA);
+  const wt=el("text",{x:85,y:246,"text-anchor":"middle","font-size":13,"font-weight":700,fill:"var(--O)"},gA);wt.textContent="一次巨大的启动";
+  const bt=el("text",{x:232,y:246,"text-anchor":"middle","font-size":13,fill:"var(--ink-3)"},gA);bt.textContent="今晚：300 个结构，一口气";
+  const at=el("text",{x:560,y:120,"text-anchor":"middle","font-size":16,"font-weight":700,fill:"var(--ink-3)"},gA);at.textContent="想到要开始，就已经不想动了";
+  // mode B decor
+  const gB=el("g",{opacity:0},svg);
+  for(let d=0;d<D;d++){el("rect",{x:72+d*33-2,y:214,width:14,height:8,rx:2,fill:"var(--O)"},gB);}
+  let path="M72 110";for(let d=0;d<D;d++){path+=` L${77+d*33} ${110-(d+1)/D*80}`}
+  el("path",{d:path,fill:"none",stroke:"var(--L)","stroke-width":3,"stroke-linecap":"round"},gB);
+  const ct=el("text",{x:80,y:22,"font-size":13,"font-weight":700,fill:"var(--L)"},gB);ct.textContent="累积曲线：第二天再认，见到标本再强化";
+  const d1=el("text",{x:77,y:246,"text-anchor":"middle","font-size":12,fill:"var(--ink-3)"},gB);d1.textContent="第 1 天";
+  const d2=el("text",{x:77+20*33,y:246,"text-anchor":"middle","font-size":12,fill:"var(--ink-3)"},gB);d2.textContent="第 21 天";
+  const st=el("text",{x:400,y:246,"text-anchor":"middle","font-size":12,"font-weight":700,fill:"var(--O)"},gB);st.textContent="每天一个很小的启动";
+  const dots=[];for(let i=0;i<N;i++){const [x,y]=posA(i);dots.push(el("circle",{cx:x,cy:y,r:3.8},svg))}
+  let mode="A";
+  const go=m=>{
+    if(m===mode)return;mode=m;svg.setAttribute("class","m"+m);
+    const from=dots.map(c=>[+c.getAttribute("cx"),+c.getAttribute("cy")]);
+    const to=dots.map((_,i)=>m==="A"?posA(i):posB(i));
+    tween(1100,p=>{
+      dots.forEach((c,i)=>{const q=Math.min(1,Math.max(0,p*1.4-(i/N)*.4));c.setAttribute("cx",lerp(from[i][0],to[i][0],q));c.setAttribute("cy",lerp(from[i][1],to[i][1],q))});
+      gA.setAttribute("opacity",m==="A"?p:1-p);gB.setAttribute("opacity",m==="B"?p:1-p);
+    });
+    $("#stStart").textContent=m==="A"?"巨大":"很小";
+    $("#stMeter").style.width=m==="A"?"100%":"8%";
+    $("#stDom").textContent=m==="A"?"眼前障碍":"长期积累";
+    $("#stDom").className=m==="A"?"tO":"tL";
+    $("#stDomNote").textContent=m==="A"?"正压在你的短板上":"落在你相对擅长的维度";
+    $$("#s4 .seg button").forEach(b=>b.classList.toggle("on",b.dataset.m===m));
+  };
+  $$("#s4 .seg button").forEach(b=>b.onclick=()=>go(b.dataset.m));
+})();
+
+/* ---------- 05 matrix ---------- */
+const PATHS={
+  "L>L":{t:"原地处理长期困难",d:"不转换，直接靠持续、重复、习惯去扛。长期本来就是你相对擅长的维度，这常常就是最优解。",diag:1},
+  "C>C":{t:"原地处理认知困难",d:"不转换，直接学习、判断、建立模型。适合问题边界清楚、想一想就能想明白的时候。",diag:1},
+  "O>O":{t:"原地硬吃眼前障碍",d:"不转换，每次都正面制造一次巨大启动。当这恰好是短板时，它会把主观难度推到最高。",diag:1},
+  "O>L":{t:"把启动困难切小，交给时间",d:"把单次任务切得极小，再依靠时间累积。大量的启动困难，被转换成了长期积累困难。",ex:"解剖学：不是今晚一口气干完 300 个结构，而是每次只背一个局部、持续三周、第二天再认、见到标本再强化。另一例：不擅长临场陌生社交，就长期参加固定组织、重复见面，让陌生社交逐渐变成熟人关系。",orig:1},
+  "C>L":{t:"让认知从实践里长出来",d:"不要一直研究到完全想明白。每天做一个小实验，连续做两周，让认知在反复实践中慢慢长出来。",ex:"适合：新领域、复杂项目，想多久都想不清，但动手就能拿到反馈的事。",orig:1},
+  "L>O":{t:"不要求坚持，只设计今天这一次",d:"不要求“坚持半年”，只设计今天唯一一次明确行动，再通过环境和机制让明天重新触发。",ex:"适合：长期坚持太难的事。长期的重量被换成了一连串很小、很清楚的眼前动作。",orig:1},
+  "O>C":{t:"给障碍命名，把它看清楚",d:"很多启动阻力来自模糊的不适。把“迈不出去”拆开：到底怕什么、卡在哪一步？一旦看清，一部分眼前障碍就变成了可以分析的认知问题。",ex:"这也是第 03 节第②层的处理方式：先承认它在那里。",add:1},
+  "C>O":{t:"把“想不明白”换成一个具体动作",d:"与其继续空想，不如把认知困难换成一个明确的、今天就能做的动作：问一个具体的人、试一次、交一个粗糙版本，用外部反馈代替内部推演。",ex:"注意：如果眼前障碍正是你的短板，这条路要配合切小使用。",add:1},
+  "L>C":{t:"找到结构，减少要重复的量",d:"长期积累的量太大时，花一点认知成本找规律、搭框架，把大量孤立条目变成少数有规律的组合，需要重复的总量就会下降。",ex:"例：不把 300 个结构当 300 个孤立点，而是按区域、功能、起止关系组织，记忆负担随之变小。",add:1}
+};
+(function(){
+  const g=$("#mxGrid"),K=["L","C","O"];
+  const cor=document.createElement("div");cor.className="h corner";cor.textContent="从 ↓ 到 →";g.appendChild(cor);
+  K.forEach(k=>{const h=document.createElement("div");h.className="h "+k;h.textContent=NAME[k];g.appendChild(h)});
+  const show=(key,btn)=>{
+    $$(".cell").forEach(c=>c.classList.remove("sel"));btn.classList.add("sel");
+    const [a,b]=key.split(">"),p=PATHS[key];
+    $("#mxDetail").innerHTML=`<div class="flow"><span class="pill ${a}">${NAME[a]}</span><span style="font-size:20px">${a===b?"↻":"→"}</span><span class="pill ${b}">${NAME[b]}</span>${p.add?'<span class="tag-add">补充</span>':""}</div><h4>${p.t}</h4><p>${p.d}</p>${p.ex?`<div class="ex">${p.ex}</div>`:""}`;
+  };
+  K.forEach(a=>{
+    const h=document.createElement("div");h.className="h "+a;h.textContent=NAME[a];g.appendChild(h);
+    K.forEach(b=>{
+      const key=a+">"+b,p=PATHS[key];const c=document.createElement("button");
+      c.className="cell"+(p.diag?" diag":p.orig?" orig":" add");
+      c.innerHTML=a===b?`<span class="ar">↻</span>原地`:`<span class="ar" style="color:${COL[b]}">→</span>${NAME[b].slice(0,2)}`;
+      c.setAttribute("aria-label",`${NAME[a]}转到${NAME[b]}`);
+      c.onclick=()=>show(key,c);g.appendChild(c);
+      if(key==="O>L")setTimeout(()=>show(key,c));
+    });
+  });
+})();
+
+/* ---------- 06 lab ---------- */
+(function(){
+  const S={tL:2,tC:3,tO:9,aL:8,aC:6,aO:3};
+  const presets=[["解剖运动系统（今晚硬干）",{tL:2,tC:3,tO:9}],["做一个新产品",{tL:5,tC:9,tO:4}],["减脂半年",{tL:9,tC:3,tO:4}],["第一次联系陌生人",{tL:1,tC:2,tO:8}]];
+  const pw=$("#presets");
+  presets.forEach(([n,v],i)=>{const b=document.createElement("button");b.textContent=n;if(!i)b.classList.add("on");b.onclick=()=>{$$("#presets button").forEach(x=>x.classList.remove("on"));b.classList.add("on");animateTo({...S,...v})};pw.appendChild(b)});
+  const svg=$("#labTri"),cx=150,cy=140,R=96;
+  drawAxes(svg,cx,cy,R,true);
+  const objP=el("polygon",{fill:"none",stroke:"var(--ink-3)","stroke-width":1.5,"stroke-dasharray":"5 4"},svg);
+  const subP=el("polygon",{"fill-opacity":.25,"stroke-width":3,"stroke-linejoin":"round"},svg);
+  const lg=el("text",{x:150,y:246,"text-anchor":"middle","font-size":12,fill:"var(--ink-3)"},svg);lg.textContent="虚线：客观困难量　实心：你感受到的难度";
+  const bars=$("#labBars");
+  ["L","C","O"].forEach(k=>{bars.insertAdjacentHTML("beforeend",`<div class="bar"><span class="t${k}" style="font-weight:700">${NAME[k]}</span><div class="track"><div class="fill" id="bf${k}" style="background:${COL[k]}"></div></div><b id="bv${k}"></b></div>`)});
+  const inputs=$$("#s6 input[type=range]");
+  const load=s=>({L:s.tL*(11-s.aL)/10,C:s.tC*(11-s.aC)/10,O:s.tO*(11-s.aO)/10});
+  let startTotal=null;
+  const render=()=>{
+    inputs.forEach(inp=>{inp.value=Math.round(S[inp.dataset.k]*10)/10;inp.nextElementSibling.textContent=Math.round(S[inp.dataset.k])});
+    const ld=load(S);
+    objP.setAttribute("points",triPts(cx,cy,R,11,{L:S.tL,C:S.tC,O:S.tO}).map(p=>p.join(",")).join(" "));
+    subP.setAttribute("points",triPts(cx,cy,R,11,ld).map(p=>p.join(",")).join(" "));
+    const dom=["L","C","O"].sort((a,b)=>ld[b]-ld[a])[0];
+    subP.setAttribute("fill",COL[dom]);subP.setAttribute("stroke",COL[dom]);
+    ["L","C","O"].forEach(k=>{$("#bf"+k).style.width=(ld[k]/11*100)+"%";$("#bv"+k).textContent=ld[k].toFixed(1)});
+    const tot=ld.L+ld.C+ld.O;$("#labTotal").textContent=tot.toFixed(1);
+    const ab={L:S.aL,C:S.aC,O:S.aO};
+    const best=["L","C","O"].sort((a,b)=>ab[b]-ab[a])[0];
+    const canConv=dom!==best&&ab[dom]<ab[best]&&S["t"+dom]>0.5;
+    let v=`主导困难：<b style="color:${COL[dom]}">${NAME[dom]}</b>（你在这里的能力 ${Math.round(ab[dom])}/10）。`;
+    if(canConv&&ab[dom]<=5)v+=` 它恰好落在你的短板上，试试把一部分搬到<b style="color:${COL[best]}">${NAME[best]}</b>。`;
+    else if(canConv)v+=` 不算短板，正面处理也行；也可以搬一部分到<b style="color:${COL[best]}">${NAME[best]}</b>。`;
+    else v+=" 它落在你扛得住的维度，正面处理即可。";
+    if(startTotal!==null&&startTotal-tot>0.05){const obj0=window.__obj0,obj1=S.tL+S.tC+S.tO;v+=`<br><span style="color:var(--ink-3)">客观量 ${obj0.toFixed(1)} → ${obj1.toFixed(1)}（转换有少量成本），主观难度 ${startTotal.toFixed(1)} → ${tot.toFixed(1)}。</span>`}
+    $("#labVerdict").innerHTML=v;$("#convBtn").disabled=!canConv;
+    return {dom,best};
+  };
+  const animateTo=(T,keep)=>{
+    if(!keep){startTotal=null}
+    const F={...S};tween(600,p=>{for(const k in T)S[k]=lerp(F[k],T[k],p);render()});
+  };
+  inputs.forEach(inp=>inp.oninput=()=>{S[inp.dataset.k]=+inp.value;startTotal=null;render()});
+  $("#convBtn").onclick=()=>{
+    const {dom,best}=render();
+    if(startTotal===null){const l=load(S);startTotal=l.L+l.C+l.O;window.__obj0=S.tL+S.tC+S.tO}
+    const move=S["t"+dom]*0.6,T={};
+    T["t"+dom]=S["t"+dom]-move;T["t"+best]=Math.min(10,S["t"+best]+move*1.1);
+    animateTo(T,true);
+  };
+  $("#resetBtn").onclick=()=>{const on=$("#presets .on")||$("#presets button");on.click()};
+  render();
+})();
+
+/* ---------- 07 compare ---------- */
+(function(){
+  const T=[
+    {bad:"启动能力差，所以不学解剖。",good:"启动能力暂时是短板，所以不要每天制造一次巨大的启动，把它切成极小启动，让长期积累接管。"},
+    {bad:"不擅长社交，所以不去认识别人。",good:"不擅长临场陌生社交，所以通过长期参加固定组织、重复见面，让陌生社交逐渐转换成熟人关系。"}];
+  $$(".case").forEach(c=>{
+    const t=T[+c.dataset.case],say=c.querySelector(".say");
+    const set=v=>{say.textContent=t[v];say.className="say "+v;c.querySelectorAll(".seg button").forEach(b=>b.classList.toggle("on",b.dataset.v===v))};
+    c.querySelectorAll(".seg button").forEach(b=>b.onclick=()=>set(b.dataset.v));set("good");
+  });
+})();
+
+/* ---------- 08 threshold ---------- */
+(function(){
+  const svg=$("#thSvg"),W=760,H=240,top=20,base=200,maxV=300;
+  const gBars=el("g",{},svg);
+  el("line",{x1:40,y1:base,x2:W-10,y2:base,stroke:"var(--line)","stroke-width":2},svg);
+  const thL=el("line",{x1:40,x2:W-10,stroke:"var(--ink)","stroke-width":2,"stroke-dasharray":"6 5"},svg);
+  const thT=el("text",{x:W-10,"text-anchor":"end","font-size":13,"font-weight":700,fill:"var(--ink)"},svg);
+  const cap=el("text",{x:40,y:228,"font-size":12,fill:"var(--ink-3)"},svg);
+  const y=v=>base-(v/maxV)*(base-top);
+  const upd=()=>{
+    const n=+$("#thN").value,t=+$("#thT").value,each=300/n;
+    $("#thNv").textContent=n;$("#thTv").textContent=t;
+    gBars.innerHTML="";
+    const span=W-60,gap=Math.min(8,span/n*.2),bw=(span-gap*(n-1))/n;
+    for(let i=0;i<n;i++){const ok=each<=t;el("rect",{x:40+i*(bw+gap),y:y(each),width:bw,height:base-y(each),rx:Math.min(4,bw/3),fill:ok?"var(--L)":"var(--O)"},gBars)}
+    thL.setAttribute("y1",y(t));thL.setAttribute("y2",y(t));thT.setAttribute("y",y(t)-6);thT.textContent="你此刻的启动阈值";
+    cap.textContent=`${n} 片，每片 ${each.toFixed(1)} 个结构的启动量`;
+    const need=Math.ceil(300/t);
+    $("#thEach").textContent=each.toFixed(1);$("#thCount").textContent=n;
+    const ok=each<=t;$("#thState").textContent=ok?"跨得过去":"跨不过去";$("#thState").style.color=ok?"var(--good)":"var(--bad)";
+    let v;
+    if(!ok)v=`每一片仍然高过阈值。以这个阈值，至少要切成 <b>${need}</b> 片，启动才落到跨得过去的范围。`;
+    else if(n<=need+2)v=`刚好够用：每一片都在阈值以下，而需要重新触发的次数还不多。困难被压到了你跨得过去的地方。`;
+    else v=`已经跨得过去了，再切更碎，并不会更轻松，只是把重量更多地搬到“长期”上：要重新触发 <b>${n}</b> 次，而 <b>${need}</b> 片其实就够了。`;
+    $("#thVerdict").innerHTML=v;
+  };
+  $("#thN").oninput=upd;$("#thT").oninput=upd;upd();
+})();
+
+/* ---------- 09 copy ---------- */
+$("#copyBtn").onclick=async()=>{
+  const txt="困难不是一个东西。\n\n困难至少可以拆成长期积累、认知建设和眼前障碍三个维度。\n\n面对困难时，不只考虑“如何克服”，还要考虑“如何转换”。当某种困难恰好落在自己的短板上，可以重新设计路径，把更多难度转移到自己更擅长的维度。\n\n例：解剖学运动系统。“今晚一口气干完”把难度全压在启动上；改成每次只背一个局部、持续三周、第二天再认、见到标本再强化，300 个结构一个没少，主导困难从眼前障碍变成了长期积累。\n\n目标可以不变，困难的形状可以改变。";
+  let ok=false;
+  try{await navigator.clipboard.writeText(txt);ok=true}catch(e){
+    try{const ta=document.createElement("textarea");ta.value=txt;ta.style.position="fixed";ta.style.opacity="0";document.body.appendChild(ta);ta.select();ok=document.execCommand("copy");ta.remove()}catch(e2){}
+  }
+  const b=$("#copyBtn");b.textContent=ok?"已复制":"复制失败，请手动选中文字";setTimeout(()=>b.textContent="复制这条认知",2000);
+};
+})();
+</script>
+<!-- blog-yusheng:html-embed-handshake v1 -->
+<script>
+  (() => {
+    const nonce = new URLSearchParams(location.hash.slice(1)).get('nonce')
+    if (!nonce || window.parent === window) return
+    window.parent.postMessage({ nonce, message: { type: 'ready' } }, '*')
+    const reportHeight = () => {
+      window.parent.postMessage(
+        { type: 'resize', height: document.documentElement.scrollHeight },
+        '*',
+      )
+    }
+    requestAnimationFrame(reportHeight)
+    new ResizeObserver(reportHeight).observe(document.documentElement)
+  })()
+</script>
+</body>
+</html>
