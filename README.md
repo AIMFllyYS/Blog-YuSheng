@@ -1,6 +1,22 @@
-# blog-yusheng
+<div align="center">
 
-> 羽升的个人博客
+# 🌌 Blog-YuSheng
+
+**羽升 · 我的电子分身 · 从一颗种子开始生长**
+
+[![Status](https://img.shields.io/badge/status-🌱_持续生长-52e0c4?style=flat-square)](https://blog.yusheng.email)
+[![Version](https://img.shields.io/badge/version-v0.1.0-7c8cff?style=flat-square)](https://github.com/AIMFllyYS/Blog-YuSheng/releases/tag/v0.1.0)
+[![Deploy](https://img.shields.io/badge/deploy-EdgeOne_Pages-ffd166?style=flat-square)](https://edgeone.cloud.tencent.com/pages)
+[![License](https://img.shields.io/badge/license-Apache--2.0-4c9be8?style=flat-square)](./LICENSE)
+[![Made With](https://img.shields.io/badge/made_with-♥_与困意-ff6b9d?style=flat-square)](#license)
+
+*这不只是一个博客，这是我留给未来的一份持续更新的自我。*
+
+**网址**：<https://blog.yusheng.email> · **联系**：contact@yusheng.email
+
+</div>
+
+---
 
 ## 项目简介
 
@@ -88,7 +104,7 @@ pnpm build
 
 ## 部署
 
-项目部署到腾讯云 EdgeOne Pages（SSG 静态导出模式）。
+项目部署到腾讯云 EdgeOne Pages（SSG 静态导出模式），线上地址 <https://blog.yusheng.email>。
 
 ```bash
 # 构建并部署
@@ -112,4 +128,22 @@ edgeone pages deploy
 
 ## License
 
-MIT
+本项目采用 **Apache License 2.0** 开源，全文见 [LICENSE](./LICENSE)，署名信息见 [NOTICE](./NOTICE)。
+
+```
+Copyright 2026 羽升 YuSheng
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+```
+
+<div align="center">
+
+**© 2026 羽升 YuSheng**
+
+*一颗会长大的种子 · 用 ♥ 与困意写于一个午后*
+
+</div>
