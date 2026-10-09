@@ -1,0 +1,1513 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<meta name="referrer" content="no-referrer">
+<title>折晓早报 · 织到哪一行，就在那一针上夹一枚记号扣 · 2026-10-09</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='5.5' fill='none' stroke='%23e07a62' stroke-width='2.4' stroke-dasharray='26 8'/%3E%3C/svg%3E">
+<style>
+  :root {
+    color-scheme: light;
+    --ink: #3a2a22;
+    --muted: #6d584c;
+    --paper: #fffaf4;
+    --line: #eadccb;
+    --coral: #e07a62;
+    --butter: #e2b143;
+    --leaf: #6f9a62;
+    --sea: #5b9aaa;
+    --plum: #a07bb8;
+    --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    color: var(--ink);
+    background:
+      radial-gradient(880px 420px at 8% -12%, #fff3d8 0%, transparent 55%),
+      linear-gradient(180deg, #f6f1e8 0%, #efe4d6 100%);
+    font-family: "WenQuanYi Micro Hei", "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", "Source Han Sans SC", sans-serif;
+    font-size: 16px;
+    line-height: 1.65;
+  }
+  button, summary { font: inherit; color: inherit; cursor: pointer; }
+  button { background: none; border: 0; padding: 0; }
+  :focus-visible { outline: 3px solid #c46a3a; outline-offset: 3px; }
+  .sr-only {
+    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+  }
+  .world { height: 100%; min-height: 100%; }
+  .stage {
+    height: 100%;
+    min-height: 640px;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: minmax(168px, 210px) minmax(300px, 1fr) minmax(190px, 240px);
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    gap: 8px 16px;
+    padding: 16px 18px 14px;
+    position: relative;
+    background:
+      radial-gradient(620px 280px at 10% 0%, rgba(255, 226, 176, 0.95), transparent 58%),
+      radial-gradient(420px 240px at 88% 6%, rgba(255, 248, 230, 0.7), transparent 62%),
+      repeating-linear-gradient(180deg, rgba(255,255,255,0.22) 0 1px, rgba(150, 96, 48, 0.045) 1px 3px, transparent 3px 16px),
+      linear-gradient(165deg, #f7e6cc 0%, #f0d4ae 46%, #e7c49a 100%);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.65), inset 0 -18px 28px rgba(120, 72, 28, 0.08);
+  }
+  .stage::after {
+    content: "";
+    position: absolute; left: 0; right: 0; bottom: 0; height: 14px;
+    background: linear-gradient(#c99562, #b57d49);
+    box-shadow: inset 0 2px 0 rgba(255,255,255,0.25);
+    pointer-events: none;
+  }
+  .date-pin {
+    position: absolute; top: 14px; right: 18px;
+    font-size: 13px; letter-spacing: 0.04em; color: #7a5b42;
+  }
+  .hint {
+    grid-column: 1 / 3;
+    justify-self: start;
+    margin: 0;
+    max-width: min(640px, 100%);
+    background: rgba(255, 250, 244, 0.92);
+    border: 1px solid rgba(255,255,255,0.8);
+    border-radius: 16px;
+    padding: 8px 14px;
+    box-shadow: 0 8px 18px rgba(90, 55, 20, 0.08);
+    color: var(--ink);
+  }
+  .hint small { display: block; color: var(--muted); font-size: 13.5px; }
+  .col-yarn { grid-column: 1; grid-row: 2; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; min-height: 0; }
+  .ball { width: 176px; height: 176px; filter: drop-shadow(0 14px 10px rgba(90, 55, 20, 0.2)); }
+  .strand {
+    width: 72px; min-height: 120px;
+    border-radius: 40px;
+    touch-action: none;
+    cursor: grab;
+    animation: bob 2.6s ease-in-out infinite;
+  }
+  .is-playing .strand { animation: none; }
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(7px); }
+  }
+  .strand svg { width: 100%; height: 120px; display: block; }
+  .thread {
+    font-size: 12.5px; color: #8a6b55;
+    text-decoration: underline; text-underline-offset: 3px;
+    min-height: 32px;
+  }
+  .loom {
+    grid-column: 2; grid-row: 2 / span 2;
+    position: relative;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 18px 72px 18px 12px;
+    overflow: auto;
+    border-radius: 28px;
+    background:
+      linear-gradient(180deg, rgba(255, 250, 244, 0.55), rgba(255, 246, 236, 0.28));
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.45);
+  }
+  .needles { display: flex; flex-direction: column; gap: 5px; margin: 0 36px 6px 10px; }
+  .needles span {
+    display: block; height: 10px; border-radius: 999px;
+    background: linear-gradient(90deg, #8a5a34, #e7c095 18%, #c48a55 70%, #f3ddc0);
+    box-shadow: 0 2px 0 rgba(90, 50, 20, 0.15);
+  }
+  .needles span:first-child { transform: rotate(-2deg); }
+  .caston, .course .knit {
+    display: flex; gap: 3px; align-items: center;
+    height: 42px; padding: 5px 6px; border-radius: 12px;
+    background: linear-gradient(#fbf7f2, #f0e2d4);
+    box-shadow: inset 0 -5px 0 rgba(120, 80, 40, 0.08), 0 7px 0 rgba(90, 55, 20, 0.04);
+  }
+  .caston { margin: 0 46px 0 8px; border-radius: 16px 16px 0 0; box-shadow: none; }
+  .bump {
+    flex: 1; height: 28px; border-radius: 40% 40% 48% 48%;
+    background:
+      radial-gradient(circle at 50% 28%, rgba(255,255,255,0.85), transparent 46%),
+      rgba(196, 154, 122, 0.35);
+  }
+  .caston-note { margin: 2px 40px 8px 10px; color: #7d624f; font-size: 13px; }
+  #courses {
+    margin: 0 36px 0 8px;
+    padding: 0 6px 8px 0;
+    background: linear-gradient(#fbf6ef, #f4e6d8);
+    border-radius: 0 0 18px 18px;
+    box-shadow: 0 12px 0 rgba(110, 70, 30, 0.07);
+  }
+  .course {
+    display: grid; grid-template-columns: 1fr 42px;
+    gap: 6px; align-items: center;
+    margin: 0;
+    animation: knitIn 0.45s var(--ease) both;
+  }
+  .course .knit { background: transparent; box-shadow: none; border-radius: 8px; }
+  @keyframes knitIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  .clip {
+    width: 34px; height: 34px; border-radius: 50%;
+    border: 6px solid var(--c, var(--coral));
+    border-right-color: transparent;
+    transform: rotate(32deg);
+    background: rgba(255,255,255,0.55);
+    box-shadow: 0 3px 0 rgba(80, 40, 20, 0.16);
+  }
+  .clip.on { border-right-color: var(--c, var(--coral)); transform: rotate(0deg); transition: transform 0.35s var(--ease), border-color 0.35s; }
+  .clip.lit { box-shadow: 0 0 0 4px rgba(255,255,255,0.85), 0 3px 0 rgba(80, 40, 20, 0.12); }
+  #ring {
+    position: absolute; right: 2px; top: 28px; z-index: 3;
+    width: 64px; height: 64px; border-radius: 50%;
+    background:
+      radial-gradient(circle at 50% 50%, transparent 0 15px, #7a4e2c 16px 19px, #fff6ea 20px 27px, #c48955 28px 31px, #8d5a34 32px);
+    box-shadow: 0 8px 0 rgba(70, 40, 12, 0.22), 0 0 0 4px rgba(255, 250, 244, 0.92);
+    touch-action: none;
+    color: transparent;
+    cursor: grab;
+  }
+  #ring:disabled { opacity: 0.45; }
+  .ring-label {
+    position: absolute; right: 10px; top: 96px; z-index: 2;
+    font-size: 12px; color: #7a5b42; background: rgba(255,250,244,0.8);
+    border-radius: 999px; padding: 1px 6px;
+  }
+  .col-side { grid-column: 3; grid-row: 2 / span 2; display: flex; flex-direction: column; gap: 10px; align-items: stretch; min-height: 0; justify-content: center; }
+  .slip {
+    background: #fffaf4;
+    border-radius: 14px;
+    padding: 8px 10px 10px;
+    box-shadow: 0 8px 16px rgba(90, 55, 20, 0.08);
+    transform: rotate(1.5deg);
+  }
+  .slip summary { list-style: none; font-size: 14.5px; }
+  .slip summary::-webkit-details-marker { display: none; }
+  .slip p { margin: 8px 0 0; font-size: 13.5px; color: var(--ink); }
+  .slip .quiet { color: var(--muted); }
+  .dish, .side-dish {
+    background: linear-gradient(#f7f4ef, #e7e0d6);
+    box-shadow: inset 0 -8px 0 rgba(120, 90, 60, 0.08), 0 8px 0 rgba(90, 55, 20, 0.06);
+    display: grid; place-items: center;
+    position: relative;
+  }
+  .dish {
+    align-self: center;
+    width: 128px; min-height: 78px; border-radius: 0 0 64px 64px;
+    padding: 14px 10px 12px;
+  }
+  .side-dish {
+    align-self: stretch;
+    width: auto; min-height: 64px; border-radius: 16px;
+    padding: 12px 10px;
+  }
+  .dish::before, .side-dish::before {
+    content: "";
+    position: absolute; left: 8px; right: 8px; top: 8px; height: 8px;
+    border-radius: 8px; background: rgba(255,255,255,0.7);
+  }
+  .peek {
+    width: 34px; height: 34px; border-radius: 50%;
+    border: 6px solid var(--c, #e07a62); border-right-color: transparent;
+    transform: rotate(24deg); margin-top: 10px;
+    background: rgba(255,255,255,0.7);
+  }
+  .side-dish { outline: 2px dashed transparent; }
+  .side-dish.ready { outline-color: #e07a62; animation: pulse 1.4s ease-in-out infinite; }
+  @keyframes pulse { 50% { transform: translateY(2px); } }
+  .side-dish button, .tools button, .dock button.action, .memory-actions button, .filter button, .book-close, .book-tools button {
+    min-height: 44px; padding: 8px 12px; border-radius: 999px;
+    background: #fff; border: 1px solid var(--line);
+  }
+  .side-dish button { width: 100%; white-space: normal; line-height: 1.35; }
+  .tools { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tools button[aria-pressed="true"] { background: #f3e2c8; }
+  .book-launch, .memory {
+    background: #fffaf4;
+    border-radius: 12px 16px 14px 12px;
+    box-shadow: 0 10px 18px rgba(90, 55, 20, 0.1);
+    text-align: left;
+  }
+  .book-launch {
+    grid-column: 1; grid-row: 3;
+    transform: rotate(-3deg);
+    padding: 14px 14px 16px;
+    min-height: 108px;
+    width: calc(100% - 8px);
+    background:
+      linear-gradient(#e07a62, #e07a62) 12px 0 / 3px 100% no-repeat,
+      linear-gradient(#fffaf4, #f6ecdf);
+  }
+  .book-launch strong { display: block; font-size: 18px; font-weight: 700; line-height: 1.35; }
+  .book-launch span { display: block; margin-top: 4px; color: var(--muted); font-size: 13px; }
+  .memory {
+    padding: 8px 10px;
+    display: flex; flex-direction: column; gap: 6px; align-items: stretch;
+    text-align: left;
+  }
+  .memory:disabled { opacity: 0.72; }
+  .bands { display: flex; flex-direction: column; gap: 3px; width: 100%; }
+  .bands i {
+    display: block; height: 10px; border-radius: 6px;
+    background: linear-gradient(90deg, #e7d7c8, #f7f1ea 40%, #e4d3c4);
+    filter: blur(0.3px);
+  }
+  .memory-label { font-size: 13.5px; color: var(--muted); }
+  #bow {
+    position: absolute; left: 8%; top: 42%;
+    z-index: 4; pointer-events: none;
+    filter: drop-shadow(0 10px 8px rgba(90, 50, 20, 0.18));
+  }
+  #bow svg { width: 280px; height: 150px; }
+  .stage.is-gift .course:nth-child(1) { transform: rotate(-4deg) translateX(-6px); }
+  .stage.is-gift .course:nth-child(2) { transform: rotate(-2deg); }
+  .stage.is-gift .course:nth-child(4) { transform: rotate(2deg); }
+  .stage.is-gift .course:nth-child(5) { transform: rotate(4deg) translateX(6px); }
+  .scrap {
+    position: absolute; width: 10px; height: 10px; border-radius: 50%;
+    top: 40%; animation: float 1.1s var(--ease) forwards; pointer-events: none;
+  }
+  @keyframes float {
+    to { transform: translateY(-80px); opacity: 0; }
+  }
+  .dock {
+    position: fixed; z-index: 6;
+    left: max(16px, calc(50% - 300px));
+    width: min(600px, calc(100% - 32px));
+    bottom: 16px;
+    max-height: min(42vh, 360px);
+    overflow: auto;
+    background: var(--paper);
+    color: var(--ink);
+    border-radius: 18px;
+    padding: 12px 14px 14px;
+    box-shadow: 0 16px 40px rgba(60, 36, 16, 0.18);
+    border: 1px solid rgba(255,255,255,0.9);
+  }
+  .dock[hidden] { display: none; }
+  .dock-top { display: flex; justify-content: space-between; gap: 8px; align-items: center; }
+  .dock h2 { font-size: 18px; line-height: 1.4; margin: 8px 0; }
+  .dock p { margin: 8px 0; }
+  .dock .sources, .article .sources { padding: 0; margin: 8px 0 0; list-style: none; font-size: 14px; }
+  .dock .sources a, .article a, .book a { color: #8d4b32; }
+  #readout { margin: 4px 0 8px; padding-left: 1.2em; }
+  #readout li { margin: 3px 0; }
+  #fake-clip {
+    position: fixed; z-index: 7; width: 54px; height: 54px;
+    border-radius: 50%; border: 5px solid #8aa888; background: #f4f7f1;
+    touch-action: none; font-size: 8px; letter-spacing: -0.04em; color: #3d4a3a;
+  }
+  dialog#book {
+    width: min(860px, calc(100% - 24px));
+    height: min(92vh, 920px);
+    max-height: calc(100% - 24px);
+    border: 0; border-radius: 20px; padding: 0;
+    color: var(--ink); background: #fffaf4;
+  }
+  dialog#book::backdrop { background: rgba(70, 48, 28, 0.28); }
+  .sheet { height: 100%; overflow: auto; padding: 28px 28px 48px; }
+  .sheet-head { max-width: 40rem; margin: 0 auto 8px; }
+  .kicker { margin: 0; color: var(--muted); font-size: 13px; letter-spacing: 0.08em; }
+  .sheet h1 { font-size: 32px; line-height: 1.3; margin: 8px 0; font-weight: 700; }
+  .sheet h2 { font-size: 24px; line-height: 1.35; margin: 1.6em 0 0.6em; }
+  .sheet h3 { font-size: 20px; line-height: 1.4; margin: 0 0 8px; }
+  .lede, .sheet p, .sheet li { font-size: 17px; line-height: 1.85; }
+  .measure { max-width: 40rem; margin-left: auto; margin-right: auto; }
+  .sheet blockquote {
+    margin: 1.2em auto; padding: 12px 16px; max-width: 40rem;
+    background: #fff; border-left: 4px solid var(--coral); border-radius: 0 12px 12px 0;
+  }
+  .book-tools {
+    position: sticky; top: 0; z-index: 2;
+    display: flex; justify-content: flex-end;
+    margin: 0 auto; max-width: 40rem;
+    padding: 8px 0; background: linear-gradient(#fffaf4, rgba(255,250,244,0.92));
+  }
+  .book-nav { display: flex; flex-wrap: wrap; gap: 8px; max-width: 40rem; margin: 12px auto; }
+  .filter { display: flex; flex-wrap: wrap; gap: 8px; max-width: 40rem; margin: 8px auto; }
+  .book-nav a {
+    text-decoration: none; background: #fff; border: 1px solid var(--line);
+    border-radius: 999px; padding: 4px 10px; font-size: 14px;
+  }
+  .legend { color: var(--muted); font-size: 14px; max-width: 40rem; margin: 0 auto 8px; }
+  article {
+    max-width: 40rem; margin: 14px auto; padding: 14px 16px 16px;
+    background: rgba(255,255,255,0.72); border: 1px solid var(--line); border-radius: 16px;
+  }
+  article[data-mark="now"] { box-shadow: inset 4px 0 0 var(--coral); }
+  article[data-mark="later"] { box-shadow: inset 4px 0 0 #b7a89a; }
+  .meta { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; color: var(--muted); font-size: 14px; margin: 0 0 8px; }
+  .badge { border-radius: 999px; padding: 2px 8px; background: #f6ecdf; color: #6a4a34; font-size: 12.5px; }
+  .badge.ok { background: #e5f0df; color: #2f5a32; }
+  .badge.warn { background: #f8ecd4; color: #7a5420; }
+  #book[data-lift="now"] article:not([data-mark="now"]) { opacity: 0.48; }
+  #book[data-lift="later"] article:not([data-mark="later"]) { opacity: 0.48; }
+  #book[data-lift="now"] article[data-mark="now"],
+  #book[data-lift="later"] article[data-mark="later"] {
+    transform: translateY(-2px);
+    background: #fff;
+  }
+  .filter button[aria-pressed="true"] { background: #f6e3d4; border-color: #e2c2ae; }
+  @media (max-width: 860px) {
+    .world { height: auto; min-height: 100%; }
+    .stage {
+      height: auto; min-height: 100dvh;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: auto auto auto auto auto auto;
+      overflow: visible;
+      padding-bottom: 28px;
+    }
+    .hint { grid-column: 1 / -1; grid-row: 1; }
+    .col-yarn { grid-column: 1; grid-row: 2; }
+    .col-side { grid-column: 2; grid-row: 2; }
+    .loom { grid-column: 1 / -1; grid-row: 3; min-height: 210px; }
+    .dock {
+      position: static;
+      grid-column: 1 / -1;
+      grid-row: 4;
+      left: auto;
+      bottom: auto;
+      width: auto;
+      max-height: 42vh;
+      margin: 0;
+      z-index: 1;
+    }
+    .book-launch { grid-column: 1 / -1; grid-row: 5; transform: none; width: auto; }
+    .memory { grid-column: auto; grid-row: auto; }
+    .date-pin { position: static; grid-column: 1 / -1; grid-row: 6; }
+    .sheet { padding: 20px 16px 36px; }
+    .sheet h1 { font-size: 26px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation: none !important;
+      transition: none !important;
+    }
+    .stage.is-gift .course { transform: none; }
+  }
+</style>
+</head>
+<body>
+<h1 class="sr-only">2026年10月9日的早报：织到哪一行，就在那一针上夹一枚记号扣</h1>
+<div class="world">
+  <div class="stage" id="stage">
+    <p class="date-pin">10 月 9 日</p>
+    <p class="hint" id="hint" role="status">按住这截毛线，往下拉一行。<small>点一下也可以。</small></p>
+    <div class="col-yarn">
+      <svg class="ball" viewBox="0 0 120 120" aria-hidden="true">
+        <ellipse cx="60" cy="108" rx="40" ry="9" fill="rgba(90,55,20,0.2)"/>
+        <circle cx="60" cy="54" r="44" fill="#fffdf8" stroke="#c9a88e" stroke-width="3"/>
+        <path d="M22 58c16-30 62-32 78 2" fill="none" stroke="#e8d0ba" stroke-width="9" stroke-linecap="round"/>
+        <path d="M20 74c22 20 58 16 80-4" fill="none" stroke="#d2b092" stroke-width="9" stroke-linecap="round"/>
+        <path d="M34 38c14 18 34 26 54 6" fill="none" stroke="#f4e6d8" stroke-width="8" stroke-linecap="round"/>
+        <path d="M48 28c10 14 12 30 2 46" fill="none" stroke="#c9a07e" stroke-width="5" stroke-linecap="round"/>
+        <path d="M28 48c10 8 18 8 28 0" fill="none" stroke="#b98a6c" stroke-width="3" stroke-linecap="round"/>
+        <circle cx="84" cy="42" r="9" fill="#fff" opacity="0.9"/>
+      </svg>
+      <button type="button" class="strand" id="strand" aria-label="按住毛线往下拉，织出新的一行">
+        <svg viewBox="0 0 72 120" aria-hidden="true">
+          <path d="M28 6 C40 28 22 46 36 68 C48 88 26 100 34 116" fill="none" stroke="#fffaf4" stroke-width="16" stroke-linecap="round"/>
+          <path d="M44 8 C30 30 50 48 36 70 C24 90 46 102 38 116" fill="none" stroke="#e4cbb6" stroke-width="7" stroke-linecap="round"/>
+          <path d="M34 108 v8" stroke="#c45b45" stroke-width="3" stroke-linecap="round"/>
+          <path d="M27 112 l7 8 7-8" fill="none" stroke="#c45b45" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <button type="button" class="thread" id="thread">一根没织上的线头</button>
+    </div>
+    <div class="loom" id="loom">
+      <button type="button" id="ring" disabled aria-label="木环。点一下读下一枚，或按住从上往下滑">木环</button>
+      <span class="ring-label">木环</span>
+      <div class="needles" aria-hidden="true"><span></span><span></span></div>
+      <div class="caston" aria-hidden="true">
+        <i class="bump"></i><i class="bump"></i><i class="bump"></i><i class="bump"></i><i class="bump"></i><i class="bump"></i><i class="bump"></i><i class="bump"></i>
+      </div>
+      <p class="caston-note">开头这几针还没有记号扣。</p>
+      <div id="courses"></div>
+      <div id="bow" hidden>
+        <svg width="168" height="92" viewBox="0 0 168 92" aria-hidden="true">
+          <path d="M84 46 C84 46 40 6 14 28 C42 40 64 48 84 48 C104 48 126 40 154 28 C128 6 84 46 84 46 Z" fill="#f8efe6" stroke="#e07a62" stroke-width="3"/>
+          <path d="M84 50 C70 74 36 90 18 80" fill="none" stroke="#f4e4d4" stroke-width="14" stroke-linecap="round"/>
+          <path d="M84 50 C98 74 132 90 150 80" fill="none" stroke="#f4e4d4" stroke-width="14" stroke-linecap="round"/>
+          <circle cx="84" cy="50" r="10" fill="#e07a62"/>
+        </svg>
+      </div>
+    </div>
+    <div class="col-side">
+      <details class="slip">
+        <summary>篮子边的三件小事</summary>
+        <p>复习工作站里，大二上 50 节核心课的笔记已经合进主分支。真人登录的完整验收还没勾上，等你自己做。</p>
+        <p class="quiet">窗外前瞻，不在这次采集窗里：OpenCode Go 的支付宝自动扣款，要在 10 月 17 日前重新授权。窗内又来过提醒，邮箱里还没看到授权完成的信。</p>
+        <p class="quiet">窗外前瞻，不在这次采集窗里：从 10 月 30 日起，Supabase 在 public 模式里新建的表，要显式写上 GRANT，数据接口才读得到。</p>
+      </details>
+      <div class="dish" aria-hidden="true"><i class="peek" id="peek" style="--c:#e07a62"></i></div>
+      <div class="side-dish" id="side-dish" hidden>
+        <button type="button" id="set-aside">放到旁边的小碟</button>
+      </div>
+      <div class="tools">
+        <button type="button" id="sound" aria-pressed="false">声音关着</button>
+        <button type="button" id="auto" hidden>让木环自己滑下去</button>
+      </div>
+      <button type="button" class="memory" id="memory" disabled>
+        <span class="bands" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+        <span class="memory-label" id="memory-label">旁边还有一条围巾，先织一行再看。</span>
+      </button>
+    </div>
+    <button type="button" class="book-launch" id="open-book" aria-haspopup="dialog" aria-controls="book">
+      <strong>今天的完整详细稿</strong>
+      <span>打开这本图解，读全文。</span>
+    </button>
+    <div class="dock" id="dock" hidden>
+      <div class="dock-top">
+        <span id="dock-kicker"></span>
+        <button type="button" class="action" id="dock-close">先放下这张纸条</button>
+      </div>
+      <ol id="readout" hidden></ol>
+      <article id="essay"></article>
+    </div>
+  </div>
+</div>
+<button type="button" id="fake-clip" hidden aria-label="一枚看起来很普通的记号扣">conhost</button>
+
+<dialog id="book" aria-labelledby="book-title">
+  <div class="sheet" id="sheet">
+    <div class="book-tools">
+      <button type="button" class="book-close" id="book-close">合上小册子</button>
+    </div>
+    <div class="sheet-head measure">
+      <p class="kicker">编织图解 · 2026-10-09 · 星期五</p>
+      <h1 id="book-title">今天的完整详细稿</h1>
+      <p class="lede">采集时间是北京时间 2026 年 10 月 8 日早上六点整，到 2026 年 10 月 9 日早上六点整。下面只使用四份证据包里的材料，没有另外上网补充。每一条都写了来源、北京时间和核实状态。今天的早报比平时晚了一些：北京六点的例行任务没有被叫起来，是七点多补跑出来的。</p>
+    </div>
+    <nav class="book-nav" aria-label="详细稿目录">
+      <a href="#sec-open">开篇</a>
+      <a href="#sec-ai">人工智能</a>
+      <a href="#sec-tech">科技与产业</a>
+      <a href="#sec-med">医学与健康</a>
+      <a href="#sec-life">个人轻提示</a>
+      <a href="#sec-skip">没有收录</a>
+      <a href="#sec-check">核实清单</a>
+    </nav>
+    <div class="filter" role="group" aria-label="把相关段落托起来">
+      <button type="button" id="lift-all" aria-pressed="true">显示全部</button>
+      <button type="button" id="lift-now" aria-pressed="false">把当时记下的托起来</button>
+      <button type="button" id="lift-later" aria-pressed="false">把事后补记和伪装的托起来</button>
+    </div>
+    <p class="legend" id="lift-note">珊瑚边是当时按顺序留下的记号，灰边是事后补记，或故意装得像平常痕迹。托起来的时候，其余段落还在，只是淡一些。</p>
+
+    <div class="measure">
+      <h2 id="sec-open">开篇：今天的形状</h2>
+      <p>今天最适合拿来当中心的，是一条很「生物课」的新闻。《科学》上发表了一项叫「DNA 打字机」的研究：研究者往小鼠的受精卵里装了一套会「打字」的基因工具。从那以后，细胞每分裂一次，就会在自己的 DNA 里按顺序盖下一枚小小的基因印章，而且这些印章会被原样复制给它所有的后代。胚胎长到 13.5 天的时候，研究者测了 158 万个细胞核里的印章，把 128 万个细胞「谁是谁的孩子」一层层反推了出来，画成了迄今最大的哺乳动物细胞家谱。</p>
+      <p>这件事最打动人的地方，不在于数字大，而在于这份家谱是怎么来的：没有任何人在事后回忆「当初是怎么分的」，每个细胞自己身上就带着一本按时间顺序写好的成长日记。研究者甚至能读出，受精卵第一次一分为二的那两个细胞，后来各自生了多少后代——大约 57% 对 42%，数量并不平均，但每一种细胞类型它们贡献的比例却一模一样。</p>
+      <blockquote>想把一件事是怎么一步步走到今天的看清楚，最靠得住的办法，是让它在每一步发生的当下，按先后顺序给自己留下一枚小记号；等到事后再凭印象补记，顺序会乱，功劳也容易被算大。</blockquote>
+      <p>带着这个读法再看别的材料，会发现很多新产品和新规则都在做同一件事：让记号跟着事情一起发生。Anthropic 的新仪表盘里，点开任何一个数字都能看到它背后的那条查询，每张图都标着数据是什么时候最后刷新的；谷歌新发布的「Gemini agent」每做一步都会记进审计日志；Anthropic 的开源漏洞扫描服务给每份报告都附上复现步骤，还会尽量用「二分法」追出这个漏洞是从哪一次代码改动开始出现的；Paradromics 的脑机接口电极在羊脑里一直记了四年多，所以才能说出「四年里信号没有变弱」。</p>
+      <p>也有几条材料从反面提醒事后补记的问题。OpenAI 披露的两起境外影响力行动里，操作者给上级写汇报时，把「自己回复的那条热门帖子的浏览量」算成了自己的成绩，还把一些和自己毫无关系的事件揽成了功劳，OpenAI 直接说这大大夸大了效果。多国联合发布的网络安全通告里，攻击者会故意把自己的程序改名成 Windows 里常见的名字，把偷来的数据起成 001.gif、Css.js 这种不起眼的文件名，让痕迹看起来很正常。而一项关于镰状细胞贫血的大型研究，则诚实地写明了自己的局限：多数感染是事后根据病史回顾记录的，而不是当时实时检测出来的。</p>
+      <p>你自己的仓库里也有一个小例子。ChatSolo 有一个改动专门想解决「事后按类型重排」：原来思考、正文、工具各拼成一条，最后再按类型排好，结果先后顺序丢了、图片总被钉在最底下。方案是在流式输出的当下就按到达顺序记一条轨迹。这个改动后来被关闭，没有合并，但它想做的事情和今天的读法正好是同一件。</p>
+      <h3>阅读说明与核实标注</h3>
+      <p><strong>多来源确认</strong>：至少两个独立来源说法一致，或者有一手官方文件加上独立媒体报道。事件本身用定论语气；公司自己报出来的数字，即使事件多来源确认，也仍然注明「公司自报」。</p>
+      <p><strong>单一来源</strong>：只有一个来源，比如只有公司新闻稿、只有一篇期刊论文、只有一家媒体、只有一份官方公告。文中会写「据某某称」「尚未得到其他来源确认」。监管机构公告和期刊论文是一手来源，可信度高，但仍然算单一来源，结论以原文自己写的局限为准。</p>
+      <p><strong>未能核实</strong>：采集时没能找到可靠证据确认，只作为背景提及，并明确标出。</p>
+      <p>所有时间都已换算成北京时间。有两条事件本身开始得更早（刚果（金）与肯尼亚的埃博拉疫情、Crew-12 乘组返航），但窗内有新的正式发布或新进展，条目里会单独说明，只写窗内的新内容。</p>
+      <p>这里没有合并任何条目。四个板块的条数和证据包一致：讯AI 6 条、讯科 6 条、讯医 6 条、连读窗内 10 条，另有 2 条窗外前瞻。讯AI 第 5 条白宫科学峰会里提到了 NIH、Biohub 的虚拟细胞计划和量子计算竞赛，和讯医、讯科的条目不是同一件事，所以没有合并。</p>
+    </div>
+
+    <h2 id="sec-ai" class="measure">一、人工智能（讯AI · 6 条）</h2>
+    <p class="measure">这一组的共同底色是把过程摊开给人看：智能体开始拥有自己的工作账号，每一步都记进日志；仪表盘上的每个数字都能点出它是怎么算出来的；漏洞扫描的报告附上复现步骤。同时，也有一份报告专门拆穿了「事后自己给自己算成绩」的做法。</p>
+
+    <article id="ai-1" data-mark="now">
+      <p class="meta"><span>讯AI · 1</span><time>北京时间 2026 年 10 月 8 日 20:00</time><span class="badge ok">多来源确认</span></p>
+      <h3>谷歌云发布「Gemini agent」：一个面向工作的通用智能体</h3>
+      <p>过去一年，各家都在把聊天机器人往「能自己把活干完的智能体」方向推：微软 9 月 25 日更新了 Copilot，OpenAI 9 月底推出了会一直在后台工作的 dots 智能体，Anthropic 10 月 6 日让 Claude 可以直接编辑谷歌文档。谷歌这次是把自己原来分散的各种助手合成一个统一入口。发布场合是 Gemini at Work 2026，美国太平洋时间 10 月 8 日早上 5 点。</p>
+      <p>谷歌官方博客的说法是：这个智能体会自己规划工作、调用技能和工具、连上企业的业务系统，最后把做完的东西交回到你本来就在用的文档、收件箱和开发环境里。它的口号是「给目标，不给步骤」。它会按任务挑选最合适的模型，目前同时使用谷歌自己的 Gemini 和竞争对手 Anthropic 的 Claude，以后还会接入更多模型。据 CNBC 和 VentureBeat 报道，用户还可以创建「同事型智能体」：它可以拥有自己的工作账号、邮箱地址、日历和网盘空间，但只能看到团队明确分享给它的资料，而不是继承某个员工的全部权限。</p>
+      <p>VentureBeat 提到，谷歌说每个智能体都有一个经过加密认证的身份，它的每一步操作都会被记进审计日志，包括它什么时候创建了隔离环境去执行代码。也就是说，一个能连续工作好几天的智能体，做过的事情是在发生的当下就一条条记下来的，而不是事后靠它自己汇报。</p>
+      <p>VentureBeat 也指出，谷歌没有给出正式上线日期、单独的价格，也没有提供第三方的可靠性评测；目前是私有预览。谷歌说近 90% 的《财富》100 强企业在用 Gemini Enterprise，但这不代表它们已经在用这个新智能体。可靠性和上线时间目前没有独立数据。</p>
+      <ul class="sources">
+        <li><a href="https://blog.google/innovation-and-ai/infrastructure-and-cloud/google-cloud/gemini-at-work/" target="_blank" rel="noopener noreferrer">谷歌官方博客</a></li>
+        <li><a href="https://www.cnbc.com/2026/10/08/google-cloud-introduces-gemini-agent-for-work-as-ai-race-heats-up.html" target="_blank" rel="noopener noreferrer">CNBC</a></li>
+        <li><a href="https://9to5google.com/2026/10/08/gemini-agent-google-cloud/" target="_blank" rel="noopener noreferrer">9to5Google</a></li>
+        <li><a href="https://venturebeat.com/orchestration/google-cloud-unveils-persistent-gemini-agents-for-long-running-tasks-and-they-get-their-own-gmail-calendar-and-drive-storage" target="_blank" rel="noopener noreferrer">VentureBeat</a></li>
+      </ul>
+    </article>
+
+    <article id="ai-2" data-mark="now">
+      <p class="meta"><span>讯AI · 2</span><time>北京时间 2026 年 10 月 9 日 03:00 前后</time><span class="badge ok">多来源确认</span><span class="badge warn">4500 万是公司自报</span></p>
+      <h3>Claude Dashboards 与 Claude Motion 测试版；Docs、Slides、Design 转为正式版</h3>
+      <p>The Verge 标注的时间是 UTC 10 月 8 日 19:00。据路透社报道，Claude Dashboards 面向付费套餐开放测试，能连上企业的数据平台和客户管理系统，用一句大白话就生成会自己更新的仪表盘。据一篇逐条转述 Anthropic 公告的整理稿，它支持 Amazon Redshift、BigQuery、ClickHouse、Databricks、Snowflake 等平台，也能连 Salesforce 这类客户管理工具。点开任何一个数字，都能看到生成这个数字的那条查询语句，或者让 Claude 解释一遍；每张图都标着数据最后刷新的时间。</p>
+      <p>Claude Motion 面向 Team 和 Enterprise 客户开放测试，用写代码的方式把你自己的文字、图表、形状和图片做成短动画讲解，可以导出 MP4。Anthropic 强调它不用视频生成模型，所以画面里没有生成出来的影像，也没有 AI 生成的人物。与此同时，Docs、Slides、Design 三个工具去掉了测试标签，所有套餐包括免费账户都能用。</p>
+      <p>「点开数字就能看到它是怎么来的」「每张图标着刷新时间」，就是给每个结果挂上一枚记号，告诉你它是在什么时候、按什么步骤得出来的。整理稿的作者也提醒：看得到的查询是 Claude 写的查询，仪表盘更适合当作需要复核的草稿，而不是权威数据来源。</p>
+      <p>Anthropic 称，自从这些工具出现在每次对话里以来，用户已经做了超过 4500 万份文档、幻灯片和设计。这是公司自报，尚未得到其他来源确认。</p>
+      <ul class="sources">
+        <li><a href="https://www.theverge.com/ai-artificial-intelligence/1008134/claude-can-now-turn-data-into-animated-explainers" target="_blank" rel="noopener noreferrer">The Verge</a></li>
+        <li><a href="https://www.channelnewsasia.com/business/anthropic-launches-dashboard-animation-tools-claude-6444391" target="_blank" rel="noopener noreferrer">路透社（经 CNA 转载）</a></li>
+        <li><a href="https://canberk.me/news/claude-dashboards-motion-beta-docs-slides-design-all-plans/" target="_blank" rel="noopener noreferrer">逐条转述 Anthropic 公告的整理稿</a></li>
+      </ul>
+    </article>
+
+    <article id="ai-3" data-mark="now">
+      <p class="meta"><span>讯AI · 3</span><time>北京时间 2026 年 10 月 9 日 03:00</time><span class="badge warn">单一来源 · Anthropic 自述</span></p>
+      <h3>免费的开源漏洞扫描服务 OSS Scanner</h3>
+      <p>页面元数据是 UTC 10 月 8 日 19:00。Anthropic 说，在一个叫 CyberGym 的学术评测上，大模型找漏洞的能力从去年年初找到不到 20%，提高到今年能找到超过 85%。开源项目的维护者收到的 AI 漏洞报告，也从「大多是垃圾」变成了「高质量」。</p>
+      <p>过去六个月，Anthropic 用最新模型扫描了一批全世界最重要的软件项目，找到了超过 29000 个候选漏洞，但人手只来得及核对大约 6000 个。它自己的原话是：瓶颈卡在人类验证这些发现的能力上。越来越多的维护者干脆要求把没核对过的报告连同补丁全部发过来，Anthropic 说迄今已应要求直接寄出将近 5000 份。于是它推出一个自愿加入的快速通道：符合条件的重要开源项目可以申请，由最强的模型（包括 Claude Mythos）定期扫描，报告直接交给维护者，不经过人工复核。</p>
+      <p>每份报告都附带一个可以独立运行的复现方法、一段漏洞解释，并且在可能的情况下用二分法（在代码历史里一半一半地往回找）确定这个漏洞是从哪一次改动开始出现的，有时还附上候选补丁。这就是把「漏洞是怎么来的」顺着代码的时间线读回来。</p>
+      <p>Anthropic 请审核漏洞的渗透测试专家抽查了扫描器在 48 个项目里找到的 97 个严重和高危漏洞，其中 85 个（88%）达到了正式披露的标准；剩下 12 个里有 11 个是真的但和已知问题重复，只有 1 个是误报。wolfSSL 的维护者说，收到的 74 份报告里只有 2 份无效，有 5 份成了正式的 CVE 编号。Anthropic 也承认：报告完全由模型生成，可能有错，严重程度有时会被高估；有人告诉他们，严重程度可能被说高了，或者扫描器误解了项目的威胁模型。维护者的评价是 Anthropic 引用的原话，未见独立报道。</p>
+      <ul class="sources">
+        <li><a href="https://www.anthropic.com/research/launching-opt-in-vuln-finding-service-for-open-source" target="_blank" rel="noopener noreferrer">Anthropic 研究博客</a></li>
+      </ul>
+    </article>
+
+    <article id="ai-4" data-mark="later">
+      <p class="meta"><span>讯AI · 4</span><time>北京时间 2026 年 10 月 8 日 21:00</time><span class="badge ok">事件多来源确认</span><span class="badge warn">等级是 OpenAI 自己的评估</span></p>
+      <h3>两起利用 ChatGPT 打造「假门面」的境外影响力行动</h3>
+      <p>NBC News 标注的时间是美国东部 10 月 8 日上午 9 点。「影响力行动」是指有组织地伪装身份、在别国舆论里推送特定说法的活动。OpenAI 用一个从 1 到 6 的「突破等级」来衡量这些行动的影响，数字越大，说明它越成功地进入了主流受众的视野。据 Unite.AI 转述，OpenAI 说过去两年半它一共曝光了 30 起这类行动。</p>
+      <p>俄罗斯来源的「Dark Clark」用一个叫「社会研究中心」的假智库和一个虚构人物「Mia Clark」当门面，当地员工并不知道自己在为谁工作。据操作者的内部报告，他们在 2026 年 5 月用假冒秘鲁利马教育部门的邮箱，让学校举办以乌克兰为主题的活动；又用另一个假邮箱，让厄瓜多尔的学校举行效忠仪式。OpenAI 通过公开资料找到了与之吻合的媒体报道，以及多国政客的回应，因此把它评为 5 级，这是它第一次处置 5 级的行动。伊朗来源的「Bogus Bylines」用 7 个假冒西方记者的署名，在大约十来家中小型网站上发表或转载了将近 100 篇文章，被评为 4 级；它配套的评论刷屏只被评为 2 级。OpenAI 没有确认伊朗这起行动背后是否有政府参与。</p>
+      <p>最值得记住的细节，是这些操作者怎么给自己记账。伊朗那一组在给上级的汇报里，用「自己去回复的那条帖子的浏览量」来衡量自己的影响，而不是自己那条回复的浏览量。OpenAI 说这种算法大大夸大了效果。俄罗斯那一组还会让 ChatGPT 帮忙找一些可以认领的事件，哪怕这些事和他们毫无关系。OpenAI 因此特别提醒：操作者自己报出来的战果不能照单全收。</p>
+      <p>NBC News、CyberScoop、Unite.AI 都报道了同一份 OpenAI 报告。报告里的行动细节是 OpenAI 单方面的调查结论。操作者自述的战果本身不可信，OpenAI 也这样提醒。</p>
+      <ul class="sources">
+        <li><a href="https://openai.com/index/disrupting-ai-enabled-false-front-operations" target="_blank" rel="noopener noreferrer">OpenAI 报告页</a></li>
+        <li><a href="https://www.nbcnews.com/tech/security/openai-chatgpt-russian-influence-operation-targeting-latin-america-rcna602066" target="_blank" rel="noopener noreferrer">NBC News</a></li>
+        <li><a href="https://cyberscoop.com/openai-disrupts-russia-iran-ai-influence-operations/" target="_blank" rel="noopener noreferrer">CyberScoop</a></li>
+        <li><a href="https://www.unite.ai/openai-bans-two-covert-influence-operations-using-false-fronts/" target="_blank" rel="noopener noreferrer">Unite.AI</a></li>
+      </ul>
+    </article>
+
+    <article id="ai-5">
+      <p class="meta"><span>讯AI · 5</span><time>北京时间 2026 年 10 月 8 日晚间</time><span class="badge ok">多来源确认</span><span class="badge warn">金额是公告口径</span></p>
+      <h3>白宫「科学：新的黄金时代」峰会宣布超过 60 亿美元的科学计划</h3>
+      <p>白宫事实清单的日期是 10 月 8 日；Anthropic 公告在北京 21:00；英伟达新闻稿在北京 22:31。Genesis Mission 是美国联邦政府「用 AI 加速科学发现」的计划，今年 7 月已经扩展到 15 个以上的联邦机构，并有 50 亿美元的联邦承诺。</p>
+      <p>白宫在峰会上一次发布了一揽子科研政策，总额超过 60 亿美元。其中 11 家企业为 Genesis Mission 承诺 24 亿美元的算力额度和科研工具：英伟达 10 亿美元、AMD 5 亿美元、OpenAI 2 亿美元、Anthropic 和谷歌各 1.5 亿美元、AMP 和 Emerald AI 各 1 亿美元、AWS、Armada、Crusoe 和美光各 5000 万美元。Anthropic 说它的 1.5 亿美元分三年投入，用来让 NASA、NIH、NSF 等 15 个以上机构的科研人员用上 Claude。英伟达说它的 10 亿美元分五年投入，方向包括量子计算、医疗和能源。同一份清单里还有：NSF 和能源部投入 1 亿多美元建设「AI 驱动的科学仪器与自主实验室」，一个 1 亿美元的加速博士项目，以及一个 2.15 亿美元、目标是做出第一台「有科学用途的容错量子计算机」的竞赛。</p>
+      <p>白宫文件全篇用 super intelligence（超级智能）来称呼 AI，这是政策口径，不是技术判断。企业的承诺大多是多年期、以额度计价，最后能兑现多少要看后续。白宫、Anthropic、英伟达三方原文的数字一致。</p>
+      <ul class="sources">
+        <li><a href="https://www.whitehouse.gov/fact-sheets/2026/10/fact-sheet-trump-administration-announces-the-most-ambitious-set-of-science-initiatives-this-century/" target="_blank" rel="noopener noreferrer">白宫事实清单</a></li>
+        <li><a href="https://www.anthropic.com/news/genesis-mission-commitment" target="_blank" rel="noopener noreferrer">Anthropic</a></li>
+        <li><a href="https://www.globenewswire.com/news-release/2026/10/08/3377484/0/en/nvidia-commits-1-billion-to-advance-us-science-over-the-next-five-years.html" target="_blank" rel="noopener noreferrer">英伟达新闻稿</a></li>
+      </ul>
+    </article>
+
+    <article id="ai-6">
+      <p class="meta"><span>讯AI · 6</span><time>北京时间 2026 年 10 月 9 日 01:58</time><span class="badge warn">单一来源 · The Verge</span></p>
+      <h3>《今日美国》母公司起诉 OpenAI，索赔超过 2.5 亿美元</h3>
+      <p>The Verge 标注的时间是美国东部 10 月 8 日 13:58。据 The Verge 报道（文中说路透社先行报道），USA Today Co. 和旗下多家地方报纸在 10 月 8 日提起诉讼，指控 OpenAI 复制了「数十万篇」文章来训练模型，要求赔偿超过 2.5 亿美元。起诉书说 OpenAI 从没征求许可，而是直接拿走内容去打造价值数千亿美元的产品。</p>
+      <p>这只是针对 OpenAI 的一长串版权诉讼里最新的一起。原告已经包括《纽约时报》、The Intercept、Ziff Davis、加拿大广播公司、大英百科、韦氏词典、《西雅图时报》以及近 400 家地方报纸组成的联盟。案子刚刚立案，起诉书里的说法是原告一方的主张；OpenAI 暂未回应。起诉书原文这次没有读到。</p>
+      <ul class="sources">
+        <li><a href="https://www.theverge.com/ai-artificial-intelligence/1008198/usa-today-openai-copyright-lawsuit" target="_blank" rel="noopener noreferrer">The Verge</a></li>
+      </ul>
+    </article>
+
+    <h2 id="sec-tech" class="measure">二、科技与产业（讯科 · 6 条）</h2>
+    <p class="measure">这一组里有两条时间账：一条是在羊脑里连续记了四年多的脑机接口信号，另一条是在太空待了 237 天后安全落地的乘组。也有一条网络安全通告，专门讲攻击者怎样把自己的痕迹伪装成看起来很正常的样子。</p>
+
+    <article id="tech-1">
+      <p class="meta"><span>讯科 · 1</span><time>北京时间 2026 年 10 月 8 日 17:11</time><span class="badge warn">单一来源 · 初步预估</span></p>
+      <h3>三星预估第三季度营业利润 107.4 万亿韩元；台积电第三季度营收创纪录</h3>
+      <p>据 Euronews 汇总，三星电子预估第三季度营业利润为 107.4 万亿韩元（约 802 亿美元），上一季度是 89.49 万亿韩元，去年同期只有 12.17 万亿韩元，同比增长 782.5%。如果正式数字也是这样，它将是科技公司有史以来最高的单季营业利润，超过英伟达最近一个季度的 637 亿美元，也是韩国公司第一次单季营业利润超过 100 万亿韩元，并且是三星连续第四个创纪录的季度。销售额预估 195 万亿韩元，同比增长 127%，营业利润率约 55%。</p>
+      <p>台积电 9 月营收同比增长 54.6%，达到 5118.6 亿新台币。按月度数字推算，第三季度营收约 1.49 万亿新台币，同比增长 51%，超过了它自己给出的指引上限。</p>
+      <p>三星是全球最大的内存芯片厂商之一。AI 数据中心在大量采购高带宽内存（HBM，一种层层堆叠、专门给 AI 处理器喂数据的内存芯片），供应又紧张，连带把普通 DRAM 和 NAND 内存的价格也推高了。</p>
+      <p>利润创纪录的当天，三星股价反而收跌 2.42%，韩国综合指数也跌了 2.62%，因为投资者在获利了结，并开始怀疑这轮内存热潮还能持续多久。三星的详细财报 10 月 29 日公布，台积电 10 月 15 日公布完整季报。三星的数字是初步预估，正式数字以 10 月 29 日财报为准。目前只有 Euronews 这一份汇总。</p>
+      <ul class="sources">
+        <li><a href="https://www.euronews.com/2026/10/08/samsung-flags-783-profit-jump-to-record-80bn-as-ai-chip-boom-also-lifts-tsmc-sales" target="_blank" rel="noopener noreferrer">Euronews</a></li>
+      </ul>
+    </article>
+
+    <article id="tech-2">
+      <p class="meta"><span>讯科 · 2</span><time>北京时间 2026 年 10 月 9 日 02:22</time><span class="badge warn">单一来源 · The Register</span></p>
+      <h3>格芯与台积电签下约 20 亿美元、为期五年的硅中介层合作</h3>
+      <p>一颗 AI 芯片往往不是一整块硅，而是把计算芯片和几摞 HBM 内存拼在一起。硅中介层就是垫在它们下面的一块硅片，给芯片之间提供比普通封装更快、更省电的通道。几乎所有用 HBM 的 AI 芯片都离不开中介层或类似的连接桥。</p>
+      <p>据 The Register 报道，格芯将在纽约州马耳他的工厂，为台积电的 CoWoS 先进封装规格生产硅中介层。合作预计持续五年，可以延长。不过格芯要先扩产，量产最早也要到 2028 年上半年。</p>
+      <p>美国本土已经能造先进芯片，但封装这一步长期要运回台湾完成。台积电和封装厂 Amkor 在亚利桑那的封装设施预计分别要到 2028 年和 2029 年才投产。这笔交易是在补这一环，但缺口至少还要再挂一年多。格芯官方新闻稿这次没有读到。</p>
+      <ul class="sources">
+        <li><a href="https://www.theregister.com/systems/2026/10/08/tsmc-taps-globalfoundries-to-bolster-us-silicon-interposer-production-in-2b-deal/5302061" target="_blank" rel="noopener noreferrer">The Register</a></li>
+      </ul>
+    </article>
+
+    <article id="tech-3" data-mark="later">
+      <p class="meta"><span>讯科 · 3</span><time>2026 年 10 月 8 日</time><span class="badge warn">单一来源 · 官方联合通告</span></p>
+      <h3>多国机构联合通告：把痕迹改得看起来很正常</h3>
+      <p>CISA 页面标注的发布日期是 2026 年 10 月 8 日，版本记录写着 October 8, 2026: Initial version，具体时刻没有标注。美国 CISA、FBI、NSA 联合英国、澳大利亚、加拿大、日本、新西兰、西班牙等机构发布通告。通告说，与中国政府有关联的永信至诚（Integrity Tech）支撑的攻击者，把自动化扫描和人工入侵结合起来偷邮件。用到的漏洞最早可以追溯到 2014 年。</p>
+      <p>这些攻击者先用大量开源扫描工具在网上找防护薄弱的目标，再用密码喷洒（拿几个常见密码去批量试很多账号）攻进微软 Exchange 邮箱，然后在受害者电脑上装一个合法的 VPN 软件 SoftEther 来长期潜伏，最后把邮件批量导出。受害者包括美国政府、关键制造业、医疗卫生和信息技术等关键基础设施，以及东南亚的政府、执法、医疗和宗教机构。通告也提到美国的执法、教育和宗教组织。</p>
+      <p>攻击者非常在意自己留下的痕迹看起来像什么：他们常把 VPN 安装程序改名成 conhost.exe 或 dllhost.exe，冒充 Windows 里常见的程序；把准备偷运出去的数据起成 001.gif、Css.js 这种不起眼的文件名。通告也说，部分入侵指标最早可以追溯到 2016 年。</p>
+      <p>被成功利用的漏洞里，最老的是 2014 年的 Bash 漏洞（CVE-2014-6278），还有好几个 2015、2016 年的老漏洞。这次新加进美国「已知被利用漏洞」目录的五个是 CVE-2015-3306、CVE-2015-5477、CVE-2016-3081、CVE-2021-3199、CVE-2023-22894。防守建议很朴素：关掉不用的服务和端口、所有服务都开多因素认证、及时打补丁。归因是多国政府机构的结论，被点名公司的回应还没见到。</p>
+      <ul class="sources">
+        <li><a href="https://www.cisa.gov/news-events/cybersecurity-advisories/aa26-281a" target="_blank" rel="noopener noreferrer">CISA 联合通告</a></li>
+      </ul>
+    </article>
+
+    <article id="tech-4">
+      <p class="meta"><span>讯科 · 4</span><time>北京时间 2026 年 10 月 8 日 23:34</time><span class="badge warn">单一来源 · NASA 官方博客</span></p>
+      <h3>Crew-12 在洛杉矶外海溅落，结束 237 天的任务</h3>
+      <p>溅落时间是美国东部 10 月 8 日 11:34。昨天的早报写到 Crew-12 已经离站、正在返回途中，今天是它安全落地的后续。龙飞船载着 NASA 宇航员杰西卡·梅尔和杰克·海瑟薇、欧空局宇航员索菲·阿德诺、俄罗斯航天局宇航员安德烈·费佳耶夫，在加州洛杉矶外海溅落。四人在空间站上一共待了 237 天，做了四次太空行走。梅尔累计在太空 440 天，进入 NASA 累计时长前十；海瑟薇和阿德诺都是第一次上太空，费佳耶夫是第二次。NASA 在溅落后的电话会上还会介绍下一次货运补给任务。</p>
+      <ul class="sources">
+        <li><a href="https://www.nasa.gov/blogs/spacestation/2026/10/08/nasas-spacex-crew-12-dragon-splashes-down-at-1134-a-m-edt/" target="_blank" rel="noopener noreferrer">NASA 官方博客</a></li>
+      </ul>
+    </article>
+
+    <article id="tech-5" data-mark="now">
+      <p class="meta"><span>讯科 · 5</span><time>2026 年 10 月 8 日</time><span class="badge warn">单一来源 · 只有两只羊</span></p>
+      <h3>Paradromics：羊脑里的电极连续四年多，信噪比没有下降</h3>
+      <p>新闻稿日期是美国得州奥斯汀 10 月 8 日。脑机接口要把电极放进大脑，读取神经元发出的电信号。过去常被认为要在「信号多、性能高」和「能用很多年」之间二选一，因为电极在脑内待久了，周围组织会把它包起来，信号就慢慢变弱。</p>
+      <p>据 Paradromics 新闻稿，两只植入了其皮层电极模块的羊，经过四年多的持续跟踪，身体健康，电极没有移位，记录到的神经信号一直稳定，解码效果也保持住了。信噪比（信号比背景噪音清楚多少）在两只羊身上都没有下降。另一项用完整系统、在六只羊身上进行的研究，信噪比也已经稳定了将近两年。</p>
+      <p>首席医学官、神经外科医生 Stephen Ryu 说，他把耐久看成安全问题：每多一次手术，就是让病人再承担一轮风险，理想情况是没有人因为植入物用旧了而需要再次开颅。公司正在推进首次人体可行性研究 Connect-One。这只是两只羊的临床前数据，由公司自己公布，还没有同行评审论文。首席执行官 Matt Angle 也说，过去人们常以为植入式脑机接口必须在峰值性能和长期稳定之间做取舍。</p>
+      <ul class="sources">
+        <li><a href="https://paradromics.com/news/paradromics-demonstrates-four-years-of-stable-neural-recording-in-major-brain-computer-interface-durability-milestone/" target="_blank" rel="noopener noreferrer">Paradromics 新闻稿</a></li>
+      </ul>
+    </article>
+
+    <article id="tech-6">
+      <p class="meta"><span>讯科 · 6</span><time>2026 年 10 月 8 日</time><span class="badge warn">单一来源 · Tom's Hardware 转述《联合报》</span></p>
+      <h3>台湾检方起诉 10 人，涉嫌走私美国军规芯片</h3>
+      <p>据报道，涉案的是德州仪器和亚德诺两家美国公司的高速射频、雷达类军工级芯片，不是 AI 加速器。按检方说法，被告用中山科学研究院等台湾机构的名义下单，附上虚假的最终用户声明，承诺不会出口到受美国制裁的对象，经销商因此被骗发货。芯片实际产自美国、泰国、菲律宾和韩国，却被谎报为「台湾制造」出口，最后据信流向大陆研制导弹和军用雷达的研究单位。</p>
+      <p>违反美国出口管制在台湾本身不构成犯罪，所以检方以诈欺、伪造文书和洗钱起诉，对每名被告求刑 2 到 10 年。目前只是起诉，尚未开庭，两家芯片公司没有公开回应。起诉书原文这次没有读到。</p>
+      <ul class="sources">
+        <li><a href="https://www.tomshardware.com/tech-industry/taiwan-indicts-10-for-smuggling-us-military-grade-chips-to-china-parts-routed-to-missile-and-radar-programs-using-forged-taiwan-defense-institute-orders-texas-instruments-and-analog-devices-hardware-passed-off-as-made-in-taiwan" target="_blank" rel="noopener noreferrer">Tom's Hardware</a></li>
+      </ul>
+    </article>
+
+    <h2 id="sec-med" class="measure">三、医学与健康（讯医 · 6 条）</h2>
+    <p class="measure">今天医学这组的种子是「DNA 打字机」。它几乎就是今天核心思想的字面版本：让每个细胞在分裂的当下，按顺序往自己的 DNA 里盖一枚印章，事后读出来，就是一棵谁也没法记错的家谱。下面的医学新闻只是报道，不构成任何个人诊疗建议。</p>
+
+    <article id="med-1">
+      <p class="meta"><span>讯医 · 1</span><time>2026 年 10 月 8 日</time><span class="badge warn">单一来源 · FDA</span></p>
+      <h3>FDA 批准阿替利珠单抗用于 III 期 dMMR 结肠癌术后辅助治疗</h3>
+      <p>FDA 页面写的是 On October 8, 2026，美国白天发布。「辅助治疗」是指手术把肿瘤切干净以后，再用药降低复发风险。dMMR 肿瘤的 DNA 修错机制坏了，突变特别多，因而更容易被免疫系统认出来，这正是免疫检查点抑制剂能起作用的基础。</p>
+      <p>FDA 批准阿替利珠单抗（商品名 Tecentriq，基因泰克）联合氟尿嘧啶类药物和奥沙利铂，用于 III 期 dMMR 结肠癌成人和 2 岁及以上儿童患者的术后辅助治疗。这是免疫治疗第一次进入这类早期结肠癌的术后阶段。依据是 ATOMIC 试验：711 名成人和 1 名儿童患者，在原发肿瘤完整切除后随机分组。加用阿替利珠单抗后，无病生存的风险比是 0.50（95% 置信区间 0.35–0.73），可以粗略理解为复发或死亡的风险约减半。两组的中位无病生存都还没到，说明随访仍在继续。同时获批的还有皮下注射剂型。</p>
+      <ul class="sources">
+        <li><a href="https://www.fda.gov/drugs/resources-information-approved-drugs/fda-approves-atezolizumab-combination-chemotherapy-stage-iii-mismatch-repair-deficient-colon-cancer" target="_blank" rel="noopener noreferrer">FDA 官方页面</a></li>
+      </ul>
+    </article>
+
+    <article id="med-2" data-mark="now">
+      <p class="meta"><span>讯医 · 2</span><time>北京时间 2026 年 10 月 9 日凌晨</time><span class="badge warn">单一来源 · 艾伦研究所新闻稿</span></p>
+      <h3>《科学》发表「DNA 打字机」：128 万个细胞的家谱</h3>
+      <p>艾伦研究所经 EurekAlert 发布的新闻稿日期是 10 月 8 日。《科学》通常在美国东部周四 14:00 上线，大约是北京 10 月 9 日 02:00。一个受精卵最后会变成由各种细胞组成的身体。想知道哪个细胞是哪个细胞的后代，过去大多只能靠在显微观察下一路盯着，或者事后根据细胞的样子去推断。这两种办法在哺乳动物胚胎里都很难做到大规模。</p>
+      <p>DNA 打字机的做法是：细胞每分裂一次，就往自己的 DNA 里按顺序插入一枚基因印章。印章会被复制到所有后代细胞里，而且是按先后写入的，所以它就像写在基因组里的一本日记。研究者把这套系统注入小鼠受精卵，让胚胎发育 13.5 天（大约是小鼠孕期的三分之二），再测了 158 万个细胞核里的印章，重建出一棵带时间刻度的家谱：一个细胞如何变成 128 万个细胞，约占两周大小鼠胚胎细胞总数的 10%。这是迄今最大的哺乳动物细胞谱系树。</p>
+      <p>受精卵第一次分裂出的两个细胞，后代数量并不相等，大约是 57% 对 42%，但两边产生的每一种细胞类型的比例都一样。数据和一个叫 NextCell 的交互浏览器已经公开。这条之所以是今天的种子，是因为它把「当下按顺序留记号、事后再读」做到了极致：没有任何一个细胞需要事后回忆或汇报自己做了什么。目前只看到这一份机构新闻稿，还没有其他来源的评论。论文发表于《科学》。</p>
+      <ul class="sources">
+        <li><a href="https://www.eurekalert.org/news-releases/1146881" target="_blank" rel="noopener noreferrer">艾伦研究所新闻稿</a></li>
+      </ul>
+    </article>
+
+    <article id="med-3">
+      <p class="meta"><span>讯医 · 3</span><time>2026 年 10 月 8 日</time><span class="badge warn">单一来源 · AACR 新闻稿转载</span></p>
+      <h3>近 4 万名实体瘤患者不分年龄做胚系检测，72% 的携带者会被年龄线漏掉</h3>
+      <p>美国癌症研究协会新闻稿的日期是 10 月 8 日，经 News-Medical 转载；论文发表于《Cancer Discovery》。胚系变异是从父母那里遗传来、身体每个细胞都带着的基因改变。查出来不仅影响患者自己用药，也提示家人要不要去做筛查。过去的默认做法是只给 50 岁以下发病的人查，理由是晚发的癌症不太像遗传。</p>
+      <p>纪念斯隆-凯特琳癌症中心的研究团队给全部 39,184 名实体瘤患者做了检测，不看年龄。结果 16.3% 的患者至少带有一个致病胚系变异。如果只查 50 岁以下的人，会漏掉 4,601 名携带者，占全部携带者的 72%。按各癌种自己的发病年龄分布来看，早发、平均、晚发人群的携带率分别是 18.4%、15.6%、12.3%，晚发的人并不少。研究者 Zsofia K. Stadler 说，现行做法在很多方面就像基因检测的守门人。期刊原文这次没有读到。</p>
+      <ul class="sources">
+        <li><a href="https://www.news-medical.net/news/20261008/Universal-germline-genetic-testing-catches-missed-cancer-risks-in-older-patients.aspx" target="_blank" rel="noopener noreferrer">News-Medical（AACR 新闻稿）</a></li>
+      </ul>
+    </article>
+
+    <article id="med-4" data-mark="later">
+      <p class="meta"><span>讯医 · 4</span><time>2026 年 10 月 8 日</time><span class="badge warn">单一来源 · 感染多为回顾登记</span></p>
+      <h3>REACH：606 名镰状细胞贫血儿童长期吃羟基脲，疟疾风险降低 51%</h3>
+      <p>帝国理工新闻稿称 published today，News-Medical 标注 10 月 8 日。羟基脲能让身体多造胎儿血红蛋白、减少红细胞镰变，在高收入国家早已是标准治疗。但它会压低中性粒细胞，医生担心在医疗资源少的地方会引发严重感染，所以一直不敢多用。</p>
+      <p>REACH 试验在安哥拉、刚果（金）、肯尼亚和乌干达四地，治疗了 606 名镰状细胞贫血儿童和年轻人。长期分析发现，羟基脲剂量越高，疟疾和非疟疾感染反而越少：疟疾风险降低 51%，其他感染降低 38%。研究者 Tom Williams 说，在超过 5,000 个患者年的随访里，即使用到最大耐受剂量，因感染导致的患病或死亡也没有增加。</p>
+      <p>原文说多数感染是事后靠病史回顾记录的，而不是在发生当下实时检测的。数字结论很让人放心，但记录方式决定了它的精度有上限。这是帝国理工的新闻稿；期刊页面可以打开，全文这次没有细读。尚未得到其他来源确认。</p>
+      <ul class="sources">
+        <li><a href="https://www.news-medical.net/news/20261008/Hydroxyurea-does-not-increase-infection-risk-in-children-with-sickle-cell-anemia.aspx" target="_blank" rel="noopener noreferrer">News-Medical（帝国理工新闻稿）</a></li>
+        <li><a href="https://www.thelancet.com/journals/lanhae/article/PIIS2352-3026%2826%2900246-2/fulltext" target="_blank" rel="noopener noreferrer">《柳叶刀·血液学》页面</a></li>
+      </ul>
+    </article>
+
+    <article id="med-5">
+      <p class="meta"><span>讯医 · 5</span><time>2026 年 10 月 8 日</time><span class="badge warn">单一来源 · WHO</span></p>
+      <h3>世卫更新刚果（金）本迪布焦型埃博拉疫情</h3>
+      <p>WHO 疾病暴发新闻 DON619 的页面日期是 10 月 8 日，数据截至 10 月 6 日。截至 10 月 6 日，刚果（金）累计确诊 8728 例、确诊死亡 4205 例，粗病死率 48.2%。疫情扩展到第 64 个卫生区。过去三周每周新增病例从 475 升到 487，部分地区在放缓、部分仍在上升。自上一期通报以来报告的 372 例死亡中，264 例发生在社区，108 例在治疗中心。世卫认为，这说明发现得晚、送医不及时。</p>
+      <p>昨天的早报写到确诊 8665 例、肯尼亚在追踪首例输入病例的接触者。今天的正式通报确认：世卫在 10 月 5 日获知肯尼亚出现一例有刚果（金）旅行史的实验室确诊输入病例；这名患者经乌干达入境，已于 10 月 5 日死亡。荷兰还接收了一名检测阳性的医护人员做医疗后送。</p>
+      <ul class="sources">
+        <li><a href="https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON619" target="_blank" rel="noopener noreferrer">WHO DON619</a></li>
+      </ul>
+    </article>
+
+    <article id="med-6">
+      <p class="meta"><span>讯医 · 6</span><time>2026 年 10 月 8 日</time><span class="badge warn">单一来源 · 关联研究，42 人</span></p>
+      <h3>《iScience》：同为 HLA-A2 的 42 名新冠患者，轻症者的 CD8+ T 细胞反应更强</h3>
+      <p>德州农工大学新闻稿的日期是 10 月 8 日。研究者只挑选 HLA 类型都是 A2 的 42 名患者，用的是 2020 年疫苗出现之前采的血样，分析了 8,402 个能识别新冠病毒的 T 细胞。故意只比 HLA 类型相同的人，是为了避免拿苹果比橘子。他们发现，轻症者的 CD8+ 杀伤性 T 细胞反应更强、更持久。CD8+ T 细胞识别的病毒片段大多藏在病毒内部、不太变异，因此可能为「不怕变异」的 T 细胞疫苗提供方向。作者自己强调，下一步是确立因果，目前只是关联。</p>
+      <ul class="sources">
+        <li><a href="https://stories.tamu.edu/news/2026/10/08/t-cell-research-reveals-paths-to-better-vaccines-for-covid-19-and-beyond/" target="_blank" rel="noopener noreferrer">德州农工大学新闻稿</a></li>
+      </ul>
+    </article>
+
+    <div class="measure">
+      <h3>课程知识桥（不计入条目）</h3>
+      <p>「细胞家谱」和组织胚胎学课上讲的「细胞谱系」是同一个问题：受精卵怎样一步步分出三个胚层、再分出各个器官。课本里的谱系图大多是靠观察和推断画出来的，而 DNA 打字机让每个细胞在分裂的当下就把记录写进自己的 DNA，事后直接读出来。复习「卵裂—囊胚—原肠胚」这一段时，可以顺手想一想：如果每一次分裂都会留下一枚按顺序排好的小印章，那张谱系图会是什么样子。</p>
+    </div>
+
+    <h2 id="sec-life" class="measure">四、个人轻提示（连读 · 窗内 10 条 + 窗外前瞻 2 条）</h2>
+    <p class="measure">这一组来自 Sofia 授权的两个 Gmail 邮箱和 GitHub 活动，全程只读。窗内两个邮箱都没有学校、课程或家庭相关邮件；也没有日历和笔记类连接器可读，所以这里只有项目和账号方面的事。Gmail 和私有仓库的链接需要登录才能打开。ChatSolo、StudyFlow、LandingPage 是私有仓库，匿名访问会看到 404，内容是用授权读到的。</p>
+
+    <article id="life-ahead">
+      <p class="meta"><span>先看的两件事</span><span class="badge warn">窗外前瞻 · 不在采集窗内</span></p>
+      <h3>OpenCode Go 要在 10 月 17 日前重新授权</h3>
+      <p>OpenCode Go 的支付宝自动扣款授权要在 10 月 17 日前重新授权，从 10 月 9 日算距今 8 天。窗内又来了一封提醒（北京 10 月 9 日 03:09），邮箱里仍然没看到「授权完成」的确认信。这封窗内提醒本身没写截止日期。截止日来自 10 月 1 日那封窗外邮件：为避免订阅在 2026 年 10 月 17 日到期后中断，请在到期前重新授权。窗内提醒是单一来源（OpenCode 官方邮件）。</p>
+      <ul class="sources">
+        <li><a href="https://mail.google.com/mail/?authuser=aimfllyys@gmail.com#all/thread-f:1878509816217644697" target="_blank" rel="noopener noreferrer">窗内提醒</a></li>
+        <li><a href="https://mail.google.com/mail/?authuser=aimfllyys@gmail.com#all/thread-f:1877793781842953279" target="_blank" rel="noopener noreferrer">截止日来源（窗外）</a></li>
+      </ul>
+      <h3>Supabase 从 10 月 30 日起，新建表要显式写 GRANT</h3>
+      <p>从 10 月 30 日起（从 10 月 9 日算距今 21 天），public 模式里新建的表要显式写 GRANT，才能被数据 API 访问。邮件的原意是：10 月 30 日，Supabase 将不再自动把数据 API 权限授给现有项目里 public 模式的新表。这两天 StudySolo 刚应用了三个新迁移、StudyFlow 应用了 6 个 Supabase 迁移，以后新建表的迁移都要记得补 GRANT。这封邮件是 9 月 24 日的，早于本次窗口，单一来源。</p>
+      <ul class="sources">
+        <li><a href="https://mail.google.com/mail/?authuser=sofiapintos190@gmail.com#all/thread-f:1877156377068587185" target="_blank" rel="noopener noreferrer">Supabase 通知</a></li>
+      </ul>
+    </article>
+
+    <article id="life-1">
+      <p class="meta"><span>窗内 · 1</span><time>北京时间 10 月 8 日 07:37</time><span class="badge ok">多来源确认</span></p>
+      <h3>昨天的早报已上线</h3>
+      <p>《请旁边的竹管来引水》在北京 10 月 8 日 07:37 合入 Blog-YuSheng main（PR #167），同步 PR #168 也随即合入 dev。main 和 dev 两边都已经有了这份文件。</p>
+      <ul class="sources">
+        <li><a href="https://github.com/AIMFllyYS/Blog-YuSheng/pull/167" target="_blank" rel="noopener noreferrer">PR #167</a></li>
+        <li><a href="https://github.com/AIMFllyYS/Blog-YuSheng/pull/168" target="_blank" rel="noopener noreferrer">PR #168</a></li>
+      </ul>
+    </article>
+
+    <article id="life-2">
+      <p class="meta"><span>窗内 · 2</span><time>北京时间 10 月 8 日 07:43</time><span class="badge warn">单一来源 · 失败原因未能核实</span></p>
+      <h3>同步到 dev 之后，CI 质量检查又失败了一次</h3>
+      <p>现象和前两天一样都在 quality-gate，但这次没读到失败日志，没法确认是不是同一个测试超时。运行大约 5 分 34 秒，有 3 条注释。运行注释还提醒：GitHub 的 ubuntu-latest 从 10 月 19 日起会迁到 Ubuntu 26。</p>
+      <ul class="sources">
+        <li><a href="https://github.com/AIMFllyYS/Blog-YuSheng/actions/runs/37703306184" target="_blank" rel="noopener noreferrer">这次运行</a></li>
+        <li><a href="https://mail.google.com/mail/?authuser=aimfllyys@gmail.com#all/thread-f:1878436447493366837" target="_blank" rel="noopener noreferrer">通知邮件</a></li>
+      </ul>
+    </article>
+
+    <article id="life-3">
+      <p class="meta"><span>窗内 · 3</span><time>北京时间 10 月 8 日 07:26</time><span class="badge warn">单一来源 · 作者自述</span></p>
+      <h3>复习工作站合入了 50 节核心课的大改</h3>
+      <p>PR #192 把大二上 50 节核心课程的可视化笔记、题源绑定、云端资产和 Agent 上下文一起进了 master。PR 自己也写明，正常登录账号的完整浏览器、跨设备和手机端流程仍需补验，数据库就绪不代表整条业务已经端到端测过。合并后 master 上紧接着有两次 CI 失败通知（北京 07:42、07:54）。具体是哪个测试失败，这次没能核实。</p>
+      <ul class="sources">
+        <li><a href="https://github.com/AIMFllyYS/1037Solo-StudySolo/pull/192" target="_blank" rel="noopener noreferrer">StudySolo PR #192</a></li>
+      </ul>
+    </article>
+
+    <article id="life-4">
+      <p class="meta"><span>窗内 · 4</span><time>北京时间 10 月 8 日 23:05、23:31</time><span class="badge warn">单一来源 · 作者自述</span></p>
+      <h3>当晚又合入文件治理和反馈投票</h3>
+      <p>#193 是文件与资产治理：单文件上限 512 MiB，加了软删除和回收站。自述 86 个测试文件、340 个用例全绿，三个数据库迁移已应用到云端库。其中「真实登录端测」一项还没勾上，交接说明写的是由人工验收：本地大文件、断网恢复、双浏览器冲突、删除、额度和恢复，等 Sofia 本人做。#194 是从遗留未提交改动里抢救出来的反馈投票恢复功能，其余同批改动已经被 master 上的治理版本取代。</p>
+      <ul class="sources">
+        <li><a href="https://github.com/AIMFllyYS/1037Solo-StudySolo/pull/193" target="_blank" rel="noopener noreferrer">PR #193</a></li>
+        <li><a href="https://github.com/AIMFllyYS/1037Solo-StudySolo/pull/194" target="_blank" rel="noopener noreferrer">PR #194</a></li>
+      </ul>
+    </article>
+
+    <article id="life-5">
+      <p class="meta"><span>窗内 · 5</span><time>北京时间 10 月 8 日 16:39、16:35</time><span class="badge warn">单一来源 · PR 描述</span></p>
+      <h3>StudyFlow 和 LandingPage 把 dev 发布到了 main</h3>
+      <p>两个仓库都打开了 MainECS 自动部署，上线前都做了服务器备份。StudyFlow 写明 6 个必需的 Supabase 迁移已经在生产环境应用。LandingPage 的上线差异是 24 个文件（增加 219 行、删除 47 行），没有依赖或迁移变化。</p>
+      <ul class="sources">
+        <li><a href="https://github.com/AIMFllyYS/1037Solo-StudyFlow/pull/16" target="_blank" rel="noopener noreferrer">StudyFlow PR #16</a></li>
+        <li><a href="https://github.com/AIMFllyYS/1037Solo-LandingPage/pull/13" target="_blank" rel="noopener noreferrer">LandingPage PR #13</a></li>
+      </ul>
+    </article>
+
+    <article id="life-6" data-mark="now">
+      <p class="meta"><span>窗内 · 6</span><time>北京时间 10 月 8 日 23:47 关闭</time><span class="badge warn">单一来源 · 关闭原因未能核实</span></p>
+      <h3>ChatSolo 那个想按到达顺序记轨迹的改动，被关掉了</h3>
+      <p>PR #29 在北京 18:05 开启，18:18 收到机器人推送的新提交，23:47 被关闭，没有合并。原先 thinking 和正文各拼成一条字符串，再按类型重排，图片条钉在最底下。改动想让前端在流式过程中按到达顺序记一条紧凑轨迹：偏移进思考或正文，工具和产物只记引用，再照着轨迹渲染。关闭原因页面上没写。</p>
+      <ul class="sources">
+        <li><a href="https://github.com/AIMFllyYS/1037Solo-ChatSolo/pull/29" target="_blank" rel="noopener noreferrer">ChatSolo PR #29</a></li>
+        <li><a href="https://mail.google.com/mail/?authuser=aimfllyys@gmail.com#all/thread-f:1878476403424370163" target="_blank" rel="noopener noreferrer">通知邮件</a></li>
+      </ul>
+    </article>
+
+    <article id="life-7">
+      <p class="meta"><span>窗内 · 7</span><time>北京时间 10 月 8 日</time><span class="badge warn">单一来源 · 作者自述</span></p>
+      <h3>PocketWebShell 发布 0.1.65，另有一份还没合并的云端流程说明</h3>
+      <p>#52 在 07:33 合入「网页顶部避让三模式」，#53 在 07:42 发布 0.1.65。自述 testDebugUnitTest 384 项、组装调试、API 35 模拟器测试和人工冒烟都通过了。#54 在 12:53 打开，目前未合并。它规定云端 Agent 只建分支、提 PR 到 dev，真机验收、签名和发布都留给 Sofia 本地做。</p>
+      <ul class="sources">
+        <li><a href="https://github.com/AIMFllyYS/PocketWebShell/pull/52" target="_blank" rel="noopener noreferrer">PR #52</a></li>
+        <li><a href="https://github.com/AIMFllyYS/PocketWebShell/pull/53" target="_blank" rel="noopener noreferrer">PR #53</a></li>
+        <li><a href="https://github.com/AIMFllyYS/PocketWebShell/pull/54" target="_blank" rel="noopener noreferrer">PR #54</a></li>
+      </ul>
+    </article>
+
+    <article id="life-8">
+      <p class="meta"><span>窗内 · 8</span><time>北京时间 10 月 8 日 14:01</time><span class="badge warn">单一来源 · 具体原因未能核实</span></p>
+      <h3>deepseek-harness 的真实接口定时测试又失败了</h3>
+      <p>同一个提交，37 秒就退出，退出码 22。没读到日志，不下结论。从 10 月 2 日起几乎每天如此。退出码 22 通常是请求拿到了 4xx 或 5xx，但这次没有日志，不能据此下结论。</p>
+      <ul class="sources">
+        <li><a href="https://github.com/AIMFllyYS/deepseek-harness/actions/runs/37735271830" target="_blank" rel="noopener noreferrer">这次运行</a></li>
+        <li><a href="https://mail.google.com/mail/?authuser=aimfllyys@gmail.com#all/thread-f:1878460243478851160" target="_blank" rel="noopener noreferrer">通知邮件</a></li>
+      </ul>
+    </article>
+
+    <article id="life-9">
+      <p class="meta"><span>窗内 · 9</span><time>北京时间 10 月 8 日 08:49</time><span class="badge warn">单一来源</span></p>
+      <h3>闲置的 Gemini 项目被加上了每月 100 美元上限</h3>
+      <p>Google AI Studio 给闲置 50 天以上的 Gemini 项目「studysolo」自动加了每月 100 美元的花费上限。不需要处理。如果这个旧项目不用了，可以找时间清理它的密钥。邮件说上限可以随时调高或去掉。</p>
+      <ul class="sources">
+        <li><a href="https://mail.google.com/mail/?authuser=aimfllyys@gmail.com#all/thread-f:1878440586071143485" target="_blank" rel="noopener noreferrer">Google 通知</a></li>
+      </ul>
+    </article>
+
+    <article id="life-10">
+      <p class="meta"><span>窗内 · 10</span><time>北京时间 10 月 9 日 03:09</time><span class="badge warn">单一来源</span></p>
+      <h3>OpenCode 又提醒了一次支付宝授权</h3>
+      <p>这就是上面「先看的两件事」里的那封窗内提醒。邮件说自动续费还开着，但绑定的支付宝授权已经失效或需要重新确认，暂时不能用来自动续费。如果最近已经处理好了，就不用再操作。</p>
+    </article>
+
+    <div class="measure" id="sec-skip">
+      <h2>五、刻意没有收录的材料</h2>
+      <p>下面这些在采集时看到了，但因为早于窗口或昨天已收，没有放进今天的条目。</p>
+      <p><strong>人工智能</strong>：GPT-6 与 Intelligent UI 全量推送（官方公告在北京 10 月 8 日 02:05，昨天已收）；Claude Haiku 5.5（昨天已收）；Liquid AI 开源 d1 决策模型（10 月 7 日）；The Information 关于微软削减内部 Claude 预算的报道（10 月 6 日、7 日）；Mistral Large 4（10 月 6 日）；第三巡回法院 ROSS 案（9 月 29 日判决）。</p>
+      <p><strong>科技与产业</strong>：美国半导体行业协会「1 到 8 月全球芯片销售额首次突破 1 万亿美元」（10 月 5 日）；2026 年诺贝尔化学奖（昨天已收）；Bridge Neurotech 免开颅超声脑机接口（10 月 6 日）；DARPA 量子基准 Stage C、思科 NX-OS 漏洞（昨天已收）。</p>
+      <p><strong>医学</strong>：图卡替尼维持治疗、瑞米布替尼两项 FDA 批准（10 月 7 日，昨天已收）；NEJM 光遗传学临床数据（昨天已收）；NEJM 上检索到的 TRILUMINATE 三尖瓣修复论文（2023 年旧文）。</p>
+      <p><strong>个人</strong>：几封营销和通讯邮件（Grok Imagine、HeyGen、Mobbin、Refero、Vercel 产品通讯），以及一封与早报无关的中转商上架通知（贵数智能在北京 10 月 8 日 14:36 上架 Kimi K2.8）。</p>
+    </div>
+
+    <div class="measure" id="sec-check">
+      <h2>单一来源与未能核实清单</h2>
+      <p>只有一个来源的条目：讯AI 第 3 条（Anthropic 自己的研究页面）、第 6 条（The Verge）、讯科第 1 条（Euronews 汇总）、第 2 条（The Register）、第 3 条（CISA 官方通告）、第 4 条（NASA 官方博客）、第 5 条（Paradromics 新闻稿）、第 6 条（Tom's Hardware 转述《联合报》）、讯医 6 条全部（FDA、艾伦研究所、AACR、帝国理工、WHO、德州农工各自的官方页面或新闻稿），以及连读的全部条目。</p>
+      <p>公司自述、未独立核实的数字：Claude 已生成超过 4500 万份文档、幻灯片和设计；OSS Scanner 抽查里 85/97 的有效率是 Anthropic 自己的抽查；两起影响力行动的等级是 OpenAI 自己的评估；白宫峰会各家承诺金额是公告口径；三星利润是初步预估；Paradromics 只有两只羊的临床前数据，未见同行评审。</p>
+      <p>链接打不开但内容已核对：openai.com 和 thelancet.com 对自动访问返回 403，venturebeat.com 偶尔返回 429，globenewswire.com 用命令行访问超时。这几页都已用另一种方式读到正文，或由多家报道交叉确认。</p>
+      <p>没能核实的：Blog-YuSheng 和 StudySolo 的 CI 具体是哪个测试失败；deepseek-harness 退出码 22 的具体原因；ChatSolo #29 被关闭的原因。个人侧多条 PR 的测试结果是作者自述。</p>
+      <h2>结尾</h2>
+      <p>今天这份材料里，最让人放心的记录，都是在事情发生的当下按顺序留下来的：细胞分裂一次就盖一枚印章，仪表盘上的每个数字都挂着自己的查询，漏洞报告里带着复现步骤和「这个问题是哪一次改动引入的」。最需要打折扣的数字，则大多来自事后的自我汇报：影响力行动的操盘手拿别人帖子的浏览量给自己记功，羟基脲研究里的感染多半是事后回顾登记的。下次想弄清一件事是怎么走到今天的，不妨先问一句：这条记录，是当时留下的，还是后来补的？</p>
+    </div>
+  </div>
+</dialog>
+
+<script>
+(function () {
+  var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var stage = document.getElementById("stage");
+  var hint = document.getElementById("hint");
+  var strand = document.getElementById("strand");
+  var courses = document.getElementById("courses");
+  var ring = document.getElementById("ring");
+  var loom = document.getElementById("loom");
+  var dock = document.getElementById("dock");
+  var essay = document.getElementById("essay");
+  var readout = document.getElementById("readout");
+  var kicker = document.getElementById("dock-kicker");
+  var memory = document.getElementById("memory");
+  var memoryLabel = document.getElementById("memory-label");
+  var sideDish = document.getElementById("side-dish");
+  var setAside = document.getElementById("set-aside");
+  var fake = document.getElementById("fake-clip");
+  var peek = document.getElementById("peek");
+  var autoBtn = document.getElementById("auto");
+  var soundBtn = document.getElementById("sound");
+  var bow = document.getElementById("bow");
+  var book = document.getElementById("book");
+  var openBookBtn = document.getElementById("open-book");
+  var threadBtn = document.getElementById("thread");
+
+  var STITCHES = [
+    {
+      color: "#e07a62",
+      yarn: "#f7efe6",
+      anchor: "med-2",
+      title: "细胞每分裂一次，就给自己盖一枚章",
+      read: "细胞在分裂的那一刻，给自己盖了章。",
+      paragraphs: [
+        "细胞每分裂一次，就往自己的 DNA 里按顺序盖一枚基因印章，再复制给后代。据艾伦研究所的新闻稿，胚胎长到 13.5 天时，测了 158 万个细胞核，读出 128 万个细胞的家谱，大约是两周大小鼠胚胎细胞的 10%。",
+        "第一次分成的两个细胞，后代大约是 57% 对 42%，每种细胞的比例却一样。没有谁需要事后回忆。目前只看到这一份新闻稿，还没有其他来源的评论。"
+      ],
+      links: [{ href: "https://www.eurekalert.org/news-releases/1146881", label: "艾伦研究所新闻稿" }]
+    },
+    {
+      color: "#e2b143",
+      yarn: "#f4e7d4",
+      anchor: "ai-2",
+      title: "数字旁边挂着它的查询",
+      read: "数字旁边留着查询，图上留着刷新时间。",
+      paragraphs: [
+        "据一篇逐条转述 Anthropic 公告的整理稿，点开仪表盘上任何一个数字，都能看到背后的查询，每张图也标着数据最后刷新的时间。路透社和 The Verge 也报道了这个测试版。",
+        "整理稿提醒：查询是 Claude 写的，更适合当作要复核的草稿。超过 4500 万份文档、幻灯片和设计，是公司自己报的，还没有其他来源确认。"
+      ],
+      links: [{ href: "https://canberk.me/news/claude-dashboards-motion-beta-docs-slides-design-all-plans/", label: "转述公告的整理稿" }]
+    },
+    {
+      color: "#6f9a62",
+      yarn: "#efe6da",
+      anchor: "ai-1",
+      title: "每一步都进了当时的日志",
+      read: "智能体做的每一步，当时就进了审计日志。",
+      paragraphs: [
+        "据 VentureBeat 报道，谷歌说 Gemini agent 的每一步都会记进审计日志，包括它什么时候打开隔离环境去跑代码。事情是当时记下的，不是事后由它自己汇报。",
+        "官方博客、CNBC 和 9to5Google 都写到：它可以有自己的工作邮箱和网盘，目前仍是私有预览。近 90% 的《财富》100 强在用 Gemini Enterprise，并不等于已经在用这个新智能体。"
+      ],
+      links: [{ href: "https://venturebeat.com/orchestration/google-cloud-unveils-persistent-gemini-agents-for-long-running-tasks-and-they-get-their-own-gmail-calendar-and-drive-storage", label: "VentureBeat" }]
+    },
+    {
+      color: "#5b9aaa",
+      yarn: "#f6eee4",
+      anchor: "ai-3",
+      title: "能回到引入它的那一次改动",
+      read: "报告能回到引入漏洞的那一次改动。",
+      paragraphs: [
+        "据 Anthropic 自己的研究页面，每份报告都带着可以单独运行的复现步骤，并尽量用二分法找出漏洞是从哪一次改动开始的。",
+        "他们说半年里找到超过 2.9 万个候选，人手大约只核对了 6000 个。抽查里 97 个严重和高危有 85 个达到披露标准。这些都是他们自己说的，还没有独立报道。"
+      ],
+      links: [{ href: "https://www.anthropic.com/research/launching-opt-in-vuln-finding-service-for-open-source", label: "Anthropic 研究博客" }]
+    },
+    {
+      color: "#a07bb8",
+      yarn: "#f3e4d8",
+      anchor: "tech-5",
+      title: "四年都在记，所以说得出没变",
+      read: "羊脑子里的信号，四年都在被记着。",
+      paragraphs: [
+        "据 Paradromics 的新闻稿，两只羊脑子里的电极连续记了四年多，信噪比没有下降。正因为一直记着，才说得出四年没变。",
+        "这是公司自己的稿子，只有两只羊，还没有同行评审的论文。另一项六只羊的完整系统，信噪比稳定了将近两年，同样出自这份新闻稿。"
+      ],
+      links: [{ href: "https://paradromics.com/news/paradromics-demonstrates-four-years-of-stable-neural-recording-in-major-brain-computer-interface-durability-milestone/", label: "Paradromics 新闻稿" }]
+    }
+  ];
+
+  var knitted = 0;
+  var impostor = false;
+  var impostorDone = false;
+  var gifted = false;
+  var soundOn = false;
+  var pass = [];
+  var drag = null;
+  var fakeDrag = null;
+  var audioCtx = null;
+  var slidingLock = false;
+  var ORD = ["第一枚", "第二枚", "第三枚", "第四枚", "第五枚"];
+
+  function setHint(main, sub) {
+    hint.textContent = "";
+    hint.appendChild(document.createTextNode(main));
+    if (sub) {
+      var s = document.createElement("small");
+      s.textContent = sub;
+      hint.appendChild(s);
+    }
+  }
+
+  function blip(freq) {
+    if (!soundOn) return;
+    try {
+      audioCtx = audioCtx || new AudioContext();
+      var o = audioCtx.createOscillator();
+      var g = audioCtx.createGain();
+      o.type = "sine";
+      o.frequency.value = freq;
+      g.gain.setValueAtTime(0.0001, audioCtx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.03, audioCtx.currentTime + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.18);
+      o.connect(g);
+      g.connect(audioCtx.destination);
+      o.start();
+      o.stop(audioCtx.currentTime + 0.2);
+    } catch (err) { /* 声音不可用时页面照常 */ }
+  }
+
+  function openDock() {
+    dock.hidden = false;
+    if (!window.matchMedia("(max-width: 860px)").matches) return;
+    window.requestAnimationFrame(function () {
+      var rect = dock.getBoundingClientRect();
+      var room = Math.min(rect.height, window.innerHeight * 0.46);
+      if (rect.top >= 72 && rect.top <= window.innerHeight - room) return;
+      var top = window.scrollY + rect.top - (window.innerHeight - room - 12);
+      window.scrollTo({ top: Math.max(0, top), behavior: reduced ? "auto" : "smooth" });
+    });
+  }
+  function showEssay(item, kickerText) {
+    openDock();
+    kicker.textContent = kickerText || "";
+    essay.replaceChildren();
+    var h = document.createElement("h2");
+    h.textContent = item.title;
+    essay.appendChild(h);
+    item.paragraphs.forEach(function (text) {
+      var p = document.createElement("p");
+      p.textContent = text;
+      essay.appendChild(p);
+    });
+    if (item.links && item.links.length) {
+      var ul = document.createElement("ul");
+      ul.className = "sources";
+      item.links.forEach(function (link) {
+        var li = document.createElement("li");
+        var a = document.createElement("a");
+        a.href = link.href;
+        a.target = "_blank";
+        a.rel = "noopener noreferrer";
+        a.textContent = link.label;
+        li.appendChild(a);
+        ul.appendChild(li);
+      });
+      essay.appendChild(ul);
+    }
+    if (item.anchor) {
+      var more = document.createElement("button");
+      more.type = "button";
+      more.className = "action";
+      more.textContent = "在详细稿里看这一条";
+      more.addEventListener("click", function () { openBook(item.anchor); });
+      essay.appendChild(more);
+    }
+  }
+
+  function paint() {
+    document.body.classList.toggle("is-playing", knitted > 0 || impostor);
+    ring.disabled = knitted === 0;
+    autoBtn.hidden = knitted === 0;
+    var next = STITCHES[knitted];
+    if (impostor && !impostorDone) peek.style.setProperty("--c", "#8aa888");
+    else if (next) peek.style.setProperty("--c", next.color);
+    else peek.style.opacity = "0.35";
+    if (knitted > 0 && !gifted) {
+      memory.disabled = false;
+      memoryLabel.textContent = "这条没夹记号扣。凭印象估一下它有几行。";
+    }
+  }
+
+  function addRow() {
+    var item = STITCHES[knitted];
+    var row = document.createElement("div");
+    row.className = "course";
+    row.dataset.index = String(knitted);
+    var knit = document.createElement("div");
+    knit.className = "knit";
+    knit.style.setProperty("--yarn", item.yarn);
+    for (var i = 0; i < 8; i++) {
+      var bump = document.createElement("i");
+      bump.className = "bump";
+      knit.appendChild(bump);
+    }
+    var clip = document.createElement("button");
+    clip.type = "button";
+    clip.className = "clip";
+    clip.style.setProperty("--c", item.color);
+    clip.setAttribute("aria-label", ORD[knitted] + "记号扣：" + item.title);
+    row.appendChild(knit);
+    row.appendChild(clip);
+    courses.appendChild(row);
+    window.setTimeout(function () { clip.classList.add("on"); }, reduced ? 0 : 180);
+    knitted += 1;
+    blip(520);
+    showEssay(item, ORD[knitted - 1] + "，刚刚夹上");
+    paint();
+    if (knitted === 1) setHint("这一针夹上了。可以再拉一行。", "也可以点木环，把已经夹好的按顺序读回来。");
+    else if (knitted < 3) setHint("继续往下拉。扣子会夹在刚刚织出来的那一行上。");
+    else if (knitted === 3) setHint("再拉一下。下一枚扣子要先看清楚，它是不是这一行的。");
+    else if (knitted < 5) setHint("这枚是刚刚这一行的。再拉一行。");
+    else setHint("五行都夹好了。点木环，或按住它从第一枚滑到最后一枚。", "让它自己滑下去也可以。");
+    courses.scrollTop = courses.scrollHeight;
+  }
+
+  function startImpostor() {
+    impostor = true;
+    sideDish.hidden = false;
+    sideDish.classList.add("ready");
+    fake.hidden = false;
+    var slot = loom.getBoundingClientRect();
+    fake.style.left = Math.max(12, slot.right - 70) + "px";
+    fake.style.top = Math.max(80, slot.top + 72) + "px";
+    showEssay({
+      title: "这枚扣子不想待在它说的那一行",
+      paragraphs: [
+        "它的颜色和刚才那枚绿扣很像，上面印着 conhost.exe。它想夹在新的一行上，可这一行不是它的。",
+        "据美国 CISA 与多国机构 10 月 8 日的联合通告，攻击者常把安装包改名成 conhost.exe 或 dllhost.exe，把准备带走的数据叫成 001.gif、Css.js，好让痕迹看起来像平常文件。",
+        "通告是官方一手来源。被点名公司的回应，这次还没见到。"
+      ],
+      links: [{ href: "https://www.cisa.gov/news-events/cybersecurity-advisories/aa26-281a", label: "CISA 联合通告" }],
+      anchor: "tech-3"
+    }, "先别夹上去");
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "action";
+    btn.textContent = "把它放到旁边的小碟里";
+    btn.addEventListener("click", resolveImpostor);
+    essay.appendChild(btn);
+    setHint("这枚扣子的颜色很眼熟，可它想夹的位置对不上。", "拖到旁边的小碟，或点「放到旁边的小碟」。");
+    blip(180);
+    paint();
+  }
+
+  function resolveImpostor() {
+    if (impostorDone) return;
+    impostorDone = true;
+    impostor = false;
+    sideDish.classList.remove("ready");
+    fake.hidden = true;
+    var kept = document.createElement("span");
+    kept.textContent = "这枚不计入";
+    kept.style.fontSize = "13px";
+    sideDish.insertBefore(kept, setAside);
+    setAside.hidden = true;
+    setHint("这枚不算在围巾上。再拉一行，夹一枚真正的。");
+    blip(300);
+    paint();
+  }
+
+  function pull() {
+    if (gifted) {
+      setHint("已经绕好了。记号都在围巾上，还可以点开每一枚再看。");
+      return;
+    }
+    if (impostor && !impostorDone) {
+      fake.animate([{ transform: "translateX(0)" }, { transform: "translateX(-8px)" }, { transform: "translateX(6px)" }, { transform: "translateX(0)" }], { duration: reduced ? 0 : 280 });
+      setHint("它还挂在半空。先放到旁边的小碟里。");
+      return;
+    }
+    if (knitted === 3 && !impostorDone) {
+      startImpostor();
+      return;
+    }
+    if (knitted >= 5) {
+      setHint("五行都在了。让木环从第一枚滑到最后一枚。");
+      return;
+    }
+    addRow();
+  }
+
+  function clearRead() {
+    readout.replaceChildren();
+    readout.hidden = true;
+    pass = [];
+    Array.prototype.forEach.call(courses.querySelectorAll(".clip"), function (clip) {
+      clip.classList.remove("lit");
+    });
+  }
+
+  function markPass(index) {
+    if (pass.length !== index) return;
+    pass.push(index);
+    var item = STITCHES[index];
+    readout.hidden = false;
+    var li = document.createElement("li");
+    li.textContent = item.read;
+    readout.appendChild(li);
+    var clip = courses.children[index].querySelector(".clip");
+    clip.classList.add("lit");
+    openDock();
+    kicker.textContent = "顺着记号扣读回来";
+    blip(640);
+  }
+
+  function finishSlide() {
+    slidingLock = false;
+    if (pass.length === 5 && knitted === 5 && impostorDone) {
+      giveGift();
+      return;
+    }
+    if (pass.length && pass.length === knitted && knitted < 5) {
+      setHint("滑过的这几枚，顺序还在。没织的行，现在还读不出来。");
+    } else if (pass.length && pass.length < knitted) {
+      setHint("这次没从第一枚滑完整。把木环放回最上面，再滑一次。", "也可以点「让木环自己滑下去」。");
+    }
+  }
+
+  function giveGift() {
+    if (gifted) return;
+    gifted = true;
+    stage.classList.add("is-gift");
+    bow.hidden = false;
+    blip(520);
+    window.setTimeout(function () { blip(660); }, 140);
+    window.setTimeout(function () { blip(780); }, 280);
+    if (!reduced) {
+      var colors = ["#e07a62", "#e2b143", "#6f9a62", "#5b9aaa", "#a07bb8", "#f3e6d8"];
+      colors.forEach(function (color, i) {
+        var bit = document.createElement("i");
+        bit.className = "scrap";
+        bit.setAttribute("aria-hidden", "true");
+        bit.style.left = (28 + i * 8) + "%";
+        bit.style.background = color;
+        stage.appendChild(bit);
+        bit.addEventListener("animationend", function () { bit.remove(); });
+      });
+    }
+    showEssay({
+      title: "围巾自己绕成了一个小结",
+      paragraphs: [
+        "五行记号都是织到那一行的时候夹上的，所以木环滑下去，顺序还在。",
+        "旁边那条没夹扣的，只能凭印象估。写下来容易写多，前后也容易换位。",
+        "想把一件事是怎么走到今天的看清楚，就让它在每一步发生的当下，按顺序给自己留一枚小记号。"
+      ]
+    }, "今天的小结");
+    setHint("围巾绕好了。当时夹上的扣子，现在还能按顺序读回来。");
+  }
+
+  function autoSlide() {
+    if (slidingLock || knitted === 0) return;
+    slidingLock = true;
+    clearRead();
+    var rows = Array.prototype.slice.call(courses.children);
+      ring.style.top = "36px";
+      if (reduced) {
+        rows.forEach(function (_, i) { markPass(i); });
+        finishSlide();
+        return;
+      }
+      var i = 0;
+      var step = function () {
+        if (i >= rows.length) {
+          finishSlide();
+          return;
+        }
+        ring.style.top = (rows[i].offsetTop + rows[i].offsetHeight / 2 - 32) + "px";
+        markPass(i);
+      i += 1;
+      window.setTimeout(step, 420);
+    };
+    step();
+  }
+
+  function stepOrDragEnd(moved) {
+    if (moved) return;
+    if (knitted === 0) return;
+    var rows = courses.children;
+    if (pass.length >= rows.length) clearRead();
+    var next = pass.length;
+    if (next >= rows.length) return;
+    ring.style.top = (rows[next].offsetTop + rows[next].offsetHeight / 2 - 32) + "px";
+    markPass(next);
+    if (pass.length === rows.length) finishSlide();
+  }
+
+  var ignoreStrandClick = false;
+  strand.addEventListener("pointerdown", function (e) {
+    strand.setPointerCapture(e.pointerId);
+    drag = { y: e.clientY, moved: false, kind: "strand" };
+  });
+  strand.addEventListener("pointermove", function (e) {
+    if (!drag || drag.kind !== "strand") return;
+    if (e.clientY - drag.y > 28) drag.moved = true;
+  });
+  strand.addEventListener("pointerup", function () {
+    if (!drag || drag.kind !== "strand") return;
+    var pulled = drag.moved;
+    drag = null;
+    if (pulled) {
+      ignoreStrandClick = true;
+      pull();
+    }
+  });
+  strand.addEventListener("pointercancel", function () { drag = null; });
+  strand.addEventListener("click", function () {
+    if (ignoreStrandClick) { ignoreStrandClick = false; return; }
+    pull();
+  });
+
+  ring.addEventListener("pointerdown", function (e) {
+    if (ring.disabled || slidingLock) return;
+    ring.setPointerCapture(e.pointerId);
+    var above = true;
+    var first = courses.children[0];
+    if (first && ring.offsetTop > first.offsetTop - 4) above = false;
+    drag = { y: e.clientY, top: ring.offsetTop, moved: false, above: above, armed: above, kind: "ring" };
+    if (drag.armed) clearRead();
+  });
+  ring.addEventListener("pointermove", function (e) {
+    if (!drag || drag.kind !== "ring") return;
+    var dy = e.clientY - drag.y;
+    if (Math.abs(dy) > 4) drag.moved = true;
+    var max = Math.max(36, loom.clientHeight - 70);
+    var top = Math.min(max, Math.max(30, drag.top + dy));
+    ring.style.top = top + "px";
+    if (!drag.armed) {
+      var first = courses.children[0];
+      if (first && top < first.offsetTop - 4) {
+        drag.armed = true;
+        clearRead();
+      }
+      return;
+    }
+    var rows = courses.children;
+    var mid = top + 32;
+    for (var i = pass.length; i < rows.length; i++) {
+      if (mid >= rows[i].offsetTop + rows[i].offsetHeight / 2) markPass(i);
+      else break;
+    }
+  });
+  var ignoreRingClick = false;
+  ring.addEventListener("pointerup", function () {
+    if (!drag || drag.kind !== "ring") return;
+    var moved = drag.moved;
+    var armed = drag.armed;
+    drag = null;
+    ignoreRingClick = true;
+    if (moved && armed) finishSlide();
+    else stepOrDragEnd(moved);
+  });
+  ring.addEventListener("click", function () {
+    if (ignoreRingClick) { ignoreRingClick = false; return; }
+    stepOrDragEnd(false);
+  });
+
+  fake.addEventListener("pointerdown", function (e) {
+    if (impostorDone) return;
+    fake.setPointerCapture(e.pointerId);
+    var rect = fake.getBoundingClientRect();
+    fakeDrag = { dx: e.clientX - rect.left, dy: e.clientY - rect.top };
+  });
+  fake.addEventListener("pointermove", function (e) {
+    if (!fakeDrag) return;
+    fake.style.left = (e.clientX - fakeDrag.dx) + "px";
+    fake.style.top = (e.clientY - fakeDrag.dy) + "px";
+  });
+  fake.addEventListener("pointerup", function () {
+    if (!fakeDrag) return;
+    fakeDrag = null;
+    var a = fake.getBoundingClientRect();
+    var b = sideDish.getBoundingClientRect();
+    var overlap = a.right > b.left && a.left < b.right && a.bottom > b.top && a.top < b.bottom;
+    if (overlap) resolveImpostor();
+  });
+
+  setAside.addEventListener("click", resolveImpostor);
+  autoBtn.addEventListener("click", autoSlide);
+  document.getElementById("dock-close").addEventListener("click", function () { dock.hidden = true; });
+
+  soundBtn.addEventListener("click", function () {
+    soundOn = !soundOn;
+    soundBtn.setAttribute("aria-pressed", soundOn ? "true" : "false");
+    soundBtn.textContent = soundOn ? "声音开着" : "声音关着";
+    if (soundOn) blip(520);
+  });
+
+  threadBtn.addEventListener("click", function () {
+    showEssay({
+      title: "一根没织进去的线",
+      paragraphs: [
+        "ChatSolo 有一个改动想做一件很像今天的事：别等结束再按类型重排，而是在文字流出来的当下，按到达顺序记一条轨迹。",
+        "这个改动后来被关掉了，没有合进主分支。页面上没写关闭原因。"
+      ],
+      links: [{ href: "https://github.com/AIMFllyYS/1037Solo-ChatSolo/pull/29", label: "ChatSolo 的那个改动" }],
+      anchor: "life-6"
+    }, "小线头");
+  });
+
+  memory.addEventListener("click", function () {
+    if (memory.disabled) return;
+    openDock();
+    kicker.textContent = "凭印象写下来的";
+    essay.replaceChildren();
+    var h = document.createElement("h2");
+    h.textContent = "这条没夹记号扣，你记得它有几行？";
+    essay.appendChild(h);
+    var p = document.createElement("p");
+    p.textContent = "色段的边界是糊的。写一个你的印象就好，没有对错分数。";
+    essay.appendChild(p);
+    var box = document.createElement("div");
+    box.className = "memory-actions";
+    ["我估四行", "我估七行", "我估九行"].forEach(function (label, idx) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.textContent = label;
+      b.addEventListener("click", function () { recall(idx === 0 ? 4 : idx === 1 ? 7 : 9); });
+      box.appendChild(b);
+    });
+    essay.appendChild(box);
+  });
+
+  function recall(n) {
+    essay.replaceChildren();
+    kicker.textContent = "事后补上的那张纸条";
+    var h = document.createElement("h2");
+    h.textContent = "写下来的时候，顺序换了位";
+    essay.appendChild(h);
+    var lead = document.createElement("p");
+    if (n > 4) {
+      lead.textContent = "你写下的是 " + n + " 行。桌上这条围巾分得清的色段只有四段，写下来的行数比色段多，前后也对不上。";
+    } else {
+      lead.textContent = "行数你写成了四行，和分得清的色段一样多。可再往下写哪一段算谁的、是什么时候留下的，顺序还是乱了，还多出了不该算进来的功劳。";
+    }
+    essay.appendChild(lead);
+    var note = document.createElement("p");
+    note.textContent = "没有记号扣，就只能这样补写。写出来的纸条比色段爱往多了说，也不管前后。";
+    essay.appendChild(note);
+    var later = document.createElement("p");
+    later.textContent = "纸条先冒出来的一笔，其实是事后补上的账：REACH 研究里，非洲四国 606 名镰状细胞贫血儿童长期吃羟基脲，疟疾风险降低 51%，其他感染降低 38%。超过 5,000 个患者年里，感染导致的患病或死亡没有增加。作者写明，多数感染是事后靠病史回顾登记的，不是当时测到的。这是帝国理工的新闻稿，尚未得到其他来源确认。";
+    essay.appendChild(later);
+    var first = document.createElement("p");
+    first.textContent = "紧跟着又把别人的数算进自己的功劳：伊朗那一伙用「自己去回复的那条帖子的浏览量」给自己算成绩，OpenAI 说这大大夸大了效果。俄罗斯那一伙还用 ChatGPT 去找和自己毫无关系的事来揽功。Dark Clark 被 OpenAI 自己评为 5 级，Bogus Bylines 被评为 4 级。据 Unite.AI 转述这份报告。";
+    essay.appendChild(first);
+    var ul = document.createElement("ul");
+    ul.className = "sources";
+    [
+      ["https://www.unite.ai/openai-bans-two-covert-influence-operations-using-false-fronts/", "Unite.AI 转述 OpenAI 报告"],
+      ["https://www.news-medical.net/news/20261008/Hydroxyurea-does-not-increase-infection-risk-in-children-with-sickle-cell-anemia.aspx", "帝国理工新闻稿"]
+    ].forEach(function (pair) {
+      var li = document.createElement("li");
+      var a = document.createElement("a");
+      a.href = pair[0];
+      a.target = "_blank";
+      a.rel = "noopener noreferrer";
+      a.textContent = pair[1];
+      li.appendChild(a);
+      ul.appendChild(li);
+    });
+    essay.appendChild(ul);
+  }
+
+  function openBook(id) {
+    try {
+      if (typeof book.showModal === "function") {
+        if (!book.open) book.showModal();
+      } else {
+        book.setAttribute("open", "");
+      }
+    } catch (err) {
+      book.setAttribute("open", "");
+    }
+    var sheet = document.getElementById("sheet");
+    if (id) {
+      var el = document.getElementById(id);
+      if (el) {
+        window.requestAnimationFrame(function () {
+          el.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
+        });
+      }
+    } else if (sheet) {
+      sheet.scrollTop = 0;
+    }
+  }
+  openBookBtn.addEventListener("click", function () { openBook(null); });
+  document.getElementById("book-close").addEventListener("click", function () { book.close(); });
+  book.addEventListener("click", function (e) {
+    if (e.target === book) book.close();
+  });
+  book.addEventListener("close", function () { openBookBtn.focus(); });
+
+  function setLift(mode) {
+    book.setAttribute("data-lift", mode);
+    document.getElementById("lift-all").setAttribute("aria-pressed", mode === "all" ? "true" : "false");
+    document.getElementById("lift-now").setAttribute("aria-pressed", mode === "now" ? "true" : "false");
+    document.getElementById("lift-later").setAttribute("aria-pressed", mode === "later" ? "true" : "false");
+    var note = document.getElementById("lift-note");
+    if (mode === "now") note.textContent = "珊瑚边的段落被托起来了。其余段落还在原处，只是淡一些。";
+    else if (mode === "later") note.textContent = "灰边的段落被托起来了。那是事后补记，或故意装得像平常痕迹。其余段落还在。";
+    else note.textContent = "珊瑚边是当时按顺序留下的记号，灰边是事后补记，或故意装得像平常痕迹。托起来的时候，其余段落还在，只是淡一些。";
+  }
+  document.getElementById("lift-all").addEventListener("click", function () { setLift("all"); });
+  document.getElementById("lift-now").addEventListener("click", function () { setLift("now"); });
+  document.getElementById("lift-later").addEventListener("click", function () { setLift("later"); });
+
+  courses.addEventListener("click", function (e) {
+    var btn = e.target.closest(".clip");
+    if (!btn) return;
+    var row = btn.closest(".course");
+    var index = Number(row.dataset.index);
+    showEssay(STITCHES[index], ORD[index] + "记号扣");
+  });
+
+  paint();
+})();
+</script>
+<noscript>
+  <style>
+    dialog#book { display: block; position: static; width: auto; height: auto; max-height: none; }
+    .sheet { height: auto; }
+  </style>
+</noscript>
+<!--
+DESIGN LESSON 2026-10-09 折晓早报
+STYLE: 午前阳光里的浅色木桌，一条正在织长的奶油色围巾和彩色记号扣
+GENRE: 拉一行毛线就夹一枚扣，再顺着扣子把顺序读回来
+TITLE: 织到哪一行，就在那一针上夹一枚记号扣
+THESIS: 当下按顺序留下记号，事后才能把来路原样读回来。
+-->
+</html>
