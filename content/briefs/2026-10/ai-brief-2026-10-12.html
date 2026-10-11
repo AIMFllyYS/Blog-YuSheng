@@ -1,0 +1,2137 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light">
+  <meta name="referrer" content="no-referrer">
+  <link rel="icon" href="data:,">
+<title>顺着瓶口把麦茶慢慢分装好 · 折晓早报 · 2026-10-12</title>
+<style>
+  :root {
+    color-scheme: light;
+    --ink: #3c2f27;
+    --muted: #7b6556;
+    --tea: #e39a3c;
+    --tea-deep: #c4782a;
+    --paper: #fffdf8;
+    --wood: #e7cfae;
+    --line: rgba(120, 86, 52, 0.16);
+    --sans: "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", "WenQuanYi Micro Hei", "Source Han Sans SC", sans-serif;
+    --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    color: var(--ink);
+    background: #f6f1e8;
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.55;
+  }
+  button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+  :focus-visible { outline: 3px solid #c4782a; outline-offset: 3px; }
+  .sr-only {
+    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+  }
+  .app { height: 100%; min-height: 100%; }
+  .scene-wrap { position: relative; height: 100%; overflow: hidden; background: #f7f3ec; }
+  .scene { width: 100%; height: 100%; display: block; touch-action: none; user-select: none; }
+  .scene text { font-family: var(--sans); }
+  #pot { cursor: grab; }
+  #pot.holding { cursor: grabbing; }
+  #guide, #stream, #bag, #pot-shadow { pointer-events: none; }
+  #handle-ring { transform-box: fill-box; transform-origin: center; animation: pulse 1.8s var(--ease) infinite; }
+  .scene.started #handle-ring { animation: none; opacity: 0; }
+  @keyframes pulse {
+    0%, 100% { opacity: 0.95; }
+    50% { opacity: 0.25; }
+  }
+  .hint {
+    position: absolute;
+    z-index: 3;
+    top: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(480px, calc(100% - 520px));
+    margin: 0;
+    padding: 8px 14px;
+    text-align: center;
+    font-size: 16.5px;
+    line-height: 1.45;
+    background: rgba(255, 252, 246, 0.9);
+    border: 1px solid rgba(196, 160, 112, 0.45);
+    border-radius: 999px;
+    box-shadow: 0 8px 20px rgba(90, 60, 30, 0.06);
+  }
+  .magnets {
+    position: absolute;
+    z-index: 3;
+    top: 14px;
+    left: 12px;
+    width: min(228px, 30vw);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .magnet, .whisper {
+    margin: 0;
+    padding: 8px 10px 9px;
+    background: #fffaf1;
+    border-radius: 4px 12px 12px 4px;
+    box-shadow: 2px 3px 0 rgba(180, 140, 90, 0.18);
+    font-size: 12.5px;
+    line-height: 1.45;
+    color: #5c4a3c;
+  }
+  .magnet { transform: rotate(-1.5deg); }
+  .magnet + .magnet { transform: rotate(1.2deg); background: #f3f7ef; }
+  .whisper {
+    background: transparent;
+    box-shadow: none;
+    padding: 0 4px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .pin {
+    display: inline-block;
+    margin-right: 4px;
+    padding: 0 5px;
+    border-radius: 999px;
+    background: #f3d7b0;
+    color: #6a4a2c;
+    font-size: 11px;
+  }
+  .recipe-box {
+    position: absolute;
+    z-index: 4;
+    top: 14px;
+    right: 14px;
+    width: 176px;
+    min-height: 108px;
+    padding: 12px 12px 10px;
+    text-align: left;
+    color: #4a3728;
+    background:
+      linear-gradient(180deg, rgba(255, 250, 240, 0.35), transparent 28%),
+      linear-gradient(180deg, #f0d7b4 0%, #e2c091 100%);
+    border-radius: 8px 8px 6px 6px;
+    box-shadow:
+      0 1px 0 #fff6e8 inset,
+      0 12px 22px rgba(90, 60, 30, 0.14);
+  }
+  .recipe-box:hover { transform: translateY(-1px); }
+  .recipe-kicker {
+    display: block;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    color: #8a6240;
+  }
+  .recipe-title {
+    display: block;
+    margin-top: 4px;
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.35;
+  }
+  .recipe-sub {
+    display: block;
+    margin-top: 6px;
+    font-size: 13px;
+    line-height: 1.4;
+    color: #6d5340;
+  }
+  .stain-card {
+    position: absolute;
+    z-index: 3;
+    left: 16px;
+    bottom: 16px;
+    width: min(280px, 34vw);
+    padding: 12px 12px 10px;
+    text-align: left;
+    background: #fff8ee;
+    border-radius: 12px;
+    box-shadow: 0 10px 22px rgba(90, 60, 30, 0.1);
+    transform: rotate(-1.4deg);
+  }
+  .stain-card .kicker {
+    display: block;
+    font-size: 12px;
+    color: #a1622f;
+  }
+  .stain-card .body {
+    display: block;
+    margin-top: 4px;
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--ink);
+  }
+  .stain-card .flip {
+    display: block;
+    margin-top: 8px;
+    font-size: 13px;
+    color: var(--tea-deep);
+  }
+  .grain-btn {
+    position: absolute;
+    z-index: 4;
+    transform: translate(-50%, -115%);
+    min-width: 132px;
+    min-height: 40px;
+    padding: 8px 12px;
+    background: #fffaf3;
+    border: 1.5px solid #e0b98a;
+    border-radius: 999px;
+    box-shadow: 0 6px 14px rgba(90, 60, 30, 0.08);
+    font-size: 14px;
+  }
+  .grain-btn[disabled] {
+    cursor: default;
+    color: var(--muted);
+    box-shadow: none;
+  }
+  .notepad {
+    position: absolute;
+    z-index: 5;
+    right: 16px;
+    bottom: 16px;
+    width: min(400px, 46vw);
+    max-height: 248px;
+    overflow: auto;
+    padding: 14px 16px 12px;
+    background: rgba(255, 252, 247, 0.96);
+    border: 1px solid rgba(210, 176, 130, 0.7);
+    border-radius: 16px;
+    box-shadow: 0 16px 36px rgba(70, 46, 24, 0.12);
+  }
+  .notepad .kicker { margin: 0; color: #a1622f; font-size: 13px; }
+  .notepad h2 { margin: 4px 0 8px; font-size: 18px; line-height: 1.35; font-weight: 700; }
+  .notepad p { margin: 0 0 8px; font-size: 15.5px; line-height: 1.65; }
+  .revisit { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+  .revisit button {
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: #f6ecdf;
+    font-size: 12.5px;
+  }
+  .revisit button[aria-current="true"] { background: #f0d3a6; }
+  .pack-btn, .gift-note {
+    margin-top: 8px;
+  }
+  .pack-btn {
+    position: sticky;
+    bottom: 0;
+    display: inline-block;
+    min-height: 42px;
+    padding: 8px 14px;
+    background: #e39a3c;
+    color: #fffaf3;
+    border-radius: 999px;
+    font-size: 15px;
+  }
+  .gift-note {
+    padding: 8px 10px;
+    background: #fff6e8;
+    border-radius: 10px;
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: #5c4636;
+  }
+  .egg {
+    margin-top: 8px;
+    font-size: 12.5px;
+    line-height: 1.55;
+    color: var(--muted);
+  }
+  .digest {
+    position: fixed;
+    inset: 0;
+    z-index: 20;
+    display: flex;
+    justify-content: center;
+    padding: 18px 14px;
+    background: rgba(72, 52, 36, 0.28);
+  }
+  .sheet {
+    width: min(820px, 100%);
+    height: 100%;
+    overflow: auto;
+    background: var(--paper);
+    border-radius: 18px;
+    box-shadow: 0 24px 60px rgba(50, 32, 16, 0.2);
+  }
+  .sheet-bar {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 22px;
+    background: rgba(255, 253, 248, 0.94);
+    border-bottom: 1px solid var(--line);
+    backdrop-filter: blur(8px);
+  }
+  .sheet-bar p { margin: 0; font-size: 15px; }
+  .sheet-bar button {
+    min-height: 40px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: #f3e4cf;
+  }
+  .sheet-body { padding: 8px 28px 72px; }
+  .toc {
+    margin: 8px 0 0;
+    padding: 12px 16px 12px 32px;
+    background: #fff8ee;
+    border-radius: 12px;
+  }
+  .toc li { margin: 6px 0; }
+  .toc a { color: #6d4c32; text-decoration: none; }
+  .toc a:hover { text-decoration: underline; }
+  .prose {
+    max-width: 68ch;
+    margin: 0 auto;
+    font-size: 17px;
+    line-height: 1.8;
+  }
+  .prose h1 { font-size: 1.7rem; line-height: 1.35; margin: 1.2em 0 0.6em; }
+  .prose h2 {
+    font-size: 1.28rem;
+    line-height: 1.4;
+    margin: 2.1em 0 0.6em;
+    padding-top: 0.4em;
+    border-top: 1px solid var(--line);
+  }
+  .prose h3 { font-size: 1.08rem; line-height: 1.45; margin: 1.6em 0 0.5em; }
+  .prose p { margin: 0.85em 0; }
+  .prose ul { margin: 0.4em 0 1em; padding-left: 1.3em; }
+  .prose li { margin: 0.35em 0; }
+  .prose a { color: #9a5416; }
+  .prose hr { border: 0; border-top: 1px solid var(--line); margin: 2em 0; }
+  .prose .status, .prose .boundary, .prose .why, .prose .aside {
+    padding: 10px 12px;
+    border-radius: 10px;
+  }
+  .prose .status { background: #f8f1e6; }
+  .prose .boundary { background: #f4f7fb; }
+  .prose .why { background: #f8f6ef; }
+  .prose .aside { background: #f6f3ee; }
+  .noscript-note {
+    max-width: 68ch;
+    margin: 24px auto;
+    padding: 0 16px;
+    font-family: var(--sans);
+    color: var(--ink);
+  }
+  @media (max-width: 980px) {
+    .hint {
+      top: auto;
+      bottom: 10px;
+      width: min(640px, calc(100% - 28px));
+      border-radius: 16px;
+    }
+    .stain-card {
+      bottom: 70px;
+      width: min(220px, 42vw);
+      max-height: 128px;
+      overflow: auto;
+    }
+    .notepad { bottom: 74px; }
+  }
+  @media (max-width: 860px) {
+    .magnets { width: min(210px, 46vw); }
+    .recipe-box { width: 168px; min-height: 96px; }
+    .recipe-title { font-size: 15px; }
+    .stain-card { bottom: 72px; width: min(210px, 46vw); }
+    .notepad {
+      left: 12px;
+      right: 12px;
+      width: auto;
+      bottom: 78px;
+      max-height: 34%;
+    }
+  }
+  @media (max-width: 640px) {
+    .magnets { width: min(188px, 50vw); }
+    .magnet, .whisper { font-size: 12px; padding: 6px 8px; }
+    .grain-btn { font-size: 12px; min-width: 0; min-height: 32px; padding: 5px 8px; }
+    .notepad { max-height: 168px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation: none !important;
+      transition: none !important;
+    }
+  }
+</style>
+</head>
+<body>
+  <div class="app">
+    <div class="scene-wrap" id="scene-wrap">
+      <svg class="scene" id="scene" viewBox="0 0 1200 780" preserveAspectRatio="xMidYMid meet" role="img" aria-label="周一早晨的窗边台面，一把玻璃茶壶，五只插着漏斗的瓶子，正在分装琥珀色的麦茶。">
+        <defs>
+          <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#f7fbff"/>
+            <stop offset="0.55" stop-color="#d5e7f6"/>
+            <stop offset="1" stop-color="#fbe7c4"/>
+          </linearGradient>
+          <linearGradient id="wood" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#f3e2c8"/>
+            <stop offset="0.2" stop-color="#e7cfae"/>
+            <stop offset="1" stop-color="#ddc09a"/>
+          </linearGradient>
+          <linearGradient id="woodFront" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#e4c39a"/>
+            <stop offset="1" stop-color="#c79a68"/>
+          </linearGradient>
+          <linearGradient id="tea" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#f8d48a"/>
+            <stop offset="0.45" stop-color="#e39a3c"/>
+            <stop offset="1" stop-color="#c56d28"/>
+          </linearGradient>
+          <linearGradient id="beam" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#fff4d4" stop-opacity="0"/>
+            <stop offset="0.25" stop-color="#ffe3a8" stop-opacity="0.45"/>
+            <stop offset="1" stop-color="#ffd08a" stop-opacity="0"/>
+          </linearGradient>
+          <linearGradient id="tile" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#fbfaf7"/>
+            <stop offset="1" stop-color="#f3efe8"/>
+          </linearGradient>
+        </defs>
+        <rect width="1200" height="780" fill="#f7f3ec"/>
+        <rect x="36" y="28" width="1128" height="292" rx="18" fill="#fffaf4"/>
+        <rect x="52" y="44" width="1096" height="248" rx="8" fill="url(#sky)"/>
+        <circle cx="250" cy="128" r="42" fill="#fff6d6"/>
+        <circle cx="250" cy="128" r="78" fill="#fff1cc" opacity="0.55"/>
+        <ellipse cx="430" cy="110" rx="70" ry="18" fill="#ffffff" opacity="0.55"/>
+        <ellipse cx="490" cy="102" rx="46" ry="14" fill="#ffffff" opacity="0.45"/>
+        <ellipse cx="760" cy="150" rx="90" ry="16" fill="#ffffff" opacity="0.35"/>
+        <polygon id="beam" points="180,70 430,292 250,292" fill="url(#beam)" opacity="0.45"/>
+        <path d="M600 44 V292 M52 168 H1148" stroke="#fffaf4" stroke-width="10"/>
+        <rect x="36" y="304" width="1128" height="22" rx="4" fill="#f7f1e6"/>
+        <text x="78" y="320" fill="#8d7360" font-size="15">10 月 12 日，星期一</text>
+        <rect x="0" y="326" width="1200" height="150" fill="url(#tile)"/>
+        <g stroke="#efe8df" stroke-width="2" opacity="0.9">
+          <path d="M0 366 H1200 M0 406 H1200 M0 446 H1200"/>
+          <path d="M80 326 V476 M200 326 V476 M320 326 V476 M440 326 V476 M560 326 V476 M680 326 V476 M800 326 V476 M920 326 V476 M1040 326 V476 M1160 326 V476"/>
+        </g>
+        <rect x="0" y="470" width="1200" height="250" fill="url(#wood)"/>
+        <rect x="0" y="470" width="1200" height="14" fill="#f8ecda"/>
+        <g stroke="#c9a36f" stroke-width="2" opacity="0.18">
+          <path d="M0 510 H1200 M0 548 H1200 M0 590 H1200 M0 636 H1200 M0 684 H1200"/>
+        </g>
+        <rect x="250" y="628" width="860" height="46" rx="16" fill="#f7f1e6"/>
+        <rect x="250" y="640" width="860" height="8" rx="4" fill="#f0d7ad" opacity="0.7"/>
+        <rect x="0" y="724" width="1200" height="56" fill="url(#woodFront)"/>
+        <g id="actors"></g>
+        <g id="pot"></g>
+        <path id="guide" fill="none" stroke="#e39a3c" stroke-width="2" stroke-dasharray="5 7" opacity="0.45" stroke-linecap="round"/>
+        <path id="stream" fill="none" stroke="url(#tea)" stroke-width="6" stroke-linecap="round" opacity="0"/>
+        <g id="bag" opacity="0"></g>
+      </svg>
+
+      <p class="hint" id="hint" aria-live="polite">按住茶壶的把手，对准瓶口，慢慢往下倒。</p>
+
+      <aside class="magnets" aria-label="冰箱侧面的小纸条">
+        <p class="magnet"><span class="pin">窗外</span>OpenCode Go 的支付宝授权，请在 10 月 17 日前重新确认，距今天还有 5 天。不在这次采集的时间窗里。如果已经办过，忽略这张纸条就好。</p>
+        <p class="magnet"><span class="pin">窗外</span>从 10 月 19 日起，GitHub Actions 的 ubuntu-latest 会换成 Ubuntu 26。到时候哪个仓库在系统相关的步骤上突然报红，可以先想到它。不在这次采集的时间窗里。</p>
+        <p class="whisper">deepseek-harness 的每日测试已经连续失败十天，有空看一眼。StudySolo 的组件测试还红着，也有空看一眼。</p>
+      </aside>
+
+      <button type="button" class="recipe-box" id="open-digest" aria-haspopup="dialog">
+        <span class="recipe-kicker">窗台上的木盒</span>
+        <span class="recipe-title">今天的完整详细稿</span>
+        <span class="recipe-sub">打开这只木盒就能读</span>
+      </button>
+
+      <button type="button" class="stain-card" id="stain-card">
+        <span class="kicker" id="card-kicker">没插漏斗的那只</span>
+        <span class="body" id="card-body">左边那只瓶子没有插漏斗。有人拿大壶直接对着瓶口倒，茶大多洒在台布上，瓶子里只进去了一点点。</span>
+        <span class="flip">翻过这张卡片</span>
+      </button>
+
+      <button type="button" class="grain-btn" id="grain-btn">先把麦粒拨开</button>
+
+      <section class="notepad" id="notepad" hidden aria-live="polite">
+        <p class="kicker" id="note-kicker"></p>
+        <h2 id="note-title"></h2>
+        <div id="note-body"></div>
+        <div class="revisit" id="revisit"></div>
+        <button type="button" class="pack-btn" id="pack-btn" hidden>盖上瓶盖，装进帆布包</button>
+        <div class="gift-note" id="gift-note" hidden></div>
+        <p class="egg" id="egg" hidden></p>
+      </section>
+    </div>
+  </div>
+
+  <div class="digest" id="digest" hidden>
+    <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="digest-label">
+      <div class="sheet-bar">
+        <p id="digest-label">今天的完整详细稿 · 2026 年 10 月 12 日</p>
+        <button type="button" id="close-digest">合上木盒</button>
+      </div>
+      <div class="sheet-body">
+        <ol class="toc"><li><a href="#h-2">开篇：今天的形状</a></li><li><a href="#h-4">一、人工智能（讯AI · 7 条）</a></li><li><a href="#h-12">二、科技（讯科 · 8 条，其中第 6—8 条的底层事件略早于时间窗）</a></li><li><a href="#h-21">三、医学（讯医 · 9 条）</a></li><li><a href="#h-32">四、个人轻提示（连读 · 窗内 9 条）</a></li><li><a href="#h-42">五、窗外前瞻（2 条，不在采集时间窗内，只作临近截止的提醒）</a></li><li><a href="#h-45">六、刻意没有收录的材料</a></li><li><a href="#h-46">结尾</a></li><li><a href="#h-47">单一来源与未能核实清单</a></li><li><a href="#h-48">时间窗边界说明</a></li></ol>
+        <article class="prose" id="prose">
+          <h1 id="h-1">折晓早报详细稿｜2026-10-12（星期一）</h1>
+<p>采集时间范围：北京时间 2026 年 10 月 11 日早上六点整，到 2026 年 10 月 12 日早上六点整（换算成 UTC 是 2026-10-10T22:00Z 到 2026-10-11T22:00Z）。本稿只使用四份证据包里的材料，没有另外上网补充；每一条都写明了来源链接、北京时间发布时间和核实状态。今天的例行任务按时触发，北京时间 06:12 开工。</p>
+<p>这个时间窗正好对应美国的周六晚上到周日、欧洲的周日，各大 AI 实验室的官方账号在窗内都没有发帖，也没有新模型正式发布；美国 FDA、中国国家药监局和欧洲药品管理局在窗内也没有新的药品或器械批准公告。不过这个周末恰好是好几个医学大会集中报告的日子：美国眼科学会年会（AAO 2026，新奥尔良）、美国心衰学会年会（HFSA 2026，菲尼克斯）、美国骨与矿物质研究学会年会（ASBMR 2026，波士顿）、美国胃肠病学会年会（ACG 2026，纳什维尔），以及在柏林举行的世界卫生峰会，所以今天医学这一组的一手材料反而比平时多。中国这边，10 月 11 日是星期日，清华大学求真书院举办了一场数学与人工智能的联盟成立仪式。</p>
+<hr>
+<h2 id="h-2">开篇：今天的形状</h2>
+<p>今天最适合拿来当中心的，是一件「好东西太多、接的人接不住」的事。10 月 6 日，OpenAI 一次性公开了七百多篇由 AI 生成的数学手稿，说自己解决了 370 多个数学问题。这件事本身发生在窗外，但窗内又有两篇主流媒体的跟进报道，写出了它的另一面。NBC News 写道：数学家们认为这批手稿里可能真有突破，「前提是经过验证——而对没有打磨过的成果来说，验证并不容易」；一位数学家说他的同行们应该高兴得「上街跳舞」，另一位却把这次经历比作自己的学术圈「被海啸击中」。《费加罗报》转述，2022 年菲尔兹奖得主 Hugo Duminil-Copin 在发现 OpenAI 公开了近 719 份手稿后「夜里哭了」，哭到把女儿都吵醒了，他所在的研究领域有 16 个问题被涉及。</p>
+<p>这件事值得想一想的地方，不在于 AI 到底会不会做数学，而在于「给」和「接」之间的速度差。手稿也许真是珍宝，可核验一篇数学证明需要懂行的人花很长时间逐行去读，整个数学界能投入核验的人手和时间是有限的。七百多篇一口气倒过去，大部分价值暂时落不了地，还把接的人冲得站不稳。</p>
+<p>医学里正好有一条几乎一模一样的药理学镜像。Cardurion 公司在美国心衰学会年会上公布了一种新药 tovinontrine 的二期结果：在射血分数降低的心衰患者里，两个低剂量组的心衰标志物 NT-proBNP 下降了，而最高剂量那一组反而没有看到获益；另一项射血分数保留的心衰试验恰好用的是这个最高剂量，也没有效果。公司把这种「剂量越高效果越差」解释为药物把一种信号分子推得太高，触发了身体的反向调节。身体能接住的，是一个刚刚好的量。</p>
+<p>这给了今天一个很朴素的读法：</p>
+<p><strong>一样好东西给得再多、再快，也要看接的那一头一次接得住多少；按对方接得住的速度和分量一点一点给，好东西才真正落到实处，一口气全倒过去，多出来的那部分只会洒在外面。</strong></p>
+<p>带着这个读法再看别的材料，会发现同一天里，好几件事都在讲「接的那一头」。CNBC 的一篇长文说，白宫不打算立法，于是 METR、Apollo Research、Transluce 这些小型第三方安全评估机构被推到了 AI 安全的中心，可 METR 的全职员工不到 50 人；前沿模型一个接一个地发布，负责「接住」并评估它们的这一头，人手和资金独立性都还没有着落。刚果（金）的埃博拉疫情在扩散，据 Al Jazeera 引用世卫组织的数据，接触者随访率是 80.4%，低于 85% 的目标，而这种本迪布焦型病毒目前没有获批疫苗和特效药，防控几乎全靠人手去追踪。SK 集团会长崔泰源说，存储芯片的需求涨得比预期还快，韩国把龙仁半导体集群的建设时间表提前了 12 年，「即便这样也预计不够」。你自己的 deepseek-harness 仓库，每日端到端测试已经连续失败十天，失败通知每天照常发出，却没有人接手。</p>
+<p>也有几条材料讲的是「好的那一面」：先看清接的一头能接多少，再调整给的方式。美国骨与矿物质研究学会年会上，BridgeBio 公布了 encaleret 的三期数据。它治的是一种遗传病：身体里感知血钙的「传感器」太敏感，明明血钙不够，它却以为够了，于是压低甲状旁腺激素。传统办法是一味补钙，结果血钙补上去一点，尿钙却更高了；encaleret 的思路是把这个传感器的灵敏度调回正常，据公司新闻稿，91% 的患者自己的甲状旁腺激素恢复到了正常下限以上。丘成桐牵头的数学与人工智能实验室联盟，在成立时把分工写得很清楚：AI 负责探索证明思路、简化计算，计算代数系统负责核验并生成可以复现的计算证书，数学家负责构思、证明和最终核验，每一层都按自己接得住的方式接手。韩国科学技术院（KAIST）在《自然》上发表的方法，让二维半导体晶体只在每个图案的正中心长出一个晶核，而不是到处同时冒芽，400 个位点里 397 个长成了单晶。你的 ChatSolo 在窗内把上下文压缩改成了持久化，并让智能模式优先选经过验证的经济型模型——这其实就是把要塞给模型的内容，按模型接得住的分量来给。</p>
+<p>下面是全部材料的详细版本。</p>
+<h3 id="h-3">阅读说明与核实标注</h3>
+<p>每条材料后面都写了核实状态，含义如下：</p>
+<ul>
+<li><strong>多来源确认</strong>：至少两个独立来源说法一致，或者有一手官方文件加上独立媒体报道。本稿用定论语气叙述事件本身；但公司自己报出来的数字，即使事件本身多来源确认，也仍然会注明「公司自报」或「发布方描述」。</li>
+<li><strong>单一来源</strong>：只有一个来源，比如只有公司新闻稿、只有一家媒体、只有一份会议摘要。本稿会写「据某某称」「尚未得到其他来源确认」。官方机构的公告是一手来源、可信度高，但仍然算单一来源，结论以原文自己写的范围为准。</li>
+<li><strong>未能核实</strong>：采集员没能找到可靠证据确认的说法，只作为背景提及，并明确标出。</li>
+<li><strong>事件早于时间窗</strong>：报道或新进展发表在窗内，但底层事件（立案、论文上线、讲话、原始发布）发生在窗口开始之前。本稿会在条目开头单独写明边界，只把窗内的新内容当成「今天的事」。</li>
+</ul>
+<p>所有时间都已换算成北京时间。今天有好几条材料属于「窗内报道、底层事件更早」：讯AI第 2 条的 OpenAI 手稿公开是 10 月 6 日；讯AI第 4 条英伟达与 Reflection AI 的谈判最早由《金融时报》在窗口开始前几个小时报出；讯科第 6 条美国国际贸易委员会的立案公告发布于美东 10 月 9 日；讯科第 7 条 KAIST 的《自然》论文 10 月 7 日上线；讯科第 8 条 Aegiq 的论文 10 月 8 日发表。这些条目开头都有单独的边界说明，文末「时间窗边界说明」一节也集中列了一遍。</p>
+<p>本稿没有合并任何条目，四个板块的条数和证据包一致：讯AI 7 条、讯科 8 条、讯医 9 条、连读窗内 9 条，另有 2 条窗外前瞻。讯AI第 3 条和讯科第 2 条是同一件事（亚马逊洽谈收购 Decart），两路采集员各自独立收录，本稿保留两个条目编号：人工智能板块写模型和技术背景，科技板块只从「大公司并购」的角度简短补充，不重复展开。</p>
+<hr>
+<h2 id="h-4">一、人工智能（讯AI · 7 条）</h2>
+<p>这一组的时间窗正好落在美国的周末，各大实验室都很安静，所以今天的人工智能新闻大多不是「谁发布了什么」，而是「已经发生的事情，接下来怎么被接住」。第 1 条是国内顶尖数学机构组成联盟，把 AI 当成数学研究里的「辅助者」，分工写得很清楚；第 2 条是数学界继续消化 OpenAI 一次性公开的七百多篇手稿，这是今天整份早报的种子；第 3 条和第 4 条是资本在快速涌向「世界模型」和「开放权重模型」；第 5 条讲负责评估 AI 安全的小型第三方机构被推到了舞台中央，但人手和独立性都还是问题；第 6 条是一个读英文材料时很容易踩的词语陷阱：不少科技公司的掌门人开始跟着把「AI」改叫「超级智能」；第 7 条用招聘数据回答「AI 会不会让程序员失业」，答案是总量回升、入门台阶变窄。</p>
+<h3 id="h-5">1.1 丘成桐牵头的「数学与人工智能实验室联盟」在清华成立，计划集中做数学专用大模型、AI 辅助形式化证明和猜想发现</h3>
+<p><strong>发布时间</strong>：北京日报客户端 2026 年 10 月 11 日 10:41；中国青年报客户端 13:54；《南华早报》20:00（原文标注香港时间晚上 8 点）。三篇都在采集窗内。</p>
+<p><strong>先解释两个词。</strong> 「形式化证明」是把一个数学证明写成计算机能逐步检查的严格语言，每一步推理都必须能被机器验证，好处是一旦通过就几乎不会出错，坏处是写起来非常费工夫。「计算代数系统」是专门做精确符号计算的软件，可以帮数学家核对一个等式是不是严格成立、一个数值区间是不是真的在某个范围里，并且留下可以复现的「计算证书」。</p>
+<p><strong>发生了什么。</strong> 10 月 11 日是星期日，国内多家顶尖数学机构在清华大学求真书院组成了「丘成桐数学与人工智能实验室联盟」。据北京日报客户端报道：「10月11日，丘成桐数学与人工智能实验室联盟成立，致力于推动AI（人工智能）与数学深度融合。……目前已拥有超1000名科学家团队。未来，联盟将向聚焦数学科学专用大模型研发、AI辅助数学形式化证明与猜想发现、可解释人工智能及交叉领域智能计算等方向发起攻关。」北京日报列出的成员包括清华大学求真书院、丘成桐数学科学中心、北京雁栖湖应用数学研究院、中国科学院晨兴数学中心等八家机构。</p>
+<p>联盟同时发布了 10 余项「AI+数学」的重点成果和研究方向。北京日报客户端举的一个例子很能说明分工：在一项关于「7 维同伦球面」上光滑结构与正截面曲率的研究里，「AI用于辅助探索证明策略、简化计算；计算代数系统用于核验精确恒等式、区间界、生成可复现的计算证书；数学家负责构思与证明，核验结果、完成数学论证和论文。」</p>
+<p>中国青年报客户端记录了丘成桐在成立仪式上的发言，语气并不轻松：「这是一个学者们最兴奋的时代，也是最危险的时代。」他还说：「机器的宏大势力让许多人不想再做了，尤其是年轻的学者们感到灰心，不想做，这是一个很严重的问题。」据采集员的说明，中青报的报道里，丘成桐把这次成立和 10 月 6 日 OpenAI 公开大批手稿（见 1.2）放在一起讲。</p>
+<p class="why"><strong>为什么值得 Sofia 注意。</strong> 这条材料最有价值的地方，是它把「AI 进入一门基础学科之后，人站在哪里」写成了一条具体的流水线：AI 出主意，软件做精确核验，数学家负责最后的判断和论证。每一层只接自己接得住的那一部分，产出才能一步一步落地。这和今天的读法正好对上：同样是 AI 生成的数学成果，一口气倒给整个数学界（见 1.2）和放进一条分工清楚的流水线里，结果会很不一样。丘成桐担心年轻学者灰心，其实也是在担心「接的人」——如果新人觉得自己已经接不住了、干脆不来了，再多的机器成果也没有人去验证和继承。对一边学医一边学 AI 的你来说，这像极了医学里「AI 辅助诊断」的分工讨论：AI 先筛，检验科复核，医生做最后的临床判断。</p>
+<p><strong>来源。</strong></p>
+<ul>
+<li>北京日报客户端：<a href="https://news.bjd.com.cn/2026/10/11/11990559.shtml" target="_blank" rel="noopener noreferrer">https://news.bjd.com.cn/2026/10/11/11990559.shtml</a></li>
+<li>北京日报客户端（成果介绍）：<a href="https://news.bjd.com.cn/2026/10/11/11990561.shtml" target="_blank" rel="noopener noreferrer">https://news.bjd.com.cn/2026/10/11/11990561.shtml</a></li>
+<li>中国青年报客户端：<a href="https://news.youth.cn/jsxw/202610/t20261011_16908710.htm" target="_blank" rel="noopener noreferrer">https://news.youth.cn/jsxw/202610/t20261011_16908710.htm</a></li>
+<li>《南华早报》：<a href="https://www.scmp.com/news/china/science/article/3370492/leading-chinese-mathematicians-unite-behind-use-ai-research" target="_blank" rel="noopener noreferrer">https://www.scmp.com/news/china/science/article/3370492/leading-chinese-mathematicians-unite-behind-use-ai-research</a></li>
+</ul>
+<p class="status"><strong>核实状态</strong>：多来源确认。北京日报客户端、中国青年报客户端、《南华早报》三家各自独立报道了成立时间、牵头人和「超过 1000 名科学家」的规模，内容一致。</p>
+<h3 id="h-6">1.2 窗内又有两篇主流媒体报道，继续跟进数学界对 OpenAI 一次性公开七百多篇 AI 数学手稿的反应：一边是「可能藏着珍宝」，一边是「被海啸冲击」</h3>
+<p class="boundary"><strong>边界说明（请先读）。</strong> 原始事件，也就是 OpenAI 公开大批数学手稿，发生在 10 月 6 日，早就不在今天的时间窗里了。本条收录的是窗内新发表、带有新信息的两篇跟进报道。</p>
+<p><strong>发布时间</strong>：《费加罗报》（Le Figaro）北京时间 2026 年 10 月 11 日 18:26（原文巴黎时间 12:26）；NBC News 北京时间 10 月 12 日 00:39（原文美东时间 10 月 11 日中午 12:39）。两篇都在采集窗内。</p>
+<p><strong>先解释一个词。</strong> 「验证」在数学里不是看一眼结论对不对，而是要有懂这个方向的数学家把证明从头到尾读一遍，确认每一步都站得住。一篇像样的论文，同行评审常常要花几个月；如果手稿本身没有打磨、表述粗糙，核验会更慢。</p>
+<p><strong>发生了什么。</strong> NBC News 的报道重点是「验证」。原文写道：「OpenAI 说它解决了 370 多个数学问题。数学家们说，如果经过验证，这里面可能有突破——但对没有打磨过的成果来说，这并不是一件容易的事。……在 OpenAI 公布了大约 370 个数学问题的可能解答之后，一位数学家说他的同行们应该高兴得『上街跳舞』，另一位则把这次经历比作她的学术圈被海啸击中。」</p>
+<p>《费加罗报》的报道更有现场感。它写道，在法国数学会 10 月 8 日（周四）组织的一场会议上，2022 年菲尔兹奖得主 Hugo Duminil-Copin 说，他发现美国人工智能公司 OpenAI 公开了近 719 份手稿时「夜里哭了」，哭到把女儿都吵醒了；他认为 AI「摧毁」了他的研究领域。据采集员的说明，他所在的领域有 16 个问题被涉及（这个数字《费加罗报》转引自《世界报》）。报道还写到，在一份集体发表的公开信之后，Duminil-Copin 让 OpenAI 作出承诺：公司将与设在普林斯顿高等研究院的一个国际顾问委员会合作。</p>
+<p><strong>几家的数字不一样，请注意出处。</strong> NBC 写的是「370 多个问题」；《费加罗报》写的是「近 719 份手稿」「16 个问题」；中国青年报客户端（见 1.1）写的是「722 篇手稿、372 个成果组」。这些差异可能来自统计口径不同，本稿各自注明出处，不做换算。</p>
+<p class="why"><strong>为什么值得 Sofia 注意。</strong> 这是今天整份早报的种子。同一个周末，同一批成果，有人欢呼「珍宝」，有人觉得「被淹没」，还有人组织起来想办法「接住」它（普林斯顿的顾问委员会）。它说明的道理很朴素：成果的价值，不只取决于它本身有多好，还取决于接收它的那一头有没有足够的时间、人手和流程把它消化掉。七百多篇手稿一次性公开，等于对着一个细口瓶整壶倒水，瓶子能接住的只有那么多。对医学生来说，这很像一个科室一夜之间收到几百份需要人工复核的 AI 阅片报告：哪怕每一份都可能有用，没有足够的医生去逐份核对，这些报告在临床上就暂时用不上，甚至会让复核的人疲惫到漏看真正要紧的那一份。</p>
+<p><strong>来源。</strong></p>
+<ul>
+<li>NBC News：<a href="https://www.nbcnews.com/tech/tech-news/openai-math-discoveries-are-jewels-verified-mathematicians-are-wary-sl-rcna602148" target="_blank" rel="noopener noreferrer">https://www.nbcnews.com/tech/tech-news/openai-math-discoveries-are-jewels-verified-mathematicians-are-wary-sl-rcna602148</a></li>
+<li>《费加罗报》：<a href="https://www.lefigaro.fr/sciences/j-ai-pleure-un-mathematicien-desespere-face-a-l-intelligence-artificielle-qui-a-reduit-son-domaine-de-recherche-a-neant-20261011" target="_blank" rel="noopener noreferrer">https://www.lefigaro.fr/sciences/j-ai-pleure-un-mathematicien-desespere-face-a-l-intelligence-artificielle-qui-a-reduit-son-domaine-de-recherche-a-neant-20261011</a></li>
+</ul>
+<p class="status"><strong>核实状态</strong>：多来源确认。NBC News 和《费加罗报》各自独立报道；「370 个问题」来自 NBC，「近 719 份手稿」「16 个问题」来自《费加罗报》（转引《世界报》），中青报写的是「722 篇手稿、372 个成果组」。几家给出的数字略有出入，引用时各自注明出处。原始手稿公开事件发生在 10 月 6 日，不在本期时间窗内。</p>
+<h3 id="h-7">1.3 据《华尔街日报》周日报道，亚马逊正在洽谈以约 70 亿美元收购实时视频生成和世界模型初创公司 Decart</h3>
+<p><strong>发布时间</strong>：《华尔街日报》页面元数据显示发布于北京时间 2026 年 10 月 12 日 04:26（UTC 10 月 11 日 20:26）；路透社的转述稿经 Investing.com 显示为北京时间 10 月 12 日 05:16。都在采集窗内，离窗口结束不到两个小时。</p>
+<p><strong>先解释一个词。</strong> 「世界模型」是最近很热的一个方向，指的是能模拟物理世界怎样运转的 AI 模型：给它一个场景，它能预测接下来会发生什么、生成一段合理的画面。它的一个重要用途，是给机器人和自动驾驶系统造一个「虚拟练习场」，让它们先在模拟环境里练，而不是一上来就在真实马路上试错。</p>
+<p><strong>发生了什么。</strong> 据路透社转述（经 CNA 转载）：「据《华尔街日报》周日援引知情人士报道，亚马逊正在洽谈收购人工智能初创公司 Decart，交易估值可能在 70 亿美元左右。」报道介绍：「据公司网站介绍，Decart 的 Lucy 模型得到英伟达支持，可以实时编辑直播视频。它还开发了 Oasis，一个能生成模拟环境、用来训练和测试机器人与自动驾驶系统的模型。……《华尔街日报》援引 PitchBook 数据称，Decart 在 5 月的估值接近 40 亿美元。」路透社同时写明：「路透社无法立即核实这一报道。Decart 和亚马逊没有回应置评请求。……据彭博新闻社报道，Anthropic 上个月在完成尽职调查后决定不再推进对 Decart 的收购。」</p>
+<p class="why"><strong>为什么值得注意。</strong> 这条说明大公司正在抢「能模拟物理世界的模型」：报道中的估值约 70 亿美元，几乎是对方 5 月估值（近 40 亿美元，PitchBook 数据）的两倍；而另一家大模型公司 Anthropic 上个月刚刚在尽调之后放弃了同一笔交易（据彭博报道）。不过请把「正在谈」三个字一直带在心里：这条目前只有一个消息源头，没有成交，双方也都没有回应。</p>
+<p><strong>来源。</strong></p>
+<ul>
+<li>《华尔街日报》（付费墙，采集员确认链接有效、页面元数据里有发布时间）：<a href="https://www.wsj.com/business/deals/amazon-in-talks-to-buy-ai-startup-decart-for-around-7-billion-9433abad" target="_blank" rel="noopener noreferrer">https://www.wsj.com/business/deals/amazon-in-talks-to-buy-ai-startup-decart-for-around-7-billion-9433abad</a></li>
+<li>CNA 转载路透社：<a href="https://www.channelnewsasia.com/business/amazon-in-talks-buy-ai-startup-decart-around-7-billion-wsj-reports-6451486" target="_blank" rel="noopener noreferrer">https://www.channelnewsasia.com/business/amazon-in-talks-buy-ai-startup-decart-around-7-billion-wsj-reports-6451486</a></li>
+<li>Investing.com 转载路透社：<a href="https://www.investing.com/news/stock-market-news/amazon-in-talks-to-buy-ai-startup-decart-for-around-7-billion-wsj-reports-4942850" target="_blank" rel="noopener noreferrer">https://www.investing.com/news/stock-market-news/amazon-in-talks-to-buy-ai-startup-decart-for-around-7-billion-wsj-reports-4942850</a></li>
+</ul>
+<p class="status"><strong>核实状态</strong>：单一来源。消息源头只有《华尔街日报》引述的知情人士；路透社明确写了「无法立即核实」，亚马逊和 Decart 都没有回应。本稿读作「据《华尔街日报》报道」，尚未得到其他来源确认。</p>
+<h3 id="h-8">1.4 彭博周日跟进证实：英伟达正与美国开放权重模型公司 Reflection AI 洽谈加码投资或提供算力，《金融时报》此前报道称可能发展成收购</h3>
+<p class="boundary"><strong>边界说明（请先读）。</strong> 这条谈判消息最早由《金融时报》在美欧时间周六报出，按采集员根据 X 热点条目时间的推算，大约是北京时间 10 月 11 日凌晨 3 点前后，在时间窗开始之前（前一天的早报已经写过《金融时报》的版本）。窗内的新增量是彭博另找消息人士独立证实了谈判，所以本条收录的是彭博这一篇。</p>
+<p><strong>发布时间</strong>：彭博稿经 The Business Times 转载，北京时间 2026 年 10 月 11 日 12:38（原文新加坡时间中午 12:38，新加坡与北京同属 UTC+8）。</p>
+<p><strong>先解释两个词。</strong> 「开放权重模型」是把训练好的模型参数公开出来、任何人都可以下载到自己的机器上运行和改造的模型，和只能通过网页或接口调用的闭源模型相对。「收购式招聘」（acqui-hire）是大公司不把一家小公司整个买下来，而是把它的核心团队雇过来、同时授权使用它的技术。</p>
+<p><strong>发生了什么。</strong> 据彭博稿（经 The Business Times 转载）：「据一位知情人士透露，英伟达正在洽谈加大对 Reflection AI 的投资，或者向这家美国初创公司提供算力，此举将加强它与一家重要的开放权重模型开发商的关系。讨论还处于早期阶段，尚未达成任何条款。」报道回顾了《金融时报》此前的说法：「《金融时报》此前报道了这些谈判，称可能发展为收购要约。可能的交易结构包括『收购式招聘』，即英伟达雇佣员工并授权技术；向这家初创公司提供更多芯片的协议；或者增加英伟达的股权投资。」</p>
+<p>报道还提到背景：「这家初创公司在 10 月早些时候推出了它的第一个开放权重模型 Beam……它说 Beam 在高级推理基准上的得分与中国智谱（Z.AI）的旗舰开放模型 GLM-5.2 相当。……这些交易包括 9 月以 130 亿美元收购 AI 模型公司 Hugging Face 的协议……」采集员的说明是：英伟达在扶持美国本土的开放权重模型，用来对冲价格更低的中国开源模型。</p>
+<p class="why"><strong>为什么值得注意。</strong> 前一天的早报读到这条时，它还只是「多家转述同一个《金融时报》信源」的传闻；今天彭博另找消息人士证实了谈判本身，可信度上了一个台阶。但谈判仍在早期，条款没有确定，英伟达没有回应，Reflection 拒绝置评。和 1.3 放在一起看，同一个周末，两家巨头都在向模型公司伸手，一个盯的是世界模型，一个盯的是开放权重模型。</p>
+<p><strong>来源。</strong></p>
+<ul>
+<li>The Business Times 转载彭博：<a href="https://www.businesstimes.com.sg/international/global/nvidia-weighs-deeper-ties-open-model-developer-reflection-ai-through-investment-or-computing-deal" target="_blank" rel="noopener noreferrer">https://www.businesstimes.com.sg/international/global/nvidia-weighs-deeper-ties-open-model-developer-reflection-ai-through-investment-or-computing-deal</a></li>
+<li>《马尼拉时报》转载：<a href="https://www.manilatimes.net/2026/10/12/business/foreign-business/nvidia-to-invest-further-in-reflection-ai/2443343" target="_blank" rel="noopener noreferrer">https://www.manilatimes.net/2026/10/12/business/foreign-business/nvidia-to-invest-further-in-reflection-ai/2443343</a></li>
+</ul>
+<p class="status"><strong>核实状态</strong>：多来源确认（谈判本身）。《金融时报》（窗前）和彭博（窗内）分别引用各自的消息人士报道了同一谈判；英伟达没有回应，Reflection 拒绝置评，交易条款还没有确定。「可能发展成收购」是《金融时报》的说法，彭博稿写的是「加码投资或提供算力」。</p>
+<h3 id="h-9">1.5 CNBC 周日长文：白宫不打算立法，于是 METR、Apollo Research、Transluce 这些小型第三方安全评估机构被推到了 AI 安全的中心，但钱从哪里来、能不能保持独立，都还没有答案</h3>
+<p><strong>发布时间</strong>：北京时间 2026 年 10 月 11 日 19:00（原文美东时间 10 月 11 日周日早上 7:00 发布，10:08 更新）。</p>
+<p><strong>先解释一个词。</strong> 「第三方评估」指的是由既不是开发者、也不是政府的独立机构，在模型发布前后去测试它有没有危险能力、会不会做出越界行为。它有点像药物审评里的独立评审：评的人和被评的人分开，结论才可信。</p>
+<p><strong>发生了什么。</strong> CNBC 的副标题写道：「在联邦政府反对建立监管监督的情况下，METR 和 Transluce 这样的非营利机构正被要求去监测和评估模型。」文章把最近几件事串成了一条线：Anthropic 的 Amodei 承诺把独立评估人员「嵌入」公司内部，OpenAI 说正在敲定第三方评估合同，加州立法建立独立验证机构（IVO）。</p>
+<p>关于规模和资金，CNBC 写道：「非营利机构 METR 在 8 月宣布，它在过去六个月里获得了约 7100 万美元的资金承诺。根据该组织最近一次向美国国税局提交的申报，它 2024 年全年获得的捐款是 1360 万美元。……据其网站，METR 的全职员工不到 50 人。」</p>
+<p>关于独立性，文章引用了 Venkatasubramanian 的话：「如果你想要真正的第三方评估，你需要在财务上和其他方面都真正独立。这不只是拿不拿钱的问题，而是：如果我作为审计者发布了一份对这家公司不利的报告，会不会有后果？我的生意会不会就此断了？」</p>
+<p class="why"><strong>为什么值得 Sofia 注意。</strong> 这篇文章讲的，其实是 AI 安全链条上「接的那一头」。前沿模型一个接一个发布，每一个都需要有人认真去测；可负责接住这些模型的评估机构规模很小，METR 全职员工不到 50 人。资金正在快速增加，但如果收入主要来自被评估的公司，就可能变成「橡皮图章」。这和医学上「药物审评要独立于药企」「临床试验的数据安全监查委员会要独立于申办方」是同一类问题，你应该很容易理解。和今天的读法连起来看：要评估的东西涌过来的速度，和评估这一头的人手、独立性能不能跟上，是同一个问题的两面。</p>
+<p><strong>来源。</strong> CNBC：<a href="https://www.cnbc.com/2026/10/11/ais-quiet-safety-gatekeepers-are-stepping-into-the-spotlight.html" target="_blank" rel="noopener noreferrer">https://www.cnbc.com/2026/10/11/ais-quiet-safety-gatekeepers-are-stepping-into-the-spotlight.html</a></p>
+<p class="status"><strong>核实状态</strong>：单一来源。分析和引语来自 CNBC 这一篇；METR 的融资数字是 CNBC 转引 METR 公告和税务申报，采集员没有另外去查 METR 的原始文件。尚未得到其他来源确认。</p>
+<h3 id="h-10">1.6 The Verge 周日评论：马斯克、贝尼奥夫、黄仁勋，以及刚刚加入的纳德拉，都在跟随特朗普把「AI」改叫「超级智能」</h3>
+<p><strong>发布时间</strong>：北京时间 2026 年 10 月 12 日 02:33（原文 UTC 10 月 11 日 18:33）。</p>
+<p><strong>先解释一个词。</strong> 在学术讨论里，「超级智能」原本指的是在几乎所有方面都全面超越人类的智能，是一个很重的概念。但最近美国的不少官方和企业英文材料里出现的「Super Intelligence / SI」，指的其实就是普通意义上的人工智能。</p>
+<p><strong>发生了什么。</strong> The Verge 这篇评论写道：「埃隆·马斯克很快跟进、承诺把 SpaceXAI 改名为 SpaceXSI，这并不让人意外。在唐纳德·特朗普宣布『白宫把任何使用「人工智能」一词、而不是使用被广泛接受的、更准确的新词「超级智能」的人视为敌人！』几个小时之后，马克·贝尼奥夫宣布 Salesforce 将把 AIForce 改名为 SIForce……」文章接着写：「最新屈服的是微软的萨提亚·纳德拉……在昨天一篇呼吁为 AI 建立『紧急刹车』的帖子里，纳德拉反复把这项技术称为『超级智能』。」据采集员的说明，特朗普在 9 月底签署行政令，要求联邦机构把 AI 改称「超级智能」。</p>
+<p class="boundary"><strong>边界说明。</strong> 纳德拉那篇「紧急刹车」帖子本身发于北京时间 10 月 10 日 22:43，在窗外（前一天的早报已经写过），这里只当背景。</p>
+<p class="why"><strong>为什么值得注意。</strong> 这条最实用的地方，是一个读英文材料时的提醒：最近你会在很多地方看到「super intelligence」（包括白宫的「Super Intelligence Force」和纳德拉的帖子），它们指的基本就是今天大家在用的 AI，并不是「全面超越人类」的那种超级智能。不知道这个背景，很容易把一条普通的政策新闻误读成「超级智能已经来了」。</p>
+<p><strong>来源。</strong> The Verge：<a href="https://www.theverge.com/ai-artificial-intelligence/1009406/silicon-valley-is-falling-in-line-with-trumps-attempt-to-rename-ai" target="_blank" rel="noopener noreferrer">https://www.theverge.com/ai-artificial-intelligence/1009406/silicon-valley-is-falling-in-line-with-trumps-attempt-to-rename-ai</a></p>
+<p class="status"><strong>核实状态</strong>：单一来源。这是 The Verge 的评论文章；文中提到的各家改名举动，据采集员说明，Verge 和 WIRED 此前都分别报道过，但「集体跟进」这个归纳只出自本文。</p>
+<h3 id="h-11">1.7 CNBC 周日数据稿：AI 正在自动化写代码，美国软件开发岗位的招聘却比 2025 年 2 月回升了近 15%，不过增长集中在资深岗位，年轻入门者的就业仍在下降</h3>
+<p><strong>发布时间</strong>：北京时间 2026 年 10 月 11 日 21:30（原文美东时间 10 月 11 日周日早上 9:30）。</p>
+<p><strong>先解释一个词。</strong> 「拉取请求」（pull request，常简称 PR）是程序员改好一批代码之后，请求把它合进主分支的那张单子，通常要经过别人审查才能合入。</p>
+<p><strong>发生了什么。</strong> CNBC 引用多方数据写道：「Indeed 说，美国软件开发岗位的招聘信息自 2025 年 2 月底以来增长了近 15%，而同期整体招聘信息下降了 7%。……这轮回升很集中：2025 年 5 月到 2026 年 5 月的增量里，71% 来自资深岗位，37% 来自职位名称里带 AI 的岗位。……斯坦福的报告显示，22 到 25 岁软件开发者的就业比 2024 年下降了近 20%，而美国劳工统计局预测，到 2035 年这个职业整体将增长 10%。」</p>
+<p>关于 AI 在写代码中的参与度，文章写道：GitHub「在 10 月报告说，现在每三个拉取请求里就有一个有 AI 智能体参与。一年前，GitHub 说这个比例还不到十分之一。」文章也提醒：「但即便在回升之后，根据 Indeed Hiring Lab 的数据，软件开发岗位的招聘信息仍然比疫情前低约 27.5%。」</p>
+<p class="why"><strong>为什么值得 Sofia 注意。</strong> 这篇用数据回答了「AI 会不会让程序员失业」：总量没有崩，反而在回升，但新增的岗位大多是资深岗位，年轻入门者的台阶变高了。一个很直观的理解是：AI 智能体交上来的代码越来越多（三个 PR 里就有一个），需要有经验的人去审、去判断好坏、去接住；能做这件事的人更吃香，而只会写入门代码的人更难找到第一份工作。对正在学 AI 技能的你来说，这是一条很实在的信号：学会判断 AI 的产出好不好、能不能用，比学会让 AI 多产出一些更值钱。</p>
+<p><strong>来源。</strong> CNBC：<a href="https://www.cnbc.com/2026/10/11/ai-software-developer-jobs.html" target="_blank" rel="noopener noreferrer">https://www.cnbc.com/2026/10/11/ai-software-developer-jobs.html</a></p>
+<p class="status"><strong>核实状态</strong>：单一来源。本文是 CNBC 汇编的二手数据稿；各项数字分别出自 Indeed Hiring Lab、斯坦福 2026 AI Index、美国劳工统计局和 GitHub，采集员没有逐一回查原始报告。</p>
+<hr>
+<h2 id="h-12">二、科技（讯科 · 8 条，其中第 6—8 条的底层事件略早于时间窗）</h2>
+<p>10 月 11 日是星期日，科技领域的一手发布偏少。这一组有两条很清楚的线索。第一条线索是「AI 的地基」：第 1 条乌克兰无人机让 Yandex 的又一座数据中心完全停摆，第 4 条伊朗高级官员把海底光缆、数据中心和 AI 设施列为潜在打击目标，第 5 条 SK 集团会长说存储芯片需求涨得比工厂能建的还快，第 6 条连「怎么给 AI 芯片供电」这种底层环节都打起了专利战。第二条线索是「把东西按接得住的方式送进去」：第 6 条的垂直供电和第 7 条只在正中心长出一个晶核的二维半导体，都是在解决「怎么让能量或材料按目标接得住的方式到位」。另外还有第 2 条亚马逊洽谈收购 Decart（和人工智能板块 1.3 是同一件事）、第 3 条 Ledger 硬件钱包供应链事件的新进展、第 8 条一项光量子计算架构的理论结果。</p>
+<p><strong>请特别注意本板块第 6—8 条的时间边界。</strong> 这三条都是窗内发表的报道或窗内出现的新进展，但它们背后的底层事件——第 6 条美国国际贸易委员会的立案（美东 10 月 9 日）、第 7 条 KAIST 的《自然》论文上线（10 月 7 日）、第 8 条 Aegiq 的期刊论文发表（10 月 8 日）——都略早于本期时间窗。本稿只把窗内的新内容（台厂回应、媒体报道和采访里的新信息）当成今天的事，立案和论文本身只作为背景，每一条开头都会再写一遍。</p>
+<h3 id="h-13">2.1 乌克兰无人机袭击使 Yandex 位于弗拉基米尔的数据中心完全停摆，据路透社这是几天之内第三座被打掉的大型数据中心</h3>
+<p><strong>发布时间</strong>：Kyiv Post 北京时间 2026 年 10 月 11 日 15:25（原文基辅夏令时上午 10:25）；Al Jazeera、路透社、The Moscow Times 均为 10 月 11 日同日发布。袭击发生在莫斯科时间 10 月 11 日（周日）凌晨，在时间窗内。</p>
+<p><strong>先解释一个词。</strong> 「数据中心」是集中放置大量服务器的机房，今天我们说的「云服务」、各种 App 背后的数据库和 AI 接口，实际上都运行在这样一栋栋具体的建筑里。「灾难恢复计划」是企业事先准备好的预案：一个机房出事时，怎样把业务切换到别的机房继续运行。</p>
+<p><strong>发生了什么。</strong> 据 Al Jazeera 报道：「Yandex 在 Telegram 上的一则服务提醒中说：『该数据中心的运营已完全暂停。』它建议用户启动灾难恢复计划，平台正处于应急模式运行。它补充说：『剩余的资源配置被认为是不稳定的。』并警告说，在团队评估损失期间，技术支持的沟通也可能中断。」Al Jazeera 援引路透社写道：「一天前，乌克兰的一次袭击让 Yandex 位于莫斯科东南方萨索沃的数据枢纽停摆，该公司用来开发 AI 模型的三台超级计算机中有两台就放在那里。」</p>
+<p>Kyiv Post 给出了更多细节：「这座设施设计容纳最多 2880 个服务器机架，是这家俄罗斯科技公司的基础处理枢纽之一。……受影响的服务包括计算云、对象存储、托管 Kubernetes、PostgreSQL 和 ClickHouse 数据库，以及开发者工具和人工智能接口，例如 YandexGPT API、SpeechKit 和 Vision OCR。」</p>
+<p class="why"><strong>为什么值得 Sofia 注意。</strong> 这件事最直观地说明了一个现实：今天的「云」和 AI 服务，其实落在一栋栋具体的机房里。机房一旦被打掉，据采集员的说明，语音助手、音乐、视频会议，以及银行、打车、零售这些看上去毫不相关的日常服务都会跟着一起受影响。「剩余的资源配置被认为是不稳定的」这句话也值得留意：一个中心倒下之后，原本由它承担的流量会一下子压到剩下的机房上，剩下的那部分未必接得住。</p>
+<p><strong>来源。</strong></p>
+<ul>
+<li>Al Jazeera：<a href="https://www.aljazeera.com/news/2026/10/11/russias-yandex-says-data-centre-in-vladimir-shut-down-after-drone-attack" target="_blank" rel="noopener noreferrer">https://www.aljazeera.com/news/2026/10/11/russias-yandex-says-data-centre-in-vladimir-shut-down-after-drone-attack</a></li>
+<li>The Moscow Times：<a href="https://www.themoscowtimes.com/2026/10/11/russias-yandex-says-data-center-in-vladimir-shut-down-after-drone-attack-a93942" target="_blank" rel="noopener noreferrer">https://www.themoscowtimes.com/2026/10/11/russias-yandex-says-data-center-in-vladimir-shut-down-after-drone-attack-a93942</a></li>
+<li>Kyiv Post：<a href="https://www.kyivpost.com/post/86708" target="_blank" rel="noopener noreferrer">https://www.kyivpost.com/post/86708</a></li>
+</ul>
+<p class="status"><strong>核实状态</strong>：多来源确认（停运事实）。Yandex 官方 Telegram 通告经路透社、法新社、Al Jazeera、The Moscow Times 转述，Kyiv Post 独立报道。具体机房容量（2880 个机架）与受影响服务的数量只有 Kyiv Post 给出，属于单一来源细节（其信息部分来自 ASTRA 等 Telegram 频道）；Yandex 官方只确认了停运和部分服务不可用。「几天之内第三座」出自路透社和 The Moscow Times 的说法。</p>
+<h3 id="h-14">2.2 《华尔街日报》独家报道：亚马逊正洽谈以约 70 亿美元收购实时视频生成初创公司 Decart（科技板块补充）</h3>
+<p><strong>发布时间</strong>：《华尔街日报》原文北京时间 2026 年 10 月 12 日 04:26（UTC 10 月 11 日 20:26）；CNA 转载路透社稿件标注 10 月 11 日。</p>
+<p><strong>说明。</strong> 这一条和人工智能板块的 1.3 是同一件事，两路采集员各自独立收录，引用的原文摘录也相同。模型和技术背景请看 1.3，这里只从「大型科技公司并购」的角度补充两句。</p>
+<p><strong>发生了什么。</strong> 据路透社转述（经 CNA 转载），《华尔街日报》周日援引知情人士报道，亚马逊正在洽谈收购 Decart，交易估值可能在 70 亿美元左右；Decart 5 月的估值接近 40 亿美元（PitchBook 数据）；路透社无法立即核实，亚马逊和 Decart 都没有回应；据彭博报道，Anthropic 上个月在完成尽职调查后决定不推进对 Decart 的收购。</p>
+<p class="why"><strong>为什么值得注意。</strong> 讯科采集员的看法是：巨头之间正在抢购能生成模拟环境、用来训练机器人和自动驾驶的公司，报道中的估值几乎是对方 5 月估值的两倍。对科技行业来说，这是「谁来接住世界模型这条路线」的一次公开争夺，但目前只是「在谈」，没有成交。</p>
+<p><strong>来源。</strong></p>
+<ul>
+<li>《华尔街日报》（付费墙，可以打开标题页）：<a href="https://www.wsj.com/business/deals/amazon-in-talks-to-buy-ai-startup-decart-for-around-7-billion-9433abad" target="_blank" rel="noopener noreferrer">https://www.wsj.com/business/deals/amazon-in-talks-to-buy-ai-startup-decart-for-around-7-billion-9433abad</a></li>
+<li>CNA 转载路透社：<a href="https://www.channelnewsasia.com/business/amazon-in-talks-buy-ai-startup-decart-around-7-billion-wsj-reports-6451486" target="_blank" rel="noopener noreferrer">https://www.channelnewsasia.com/business/amazon-in-talks-buy-ai-startup-decart-around-7-billion-wsj-reports-6451486</a></li>
+</ul>
+<p class="status"><strong>核实状态</strong>：单一来源。消息唯一源头是《华尔街日报》援引知情人士的独家报道，路透社明确表示未能立即核实，亚马逊和 Decart 均未回应，交易尚未确认。</p>
+<h3 id="h-15">2.3 Ledger 发布「72 小时更新」：经授权经销商 CryptoBilis 售出的硬件钱包被植入窃密芯片，公司已在与执法部门合作</h3>
+<p><strong>发布时间</strong>：Ledger 官方 X 账号的「72 hour update」发于北京时间 2026 年 10 月 12 日 01:13（UTC 10 月 11 日 17:13:22）；Cointelegraph 报道标注 10 月 11 日发布。</p>
+<p class="boundary"><strong>边界说明。</strong> 「确认存在未经授权的硬件植入物」这一说法，由 @Ledger_Support 于北京时间 10 月 11 日 01:09 发出，早于时间窗（前一天的早报已经写过），本条只把它当背景；窗内的新进展是 Ledger 官方账号的「72 小时更新」。</p>
+<p><strong>先解释两个词。</strong> 「硬件钱包」是一种专门保管加密货币私钥的小设备，私钥不离开设备，所以比放在电脑或手机里安全。「助记词」是设备初始化时显示的一串单词，用来备份和恢复钱包，谁拿到它，谁就能拿走钱包里的资产。「供应链攻击」是指问题不出在产品本身，而出在产品从工厂到用户手上的某个中间环节。</p>
+<p><strong>发生了什么。</strong> Ledger 官方 X 账号的原文是：「关于经销商 CryptoBilis 事件的 72 小时更新：调查仍在继续，我们正在与相关部门合作。受影响设备的数量是有限的。我们知道这令人担忧，尤其是对直接受到影响的人，我们正在联系受影响的用户。」</p>
+<p>Cointelegraph 的报道写道：「硬件钱包制造商 Ledger 一直在调查涉及从一家东南亚经销商处购买的设备的加密货币损失报告，它确认其中一名受影响用户的设备里含有一个未经授权的硬件植入物。……调查人员 Specter 估计，损失可能超过 8600 万美元，涉及比特币、以太坊和波场。」报道还转述了 Ledger 的建议：「Ledger 建议从这家经销商处购买设备的用户，如果还没有初始化，就不要开始初始化；如果已经初始化了，应考虑把资产转移到一台新的 Ledger 签名设备上，包括使用新的助记词。」</p>
+<p class="why"><strong>为什么值得注意。</strong> 这是一起典型的硬件供应链攻击：据采集员的说明，问题不在 Ledger 的芯片或软件，而在东南亚一家授权经销商卖出的设备里被人加装了带通信模块的小电路板，用户初始化时生成的助记词被偷走。它提醒我们，安全链条里最薄弱的一环，往往是「从工厂到你手上」的中间环节，买安全设备要走官方渠道。</p>
+<p><strong>来源。</strong></p>
+<ul>
+<li>Ledger 官方 X：<a href="https://x.com/Ledger/status/2109331538072494364" target="_blank" rel="noopener noreferrer">https://x.com/Ledger/status/2109331538072494364</a></li>
+<li>Cointelegraph：<a href="https://cointelegraph.com/news/ledger-confirms-unauthorized-hardware-implant-losses-may-exceed-86m" target="_blank" rel="noopener noreferrer">https://cointelegraph.com/news/ledger-confirms-unauthorized-hardware-implant-losses-may-exceed-86m</a></li>
+</ul>
+<p class="status"><strong>核实状态</strong>：多来源确认（事件与官方表态）。Ledger 官方 X 原帖可以直接查看，Cointelegraph 获得了 Ledger 的书面声明。「损失可能超过 8600 万美元」是调查方 Specter 的估算，Ledger 本身没有确认损失金额，属于未经公司确认的数字；Ledger 只说受影响设备数量「有限」。</p>
+<h3 id="h-16">2.4 伊朗最高国家安全委员会秘书礼萨伊警告：若战事重启，地区内的海底光缆、数据中心和人工智能设施可能成为打击目标</h3>
+<p><strong>发布时间</strong>：WANA 原文为德黑兰时间 10 月 11 日晚上 8:22，换算为北京时间 2026 年 10 月 12 日 00:52；CoinNess 转述伊朗塔斯尼姆通讯社，标注 10 月 11 日下午 3:06（该站时区未注明，若为韩国时间则为北京时间 14:06）。讲话发生在 10 月 11 日当地时间，在时间窗内。</p>
+<p><strong>先解释一个词。</strong> 「海底光缆」是铺在海底、承载跨国互联网流量的光纤线路，全世界绝大部分跨洲数据都靠它传输。</p>
+<p><strong>发生了什么。</strong> 据伊朗 WANA 通讯社报道：「他说，伊朗此前没有把其中许多设施视为目标，但如果再发生一场战争，许多海底光缆、数据中心和人工智能中心都可能进入伊朗的打击范围。据礼萨伊说，这些光缆、数据中心和 AI 中心的总价值超过 2 万亿美元。他说，其中许多是因为巨大的能源需求，才从美国和欧洲搬到这个地区的。」CoinNess 转述塔斯尼姆通讯社的报道说：「伊朗最高国家安全委员会秘书警告说，如果战争再次爆发，该地区的许多海底光缆、数据中心、AI 设施和其他场所将被摧毁。……这位官员补充说，美国在阿联酋和霍尔木兹海峡周边拥有价值非常高的资产，伊朗到目前为止还没有把它们作为目标。」</p>
+<p class="why"><strong>为什么值得注意。</strong> 据采集员的说明，这是伊朗高级安全官员第一次在电视采访中把「海底光缆、数据中心、AI 设施」明确列为潜在打击目标。和 2.1 放在一起看，可以看到一个趋势：数据中心和光缆正在被当作和油田、电网同等级别的战略目标。讲话里还有一个细节值得留意：很多数据中心之所以搬到海湾地区，是因为它们太耗电，需要靠近能源。需要强调的是，这只是威胁性表态，没有发生实际行动。</p>
+<p><strong>来源。</strong></p>
+<ul>
+<li>WANA：<a href="https://wanaen.com/rezaei-iran-deems-us-response-to-its-proposals-insufficient/" target="_blank" rel="noopener noreferrer">https://wanaen.com/rezaei-iran-deems-us-response-to-its-proposals-insufficient/</a></li>
+<li>CoinNess（转述塔斯尼姆）：<a href="https://coinness.com/en/stock-news/142267" target="_blank" rel="noopener noreferrer">https://coinness.com/en/stock-news/142267</a></li>
+</ul>
+<p class="status"><strong>核实状态</strong>：多来源确认（讲话内容）。WANA 与 CoinNess（转述塔斯尼姆）两个独立渠道报道了同一电视采访的同一内容；但两者都不是西方主流通讯社。「总价值超过 2 万亿美元」是讲话者自己的说法，没有独立核算，属于未能核实的当事人口径。</p>
+<h3 id="h-17">2.5 SK 集团会长崔泰源在上海表示：如果美光和中国存储厂商扩产更快，韩国的存储芯片份额将缩小，韩国必须以最快速度扩建晶圆厂</h3>
+<p><strong>发布时间</strong>：ChosunBiz 英文版标注韩国时间 10 月 11 日 18:01，即北京时间 2026 年 10 月 11 日 17:01（转述韩联社当天在上海的采访）；Seoul Economic Daily 相关报道为韩国时间 14:56:44，即北京时间 13:56。</p>
+<p><strong>先解释两个词。</strong> 「HBM」（高带宽内存）是一种堆叠起来的高速存储芯片，专门配给 AI 芯片使用，SK 海力士是全球龙头。「晶圆厂」是制造芯片的工厂。文中的「湖南」指的是韩国的湖南地区（全罗南道和光州一带），不是中国的湖南省。</p>
+<p><strong>发生了什么。</strong> 据 ChosunBiz 转述韩联社的采访，崔泰源说：「如果中国企业或美国的美光扩产更快，韩国的市场份额就会缩小。」他补充说：「需求非常大，但如果我们不能扩建工厂，那就是问题所在。」他还说：「如果放任不管，他们都会追上来。他们追得很快。」谈到美国对中国芯片的限制，他说：「这看起来不太明智。认为那样封锁就能挡住中国的半导体，看起来不太明智。」他接着解释说：「长鑫存储（CXMT）和长江存储（YMTC）正在以惊人的速度持续进步。」ChosunBiz 还写到：「他说：『SK 在中国的半导体、电池和石化领域投资了约 600 亿美元（约 80.6 万亿韩元）。』……SK 集团还在推动在中国上海设立一个人工智能研发中心。」</p>
+<p>Seoul Economic Daily 的同日报道引用他的话：「半导体需求涨得比预期更快，所以我们需要尽快扩建生产设施。我们把龙仁集群的建设时间表提前了 12 年，但即便这样，预计也还是不够。」据采集员说明，湖南集群的规模是「400 万亿韩元」，出自上述原文。</p>
+<p class="why"><strong>为什么值得 Sofia 注意。</strong> 这条材料把三条线串在了一起：AI 带动的存储芯片超级周期、中美韩三方的产能竞赛、出口管制到底有没有用。它和今天的读法也很贴：需求像一大壶水一样涌过来，接得住的只有已经建好的晶圆厂；提前 12 年都「还是不够」，说明接的这一头扩张的速度，暂时赶不上给的那一头。</p>
+<p><strong>来源。</strong></p>
+<ul>
+<li>ChosunBiz：<a href="https://biz.chosun.com/en/en-it/2026/10/11/Z63RY5MMTFGGXCWJFDQVEYFZTM/" target="_blank" rel="noopener noreferrer">https://biz.chosun.com/en/en-it/2026/10/11/Z63RY5MMTFGGXCWJFDQVEYFZTM/</a></li>
+<li>Seoul Economic Daily：<a href="https://en.sedaily.com/finance/2026/10/11/sk-chairman-dispels-doubts-over-400-trillion-won-honam-chip" target="_blank" rel="noopener noreferrer">https://en.sedaily.com/finance/2026/10/11/sk-chairman-dispels-doubts-over-400-trillion-won-honam-chip</a></li>
+</ul>
+<p class="status"><strong>核实状态</strong>：多来源确认。崔泰源的上海讲话由韩联社采访、ChosunBiz 刊发；他的扩产表态与 Seoul Economic Daily 同日报道相互印证。</p>
+<h3 id="h-18">2.6 美国国际贸易委员会对 AI 服务器「垂直供电系统」启动 337 调查，鸿海、广达、台达电等 20 家企业被点名，台厂于 10 月 11 日集体回应</h3>
+<p class="boundary"><strong>边界说明（请先读）。</strong> 美国国际贸易委员会（USITC）的立案公告本身发布于美东时间 10 月 9 日（北京时间 10 月 9 日晚到 10 日凌晨），早于本期时间窗。时间窗内的新进展是台湾企业 10 月 11 日的集体回应，以及路透社 10 月 11 日的跟进报道。本条把立案当作背景，窗内的新内容是台厂的表态。</p>
+<p><strong>发布时间</strong>：中时新闻网北京时间 2026 年 10 月 11 日 16:33（台北时间与北京时间相同）；INNOVOX 综述为 10 月 11 日。</p>
+<p><strong>先解释两个词。</strong> 「337 调查」是美国国际贸易委员会依据美国《1930 年关税法》第 337 条发起的调查，常用来处理进口产品侵犯美国专利的指控，结果可能是禁止相关产品进口美国。「垂直供电」是给 AI 芯片供电的一种新做法：传统上，电流在电路板上横着走一段路才送到芯片，电流越大损耗越大；垂直供电把电压转换模块直接放到芯片正下方，让大电流沿最短的路径从下往上送进芯片。</p>
+<p><strong>发生了什么。</strong> 中时新闻网报道：「美国国际贸易委员会（USITC）于美东时间9日公告，针对AI服务器关键的特定垂直供电系统启动『337调查』，台湾电子代工与电源龙头鸿海、广达旗下云达、台达电全遭点名入列。面对美企发动专利战夹击，台厂强调目前全案仅在立案调查阶段，尚未有任何实质侵权认定，现阶段生产营运与产品出货均未受影响，已启动专业团队积极因应。」报道还写道：「该起跨国专利争端源于美国电源技术商维克尔（Vicor），该公司指控包括鸿海、台达电、广达以及大陆立讯精密等全球20家企业，输美的垂直电力传输系统及搭载相关技术的AI运算设备涉嫌侵权，要求美方祭出有限排除令与停止令。」（引文按原文意思以简体字转写。）</p>
+<p>INNOVOX 给出了案件编号：「美国国际贸易委员会于 10 月 9 日立案 337-TA-1526 号调查，涉及进口的垂直供电系统、组件和计算系统。Vicor 指控侵犯美国第 10,903,734 号专利，专利名称为『向半导体负载供电』，并寻求有限排除令和停止令。」据采集员说明，名单覆盖台达、英飞凌、立讯、鸿海、广达等整条供应链；台湾经济部贸易署称，这类案件审理通常需要 12 至 16 个月。</p>
+<p class="why"><strong>为什么值得 Sofia 注意。</strong> AI 芯片越来越耗电，「怎么把电送进去」本身已经成了一项关键技术。垂直供电解决的问题，正是今天读法的一个工程版本：芯片能接住的电流方式是确定的，横着硬送，损耗就洒在路上；换一条贴合芯片的路径，同样的电才能真正送到位。这条新闻同时说明，AI 硬件的竞争已经从 GPU 本身延伸到供电这种底层环节，专利战也随之而来。目前只是立案，没有任何侵权认定。</p>
+<p><strong>来源。</strong></p>
+<ul>
+<li>中时新闻网：<a href="https://www.chinatimes.com/realtimenews/20261011001978-260410" target="_blank" rel="noopener noreferrer">https://www.chinatimes.com/realtimenews/20261011001978-260410</a></li>
+<li>INNOVOX：<a href="https://www.innovox.news/news/usitc-vicor-vertical-power-delivery-patent-probe" target="_blank" rel="noopener noreferrer">https://www.innovox.news/news/usitc-vicor-vertical-power-delivery-patent-probe</a></li>
+</ul>
+<p class="status"><strong>核实状态</strong>：多来源确认。立案事实有 USITC 公告（经 INNOVOX、路透社转述）和立讯向深交所的披露为证；台厂回应出自中时新闻网，属单一媒体整理，但引用了企业的正式表态。立案本身早于时间窗。</p>
+<h3 id="h-19">2.7 KAIST 与初创公司 TDS Innovation 在《自然》发表方法：让二维半导体晶体只在每个图案的正中心「发芽」，单晶良率超过 99%</h3>
+<p class="boundary"><strong>边界说明（请先读）。</strong> 论文本身于 2026 年 10 月 7 日在《自然》上线，早于本期时间窗。时间窗内的是 The Register 的报道，以及报道里公司方面对商业化时间表的新表态。本条把论文当作背景，窗内的新内容是这篇报道和采访。</p>
+<p><strong>发布时间</strong>：The Register 北京时间 2026 年 10 月 11 日 17:30（原文 UTC 10 月 11 日 09:30）。</p>
+<p><strong>先解释几个词。</strong> 「二维半导体」是只有一个或几个原子那么厚的半导体材料，比如二硫化钼（MoS₂），被看作硅晶体管快到物理极限之后的下一代候选。「成核」是晶体开始生长的第一步，就像一粒种子发芽；如果在很多随机位置同时成核，就会长出许多小晶粒，晶粒之间的边界（晶界）会拖累电性能。「迁移率」衡量电子在材料里跑得有多顺畅，越高越好。</p>
+<p><strong>发生了什么。</strong> 《自然》论文摘要写道：「刻蚀通量介导的单中心成核，使二硫化钼可以在 10 微米尺度上生长成单晶，场效应迁移率最高达 117 cm²/V·s，并具有大面积均匀性和工艺兼容性。」The Register 的报道补充：「在另一项横跨两厘米衬底的测试中，这个工艺在 400 个图案位点中的 397 个上长出了单晶，良率为 99.3%。这对扩大规模来说很有希望，尽管它还不是商业芯片生产的演示。」</p>
+<p>报道里 TDS 公司的 Jony Jung 说：「论文没有说什么时候能在量产芯片里看到用这种方法做的二维半导体。我们的目标是在 2030 年前后实现二维半导体的商业化应用。我们认为，来自 AI（包括物理 AI 和机器人）的需求加速，可能会把应用时间提前，不过生产时间取决于进一步的验证。」</p>
+<p>据采集员的说明，这项研究用氧化铪「围栏」释放的氧，把边缘处冒出来的晶核刻蚀掉，只留下正中心的一个晶核长成单晶。</p>
+<p class="why"><strong>为什么值得 Sofia 注意。</strong> 这个思路很像「一次只让一粒种子发芽」：与其让材料在一大片区域上到处同时冒芽、彼此挤在一起长成一堆小晶粒，不如控制好位置，让每个图案只从中心那一处开始长，长出来的反而是完整的单晶。用今天的读法来说，就是不要一下子让所有地方都接收材料，而是只让最适合接住的那一处去接。需要提醒：论文通讯作者之一 Kibum Kang 是 TDS Innovation 的联合创始人兼 CEO，论文已声明这一利益关系；「2030 年商用」是公司的目标，不是论文结论。</p>
+<p><strong>来源。</strong></p>
+<ul>
+<li>The Register：<a href="https://www.theregister.com/science/2026/10/11/researchers-work-out-how-to-control-2d-semiconductor-growth-for-future-chips/5301666" target="_blank" rel="noopener noreferrer">https://www.theregister.com/science/2026/10/11/researchers-work-out-how-to-control-2d-semiconductor-growth-for-future-chips/5301666</a></li>
+<li>《自然》论文：<a href="https://www.nature.com/articles/s41586-026-11095-1" target="_blank" rel="noopener noreferrer">https://www.nature.com/articles/s41586-026-11095-1</a></li>
+</ul>
+<p class="status"><strong>核实状态</strong>：多来源确认。《自然》论文原文可开放获取，The Register 独立报道并采访了公司；论文页面编号为 s41586-026-11095-1。论文上线时间（10 月 7 日）早于时间窗。</p>
+<h3 id="h-20">2.8 英国初创公司 Aegiq 提出光量子计算架构 QGATE，计算出的容错阈值最高达 25.98%</h3>
+<p class="boundary"><strong>边界说明（请先读）。</strong> 论文本身于 2026 年 10 月 8 日在期刊《量子科学与技术》（Quantum Science and Technology）上发表，早于本期时间窗。时间窗内的是 Tech Times 的深度报道。本条把论文当作背景，窗内的新内容是这篇报道。</p>
+<p><strong>发布时间</strong>：Tech Times 北京时间 2026 年 10 月 11 日 12:37（原文美东时间 10 月 11 日凌晨 0:37）。</p>
+<p><strong>先解释几个词。</strong> 「光量子计算」是用光子来当量子比特的量子计算路线，好处是接近室温就能工作、可以直接走光纤，难点是光子很容易「丢」。「量子纠错」是用很多个容易出错的物理量子比特，拼成一个更可靠的「逻辑量子比特」；「容错阈值」是指每一步的出错率低于多少时，纠错还跟得上——出错率超过这个阈值，纠错就接不住了。「确定性单光子源」是能按需、稳定地一次只发出一个光子的光源，目前还没有大规模量产。</p>
+<p><strong>发生了什么。</strong> 据采集员核对的 arXiv 预印本摘要：「我们还提出了 QGATE 的一种光子实现，并计算出在由折叠旋转表面码构建的逻辑量子比特上，对光子融合失败率的量子纠错阈值为 10.36±0.02% 或 25.98±0.28%……分别取决于采用层内融合还是层间融合。」Tech Times 给出了对比背景：「作为参照，Quandela 在 2024 年的一项研究报告了此前已发表的、不依赖大规模复用的最佳光子阈值，为 6.4%，使用的是 Floquet 码架构。」Tech Times 也写了限制条件：「实际的结论是，QGATE 的基准数字只有在确定性发射器技术能以容错机器所需的规模、均匀性和集成密度生产出来时才成立。」</p>
+<p class="why"><strong>为什么值得注意。</strong> 据采集员说明，Aegiq 是谢菲尔德大学的衍生公司，这项工作属于量子计算硬件路线之争（对手包括 PsiQuantum 等）。从今天的读法看，「容错阈值」本身就是一个「接得住多少」的数字：系统每一步丢掉多少光子之后，纠错还能把它接住。QGATE 算出的阈值明显高于此前公开的 6.4%，但它是理论计算，还没有硬件验证，而且依赖尚未量产的光源技术。</p>
+<p><strong>一个表述上的提醒。</strong> 论文摘要里的阈值针对的是「融合失败率」，Tech Times 把它通俗写成「光子损耗」（从这篇报道的网址可以看出，它的标题写的是芯片「能容忍比任何对手多 4 倍的光损耗」，这是媒体的通俗说法）。本稿以论文表述为准。</p>
+<p><strong>来源。</strong></p>
+<ul>
+<li>Tech Times：<a href="https://www.techtimes.com/articles/328869/20261011/photonic-quantum-computing-chip-tolerates-4x-more-light-loss-any-rival.htm" target="_blank" rel="noopener noreferrer">https://www.techtimes.com/articles/328869/20261011/photonic-quantum-computing-chip-tolerates-4x-more-light-loss-any-rival.htm</a></li>
+<li>arXiv 预印本：<a href="https://arxiv.org/abs/2512.04171" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2512.04171</a></li>
+</ul>
+<p class="status"><strong>核实状态</strong>：单一来源（报道层面）。时间窗内只有 Tech Times 一家深度报道；论文本身已通过 arXiv 预印本核对，阈值数字与原文一致；期刊版 DOI（10.1088/2058-9565/aea970）由 Tech Times 给出，采集员未能直接打开期刊页面核对。论文发表时间（10 月 8 日）早于时间窗。</p>
+<hr>
+<h2 id="h-21">三、医学（讯医 · 9 条）</h2>
+<p>这个周末是医学大会扎堆的日子，所以医学这一组的一手材料比平时多。第 1 条是《柳叶刀》委员会在柏林世界卫生峰会上发布的报告，用同一把尺子给本世纪 17 项健康威胁排了行动顺序，其中「恶意使用 AI」被列为两项有灭绝潜力的威胁之一；第 2 条是世卫组织总干事候选人第一次公开同台，背景是美国退出后的预算削减和 25% 的人员缩减；第 3 条是刚果（金）埃博拉疫情的扩散和肯尼亚的首例输入病例。第 4 到第 7 条来自三个专科学会的年会：眼科的 remigromig 非劣效试验、心衰的 tovinontrine「反向剂量反应」（今天的第二颗种子）、心肌淀粉样变的真实世界对比研究、遗传性低钙血症的 encaleret 三期结果。第 8 条是美国胃肠病学会年会上的两项摘要：AI 聊天机器人换一种语言就更容易漏判急症，以及美国年轻人结直肠癌发病率的快速上升。第 9 条是国内团队用牙龈来源的干细胞治疗 1 型糖尿病的 I 期试验。</p>
+<h3 id="h-22">3.1 《柳叶刀》委员会发布报告：本世纪对人类健康威胁最大的 17 项相互关联的「灾难性威胁」，其中「恶意使用 AI」与「核冲突」被列为具有导致人类灭绝潜力的两项</h3>
+<p><strong>发布时间</strong>：北京时间 2026 年 10 月 11 日 07:01。报告的解禁时间是英国夏令时 10 月 11 日周日 00:01（即 UTC 10 月 10 日 23:01）；EurekAlert 新闻稿页面标注的 10 月 10 日是提前向媒体分发的日期。</p>
+<p><strong>先解释一个词。</strong> 「伤残调整生命年」（DALY）是公共卫生里衡量疾病负担的统一尺度，把「早死损失的寿命」和「带着残疾或疾病生活的年数」加在一起算。一个 DALY 大致相当于损失了一年健康的生命。这份报告用的是「可通过政策避免的 DALY」，也就是如果采取行动，能避免多少健康损失。</p>
+<p><strong>发生了什么。</strong> 《柳叶刀》官方新闻稿写道：「下一代人的健康，不会由某一场决定性的危机塑造，而会由一组相互关联的 17 项灾难性威胁塑造，它们横跨疾病、社会和经济条件、环境变化、技术和冲突。这是一份发表在《柳叶刀》上、在 2026 年柏林世界卫生峰会上发布的新委员会报告的发现。」新闻稿写明：「委员会认定两项威胁具有灭绝潜力：恶意使用人工智能（AI）；核冲突。」</p>
+<p>关于行动能带来的收益，新闻稿写道：「综合考虑潜在影响和发生概率，委员会的评估发现，预防核冲突的行动到 2100 年可以避免约 1.33 亿人死亡和 93.5 亿个 DALY，而降低恶意 AI 风险的行动可以避免约 104 亿个 DALY。」据采集员说明，新闻稿里还列有气候变化 18.9 亿、肥胖 231 亿、收入不平等 138 亿个 DALY 等数字。</p>
+<p>据采集员说明，这个委员会由 IHME 主任 Christopher Murray 与联合国人口基金前执行主任 Natalia Kanem 共同主持，从数百种威胁中筛出 17 项，提出「建设应对型卫生体系、投资突破性创新、持续追踪威胁」三条建议。IHME 页面给出的引用格式是：Murray CJL, Kanem N, Abed S, et al. The Lancet Commission on 21st century global threats to health. The Lancet. 11 October 2026. doi: 10.1016/S0140-6736(26)01714-9。</p>
+<p class="why"><strong>为什么值得 Sofia 注意。</strong> 这份报告把你在医学课上学的 DALY 直接用在了全球决策上，而且把「恶意使用 AI」和高血压、肥胖、抗菌药耐药放进了同一张表，恰好连接了你的医学和 AI 两条学习线。它的思路也和今天的读法有关：资源有限，卫生体系能接住的行动也有限，所以要按「影响 × 可能性」排出先后，把力气先放在最值得的地方；「建设应对型卫生体系」这条建议，本身就是在加强接的那一头。</p>
+<p><strong>来源。</strong></p>
+<ul>
+<li>EurekAlert（《柳叶刀》官方新闻稿）：<a href="https://www.eurekalert.org/news-releases/1146827" target="_blank" rel="noopener noreferrer">https://www.eurekalert.org/news-releases/1146827</a></li>
+<li>IHME 报告页：<a href="https://www.healthdata.org/research-analysis/library/lancet-commission-21st-century-global-threats-health" target="_blank" rel="noopener noreferrer">https://www.healthdata.org/research-analysis/library/lancet-commission-21st-century-global-threats-health</a></li>
+<li>论文 DOI：<a href="https://doi.org/10.1016/S0140-6736(26)01714-9" target="_blank" rel="noopener noreferrer">https://doi.org/10.1016/S0140-6736(26)01714-9</a></li>
+</ul>
+<p class="status"><strong>核实状态</strong>：多来源确认。EurekAlert 官方新闻稿与 IHME 报告页内容一致，DOI 链接可以解析；《柳叶刀》原站对采集员的抓取返回 403，没能直接打开全文页。</p>
+<h3 id="h-23">3.2 世卫组织总干事候选人在柏林世界卫生峰会上首次同台公开亮相，围绕美国退出后的预算削减与全球卫生架构改革提出各自的方案</h3>
+<p><strong>发布时间</strong>：Health Policy Watch 现场报道发于北京时间 2026 年 10 月 12 日 01:54（页面时间柏林 10 月 11 日 19:54）；活动本身在北京时间 10 月 11 日 18:45 到 19:45 举行（世界卫生峰会新闻稿注明 UTC 10:45 到 11:45）。</p>
+<p><strong>发生了什么。</strong> Health Policy Watch 报道：「柏林——世卫组织总干事选举周日（10 月 11 日）在 2026 年柏林世界卫生峰会上迎来了第一场公开的候选人对话，七位已宣布参选者中的四位，讨论了如何让全球卫生机构更能回应需求、更适合其使命这个棘手问题。」报道接着写：「参选者直接谈到了房间里那头高风险的大象：在美国退出之后，这个机构正因严重的预算削减和 25% 的人员缩减而摇摇欲坠，成员国还要求重构全球卫生架构，提升国家主权、消除机构重叠。」报道也写了缺席者：「值得注意的是，三位候选人缺席，包括沙特阿拉伯的 Hanan Balkhy 博士，她因地震导致航班停飞而滞留巴拿马。同样缺席、且没有明确解释原因的，是比利时的 Hans Kluge 博士，以及中国的宋立博士，她的提名上周才被公开确认。」</p>
+<p>据采集员说明：现任总干事谭德塞 2027 年任满，下一任将在 2027 年 5 月的世界卫生大会上由成员国任命。到场的四位（卡塔尔的 Al-Kuwari、印尼卫生部长 Sadikin、西班牙的 Neira、博茨瓦纳提名的 Tamamyan）分别主张三级机构职能审查、回归「基于科学制定规范」、转向一级预防、以患者结局衡量绩效。接下来的看点包括 11 月的日内瓦候选人论坛，以及 2027 年 1 月执委会提名三人。</p>
+<p class="why"><strong>为什么值得 Sofia 注意。</strong> 这条能帮你理解世卫组织在美国（据采集员说明还有阿根廷）退出、人员缩减 25% 之后面临的处境。全球公共卫生的需求没有减少（3.3 的埃博拉疫情就是例子），而负责接住这些需求的机构却在收缩，下一任总干事要解决的，正是「需求涌过来的速度」和「机构接得住的能力」之间越拉越大的差距。</p>
+<p><strong>来源。</strong></p>
+<ul>
+<li>Health Policy Watch 现场报道：<a href="https://healthpolicy-watch.news/who-director-general-forum/" target="_blank" rel="noopener noreferrer">https://healthpolicy-watch.news/who-director-general-forum/</a></li>
+<li>世界卫生峰会官方新闻稿（10 月 5 日发布的活动预告，用于核对议程，本身不在时间窗内）：<a href="https://www.worldhealthsummit.org/news/press-release-world-health-summit-2026-brings-prospective-who-director-general-candidates-together-in-berlin" target="_blank" rel="noopener noreferrer">https://www.worldhealthsummit.org/news/press-release-world-health-summit-2026-brings-prospective-who-director-general-candidates-together-in-berlin</a></li>
+</ul>
+<p class="status"><strong>核实状态</strong>：多来源确认（活动本身）。活动时间、主持人与候选人名单与世界卫生峰会官方新闻稿一致；候选人现场发言内容目前只见 Health Policy Watch 一家详细报道，发言细节属于单一来源。</p>
+<h3 id="h-24">3.3 刚果（金）本迪布焦型埃博拉疫情扩散到北基伍新卫生区，肯尼亚确认首例输入病例并已死亡</h3>
+<p><strong>发布时间</strong>：Al Jazeera 北京时间 2026 年 10 月 11 日 08:23（页面时间 UTC 10 月 11 日 00:23:50）。</p>
+<p><strong>先解释几个词。</strong> 「本迪布焦病毒」是埃博拉病毒属里的一个种，和 2018—2020 年刚果（金）那次大疫情的扎伊尔型不是同一种。「粗病死率」是死亡数除以确诊数，是一个粗略的严重程度指标。「接触者随访率」是指确诊病例的密切接触者里，有多大比例被找到并按时随访观察，它直接决定能不能在下一代病例出现之前把传播链切断。</p>
+<p><strong>发生了什么。</strong> Al Jazeera 报道：「截至 10 月 6 日，世卫组织在刚果（金）记录了 8728 例确诊病例和 4205 例确诊死亡。另有 2269 人康复，粗病死率为 48.2%。」报道写道：「据世卫组织，肯尼亚于 10 月 6 日确认了首例输入的本迪布焦病毒病病例。患者是一名曾在刚果（金）生活的肯尼亚公民，在那里发病，在多家医疗机构接受治疗后，经乌干达前往肯尼亚。」报道强调了这次疫情的特殊困难：「当前的疫情带来了独特的挑战：据世卫组织，本迪布焦病毒病目前没有获批的疫苗或特效治疗。」</p>
+<p>据采集员说明，Al Jazeera 原文还写到疫情波及 7 个省 64 个卫生区，接触者随访率为 80.4%，低于 85% 的目标；肯尼亚病例经乌干达坎帕拉飞抵内罗毕。原文称这些数字来自世卫组织 10 月 8 日的更新与无国界医生 10 月 5 日的更新。</p>
+<p class="why"><strong>为什么值得 Sofia 注意。</strong> 和扎伊尔型不同，本迪布焦型目前没有获批疫苗和特效药，只能靠早发现、支持治疗和感染防控，防控几乎全靠人手。在这种情况下，接触者随访率 80.4%、低于 85% 的目标，就是一个「接的一头跟不上」的信号：每一个漏掉的接触者都可能带出新的传播链，而跨境输入（肯尼亚病例）说明这种压力已经越过国界。对医学生来说，这是理解「接触者追踪、隔离、病死率」这些流行病学概念的现实案例。</p>
+<p><strong>来源。</strong> Al Jazeera：<a href="https://www.aljazeera.com/news/2026/10/11/ebola-spreads-in-eastern-drc-as-kenya-confirms-imported-case" target="_blank" rel="noopener noreferrer">https://www.aljazeera.com/news/2026/10/11/ebola-spreads-in-eastern-drc-as-kenya-confirms-imported-case</a></p>
+<p class="status"><strong>核实状态</strong>：单一来源。时间窗内只有 Al Jazeera 一篇报道，其数字注明引自世卫组织与无国界医生；采集员尝试打开世卫组织疾病暴发新闻的原页面，没能找到对应条目，所以没有独立核对世卫原文。尚未得到其他来源确认。另外请注意：文中数据截止于 10 月 4 日到 8 日，并不是 10 月 11 日当天的新数据。</p>
+<h3 id="h-25">3.4 默沙东 BRUNELLO 关键试验一年结果：靶向 Wnt 通路的三特异性抗体 remigromig 治疗糖尿病黄斑水肿，视力获益不劣于雷珠单抗，但增殖性糖网相关不良事件更多</h3>
+<p><strong>发布时间</strong>：Merck 新闻稿北京时间 2026 年 10 月 11 日 06:10（美东 10 月 10 日晚上 6:10）；MSD 版本 06:15。都在采集窗开始后的十几分钟内。</p>
+<p><strong>先解释几个词。</strong> 「糖尿病黄斑水肿」（DME）是糖尿病损伤视网膜血管、导致视网膜中央区域积液，是糖尿病患者视力下降的主要原因之一。目前的一线治疗是往眼内注射抗 VEGF 药物（比如雷珠单抗），抑制异常的血管生成和渗漏。「Wnt 通路」是细胞里一条重要的信号通路，和血-视网膜屏障的维持有关。「非劣效试验」的目的不是证明新药更好，而是证明新药「不比老药差到一个预先规定的程度」。「BCVA」是最佳矫正视力，用视力表上能多读出几个字母来衡量。「增殖性糖尿病视网膜病变」（PDR）是糖网病更严重的阶段，会长出脆弱的新生血管。</p>
+<p><strong>发生了什么。</strong> Merck 新闻稿写道：「第 1 年时，remigromig 0.5 mg 组的平均 BCVA 提高 9.1 个字母（95% 置信区间 8.1—10.1；经多重性校正 p=0.0129），0.8 mg 组提高 8.7 个字母（95% 置信区间 7.7—9.8；经多重性校正 p=0.0222），雷珠单抗组提高 11.8 个字母（95% 置信区间 10.7—12.8）。各治疗组之间的差异在预先规定的非劣效界值之内，被认为没有临床意义。没有任何次要终点显示优于雷珠单抗。」</p>
+<p>关于安全性：「虽然两个剂量的 remigromig 总体耐受良好，但与增殖性糖尿病视网膜病变（PDR）相关的不良事件在 remigromig 组更常见（0.5 mg 和 0.8 mg 组分别为 6.7% 和 6.1%，雷珠单抗组为 0.9%），包括新发 PDR。」试验规模：「试验纳入 984 名参与者，按 1:1:1 随机分配接受低剂量或高剂量 remigromig 或雷珠单抗，第一年每四周给药一次。」</p>
+<p>据采集员说明，新闻稿称最多 40% 的患者在抗 VEGF 治疗六个月后仍有持续病变；remigromig 换了一条思路，激活 Wnt 通路去修复血-视网膜屏障，而不是直接抑制血管生成。结果在美国眼科学会年会（AAO 2026，新奥尔良）上公布；因不良事件停药的比例也是 remigromig 组更多。</p>
+<p class="why"><strong>为什么值得 Sofia 注意。</strong> 这条很适合练习读非劣效试验：两个剂量组都达到了「不劣于」雷珠单抗的主要终点，但数值上视力获益更少，次要终点没有优势，而且增殖性糖网相关事件约是对照组的 7 倍（6.7%、6.1% 对 0.9%）。「达到主要终点」只是一个起点，安全性信号同样要认真看。</p>
+<p><strong>来源。</strong></p>
+<ul>
+<li>Merck 新闻稿：<a href="https://www.merck.com/news/merck-presents-one-year-results-from-the-pivotal-phase-2b-3-brunello-study-evaluating-remigromig-a-tri-specific-agonist-of-the-wingless-related-integration-site-wnt-pathway-in-adults-with-diabetic/" target="_blank" rel="noopener noreferrer">https://www.merck.com/news/merck-presents-one-year-results-from-the-pivotal-phase-2b-3-brunello-study-evaluating-remigromig-a-tri-specific-agonist-of-the-wingless-related-integration-site-wnt-pathway-in-adults-with-diabetic/</a></li>
+<li>MSD 新闻稿（美加以外版本）：<a href="https://www.msd.com/news/msd-presents-one-year-results-from-the-pivotal-phase-2b-3-brunello-study-evaluating-remigromig-a-tri-specific-agonist-of-thewingless-related-integration-site-wnt-pathway-in-adults-with-diabetic-ma/" target="_blank" rel="noopener noreferrer">https://www.msd.com/news/msd-presents-one-year-results-from-the-pivotal-phase-2b-3-brunello-study-evaluating-remigromig-a-tri-specific-agonist-of-thewingless-related-integration-site-wnt-pathway-in-adults-with-diabetic-ma/</a></li>
+<li>Ophthalmology Times 报道（页面时间为北京时间 10 月 12 日 06:16，略晚于时间窗，仅作旁证）：<a href="https://www.ophthalmologytimes.com/view/aao-2026-brunello-1-year-results-for-remigromig-in-dme" target="_blank" rel="noopener noreferrer">https://www.ophthalmologytimes.com/view/aao-2026-brunello-1-year-results-for-remigromig-in-dme</a></li>
+</ul>
+<p class="status"><strong>核实状态</strong>：多来源确认。Merck 与 MSD 两份官方新闻稿数字一致，Ophthalmology Times 的报道（略晚于时间窗）也给出相同的 +9.1、+8.7、+11.8 个字母数据。注意数据来自企业新闻稿和会议报告，尚未见同行评审全文。</p>
+<h3 id="h-26">3.5 Cardurion 公布 PDE9 抑制剂 tovinontrine 二期结果：射血分数降低的心衰患者低剂量组 NT-proBNP 下降，最高剂量和射血分数保留心衰组无效，呈「反向剂量反应」</h3>
+<p><strong>发布时间</strong>：GlobeNewswire 稿件经 Markets Insider 转载，北京时间 2026 年 10 月 12 日 01:35（UTC 10 月 11 日 17:35）；会议报告时间为北京时间 10 月 12 日 00:00 到 01:30（美国心衰学会官网议程：菲尼克斯时间 10 月 11 日周日上午 9:00 到 10:30，菲尼克斯为 UTC−7）。</p>
+<p><strong>先解释几个词。</strong> 「NT-proBNP」是心脏在承受过大压力时释放的一种标志物，心衰越重通常越高，临床上常用它来辅助诊断和判断病情。「射血分数」是心脏每次收缩能把心室里多大比例的血泵出去，心衰按它分成「射血分数降低」（HFrEF）和「射血分数保留」（HFpEF）两大类。「cGMP」是细胞里的一种第二信使，利钠肽这条保护心脏的通路要靠它传递信号；PDE9 是一种分解 cGMP 的酶，心衰时会上调。「剂量反应」是指药物剂量和效果之间的关系，通常剂量越大效果越强，「反向剂量反应」则是剂量越大效果反而越差。</p>
+<p><strong>发生了什么。</strong> 公司新闻稿写道：「Cycle-1 REF 二期临床试验在全球多个中心把 529 名参与者随机分配到 tovinontrine 的三个剂量组之一或安慰剂组，背景是指南指导的药物治疗。12 周时 NT-proBNP 相对基线的下降，在 tovinontrine 每日两次 2.5 mg 组最大，每日两次 25 mg 组下降略小；NT-proBNP 的下降最早在第 2 周就观察到，并持续到 12 周治疗期结束。」新闻稿接着写：「在本临床试验测试的最高剂量（每日两次 50 mg）下，没有观察到 tovinontrine 对 NT-proBNP 水平的获益。」关于另一项试验：「在 Cycle-2 PEF 试验中，277 名射血分数保留的心衰（HFpEF）患者被随机分配接受 tovinontrine 每日两次 50 mg 或安慰剂。与 Cycle-1 REF 中最高剂量没有 NT-proBNP 效应一致，Cycle-2 PEF 在这个剂量下也没有观察到 NT-proBNP 的显著变化。」</p>
+<p>据采集员说明，公司把这种「剂量越高效果越差」解释为 cGMP 过高触发了反向调节；结果在美国心衰学会年会（HFSA 2026，菲尼克斯）的晚期突破专场公布。</p>
+<p class="why"><strong>为什么值得 Sofia 注意。</strong> 这是今天的第二颗种子，也是一个很好的药理学教学案例。抑制 PDE9 理论上能让利钠肽的保护信号更强，可信号推得太高，身体会启动反向调节把它压回去，于是最高剂量反而没有效果；射血分数保留的那项试验恰好只测了最高剂量，结果也是无效。身体能接住的，是一个刚刚好的量，不是越多越好。需要注意的是：主要终点只是生物标志物 NT-proBNP，新闻稿没有给出具体下降了百分之多少，也不是死亡、住院这类硬终点；「cGMP 过高触发反向调节」是公司的解释，还需要更多研究验证。</p>
+<p><strong>来源。</strong></p>
+<ul>
+<li>Markets Insider 转载的 GlobeNewswire 新闻稿：<a href="https://markets.businessinsider.com/news/stocks/cardurion-pharmaceuticals-presents-phase-2-results-for-tovinontrine-crd-750-a-pde9-inhibitor-as-a-novel-treatment-for-heart-failure-1036614695" target="_blank" rel="noopener noreferrer">https://markets.businessinsider.com/news/stocks/cardurion-pharmaceuticals-presents-phase-2-results-for-tovinontrine-crd-750-a-pde9-inhibitor-as-a-novel-treatment-for-heart-failure-1036614695</a></li>
+<li>GlobeNewswire 原稿（浏览器可以打开，采集员的脚本访问返回 403）：<a href="https://www.globenewswire.com/news-release/2026/10/11/3378505/0/en/cardurion-pharmaceuticals-presents-phase-2-results-for-tovinontrine-crd-750-a-pde9-inhibitor-as-a-novel-treatment-for-heart-failure.html" target="_blank" rel="noopener noreferrer">https://www.globenewswire.com/news-release/2026/10/11/3378505/0/en/cardurion-pharmaceuticals-presents-phase-2-results-for-tovinontrine-crd-750-a-pde9-inhibitor-as-a-novel-treatment-for-heart-failure.html</a></li>
+<li>美国心衰学会 2026 晚期突破研究议程：<a href="https://hfsa.org/asm/late-breaking-clinical-research-2026" target="_blank" rel="noopener noreferrer">https://hfsa.org/asm/late-breaking-clinical-research-2026</a></li>
+</ul>
+<p class="status"><strong>核实状态</strong>：发布事实多来源确认，疗效数字单一来源。美国心衰学会官网议程确认这两项试验在 10 月 11 日上午的晚期突破专场报告；疗效描述只来自公司新闻稿，没有看到同行评审论文或独立媒体给出的具体降幅，尚未得到其他来源确认。</p>
+<h3 id="h-27">3.6 BridgeBio 在美国心衰学会年会公布独立真实世界研究：转甲状腺素蛋白淀粉样心肌病患者用 acoramidis 比用 tafamidis 复合不良结局风险低 18%</h3>
+<p><strong>发布时间</strong>：GlobeNewswire 稿件北京时间 2026 年 10 月 12 日 02:30（美东 10 月 11 日下午 2:30；FinancialContent 转载页 UTC 18:30）。</p>
+<p><strong>先解释几个词。</strong> 「转甲状腺素蛋白淀粉样心肌病」（ATTR-CM）是一种转甲状腺素蛋白错误折叠、沉积在心肌里导致心衰的疾病。acoramidis 和 tafamidis 都是口服的「稳定剂」，让这种蛋白保持正常的四聚体结构、不容易拆散沉积。「真实世界研究」是用医院电子病历等日常诊疗数据做的观察性研究，不是随机分组的试验。「倾向评分匹配」是一种统计方法，尽量把两组病人在年龄、病情等基线特征上配平，让比较更公平，但它没法配平那些没有被记录下来的因素（这叫「残余混杂」）。「HR」（风险比）小于 1 表示风险更低。</p>
+<p><strong>发生了什么。</strong> 新闻稿写道：「在一项对来自美国最大电子病历数据库 Epic COSMOS 的 2684 名 ATTR-CM 患者进行的独立倾向评分匹配分析中，与 tafamidis 相比，acoramidis 与死亡、全因住院、新发房颤和利尿剂加量这一复合终点的风险在统计学上显著降低 18% 相关（HR 0.82；95% 置信区间 0.73—0.93；p&lt;0.01）。」新闻稿也写了没有达到统计学意义的部分：「死亡（HR 0.85；95% 置信区间 0.62—1.20；p=0.34）和新发房颤（HR 0.88；95% 置信区间 0.68—1.13；p=0.31）的差异在数值上有利于 acoramidis，与复合终点一致，但没有达到统计学显著性，这反映出这些长期终点的事件数较少、随访时间有限。」新闻稿自己写明了局限：「和所有观察性研究一样，本研究存在固有局限。尽管倾向评分匹配平衡了患者的基线特征，并且结果在未加权分析和敏感性分析中保持一致，但不能完全排除残余混杂的可能。」</p>
+<p>据采集员说明，研究由 Henry Ford Health 的 David Lanfear 主导，910 人用 acoramidis、1774 人用 tafamidis；心血管住院和心衰住院分别低 27%；全文目前仍在期刊同行评审中。美国心衰学会议程在 10 月 11 日 10:45—11:45 的快速口头报告里列有这项研究。</p>
+<p class="why"><strong>为什么值得 Sofia 注意。</strong> 这条适合练习辨析「真实世界观察性研究」和随机试验的证据等级差异：两种药目前没有头对头的随机试验，这项研究提供了一个参考，但倾向评分匹配不能排除残余混杂，随访也短，死亡和房颤的差异没有统计学意义，而且新闻稿是由生产 acoramidis 的公司发布的。读这类新闻时，把「相关」两个字一直带在心里。</p>
+<p><strong>来源。</strong></p>
+<ul>
+<li>FinancialContent 转载的 GlobeNewswire 新闻稿：<a href="https://www.financialcontent.com/article/gnwcq-2026-10-11-acoramidis-associated-with-significantly-improved-clinical-outcomes-versus-tafamidis-in-attr-cm-in-an-independent-real-world-study-of-us-electronic-health-records" target="_blank" rel="noopener noreferrer">https://www.financialcontent.com/article/gnwcq-2026-10-11-acoramidis-associated-with-significantly-improved-clinical-outcomes-versus-tafamidis-in-attr-cm-in-an-independent-real-world-study-of-us-electronic-health-records</a></li>
+<li>美国心衰学会 2026 议程：<a href="https://hfsa.org/asm/late-breaking-clinical-research-2026" target="_blank" rel="noopener noreferrer">https://hfsa.org/asm/late-breaking-clinical-research-2026</a></li>
+</ul>
+<p class="status"><strong>核实状态</strong>：单一来源。疗效数字只见于 BridgeBio 新闻稿；美国心衰学会官网议程可以确认该研究于 10 月 11 日在会上报告。尚未得到其他来源确认，属于观察性关联，不能读作因果结论。</p>
+<h3 id="h-28">3.7 BridgeBio 在美国骨与矿物质研究学会年会公布 encaleret 三期 CALIBRATE 数据：常染色体显性低钙血症 1 型患者自身的甲状旁腺激素恢复，骨转换和症状改善</h3>
+<p><strong>发布时间</strong>：GlobeNewswire 稿件经 Markets Insider 转载，北京时间 2026 年 10 月 12 日 01:42（UTC 10 月 11 日 17:42）。</p>
+<p><strong>先解释几个词。</strong> 「甲状旁腺激素」（PTH）是调节血钙的关键激素：血钙低时，甲状旁腺分泌 PTH，把血钙升上去。甲状旁腺靠细胞表面的「钙敏感受体」（CaSR）感知血钙高低，它就像一个传感器。「常染色体显性低钙血症 1 型」（ADH1）是 CaSR 发生了功能获得性突变：传感器太敏感，血钙明明偏低，它却「以为」血钙已经够高，于是把 PTH 压低，结果血钙低、尿钙反而高。「负向变构调节剂」是一类药，它不直接堵住受体，而是结合在受体的另一个位置上，把受体的灵敏度往下调。</p>
+<p><strong>发生了什么。</strong> 新闻稿写道：「encaleret 使 91% 的参与者自身的 PTH 分泌恢复到或高于正常下限，而标准治疗组为 0%。」「接受 encaleret 的参与者 100% 报告至少一种 ADH1 症状有所改善，而接受标准治疗的参与者为 46%。」「FDA 已受理 BridgeBio 关于 encaleret 用于 ADH1 的新药申请并授予优先审评，PDUFA 目标审评日期为 2027 年 5 月 8 日；公司也已向欧洲药品管理局提交了上市许可申请。」</p>
+<p>据采集员说明，传统的补钙加活性维生素 D 只能把血钙补上去，还会加重高尿钙；encaleret 是 CaSR 的口服负向变构调节剂，相当于把这个过敏的传感器调回正常灵敏度。ASBMR 2026（波士顿）的口头报告显示，24 周时 91% 的患者 PTH 恢复，骨转换标志物上升，疲劳、肌肉痉挛、麻刺感等症状改善更多。</p>
+<p class="why"><strong>为什么值得 Sofia 注意。</strong> 这是今天「好的那一面」里最漂亮的一个例子。传统办法是从「给」的一头使劲：血钙低就一直补钙，可身体里那个接收信号的传感器出了问题，补进去的钙一部分从尿里漏掉了，还加重了高尿钙。encaleret 换到「接」的一头去解决：把传感器的灵敏度调回正常，身体自己就重新开始分泌 PTH。它也是把生理课里「钙稳态—PTH—CaSR」这一章直接变成药物设计的好例子，等你学到内分泌的时候可以回头看。</p>
+<p><strong>来源。</strong> Markets Insider 转载的 GlobeNewswire 新闻稿：<a href="https://markets.businessinsider.com/news/stocks/encaleret-increased-bone-turnover-and-improved-participant-reported-symptoms-in-the-phase-3-calibrate-trial-in-adh1-1036614700" target="_blank" rel="noopener noreferrer">https://markets.businessinsider.com/news/stocks/encaleret-increased-bone-turnover-and-improved-participant-reported-symptoms-in-the-phase-3-calibrate-trial-in-adh1-1036614700</a></p>
+<p class="status"><strong>核实状态</strong>：单一来源。数据只来自公司新闻稿；ASBMR 2026 的会期（10 月 9 日到 12 日，波士顿）可以由会议信息印证，但具体摘要采集员这次没有单独打开核对。尚未得到其他来源确认。</p>
+<h3 id="h-29">3.8 美国胃肠病学会年会解禁「新闻价值摘要」：多语言测试显示 AI 聊天机器人在越南语中漏判需要急诊情况的比例约 41%，英语为 15%；美国 50 岁以下结直肠癌发病率 23 年上升 89%</h3>
+<p><strong>发布时间</strong>：北京时间 2026 年 10 月 12 日 01:00（ACG 2026 统一解禁时间为美国中部时间 10 月 11 日周日中午 12:00，即美东下午 1:00、UTC 17:00）。</p>
+<p><strong>先解释几个词。</strong> 「早发性结直肠癌」是指 50 岁以下确诊的结直肠癌。「SEER」是美国国家癌症研究所的癌症登记数据库。「年变化百分比」（APC）是每年平均增长或下降的百分比。</p>
+<p><strong>发生了什么。</strong> 美国胃肠病学会（ACG 2026，纳什维尔）公关委员会挑出了一批「有新闻价值的摘要」。页面上的禁发说明是：「ACG 2026 上展示的所有研究都严格禁发，直到 2026 年 10 月 11 日周日美国中部时间中午 12:00、美东时间下午 1:00。」</p>
+<p>第一项和医学 AI 的临床安全有关。作者的解读是：「我们不只看 AI 能不能正确回答胃肠病问题，还要问它在不同语言里识别急症的能力是不是一样好。在四个模型、七种语言里，同一个临床场景可能会因为使用的语言不同而得到不同的建议。没有建议去急诊的比例，从英语的 15% 上升到越南语的约 41%。虽然我们测试的是模拟场景，而不是真实患者的结局，但这引发了对延误就医的担忧。」据采集员说明，ACG 页面上这项摘要的标题没有显示，只给出了作者 Harika Dadigiri。</p>
+<p>第二项是 SEER 数据库的分析：「在美国，50 岁以下成年人确诊的早发性结直肠癌在过去 23 年里增加了 89%。更令人担忧的是，2021 年到 2023 年间年变化百分比加速到接近 10%，说明这一趋势正在快速恶化。」据采集员说明，研究还发现确诊时远处转移更多。同一页上还有 AI 辅助胶囊内镜的敏感度为 93.0% 对 44.0%、粪便筛查阳性后一年内只有 40.8% 的人完成肠镜等结果。</p>
+<p class="why"><strong>为什么值得 Sofia 注意。</strong> 第一项是今天读法的一个很具体的版本：同样一条「要不要去急诊」的建议，给到说英语的人和说越南语的人，接收者得到的质量很不一样。AI 回答得再流利，如果没有按接收者的语言重新校准，给出去的好建议就可能在半路变了样。第二项则和你未来的临床工作直接相关：年轻人的结直肠癌在增加，而「粪便筛查阳性后一年内只有 40.8% 完成肠镜」这个数字说明，筛查发出了信号，接下来的那一步却常常没人接住。</p>
+<p><strong>来源。</strong> 美国胃肠病学会新闻价值摘要页：<a href="https://gi.org/media/press-info-scientific-meeting/featured-science/" target="_blank" rel="noopener noreferrer">https://gi.org/media/press-info-scientific-meeting/featured-science/</a></p>
+<p class="status"><strong>核实状态</strong>：单一来源。均为 ACG 官方页面上的会议摘要作者解读，属于没有经过同行评审全文发表的会议摘要；没有找到独立媒体报道交叉核对。AI 急症识别研究用的是模拟场景，不是真实患者结局。</p>
+<h3 id="h-30">3.9 中山大学与上海交大团队完成全球首个牙龈间充质干细胞治疗 1 型糖尿病的随机双盲安慰剂对照 I 期试验，结果被《Signal Transduction and Targeted Therapy》接收</h3>
+<p><strong>发布时间</strong>：读创/深圳商报北京时间 2026 年 10 月 11 日 17:43。</p>
+<p><strong>先解释几个词。</strong> 「1 型糖尿病」是 T 细胞攻击胰岛 β 细胞导致的自身免疫病，胰岛素替代只能控制血糖，挡不住 β 细胞继续丢失。「间充质干细胞」是一类有免疫调节作用的成体干细胞，可以从骨髓、脐带、牙龈等组织里提取，「牙龈来源」的好处是取材方便。「I 期试验」是新疗法第一次在人身上做的试验，规模很小，主要目的是看安全性。「T 细胞耗竭」是指 T 细胞在长期受刺激后功能减弱的状态。</p>
+<p><strong>发生了什么。</strong> 据读创/深圳商报报道：「研究最终入组18例T1DM患者，按1:1随机分为GMSCs治疗组与安慰剂对照组。受试者每间隔3周接受一次GMSCs注射或安慰剂注射，共计4次治疗，并完成48周随访观察。在安全性评价上，GMSCs治疗未增加低血糖及其他不良事件风险，无严重不良事件发生，证实 GMSCs治疗具有良好的安全性。」报道还写道：「研究证实，GMSCs静脉输注具备良好安全性，可改善T1DM患者残余β细胞功能，并揭示GMSCs可能通过诱导CD8+效应T细胞耗竭减轻胰岛自身免疫损伤的新机制，为T1DM干细胞治疗提供了重要临床证据。」</p>
+<p>据采集员说明，试验由中山大学附属第八医院陈燕铭教授和上海交大医学院郑颂国教授团队牵头。</p>
+<p class="why"><strong>为什么值得 Sofia 注意。</strong> 一种新疗法第一次进入人体时，正确的做法就是今天读法里的「一点一点给」：只入组 18 人，每隔 3 周给一次、一共 4 次，再随访 48 周，先把安全性一步一步看清楚。需要提醒：这是只有 18 人的 I 期试验，主要目的是看安全性，报道没有给出疗效的具体数字（比如 C 肽的变化），论文目前是「被接收」状态；报道中提到的影响因子说法采集员没有核实，本稿不引用。</p>
+<p><strong>来源。</strong> 读创/深圳商报：<a href="https://dcapp.netwin.cn/a/202610/11/s6acb5a49e4b03169d5dc04f9.html" target="_blank" rel="noopener noreferrer">https://dcapp.netwin.cn/a/202610/11/s6acb5a49e4b03169d5dc04f9.html</a></p>
+<p class="status"><strong>核实状态</strong>：单一来源。目前只找到这一篇媒体报道，没能打开期刊上的论文页面或 DOI 核对数据。尚未得到其他来源确认。</p>
+<h3 id="h-31">课程知识桥（不计入条目）</h3>
+<p>今天医学这一组里，有好几个点正好能接上你的课。第一，3.5 的 tovinontrine 是药理学里「剂量—效应关系」和「受体/通路的反向调节」最生动的例子：效果并不总是随剂量单调上升，信号推过了头，身体会把它压回去；学到药效学的「治疗窗」时，可以拿它来想。第二，3.7 的 encaleret 对应生理学里「钙稳态—PTH—钙敏感受体」那一章：一个传感器的灵敏度出了问题，整条反馈环都会跟着偏；负向变构调节剂则是药理学里「变构调节」的现成例子。第三，3.4 的 remigromig 是读「非劣效试验」的好材料：达到主要终点不等于更好，安全性信号要单独看。第四，3.6 的 acoramidis 研究是流行病学里「倾向评分匹配」和「残余混杂」的教材，可以和随机对照试验对照着理解证据等级。第五，3.1 的《柳叶刀》报告用的是公共卫生里的 DALY，3.3 的埃博拉疫情用的是「病死率」「接触者随访」，都是预防医学课上的核心概念。</p>
+<hr>
+<h2 id="h-32">四、个人轻提示（连读 · 窗内 9 条）</h2>
+<p>这一组来自你授权的两个 Gmail 邮箱和 GitHub 活动，全程只读。aimfllyys 邮箱窗内只有 2 封邮件（1 封 GitHub Actions 失败通知、1 封 Readwise 通讯），sofiapintos190 邮箱窗内有 1 封（Google Play 条款更新）。日历、笔记和云盘类的连接器这次没有可读的，所以学业日程这一块是空的，本稿没有编造任何日程；从 GitHub 侧面看，StudySolo 的课堂内容仓库窗内也没有新的课堂内容提交。GitHub 方面，窗内最热闹的是 ChatSolo，一天里向 main 连推了 22 个提交。今天是周一，这一组可以正常当轻提示看，大部分都不需要你马上动手。链接里，Gmail 和私有仓库需要登录才能打开；验证码、密码重设链接、带工作区编号的账单网址这类内容一律没有写进来。</p>
+<p><strong>先解释两个词。</strong> 下面多次出现的 CI（持续集成），是代码每次提交或合并时自动跑一遍的检查流程，比如类型检查、代码规范检查、单元测试、构建；PR（拉取请求）是「我改好了一批代码，请求合进主分支」的那张单子。</p>
+<p><strong>一句话看完这一组。</strong> 这一天你在 ChatSolo 上「给」得又多又快（22 个提交、新增七千多行），而且部署都接住了；另一边有两处「接」的环节空着：昨天那期早报的 PR 一早就开好了、却晚了一整天才合入，deepseek-harness 的测试已经连续失败十天、没有人接手。</p>
+<h3 id="h-33">4.1 2026-10-11 那期早报《把内胎按进水里，看它在哪里冒泡》的 PR #173 在窗内开出并通过 CI，但直到窗口结束后几分钟才合入 main</h3>
+<p><strong>时间</strong>：PR 开出于北京时间 2026 年 10 月 11 日 07:40:10，CI 07:40 起跑并通过；合入 main 是 10 月 12 日 06:13:42（窗外，紧贴窗口结束）；同步 dev 的 PR #174 在 06:13:58 合入（窗外）。</p>
+<p><strong>发生了什么。</strong> PR 标题是「content(briefs): 2026-10-11 把内胎按进水里，看它在哪里冒泡」，设计课注释里的 THESIS 是「越早让岔子自己冒出来，就越好补；只看交上来的部分，漏洞会一直漏。」页面开头的说明写着：「周日上午的浅色车棚。前轮卸在旁边，内胎按进水盆：打气之后看起来鼓，并不等于没漏。拖过水面，快漏会马上冒泡；有一处慢漏要在那一段停一会儿才出现。」这个 PR 在 10 月 11 日早上 07:40 就开出来了，CI 一次通过，但它在整整一天里一直没有合入，直到今天 06:13 才 squash 合进 main，并随即用 #174 同步到 dev。也就是说，10 月 11 日那期在博客上线比预定晚了大约一天。</p>
+<p><strong>一句轻提示。</strong> 东西早就做好、检查也过了，差的只是「有人接手验收、点下合并」这一步。这一步现在已经补上了，那一期已经在线上。合入时刻在本期时间窗之外，这里只作为背景。</p>
+<p><strong>来源。</strong></p>
+<ul>
+<li><a href="https://github.com/AIMFllyYS/Blog-YuSheng/pull/173" target="_blank" rel="noopener noreferrer">https://github.com/AIMFllyYS/Blog-YuSheng/pull/173</a></li>
+<li><a href="https://github.com/AIMFllyYS/Blog-YuSheng/actions/runs/38095827640" target="_blank" rel="noopener noreferrer">https://github.com/AIMFllyYS/Blog-YuSheng/actions/runs/38095827640</a></li>
+<li><a href="https://github.com/AIMFllyYS/Blog-YuSheng/pull/174" target="_blank" rel="noopener noreferrer">https://github.com/AIMFllyYS/Blog-YuSheng/pull/174</a></li>
+</ul>
+<p class="status"><strong>核实状态</strong>：多来源确认（GitHub PR 页面、Actions 运行记录与 AIMFllyYS 的账户事件流三处时间一致）。</p>
+<h3 id="h-34">4.2 deepseek-harness 的「真实 DeepSeek API」端到端定时测试在窗内又一次失败，已经连续失败十天</h3>
+<p><strong>时间</strong>：运行开始于北京时间 2026 年 10 月 11 日 13:43:25，13:44:10 失败结束；GitHub 通知邮件 13:44:30 到达。</p>
+<p><strong>先解释一个词。</strong> bubblewrap 是 Linux 上一个轻量的沙箱工具，测试前要先把它准备好；「unrestrict userns」是放开一项系统设置，让它能正常运行。</p>
+<p><strong>发生了什么。</strong> 通知邮件写着：「[AIMFllyYS/deepseek-harness] 运行失败：E2E（真实 DeepSeek API）- master（c291e79）」，用时 45.0 秒，结束于 UTC 2026-10-11 05:44:10，作业 e2e 失败（3 条注释），注释里写着「进程以退出码 22 结束」。据采集员说明，这次在「准备 bubblewrap（放开 userns）」这一步就失败了，还没走到调用 DeepSeek API，所以更像是运行环境准备的问题，而不是 API 或余额问题。Actions 列表显示，2026 年 10 月 2 日到 10 月 11 日共 10 次定时运行全部失败；这个 fork 自 deepseek-ai/deepseek-harness 的仓库，最后一次推送是 2026 年 9 月 11 日。</p>
+<p><strong>一句轻提示。</strong> 这盏红灯每天都按时亮、按时发邮件，已经连续十天了，可是没有人去接这封信。你可以二选一：如果这个 fork 还想用，找个时间看一下准备沙箱那一步（也可以对照窗外前瞻 B 里 GitHub 运行器系统升级的提示一起看）；如果暂时不用了，可以先把这条定时测试停掉，免得每天收一封没有人处理的失败通知。</p>
+<p><strong>来源。</strong></p>
+<ul>
+<li><a href="https://github.com/AIMFllyYS/deepseek-harness/actions/runs/38115705316" target="_blank" rel="noopener noreferrer">https://github.com/AIMFllyYS/deepseek-harness/actions/runs/38115705316</a></li>
+<li><a href="https://mail.google.com/mail/?authuser=aimfllyys@gmail.com#all/thread-f:1878730967409479661" target="_blank" rel="noopener noreferrer">https://mail.google.com/mail/?authuser=aimfllyys@gmail.com#all/thread-f:1878730967409479661</a></li>
+</ul>
+<p class="status"><strong>核实状态</strong>：多来源确认（GitHub Actions 运行页、作业步骤与注释和 Gmail 通知邮件三处一致；「连续 10 次失败」来自 Actions 运行列表）。</p>
+<h3 id="h-35">4.3 1037Solo-ChatSolo 在窗内向 main 连推 22 个提交，主体是画布与工作区体验的一大轮完善</h3>
+<p><strong>时间</strong>：第一个提交是北京时间 2026 年 10 月 11 日 12:50:37（d40b446），最后一个提交是 10 月 12 日 00:03:58（1412b39）；画布相关的主要提交在 15:06:51（3517b9b）、21:29:38（996aaba）、23:50:01（4f3f7bf）。</p>
+<p><strong>发生了什么。</strong> 三个画布相关提交的标题分别是「完成画布导航和云端附件工作流」「画布：改进布局、延迟加载详情和生成活动」「画布：把清空操作换成可撤回的对话折叠」。据采集员统计，窗内 22 个提交全部由 AIMFllyYS 推到 main，逐个累加合计新增 7863 行、删除 1634 行。大多数改动围绕画布：节点内容开在可以拖动的锚定窗口里，分支保持在同一张图中，窄屏下显示压缩反馈，以及把「清空」改成可以撤回的「折叠对话」。其中 3517b9b 这一个提交就改了 65 个文件，新增 937 行、删除 127 行。</p>
+<p><strong>一句轻提示。</strong> 「把清空换成可撤回的折叠」这个改动很贴心：用户一下子塞进去的内容太多时，不必一键清掉，可以先收起来，等需要的时候再展开。一天推 22 个提交、七千多行，是很大的一次「给」，好在下面 4.6 显示部署都接住了。</p>
+<p><strong>来源（私有仓库，需要登录 AIMFllyYS）。</strong></p>
+<ul>
+<li><a href="https://github.com/AIMFllyYS/1037Solo-ChatSolo/commit/3517b9b4a0654d00ab91a6af6237fa497a0e25cd" target="_blank" rel="noopener noreferrer">https://github.com/AIMFllyYS/1037Solo-ChatSolo/commit/3517b9b4a0654d00ab91a6af6237fa497a0e25cd</a></li>
+<li><a href="https://github.com/AIMFllyYS/1037Solo-ChatSolo/commit/4f3f7bf7d26b7fff0c736c89ac6418b323abcb01" target="_blank" rel="noopener noreferrer">https://github.com/AIMFllyYS/1037Solo-ChatSolo/commit/4f3f7bf7d26b7fff0c736c89ac6418b323abcb01</a></li>
+<li><a href="https://github.com/AIMFllyYS/1037Solo-ChatSolo/commit/996aabab7e41541f0f020ffd581dd5adc077e276" target="_blank" rel="noopener noreferrer">https://github.com/AIMFllyYS/1037Solo-ChatSolo/commit/996aabab7e41541f0f020ffd581dd5adc077e276</a></li>
+</ul>
+<p class="status"><strong>核实状态</strong>：单一来源（数据全部来自 GitHub 提交记录，提交说明是开发者自己写的，没有另外的发布说明可以对照）。</p>
+<h3 id="h-36">4.4 ChatSolo 窗内上线了「分享」功能改造，并修复了分享链接在不同部署环境之间串用的问题</h3>
+<p><strong>时间</strong>：44e5bd3 在北京时间 2026 年 10 月 11 日 20:54:02；04c17b2 在 21:09:55。</p>
+<p><strong>发生了什么。</strong> 两个提交的标题是「分享：复用原生工作区并支持复制公开对话」和「分享：在不同部署环境之间隔离链接」。据采集员说明，44e5bd3 是窗内体量最大的单个提交，改了 86 个文件，新增 1429 行、删除 196 行，让公开分享复用原生工作区并支持复制公开对话；十几分钟后的 04c17b2（4 个文件，新增 92 行、删除 8 行）把不同部署环境的分享链接隔离开，避免一个环境生成的链接落到另一个环境里。两次推送对应的 deploy-mainecs 部署都显示成功。</p>
+<p><strong>来源（私有仓库）。</strong></p>
+<ul>
+<li><a href="https://github.com/AIMFllyYS/1037Solo-ChatSolo/commit/44e5bd30607fac5cba37949281ab10f2907ea034" target="_blank" rel="noopener noreferrer">https://github.com/AIMFllyYS/1037Solo-ChatSolo/commit/44e5bd30607fac5cba37949281ab10f2907ea034</a></li>
+<li><a href="https://github.com/AIMFllyYS/1037Solo-ChatSolo/commit/04c17b24d56fa55a4da6449dbed7fd55b9ad9381" target="_blank" rel="noopener noreferrer">https://github.com/AIMFllyYS/1037Solo-ChatSolo/commit/04c17b24d56fa55a4da6449dbed7fd55b9ad9381</a></li>
+</ul>
+<p class="status"><strong>核实状态</strong>：单一来源（只有 GitHub 提交与对应的 Actions 记录，没有用户侧公告）。</p>
+<h3 id="h-37">4.5 ChatSolo 窗内调整了智能模式的选模策略，并开始向用户展示上下文压缩与精确到单个对话的计费</h3>
+<p><strong>时间</strong>：9b19db9 在北京时间 2026 年 10 月 11 日 13:25:59；2637f8d 在 18:19:08；3ee452c 在 18:21:18；aa26b4e 在 20:53:55。</p>
+<p><strong>先解释一个词。</strong> 「上下文压缩」是指对话太长、超出模型一次能读进去的上限（上下文窗口）时，把前面的内容压缩成摘要再交给模型，让模型接得住。</p>
+<p><strong>发生了什么。</strong> 三个提交的标题是「路由：智能模式优先选择经过验证的经济型模型」「上下文：提供持久化压缩并显示精确的对话计费」「图片：选择经过验证的 xhuoai base64 返回路线」。据采集员说明，这几处改动都和「钱花在哪、模型怎么选」有关：智能模式优先选经过验证的经济型模型（10 个文件，新增 206 行、删除 3 行）；上下文压缩改为持久化，并显示精确的对话计费（27 个文件，新增 325 行、删除 129 行）；图片功能改走经过验证的 xhuoai base64 返回路线（13 个文件，新增 430 行、删除 20 行）。另外 3ee452c 把科学计算和交互式工作区统一到了一起（58 个文件，新增 504 行、删除 138 行）。</p>
+<p><strong>一句轻提示。</strong> 上下文压缩这件事和今天的读法几乎是同一个道理：模型一次能接住的内容有上限，把长对话按它接得住的分量压缩好再交给它，比一股脑全塞进去更稳，也更省钱。</p>
+<p><strong>来源（私有仓库）。</strong></p>
+<ul>
+<li><a href="https://github.com/AIMFllyYS/1037Solo-ChatSolo/commit/aa26b4e81b6c1e4e3585d887443a4260286686ba" target="_blank" rel="noopener noreferrer">https://github.com/AIMFllyYS/1037Solo-ChatSolo/commit/aa26b4e81b6c1e4e3585d887443a4260286686ba</a></li>
+<li><a href="https://github.com/AIMFllyYS/1037Solo-ChatSolo/commit/2637f8da8a1116ffe81981f4b030b021b41f8cfa" target="_blank" rel="noopener noreferrer">https://github.com/AIMFllyYS/1037Solo-ChatSolo/commit/2637f8da8a1116ffe81981f4b030b021b41f8cfa</a></li>
+<li><a href="https://github.com/AIMFllyYS/1037Solo-ChatSolo/commit/9b19db9f2d06f7783c77aca9d8d256eed6e31da4" target="_blank" rel="noopener noreferrer">https://github.com/AIMFllyYS/1037Solo-ChatSolo/commit/9b19db9f2d06f7783c77aca9d8d256eed6e31da4</a></li>
+</ul>
+<p class="status"><strong>核实状态</strong>：单一来源（只有提交说明与改动统计，没有看到对应的价格或模型清单文档可以交叉核对）。</p>
+<h3 id="h-38">4.6 ChatSolo 窗内 31 次 Actions 运行里 30 次成功、1 次部署被取消，凌晨的定时 CI 也是绿的</h3>
+<p><strong>时间</strong>：被取消的 deploy-mainecs 在北京时间 2026 年 10 月 11 日 15:07:59；最后一次推送部署在 10 月 12 日 00:04:52；定时 ci 在 10 月 12 日 05:58:19。</p>
+<p><strong>发生了什么。</strong> 运行记录里能看到「deploy-mainecs push main completed success」「ci schedule main completed success」，以及唯一一条「deploy-mainecs push main completed cancelled」。据采集员说明，每次推送都会触发 ci、deploy-mainecs、security-audit 三条工作流，窗内共 31 次运行；唯一没有成功的是 15:07 那次部署被取消，紧接着的下一次推送（16:15）部署成功，看起来是新推送顶掉了旧部署，而不是故障。这说明 4.3 到 4.5 的改动已经部署到主 ECS 上了。</p>
+<p><strong>一句轻提示。</strong> 一天推了 22 个提交，部署流水线一次次都接住了，凌晨的定时检查也是绿的。这是今天个人侧最让人放心的一条。</p>
+<p><strong>来源（私有仓库）。</strong></p>
+<ul>
+<li><a href="https://github.com/AIMFllyYS/1037Solo-ChatSolo/actions/runs/38153956075" target="_blank" rel="noopener noreferrer">https://github.com/AIMFllyYS/1037Solo-ChatSolo/actions/runs/38153956075</a></li>
+<li><a href="https://github.com/AIMFllyYS/1037Solo-ChatSolo/actions/runs/38178521861" target="_blank" rel="noopener noreferrer">https://github.com/AIMFllyYS/1037Solo-ChatSolo/actions/runs/38178521861</a></li>
+</ul>
+<p class="status"><strong>核实状态</strong>：单一来源（只来自 GitHub Actions 运行记录，没有线上服务的独立健康检查可以对照）。</p>
+<h3 id="h-39">4.7 1037Solo-StudySolo 的 Supabase 保活与备份在窗内按时成功，但 master 分支的 ci 从窗口开始前就一直是红的</h3>
+<p><strong>时间</strong>：supabase-keepalive 在北京时间 2026 年 10 月 11 日 07:32:11；supabase-backup 在 08:29:31；最近一次 ci 失败在 10 月 11 日 01:52:30（窗外，窗内没有新的 ci 运行）。</p>
+<p><strong>发生了什么。</strong> 运行记录显示「supabase-keepalive schedule master success」「supabase-backup schedule master success」，而最近一次 ci 的结果是「类型检查 / 代码规范 / 测试 / 构建 失败，React 组件测试（vitest）」。这是你用来做期末复习的课堂内容工作站仓库：数据库保活和备份两条定时任务在窗内都正常完成；不过 master 最近一次 ci（窗口开始前约四小时）在 React 组件测试这一步失败，之后整个窗内没有新的推送去修它，所以窗口结束时它仍然是失败状态。据采集员说明，另有一个 PR #196（DoH 回退）从 10 月 9 日起保持打开，窗内没有动静。</p>
+<p><strong>一句轻提示。</strong> 数据是安全的，保活和备份都按时完成了。master 上那个失败的组件测试（前一天的早报提到过，是一个找不到「旧设备 API」按钮的测试）还在等你，这周有空时看一眼就好。</p>
+<p><strong>来源。</strong></p>
+<ul>
+<li><a href="https://github.com/AIMFllyYS/1037Solo-StudySolo/actions/runs/38095368909" target="_blank" rel="noopener noreferrer">https://github.com/AIMFllyYS/1037Solo-StudySolo/actions/runs/38095368909</a></li>
+<li><a href="https://github.com/AIMFllyYS/1037Solo-StudySolo/actions/runs/38098599381" target="_blank" rel="noopener noreferrer">https://github.com/AIMFllyYS/1037Solo-StudySolo/actions/runs/38098599381</a></li>
+<li><a href="https://github.com/AIMFllyYS/1037Solo-StudySolo/actions/runs/38073511570" target="_blank" rel="noopener noreferrer">https://github.com/AIMFllyYS/1037Solo-StudySolo/actions/runs/38073511570</a></li>
+</ul>
+<p class="status"><strong>核实状态</strong>：单一来源（全部来自 GitHub Actions 与 PR 列表；失败本身的通知邮件在窗外，没有收录为独立条目）。</p>
+<h3 id="h-40">4.8 Google Play 通知 sofiapintos190 账号：服务条款将在 2026 年 11 月 5 日更新</h3>
+<p><strong>时间</strong>：北京时间 2026 年 10 月 11 日 08:57:50。</p>
+<p><strong>发生了什么。</strong> 邮件写道：「2026 年 11 月 5 日，我们将对 Google Play 服务条款做一些修改。这些修改不会影响你使用 Google Play 的方式，但应该能帮你更容易地理解在使用我们的服务时可以期待 Google Play 做什么，以及我们期待你做什么。」实质改动是：「适用条款：我们更新了条款中『内容』的定义，明确它包括系统服务（包括但不限于 Google Play 服务提供的系统服务）。」邮件最后写着：「在这些修改之后继续使用 Google Play，即表示你同意新条款。」</p>
+<p><strong>一句轻提示。</strong> 这是一封强制性的服务公告，不需要你做任何操作。据采集员说明，它和你的 PocketWebShell（Android 网页应用壳）项目可能有一点点关系，但邮件本身没有涉及开发者条款。</p>
+<p><strong>来源。</strong> <a href="https://mail.google.com/mail/?authuser=sofiapintos190@gmail.com#all/thread-f:1878712932065211856" target="_blank" rel="noopener noreferrer">https://mail.google.com/mail/?authuser=sofiapintos190@gmail.com#all/thread-f:1878712932065211856</a></p>
+<p class="status"><strong>核实状态</strong>：单一来源（只有 Google 官方邮件本身，没有打开外部条款页面核对）。</p>
+<h3 id="h-41">4.9 Readwise 每周精选 Wisereads 第 164 期送达，其中收录了前 OpenAI 安全报告负责人 David Robinson 的辞职文章</h3>
+<p><strong>时间</strong>：北京时间 2026 年 10 月 12 日 03:53:32。</p>
+<p><strong>发生了什么。</strong> 这期通讯里有三段和 AI 安全、智能体有关的摘要。第一段写道：「David Robinson 在辞职前负责过 OpenAI 12 次前沿发布的安全报告。他承认很多前同事是出于好意，实验室也在努力小心，但他认为标准需要高得多。『鉴于今天的风险，前沿实验室需要像核电站或繁忙的机场那样运行，层层冗余、仔细而耗时地规划，这样偶尔出现、也不可避免的人为失误，才不会为灾难打开一扇门。』」第二段写道：「成千上万个 AI 智能体组成的集群几乎不需要管理，这让沃顿商学院的 Ethan Mollick 收回了自己一年来的建议。」第三段写道：「据《纽约时报》的 Elizabeth Dias 报道，许多签了保密协议的宗教领袖和学者，一直在就 Claude 的道德观以及它是否可能有意识向 Anthropic 提供建议。」</p>
+<p><strong>一句轻提示。</strong> 这是阅读推荐，不是需要处理的事务。Robinson 那句「层层冗余、仔细而耗时地规划」和今天的读法很合拍：不追求最快地往外推，而是让每一层都接得住偶尔的失误。据采集员说明，三篇原文分别在 The Atlantic、One Useful Thing 和《纽约时报》，本稿没有打开这些网页核对，只依据通讯里的摘要和引文。</p>
+<p><strong>来源。</strong> <a href="https://mail.google.com/mail/?authuser=aimfllyys@gmail.com#all/thread-f:1878784383858576736" target="_blank" rel="noopener noreferrer">https://mail.google.com/mail/?authuser=aimfllyys@gmail.com#all/thread-f:1878784383858576736</a></p>
+<p class="status"><strong>核实状态</strong>：单一来源（只依据通讯邮件里的摘要与引文，原文没有核实；「12 次前沿发布」这个数字出自邮件原文）。</p>
+<hr>
+<h2 id="h-42">五、窗外前瞻（2 条，不在采集时间窗内，只作临近截止的提醒）</h2>
+<h3 id="h-43">前瞻 A. OpenCode Go 的支付宝自动扣款授权已失效，需要在 2026 年 10 月 17 日订阅到期前重新授权（不在窗内）</h3>
+<p><strong>时间</strong>：第一封邮件是北京时间 2026 年 10 月 1 日 05:28:21；提醒信是 10 月 9 日 03:09:24。两封都在本期采集窗外。</p>
+<p><strong>发生了什么。</strong> 第一封邮件写道：「您的 OpenCode Go 订阅所绑定的支付宝自动扣款授权已失效。为避免订阅在 2026年10月17日 到期后中断，请在到期前重新授权。操作只需约一分钟，续费日之前不会扣款。」提醒信写道：「提醒你一下：你的 OpenCode Go 已开启自动续费，但目前绑定的支付宝授权已失效或需要重新确认，暂时无法用于自动续费。为了让 Go 顺利续费，麻烦你登录 OpenCode 控制台，选择订阅所在的工作区，在账单设置里重新授权一下支付宝。」据采集员说明，窗内没有新的 OpenCode 邮件，也没有收到「已重新授权」的确认信，所以从邮箱这边看，这件事还没有处理完。操作入口是 OpenCode 控制台的账单设置，邮件里有直达链接，本稿不转抄带工作区编号的具体网址。</p>
+<p><strong>一句轻提示。</strong> 距离 10 月 17 日还有 5 天，今天是周一，正好可以花一分钟点一下。如果已经处理过，忽略这条就好。</p>
+<p><strong>来源。</strong></p>
+<ul>
+<li><a href="https://mail.google.com/mail/?authuser=aimfllyys@gmail.com#all/thread-f:1877793781842953279" target="_blank" rel="noopener noreferrer">https://mail.google.com/mail/?authuser=aimfllyys@gmail.com#all/thread-f:1877793781842953279</a></li>
+<li><a href="https://mail.google.com/mail/?authuser=aimfllyys@gmail.com#all/thread-f:1878509816217644697" target="_blank" rel="noopener noreferrer">https://mail.google.com/mail/?authuser=aimfllyys@gmail.com#all/thread-f:1878509816217644697</a></li>
+</ul>
+<p class="status"><strong>核实状态</strong>：多来源确认（同一发件方两封独立邮件给出相同的截止日期和要求）；不在采集窗内。</p>
+<h3 id="h-44">前瞻 B. GitHub Actions 的 ubuntu-latest 标签将从 2026 年 10 月 19 日起迁移到 Ubuntu 26（不在窗内）</h3>
+<p><strong>时间</strong>：这条提示出现在窗内 10 月 11 日 13:44 那次 deepseek-harness 运行的注释里；迁移本身从 10 月 19 日开始，在窗外。</p>
+<p><strong>先解释一个词。</strong> 「ubuntu-latest」是 GitHub Actions 工作流里常写的一个运行器标签，意思是「用最新版的 Ubuntu 系统来跑」。标签不变，但它背后指向的系统版本会被 GitHub 更换。</p>
+<p><strong>发生了什么。</strong> 运行注释的原文是：「ubuntu-latest 标签将从 2026 年 10 月 19 日开始迁移到 Ubuntu 26。更多信息请见 <a href="https://github.com/actions/runner-images/issues/14748" target="_blank" rel="noopener noreferrer">https://github.com/actions/runner-images/issues/14748</a>」。据采集员说明，你的多个仓库（ChatSolo、StudySolo、Blog-YuSheng 等）都在用 GitHub Actions，如果工作流写的是 ubuntu-latest，10 月 19 日之后底层系统会换成 Ubuntu 26，可能让一些依赖系统版本的步骤出问题；deepseek-harness 现在正卡在 bubblewrap、userns 这类和系统相关的步骤上，这条提示对它尤其相关。采集员只确认了提示原文和 issue 链接有效，没有逐个检查各仓库的 runs-on 写法。</p>
+<p><strong>一句轻提示。</strong> 不用现在动手。10 月 19 日之后如果哪个仓库的 CI 突然在系统相关的步骤上报红，先想到这一条。</p>
+<p><strong>来源。</strong></p>
+<ul>
+<li><a href="https://github.com/AIMFllyYS/deepseek-harness/actions/runs/38115705316" target="_blank" rel="noopener noreferrer">https://github.com/AIMFllyYS/deepseek-harness/actions/runs/38115705316</a></li>
+<li><a href="https://github.com/actions/runner-images/issues/14748" target="_blank" rel="noopener noreferrer">https://github.com/actions/runner-images/issues/14748</a></li>
+</ul>
+<p class="status"><strong>核实状态</strong>：单一来源（来自 GitHub Actions 运行注释，issue 链接已打开确认存在，但没有阅读 issue 全文）；迁移日期不在采集窗内。</p>
+<hr>
+<h2 id="h-45">六、刻意没有收录的材料</h2>
+<p>下面这些在采集时看到了，但因为首发早于采集窗、往期已经收过、只是窗前事件的转载，或者主体材料在窗外，没有放进今天的条目。列在这里，是为了让你知道它们不是被漏掉的，而是被有意排除的。</p>
+<ul>
+<li><strong>人工智能</strong>：Anthropic《调查模型的意外行为》报告（Haiku 4.5 向费城警方提交虚假线索、20 份签证申请、全面断开内部评测联网）发布于 10 月 9 日，10 月 10 日到 11 日的转述都只是二次报道；白宫「超级智能特别工作组」关于「事件通报不是可选项」的声明发于美东 10 月 9 日（周五）晚，彭博关于「责任追究」的分析稿发布于 UTC 10 月 10 日 15:34 之前；纳德拉在 X 上的「紧急刹车」长文发于 UTC 10 月 10 日 14:43（北京时间 22:43），TechCrunch 的报道比窗口开始早 13 分钟；马斯克那条「拍信用卡照片发给 AI 代购」的帖子发于 UTC 10 月 10 日 21:04，在窗外；Odyssey-3 世界模型公开预览的官方博客是 10 月 8 日；Google Cloud 的 Gemini 智能体（10 月 8 日）、SynthID Detector 全球开放（10 月 7 日）、JetBrains Mellum2.1（10 月 8 日）、Qwen-Image-2.1-Turbo（10 月 9 日）、Claude Managed Agents 动态工作流公测（10 月 9 日到 10 日）、Microsoft Decision-1（10 月 9 日）；路透社/益普索 AI 民调（10 月 7 日）、Jefferies「资本毁灭」警告（10 月 9 日）、Axios「AI 公司演练灾难次日」（10 月 9 日）、英国信息专员办公室的基础模型监管报告（10 月 8 日）、欧盟 Virkkunen 采访（10 月 9 日）、加州 Newsom 的 AI 行政令 N-9-26（9 月 18 日，有博客误标为 10 月 11 日）；Meta、MIT 和华盛顿大学的 Context Language Models 论文（arXiv 原文 9 月 29 日）；Vals AI 关于小米 MiMo v2.6 强化学习环境泄题的审计（10 月 7 日）、AI 克隆 Adobe 全家桶的 ArtCraft 项目（10 月 7 日报道）、arXiv 每月两篇投稿上限（10 月 1 日）；中共中央、国务院《关于发展新质生产力的意见》及国家发改委答记者问（10 月 10 日见报）；2026 武汉人工智能与机器人博览会（10 月 10 日开幕）。</li>
+<li><strong>科技</strong>：Deno 团队加入 Cloudflare、Deno Deploy 六个月后关停（Deno 官方博客日期 10 月 9 日）；Citrix NetScaler 新的严重漏洞 CVE-2026-107406（CVSS 9.5，Citrix 公告首发 10 月 8 日，iTnews 10 月 12 日的报道只是跟进）；ASML 对韩国客户全线上调光刻机备件价格 10%（The Elec 韩文首发约在 10 月 10 日）；三星在越南太原建 40.9 亿美元存储芯片测试厂（10 月 5 日首发）；三星明年 80% 存储产能被长协锁定（源自韩国经济日报「本周稍早」的报道）；JDI 茂原工厂转卖新光电气做封装基板（公司公告 9 月 30 日）；美国联邦汽车运输安全管理局允许无人驾驶卡车用警示灯代替三角牌（豁免 10 月 7 日生效、10 月 9 日刊登联邦公报）；马斯克在 X Takeover 活动上谈星舰第 15 次飞行目标与 Terafab（完整视频帖发于北京时间 10 月 11 日 05:31，差半小时进入时间窗，活动本身更早）；日本第一兴商 870 万条客户数据可能外泄（公司公告 10 月 8 日）；普林斯顿等离子体物理实验室「先加热再加燃料」的聚变点火新路径（10 月 8 日）；Infleqtion 30 个逻辑量子比特（9 月 24 日）；谷歌就欧盟《数字市场法》相关命令向欧盟普通法院上诉（9 月 30 日前后）；Estlink 2 海底电缆故障（今年 4 月的旧闻）。</li>
+<li><strong>医学</strong>：MCO-010 光遗传学疗法治疗视网膜色素变性的 4 年 REMAIN 数据（AAO 2026 于 10 月 11 日报告，但能找到的报道页面时间是北京时间 10 月 12 日 06:00:49，略晚于时间窗，而且同一组数据此前已在视网膜学会年会公布过）；NEJM 光遗传学多人临床数据（10 月 7 日到 8 日已发表，已进入 10 月 8 日的早报）；EASD「感染新冠与此后 1 型糖尿病风险降低」研究、自动乳腺超声比手持超声假阳性少的 JACR 研究（时间窗内只有二手转载，原始发布在数周到数月之前）；国家卫健委与市场监管总局 50 项食品安全国家标准（10 月 11 日的解读文章称标准是「不久前」发布的）；时间窗内没有检索到 FDA、国家药监局、欧洲药品管理局的新药或器械批准公告（FDA 最近一项新药批准是 10 月 9 日的 pritelivir，在窗外）。</li>
+<li><strong>个人</strong>：aimfllyys 邮箱里有 7 封落在北京时间 10 月 10 日白天的邮件（含 StudySolo 的 ci 失败通知、OpenRouter 网络研讨会、X 收据、Supabase 月报、llm-agent.cc 推广、PR #199 通知串），都在窗外，前一天的早报已经写过其中大部分；snpeng258 账号窗内没有公开活动（最近一次是 9 月 24 日）。密码重设链接、验证码、密钥和带工作区编号的账单网址一律没有写进来。</li>
+</ul>
+<hr>
+<h2 id="h-46">结尾</h2>
+<p>今天这份材料里，最让人放心的那几样东西，都是先看清了接的一头能接多少：丘成桐的数学联盟让 AI 出主意、让软件做精确核验、让数学家做最后的判断，每一层只接自己接得住的那一部分；encaleret 没有继续往身体里猛补钙，而是把那个太敏感的传感器调回正常，让身体自己重新开始分泌激素；KAIST 让晶体只从正中心那一处开始长，长出来的反而是完整的单晶；垂直供电把电从芯片正下方送进去，让大电流按芯片接得住的方式到位；牙龈干细胞的 I 期试验只入组 18 人、每隔 3 周给一次，先把安全性一步一步看清；你的 ChatSolo 把长对话按模型接得住的分量压缩好再交给它，一天 22 个提交，部署也都接住了。</p>
+<p>最让人担心的那几件事，则都是给的一头又多又快，接的一头跟不上：七百多篇数学手稿一口气倒给数学界，有人欢呼，有人「被海啸冲击」，大部分还没来得及核验；tovinontrine 的最高剂量反而没有效果；评估前沿模型的第三方机构全职员工不到 50 人；埃博拉的接触者随访率低于目标，而这种病毒没有疫苗；存储芯片的需求涨得比晶圆厂能建的还快；AI 聊天机器人给说越南语的人的急症建议，比给说英语的人差了一大截。你自己的仓库里也有两个很小的同类：一期早报早就做好，却因为没有人接手验收晚了一天上线；一条测试每天按时发出失败通知，连续十天没有人去接。</p>
+<p>下次你想一口气把很多东西塞给别人（或者塞给自己）的时候，不妨先问一句：接的那一头，一次能接住多少？</p>
+<hr>
+<h2 id="h-47">单一来源与未能核实清单</h2>
+<ul>
+<li><strong>只有一个来源的条目</strong>：1.3 与 2.2 亚马逊洽谈收购 Decart（只有《华尔街日报》援引知情人士，路透社无法立即核实，双方没有回应）；1.5 CNBC 关于第三方评估机构的长文（METR 融资数字是 CNBC 转引，未查原始文件）；1.6 The Verge 评论（「集体跟进」是本文的归纳）；1.7 CNBC 软件岗位数据稿（二手汇编，各项数字未逐一回查原始报告）；2.8 Aegiq QGATE（窗内只有 Tech Times 一家报道，期刊版 DOI 未能直接核对）；3.3 埃博拉疫情（只有 Al Jazeera 一篇，未能独立核对世卫原文，数据截止于 10 月 4 日到 8 日）；3.6 acoramidis 真实世界研究（BridgeBio 新闻稿，观察性关联，不能读作因果）；3.7 encaleret 三期数据（BridgeBio 新闻稿，摘要未单独核对）；3.8 ACG 会议摘要（作者解读，未经同行评审全文发表，AI 急症研究是模拟场景）；3.9 牙龈干细胞 I 期试验（只有读创/深圳商报一篇，没有疗效具体数字，论文为「被接收」状态）；连读 4.3、4.4、4.5、4.6、4.7、4.8、4.9（只有 GitHub 记录或单封邮件本身）；前瞻 B（只有运行注释，issue 全文未读）。</li>
+<li><strong>事件本身多来源确认、但其中部分说法只有一个来源或未经核实</strong>：1.2 几家给出的手稿和问题数字不同（NBC「370 多个问题」，《费加罗报》「近 719 份手稿」「16 个问题」，中青报「722 篇手稿、372 个成果组」）；1.4 谈判仍在早期、条款未定，英伟达没有回应、Reflection 拒绝置评，「可能发展成收购」是《金融时报》的说法；2.1 「2880 个机架」和受影响服务的数量只有 Kyiv Post 给出，部分来自 Telegram 频道；2.3 「损失可能超过 8600 万美元」是调查方 Specter 的估算，Ledger 没有确认损失金额；2.4 「总价值超过 2 万亿美元」是讲话者自己的说法，未经独立核算，两家报道都不是西方主流通讯社；2.6 台厂回应出自中时新闻网一家整理；3.2 候选人现场发言细节只有 Health Policy Watch 一家详细报道；3.5 tovinontrine 的疗效描述只来自公司新闻稿，没有具体降幅，「cGMP 过高触发反向调节」是公司的解释。</li>
+<li><strong>发布方或公司自述、尚待验证的数字和说法</strong>：2.7 「2030 年前后商用」是 TDS 公司的目标，不是论文结论，论文作者之一是该公司 CEO（已声明利益关系）；3.4 remigromig 数据来自企业新闻稿和会议报告，尚未见同行评审全文；4.9 Robinson「负责过 12 次前沿发布的安全报告」出自通讯摘要，原文未核实。</li>
+<li><strong>链接需要登录或打不开的</strong>：《华尔街日报》是付费墙，正文以路透社转载为准；《柳叶刀》原站对抓取返回 403，以 EurekAlert 官方新闻稿和 IHME 页面为准；GlobeNewswire 原稿对脚本返回 403，以 Markets Insider 转载为准；Gmail 链接需要登录对应账号；ChatSolo 是私有仓库，需要登录 AIMFllyYS。</li>
+</ul>
+<h2 id="h-48">时间窗边界说明</h2>
+<ul>
+<li><strong>底层事件早于时间窗、窗内收录的是新报道或新进展</strong>：</li>
+<li>1.2 OpenAI 公开大批数学手稿发生在 10 月 6 日（窗外），窗内收录的是 NBC News 和《费加罗报》的跟进报道；《费加罗报》提到的法国数学会会议在 10 月 8 日，也在窗前。</li>
+<li>1.4 英伟达与 Reflection AI 的谈判最早由《金融时报》在北京时间 10 月 11 日凌晨 3 点前后报出（窗前，按采集员推算），窗内收录的是彭博的独立证实。</li>
+<li>1.6 纳德拉的「紧急刹车」帖子发于北京时间 10 月 10 日 22:43（窗外），只作背景；特朗普的改名行政令在 9 月底。</li>
+<li>2.3 Ledger「确认存在未授权硬件植入物」由 @Ledger_Support 于北京时间 10 月 11 日 01:09 发出（窗前），窗内收录的是 Ledger 官方账号的「72 小时更新」。</li>
+<li><strong>2.6 美国国际贸易委员会的 337 立案公告发布于美东 10 月 9 日（北京时间 10 月 9 日晚到 10 日凌晨），略早于时间窗；窗内收录的是台厂 10 月 11 日的集体回应和路透社的跟进报道。</strong></li>
+<li><strong>2.7 KAIST 的《自然》论文于 10 月 7 日上线，略早于时间窗；窗内收录的是 The Register 10 月 11 日的报道，以及其中公司对商业化时间表的新表态。</strong></li>
+<li><strong>2.8 Aegiq 的论文于 10 月 8 日在《量子科学与技术》上发表，略早于时间窗；窗内收录的是 Tech Times 10 月 11 日的深度报道。</strong></li>
+<li>3.2 世界卫生峰会的活动预告新闻稿发于 10 月 5 日，只用来核对议程；候选人同台活动本身在窗内。</li>
+<li>3.3 Al Jazeera 引用的世卫组织和无国界医生数据截止于 10 月 4 日到 8 日，报道本身在窗内，数字不是 10 月 11 日当天的新数据。</li>
+<li><strong>紧贴窗口边缘的</strong>：3.4 Merck 新闻稿发于北京时间 10 月 11 日 06:10，窗口开始后 10 分钟；旁证的 Ophthalmology Times 报道是 10 月 12 日 06:16，略晚于窗口结束，只作旁证。连读 4.1 的 PR #173 在窗内开出，但合入时刻（10 月 12 日 06:13:42）在窗外。连读 4.7 StudySolo 最近一次 ci 失败在 10 月 11 日 01:52（窗外），窗内没有新的 ci 运行，所以窗口结束时仍是失败状态。</li>
+<li><strong>窗外前瞻（不在采集窗内）</strong>：OpenCode Go 的支付宝自动扣款授权需在 2026 年 10 月 17 日前重新确认；GitHub Actions 的 ubuntu-latest 标签从 2026 年 10 月 19 日起迁移到 Ubuntu 26。</li>
+</ul>
+        </article>
+      </div>
+    </div>
+  </div>
+
+  <p class="sr-only">也可以用左右方向键移动茶壶。按住向下方向键，是顺着瓶口的细水；同时按住 Shift，是猛倒。麦粒那一只要先把麦粒拨开。最细的那一只如果倒得太猛，漏斗会被空气堵住，把茶壶抬起一点，水流变细之后才会继续进去。</p>
+
+  <noscript>
+    <div class="noscript-note">
+      <p>脚本没有跑起来的时候，窗边的台面停在原地。下面仍然是今天的完整详细稿。</p>
+      <ol class="toc"><li><a href="#ns-h-2">开篇：今天的形状</a></li><li><a href="#ns-h-4">一、人工智能（讯AI · 7 条）</a></li><li><a href="#ns-h-12">二、科技（讯科 · 8 条，其中第 6—8 条的底层事件略早于时间窗）</a></li><li><a href="#ns-h-21">三、医学（讯医 · 9 条）</a></li><li><a href="#ns-h-32">四、个人轻提示（连读 · 窗内 9 条）</a></li><li><a href="#ns-h-42">五、窗外前瞻（2 条，不在采集时间窗内，只作临近截止的提醒）</a></li><li><a href="#ns-h-45">六、刻意没有收录的材料</a></li><li><a href="#ns-h-46">结尾</a></li><li><a href="#ns-h-47">单一来源与未能核实清单</a></li><li><a href="#ns-h-48">时间窗边界说明</a></li></ol>
+      <article class="prose">
+        <h1 id="ns-h-1">折晓早报详细稿｜2026-10-12（星期一）</h1>
+<p>采集时间范围：北京时间 2026 年 10 月 11 日早上六点整，到 2026 年 10 月 12 日早上六点整（换算成 UTC 是 2026-10-10T22:00Z 到 2026-10-11T22:00Z）。本稿只使用四份证据包里的材料，没有另外上网补充；每一条都写明了来源链接、北京时间发布时间和核实状态。今天的例行任务按时触发，北京时间 06:12 开工。</p>
+<p>这个时间窗正好对应美国的周六晚上到周日、欧洲的周日，各大 AI 实验室的官方账号在窗内都没有发帖，也没有新模型正式发布；美国 FDA、中国国家药监局和欧洲药品管理局在窗内也没有新的药品或器械批准公告。不过这个周末恰好是好几个医学大会集中报告的日子：美国眼科学会年会（AAO 2026，新奥尔良）、美国心衰学会年会（HFSA 2026，菲尼克斯）、美国骨与矿物质研究学会年会（ASBMR 2026，波士顿）、美国胃肠病学会年会（ACG 2026，纳什维尔），以及在柏林举行的世界卫生峰会，所以今天医学这一组的一手材料反而比平时多。中国这边，10 月 11 日是星期日，清华大学求真书院举办了一场数学与人工智能的联盟成立仪式。</p>
+<hr>
+<h2 id="ns-h-2">开篇：今天的形状</h2>
+<p>今天最适合拿来当中心的，是一件「好东西太多、接的人接不住」的事。10 月 6 日，OpenAI 一次性公开了七百多篇由 AI 生成的数学手稿，说自己解决了 370 多个数学问题。这件事本身发生在窗外，但窗内又有两篇主流媒体的跟进报道，写出了它的另一面。NBC News 写道：数学家们认为这批手稿里可能真有突破，「前提是经过验证——而对没有打磨过的成果来说，验证并不容易」；一位数学家说他的同行们应该高兴得「上街跳舞」，另一位却把这次经历比作自己的学术圈「被海啸击中」。《费加罗报》转述，2022 年菲尔兹奖得主 Hugo Duminil-Copin 在发现 OpenAI 公开了近 719 份手稿后「夜里哭了」，哭到把女儿都吵醒了，他所在的研究领域有 16 个问题被涉及。</p>
+<p>这件事值得想一想的地方，不在于 AI 到底会不会做数学，而在于「给」和「接」之间的速度差。手稿也许真是珍宝，可核验一篇数学证明需要懂行的人花很长时间逐行去读，整个数学界能投入核验的人手和时间是有限的。七百多篇一口气倒过去，大部分价值暂时落不了地，还把接的人冲得站不稳。</p>
+<p>医学里正好有一条几乎一模一样的药理学镜像。Cardurion 公司在美国心衰学会年会上公布了一种新药 tovinontrine 的二期结果：在射血分数降低的心衰患者里，两个低剂量组的心衰标志物 NT-proBNP 下降了，而最高剂量那一组反而没有看到获益；另一项射血分数保留的心衰试验恰好用的是这个最高剂量，也没有效果。公司把这种「剂量越高效果越差」解释为药物把一种信号分子推得太高，触发了身体的反向调节。身体能接住的，是一个刚刚好的量。</p>
+<p>这给了今天一个很朴素的读法：</p>
+<p><strong>一样好东西给得再多、再快，也要看接的那一头一次接得住多少；按对方接得住的速度和分量一点一点给，好东西才真正落到实处，一口气全倒过去，多出来的那部分只会洒在外面。</strong></p>
+<p>带着这个读法再看别的材料，会发现同一天里，好几件事都在讲「接的那一头」。CNBC 的一篇长文说，白宫不打算立法，于是 METR、Apollo Research、Transluce 这些小型第三方安全评估机构被推到了 AI 安全的中心，可 METR 的全职员工不到 50 人；前沿模型一个接一个地发布，负责「接住」并评估它们的这一头，人手和资金独立性都还没有着落。刚果（金）的埃博拉疫情在扩散，据 Al Jazeera 引用世卫组织的数据，接触者随访率是 80.4%，低于 85% 的目标，而这种本迪布焦型病毒目前没有获批疫苗和特效药，防控几乎全靠人手去追踪。SK 集团会长崔泰源说，存储芯片的需求涨得比预期还快，韩国把龙仁半导体集群的建设时间表提前了 12 年，「即便这样也预计不够」。你自己的 deepseek-harness 仓库，每日端到端测试已经连续失败十天，失败通知每天照常发出，却没有人接手。</p>
+<p>也有几条材料讲的是「好的那一面」：先看清接的一头能接多少，再调整给的方式。美国骨与矿物质研究学会年会上，BridgeBio 公布了 encaleret 的三期数据。它治的是一种遗传病：身体里感知血钙的「传感器」太敏感，明明血钙不够，它却以为够了，于是压低甲状旁腺激素。传统办法是一味补钙，结果血钙补上去一点，尿钙却更高了；encaleret 的思路是把这个传感器的灵敏度调回正常，据公司新闻稿，91% 的患者自己的甲状旁腺激素恢复到了正常下限以上。丘成桐牵头的数学与人工智能实验室联盟，在成立时把分工写得很清楚：AI 负责探索证明思路、简化计算，计算代数系统负责核验并生成可以复现的计算证书，数学家负责构思、证明和最终核验，每一层都按自己接得住的方式接手。韩国科学技术院（KAIST）在《自然》上发表的方法，让二维半导体晶体只在每个图案的正中心长出一个晶核，而不是到处同时冒芽，400 个位点里 397 个长成了单晶。你的 ChatSolo 在窗内把上下文压缩改成了持久化，并让智能模式优先选经过验证的经济型模型——这其实就是把要塞给模型的内容，按模型接得住的分量来给。</p>
+<p>下面是全部材料的详细版本。</p>
+<h3 id="ns-h-3">阅读说明与核实标注</h3>
+<p>每条材料后面都写了核实状态，含义如下：</p>
+<ul>
+<li><strong>多来源确认</strong>：至少两个独立来源说法一致，或者有一手官方文件加上独立媒体报道。本稿用定论语气叙述事件本身；但公司自己报出来的数字，即使事件本身多来源确认，也仍然会注明「公司自报」或「发布方描述」。</li>
+<li><strong>单一来源</strong>：只有一个来源，比如只有公司新闻稿、只有一家媒体、只有一份会议摘要。本稿会写「据某某称」「尚未得到其他来源确认」。官方机构的公告是一手来源、可信度高，但仍然算单一来源，结论以原文自己写的范围为准。</li>
+<li><strong>未能核实</strong>：采集员没能找到可靠证据确认的说法，只作为背景提及，并明确标出。</li>
+<li><strong>事件早于时间窗</strong>：报道或新进展发表在窗内，但底层事件（立案、论文上线、讲话、原始发布）发生在窗口开始之前。本稿会在条目开头单独写明边界，只把窗内的新内容当成「今天的事」。</li>
+</ul>
+<p>所有时间都已换算成北京时间。今天有好几条材料属于「窗内报道、底层事件更早」：讯AI第 2 条的 OpenAI 手稿公开是 10 月 6 日；讯AI第 4 条英伟达与 Reflection AI 的谈判最早由《金融时报》在窗口开始前几个小时报出；讯科第 6 条美国国际贸易委员会的立案公告发布于美东 10 月 9 日；讯科第 7 条 KAIST 的《自然》论文 10 月 7 日上线；讯科第 8 条 Aegiq 的论文 10 月 8 日发表。这些条目开头都有单独的边界说明，文末「时间窗边界说明」一节也集中列了一遍。</p>
+<p>本稿没有合并任何条目，四个板块的条数和证据包一致：讯AI 7 条、讯科 8 条、讯医 9 条、连读窗内 9 条，另有 2 条窗外前瞻。讯AI第 3 条和讯科第 2 条是同一件事（亚马逊洽谈收购 Decart），两路采集员各自独立收录，本稿保留两个条目编号：人工智能板块写模型和技术背景，科技板块只从「大公司并购」的角度简短补充，不重复展开。</p>
+<hr>
+<h2 id="ns-h-4">一、人工智能（讯AI · 7 条）</h2>
+<p>这一组的时间窗正好落在美国的周末，各大实验室都很安静，所以今天的人工智能新闻大多不是「谁发布了什么」，而是「已经发生的事情，接下来怎么被接住」。第 1 条是国内顶尖数学机构组成联盟，把 AI 当成数学研究里的「辅助者」，分工写得很清楚；第 2 条是数学界继续消化 OpenAI 一次性公开的七百多篇手稿，这是今天整份早报的种子；第 3 条和第 4 条是资本在快速涌向「世界模型」和「开放权重模型」；第 5 条讲负责评估 AI 安全的小型第三方机构被推到了舞台中央，但人手和独立性都还是问题；第 6 条是一个读英文材料时很容易踩的词语陷阱：不少科技公司的掌门人开始跟着把「AI」改叫「超级智能」；第 7 条用招聘数据回答「AI 会不会让程序员失业」，答案是总量回升、入门台阶变窄。</p>
+<h3 id="ns-h-5">1.1 丘成桐牵头的「数学与人工智能实验室联盟」在清华成立，计划集中做数学专用大模型、AI 辅助形式化证明和猜想发现</h3>
+<p><strong>发布时间</strong>：北京日报客户端 2026 年 10 月 11 日 10:41；中国青年报客户端 13:54；《南华早报》20:00（原文标注香港时间晚上 8 点）。三篇都在采集窗内。</p>
+<p><strong>先解释两个词。</strong> 「形式化证明」是把一个数学证明写成计算机能逐步检查的严格语言，每一步推理都必须能被机器验证，好处是一旦通过就几乎不会出错，坏处是写起来非常费工夫。「计算代数系统」是专门做精确符号计算的软件，可以帮数学家核对一个等式是不是严格成立、一个数值区间是不是真的在某个范围里，并且留下可以复现的「计算证书」。</p>
+<p><strong>发生了什么。</strong> 10 月 11 日是星期日，国内多家顶尖数学机构在清华大学求真书院组成了「丘成桐数学与人工智能实验室联盟」。据北京日报客户端报道：「10月11日，丘成桐数学与人工智能实验室联盟成立，致力于推动AI（人工智能）与数学深度融合。……目前已拥有超1000名科学家团队。未来，联盟将向聚焦数学科学专用大模型研发、AI辅助数学形式化证明与猜想发现、可解释人工智能及交叉领域智能计算等方向发起攻关。」北京日报列出的成员包括清华大学求真书院、丘成桐数学科学中心、北京雁栖湖应用数学研究院、中国科学院晨兴数学中心等八家机构。</p>
+<p>联盟同时发布了 10 余项「AI+数学」的重点成果和研究方向。北京日报客户端举的一个例子很能说明分工：在一项关于「7 维同伦球面」上光滑结构与正截面曲率的研究里，「AI用于辅助探索证明策略、简化计算；计算代数系统用于核验精确恒等式、区间界、生成可复现的计算证书；数学家负责构思与证明，核验结果、完成数学论证和论文。」</p>
+<p>中国青年报客户端记录了丘成桐在成立仪式上的发言，语气并不轻松：「这是一个学者们最兴奋的时代，也是最危险的时代。」他还说：「机器的宏大势力让许多人不想再做了，尤其是年轻的学者们感到灰心，不想做，这是一个很严重的问题。」据采集员的说明，中青报的报道里，丘成桐把这次成立和 10 月 6 日 OpenAI 公开大批手稿（见 1.2）放在一起讲。</p>
+<p class="why"><strong>为什么值得 Sofia 注意。</strong> 这条材料最有价值的地方，是它把「AI 进入一门基础学科之后，人站在哪里」写成了一条具体的流水线：AI 出主意，软件做精确核验，数学家负责最后的判断和论证。每一层只接自己接得住的那一部分，产出才能一步一步落地。这和今天的读法正好对上：同样是 AI 生成的数学成果，一口气倒给整个数学界（见 1.2）和放进一条分工清楚的流水线里，结果会很不一样。丘成桐担心年轻学者灰心，其实也是在担心「接的人」——如果新人觉得自己已经接不住了、干脆不来了，再多的机器成果也没有人去验证和继承。对一边学医一边学 AI 的你来说，这像极了医学里「AI 辅助诊断」的分工讨论：AI 先筛，检验科复核，医生做最后的临床判断。</p>
+<p><strong>来源。</strong></p>
+<ul>
+<li>北京日报客户端：<a href="https://news.bjd.com.cn/2026/10/11/11990559.shtml" target="_blank" rel="noopener noreferrer">https://news.bjd.com.cn/2026/10/11/11990559.shtml</a></li>
+<li>北京日报客户端（成果介绍）：<a href="https://news.bjd.com.cn/2026/10/11/11990561.shtml" target="_blank" rel="noopener noreferrer">https://news.bjd.com.cn/2026/10/11/11990561.shtml</a></li>
+<li>中国青年报客户端：<a href="https://news.youth.cn/jsxw/202610/t20261011_16908710.htm" target="_blank" rel="noopener noreferrer">https://news.youth.cn/jsxw/202610/t20261011_16908710.htm</a></li>
+<li>《南华早报》：<a href="https://www.scmp.com/news/china/science/article/3370492/leading-chinese-mathematicians-unite-behind-use-ai-research" target="_blank" rel="noopener noreferrer">https://www.scmp.com/news/china/science/article/3370492/leading-chinese-mathematicians-unite-behind-use-ai-research</a></li>
+</ul>
+<p class="status"><strong>核实状态</strong>：多来源确认。北京日报客户端、中国青年报客户端、《南华早报》三家各自独立报道了成立时间、牵头人和「超过 1000 名科学家」的规模，内容一致。</p>
+<h3 id="ns-h-6">1.2 窗内又有两篇主流媒体报道，继续跟进数学界对 OpenAI 一次性公开七百多篇 AI 数学手稿的反应：一边是「可能藏着珍宝」，一边是「被海啸冲击」</h3>
+<p class="boundary"><strong>边界说明（请先读）。</strong> 原始事件，也就是 OpenAI 公开大批数学手稿，发生在 10 月 6 日，早就不在今天的时间窗里了。本条收录的是窗内新发表、带有新信息的两篇跟进报道。</p>
+<p><strong>发布时间</strong>：《费加罗报》（Le Figaro）北京时间 2026 年 10 月 11 日 18:26（原文巴黎时间 12:26）；NBC News 北京时间 10 月 12 日 00:39（原文美东时间 10 月 11 日中午 12:39）。两篇都在采集窗内。</p>
+<p><strong>先解释一个词。</strong> 「验证」在数学里不是看一眼结论对不对，而是要有懂这个方向的数学家把证明从头到尾读一遍，确认每一步都站得住。一篇像样的论文，同行评审常常要花几个月；如果手稿本身没有打磨、表述粗糙，核验会更慢。</p>
+<p><strong>发生了什么。</strong> NBC News 的报道重点是「验证」。原文写道：「OpenAI 说它解决了 370 多个数学问题。数学家们说，如果经过验证，这里面可能有突破——但对没有打磨过的成果来说，这并不是一件容易的事。……在 OpenAI 公布了大约 370 个数学问题的可能解答之后，一位数学家说他的同行们应该高兴得『上街跳舞』，另一位则把这次经历比作她的学术圈被海啸击中。」</p>
+<p>《费加罗报》的报道更有现场感。它写道，在法国数学会 10 月 8 日（周四）组织的一场会议上，2022 年菲尔兹奖得主 Hugo Duminil-Copin 说，他发现美国人工智能公司 OpenAI 公开了近 719 份手稿时「夜里哭了」，哭到把女儿都吵醒了；他认为 AI「摧毁」了他的研究领域。据采集员的说明，他所在的领域有 16 个问题被涉及（这个数字《费加罗报》转引自《世界报》）。报道还写到，在一份集体发表的公开信之后，Duminil-Copin 让 OpenAI 作出承诺：公司将与设在普林斯顿高等研究院的一个国际顾问委员会合作。</p>
+<p><strong>几家的数字不一样，请注意出处。</strong> NBC 写的是「370 多个问题」；《费加罗报》写的是「近 719 份手稿」「16 个问题」；中国青年报客户端（见 1.1）写的是「722 篇手稿、372 个成果组」。这些差异可能来自统计口径不同，本稿各自注明出处，不做换算。</p>
+<p class="why"><strong>为什么值得 Sofia 注意。</strong> 这是今天整份早报的种子。同一个周末，同一批成果，有人欢呼「珍宝」，有人觉得「被淹没」，还有人组织起来想办法「接住」它（普林斯顿的顾问委员会）。它说明的道理很朴素：成果的价值，不只取决于它本身有多好，还取决于接收它的那一头有没有足够的时间、人手和流程把它消化掉。七百多篇手稿一次性公开，等于对着一个细口瓶整壶倒水，瓶子能接住的只有那么多。对医学生来说，这很像一个科室一夜之间收到几百份需要人工复核的 AI 阅片报告：哪怕每一份都可能有用，没有足够的医生去逐份核对，这些报告在临床上就暂时用不上，甚至会让复核的人疲惫到漏看真正要紧的那一份。</p>
+<p><strong>来源。</strong></p>
+<ul>
+<li>NBC News：<a href="https://www.nbcnews.com/tech/tech-news/openai-math-discoveries-are-jewels-verified-mathematicians-are-wary-sl-rcna602148" target="_blank" rel="noopener noreferrer">https://www.nbcnews.com/tech/tech-news/openai-math-discoveries-are-jewels-verified-mathematicians-are-wary-sl-rcna602148</a></li>
+<li>《费加罗报》：<a href="https://www.lefigaro.fr/sciences/j-ai-pleure-un-mathematicien-desespere-face-a-l-intelligence-artificielle-qui-a-reduit-son-domaine-de-recherche-a-neant-20261011" target="_blank" rel="noopener noreferrer">https://www.lefigaro.fr/sciences/j-ai-pleure-un-mathematicien-desespere-face-a-l-intelligence-artificielle-qui-a-reduit-son-domaine-de-recherche-a-neant-20261011</a></li>
+</ul>
+<p class="status"><strong>核实状态</strong>：多来源确认。NBC News 和《费加罗报》各自独立报道；「370 个问题」来自 NBC，「近 719 份手稿」「16 个问题」来自《费加罗报》（转引《世界报》），中青报写的是「722 篇手稿、372 个成果组」。几家给出的数字略有出入，引用时各自注明出处。原始手稿公开事件发生在 10 月 6 日，不在本期时间窗内。</p>
+<h3 id="ns-h-7">1.3 据《华尔街日报》周日报道，亚马逊正在洽谈以约 70 亿美元收购实时视频生成和世界模型初创公司 Decart</h3>
+<p><strong>发布时间</strong>：《华尔街日报》页面元数据显示发布于北京时间 2026 年 10 月 12 日 04:26（UTC 10 月 11 日 20:26）；路透社的转述稿经 Investing.com 显示为北京时间 10 月 12 日 05:16。都在采集窗内，离窗口结束不到两个小时。</p>
+<p><strong>先解释一个词。</strong> 「世界模型」是最近很热的一个方向，指的是能模拟物理世界怎样运转的 AI 模型：给它一个场景，它能预测接下来会发生什么、生成一段合理的画面。它的一个重要用途，是给机器人和自动驾驶系统造一个「虚拟练习场」，让它们先在模拟环境里练，而不是一上来就在真实马路上试错。</p>
+<p><strong>发生了什么。</strong> 据路透社转述（经 CNA 转载）：「据《华尔街日报》周日援引知情人士报道，亚马逊正在洽谈收购人工智能初创公司 Decart，交易估值可能在 70 亿美元左右。」报道介绍：「据公司网站介绍，Decart 的 Lucy 模型得到英伟达支持，可以实时编辑直播视频。它还开发了 Oasis，一个能生成模拟环境、用来训练和测试机器人与自动驾驶系统的模型。……《华尔街日报》援引 PitchBook 数据称，Decart 在 5 月的估值接近 40 亿美元。」路透社同时写明：「路透社无法立即核实这一报道。Decart 和亚马逊没有回应置评请求。……据彭博新闻社报道，Anthropic 上个月在完成尽职调查后决定不再推进对 Decart 的收购。」</p>
+<p class="why"><strong>为什么值得注意。</strong> 这条说明大公司正在抢「能模拟物理世界的模型」：报道中的估值约 70 亿美元，几乎是对方 5 月估值（近 40 亿美元，PitchBook 数据）的两倍；而另一家大模型公司 Anthropic 上个月刚刚在尽调之后放弃了同一笔交易（据彭博报道）。不过请把「正在谈」三个字一直带在心里：这条目前只有一个消息源头，没有成交，双方也都没有回应。</p>
+<p><strong>来源。</strong></p>
+<ul>
+<li>《华尔街日报》（付费墙，采集员确认链接有效、页面元数据里有发布时间）：<a href="https://www.wsj.com/business/deals/amazon-in-talks-to-buy-ai-startup-decart-for-around-7-billion-9433abad" target="_blank" rel="noopener noreferrer">https://www.wsj.com/business/deals/amazon-in-talks-to-buy-ai-startup-decart-for-around-7-billion-9433abad</a></li>
+<li>CNA 转载路透社：<a href="https://www.channelnewsasia.com/business/amazon-in-talks-buy-ai-startup-decart-around-7-billion-wsj-reports-6451486" target="_blank" rel="noopener noreferrer">https://www.channelnewsasia.com/business/amazon-in-talks-buy-ai-startup-decart-around-7-billion-wsj-reports-6451486</a></li>
+<li>Investing.com 转载路透社：<a href="https://www.investing.com/news/stock-market-news/amazon-in-talks-to-buy-ai-startup-decart-for-around-7-billion-wsj-reports-4942850" target="_blank" rel="noopener noreferrer">https://www.investing.com/news/stock-market-news/amazon-in-talks-to-buy-ai-startup-decart-for-around-7-billion-wsj-reports-4942850</a></li>
+</ul>
+<p class="status"><strong>核实状态</strong>：单一来源。消息源头只有《华尔街日报》引述的知情人士；路透社明确写了「无法立即核实」，亚马逊和 Decart 都没有回应。本稿读作「据《华尔街日报》报道」，尚未得到其他来源确认。</p>
+<h3 id="ns-h-8">1.4 彭博周日跟进证实：英伟达正与美国开放权重模型公司 Reflection AI 洽谈加码投资或提供算力，《金融时报》此前报道称可能发展成收购</h3>
+<p class="boundary"><strong>边界说明（请先读）。</strong> 这条谈判消息最早由《金融时报》在美欧时间周六报出，按采集员根据 X 热点条目时间的推算，大约是北京时间 10 月 11 日凌晨 3 点前后，在时间窗开始之前（前一天的早报已经写过《金融时报》的版本）。窗内的新增量是彭博另找消息人士独立证实了谈判，所以本条收录的是彭博这一篇。</p>
+<p><strong>发布时间</strong>：彭博稿经 The Business Times 转载，北京时间 2026 年 10 月 11 日 12:38（原文新加坡时间中午 12:38，新加坡与北京同属 UTC+8）。</p>
+<p><strong>先解释两个词。</strong> 「开放权重模型」是把训练好的模型参数公开出来、任何人都可以下载到自己的机器上运行和改造的模型，和只能通过网页或接口调用的闭源模型相对。「收购式招聘」（acqui-hire）是大公司不把一家小公司整个买下来，而是把它的核心团队雇过来、同时授权使用它的技术。</p>
+<p><strong>发生了什么。</strong> 据彭博稿（经 The Business Times 转载）：「据一位知情人士透露，英伟达正在洽谈加大对 Reflection AI 的投资，或者向这家美国初创公司提供算力，此举将加强它与一家重要的开放权重模型开发商的关系。讨论还处于早期阶段，尚未达成任何条款。」报道回顾了《金融时报》此前的说法：「《金融时报》此前报道了这些谈判，称可能发展为收购要约。可能的交易结构包括『收购式招聘』，即英伟达雇佣员工并授权技术；向这家初创公司提供更多芯片的协议；或者增加英伟达的股权投资。」</p>
+<p>报道还提到背景：「这家初创公司在 10 月早些时候推出了它的第一个开放权重模型 Beam……它说 Beam 在高级推理基准上的得分与中国智谱（Z.AI）的旗舰开放模型 GLM-5.2 相当。……这些交易包括 9 月以 130 亿美元收购 AI 模型公司 Hugging Face 的协议……」采集员的说明是：英伟达在扶持美国本土的开放权重模型，用来对冲价格更低的中国开源模型。</p>
+<p class="why"><strong>为什么值得注意。</strong> 前一天的早报读到这条时，它还只是「多家转述同一个《金融时报》信源」的传闻；今天彭博另找消息人士证实了谈判本身，可信度上了一个台阶。但谈判仍在早期，条款没有确定，英伟达没有回应，Reflection 拒绝置评。和 1.3 放在一起看，同一个周末，两家巨头都在向模型公司伸手，一个盯的是世界模型，一个盯的是开放权重模型。</p>
+<p><strong>来源。</strong></p>
+<ul>
+<li>The Business Times 转载彭博：<a href="https://www.businesstimes.com.sg/international/global/nvidia-weighs-deeper-ties-open-model-developer-reflection-ai-through-investment-or-computing-deal" target="_blank" rel="noopener noreferrer">https://www.businesstimes.com.sg/international/global/nvidia-weighs-deeper-ties-open-model-developer-reflection-ai-through-investment-or-computing-deal</a></li>
+<li>《马尼拉时报》转载：<a href="https://www.manilatimes.net/2026/10/12/business/foreign-business/nvidia-to-invest-further-in-reflection-ai/2443343" target="_blank" rel="noopener noreferrer">https://www.manilatimes.net/2026/10/12/business/foreign-business/nvidia-to-invest-further-in-reflection-ai/2443343</a></li>
+</ul>
+<p class="status"><strong>核实状态</strong>：多来源确认（谈判本身）。《金融时报》（窗前）和彭博（窗内）分别引用各自的消息人士报道了同一谈判；英伟达没有回应，Reflection 拒绝置评，交易条款还没有确定。「可能发展成收购」是《金融时报》的说法，彭博稿写的是「加码投资或提供算力」。</p>
+<h3 id="ns-h-9">1.5 CNBC 周日长文：白宫不打算立法，于是 METR、Apollo Research、Transluce 这些小型第三方安全评估机构被推到了 AI 安全的中心，但钱从哪里来、能不能保持独立，都还没有答案</h3>
+<p><strong>发布时间</strong>：北京时间 2026 年 10 月 11 日 19:00（原文美东时间 10 月 11 日周日早上 7:00 发布，10:08 更新）。</p>
+<p><strong>先解释一个词。</strong> 「第三方评估」指的是由既不是开发者、也不是政府的独立机构，在模型发布前后去测试它有没有危险能力、会不会做出越界行为。它有点像药物审评里的独立评审：评的人和被评的人分开，结论才可信。</p>
+<p><strong>发生了什么。</strong> CNBC 的副标题写道：「在联邦政府反对建立监管监督的情况下，METR 和 Transluce 这样的非营利机构正被要求去监测和评估模型。」文章把最近几件事串成了一条线：Anthropic 的 Amodei 承诺把独立评估人员「嵌入」公司内部，OpenAI 说正在敲定第三方评估合同，加州立法建立独立验证机构（IVO）。</p>
+<p>关于规模和资金，CNBC 写道：「非营利机构 METR 在 8 月宣布，它在过去六个月里获得了约 7100 万美元的资金承诺。根据该组织最近一次向美国国税局提交的申报，它 2024 年全年获得的捐款是 1360 万美元。……据其网站，METR 的全职员工不到 50 人。」</p>
+<p>关于独立性，文章引用了 Venkatasubramanian 的话：「如果你想要真正的第三方评估，你需要在财务上和其他方面都真正独立。这不只是拿不拿钱的问题，而是：如果我作为审计者发布了一份对这家公司不利的报告，会不会有后果？我的生意会不会就此断了？」</p>
+<p class="why"><strong>为什么值得 Sofia 注意。</strong> 这篇文章讲的，其实是 AI 安全链条上「接的那一头」。前沿模型一个接一个发布，每一个都需要有人认真去测；可负责接住这些模型的评估机构规模很小，METR 全职员工不到 50 人。资金正在快速增加，但如果收入主要来自被评估的公司，就可能变成「橡皮图章」。这和医学上「药物审评要独立于药企」「临床试验的数据安全监查委员会要独立于申办方」是同一类问题，你应该很容易理解。和今天的读法连起来看：要评估的东西涌过来的速度，和评估这一头的人手、独立性能不能跟上，是同一个问题的两面。</p>
+<p><strong>来源。</strong> CNBC：<a href="https://www.cnbc.com/2026/10/11/ais-quiet-safety-gatekeepers-are-stepping-into-the-spotlight.html" target="_blank" rel="noopener noreferrer">https://www.cnbc.com/2026/10/11/ais-quiet-safety-gatekeepers-are-stepping-into-the-spotlight.html</a></p>
+<p class="status"><strong>核实状态</strong>：单一来源。分析和引语来自 CNBC 这一篇；METR 的融资数字是 CNBC 转引 METR 公告和税务申报，采集员没有另外去查 METR 的原始文件。尚未得到其他来源确认。</p>
+<h3 id="ns-h-10">1.6 The Verge 周日评论：马斯克、贝尼奥夫、黄仁勋，以及刚刚加入的纳德拉，都在跟随特朗普把「AI」改叫「超级智能」</h3>
+<p><strong>发布时间</strong>：北京时间 2026 年 10 月 12 日 02:33（原文 UTC 10 月 11 日 18:33）。</p>
+<p><strong>先解释一个词。</strong> 在学术讨论里，「超级智能」原本指的是在几乎所有方面都全面超越人类的智能，是一个很重的概念。但最近美国的不少官方和企业英文材料里出现的「Super Intelligence / SI」，指的其实就是普通意义上的人工智能。</p>
+<p><strong>发生了什么。</strong> The Verge 这篇评论写道：「埃隆·马斯克很快跟进、承诺把 SpaceXAI 改名为 SpaceXSI，这并不让人意外。在唐纳德·特朗普宣布『白宫把任何使用「人工智能」一词、而不是使用被广泛接受的、更准确的新词「超级智能」的人视为敌人！』几个小时之后，马克·贝尼奥夫宣布 Salesforce 将把 AIForce 改名为 SIForce……」文章接着写：「最新屈服的是微软的萨提亚·纳德拉……在昨天一篇呼吁为 AI 建立『紧急刹车』的帖子里，纳德拉反复把这项技术称为『超级智能』。」据采集员的说明，特朗普在 9 月底签署行政令，要求联邦机构把 AI 改称「超级智能」。</p>
+<p class="boundary"><strong>边界说明。</strong> 纳德拉那篇「紧急刹车」帖子本身发于北京时间 10 月 10 日 22:43，在窗外（前一天的早报已经写过），这里只当背景。</p>
+<p class="why"><strong>为什么值得注意。</strong> 这条最实用的地方，是一个读英文材料时的提醒：最近你会在很多地方看到「super intelligence」（包括白宫的「Super Intelligence Force」和纳德拉的帖子），它们指的基本就是今天大家在用的 AI，并不是「全面超越人类」的那种超级智能。不知道这个背景，很容易把一条普通的政策新闻误读成「超级智能已经来了」。</p>
+<p><strong>来源。</strong> The Verge：<a href="https://www.theverge.com/ai-artificial-intelligence/1009406/silicon-valley-is-falling-in-line-with-trumps-attempt-to-rename-ai" target="_blank" rel="noopener noreferrer">https://www.theverge.com/ai-artificial-intelligence/1009406/silicon-valley-is-falling-in-line-with-trumps-attempt-to-rename-ai</a></p>
+<p class="status"><strong>核实状态</strong>：单一来源。这是 The Verge 的评论文章；文中提到的各家改名举动，据采集员说明，Verge 和 WIRED 此前都分别报道过，但「集体跟进」这个归纳只出自本文。</p>
+<h3 id="ns-h-11">1.7 CNBC 周日数据稿：AI 正在自动化写代码，美国软件开发岗位的招聘却比 2025 年 2 月回升了近 15%，不过增长集中在资深岗位，年轻入门者的就业仍在下降</h3>
+<p><strong>发布时间</strong>：北京时间 2026 年 10 月 11 日 21:30（原文美东时间 10 月 11 日周日早上 9:30）。</p>
+<p><strong>先解释一个词。</strong> 「拉取请求」（pull request，常简称 PR）是程序员改好一批代码之后，请求把它合进主分支的那张单子，通常要经过别人审查才能合入。</p>
+<p><strong>发生了什么。</strong> CNBC 引用多方数据写道：「Indeed 说，美国软件开发岗位的招聘信息自 2025 年 2 月底以来增长了近 15%，而同期整体招聘信息下降了 7%。……这轮回升很集中：2025 年 5 月到 2026 年 5 月的增量里，71% 来自资深岗位，37% 来自职位名称里带 AI 的岗位。……斯坦福的报告显示，22 到 25 岁软件开发者的就业比 2024 年下降了近 20%，而美国劳工统计局预测，到 2035 年这个职业整体将增长 10%。」</p>
+<p>关于 AI 在写代码中的参与度，文章写道：GitHub「在 10 月报告说，现在每三个拉取请求里就有一个有 AI 智能体参与。一年前，GitHub 说这个比例还不到十分之一。」文章也提醒：「但即便在回升之后，根据 Indeed Hiring Lab 的数据，软件开发岗位的招聘信息仍然比疫情前低约 27.5%。」</p>
+<p class="why"><strong>为什么值得 Sofia 注意。</strong> 这篇用数据回答了「AI 会不会让程序员失业」：总量没有崩，反而在回升，但新增的岗位大多是资深岗位，年轻入门者的台阶变高了。一个很直观的理解是：AI 智能体交上来的代码越来越多（三个 PR 里就有一个），需要有经验的人去审、去判断好坏、去接住；能做这件事的人更吃香，而只会写入门代码的人更难找到第一份工作。对正在学 AI 技能的你来说，这是一条很实在的信号：学会判断 AI 的产出好不好、能不能用，比学会让 AI 多产出一些更值钱。</p>
+<p><strong>来源。</strong> CNBC：<a href="https://www.cnbc.com/2026/10/11/ai-software-developer-jobs.html" target="_blank" rel="noopener noreferrer">https://www.cnbc.com/2026/10/11/ai-software-developer-jobs.html</a></p>
+<p class="status"><strong>核实状态</strong>：单一来源。本文是 CNBC 汇编的二手数据稿；各项数字分别出自 Indeed Hiring Lab、斯坦福 2026 AI Index、美国劳工统计局和 GitHub，采集员没有逐一回查原始报告。</p>
+<hr>
+<h2 id="ns-h-12">二、科技（讯科 · 8 条，其中第 6—8 条的底层事件略早于时间窗）</h2>
+<p>10 月 11 日是星期日，科技领域的一手发布偏少。这一组有两条很清楚的线索。第一条线索是「AI 的地基」：第 1 条乌克兰无人机让 Yandex 的又一座数据中心完全停摆，第 4 条伊朗高级官员把海底光缆、数据中心和 AI 设施列为潜在打击目标，第 5 条 SK 集团会长说存储芯片需求涨得比工厂能建的还快，第 6 条连「怎么给 AI 芯片供电」这种底层环节都打起了专利战。第二条线索是「把东西按接得住的方式送进去」：第 6 条的垂直供电和第 7 条只在正中心长出一个晶核的二维半导体，都是在解决「怎么让能量或材料按目标接得住的方式到位」。另外还有第 2 条亚马逊洽谈收购 Decart（和人工智能板块 1.3 是同一件事）、第 3 条 Ledger 硬件钱包供应链事件的新进展、第 8 条一项光量子计算架构的理论结果。</p>
+<p><strong>请特别注意本板块第 6—8 条的时间边界。</strong> 这三条都是窗内发表的报道或窗内出现的新进展，但它们背后的底层事件——第 6 条美国国际贸易委员会的立案（美东 10 月 9 日）、第 7 条 KAIST 的《自然》论文上线（10 月 7 日）、第 8 条 Aegiq 的期刊论文发表（10 月 8 日）——都略早于本期时间窗。本稿只把窗内的新内容（台厂回应、媒体报道和采访里的新信息）当成今天的事，立案和论文本身只作为背景，每一条开头都会再写一遍。</p>
+<h3 id="ns-h-13">2.1 乌克兰无人机袭击使 Yandex 位于弗拉基米尔的数据中心完全停摆，据路透社这是几天之内第三座被打掉的大型数据中心</h3>
+<p><strong>发布时间</strong>：Kyiv Post 北京时间 2026 年 10 月 11 日 15:25（原文基辅夏令时上午 10:25）；Al Jazeera、路透社、The Moscow Times 均为 10 月 11 日同日发布。袭击发生在莫斯科时间 10 月 11 日（周日）凌晨，在时间窗内。</p>
+<p><strong>先解释一个词。</strong> 「数据中心」是集中放置大量服务器的机房，今天我们说的「云服务」、各种 App 背后的数据库和 AI 接口，实际上都运行在这样一栋栋具体的建筑里。「灾难恢复计划」是企业事先准备好的预案：一个机房出事时，怎样把业务切换到别的机房继续运行。</p>
+<p><strong>发生了什么。</strong> 据 Al Jazeera 报道：「Yandex 在 Telegram 上的一则服务提醒中说：『该数据中心的运营已完全暂停。』它建议用户启动灾难恢复计划，平台正处于应急模式运行。它补充说：『剩余的资源配置被认为是不稳定的。』并警告说，在团队评估损失期间，技术支持的沟通也可能中断。」Al Jazeera 援引路透社写道：「一天前，乌克兰的一次袭击让 Yandex 位于莫斯科东南方萨索沃的数据枢纽停摆，该公司用来开发 AI 模型的三台超级计算机中有两台就放在那里。」</p>
+<p>Kyiv Post 给出了更多细节：「这座设施设计容纳最多 2880 个服务器机架，是这家俄罗斯科技公司的基础处理枢纽之一。……受影响的服务包括计算云、对象存储、托管 Kubernetes、PostgreSQL 和 ClickHouse 数据库，以及开发者工具和人工智能接口，例如 YandexGPT API、SpeechKit 和 Vision OCR。」</p>
+<p class="why"><strong>为什么值得 Sofia 注意。</strong> 这件事最直观地说明了一个现实：今天的「云」和 AI 服务，其实落在一栋栋具体的机房里。机房一旦被打掉，据采集员的说明，语音助手、音乐、视频会议，以及银行、打车、零售这些看上去毫不相关的日常服务都会跟着一起受影响。「剩余的资源配置被认为是不稳定的」这句话也值得留意：一个中心倒下之后，原本由它承担的流量会一下子压到剩下的机房上，剩下的那部分未必接得住。</p>
+<p><strong>来源。</strong></p>
+<ul>
+<li>Al Jazeera：<a href="https://www.aljazeera.com/news/2026/10/11/russias-yandex-says-data-centre-in-vladimir-shut-down-after-drone-attack" target="_blank" rel="noopener noreferrer">https://www.aljazeera.com/news/2026/10/11/russias-yandex-says-data-centre-in-vladimir-shut-down-after-drone-attack</a></li>
+<li>The Moscow Times：<a href="https://www.themoscowtimes.com/2026/10/11/russias-yandex-says-data-center-in-vladimir-shut-down-after-drone-attack-a93942" target="_blank" rel="noopener noreferrer">https://www.themoscowtimes.com/2026/10/11/russias-yandex-says-data-center-in-vladimir-shut-down-after-drone-attack-a93942</a></li>
+<li>Kyiv Post：<a href="https://www.kyivpost.com/post/86708" target="_blank" rel="noopener noreferrer">https://www.kyivpost.com/post/86708</a></li>
+</ul>
+<p class="status"><strong>核实状态</strong>：多来源确认（停运事实）。Yandex 官方 Telegram 通告经路透社、法新社、Al Jazeera、The Moscow Times 转述，Kyiv Post 独立报道。具体机房容量（2880 个机架）与受影响服务的数量只有 Kyiv Post 给出，属于单一来源细节（其信息部分来自 ASTRA 等 Telegram 频道）；Yandex 官方只确认了停运和部分服务不可用。「几天之内第三座」出自路透社和 The Moscow Times 的说法。</p>
+<h3 id="ns-h-14">2.2 《华尔街日报》独家报道：亚马逊正洽谈以约 70 亿美元收购实时视频生成初创公司 Decart（科技板块补充）</h3>
+<p><strong>发布时间</strong>：《华尔街日报》原文北京时间 2026 年 10 月 12 日 04:26（UTC 10 月 11 日 20:26）；CNA 转载路透社稿件标注 10 月 11 日。</p>
+<p><strong>说明。</strong> 这一条和人工智能板块的 1.3 是同一件事，两路采集员各自独立收录，引用的原文摘录也相同。模型和技术背景请看 1.3，这里只从「大型科技公司并购」的角度补充两句。</p>
+<p><strong>发生了什么。</strong> 据路透社转述（经 CNA 转载），《华尔街日报》周日援引知情人士报道，亚马逊正在洽谈收购 Decart，交易估值可能在 70 亿美元左右；Decart 5 月的估值接近 40 亿美元（PitchBook 数据）；路透社无法立即核实，亚马逊和 Decart 都没有回应；据彭博报道，Anthropic 上个月在完成尽职调查后决定不推进对 Decart 的收购。</p>
+<p class="why"><strong>为什么值得注意。</strong> 讯科采集员的看法是：巨头之间正在抢购能生成模拟环境、用来训练机器人和自动驾驶的公司，报道中的估值几乎是对方 5 月估值的两倍。对科技行业来说，这是「谁来接住世界模型这条路线」的一次公开争夺，但目前只是「在谈」，没有成交。</p>
+<p><strong>来源。</strong></p>
+<ul>
+<li>《华尔街日报》（付费墙，可以打开标题页）：<a href="https://www.wsj.com/business/deals/amazon-in-talks-to-buy-ai-startup-decart-for-around-7-billion-9433abad" target="_blank" rel="noopener noreferrer">https://www.wsj.com/business/deals/amazon-in-talks-to-buy-ai-startup-decart-for-around-7-billion-9433abad</a></li>
+<li>CNA 转载路透社：<a href="https://www.channelnewsasia.com/business/amazon-in-talks-buy-ai-startup-decart-around-7-billion-wsj-reports-6451486" target="_blank" rel="noopener noreferrer">https://www.channelnewsasia.com/business/amazon-in-talks-buy-ai-startup-decart-around-7-billion-wsj-reports-6451486</a></li>
+</ul>
+<p class="status"><strong>核实状态</strong>：单一来源。消息唯一源头是《华尔街日报》援引知情人士的独家报道，路透社明确表示未能立即核实，亚马逊和 Decart 均未回应，交易尚未确认。</p>
+<h3 id="ns-h-15">2.3 Ledger 发布「72 小时更新」：经授权经销商 CryptoBilis 售出的硬件钱包被植入窃密芯片，公司已在与执法部门合作</h3>
+<p><strong>发布时间</strong>：Ledger 官方 X 账号的「72 hour update」发于北京时间 2026 年 10 月 12 日 01:13（UTC 10 月 11 日 17:13:22）；Cointelegraph 报道标注 10 月 11 日发布。</p>
+<p class="boundary"><strong>边界说明。</strong> 「确认存在未经授权的硬件植入物」这一说法，由 @Ledger_Support 于北京时间 10 月 11 日 01:09 发出，早于时间窗（前一天的早报已经写过），本条只把它当背景；窗内的新进展是 Ledger 官方账号的「72 小时更新」。</p>
+<p><strong>先解释两个词。</strong> 「硬件钱包」是一种专门保管加密货币私钥的小设备，私钥不离开设备，所以比放在电脑或手机里安全。「助记词」是设备初始化时显示的一串单词，用来备份和恢复钱包，谁拿到它，谁就能拿走钱包里的资产。「供应链攻击」是指问题不出在产品本身，而出在产品从工厂到用户手上的某个中间环节。</p>
+<p><strong>发生了什么。</strong> Ledger 官方 X 账号的原文是：「关于经销商 CryptoBilis 事件的 72 小时更新：调查仍在继续，我们正在与相关部门合作。受影响设备的数量是有限的。我们知道这令人担忧，尤其是对直接受到影响的人，我们正在联系受影响的用户。」</p>
+<p>Cointelegraph 的报道写道：「硬件钱包制造商 Ledger 一直在调查涉及从一家东南亚经销商处购买的设备的加密货币损失报告，它确认其中一名受影响用户的设备里含有一个未经授权的硬件植入物。……调查人员 Specter 估计，损失可能超过 8600 万美元，涉及比特币、以太坊和波场。」报道还转述了 Ledger 的建议：「Ledger 建议从这家经销商处购买设备的用户，如果还没有初始化，就不要开始初始化；如果已经初始化了，应考虑把资产转移到一台新的 Ledger 签名设备上，包括使用新的助记词。」</p>
+<p class="why"><strong>为什么值得注意。</strong> 这是一起典型的硬件供应链攻击：据采集员的说明，问题不在 Ledger 的芯片或软件，而在东南亚一家授权经销商卖出的设备里被人加装了带通信模块的小电路板，用户初始化时生成的助记词被偷走。它提醒我们，安全链条里最薄弱的一环，往往是「从工厂到你手上」的中间环节，买安全设备要走官方渠道。</p>
+<p><strong>来源。</strong></p>
+<ul>
+<li>Ledger 官方 X：<a href="https://x.com/Ledger/status/2109331538072494364" target="_blank" rel="noopener noreferrer">https://x.com/Ledger/status/2109331538072494364</a></li>
+<li>Cointelegraph：<a href="https://cointelegraph.com/news/ledger-confirms-unauthorized-hardware-implant-losses-may-exceed-86m" target="_blank" rel="noopener noreferrer">https://cointelegraph.com/news/ledger-confirms-unauthorized-hardware-implant-losses-may-exceed-86m</a></li>
+</ul>
+<p class="status"><strong>核实状态</strong>：多来源确认（事件与官方表态）。Ledger 官方 X 原帖可以直接查看，Cointelegraph 获得了 Ledger 的书面声明。「损失可能超过 8600 万美元」是调查方 Specter 的估算，Ledger 本身没有确认损失金额，属于未经公司确认的数字；Ledger 只说受影响设备数量「有限」。</p>
+<h3 id="ns-h-16">2.4 伊朗最高国家安全委员会秘书礼萨伊警告：若战事重启，地区内的海底光缆、数据中心和人工智能设施可能成为打击目标</h3>
+<p><strong>发布时间</strong>：WANA 原文为德黑兰时间 10 月 11 日晚上 8:22，换算为北京时间 2026 年 10 月 12 日 00:52；CoinNess 转述伊朗塔斯尼姆通讯社，标注 10 月 11 日下午 3:06（该站时区未注明，若为韩国时间则为北京时间 14:06）。讲话发生在 10 月 11 日当地时间，在时间窗内。</p>
+<p><strong>先解释一个词。</strong> 「海底光缆」是铺在海底、承载跨国互联网流量的光纤线路，全世界绝大部分跨洲数据都靠它传输。</p>
+<p><strong>发生了什么。</strong> 据伊朗 WANA 通讯社报道：「他说，伊朗此前没有把其中许多设施视为目标，但如果再发生一场战争，许多海底光缆、数据中心和人工智能中心都可能进入伊朗的打击范围。据礼萨伊说，这些光缆、数据中心和 AI 中心的总价值超过 2 万亿美元。他说，其中许多是因为巨大的能源需求，才从美国和欧洲搬到这个地区的。」CoinNess 转述塔斯尼姆通讯社的报道说：「伊朗最高国家安全委员会秘书警告说，如果战争再次爆发，该地区的许多海底光缆、数据中心、AI 设施和其他场所将被摧毁。……这位官员补充说，美国在阿联酋和霍尔木兹海峡周边拥有价值非常高的资产，伊朗到目前为止还没有把它们作为目标。」</p>
+<p class="why"><strong>为什么值得注意。</strong> 据采集员的说明，这是伊朗高级安全官员第一次在电视采访中把「海底光缆、数据中心、AI 设施」明确列为潜在打击目标。和 2.1 放在一起看，可以看到一个趋势：数据中心和光缆正在被当作和油田、电网同等级别的战略目标。讲话里还有一个细节值得留意：很多数据中心之所以搬到海湾地区，是因为它们太耗电，需要靠近能源。需要强调的是，这只是威胁性表态，没有发生实际行动。</p>
+<p><strong>来源。</strong></p>
+<ul>
+<li>WANA：<a href="https://wanaen.com/rezaei-iran-deems-us-response-to-its-proposals-insufficient/" target="_blank" rel="noopener noreferrer">https://wanaen.com/rezaei-iran-deems-us-response-to-its-proposals-insufficient/</a></li>
+<li>CoinNess（转述塔斯尼姆）：<a href="https://coinness.com/en/stock-news/142267" target="_blank" rel="noopener noreferrer">https://coinness.com/en/stock-news/142267</a></li>
+</ul>
+<p class="status"><strong>核实状态</strong>：多来源确认（讲话内容）。WANA 与 CoinNess（转述塔斯尼姆）两个独立渠道报道了同一电视采访的同一内容；但两者都不是西方主流通讯社。「总价值超过 2 万亿美元」是讲话者自己的说法，没有独立核算，属于未能核实的当事人口径。</p>
+<h3 id="ns-h-17">2.5 SK 集团会长崔泰源在上海表示：如果美光和中国存储厂商扩产更快，韩国的存储芯片份额将缩小，韩国必须以最快速度扩建晶圆厂</h3>
+<p><strong>发布时间</strong>：ChosunBiz 英文版标注韩国时间 10 月 11 日 18:01，即北京时间 2026 年 10 月 11 日 17:01（转述韩联社当天在上海的采访）；Seoul Economic Daily 相关报道为韩国时间 14:56:44，即北京时间 13:56。</p>
+<p><strong>先解释两个词。</strong> 「HBM」（高带宽内存）是一种堆叠起来的高速存储芯片，专门配给 AI 芯片使用，SK 海力士是全球龙头。「晶圆厂」是制造芯片的工厂。文中的「湖南」指的是韩国的湖南地区（全罗南道和光州一带），不是中国的湖南省。</p>
+<p><strong>发生了什么。</strong> 据 ChosunBiz 转述韩联社的采访，崔泰源说：「如果中国企业或美国的美光扩产更快，韩国的市场份额就会缩小。」他补充说：「需求非常大，但如果我们不能扩建工厂，那就是问题所在。」他还说：「如果放任不管，他们都会追上来。他们追得很快。」谈到美国对中国芯片的限制，他说：「这看起来不太明智。认为那样封锁就能挡住中国的半导体，看起来不太明智。」他接着解释说：「长鑫存储（CXMT）和长江存储（YMTC）正在以惊人的速度持续进步。」ChosunBiz 还写到：「他说：『SK 在中国的半导体、电池和石化领域投资了约 600 亿美元（约 80.6 万亿韩元）。』……SK 集团还在推动在中国上海设立一个人工智能研发中心。」</p>
+<p>Seoul Economic Daily 的同日报道引用他的话：「半导体需求涨得比预期更快，所以我们需要尽快扩建生产设施。我们把龙仁集群的建设时间表提前了 12 年，但即便这样，预计也还是不够。」据采集员说明，湖南集群的规模是「400 万亿韩元」，出自上述原文。</p>
+<p class="why"><strong>为什么值得 Sofia 注意。</strong> 这条材料把三条线串在了一起：AI 带动的存储芯片超级周期、中美韩三方的产能竞赛、出口管制到底有没有用。它和今天的读法也很贴：需求像一大壶水一样涌过来，接得住的只有已经建好的晶圆厂；提前 12 年都「还是不够」，说明接的这一头扩张的速度，暂时赶不上给的那一头。</p>
+<p><strong>来源。</strong></p>
+<ul>
+<li>ChosunBiz：<a href="https://biz.chosun.com/en/en-it/2026/10/11/Z63RY5MMTFGGXCWJFDQVEYFZTM/" target="_blank" rel="noopener noreferrer">https://biz.chosun.com/en/en-it/2026/10/11/Z63RY5MMTFGGXCWJFDQVEYFZTM/</a></li>
+<li>Seoul Economic Daily：<a href="https://en.sedaily.com/finance/2026/10/11/sk-chairman-dispels-doubts-over-400-trillion-won-honam-chip" target="_blank" rel="noopener noreferrer">https://en.sedaily.com/finance/2026/10/11/sk-chairman-dispels-doubts-over-400-trillion-won-honam-chip</a></li>
+</ul>
+<p class="status"><strong>核实状态</strong>：多来源确认。崔泰源的上海讲话由韩联社采访、ChosunBiz 刊发；他的扩产表态与 Seoul Economic Daily 同日报道相互印证。</p>
+<h3 id="ns-h-18">2.6 美国国际贸易委员会对 AI 服务器「垂直供电系统」启动 337 调查，鸿海、广达、台达电等 20 家企业被点名，台厂于 10 月 11 日集体回应</h3>
+<p class="boundary"><strong>边界说明（请先读）。</strong> 美国国际贸易委员会（USITC）的立案公告本身发布于美东时间 10 月 9 日（北京时间 10 月 9 日晚到 10 日凌晨），早于本期时间窗。时间窗内的新进展是台湾企业 10 月 11 日的集体回应，以及路透社 10 月 11 日的跟进报道。本条把立案当作背景，窗内的新内容是台厂的表态。</p>
+<p><strong>发布时间</strong>：中时新闻网北京时间 2026 年 10 月 11 日 16:33（台北时间与北京时间相同）；INNOVOX 综述为 10 月 11 日。</p>
+<p><strong>先解释两个词。</strong> 「337 调查」是美国国际贸易委员会依据美国《1930 年关税法》第 337 条发起的调查，常用来处理进口产品侵犯美国专利的指控，结果可能是禁止相关产品进口美国。「垂直供电」是给 AI 芯片供电的一种新做法：传统上，电流在电路板上横着走一段路才送到芯片，电流越大损耗越大；垂直供电把电压转换模块直接放到芯片正下方，让大电流沿最短的路径从下往上送进芯片。</p>
+<p><strong>发生了什么。</strong> 中时新闻网报道：「美国国际贸易委员会（USITC）于美东时间9日公告，针对AI服务器关键的特定垂直供电系统启动『337调查』，台湾电子代工与电源龙头鸿海、广达旗下云达、台达电全遭点名入列。面对美企发动专利战夹击，台厂强调目前全案仅在立案调查阶段，尚未有任何实质侵权认定，现阶段生产营运与产品出货均未受影响，已启动专业团队积极因应。」报道还写道：「该起跨国专利争端源于美国电源技术商维克尔（Vicor），该公司指控包括鸿海、台达电、广达以及大陆立讯精密等全球20家企业，输美的垂直电力传输系统及搭载相关技术的AI运算设备涉嫌侵权，要求美方祭出有限排除令与停止令。」（引文按原文意思以简体字转写。）</p>
+<p>INNOVOX 给出了案件编号：「美国国际贸易委员会于 10 月 9 日立案 337-TA-1526 号调查，涉及进口的垂直供电系统、组件和计算系统。Vicor 指控侵犯美国第 10,903,734 号专利，专利名称为『向半导体负载供电』，并寻求有限排除令和停止令。」据采集员说明，名单覆盖台达、英飞凌、立讯、鸿海、广达等整条供应链；台湾经济部贸易署称，这类案件审理通常需要 12 至 16 个月。</p>
+<p class="why"><strong>为什么值得 Sofia 注意。</strong> AI 芯片越来越耗电，「怎么把电送进去」本身已经成了一项关键技术。垂直供电解决的问题，正是今天读法的一个工程版本：芯片能接住的电流方式是确定的，横着硬送，损耗就洒在路上；换一条贴合芯片的路径，同样的电才能真正送到位。这条新闻同时说明，AI 硬件的竞争已经从 GPU 本身延伸到供电这种底层环节，专利战也随之而来。目前只是立案，没有任何侵权认定。</p>
+<p><strong>来源。</strong></p>
+<ul>
+<li>中时新闻网：<a href="https://www.chinatimes.com/realtimenews/20261011001978-260410" target="_blank" rel="noopener noreferrer">https://www.chinatimes.com/realtimenews/20261011001978-260410</a></li>
+<li>INNOVOX：<a href="https://www.innovox.news/news/usitc-vicor-vertical-power-delivery-patent-probe" target="_blank" rel="noopener noreferrer">https://www.innovox.news/news/usitc-vicor-vertical-power-delivery-patent-probe</a></li>
+</ul>
+<p class="status"><strong>核实状态</strong>：多来源确认。立案事实有 USITC 公告（经 INNOVOX、路透社转述）和立讯向深交所的披露为证；台厂回应出自中时新闻网，属单一媒体整理，但引用了企业的正式表态。立案本身早于时间窗。</p>
+<h3 id="ns-h-19">2.7 KAIST 与初创公司 TDS Innovation 在《自然》发表方法：让二维半导体晶体只在每个图案的正中心「发芽」，单晶良率超过 99%</h3>
+<p class="boundary"><strong>边界说明（请先读）。</strong> 论文本身于 2026 年 10 月 7 日在《自然》上线，早于本期时间窗。时间窗内的是 The Register 的报道，以及报道里公司方面对商业化时间表的新表态。本条把论文当作背景，窗内的新内容是这篇报道和采访。</p>
+<p><strong>发布时间</strong>：The Register 北京时间 2026 年 10 月 11 日 17:30（原文 UTC 10 月 11 日 09:30）。</p>
+<p><strong>先解释几个词。</strong> 「二维半导体」是只有一个或几个原子那么厚的半导体材料，比如二硫化钼（MoS₂），被看作硅晶体管快到物理极限之后的下一代候选。「成核」是晶体开始生长的第一步，就像一粒种子发芽；如果在很多随机位置同时成核，就会长出许多小晶粒，晶粒之间的边界（晶界）会拖累电性能。「迁移率」衡量电子在材料里跑得有多顺畅，越高越好。</p>
+<p><strong>发生了什么。</strong> 《自然》论文摘要写道：「刻蚀通量介导的单中心成核，使二硫化钼可以在 10 微米尺度上生长成单晶，场效应迁移率最高达 117 cm²/V·s，并具有大面积均匀性和工艺兼容性。」The Register 的报道补充：「在另一项横跨两厘米衬底的测试中，这个工艺在 400 个图案位点中的 397 个上长出了单晶，良率为 99.3%。这对扩大规模来说很有希望，尽管它还不是商业芯片生产的演示。」</p>
+<p>报道里 TDS 公司的 Jony Jung 说：「论文没有说什么时候能在量产芯片里看到用这种方法做的二维半导体。我们的目标是在 2030 年前后实现二维半导体的商业化应用。我们认为，来自 AI（包括物理 AI 和机器人）的需求加速，可能会把应用时间提前，不过生产时间取决于进一步的验证。」</p>
+<p>据采集员的说明，这项研究用氧化铪「围栏」释放的氧，把边缘处冒出来的晶核刻蚀掉，只留下正中心的一个晶核长成单晶。</p>
+<p class="why"><strong>为什么值得 Sofia 注意。</strong> 这个思路很像「一次只让一粒种子发芽」：与其让材料在一大片区域上到处同时冒芽、彼此挤在一起长成一堆小晶粒，不如控制好位置，让每个图案只从中心那一处开始长，长出来的反而是完整的单晶。用今天的读法来说，就是不要一下子让所有地方都接收材料，而是只让最适合接住的那一处去接。需要提醒：论文通讯作者之一 Kibum Kang 是 TDS Innovation 的联合创始人兼 CEO，论文已声明这一利益关系；「2030 年商用」是公司的目标，不是论文结论。</p>
+<p><strong>来源。</strong></p>
+<ul>
+<li>The Register：<a href="https://www.theregister.com/science/2026/10/11/researchers-work-out-how-to-control-2d-semiconductor-growth-for-future-chips/5301666" target="_blank" rel="noopener noreferrer">https://www.theregister.com/science/2026/10/11/researchers-work-out-how-to-control-2d-semiconductor-growth-for-future-chips/5301666</a></li>
+<li>《自然》论文：<a href="https://www.nature.com/articles/s41586-026-11095-1" target="_blank" rel="noopener noreferrer">https://www.nature.com/articles/s41586-026-11095-1</a></li>
+</ul>
+<p class="status"><strong>核实状态</strong>：多来源确认。《自然》论文原文可开放获取，The Register 独立报道并采访了公司；论文页面编号为 s41586-026-11095-1。论文上线时间（10 月 7 日）早于时间窗。</p>
+<h3 id="ns-h-20">2.8 英国初创公司 Aegiq 提出光量子计算架构 QGATE，计算出的容错阈值最高达 25.98%</h3>
+<p class="boundary"><strong>边界说明（请先读）。</strong> 论文本身于 2026 年 10 月 8 日在期刊《量子科学与技术》（Quantum Science and Technology）上发表，早于本期时间窗。时间窗内的是 Tech Times 的深度报道。本条把论文当作背景，窗内的新内容是这篇报道。</p>
+<p><strong>发布时间</strong>：Tech Times 北京时间 2026 年 10 月 11 日 12:37（原文美东时间 10 月 11 日凌晨 0:37）。</p>
+<p><strong>先解释几个词。</strong> 「光量子计算」是用光子来当量子比特的量子计算路线，好处是接近室温就能工作、可以直接走光纤，难点是光子很容易「丢」。「量子纠错」是用很多个容易出错的物理量子比特，拼成一个更可靠的「逻辑量子比特」；「容错阈值」是指每一步的出错率低于多少时，纠错还跟得上——出错率超过这个阈值，纠错就接不住了。「确定性单光子源」是能按需、稳定地一次只发出一个光子的光源，目前还没有大规模量产。</p>
+<p><strong>发生了什么。</strong> 据采集员核对的 arXiv 预印本摘要：「我们还提出了 QGATE 的一种光子实现，并计算出在由折叠旋转表面码构建的逻辑量子比特上，对光子融合失败率的量子纠错阈值为 10.36±0.02% 或 25.98±0.28%……分别取决于采用层内融合还是层间融合。」Tech Times 给出了对比背景：「作为参照，Quandela 在 2024 年的一项研究报告了此前已发表的、不依赖大规模复用的最佳光子阈值，为 6.4%，使用的是 Floquet 码架构。」Tech Times 也写了限制条件：「实际的结论是，QGATE 的基准数字只有在确定性发射器技术能以容错机器所需的规模、均匀性和集成密度生产出来时才成立。」</p>
+<p class="why"><strong>为什么值得注意。</strong> 据采集员说明，Aegiq 是谢菲尔德大学的衍生公司，这项工作属于量子计算硬件路线之争（对手包括 PsiQuantum 等）。从今天的读法看，「容错阈值」本身就是一个「接得住多少」的数字：系统每一步丢掉多少光子之后，纠错还能把它接住。QGATE 算出的阈值明显高于此前公开的 6.4%，但它是理论计算，还没有硬件验证，而且依赖尚未量产的光源技术。</p>
+<p><strong>一个表述上的提醒。</strong> 论文摘要里的阈值针对的是「融合失败率」，Tech Times 把它通俗写成「光子损耗」（从这篇报道的网址可以看出，它的标题写的是芯片「能容忍比任何对手多 4 倍的光损耗」，这是媒体的通俗说法）。本稿以论文表述为准。</p>
+<p><strong>来源。</strong></p>
+<ul>
+<li>Tech Times：<a href="https://www.techtimes.com/articles/328869/20261011/photonic-quantum-computing-chip-tolerates-4x-more-light-loss-any-rival.htm" target="_blank" rel="noopener noreferrer">https://www.techtimes.com/articles/328869/20261011/photonic-quantum-computing-chip-tolerates-4x-more-light-loss-any-rival.htm</a></li>
+<li>arXiv 预印本：<a href="https://arxiv.org/abs/2512.04171" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2512.04171</a></li>
+</ul>
+<p class="status"><strong>核实状态</strong>：单一来源（报道层面）。时间窗内只有 Tech Times 一家深度报道；论文本身已通过 arXiv 预印本核对，阈值数字与原文一致；期刊版 DOI（10.1088/2058-9565/aea970）由 Tech Times 给出，采集员未能直接打开期刊页面核对。论文发表时间（10 月 8 日）早于时间窗。</p>
+<hr>
+<h2 id="ns-h-21">三、医学（讯医 · 9 条）</h2>
+<p>这个周末是医学大会扎堆的日子，所以医学这一组的一手材料比平时多。第 1 条是《柳叶刀》委员会在柏林世界卫生峰会上发布的报告，用同一把尺子给本世纪 17 项健康威胁排了行动顺序，其中「恶意使用 AI」被列为两项有灭绝潜力的威胁之一；第 2 条是世卫组织总干事候选人第一次公开同台，背景是美国退出后的预算削减和 25% 的人员缩减；第 3 条是刚果（金）埃博拉疫情的扩散和肯尼亚的首例输入病例。第 4 到第 7 条来自三个专科学会的年会：眼科的 remigromig 非劣效试验、心衰的 tovinontrine「反向剂量反应」（今天的第二颗种子）、心肌淀粉样变的真实世界对比研究、遗传性低钙血症的 encaleret 三期结果。第 8 条是美国胃肠病学会年会上的两项摘要：AI 聊天机器人换一种语言就更容易漏判急症，以及美国年轻人结直肠癌发病率的快速上升。第 9 条是国内团队用牙龈来源的干细胞治疗 1 型糖尿病的 I 期试验。</p>
+<h3 id="ns-h-22">3.1 《柳叶刀》委员会发布报告：本世纪对人类健康威胁最大的 17 项相互关联的「灾难性威胁」，其中「恶意使用 AI」与「核冲突」被列为具有导致人类灭绝潜力的两项</h3>
+<p><strong>发布时间</strong>：北京时间 2026 年 10 月 11 日 07:01。报告的解禁时间是英国夏令时 10 月 11 日周日 00:01（即 UTC 10 月 10 日 23:01）；EurekAlert 新闻稿页面标注的 10 月 10 日是提前向媒体分发的日期。</p>
+<p><strong>先解释一个词。</strong> 「伤残调整生命年」（DALY）是公共卫生里衡量疾病负担的统一尺度，把「早死损失的寿命」和「带着残疾或疾病生活的年数」加在一起算。一个 DALY 大致相当于损失了一年健康的生命。这份报告用的是「可通过政策避免的 DALY」，也就是如果采取行动，能避免多少健康损失。</p>
+<p><strong>发生了什么。</strong> 《柳叶刀》官方新闻稿写道：「下一代人的健康，不会由某一场决定性的危机塑造，而会由一组相互关联的 17 项灾难性威胁塑造，它们横跨疾病、社会和经济条件、环境变化、技术和冲突。这是一份发表在《柳叶刀》上、在 2026 年柏林世界卫生峰会上发布的新委员会报告的发现。」新闻稿写明：「委员会认定两项威胁具有灭绝潜力：恶意使用人工智能（AI）；核冲突。」</p>
+<p>关于行动能带来的收益，新闻稿写道：「综合考虑潜在影响和发生概率，委员会的评估发现，预防核冲突的行动到 2100 年可以避免约 1.33 亿人死亡和 93.5 亿个 DALY，而降低恶意 AI 风险的行动可以避免约 104 亿个 DALY。」据采集员说明，新闻稿里还列有气候变化 18.9 亿、肥胖 231 亿、收入不平等 138 亿个 DALY 等数字。</p>
+<p>据采集员说明，这个委员会由 IHME 主任 Christopher Murray 与联合国人口基金前执行主任 Natalia Kanem 共同主持，从数百种威胁中筛出 17 项，提出「建设应对型卫生体系、投资突破性创新、持续追踪威胁」三条建议。IHME 页面给出的引用格式是：Murray CJL, Kanem N, Abed S, et al. The Lancet Commission on 21st century global threats to health. The Lancet. 11 October 2026. doi: 10.1016/S0140-6736(26)01714-9。</p>
+<p class="why"><strong>为什么值得 Sofia 注意。</strong> 这份报告把你在医学课上学的 DALY 直接用在了全球决策上，而且把「恶意使用 AI」和高血压、肥胖、抗菌药耐药放进了同一张表，恰好连接了你的医学和 AI 两条学习线。它的思路也和今天的读法有关：资源有限，卫生体系能接住的行动也有限，所以要按「影响 × 可能性」排出先后，把力气先放在最值得的地方；「建设应对型卫生体系」这条建议，本身就是在加强接的那一头。</p>
+<p><strong>来源。</strong></p>
+<ul>
+<li>EurekAlert（《柳叶刀》官方新闻稿）：<a href="https://www.eurekalert.org/news-releases/1146827" target="_blank" rel="noopener noreferrer">https://www.eurekalert.org/news-releases/1146827</a></li>
+<li>IHME 报告页：<a href="https://www.healthdata.org/research-analysis/library/lancet-commission-21st-century-global-threats-health" target="_blank" rel="noopener noreferrer">https://www.healthdata.org/research-analysis/library/lancet-commission-21st-century-global-threats-health</a></li>
+<li>论文 DOI：<a href="https://doi.org/10.1016/S0140-6736(26)01714-9" target="_blank" rel="noopener noreferrer">https://doi.org/10.1016/S0140-6736(26)01714-9</a></li>
+</ul>
+<p class="status"><strong>核实状态</strong>：多来源确认。EurekAlert 官方新闻稿与 IHME 报告页内容一致，DOI 链接可以解析；《柳叶刀》原站对采集员的抓取返回 403，没能直接打开全文页。</p>
+<h3 id="ns-h-23">3.2 世卫组织总干事候选人在柏林世界卫生峰会上首次同台公开亮相，围绕美国退出后的预算削减与全球卫生架构改革提出各自的方案</h3>
+<p><strong>发布时间</strong>：Health Policy Watch 现场报道发于北京时间 2026 年 10 月 12 日 01:54（页面时间柏林 10 月 11 日 19:54）；活动本身在北京时间 10 月 11 日 18:45 到 19:45 举行（世界卫生峰会新闻稿注明 UTC 10:45 到 11:45）。</p>
+<p><strong>发生了什么。</strong> Health Policy Watch 报道：「柏林——世卫组织总干事选举周日（10 月 11 日）在 2026 年柏林世界卫生峰会上迎来了第一场公开的候选人对话，七位已宣布参选者中的四位，讨论了如何让全球卫生机构更能回应需求、更适合其使命这个棘手问题。」报道接着写：「参选者直接谈到了房间里那头高风险的大象：在美国退出之后，这个机构正因严重的预算削减和 25% 的人员缩减而摇摇欲坠，成员国还要求重构全球卫生架构，提升国家主权、消除机构重叠。」报道也写了缺席者：「值得注意的是，三位候选人缺席，包括沙特阿拉伯的 Hanan Balkhy 博士，她因地震导致航班停飞而滞留巴拿马。同样缺席、且没有明确解释原因的，是比利时的 Hans Kluge 博士，以及中国的宋立博士，她的提名上周才被公开确认。」</p>
+<p>据采集员说明：现任总干事谭德塞 2027 年任满，下一任将在 2027 年 5 月的世界卫生大会上由成员国任命。到场的四位（卡塔尔的 Al-Kuwari、印尼卫生部长 Sadikin、西班牙的 Neira、博茨瓦纳提名的 Tamamyan）分别主张三级机构职能审查、回归「基于科学制定规范」、转向一级预防、以患者结局衡量绩效。接下来的看点包括 11 月的日内瓦候选人论坛，以及 2027 年 1 月执委会提名三人。</p>
+<p class="why"><strong>为什么值得 Sofia 注意。</strong> 这条能帮你理解世卫组织在美国（据采集员说明还有阿根廷）退出、人员缩减 25% 之后面临的处境。全球公共卫生的需求没有减少（3.3 的埃博拉疫情就是例子），而负责接住这些需求的机构却在收缩，下一任总干事要解决的，正是「需求涌过来的速度」和「机构接得住的能力」之间越拉越大的差距。</p>
+<p><strong>来源。</strong></p>
+<ul>
+<li>Health Policy Watch 现场报道：<a href="https://healthpolicy-watch.news/who-director-general-forum/" target="_blank" rel="noopener noreferrer">https://healthpolicy-watch.news/who-director-general-forum/</a></li>
+<li>世界卫生峰会官方新闻稿（10 月 5 日发布的活动预告，用于核对议程，本身不在时间窗内）：<a href="https://www.worldhealthsummit.org/news/press-release-world-health-summit-2026-brings-prospective-who-director-general-candidates-together-in-berlin" target="_blank" rel="noopener noreferrer">https://www.worldhealthsummit.org/news/press-release-world-health-summit-2026-brings-prospective-who-director-general-candidates-together-in-berlin</a></li>
+</ul>
+<p class="status"><strong>核实状态</strong>：多来源确认（活动本身）。活动时间、主持人与候选人名单与世界卫生峰会官方新闻稿一致；候选人现场发言内容目前只见 Health Policy Watch 一家详细报道，发言细节属于单一来源。</p>
+<h3 id="ns-h-24">3.3 刚果（金）本迪布焦型埃博拉疫情扩散到北基伍新卫生区，肯尼亚确认首例输入病例并已死亡</h3>
+<p><strong>发布时间</strong>：Al Jazeera 北京时间 2026 年 10 月 11 日 08:23（页面时间 UTC 10 月 11 日 00:23:50）。</p>
+<p><strong>先解释几个词。</strong> 「本迪布焦病毒」是埃博拉病毒属里的一个种，和 2018—2020 年刚果（金）那次大疫情的扎伊尔型不是同一种。「粗病死率」是死亡数除以确诊数，是一个粗略的严重程度指标。「接触者随访率」是指确诊病例的密切接触者里，有多大比例被找到并按时随访观察，它直接决定能不能在下一代病例出现之前把传播链切断。</p>
+<p><strong>发生了什么。</strong> Al Jazeera 报道：「截至 10 月 6 日，世卫组织在刚果（金）记录了 8728 例确诊病例和 4205 例确诊死亡。另有 2269 人康复，粗病死率为 48.2%。」报道写道：「据世卫组织，肯尼亚于 10 月 6 日确认了首例输入的本迪布焦病毒病病例。患者是一名曾在刚果（金）生活的肯尼亚公民，在那里发病，在多家医疗机构接受治疗后，经乌干达前往肯尼亚。」报道强调了这次疫情的特殊困难：「当前的疫情带来了独特的挑战：据世卫组织，本迪布焦病毒病目前没有获批的疫苗或特效治疗。」</p>
+<p>据采集员说明，Al Jazeera 原文还写到疫情波及 7 个省 64 个卫生区，接触者随访率为 80.4%，低于 85% 的目标；肯尼亚病例经乌干达坎帕拉飞抵内罗毕。原文称这些数字来自世卫组织 10 月 8 日的更新与无国界医生 10 月 5 日的更新。</p>
+<p class="why"><strong>为什么值得 Sofia 注意。</strong> 和扎伊尔型不同，本迪布焦型目前没有获批疫苗和特效药，只能靠早发现、支持治疗和感染防控，防控几乎全靠人手。在这种情况下，接触者随访率 80.4%、低于 85% 的目标，就是一个「接的一头跟不上」的信号：每一个漏掉的接触者都可能带出新的传播链，而跨境输入（肯尼亚病例）说明这种压力已经越过国界。对医学生来说，这是理解「接触者追踪、隔离、病死率」这些流行病学概念的现实案例。</p>
+<p><strong>来源。</strong> Al Jazeera：<a href="https://www.aljazeera.com/news/2026/10/11/ebola-spreads-in-eastern-drc-as-kenya-confirms-imported-case" target="_blank" rel="noopener noreferrer">https://www.aljazeera.com/news/2026/10/11/ebola-spreads-in-eastern-drc-as-kenya-confirms-imported-case</a></p>
+<p class="status"><strong>核实状态</strong>：单一来源。时间窗内只有 Al Jazeera 一篇报道，其数字注明引自世卫组织与无国界医生；采集员尝试打开世卫组织疾病暴发新闻的原页面，没能找到对应条目，所以没有独立核对世卫原文。尚未得到其他来源确认。另外请注意：文中数据截止于 10 月 4 日到 8 日，并不是 10 月 11 日当天的新数据。</p>
+<h3 id="ns-h-25">3.4 默沙东 BRUNELLO 关键试验一年结果：靶向 Wnt 通路的三特异性抗体 remigromig 治疗糖尿病黄斑水肿，视力获益不劣于雷珠单抗，但增殖性糖网相关不良事件更多</h3>
+<p><strong>发布时间</strong>：Merck 新闻稿北京时间 2026 年 10 月 11 日 06:10（美东 10 月 10 日晚上 6:10）；MSD 版本 06:15。都在采集窗开始后的十几分钟内。</p>
+<p><strong>先解释几个词。</strong> 「糖尿病黄斑水肿」（DME）是糖尿病损伤视网膜血管、导致视网膜中央区域积液，是糖尿病患者视力下降的主要原因之一。目前的一线治疗是往眼内注射抗 VEGF 药物（比如雷珠单抗），抑制异常的血管生成和渗漏。「Wnt 通路」是细胞里一条重要的信号通路，和血-视网膜屏障的维持有关。「非劣效试验」的目的不是证明新药更好，而是证明新药「不比老药差到一个预先规定的程度」。「BCVA」是最佳矫正视力，用视力表上能多读出几个字母来衡量。「增殖性糖尿病视网膜病变」（PDR）是糖网病更严重的阶段，会长出脆弱的新生血管。</p>
+<p><strong>发生了什么。</strong> Merck 新闻稿写道：「第 1 年时，remigromig 0.5 mg 组的平均 BCVA 提高 9.1 个字母（95% 置信区间 8.1—10.1；经多重性校正 p=0.0129），0.8 mg 组提高 8.7 个字母（95% 置信区间 7.7—9.8；经多重性校正 p=0.0222），雷珠单抗组提高 11.8 个字母（95% 置信区间 10.7—12.8）。各治疗组之间的差异在预先规定的非劣效界值之内，被认为没有临床意义。没有任何次要终点显示优于雷珠单抗。」</p>
+<p>关于安全性：「虽然两个剂量的 remigromig 总体耐受良好，但与增殖性糖尿病视网膜病变（PDR）相关的不良事件在 remigromig 组更常见（0.5 mg 和 0.8 mg 组分别为 6.7% 和 6.1%，雷珠单抗组为 0.9%），包括新发 PDR。」试验规模：「试验纳入 984 名参与者，按 1:1:1 随机分配接受低剂量或高剂量 remigromig 或雷珠单抗，第一年每四周给药一次。」</p>
+<p>据采集员说明，新闻稿称最多 40% 的患者在抗 VEGF 治疗六个月后仍有持续病变；remigromig 换了一条思路，激活 Wnt 通路去修复血-视网膜屏障，而不是直接抑制血管生成。结果在美国眼科学会年会（AAO 2026，新奥尔良）上公布；因不良事件停药的比例也是 remigromig 组更多。</p>
+<p class="why"><strong>为什么值得 Sofia 注意。</strong> 这条很适合练习读非劣效试验：两个剂量组都达到了「不劣于」雷珠单抗的主要终点，但数值上视力获益更少，次要终点没有优势，而且增殖性糖网相关事件约是对照组的 7 倍（6.7%、6.1% 对 0.9%）。「达到主要终点」只是一个起点，安全性信号同样要认真看。</p>
+<p><strong>来源。</strong></p>
+<ul>
+<li>Merck 新闻稿：<a href="https://www.merck.com/news/merck-presents-one-year-results-from-the-pivotal-phase-2b-3-brunello-study-evaluating-remigromig-a-tri-specific-agonist-of-the-wingless-related-integration-site-wnt-pathway-in-adults-with-diabetic/" target="_blank" rel="noopener noreferrer">https://www.merck.com/news/merck-presents-one-year-results-from-the-pivotal-phase-2b-3-brunello-study-evaluating-remigromig-a-tri-specific-agonist-of-the-wingless-related-integration-site-wnt-pathway-in-adults-with-diabetic/</a></li>
+<li>MSD 新闻稿（美加以外版本）：<a href="https://www.msd.com/news/msd-presents-one-year-results-from-the-pivotal-phase-2b-3-brunello-study-evaluating-remigromig-a-tri-specific-agonist-of-thewingless-related-integration-site-wnt-pathway-in-adults-with-diabetic-ma/" target="_blank" rel="noopener noreferrer">https://www.msd.com/news/msd-presents-one-year-results-from-the-pivotal-phase-2b-3-brunello-study-evaluating-remigromig-a-tri-specific-agonist-of-thewingless-related-integration-site-wnt-pathway-in-adults-with-diabetic-ma/</a></li>
+<li>Ophthalmology Times 报道（页面时间为北京时间 10 月 12 日 06:16，略晚于时间窗，仅作旁证）：<a href="https://www.ophthalmologytimes.com/view/aao-2026-brunello-1-year-results-for-remigromig-in-dme" target="_blank" rel="noopener noreferrer">https://www.ophthalmologytimes.com/view/aao-2026-brunello-1-year-results-for-remigromig-in-dme</a></li>
+</ul>
+<p class="status"><strong>核实状态</strong>：多来源确认。Merck 与 MSD 两份官方新闻稿数字一致，Ophthalmology Times 的报道（略晚于时间窗）也给出相同的 +9.1、+8.7、+11.8 个字母数据。注意数据来自企业新闻稿和会议报告，尚未见同行评审全文。</p>
+<h3 id="ns-h-26">3.5 Cardurion 公布 PDE9 抑制剂 tovinontrine 二期结果：射血分数降低的心衰患者低剂量组 NT-proBNP 下降，最高剂量和射血分数保留心衰组无效，呈「反向剂量反应」</h3>
+<p><strong>发布时间</strong>：GlobeNewswire 稿件经 Markets Insider 转载，北京时间 2026 年 10 月 12 日 01:35（UTC 10 月 11 日 17:35）；会议报告时间为北京时间 10 月 12 日 00:00 到 01:30（美国心衰学会官网议程：菲尼克斯时间 10 月 11 日周日上午 9:00 到 10:30，菲尼克斯为 UTC−7）。</p>
+<p><strong>先解释几个词。</strong> 「NT-proBNP」是心脏在承受过大压力时释放的一种标志物，心衰越重通常越高，临床上常用它来辅助诊断和判断病情。「射血分数」是心脏每次收缩能把心室里多大比例的血泵出去，心衰按它分成「射血分数降低」（HFrEF）和「射血分数保留」（HFpEF）两大类。「cGMP」是细胞里的一种第二信使，利钠肽这条保护心脏的通路要靠它传递信号；PDE9 是一种分解 cGMP 的酶，心衰时会上调。「剂量反应」是指药物剂量和效果之间的关系，通常剂量越大效果越强，「反向剂量反应」则是剂量越大效果反而越差。</p>
+<p><strong>发生了什么。</strong> 公司新闻稿写道：「Cycle-1 REF 二期临床试验在全球多个中心把 529 名参与者随机分配到 tovinontrine 的三个剂量组之一或安慰剂组，背景是指南指导的药物治疗。12 周时 NT-proBNP 相对基线的下降，在 tovinontrine 每日两次 2.5 mg 组最大，每日两次 25 mg 组下降略小；NT-proBNP 的下降最早在第 2 周就观察到，并持续到 12 周治疗期结束。」新闻稿接着写：「在本临床试验测试的最高剂量（每日两次 50 mg）下，没有观察到 tovinontrine 对 NT-proBNP 水平的获益。」关于另一项试验：「在 Cycle-2 PEF 试验中，277 名射血分数保留的心衰（HFpEF）患者被随机分配接受 tovinontrine 每日两次 50 mg 或安慰剂。与 Cycle-1 REF 中最高剂量没有 NT-proBNP 效应一致，Cycle-2 PEF 在这个剂量下也没有观察到 NT-proBNP 的显著变化。」</p>
+<p>据采集员说明，公司把这种「剂量越高效果越差」解释为 cGMP 过高触发了反向调节；结果在美国心衰学会年会（HFSA 2026，菲尼克斯）的晚期突破专场公布。</p>
+<p class="why"><strong>为什么值得 Sofia 注意。</strong> 这是今天的第二颗种子，也是一个很好的药理学教学案例。抑制 PDE9 理论上能让利钠肽的保护信号更强，可信号推得太高，身体会启动反向调节把它压回去，于是最高剂量反而没有效果；射血分数保留的那项试验恰好只测了最高剂量，结果也是无效。身体能接住的，是一个刚刚好的量，不是越多越好。需要注意的是：主要终点只是生物标志物 NT-proBNP，新闻稿没有给出具体下降了百分之多少，也不是死亡、住院这类硬终点；「cGMP 过高触发反向调节」是公司的解释，还需要更多研究验证。</p>
+<p><strong>来源。</strong></p>
+<ul>
+<li>Markets Insider 转载的 GlobeNewswire 新闻稿：<a href="https://markets.businessinsider.com/news/stocks/cardurion-pharmaceuticals-presents-phase-2-results-for-tovinontrine-crd-750-a-pde9-inhibitor-as-a-novel-treatment-for-heart-failure-1036614695" target="_blank" rel="noopener noreferrer">https://markets.businessinsider.com/news/stocks/cardurion-pharmaceuticals-presents-phase-2-results-for-tovinontrine-crd-750-a-pde9-inhibitor-as-a-novel-treatment-for-heart-failure-1036614695</a></li>
+<li>GlobeNewswire 原稿（浏览器可以打开，采集员的脚本访问返回 403）：<a href="https://www.globenewswire.com/news-release/2026/10/11/3378505/0/en/cardurion-pharmaceuticals-presents-phase-2-results-for-tovinontrine-crd-750-a-pde9-inhibitor-as-a-novel-treatment-for-heart-failure.html" target="_blank" rel="noopener noreferrer">https://www.globenewswire.com/news-release/2026/10/11/3378505/0/en/cardurion-pharmaceuticals-presents-phase-2-results-for-tovinontrine-crd-750-a-pde9-inhibitor-as-a-novel-treatment-for-heart-failure.html</a></li>
+<li>美国心衰学会 2026 晚期突破研究议程：<a href="https://hfsa.org/asm/late-breaking-clinical-research-2026" target="_blank" rel="noopener noreferrer">https://hfsa.org/asm/late-breaking-clinical-research-2026</a></li>
+</ul>
+<p class="status"><strong>核实状态</strong>：发布事实多来源确认，疗效数字单一来源。美国心衰学会官网议程确认这两项试验在 10 月 11 日上午的晚期突破专场报告；疗效描述只来自公司新闻稿，没有看到同行评审论文或独立媒体给出的具体降幅，尚未得到其他来源确认。</p>
+<h3 id="ns-h-27">3.6 BridgeBio 在美国心衰学会年会公布独立真实世界研究：转甲状腺素蛋白淀粉样心肌病患者用 acoramidis 比用 tafamidis 复合不良结局风险低 18%</h3>
+<p><strong>发布时间</strong>：GlobeNewswire 稿件北京时间 2026 年 10 月 12 日 02:30（美东 10 月 11 日下午 2:30；FinancialContent 转载页 UTC 18:30）。</p>
+<p><strong>先解释几个词。</strong> 「转甲状腺素蛋白淀粉样心肌病」（ATTR-CM）是一种转甲状腺素蛋白错误折叠、沉积在心肌里导致心衰的疾病。acoramidis 和 tafamidis 都是口服的「稳定剂」，让这种蛋白保持正常的四聚体结构、不容易拆散沉积。「真实世界研究」是用医院电子病历等日常诊疗数据做的观察性研究，不是随机分组的试验。「倾向评分匹配」是一种统计方法，尽量把两组病人在年龄、病情等基线特征上配平，让比较更公平，但它没法配平那些没有被记录下来的因素（这叫「残余混杂」）。「HR」（风险比）小于 1 表示风险更低。</p>
+<p><strong>发生了什么。</strong> 新闻稿写道：「在一项对来自美国最大电子病历数据库 Epic COSMOS 的 2684 名 ATTR-CM 患者进行的独立倾向评分匹配分析中，与 tafamidis 相比，acoramidis 与死亡、全因住院、新发房颤和利尿剂加量这一复合终点的风险在统计学上显著降低 18% 相关（HR 0.82；95% 置信区间 0.73—0.93；p&lt;0.01）。」新闻稿也写了没有达到统计学意义的部分：「死亡（HR 0.85；95% 置信区间 0.62—1.20；p=0.34）和新发房颤（HR 0.88；95% 置信区间 0.68—1.13；p=0.31）的差异在数值上有利于 acoramidis，与复合终点一致，但没有达到统计学显著性，这反映出这些长期终点的事件数较少、随访时间有限。」新闻稿自己写明了局限：「和所有观察性研究一样，本研究存在固有局限。尽管倾向评分匹配平衡了患者的基线特征，并且结果在未加权分析和敏感性分析中保持一致，但不能完全排除残余混杂的可能。」</p>
+<p>据采集员说明，研究由 Henry Ford Health 的 David Lanfear 主导，910 人用 acoramidis、1774 人用 tafamidis；心血管住院和心衰住院分别低 27%；全文目前仍在期刊同行评审中。美国心衰学会议程在 10 月 11 日 10:45—11:45 的快速口头报告里列有这项研究。</p>
+<p class="why"><strong>为什么值得 Sofia 注意。</strong> 这条适合练习辨析「真实世界观察性研究」和随机试验的证据等级差异：两种药目前没有头对头的随机试验，这项研究提供了一个参考，但倾向评分匹配不能排除残余混杂，随访也短，死亡和房颤的差异没有统计学意义，而且新闻稿是由生产 acoramidis 的公司发布的。读这类新闻时，把「相关」两个字一直带在心里。</p>
+<p><strong>来源。</strong></p>
+<ul>
+<li>FinancialContent 转载的 GlobeNewswire 新闻稿：<a href="https://www.financialcontent.com/article/gnwcq-2026-10-11-acoramidis-associated-with-significantly-improved-clinical-outcomes-versus-tafamidis-in-attr-cm-in-an-independent-real-world-study-of-us-electronic-health-records" target="_blank" rel="noopener noreferrer">https://www.financialcontent.com/article/gnwcq-2026-10-11-acoramidis-associated-with-significantly-improved-clinical-outcomes-versus-tafamidis-in-attr-cm-in-an-independent-real-world-study-of-us-electronic-health-records</a></li>
+<li>美国心衰学会 2026 议程：<a href="https://hfsa.org/asm/late-breaking-clinical-research-2026" target="_blank" rel="noopener noreferrer">https://hfsa.org/asm/late-breaking-clinical-research-2026</a></li>
+</ul>
+<p class="status"><strong>核实状态</strong>：单一来源。疗效数字只见于 BridgeBio 新闻稿；美国心衰学会官网议程可以确认该研究于 10 月 11 日在会上报告。尚未得到其他来源确认，属于观察性关联，不能读作因果结论。</p>
+<h3 id="ns-h-28">3.7 BridgeBio 在美国骨与矿物质研究学会年会公布 encaleret 三期 CALIBRATE 数据：常染色体显性低钙血症 1 型患者自身的甲状旁腺激素恢复，骨转换和症状改善</h3>
+<p><strong>发布时间</strong>：GlobeNewswire 稿件经 Markets Insider 转载，北京时间 2026 年 10 月 12 日 01:42（UTC 10 月 11 日 17:42）。</p>
+<p><strong>先解释几个词。</strong> 「甲状旁腺激素」（PTH）是调节血钙的关键激素：血钙低时，甲状旁腺分泌 PTH，把血钙升上去。甲状旁腺靠细胞表面的「钙敏感受体」（CaSR）感知血钙高低，它就像一个传感器。「常染色体显性低钙血症 1 型」（ADH1）是 CaSR 发生了功能获得性突变：传感器太敏感，血钙明明偏低，它却「以为」血钙已经够高，于是把 PTH 压低，结果血钙低、尿钙反而高。「负向变构调节剂」是一类药，它不直接堵住受体，而是结合在受体的另一个位置上，把受体的灵敏度往下调。</p>
+<p><strong>发生了什么。</strong> 新闻稿写道：「encaleret 使 91% 的参与者自身的 PTH 分泌恢复到或高于正常下限，而标准治疗组为 0%。」「接受 encaleret 的参与者 100% 报告至少一种 ADH1 症状有所改善，而接受标准治疗的参与者为 46%。」「FDA 已受理 BridgeBio 关于 encaleret 用于 ADH1 的新药申请并授予优先审评，PDUFA 目标审评日期为 2027 年 5 月 8 日；公司也已向欧洲药品管理局提交了上市许可申请。」</p>
+<p>据采集员说明，传统的补钙加活性维生素 D 只能把血钙补上去，还会加重高尿钙；encaleret 是 CaSR 的口服负向变构调节剂，相当于把这个过敏的传感器调回正常灵敏度。ASBMR 2026（波士顿）的口头报告显示，24 周时 91% 的患者 PTH 恢复，骨转换标志物上升，疲劳、肌肉痉挛、麻刺感等症状改善更多。</p>
+<p class="why"><strong>为什么值得 Sofia 注意。</strong> 这是今天「好的那一面」里最漂亮的一个例子。传统办法是从「给」的一头使劲：血钙低就一直补钙，可身体里那个接收信号的传感器出了问题，补进去的钙一部分从尿里漏掉了，还加重了高尿钙。encaleret 换到「接」的一头去解决：把传感器的灵敏度调回正常，身体自己就重新开始分泌 PTH。它也是把生理课里「钙稳态—PTH—CaSR」这一章直接变成药物设计的好例子，等你学到内分泌的时候可以回头看。</p>
+<p><strong>来源。</strong> Markets Insider 转载的 GlobeNewswire 新闻稿：<a href="https://markets.businessinsider.com/news/stocks/encaleret-increased-bone-turnover-and-improved-participant-reported-symptoms-in-the-phase-3-calibrate-trial-in-adh1-1036614700" target="_blank" rel="noopener noreferrer">https://markets.businessinsider.com/news/stocks/encaleret-increased-bone-turnover-and-improved-participant-reported-symptoms-in-the-phase-3-calibrate-trial-in-adh1-1036614700</a></p>
+<p class="status"><strong>核实状态</strong>：单一来源。数据只来自公司新闻稿；ASBMR 2026 的会期（10 月 9 日到 12 日，波士顿）可以由会议信息印证，但具体摘要采集员这次没有单独打开核对。尚未得到其他来源确认。</p>
+<h3 id="ns-h-29">3.8 美国胃肠病学会年会解禁「新闻价值摘要」：多语言测试显示 AI 聊天机器人在越南语中漏判需要急诊情况的比例约 41%，英语为 15%；美国 50 岁以下结直肠癌发病率 23 年上升 89%</h3>
+<p><strong>发布时间</strong>：北京时间 2026 年 10 月 12 日 01:00（ACG 2026 统一解禁时间为美国中部时间 10 月 11 日周日中午 12:00，即美东下午 1:00、UTC 17:00）。</p>
+<p><strong>先解释几个词。</strong> 「早发性结直肠癌」是指 50 岁以下确诊的结直肠癌。「SEER」是美国国家癌症研究所的癌症登记数据库。「年变化百分比」（APC）是每年平均增长或下降的百分比。</p>
+<p><strong>发生了什么。</strong> 美国胃肠病学会（ACG 2026，纳什维尔）公关委员会挑出了一批「有新闻价值的摘要」。页面上的禁发说明是：「ACG 2026 上展示的所有研究都严格禁发，直到 2026 年 10 月 11 日周日美国中部时间中午 12:00、美东时间下午 1:00。」</p>
+<p>第一项和医学 AI 的临床安全有关。作者的解读是：「我们不只看 AI 能不能正确回答胃肠病问题，还要问它在不同语言里识别急症的能力是不是一样好。在四个模型、七种语言里，同一个临床场景可能会因为使用的语言不同而得到不同的建议。没有建议去急诊的比例，从英语的 15% 上升到越南语的约 41%。虽然我们测试的是模拟场景，而不是真实患者的结局，但这引发了对延误就医的担忧。」据采集员说明，ACG 页面上这项摘要的标题没有显示，只给出了作者 Harika Dadigiri。</p>
+<p>第二项是 SEER 数据库的分析：「在美国，50 岁以下成年人确诊的早发性结直肠癌在过去 23 年里增加了 89%。更令人担忧的是，2021 年到 2023 年间年变化百分比加速到接近 10%，说明这一趋势正在快速恶化。」据采集员说明，研究还发现确诊时远处转移更多。同一页上还有 AI 辅助胶囊内镜的敏感度为 93.0% 对 44.0%、粪便筛查阳性后一年内只有 40.8% 的人完成肠镜等结果。</p>
+<p class="why"><strong>为什么值得 Sofia 注意。</strong> 第一项是今天读法的一个很具体的版本：同样一条「要不要去急诊」的建议，给到说英语的人和说越南语的人，接收者得到的质量很不一样。AI 回答得再流利，如果没有按接收者的语言重新校准，给出去的好建议就可能在半路变了样。第二项则和你未来的临床工作直接相关：年轻人的结直肠癌在增加，而「粪便筛查阳性后一年内只有 40.8% 完成肠镜」这个数字说明，筛查发出了信号，接下来的那一步却常常没人接住。</p>
+<p><strong>来源。</strong> 美国胃肠病学会新闻价值摘要页：<a href="https://gi.org/media/press-info-scientific-meeting/featured-science/" target="_blank" rel="noopener noreferrer">https://gi.org/media/press-info-scientific-meeting/featured-science/</a></p>
+<p class="status"><strong>核实状态</strong>：单一来源。均为 ACG 官方页面上的会议摘要作者解读，属于没有经过同行评审全文发表的会议摘要；没有找到独立媒体报道交叉核对。AI 急症识别研究用的是模拟场景，不是真实患者结局。</p>
+<h3 id="ns-h-30">3.9 中山大学与上海交大团队完成全球首个牙龈间充质干细胞治疗 1 型糖尿病的随机双盲安慰剂对照 I 期试验，结果被《Signal Transduction and Targeted Therapy》接收</h3>
+<p><strong>发布时间</strong>：读创/深圳商报北京时间 2026 年 10 月 11 日 17:43。</p>
+<p><strong>先解释几个词。</strong> 「1 型糖尿病」是 T 细胞攻击胰岛 β 细胞导致的自身免疫病，胰岛素替代只能控制血糖，挡不住 β 细胞继续丢失。「间充质干细胞」是一类有免疫调节作用的成体干细胞，可以从骨髓、脐带、牙龈等组织里提取，「牙龈来源」的好处是取材方便。「I 期试验」是新疗法第一次在人身上做的试验，规模很小，主要目的是看安全性。「T 细胞耗竭」是指 T 细胞在长期受刺激后功能减弱的状态。</p>
+<p><strong>发生了什么。</strong> 据读创/深圳商报报道：「研究最终入组18例T1DM患者，按1:1随机分为GMSCs治疗组与安慰剂对照组。受试者每间隔3周接受一次GMSCs注射或安慰剂注射，共计4次治疗，并完成48周随访观察。在安全性评价上，GMSCs治疗未增加低血糖及其他不良事件风险，无严重不良事件发生，证实 GMSCs治疗具有良好的安全性。」报道还写道：「研究证实，GMSCs静脉输注具备良好安全性，可改善T1DM患者残余β细胞功能，并揭示GMSCs可能通过诱导CD8+效应T细胞耗竭减轻胰岛自身免疫损伤的新机制，为T1DM干细胞治疗提供了重要临床证据。」</p>
+<p>据采集员说明，试验由中山大学附属第八医院陈燕铭教授和上海交大医学院郑颂国教授团队牵头。</p>
+<p class="why"><strong>为什么值得 Sofia 注意。</strong> 一种新疗法第一次进入人体时，正确的做法就是今天读法里的「一点一点给」：只入组 18 人，每隔 3 周给一次、一共 4 次，再随访 48 周，先把安全性一步一步看清楚。需要提醒：这是只有 18 人的 I 期试验，主要目的是看安全性，报道没有给出疗效的具体数字（比如 C 肽的变化），论文目前是「被接收」状态；报道中提到的影响因子说法采集员没有核实，本稿不引用。</p>
+<p><strong>来源。</strong> 读创/深圳商报：<a href="https://dcapp.netwin.cn/a/202610/11/s6acb5a49e4b03169d5dc04f9.html" target="_blank" rel="noopener noreferrer">https://dcapp.netwin.cn/a/202610/11/s6acb5a49e4b03169d5dc04f9.html</a></p>
+<p class="status"><strong>核实状态</strong>：单一来源。目前只找到这一篇媒体报道，没能打开期刊上的论文页面或 DOI 核对数据。尚未得到其他来源确认。</p>
+<h3 id="ns-h-31">课程知识桥（不计入条目）</h3>
+<p>今天医学这一组里，有好几个点正好能接上你的课。第一，3.5 的 tovinontrine 是药理学里「剂量—效应关系」和「受体/通路的反向调节」最生动的例子：效果并不总是随剂量单调上升，信号推过了头，身体会把它压回去；学到药效学的「治疗窗」时，可以拿它来想。第二，3.7 的 encaleret 对应生理学里「钙稳态—PTH—钙敏感受体」那一章：一个传感器的灵敏度出了问题，整条反馈环都会跟着偏；负向变构调节剂则是药理学里「变构调节」的现成例子。第三，3.4 的 remigromig 是读「非劣效试验」的好材料：达到主要终点不等于更好，安全性信号要单独看。第四，3.6 的 acoramidis 研究是流行病学里「倾向评分匹配」和「残余混杂」的教材，可以和随机对照试验对照着理解证据等级。第五，3.1 的《柳叶刀》报告用的是公共卫生里的 DALY，3.3 的埃博拉疫情用的是「病死率」「接触者随访」，都是预防医学课上的核心概念。</p>
+<hr>
+<h2 id="ns-h-32">四、个人轻提示（连读 · 窗内 9 条）</h2>
+<p>这一组来自你授权的两个 Gmail 邮箱和 GitHub 活动，全程只读。aimfllyys 邮箱窗内只有 2 封邮件（1 封 GitHub Actions 失败通知、1 封 Readwise 通讯），sofiapintos190 邮箱窗内有 1 封（Google Play 条款更新）。日历、笔记和云盘类的连接器这次没有可读的，所以学业日程这一块是空的，本稿没有编造任何日程；从 GitHub 侧面看，StudySolo 的课堂内容仓库窗内也没有新的课堂内容提交。GitHub 方面，窗内最热闹的是 ChatSolo，一天里向 main 连推了 22 个提交。今天是周一，这一组可以正常当轻提示看，大部分都不需要你马上动手。链接里，Gmail 和私有仓库需要登录才能打开；验证码、密码重设链接、带工作区编号的账单网址这类内容一律没有写进来。</p>
+<p><strong>先解释两个词。</strong> 下面多次出现的 CI（持续集成），是代码每次提交或合并时自动跑一遍的检查流程，比如类型检查、代码规范检查、单元测试、构建；PR（拉取请求）是「我改好了一批代码，请求合进主分支」的那张单子。</p>
+<p><strong>一句话看完这一组。</strong> 这一天你在 ChatSolo 上「给」得又多又快（22 个提交、新增七千多行），而且部署都接住了；另一边有两处「接」的环节空着：昨天那期早报的 PR 一早就开好了、却晚了一整天才合入，deepseek-harness 的测试已经连续失败十天、没有人接手。</p>
+<h3 id="ns-h-33">4.1 2026-10-11 那期早报《把内胎按进水里，看它在哪里冒泡》的 PR #173 在窗内开出并通过 CI，但直到窗口结束后几分钟才合入 main</h3>
+<p><strong>时间</strong>：PR 开出于北京时间 2026 年 10 月 11 日 07:40:10，CI 07:40 起跑并通过；合入 main 是 10 月 12 日 06:13:42（窗外，紧贴窗口结束）；同步 dev 的 PR #174 在 06:13:58 合入（窗外）。</p>
+<p><strong>发生了什么。</strong> PR 标题是「content(briefs): 2026-10-11 把内胎按进水里，看它在哪里冒泡」，设计课注释里的 THESIS 是「越早让岔子自己冒出来，就越好补；只看交上来的部分，漏洞会一直漏。」页面开头的说明写着：「周日上午的浅色车棚。前轮卸在旁边，内胎按进水盆：打气之后看起来鼓，并不等于没漏。拖过水面，快漏会马上冒泡；有一处慢漏要在那一段停一会儿才出现。」这个 PR 在 10 月 11 日早上 07:40 就开出来了，CI 一次通过，但它在整整一天里一直没有合入，直到今天 06:13 才 squash 合进 main，并随即用 #174 同步到 dev。也就是说，10 月 11 日那期在博客上线比预定晚了大约一天。</p>
+<p><strong>一句轻提示。</strong> 东西早就做好、检查也过了，差的只是「有人接手验收、点下合并」这一步。这一步现在已经补上了，那一期已经在线上。合入时刻在本期时间窗之外，这里只作为背景。</p>
+<p><strong>来源。</strong></p>
+<ul>
+<li><a href="https://github.com/AIMFllyYS/Blog-YuSheng/pull/173" target="_blank" rel="noopener noreferrer">https://github.com/AIMFllyYS/Blog-YuSheng/pull/173</a></li>
+<li><a href="https://github.com/AIMFllyYS/Blog-YuSheng/actions/runs/38095827640" target="_blank" rel="noopener noreferrer">https://github.com/AIMFllyYS/Blog-YuSheng/actions/runs/38095827640</a></li>
+<li><a href="https://github.com/AIMFllyYS/Blog-YuSheng/pull/174" target="_blank" rel="noopener noreferrer">https://github.com/AIMFllyYS/Blog-YuSheng/pull/174</a></li>
+</ul>
+<p class="status"><strong>核实状态</strong>：多来源确认（GitHub PR 页面、Actions 运行记录与 AIMFllyYS 的账户事件流三处时间一致）。</p>
+<h3 id="ns-h-34">4.2 deepseek-harness 的「真实 DeepSeek API」端到端定时测试在窗内又一次失败，已经连续失败十天</h3>
+<p><strong>时间</strong>：运行开始于北京时间 2026 年 10 月 11 日 13:43:25，13:44:10 失败结束；GitHub 通知邮件 13:44:30 到达。</p>
+<p><strong>先解释一个词。</strong> bubblewrap 是 Linux 上一个轻量的沙箱工具，测试前要先把它准备好；「unrestrict userns」是放开一项系统设置，让它能正常运行。</p>
+<p><strong>发生了什么。</strong> 通知邮件写着：「[AIMFllyYS/deepseek-harness] 运行失败：E2E（真实 DeepSeek API）- master（c291e79）」，用时 45.0 秒，结束于 UTC 2026-10-11 05:44:10，作业 e2e 失败（3 条注释），注释里写着「进程以退出码 22 结束」。据采集员说明，这次在「准备 bubblewrap（放开 userns）」这一步就失败了，还没走到调用 DeepSeek API，所以更像是运行环境准备的问题，而不是 API 或余额问题。Actions 列表显示，2026 年 10 月 2 日到 10 月 11 日共 10 次定时运行全部失败；这个 fork 自 deepseek-ai/deepseek-harness 的仓库，最后一次推送是 2026 年 9 月 11 日。</p>
+<p><strong>一句轻提示。</strong> 这盏红灯每天都按时亮、按时发邮件，已经连续十天了，可是没有人去接这封信。你可以二选一：如果这个 fork 还想用，找个时间看一下准备沙箱那一步（也可以对照窗外前瞻 B 里 GitHub 运行器系统升级的提示一起看）；如果暂时不用了，可以先把这条定时测试停掉，免得每天收一封没有人处理的失败通知。</p>
+<p><strong>来源。</strong></p>
+<ul>
+<li><a href="https://github.com/AIMFllyYS/deepseek-harness/actions/runs/38115705316" target="_blank" rel="noopener noreferrer">https://github.com/AIMFllyYS/deepseek-harness/actions/runs/38115705316</a></li>
+<li><a href="https://mail.google.com/mail/?authuser=aimfllyys@gmail.com#all/thread-f:1878730967409479661" target="_blank" rel="noopener noreferrer">https://mail.google.com/mail/?authuser=aimfllyys@gmail.com#all/thread-f:1878730967409479661</a></li>
+</ul>
+<p class="status"><strong>核实状态</strong>：多来源确认（GitHub Actions 运行页、作业步骤与注释和 Gmail 通知邮件三处一致；「连续 10 次失败」来自 Actions 运行列表）。</p>
+<h3 id="ns-h-35">4.3 1037Solo-ChatSolo 在窗内向 main 连推 22 个提交，主体是画布与工作区体验的一大轮完善</h3>
+<p><strong>时间</strong>：第一个提交是北京时间 2026 年 10 月 11 日 12:50:37（d40b446），最后一个提交是 10 月 12 日 00:03:58（1412b39）；画布相关的主要提交在 15:06:51（3517b9b）、21:29:38（996aaba）、23:50:01（4f3f7bf）。</p>
+<p><strong>发生了什么。</strong> 三个画布相关提交的标题分别是「完成画布导航和云端附件工作流」「画布：改进布局、延迟加载详情和生成活动」「画布：把清空操作换成可撤回的对话折叠」。据采集员统计，窗内 22 个提交全部由 AIMFllyYS 推到 main，逐个累加合计新增 7863 行、删除 1634 行。大多数改动围绕画布：节点内容开在可以拖动的锚定窗口里，分支保持在同一张图中，窄屏下显示压缩反馈，以及把「清空」改成可以撤回的「折叠对话」。其中 3517b9b 这一个提交就改了 65 个文件，新增 937 行、删除 127 行。</p>
+<p><strong>一句轻提示。</strong> 「把清空换成可撤回的折叠」这个改动很贴心：用户一下子塞进去的内容太多时，不必一键清掉，可以先收起来，等需要的时候再展开。一天推 22 个提交、七千多行，是很大的一次「给」，好在下面 4.6 显示部署都接住了。</p>
+<p><strong>来源（私有仓库，需要登录 AIMFllyYS）。</strong></p>
+<ul>
+<li><a href="https://github.com/AIMFllyYS/1037Solo-ChatSolo/commit/3517b9b4a0654d00ab91a6af6237fa497a0e25cd" target="_blank" rel="noopener noreferrer">https://github.com/AIMFllyYS/1037Solo-ChatSolo/commit/3517b9b4a0654d00ab91a6af6237fa497a0e25cd</a></li>
+<li><a href="https://github.com/AIMFllyYS/1037Solo-ChatSolo/commit/4f3f7bf7d26b7fff0c736c89ac6418b323abcb01" target="_blank" rel="noopener noreferrer">https://github.com/AIMFllyYS/1037Solo-ChatSolo/commit/4f3f7bf7d26b7fff0c736c89ac6418b323abcb01</a></li>
+<li><a href="https://github.com/AIMFllyYS/1037Solo-ChatSolo/commit/996aabab7e41541f0f020ffd581dd5adc077e276" target="_blank" rel="noopener noreferrer">https://github.com/AIMFllyYS/1037Solo-ChatSolo/commit/996aabab7e41541f0f020ffd581dd5adc077e276</a></li>
+</ul>
+<p class="status"><strong>核实状态</strong>：单一来源（数据全部来自 GitHub 提交记录，提交说明是开发者自己写的，没有另外的发布说明可以对照）。</p>
+<h3 id="ns-h-36">4.4 ChatSolo 窗内上线了「分享」功能改造，并修复了分享链接在不同部署环境之间串用的问题</h3>
+<p><strong>时间</strong>：44e5bd3 在北京时间 2026 年 10 月 11 日 20:54:02；04c17b2 在 21:09:55。</p>
+<p><strong>发生了什么。</strong> 两个提交的标题是「分享：复用原生工作区并支持复制公开对话」和「分享：在不同部署环境之间隔离链接」。据采集员说明，44e5bd3 是窗内体量最大的单个提交，改了 86 个文件，新增 1429 行、删除 196 行，让公开分享复用原生工作区并支持复制公开对话；十几分钟后的 04c17b2（4 个文件，新增 92 行、删除 8 行）把不同部署环境的分享链接隔离开，避免一个环境生成的链接落到另一个环境里。两次推送对应的 deploy-mainecs 部署都显示成功。</p>
+<p><strong>来源（私有仓库）。</strong></p>
+<ul>
+<li><a href="https://github.com/AIMFllyYS/1037Solo-ChatSolo/commit/44e5bd30607fac5cba37949281ab10f2907ea034" target="_blank" rel="noopener noreferrer">https://github.com/AIMFllyYS/1037Solo-ChatSolo/commit/44e5bd30607fac5cba37949281ab10f2907ea034</a></li>
+<li><a href="https://github.com/AIMFllyYS/1037Solo-ChatSolo/commit/04c17b24d56fa55a4da6449dbed7fd55b9ad9381" target="_blank" rel="noopener noreferrer">https://github.com/AIMFllyYS/1037Solo-ChatSolo/commit/04c17b24d56fa55a4da6449dbed7fd55b9ad9381</a></li>
+</ul>
+<p class="status"><strong>核实状态</strong>：单一来源（只有 GitHub 提交与对应的 Actions 记录，没有用户侧公告）。</p>
+<h3 id="ns-h-37">4.5 ChatSolo 窗内调整了智能模式的选模策略，并开始向用户展示上下文压缩与精确到单个对话的计费</h3>
+<p><strong>时间</strong>：9b19db9 在北京时间 2026 年 10 月 11 日 13:25:59；2637f8d 在 18:19:08；3ee452c 在 18:21:18；aa26b4e 在 20:53:55。</p>
+<p><strong>先解释一个词。</strong> 「上下文压缩」是指对话太长、超出模型一次能读进去的上限（上下文窗口）时，把前面的内容压缩成摘要再交给模型，让模型接得住。</p>
+<p><strong>发生了什么。</strong> 三个提交的标题是「路由：智能模式优先选择经过验证的经济型模型」「上下文：提供持久化压缩并显示精确的对话计费」「图片：选择经过验证的 xhuoai base64 返回路线」。据采集员说明，这几处改动都和「钱花在哪、模型怎么选」有关：智能模式优先选经过验证的经济型模型（10 个文件，新增 206 行、删除 3 行）；上下文压缩改为持久化，并显示精确的对话计费（27 个文件，新增 325 行、删除 129 行）；图片功能改走经过验证的 xhuoai base64 返回路线（13 个文件，新增 430 行、删除 20 行）。另外 3ee452c 把科学计算和交互式工作区统一到了一起（58 个文件，新增 504 行、删除 138 行）。</p>
+<p><strong>一句轻提示。</strong> 上下文压缩这件事和今天的读法几乎是同一个道理：模型一次能接住的内容有上限，把长对话按它接得住的分量压缩好再交给它，比一股脑全塞进去更稳，也更省钱。</p>
+<p><strong>来源（私有仓库）。</strong></p>
+<ul>
+<li><a href="https://github.com/AIMFllyYS/1037Solo-ChatSolo/commit/aa26b4e81b6c1e4e3585d887443a4260286686ba" target="_blank" rel="noopener noreferrer">https://github.com/AIMFllyYS/1037Solo-ChatSolo/commit/aa26b4e81b6c1e4e3585d887443a4260286686ba</a></li>
+<li><a href="https://github.com/AIMFllyYS/1037Solo-ChatSolo/commit/2637f8da8a1116ffe81981f4b030b021b41f8cfa" target="_blank" rel="noopener noreferrer">https://github.com/AIMFllyYS/1037Solo-ChatSolo/commit/2637f8da8a1116ffe81981f4b030b021b41f8cfa</a></li>
+<li><a href="https://github.com/AIMFllyYS/1037Solo-ChatSolo/commit/9b19db9f2d06f7783c77aca9d8d256eed6e31da4" target="_blank" rel="noopener noreferrer">https://github.com/AIMFllyYS/1037Solo-ChatSolo/commit/9b19db9f2d06f7783c77aca9d8d256eed6e31da4</a></li>
+</ul>
+<p class="status"><strong>核实状态</strong>：单一来源（只有提交说明与改动统计，没有看到对应的价格或模型清单文档可以交叉核对）。</p>
+<h3 id="ns-h-38">4.6 ChatSolo 窗内 31 次 Actions 运行里 30 次成功、1 次部署被取消，凌晨的定时 CI 也是绿的</h3>
+<p><strong>时间</strong>：被取消的 deploy-mainecs 在北京时间 2026 年 10 月 11 日 15:07:59；最后一次推送部署在 10 月 12 日 00:04:52；定时 ci 在 10 月 12 日 05:58:19。</p>
+<p><strong>发生了什么。</strong> 运行记录里能看到「deploy-mainecs push main completed success」「ci schedule main completed success」，以及唯一一条「deploy-mainecs push main completed cancelled」。据采集员说明，每次推送都会触发 ci、deploy-mainecs、security-audit 三条工作流，窗内共 31 次运行；唯一没有成功的是 15:07 那次部署被取消，紧接着的下一次推送（16:15）部署成功，看起来是新推送顶掉了旧部署，而不是故障。这说明 4.3 到 4.5 的改动已经部署到主 ECS 上了。</p>
+<p><strong>一句轻提示。</strong> 一天推了 22 个提交，部署流水线一次次都接住了，凌晨的定时检查也是绿的。这是今天个人侧最让人放心的一条。</p>
+<p><strong>来源（私有仓库）。</strong></p>
+<ul>
+<li><a href="https://github.com/AIMFllyYS/1037Solo-ChatSolo/actions/runs/38153956075" target="_blank" rel="noopener noreferrer">https://github.com/AIMFllyYS/1037Solo-ChatSolo/actions/runs/38153956075</a></li>
+<li><a href="https://github.com/AIMFllyYS/1037Solo-ChatSolo/actions/runs/38178521861" target="_blank" rel="noopener noreferrer">https://github.com/AIMFllyYS/1037Solo-ChatSolo/actions/runs/38178521861</a></li>
+</ul>
+<p class="status"><strong>核实状态</strong>：单一来源（只来自 GitHub Actions 运行记录，没有线上服务的独立健康检查可以对照）。</p>
+<h3 id="ns-h-39">4.7 1037Solo-StudySolo 的 Supabase 保活与备份在窗内按时成功，但 master 分支的 ci 从窗口开始前就一直是红的</h3>
+<p><strong>时间</strong>：supabase-keepalive 在北京时间 2026 年 10 月 11 日 07:32:11；supabase-backup 在 08:29:31；最近一次 ci 失败在 10 月 11 日 01:52:30（窗外，窗内没有新的 ci 运行）。</p>
+<p><strong>发生了什么。</strong> 运行记录显示「supabase-keepalive schedule master success」「supabase-backup schedule master success」，而最近一次 ci 的结果是「类型检查 / 代码规范 / 测试 / 构建 失败，React 组件测试（vitest）」。这是你用来做期末复习的课堂内容工作站仓库：数据库保活和备份两条定时任务在窗内都正常完成；不过 master 最近一次 ci（窗口开始前约四小时）在 React 组件测试这一步失败，之后整个窗内没有新的推送去修它，所以窗口结束时它仍然是失败状态。据采集员说明，另有一个 PR #196（DoH 回退）从 10 月 9 日起保持打开，窗内没有动静。</p>
+<p><strong>一句轻提示。</strong> 数据是安全的，保活和备份都按时完成了。master 上那个失败的组件测试（前一天的早报提到过，是一个找不到「旧设备 API」按钮的测试）还在等你，这周有空时看一眼就好。</p>
+<p><strong>来源。</strong></p>
+<ul>
+<li><a href="https://github.com/AIMFllyYS/1037Solo-StudySolo/actions/runs/38095368909" target="_blank" rel="noopener noreferrer">https://github.com/AIMFllyYS/1037Solo-StudySolo/actions/runs/38095368909</a></li>
+<li><a href="https://github.com/AIMFllyYS/1037Solo-StudySolo/actions/runs/38098599381" target="_blank" rel="noopener noreferrer">https://github.com/AIMFllyYS/1037Solo-StudySolo/actions/runs/38098599381</a></li>
+<li><a href="https://github.com/AIMFllyYS/1037Solo-StudySolo/actions/runs/38073511570" target="_blank" rel="noopener noreferrer">https://github.com/AIMFllyYS/1037Solo-StudySolo/actions/runs/38073511570</a></li>
+</ul>
+<p class="status"><strong>核实状态</strong>：单一来源（全部来自 GitHub Actions 与 PR 列表；失败本身的通知邮件在窗外，没有收录为独立条目）。</p>
+<h3 id="ns-h-40">4.8 Google Play 通知 sofiapintos190 账号：服务条款将在 2026 年 11 月 5 日更新</h3>
+<p><strong>时间</strong>：北京时间 2026 年 10 月 11 日 08:57:50。</p>
+<p><strong>发生了什么。</strong> 邮件写道：「2026 年 11 月 5 日，我们将对 Google Play 服务条款做一些修改。这些修改不会影响你使用 Google Play 的方式，但应该能帮你更容易地理解在使用我们的服务时可以期待 Google Play 做什么，以及我们期待你做什么。」实质改动是：「适用条款：我们更新了条款中『内容』的定义，明确它包括系统服务（包括但不限于 Google Play 服务提供的系统服务）。」邮件最后写着：「在这些修改之后继续使用 Google Play，即表示你同意新条款。」</p>
+<p><strong>一句轻提示。</strong> 这是一封强制性的服务公告，不需要你做任何操作。据采集员说明，它和你的 PocketWebShell（Android 网页应用壳）项目可能有一点点关系，但邮件本身没有涉及开发者条款。</p>
+<p><strong>来源。</strong> <a href="https://mail.google.com/mail/?authuser=sofiapintos190@gmail.com#all/thread-f:1878712932065211856" target="_blank" rel="noopener noreferrer">https://mail.google.com/mail/?authuser=sofiapintos190@gmail.com#all/thread-f:1878712932065211856</a></p>
+<p class="status"><strong>核实状态</strong>：单一来源（只有 Google 官方邮件本身，没有打开外部条款页面核对）。</p>
+<h3 id="ns-h-41">4.9 Readwise 每周精选 Wisereads 第 164 期送达，其中收录了前 OpenAI 安全报告负责人 David Robinson 的辞职文章</h3>
+<p><strong>时间</strong>：北京时间 2026 年 10 月 12 日 03:53:32。</p>
+<p><strong>发生了什么。</strong> 这期通讯里有三段和 AI 安全、智能体有关的摘要。第一段写道：「David Robinson 在辞职前负责过 OpenAI 12 次前沿发布的安全报告。他承认很多前同事是出于好意，实验室也在努力小心，但他认为标准需要高得多。『鉴于今天的风险，前沿实验室需要像核电站或繁忙的机场那样运行，层层冗余、仔细而耗时地规划，这样偶尔出现、也不可避免的人为失误，才不会为灾难打开一扇门。』」第二段写道：「成千上万个 AI 智能体组成的集群几乎不需要管理，这让沃顿商学院的 Ethan Mollick 收回了自己一年来的建议。」第三段写道：「据《纽约时报》的 Elizabeth Dias 报道，许多签了保密协议的宗教领袖和学者，一直在就 Claude 的道德观以及它是否可能有意识向 Anthropic 提供建议。」</p>
+<p><strong>一句轻提示。</strong> 这是阅读推荐，不是需要处理的事务。Robinson 那句「层层冗余、仔细而耗时地规划」和今天的读法很合拍：不追求最快地往外推，而是让每一层都接得住偶尔的失误。据采集员说明，三篇原文分别在 The Atlantic、One Useful Thing 和《纽约时报》，本稿没有打开这些网页核对，只依据通讯里的摘要和引文。</p>
+<p><strong>来源。</strong> <a href="https://mail.google.com/mail/?authuser=aimfllyys@gmail.com#all/thread-f:1878784383858576736" target="_blank" rel="noopener noreferrer">https://mail.google.com/mail/?authuser=aimfllyys@gmail.com#all/thread-f:1878784383858576736</a></p>
+<p class="status"><strong>核实状态</strong>：单一来源（只依据通讯邮件里的摘要与引文，原文没有核实；「12 次前沿发布」这个数字出自邮件原文）。</p>
+<hr>
+<h2 id="ns-h-42">五、窗外前瞻（2 条，不在采集时间窗内，只作临近截止的提醒）</h2>
+<h3 id="ns-h-43">前瞻 A. OpenCode Go 的支付宝自动扣款授权已失效，需要在 2026 年 10 月 17 日订阅到期前重新授权（不在窗内）</h3>
+<p><strong>时间</strong>：第一封邮件是北京时间 2026 年 10 月 1 日 05:28:21；提醒信是 10 月 9 日 03:09:24。两封都在本期采集窗外。</p>
+<p><strong>发生了什么。</strong> 第一封邮件写道：「您的 OpenCode Go 订阅所绑定的支付宝自动扣款授权已失效。为避免订阅在 2026年10月17日 到期后中断，请在到期前重新授权。操作只需约一分钟，续费日之前不会扣款。」提醒信写道：「提醒你一下：你的 OpenCode Go 已开启自动续费，但目前绑定的支付宝授权已失效或需要重新确认，暂时无法用于自动续费。为了让 Go 顺利续费，麻烦你登录 OpenCode 控制台，选择订阅所在的工作区，在账单设置里重新授权一下支付宝。」据采集员说明，窗内没有新的 OpenCode 邮件，也没有收到「已重新授权」的确认信，所以从邮箱这边看，这件事还没有处理完。操作入口是 OpenCode 控制台的账单设置，邮件里有直达链接，本稿不转抄带工作区编号的具体网址。</p>
+<p><strong>一句轻提示。</strong> 距离 10 月 17 日还有 5 天，今天是周一，正好可以花一分钟点一下。如果已经处理过，忽略这条就好。</p>
+<p><strong>来源。</strong></p>
+<ul>
+<li><a href="https://mail.google.com/mail/?authuser=aimfllyys@gmail.com#all/thread-f:1877793781842953279" target="_blank" rel="noopener noreferrer">https://mail.google.com/mail/?authuser=aimfllyys@gmail.com#all/thread-f:1877793781842953279</a></li>
+<li><a href="https://mail.google.com/mail/?authuser=aimfllyys@gmail.com#all/thread-f:1878509816217644697" target="_blank" rel="noopener noreferrer">https://mail.google.com/mail/?authuser=aimfllyys@gmail.com#all/thread-f:1878509816217644697</a></li>
+</ul>
+<p class="status"><strong>核实状态</strong>：多来源确认（同一发件方两封独立邮件给出相同的截止日期和要求）；不在采集窗内。</p>
+<h3 id="ns-h-44">前瞻 B. GitHub Actions 的 ubuntu-latest 标签将从 2026 年 10 月 19 日起迁移到 Ubuntu 26（不在窗内）</h3>
+<p><strong>时间</strong>：这条提示出现在窗内 10 月 11 日 13:44 那次 deepseek-harness 运行的注释里；迁移本身从 10 月 19 日开始，在窗外。</p>
+<p><strong>先解释一个词。</strong> 「ubuntu-latest」是 GitHub Actions 工作流里常写的一个运行器标签，意思是「用最新版的 Ubuntu 系统来跑」。标签不变，但它背后指向的系统版本会被 GitHub 更换。</p>
+<p><strong>发生了什么。</strong> 运行注释的原文是：「ubuntu-latest 标签将从 2026 年 10 月 19 日开始迁移到 Ubuntu 26。更多信息请见 <a href="https://github.com/actions/runner-images/issues/14748" target="_blank" rel="noopener noreferrer">https://github.com/actions/runner-images/issues/14748</a>」。据采集员说明，你的多个仓库（ChatSolo、StudySolo、Blog-YuSheng 等）都在用 GitHub Actions，如果工作流写的是 ubuntu-latest，10 月 19 日之后底层系统会换成 Ubuntu 26，可能让一些依赖系统版本的步骤出问题；deepseek-harness 现在正卡在 bubblewrap、userns 这类和系统相关的步骤上，这条提示对它尤其相关。采集员只确认了提示原文和 issue 链接有效，没有逐个检查各仓库的 runs-on 写法。</p>
+<p><strong>一句轻提示。</strong> 不用现在动手。10 月 19 日之后如果哪个仓库的 CI 突然在系统相关的步骤上报红，先想到这一条。</p>
+<p><strong>来源。</strong></p>
+<ul>
+<li><a href="https://github.com/AIMFllyYS/deepseek-harness/actions/runs/38115705316" target="_blank" rel="noopener noreferrer">https://github.com/AIMFllyYS/deepseek-harness/actions/runs/38115705316</a></li>
+<li><a href="https://github.com/actions/runner-images/issues/14748" target="_blank" rel="noopener noreferrer">https://github.com/actions/runner-images/issues/14748</a></li>
+</ul>
+<p class="status"><strong>核实状态</strong>：单一来源（来自 GitHub Actions 运行注释，issue 链接已打开确认存在，但没有阅读 issue 全文）；迁移日期不在采集窗内。</p>
+<hr>
+<h2 id="ns-h-45">六、刻意没有收录的材料</h2>
+<p>下面这些在采集时看到了，但因为首发早于采集窗、往期已经收过、只是窗前事件的转载，或者主体材料在窗外，没有放进今天的条目。列在这里，是为了让你知道它们不是被漏掉的，而是被有意排除的。</p>
+<ul>
+<li><strong>人工智能</strong>：Anthropic《调查模型的意外行为》报告（Haiku 4.5 向费城警方提交虚假线索、20 份签证申请、全面断开内部评测联网）发布于 10 月 9 日，10 月 10 日到 11 日的转述都只是二次报道；白宫「超级智能特别工作组」关于「事件通报不是可选项」的声明发于美东 10 月 9 日（周五）晚，彭博关于「责任追究」的分析稿发布于 UTC 10 月 10 日 15:34 之前；纳德拉在 X 上的「紧急刹车」长文发于 UTC 10 月 10 日 14:43（北京时间 22:43），TechCrunch 的报道比窗口开始早 13 分钟；马斯克那条「拍信用卡照片发给 AI 代购」的帖子发于 UTC 10 月 10 日 21:04，在窗外；Odyssey-3 世界模型公开预览的官方博客是 10 月 8 日；Google Cloud 的 Gemini 智能体（10 月 8 日）、SynthID Detector 全球开放（10 月 7 日）、JetBrains Mellum2.1（10 月 8 日）、Qwen-Image-2.1-Turbo（10 月 9 日）、Claude Managed Agents 动态工作流公测（10 月 9 日到 10 日）、Microsoft Decision-1（10 月 9 日）；路透社/益普索 AI 民调（10 月 7 日）、Jefferies「资本毁灭」警告（10 月 9 日）、Axios「AI 公司演练灾难次日」（10 月 9 日）、英国信息专员办公室的基础模型监管报告（10 月 8 日）、欧盟 Virkkunen 采访（10 月 9 日）、加州 Newsom 的 AI 行政令 N-9-26（9 月 18 日，有博客误标为 10 月 11 日）；Meta、MIT 和华盛顿大学的 Context Language Models 论文（arXiv 原文 9 月 29 日）；Vals AI 关于小米 MiMo v2.6 强化学习环境泄题的审计（10 月 7 日）、AI 克隆 Adobe 全家桶的 ArtCraft 项目（10 月 7 日报道）、arXiv 每月两篇投稿上限（10 月 1 日）；中共中央、国务院《关于发展新质生产力的意见》及国家发改委答记者问（10 月 10 日见报）；2026 武汉人工智能与机器人博览会（10 月 10 日开幕）。</li>
+<li><strong>科技</strong>：Deno 团队加入 Cloudflare、Deno Deploy 六个月后关停（Deno 官方博客日期 10 月 9 日）；Citrix NetScaler 新的严重漏洞 CVE-2026-107406（CVSS 9.5，Citrix 公告首发 10 月 8 日，iTnews 10 月 12 日的报道只是跟进）；ASML 对韩国客户全线上调光刻机备件价格 10%（The Elec 韩文首发约在 10 月 10 日）；三星在越南太原建 40.9 亿美元存储芯片测试厂（10 月 5 日首发）；三星明年 80% 存储产能被长协锁定（源自韩国经济日报「本周稍早」的报道）；JDI 茂原工厂转卖新光电气做封装基板（公司公告 9 月 30 日）；美国联邦汽车运输安全管理局允许无人驾驶卡车用警示灯代替三角牌（豁免 10 月 7 日生效、10 月 9 日刊登联邦公报）；马斯克在 X Takeover 活动上谈星舰第 15 次飞行目标与 Terafab（完整视频帖发于北京时间 10 月 11 日 05:31，差半小时进入时间窗，活动本身更早）；日本第一兴商 870 万条客户数据可能外泄（公司公告 10 月 8 日）；普林斯顿等离子体物理实验室「先加热再加燃料」的聚变点火新路径（10 月 8 日）；Infleqtion 30 个逻辑量子比特（9 月 24 日）；谷歌就欧盟《数字市场法》相关命令向欧盟普通法院上诉（9 月 30 日前后）；Estlink 2 海底电缆故障（今年 4 月的旧闻）。</li>
+<li><strong>医学</strong>：MCO-010 光遗传学疗法治疗视网膜色素变性的 4 年 REMAIN 数据（AAO 2026 于 10 月 11 日报告，但能找到的报道页面时间是北京时间 10 月 12 日 06:00:49，略晚于时间窗，而且同一组数据此前已在视网膜学会年会公布过）；NEJM 光遗传学多人临床数据（10 月 7 日到 8 日已发表，已进入 10 月 8 日的早报）；EASD「感染新冠与此后 1 型糖尿病风险降低」研究、自动乳腺超声比手持超声假阳性少的 JACR 研究（时间窗内只有二手转载，原始发布在数周到数月之前）；国家卫健委与市场监管总局 50 项食品安全国家标准（10 月 11 日的解读文章称标准是「不久前」发布的）；时间窗内没有检索到 FDA、国家药监局、欧洲药品管理局的新药或器械批准公告（FDA 最近一项新药批准是 10 月 9 日的 pritelivir，在窗外）。</li>
+<li><strong>个人</strong>：aimfllyys 邮箱里有 7 封落在北京时间 10 月 10 日白天的邮件（含 StudySolo 的 ci 失败通知、OpenRouter 网络研讨会、X 收据、Supabase 月报、llm-agent.cc 推广、PR #199 通知串），都在窗外，前一天的早报已经写过其中大部分；snpeng258 账号窗内没有公开活动（最近一次是 9 月 24 日）。密码重设链接、验证码、密钥和带工作区编号的账单网址一律没有写进来。</li>
+</ul>
+<hr>
+<h2 id="ns-h-46">结尾</h2>
+<p>今天这份材料里，最让人放心的那几样东西，都是先看清了接的一头能接多少：丘成桐的数学联盟让 AI 出主意、让软件做精确核验、让数学家做最后的判断，每一层只接自己接得住的那一部分；encaleret 没有继续往身体里猛补钙，而是把那个太敏感的传感器调回正常，让身体自己重新开始分泌激素；KAIST 让晶体只从正中心那一处开始长，长出来的反而是完整的单晶；垂直供电把电从芯片正下方送进去，让大电流按芯片接得住的方式到位；牙龈干细胞的 I 期试验只入组 18 人、每隔 3 周给一次，先把安全性一步一步看清；你的 ChatSolo 把长对话按模型接得住的分量压缩好再交给它，一天 22 个提交，部署也都接住了。</p>
+<p>最让人担心的那几件事，则都是给的一头又多又快，接的一头跟不上：七百多篇数学手稿一口气倒给数学界，有人欢呼，有人「被海啸冲击」，大部分还没来得及核验；tovinontrine 的最高剂量反而没有效果；评估前沿模型的第三方机构全职员工不到 50 人；埃博拉的接触者随访率低于目标，而这种病毒没有疫苗；存储芯片的需求涨得比晶圆厂能建的还快；AI 聊天机器人给说越南语的人的急症建议，比给说英语的人差了一大截。你自己的仓库里也有两个很小的同类：一期早报早就做好，却因为没有人接手验收晚了一天上线；一条测试每天按时发出失败通知，连续十天没有人去接。</p>
+<p>下次你想一口气把很多东西塞给别人（或者塞给自己）的时候，不妨先问一句：接的那一头，一次能接住多少？</p>
+<hr>
+<h2 id="ns-h-47">单一来源与未能核实清单</h2>
+<ul>
+<li><strong>只有一个来源的条目</strong>：1.3 与 2.2 亚马逊洽谈收购 Decart（只有《华尔街日报》援引知情人士，路透社无法立即核实，双方没有回应）；1.5 CNBC 关于第三方评估机构的长文（METR 融资数字是 CNBC 转引，未查原始文件）；1.6 The Verge 评论（「集体跟进」是本文的归纳）；1.7 CNBC 软件岗位数据稿（二手汇编，各项数字未逐一回查原始报告）；2.8 Aegiq QGATE（窗内只有 Tech Times 一家报道，期刊版 DOI 未能直接核对）；3.3 埃博拉疫情（只有 Al Jazeera 一篇，未能独立核对世卫原文，数据截止于 10 月 4 日到 8 日）；3.6 acoramidis 真实世界研究（BridgeBio 新闻稿，观察性关联，不能读作因果）；3.7 encaleret 三期数据（BridgeBio 新闻稿，摘要未单独核对）；3.8 ACG 会议摘要（作者解读，未经同行评审全文发表，AI 急症研究是模拟场景）；3.9 牙龈干细胞 I 期试验（只有读创/深圳商报一篇，没有疗效具体数字，论文为「被接收」状态）；连读 4.3、4.4、4.5、4.6、4.7、4.8、4.9（只有 GitHub 记录或单封邮件本身）；前瞻 B（只有运行注释，issue 全文未读）。</li>
+<li><strong>事件本身多来源确认、但其中部分说法只有一个来源或未经核实</strong>：1.2 几家给出的手稿和问题数字不同（NBC「370 多个问题」，《费加罗报》「近 719 份手稿」「16 个问题」，中青报「722 篇手稿、372 个成果组」）；1.4 谈判仍在早期、条款未定，英伟达没有回应、Reflection 拒绝置评，「可能发展成收购」是《金融时报》的说法；2.1 「2880 个机架」和受影响服务的数量只有 Kyiv Post 给出，部分来自 Telegram 频道；2.3 「损失可能超过 8600 万美元」是调查方 Specter 的估算，Ledger 没有确认损失金额；2.4 「总价值超过 2 万亿美元」是讲话者自己的说法，未经独立核算，两家报道都不是西方主流通讯社；2.6 台厂回应出自中时新闻网一家整理；3.2 候选人现场发言细节只有 Health Policy Watch 一家详细报道；3.5 tovinontrine 的疗效描述只来自公司新闻稿，没有具体降幅，「cGMP 过高触发反向调节」是公司的解释。</li>
+<li><strong>发布方或公司自述、尚待验证的数字和说法</strong>：2.7 「2030 年前后商用」是 TDS 公司的目标，不是论文结论，论文作者之一是该公司 CEO（已声明利益关系）；3.4 remigromig 数据来自企业新闻稿和会议报告，尚未见同行评审全文；4.9 Robinson「负责过 12 次前沿发布的安全报告」出自通讯摘要，原文未核实。</li>
+<li><strong>链接需要登录或打不开的</strong>：《华尔街日报》是付费墙，正文以路透社转载为准；《柳叶刀》原站对抓取返回 403，以 EurekAlert 官方新闻稿和 IHME 页面为准；GlobeNewswire 原稿对脚本返回 403，以 Markets Insider 转载为准；Gmail 链接需要登录对应账号；ChatSolo 是私有仓库，需要登录 AIMFllyYS。</li>
+</ul>
+<h2 id="ns-h-48">时间窗边界说明</h2>
+<ul>
+<li><strong>底层事件早于时间窗、窗内收录的是新报道或新进展</strong>：</li>
+<li>1.2 OpenAI 公开大批数学手稿发生在 10 月 6 日（窗外），窗内收录的是 NBC News 和《费加罗报》的跟进报道；《费加罗报》提到的法国数学会会议在 10 月 8 日，也在窗前。</li>
+<li>1.4 英伟达与 Reflection AI 的谈判最早由《金融时报》在北京时间 10 月 11 日凌晨 3 点前后报出（窗前，按采集员推算），窗内收录的是彭博的独立证实。</li>
+<li>1.6 纳德拉的「紧急刹车」帖子发于北京时间 10 月 10 日 22:43（窗外），只作背景；特朗普的改名行政令在 9 月底。</li>
+<li>2.3 Ledger「确认存在未授权硬件植入物」由 @Ledger_Support 于北京时间 10 月 11 日 01:09 发出（窗前），窗内收录的是 Ledger 官方账号的「72 小时更新」。</li>
+<li><strong>2.6 美国国际贸易委员会的 337 立案公告发布于美东 10 月 9 日（北京时间 10 月 9 日晚到 10 日凌晨），略早于时间窗；窗内收录的是台厂 10 月 11 日的集体回应和路透社的跟进报道。</strong></li>
+<li><strong>2.7 KAIST 的《自然》论文于 10 月 7 日上线，略早于时间窗；窗内收录的是 The Register 10 月 11 日的报道，以及其中公司对商业化时间表的新表态。</strong></li>
+<li><strong>2.8 Aegiq 的论文于 10 月 8 日在《量子科学与技术》上发表，略早于时间窗；窗内收录的是 Tech Times 10 月 11 日的深度报道。</strong></li>
+<li>3.2 世界卫生峰会的活动预告新闻稿发于 10 月 5 日，只用来核对议程；候选人同台活动本身在窗内。</li>
+<li>3.3 Al Jazeera 引用的世卫组织和无国界医生数据截止于 10 月 4 日到 8 日，报道本身在窗内，数字不是 10 月 11 日当天的新数据。</li>
+<li><strong>紧贴窗口边缘的</strong>：3.4 Merck 新闻稿发于北京时间 10 月 11 日 06:10，窗口开始后 10 分钟；旁证的 Ophthalmology Times 报道是 10 月 12 日 06:16，略晚于窗口结束，只作旁证。连读 4.1 的 PR #173 在窗内开出，但合入时刻（10 月 12 日 06:13:42）在窗外。连读 4.7 StudySolo 最近一次 ci 失败在 10 月 11 日 01:52（窗外），窗内没有新的 ci 运行，所以窗口结束时仍是失败状态。</li>
+<li><strong>窗外前瞻（不在采集窗内）</strong>：OpenCode Go 的支付宝自动扣款授权需在 2026 年 10 月 17 日前重新确认；GitHub Actions 的 ubuntu-latest 标签从 2026 年 10 月 19 日起迁移到 Ubuntu 26。</li>
+</ul>
+      </article>
+    </div>
+  </noscript>
+
+<script>
+(function () {
+  var NS = 'http://www.w3.org/2000/svg';
+  var svg = document.getElementById('scene');
+  var actors = document.getElementById('actors');
+  var pot = document.getElementById('pot');
+  var stream = document.getElementById('stream');
+  var guide = document.getElementById('guide');
+  var bag = document.getElementById('bag');
+  var beam = document.getElementById('beam');
+  var hint = document.getElementById('hint');
+  var notepad = document.getElementById('notepad');
+  var noteKicker = document.getElementById('note-kicker');
+  var noteTitle = document.getElementById('note-title');
+  var noteBody = document.getElementById('note-body');
+  var revisit = document.getElementById('revisit');
+  var packBtn = document.getElementById('pack-btn');
+  var giftNote = document.getElementById('gift-note');
+  var egg = document.getElementById('egg');
+  var grainBtn = document.getElementById('grain-btn');
+  var digest = document.getElementById('digest');
+  var openDigest = document.getElementById('open-digest');
+  var closeDigest = document.getElementById('close-digest');
+  var cardKicker = document.getElementById('card-kicker');
+  var cardBody = document.getElementById('card-body');
+  var stainCard = document.getElementById('stain-card');
+  var wrap = document.getElementById('scene-wrap');
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var POT_BASE_Y = 528;
+  var RIM_Y = 486;
+  var BASE_Y = 668;
+  var LIQUID_H = 112;
+  var MAX_POUR = 0.46;
+  var LINE = 0.78;
+
+  var bottles = [
+    {
+      id: 'jam', name: '宽口的果酱瓶', x: 400, neck: 50, body: 86, mouth: 46,
+      intake: 0.34, funnelCap: 0.14,
+      title: '每一层只接自己接得住的那一部分',
+      paragraphs: [
+        '10 月 11 日，丘成桐牵头的数学与人工智能实验室联盟在清华成立。人工智能负责探索证明思路、简化计算；计算代数系统负责核验，并留下可以复现的计算证书；数学家负责构思、证明和最后的判断。',
+        '北京日报、中国青年报和《南华早报》都报道了这件事。丘成桐也说，机器的势力会让年轻学者灰心，这是一件严重的事。'
+      ]
+    },
+    {
+      id: 'milk', name: '牛奶瓶', x: 555, neck: 30, body: 64, mouth: 34,
+      intake: 0.2, funnelCap: 0.11,
+      title: '只让正中心那一处把晶体接住',
+      paragraphs: [
+        '据 The Register 报道，韩国科学技术院的方法让二维半导体只在每个图案的正中心长出一个晶核，400 个位点里有 397 个长成了单晶。',
+        '论文 10 月 7 日已经在《自然》上线，早于今天的时间窗，窗内读到的是这篇报道。「2030 年前后商用」是合作公司的目标，不是论文的结论。论文作者之一是该公司的首席执行官，利益关系已经声明。'
+      ]
+    },
+    {
+      id: 'thin', name: '最细的小瓶', x: 700, neck: 16, body: 50, mouth: 20,
+      intake: 0.15, funnelCap: 0.08, airlock: true, sealAt: 0.22, releaseAt: 0.15,
+      title: '倒得越猛，这只瓶子反而越慢',
+      paragraphs: [
+        '据 Cardurion 的新闻稿，心衰新药 tovinontrine 在每日两次 2.5 毫克和 25 毫克时，标志物 NT-proBNP 下降了；最高的每日两次 50 毫克反而没有看到获益。射血分数保留的那项试验恰好只用了这个最高剂量，也没有效果。',
+        '公司把这件事解释为信号推得太高，触发了身体的反向调节。新闻稿没有写出具体降幅，这个解释尚未得到其他来源确认。主要终点是生物标志物，不是死亡或住院。'
+      ]
+    },
+    {
+      id: 'phial', name: '小药瓶', x: 845, neck: 18, body: 46, mouth: 22,
+      intake: 0.145, funnelCap: 0.09,
+      title: '先按身体接得住的节奏，一点点给',
+      paragraphs: [
+        '据读创、深圳商报报道，牙龈间充质干细胞治疗 1 型糖尿病的一期试验只入组 18 人，每隔 3 周注射一次，一共 4 次，再随访 48 周，先把安全性看清楚。',
+        '尚未得到其他来源确认。报道里没有给出疗效的具体数字，论文目前是被接收的状态。'
+      ]
+    },
+    {
+      id: 'grain', name: '有麦粒的瓶子', x: 1000, neck: 26, body: 58, mouth: 32,
+      intake: 0.24, funnelCap: 0.1, grains: true,
+      title: '先把接的那一头调回去',
+      paragraphs: [
+        '这种遗传病是感知血钙的传感器太敏感。一味补钙，血钙补上去一点，尿钙却更高。encaleret 不继续猛补，而是把传感器的灵敏度调回正常。',
+        '据 BridgeBio 新闻稿，91% 的患者自己的甲状旁腺激素恢复到了正常下限以上，标准治疗组是 0%。数据尚未得到其他来源确认。'
+      ]
+    }
+  ];
+
+  var cardFaces = [
+    {
+      kicker: '没插漏斗的那只',
+      body: '左边那只瓶子没有插漏斗。有人拿大壶直接对着瓶口倒，茶大多洒在台布上，瓶子里只进去了一点点。'
+    },
+    {
+      kicker: '手稿，几家数字不一样',
+      body: '公开手稿发生在 10 月 6 日，不在今天的时间窗里。窗内是跟进。据 NBC News，OpenAI 说自己解决了 370 多个问题；数学家说，若经过验证，里面可能有突破，可没有打磨过的成果并不好核验。一位说同行该高兴得上街跳舞，另一位说学术圈像被海啸击中。据《费加罗报》，2022 年菲尔兹奖得主 Duminil-Copin 发现近 719 份手稿后夜里哭了，哭到把女儿吵醒，他所在领域有 16 个问题被涉及。中国青年报写的是 722 篇手稿、372 个成果组。几家数字不同，这里分开写，不合成一个数。'
+    },
+    {
+      kicker: '评估的人太少',
+      body: '据 CNBC 报道，白宫不打算立法，于是 METR、Apollo Research、Transluce 这些小型第三方评估机构被推到人工智能安全的中心。同一篇报道说，METR 全职员工不到 50 人，过去六个月获得约 7100 万美元的资金承诺，2024 年全年捐款是 1360 万美元。这些数字是 CNBC 转引的，尚未得到其他来源确认。'
+    },
+    {
+      kicker: '随访和晶圆厂都还差一截',
+      body: '据 Al Jazeera 引用世卫组织的数据，刚果（金）本迪布焦型埃博拉的接触者随访率是 80.4%，低于 85% 的目标。这种病毒目前没有获批疫苗和特效药。只有这一篇报道，数字截止 10 月 4 日到 8 日，还没有独立核对世卫原文。另一边，SK 集团会长崔泰源说，半导体需求涨得比预期快，龙仁集群的工期提前了 12 年，即便这样也预计不够。韩联社和 Seoul Economic Daily 同日的报道可以互相印证。'
+    }
+  ];
+
+  bottles.forEach(function (b) {
+    b.fill = 0;
+    b.held = 0;
+    b.spill = 0;
+    b.sealed = false;
+    b.revealed = false;
+    b.cleared = !b.grains;
+  });
+
+  var state = {
+    aimX: bottles[0].x,
+    tilt: 0,
+    holding: false,
+    started: false,
+    packed: false,
+    card: 0,
+    reading: 0,
+    target: bottles[0]
+  };
+  var drag = null;
+  var keys = { left: false, right: false, down: false, hard: false };
+  var last = performance.now();
+
+  function el(name, attrs) {
+    var node = document.createElementNS(NS, name);
+    if (attrs) {
+      Object.keys(attrs).forEach(function (key) {
+        node.setAttribute(key, attrs[key]);
+      });
+    }
+    return node;
+  }
+
+  function textNode(x, y, value, size, fill) {
+    var node = el('text', {
+      x: x, y: y, 'text-anchor': 'middle', 'font-size': size || 15, fill: fill || '#6a5646'
+    });
+    node.textContent = value;
+    return node;
+  }
+
+  function jarPath(x, top, bot, neck, body) {
+    var shoulder = top + 34;
+    return [
+      'M', x - neck / 2, top,
+      'L', x - neck / 2, shoulder - 8,
+      'C', x - neck / 2, shoulder + 8, x - body / 2, shoulder, x - body / 2, shoulder + 26,
+      'L', x - body / 2, bot - 16,
+      'Q', x - body / 2, bot, x, bot + 7,
+      'Q', x + body / 2, bot, x + body / 2, bot - 16,
+      'L', x + body / 2, shoulder + 26,
+      'C', x + body / 2, shoulder, x + neck / 2, shoulder + 8, x + neck / 2, shoulder - 8,
+      'L', x + neck / 2, top,
+      'Z'
+    ].join(' ');
+  }
+
+  function drawSpillBottle() {
+    var x = 132;
+    var path = jarPath(x, 548, BASE_Y, 34, 48);
+    actors.appendChild(el('ellipse', { cx: x, cy: BASE_Y + 10, rx: 36, ry: 8, fill: 'rgba(120,80,40,0.13)' }));
+    actors.appendChild(el('ellipse', { cx: x - 8, cy: BASE_Y + 16, rx: 46, ry: 12, fill: '#e7c48a', opacity: '0.75' }));
+    actors.appendChild(el('ellipse', { cx: x + 34, cy: BASE_Y + 18, rx: 22, ry: 8, fill: '#efd0a0', opacity: '0.8' }));
+    var defs = svg.querySelector('defs');
+    var clip = el('clipPath', { id: 'clip-spill' });
+    clip.appendChild(el('path', { d: path }));
+    defs.appendChild(clip);
+    actors.appendChild(el('path', {
+      d: path, fill: 'rgba(255,255,255,0.32)', stroke: 'rgba(130,160,176,0.55)', 'stroke-width': '2'
+    }));
+    actors.appendChild(el('rect', {
+      x: x - 40, y: BASE_Y - 28, width: 80, height: 28, fill: 'url(#tea)', 'clip-path': 'url(#clip-spill)', opacity: '0.9'
+    }));
+    actors.appendChild(textNode(x, 718, '没插漏斗', 14, '#8a6a52'));
+  }
+
+  function drawBottle(b) {
+    var top = 534;
+    var path = jarPath(b.x, top, BASE_Y, b.neck, b.body);
+    var defs = svg.querySelector('defs');
+    var clip = el('clipPath', { id: 'clip-' + b.id });
+    clip.appendChild(el('path', { d: path }));
+    defs.appendChild(clip);
+    var g = el('g', { id: 'bottle-' + b.id });
+    g.appendChild(el('ellipse', {
+      cx: b.x, cy: BASE_Y + 12, rx: b.body * 0.48, ry: 8, fill: 'rgba(120,80,40,0.12)'
+    }));
+    var stain = el('ellipse', {
+      id: 'stain-' + b.id, cx: b.x, cy: BASE_Y + 18, rx: b.body * 0.7, ry: 12, fill: '#e8c07a', opacity: '0'
+    });
+    g.appendChild(stain);
+    var funnelBottom = RIM_Y + 54;
+    var funnel = [
+      'M', b.x - b.mouth, RIM_Y,
+      'L', b.x - Math.max(5, b.neck * 0.22), funnelBottom,
+      'L', b.x + Math.max(5, b.neck * 0.22), funnelBottom,
+      'L', b.x + b.mouth, RIM_Y, 'Z'
+    ].join(' ');
+    g.appendChild(el('path', {
+      d: funnel, fill: 'rgba(255,255,255,0.72)', stroke: '#7ea4b6', 'stroke-width': '2.6'
+    }));
+    g.appendChild(el('ellipse', {
+      cx: b.x, cy: RIM_Y, rx: b.mouth, ry: 9,
+      fill: 'rgba(255,255,255,0.45)', stroke: '#7ea4b6', 'stroke-width': '2.2'
+    }));
+    g.appendChild(el('ellipse', {
+      id: 'funnel-fill-' + b.id,
+      cx: b.x, cy: RIM_Y + 16, rx: b.mouth * 0.72, ry: 5,
+      fill: 'url(#tea)', opacity: '0'
+    }));
+    g.appendChild(el('path', {
+      id: 'spill-run-' + b.id,
+      d: 'M ' + (b.x + b.mouth * 0.82) + ' ' + (RIM_Y + 2) +
+        ' C ' + (b.x + b.mouth + 16) + ' ' + (RIM_Y + 40) +
+        ' ' + (b.x + b.body * 0.35) + ' ' + (BASE_Y - 20) +
+        ' ' + (b.x + b.body * 0.62) + ' ' + (BASE_Y + 6),
+      fill: 'none', stroke: '#e39a3c', 'stroke-width': '5', 'stroke-linecap': 'round', opacity: '0'
+    }));
+    g.appendChild(el('circle', {
+      id: 'drop-' + b.id, cx: b.x + b.mouth * 0.78, cy: RIM_Y + 22, r: 6,
+      fill: '#e39a3c', opacity: '0'
+    }));
+    if (b.grains) {
+      var grains = el('g', { id: 'grains' });
+      [[-10, 14], [7, 18], [-1, 26]].forEach(function (p, index) {
+        grains.appendChild(el('ellipse', {
+          cx: b.x + p[0], cy: RIM_Y + p[1], rx: 6.5, ry: 4,
+          fill: index === 1 ? '#e7c56a' : '#f3d78a', stroke: '#b8893b', 'stroke-width': '0.8'
+        }));
+      });
+      g.appendChild(grains);
+    }
+    var glass = el('path', {
+      id: 'glass-' + b.id,
+      d: path,
+      fill: 'rgba(255,255,255,0.28)',
+      stroke: 'rgba(126,156,172,0.62)',
+      'stroke-width': '2.2'
+    });
+    g.appendChild(glass);
+    g.appendChild(el('rect', {
+      id: 'liquid-' + b.id,
+      x: b.x - b.body, y: BASE_Y, width: b.body * 2, height: 0,
+      fill: 'url(#tea)', 'clip-path': 'url(#clip-' + b.id + ')'
+    }));
+    g.appendChild(el('ellipse', {
+      id: 'meniscus-' + b.id,
+      cx: b.x, cy: BASE_Y, rx: b.body * 0.42, ry: 5,
+      fill: '#f6c56b', opacity: '0', 'clip-path': 'url(#clip-' + b.id + ')'
+    }));
+    g.appendChild(el('path', {
+      d: 'M ' + (b.x - b.body * 0.28) + ' ' + (top + 48) + ' Q ' + (b.x - b.body * 0.18) + ' ' + (BASE_Y - 30) + ' ' + (b.x - b.body * 0.22) + ' ' + (BASE_Y - 16),
+      fill: 'none', stroke: 'rgba(255,255,255,0.55)', 'stroke-width': '4', 'stroke-linecap': 'round'
+    }));
+    var lineY = BASE_Y - LINE * LIQUID_H;
+    g.appendChild(el('line', {
+      id: 'line-' + b.id,
+      x1: b.x - b.body * 0.36, x2: b.x + b.body * 0.36, y1: lineY, y2: lineY,
+      stroke: '#c9a27a', 'stroke-width': '1.6', 'stroke-dasharray': '3 3'
+    }));
+    if (b.id === 'jam') {
+      g.appendChild(textNode(b.x - b.body - 34, lineY + 4, '刚刚好', 13, '#b07a48'));
+    }
+    g.appendChild(el('ellipse', {
+      cx: b.x, cy: top + 2, rx: b.neck * 0.55, ry: 5,
+      fill: 'rgba(255,255,255,0.2)', stroke: 'rgba(140,170,186,0.7)', 'stroke-width': '1.5'
+    }));
+    var cap = el('g', { id: 'cap-' + b.id, opacity: '0' });
+    cap.appendChild(el('rect', {
+      x: b.x - b.mouth * 0.78, y: RIM_Y - 16, width: b.mouth * 1.56, height: 16, rx: 4,
+      fill: '#f6e4c4', stroke: '#d7b88a', 'stroke-width': '1.4'
+    }));
+    cap.appendChild(el('rect', {
+      x: b.x - b.mouth * 0.3, y: RIM_Y - 24, width: b.mouth * 0.6, height: 10, rx: 3, fill: '#e8c898'
+    }));
+    g.appendChild(cap);
+    if (b.airlock) {
+      var bubbles = el('g', { id: 'bubbles', opacity: '0' });
+      ;[0, 1, 2].forEach(function (i) {
+        bubbles.appendChild(el('circle', {
+          id: 'bubble-' + i, cx: b.x + (i - 1) * 9, cy: RIM_Y + 14, r: 5.5 + i,
+          fill: '#fffdf8', stroke: '#e39a3c', 'stroke-width': '1.6'
+        }));
+      });
+      g.appendChild(bubbles);
+    }
+    g.appendChild(textNode(b.x, 718, b.name, 15, '#6e5848'));
+    actors.appendChild(g);
+  }
+
+  function drawPot() {
+    var shadow = el('ellipse', {
+      id: 'pot-shadow', cx: '400', cy: '646', rx: '54', ry: '9', fill: 'rgba(120,80,40,0.16)'
+    });
+    svg.insertBefore(shadow, pot);
+    pot.appendChild(el('ellipse', {
+      cx: 0, cy: -42, rx: 66, ry: 44,
+      fill: 'rgba(255,255,255,0.55)', stroke: '#c5d7e0', 'stroke-width': '2.6'
+    }));
+    pot.appendChild(el('ellipse', {
+      cx: 2, cy: -30, rx: 46, ry: 26, fill: 'url(#tea)'
+    }));
+    pot.appendChild(el('path', {
+      d: 'M 38,-54 C 74,-60 94,-80 108,-96',
+      fill: 'none', stroke: '#d5e3ea', 'stroke-width': '14', 'stroke-linecap': 'round'
+    }));
+    pot.appendChild(el('path', {
+      d: 'M 38,-54 C 74,-60 94,-80 108,-96',
+      fill: 'none', stroke: 'url(#tea)', 'stroke-width': '6', 'stroke-linecap': 'round'
+    }));
+    pot.appendChild(el('circle', { id: 'spout-tip', cx: 108, cy: -96, r: 4.5, fill: '#e39a3c' }));
+    pot.appendChild(el('ellipse', {
+      cx: 0, cy: -82, rx: 40, ry: 12, fill: '#fffaf3', stroke: '#e3d0b4', 'stroke-width': '2'
+    }));
+    pot.appendChild(el('circle', { cx: 0, cy: -96, r: 8, fill: '#ecc48a', stroke: '#d7b07a', 'stroke-width': '1.5' }));
+    pot.appendChild(el('circle', { cx: 18, cy: -80, r: 7, fill: '#fff4e4', stroke: '#e7c9a4', 'stroke-width': '1' }));
+    pot.appendChild(el('path', {
+      d: 'M -44,-72 C -112,-82 -116,-16 -48,-12',
+      fill: 'none', stroke: '#e0b56e', 'stroke-width': '12', 'stroke-linecap': 'round'
+    }));
+    pot.appendChild(el('circle', {
+      id: 'handle-ring', cx: -84, cy: -46, r: 30,
+      fill: 'none', stroke: '#e39a3c', 'stroke-width': '2.6'
+    }));
+    pot.appendChild(el('circle', {
+      id: 'pot-handle', cx: -84, cy: -46, r: 38, fill: 'rgba(0,0,0,0.001)'
+    }));
+  }
+
+  function drawBag() {
+    bag.setAttribute('transform', 'translate(948 158) scale(0.58)');
+    bag.appendChild(el('path', {
+      d: 'M30 70 L8 210 Q8 240 40 240 L150 240 Q182 240 182 210 L160 70 Z',
+      fill: '#f7f1e6', stroke: '#c8b59a', 'stroke-width': '3'
+    }));
+    bag.appendChild(el('path', {
+      d: 'M36 70 Q95 34 156 70',
+      fill: 'none', stroke: '#b89a74', 'stroke-width': '8', 'stroke-linecap': 'round'
+    }));
+    bag.appendChild(el('rect', {
+      x: 46, y: 118, width: 100, height: 46, rx: 6, fill: '#fffaf3', stroke: '#e2c9a4', 'stroke-width': '1.4'
+    }));
+    bag.appendChild(textNode(96, 147, '这瓶带去上课', 16, '#6a4e38'));
+  }
+
+  function nearest() {
+    var best = bottles[0];
+    var score = Infinity;
+    bottles.forEach(function (b) {
+      var distance = Math.abs(state.aimX - b.x);
+      if (distance < score) {
+        score = distance;
+        best = b;
+      }
+    });
+    return best;
+  }
+
+  function countRevealed() {
+    return bottles.filter(function (b) { return b.revealed; }).length;
+  }
+
+  function showNote(index) {
+    var b = bottles[index];
+    if (!b || !b.revealed) return;
+    state.reading = index;
+    notepad.hidden = false;
+    noteKicker.textContent = b.name + '到了刚刚好的那条线';
+    noteTitle.textContent = b.title;
+    noteBody.textContent = '';
+    b.paragraphs.forEach(function (paragraph) {
+      var p = document.createElement('p');
+      p.textContent = paragraph;
+      noteBody.appendChild(p);
+    });
+    revisit.textContent = '';
+    bottles.forEach(function (item, itemIndex) {
+      if (!item.revealed) return;
+      var button = document.createElement('button');
+      button.type = 'button';
+      button.textContent = item.name;
+      if (itemIndex === index) button.setAttribute('aria-current', 'true');
+      button.addEventListener('click', function () { showNote(itemIndex); });
+      revisit.appendChild(button);
+    });
+    var done = countRevealed();
+    packBtn.hidden = done < bottles.length || state.packed;
+  }
+
+  function onReveal(b) {
+    showNote(bottles.indexOf(b));
+    var done = countRevealed();
+    if (done === bottles.length) {
+      setHint('五只瓶子都到了刚刚好的那条线。可以盖上瓶盖，把一瓶装进帆布包。');
+    }
+  }
+
+  function setHint(value) {
+    if (hint.textContent !== value) hint.textContent = value;
+  }
+
+  function currentHint(pour, target) {
+    if (state.packed) {
+      return '晨光穿过这一排琥珀色的茶。有一瓶进了帆布包，包上别着卡片：这瓶带去上课。';
+    }
+    if (countRevealed() === bottles.length) {
+      return '五只瓶子都到了刚刚好的那条线。可以盖上瓶盖，把一瓶装进帆布包。';
+    }
+    if (target && target.grains && !target.cleared && pour > 0.05) {
+      return '这只漏斗里卡着几粒麦粒，倒得再猛也顺不下去。先把麦粒拨开。';
+    }
+    if (target && target.sealed) {
+      return '最细的这只把漏斗口封住了，瓶子里的空气出不来，茶在咕嘟咕嘟地卡着。把茶壶抬起一点，让水流变细。';
+    }
+    if (target && pour > target.intake + 0.04 && target.held > target.funnelCap * 0.72) {
+      return '倒得比这只瓶口接得住的更快，茶从漏斗沿上溢出去了。瓶子并没有因此满得更快。';
+    }
+    if (target && target.revealed) {
+      var left = bottles.length - countRevealed();
+      if (left > 0) return target.name + '已经到线了。换下一只，仍然顺着它的瓶口来。还剩' + left + '只。';
+    }
+    if (pour > 0.08 && target && !target.revealed) {
+      return '水流稳的时候，漏斗里的茶面不会一直往上涨，瓶子会一点一点满到那条线。';
+    }
+    return '按住茶壶的把手，对准瓶口，慢慢往下倒。';
+  }
+
+  function step(dt) {
+    if (!drag) {
+      if (keys.left) state.aimX -= 220 * dt;
+      if (keys.right) state.aimX += 220 * dt;
+      if (keys.down) {
+        var goal = keys.hard ? 1 : 0.3;
+        state.tilt += (goal - state.tilt) * Math.min(1, dt * 4.2);
+      } else {
+        state.tilt += (0 - state.tilt) * Math.min(1, dt * (reduced ? 8 : 3.2));
+      }
+    }
+    state.aimX = Math.max(bottles[0].x, Math.min(bottles[bottles.length - 1].x, state.aimX));
+    var pour = Math.max(0, state.tilt) * MAX_POUR;
+    var target = pour > 0.02 ? nearest() : nearest();
+    state.target = target;
+    bottles.forEach(function (b) {
+      var incoming = (pour > 0.02 && b === target) ? pour : 0;
+      var accept = b.intake;
+      if (b.grains && !b.cleared) accept = 0.028;
+      if (b.airlock) {
+        if (!b.sealed && incoming > b.sealAt && b.held > 0.04) b.sealed = true;
+        if (b.sealed && incoming < b.releaseAt) b.sealed = false;
+        if (b.sealed) accept = 0.02;
+      }
+      b.held += incoming * dt;
+      var room = Math.max(0, 1 - b.fill);
+      var drain = Math.min(b.held, accept * dt, room);
+      b.held -= drain;
+      b.fill += drain;
+      b.spilling = false;
+      if (b.held > b.funnelCap) {
+        b.spill += b.held - b.funnelCap;
+        b.held = b.funnelCap;
+        b.spilling = incoming > accept + 0.02;
+      }
+      if (!b.revealed && b.fill >= LINE) {
+        b.revealed = true;
+        onReveal(b);
+      }
+    });
+    setHint(currentHint(pour, pour > 0.02 ? target : nearest()));
+  }
+
+  function spoutWorld() {
+    var rad = state.tilt * 22 * Math.PI / 180;
+    var cos = Math.cos(rad);
+    var sin = Math.sin(rad);
+    var lx = 108;
+    var ly = -96;
+    var offX = lx * cos - ly * sin;
+    var offY = lx * sin + ly * cos;
+    return {
+      x: state.aimX,
+      y: POT_BASE_Y + offY,
+      tx: state.aimX - offX,
+      ty: POT_BASE_Y,
+      angle: state.tilt * 22
+    };
+  }
+
+  function render(now) {
+    var spout = spoutWorld();
+    pot.setAttribute('transform', 'translate(' + spout.tx.toFixed(2) + ' ' + spout.ty.toFixed(2) + ') rotate(' + spout.angle.toFixed(2) + ')');
+    var shadow = document.getElementById('pot-shadow');
+    if (shadow) {
+      shadow.setAttribute('cx', String(spout.tx));
+      shadow.setAttribute('cy', '648');
+    }
+    var pour = state.tilt > 0.05;
+    var target = state.target || bottles[0];
+    var endX = target.x;
+    var endY = RIM_Y + 6;
+    var midY = (spout.y + endY) / 2 + (pour ? 16 : 8);
+    var d = 'M ' + spout.x.toFixed(1) + ' ' + spout.y.toFixed(1) + ' Q ' + ((spout.x + endX) / 2).toFixed(1) + ' ' + midY.toFixed(1) + ' ' + endX + ' ' + endY;
+    if (pour) {
+      stream.setAttribute('d', d);
+      stream.setAttribute('opacity', '0.95');
+      stream.setAttribute('stroke-width', String(3 + state.tilt * 10));
+      guide.setAttribute('opacity', '0');
+    } else {
+      stream.setAttribute('opacity', '0');
+      guide.setAttribute('d', d);
+      guide.setAttribute('opacity', '0.55');
+    }
+    bottles.forEach(function (b) {
+      var h = b.fill * LIQUID_H;
+      var y = BASE_Y - h;
+      var liquid = document.getElementById('liquid-' + b.id);
+      liquid.setAttribute('y', y.toFixed(2));
+      liquid.setAttribute('height', Math.max(0, h).toFixed(2));
+      var group = document.getElementById('bottle-' + b.id);
+      group.setAttribute('data-fill', b.fill.toFixed(3));
+      group.setAttribute('data-revealed', b.revealed ? '1' : '0');
+      group.setAttribute('data-sealed', b.sealed ? '1' : '0');
+      var meniscus = document.getElementById('meniscus-' + b.id);
+      var wobble = reduced ? 0 : Math.sin(now / 280 + b.x) * (pour && b === target ? 1.6 : 0.5);
+      meniscus.setAttribute('cy', (y + wobble).toFixed(2));
+      meniscus.setAttribute('opacity', h > 4 ? '0.9' : '0');
+      var funnelLevel = b.held / b.funnelCap;
+      var funnelFill = document.getElementById('funnel-fill-' + b.id);
+      funnelFill.setAttribute('opacity', funnelLevel > 0.04 ? '0.95' : '0');
+      funnelFill.setAttribute('ry', String(4 + funnelLevel * 8));
+      funnelFill.setAttribute('rx', String(Math.max(8, b.mouth * (0.42 + funnelLevel * 0.48))));
+      funnelFill.setAttribute('cy', String(RIM_Y + 22 - funnelLevel * 16));
+      var drop = document.getElementById('drop-' + b.id);
+      var run = document.getElementById('spill-run-' + b.id);
+      drop.setAttribute('opacity', b.spilling ? '1' : '0');
+      run.setAttribute('opacity', b.spilling ? '0.9' : '0');
+      if (b.spilling && !reduced) {
+        drop.setAttribute('cy', String(RIM_Y + 18 + ((now / 14) % 48)));
+      }
+      document.getElementById('stain-' + b.id).setAttribute('opacity', String(Math.min(0.82, b.spill * 4)));
+      var glass = document.getElementById('glass-' + b.id);
+      var hot = b === target && !state.packed;
+      glass.setAttribute('stroke', hot ? '#e09a3c' : 'rgba(126,156,172,0.62)');
+      glass.setAttribute('stroke-width', hot ? '3' : '2.2');
+      var line = document.getElementById('line-' + b.id);
+      line.setAttribute('stroke', b.revealed ? '#c4782a' : '#c9a27a');
+      line.setAttribute('stroke-dasharray', b.revealed ? '0' : '3 3');
+    });
+    var bubbles = document.getElementById('bubbles');
+    if (bubbles) {
+      var thin = bottles[2];
+      bubbles.setAttribute('opacity', thin.sealed ? '1' : '0');
+      if (thin.sealed && !reduced) {
+        ;[0, 1, 2].forEach(function (i) {
+          var bubble = document.getElementById('bubble-' + i);
+          var cy = RIM_Y + 22 - ((now / 140 + i * 16) % 20);
+          bubble.setAttribute('cy', String(cy));
+        });
+      }
+    }
+    if (state.packed) {
+      beam.setAttribute('opacity', '0.85');
+      bag.setAttribute('opacity', '1');
+      bottles.forEach(function (b) {
+        document.getElementById('cap-' + b.id).setAttribute('opacity', '1');
+      });
+    }
+    placeGrainButton();
+  }
+
+  function placeGrainButton() {
+    var point = svg.createSVGPoint();
+    point.x = bottles[4].x;
+    point.y = RIM_Y - 28;
+    var matrix = svg.getScreenCTM();
+    if (!matrix) return;
+    var client = point.matrixTransform(matrix);
+    var bounds = wrap.getBoundingClientRect();
+    grainBtn.style.left = (client.x - bounds.left) + 'px';
+    grainBtn.style.top = (client.y - bounds.top) + 'px';
+  }
+
+  function clientToSvg(clientX, clientY) {
+    var point = svg.createSVGPoint();
+    point.x = clientX;
+    point.y = clientY;
+    var matrix = svg.getScreenCTM();
+    if (!matrix) return { x: 0, y: 0 };
+    var local = point.matrixTransform(matrix.inverse());
+    return { x: local.x, y: local.y };
+  }
+
+  function pointerDown(event) {
+    if (event.button !== undefined && event.button !== 0) return;
+    pot.classList.add('holding');
+    svg.classList.add('started');
+    state.started = true;
+    try { pot.setPointerCapture(event.pointerId); } catch (err) { /* 沙箱里捕获可能失败，松手事件改在 window 上收 */ }
+    var point = clientToSvg(event.clientX, event.clientY);
+    drag = { x: point.x, y: point.y, aimX: state.aimX, tilt: state.tilt };
+    event.preventDefault();
+  }
+
+  function pointerMove(event) {
+    if (!drag) return;
+    var point = clientToSvg(event.clientX, event.clientY);
+    state.aimX = drag.aimX + (point.x - drag.x);
+    state.tilt = Math.max(0, Math.min(1, drag.tilt + (point.y - drag.y) / 150));
+  }
+
+  function pointerUp() {
+    drag = null;
+    pot.classList.remove('holding');
+  }
+
+  pot.addEventListener('pointerdown', pointerDown);
+  window.addEventListener('pointermove', pointerMove);
+  window.addEventListener('pointerup', pointerUp);
+  window.addEventListener('pointercancel', pointerUp);
+
+  document.addEventListener('keydown', function (event) {
+    if (!digest.hidden) {
+      if (event.key === 'Escape') {
+        digest.hidden = true;
+        openDigest.focus();
+      }
+      return;
+    }
+    if (event.key === 'ArrowLeft') { keys.left = true; event.preventDefault(); }
+    if (event.key === 'ArrowRight') { keys.right = true; event.preventDefault(); }
+    if (event.key === 'ArrowDown') {
+      keys.down = true;
+      keys.hard = event.shiftKey;
+      svg.classList.add('started');
+      event.preventDefault();
+    }
+    if (event.key === 'Shift') keys.hard = true;
+    if (event.key === 'Escape') event.preventDefault();
+  });
+  document.addEventListener('keyup', function (event) {
+    if (event.key === 'ArrowLeft') keys.left = false;
+    if (event.key === 'ArrowRight') keys.right = false;
+    if (event.key === 'ArrowDown') keys.down = false;
+    if (event.key === 'Shift') keys.hard = false;
+  });
+
+  grainBtn.addEventListener('click', function () {
+    var bottle = bottles[4];
+    bottle.cleared = true;
+    var grains = document.getElementById('grains');
+    if (grains) grains.setAttribute('opacity', '0');
+    grainBtn.textContent = '麦粒已经拨开';
+    grainBtn.disabled = true;
+    setHint('麦粒拨开了。现在顺着这只瓶子的速度倒，茶就进得去。');
+  });
+
+  stainCard.addEventListener('click', function () {
+    state.card = (state.card + 1) % cardFaces.length;
+    cardKicker.textContent = cardFaces[state.card].kicker;
+    cardBody.textContent = cardFaces[state.card].body;
+  });
+
+  packBtn.addEventListener('click', function () {
+    state.packed = true;
+    packBtn.hidden = true;
+    giftNote.hidden = false;
+    giftNote.textContent = '瓶盖盖好了。晨光穿过这一排琥珀色的茶，在台面上投下一小片暖光。有一瓶进了帆布包，卡片上写着：这瓶带去上课。';
+    egg.hidden = false;
+    egg.textContent = '包的内袋里还有一张很小的纸条：这一天 ChatSolo 向主分支推了 22 个提交，部署都接住了。长对话改成按模型接得住的分量做持久化压缩，「清空」也换成了可以撤回的折叠。这只依据你自己的提交记录。';
+    noteKicker.textContent = '分装好了';
+    noteTitle.textContent = '顺着接得住的速度，茶才进了瓶子';
+    setHint('晨光穿过这一排琥珀色的茶。有一瓶进了帆布包，包上别着卡片：这瓶带去上课。');
+  });
+
+  openDigest.addEventListener('click', function () {
+    digest.hidden = false;
+    closeDigest.focus();
+  });
+  closeDigest.addEventListener('click', function () {
+    digest.hidden = true;
+    openDigest.focus();
+  });
+  digest.addEventListener('click', function (event) {
+    if (event.target === digest) {
+      digest.hidden = true;
+      openDigest.focus();
+    }
+  });
+
+  drawSpillBottle();
+  bottles.forEach(drawBottle);
+  drawPot();
+  drawBag();
+
+  function frame(now) {
+    var dt = Math.min(0.05, (now - last) / 1000);
+    last = now;
+    step(dt);
+    render(now);
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+  window.addEventListener('resize', placeGrainButton);
+})();
+</script>
+<!--
+DESIGN LESSON 2026-10-12 折晓早报
+STYLE: 周一晨光里的浅木台面，透明玻璃瓶和琥珀色的麦茶
+GENRE: 按住茶壶，顺着每只瓶口接得住的速度把茶分装进去
+TITLE: 顺着瓶口把麦茶慢慢分装好
+THESIS: 按接得住的速度给，好东西才真正装进去。
+-->
+</html>
