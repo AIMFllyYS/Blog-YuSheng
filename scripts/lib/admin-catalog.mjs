@@ -14,11 +14,12 @@ export async function loadAdminCatalog(root = process.cwd()) {
   const visibility = await readVisibilityFile(path.join(root, 'content', 'visibility.json'))
   const hiddenPosts = new Set(visibility.posts)
   const hiddenBriefs = new Set(visibility.briefs)
+  const sections = await loadSections(path.join(root, 'content', 'sections.yml'))
   const [posts, briefs] = await Promise.all([
-    loadPosts(path.join(root, 'content', 'posts'), hiddenPosts),
+    loadPosts(path.join(root, 'content', 'posts'), hiddenPosts, sections),
     loadBriefs(path.join(root, 'content', 'briefs'), hiddenBriefs),
   ])
-  return { posts, briefs }
+  return { sections, posts, briefs }
 }
 
 /**
@@ -31,10 +32,40 @@ async function readVisibilityFile(filePath) {
 }
 
 /**
+ * @param {string} sectionsPath
+ */
+async function loadSections(sectionsPath) {
+  try {
+    return parseSections(await readFile(sectionsPath, 'utf8'))
+  } catch (error) {
+    if (isMissingDirectory(error)) return []
+    throw error
+  }
+}
+
+/**
+ * @param {string} source
+ */
+function parseSections(source) {
+  const sections = []
+  for (const match of source.matchAll(
+    /- slug: ([a-z0-9-]+)\r?\n\s+title: ([^\r\n]+)\r?\n\s+order: (\d+)/gu,
+  )) {
+    sections.push({
+      slug: match[1],
+      title: match[2].trim().replace(/^['"]|['"]$/gu, ''),
+      order: Number(match[3]),
+    })
+  }
+  return sections.sort((left, right) => left.order - right.order || left.slug.localeCompare(right.slug))
+}
+
+/**
  * @param {string} postsRoot
  * @param {Set<string>} hiddenPosts
+ * @param {{ slug: string, title: string }[]} sections
  */
-async function loadPosts(postsRoot, hiddenPosts) {
+async function loadPosts(postsRoot, hiddenPosts, sections) {
   const entries = await readdir(postsRoot, { withFileTypes: true })
   const posts = []
   for (const entry of entries) {
@@ -46,10 +77,13 @@ async function loadPosts(postsRoot, hiddenPosts) {
     const publishedAt =
       typeof frontmatter.publishedAt === 'string' ? frontmatter.publishedAt : ''
     if (!title || !publishedAt) continue
+    const section = typeof frontmatter.section === 'string' ? frontmatter.section : ''
     posts.push({
       slug: entry.name,
       title,
       publishedAt,
+      section,
+      sectionTitle: sections.find((item) => item.slug === section)?.title ?? (section || '未分类'),
       hidden: hiddenPosts.has(entry.name),
     })
   }
