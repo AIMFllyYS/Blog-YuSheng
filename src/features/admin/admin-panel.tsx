@@ -56,7 +56,7 @@ export function AdminPanel() {
       body: JSON.stringify({
         username: formData.get('username'),
         password: formData.get('password'),
-        rfa: formData.get('rfa'),
+        code: formData.get('code'),
       }),
     })
     if (!response.ok) {
@@ -189,7 +189,13 @@ export function AdminPanel() {
         >
           <Field label="用户名" name="username" type="text" />
           <Field label="密码" name="password" type="password" />
-          <Field label="RFA" name="rfa" type="password" />
+          <Field
+            autoComplete="one-time-code"
+            inputMode="numeric"
+            label="验证码"
+            name="code"
+            type="text"
+          />
           <button
             className="mt-2 border border-[var(--line)] bg-[var(--bg-elevated)] px-4 py-2"
             type="submit"
@@ -206,18 +212,25 @@ function Field({
   label,
   name,
   type,
+  autoComplete = name === 'password' ? 'current-password' : 'username',
+  inputMode,
 }: {
   label: string
   name: string
   type: 'text' | 'password'
+  autoComplete?: string
+  inputMode?: 'numeric'
 }) {
   return (
     <label className="grid gap-2 text-sm">
       <span>{label}</span>
       <input
-        autoComplete={name === 'rfa' ? 'off' : name === 'password' ? 'current-password' : 'username'}
+        autoComplete={autoComplete}
         className="border border-[var(--line)] bg-[var(--bg-elevated)] px-3 py-2"
+        inputMode={inputMode}
+        maxLength={name === 'code' ? 6 : undefined}
         name={name}
+        pattern={name === 'code' ? '[0-9]{6}' : undefined}
         required
         spellCheck={false}
         type={type}

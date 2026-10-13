@@ -3,15 +3,18 @@ import {
   credentialsMatch,
   readAdminSecrets,
   signAdminToken,
+  totpAt,
   verifyAdminToken,
+  verifyTotp,
 } from '../../functions/lib/admin-auth.mjs'
 import { handleAdminRequest } from '../../functions/lib/handle-admin.mjs'
 
-const secrets = { username: 'yu', password: 'secret', rfa: 'rfa-token' }
+const totpSecret = 'GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ'
+const secrets = { username: 'yu', password: 'secret', totpSecret }
 const env = {
   ADMIN_USERNAME: secrets.username,
   ADMIN_PASSWORD: secrets.password,
-  ADMIN_RFA: secrets.rfa,
+  ADMIN_TOTP_SECRET: totpSecret,
 }
 const catalog = {
   posts: [
@@ -26,10 +29,16 @@ const catalog = {
 }
 
 describe('admin login', () => {
-  it('accepts the three secrets and rejects a wrong RFA', () => {
-    expect(credentialsMatch(secrets, secrets)).toBe(true)
-    expect(credentialsMatch(secrets, { ...secrets, rfa: 'other' })).toBe(false)
+  it('accepts the current authenticator code and rejects a wrong one', async () => {
+    const issuedAt = 59_000
+    const code = await totpAt(totpSecret, issuedAt)
+    expect(code).toBe('287082')
+    expect(await verifyTotp(totpSecret, '287082', issuedAt)).toBe(true)
+    expect(await verifyTotp(totpSecret, '287082', issuedAt + 60_000)).toBe(false)
+    expect(await credentialsMatch(secrets, { ...secrets, code: '287082' }, issuedAt)).toBe(true)
+    expect(await credentialsMatch(secrets, { ...secrets, code: '000000' }, issuedAt)).toBe(false)
     expect(readAdminSecrets({})).toBeUndefined()
+    expect(readAdminSecrets({ ...env, ADMIN_TOTP_SECRET: 'not-a-secret' })).toBeUndefined()
   })
 
   it('expires the session token', async () => {
@@ -41,10 +50,15 @@ describe('admin login', () => {
   })
 
   it('returns the catalog after login and refuses online writes', async () => {
+    const code = await totpAt(totpSecret)
     const login = await handleAdminRequest({
       request: new Request('https://blog.yusheng.email/api/admin/login', {
         method: 'POST',
-        body: JSON.stringify(secrets),
+        body: JSON.stringify({
+          username: secrets.username,
+          password: secrets.password,
+          code,
+        }),
       }),
       env,
       catalog,

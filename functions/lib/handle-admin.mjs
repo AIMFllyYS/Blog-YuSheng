@@ -38,8 +38,8 @@ export async function handleAdminRequest({
     const body = await readJson(request)
     if (!body.ok) return json({ error: body.error }, body.status, corsOrigin)
     const attempt = readAttempt(body.value)
-    if (!attempt) return json({ error: '请填写用户名、密码和 RFA' }, 400, corsOrigin)
-    if (!credentialsMatch(secrets, attempt)) {
+    if (!attempt) return json({ error: '请填写用户名、密码和验证码' }, 400, corsOrigin)
+    if (!(await credentialsMatch(secrets, attempt))) {
       return json({ error: '登录没有通过' }, 401, corsOrigin)
     }
     return json({ token: await signAdminToken(secrets) }, 200, corsOrigin)
@@ -87,7 +87,7 @@ export async function handleAdminRequest({
 
 /**
  * @param {Request} request
- * @param {{ username: string, password: string, rfa: string }} secrets
+ * @param {{ username: string, password: string, totpSecret: string }} secrets
  */
 async function authorized(request, secrets) {
   const header = request.headers.get('authorization') ?? ''
@@ -105,14 +105,14 @@ function readAttempt(value) {
   if (
     typeof record.username !== 'string' ||
     typeof record.password !== 'string' ||
-    typeof record.rfa !== 'string'
+    typeof record.code !== 'string'
   ) {
     return undefined
   }
   return {
     username: record.username,
     password: record.password,
-    rfa: record.rfa,
+    code: record.code.trim(),
   }
 }
 
