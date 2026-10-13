@@ -4,7 +4,7 @@ import { BriefReader } from '@/features/daily-brief'
 import {
   createBriefMetadata,
   createBriefStaticParams,
-  discoverBriefs,
+  listPublicDiscoveredBriefs,
   mirrorBriefsForDev,
 } from '@/server/briefs'
 
@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function DailyBriefPage({ params }: Props) {
   const { date } = await params
-  const briefs = await discoverBriefs()
+  const briefs = await listPublicDiscoveredBriefs()
   const index = briefs.findIndex((item) => item.entry.date === date)
   if (index === -1) notFound()
   await mirrorBriefsForDev([briefs[index]!])

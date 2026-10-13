@@ -3,7 +3,8 @@ import 'server-only'
 import { copyFile, mkdir } from 'node:fs/promises'
 import path from 'node:path'
 import { briefOutputPath } from './brief-paths'
-import { discoverBriefs, type DiscoveredBrief } from './discover-briefs'
+import type { DiscoveredBrief } from './discover-briefs'
+import { listPublicDiscoveredBriefs } from './public-briefs'
 
 /**
  * 把 `content/briefs/**` 的原件原样复制到 `out/briefs/<date>.html`。
@@ -12,7 +13,7 @@ import { discoverBriefs, type DiscoveredBrief } from './discover-briefs'
 export async function buildBriefAssets(
   outputRoot = path.join(process.cwd(), 'out'),
 ): Promise<readonly DiscoveredBrief[]> {
-  const briefs = await discoverBriefs()
+  const briefs = await listPublicDiscoveredBriefs()
   await copyBriefs(briefs, outputRoot)
   return briefs
 }

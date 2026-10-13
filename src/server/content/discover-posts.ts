@@ -1,6 +1,8 @@
 import 'server-only'
 
 import { readdir } from 'node:fs/promises'
+import path from 'node:path'
+import { readVisibility } from '../visibility/read-visibility'
 import { CONTENT_POSTS_ROOT } from './content-paths'
 import { readPost, type Post } from './read-post'
 import {
@@ -30,11 +32,15 @@ export async function readAllPosts(postsRoot = CONTENT_POSTS_ROOT) {
   return posts
 }
 
-export async function listPublishedPosts(postsRoot = CONTENT_POSTS_ROOT) {
+export async function listPublishedPosts(
+  postsRoot = CONTENT_POSTS_ROOT,
+  hiddenSlugs?: readonly string[],
+) {
   const posts = await readAllPosts(postsRoot)
   assertPublishedSections(posts)
+  const hidden = await hiddenPostSlugs(postsRoot, hiddenSlugs)
   return posts
-    .filter((post) => post.frontmatter.draft !== true)
+    .filter((post) => post.frontmatter.draft !== true && !hidden.has(post.slug))
     .sort((left, right) => {
       const byDate =
         Date.parse(right.frontmatter.publishedAt) -
@@ -42,4 +48,15 @@ export async function listPublishedPosts(postsRoot = CONTENT_POSTS_ROOT) {
       return byDate || left.slug.localeCompare(right.slug, 'en')
     })
     .map(({ slug, frontmatter, source }) => ({ slug, frontmatter, source }))
+}
+
+async function hiddenPostSlugs(
+  postsRoot: string,
+  hiddenSlugs: readonly string[] | undefined,
+) {
+  if (hiddenSlugs) return new Set(hiddenSlugs)
+  if (path.resolve(postsRoot) !== path.resolve(CONTENT_POSTS_ROOT)) {
+    return new Set<string>()
+  }
+  return new Set((await readVisibility()).posts)
 }

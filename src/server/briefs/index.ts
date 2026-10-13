@@ -24,4 +24,5 @@ export {
   type BriefDiagnostic,
   type DiscoveredBrief,
 } from './discover-briefs'
+export { listPublicBriefs, listPublicDiscoveredBriefs } from './public-briefs'
 export { parseBriefSource, type BriefSourceMeta } from './parse-brief-source'

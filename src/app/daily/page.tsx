@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { DailyBriefIndex } from '@/features/daily-brief'
-import { listBriefs } from '@/server/briefs'
+import { listPublicBriefs } from '@/server/briefs'
 
 export const metadata: Metadata = {
   title: '小日报 · 折晓早报台历',
@@ -8,6 +8,6 @@ export const metadata: Metadata = {
 }
 
 export default async function DailyPage() {
-  const briefs = await listBriefs()
+  const briefs = await listPublicBriefs()
   return <DailyBriefIndex briefs={briefs} />
 }

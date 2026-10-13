@@ -18,6 +18,12 @@ const child = spawn(process.execPath, args, {
   windowsHide: true,
 })
 child.on('exit', (code, signal) => {
-  if (signal) process.exit(1)
-  process.exit(code ?? 1)
+  if (signal || code) process.exit(code ?? 1)
+  import('../lib/write-admin-catalog.mjs')
+    .then((mod) => mod.writeAdminCatalog())
+    .then(() => process.exit(0))
+    .catch((error) => {
+      console.error(error)
+      process.exit(1)
+    })
 })

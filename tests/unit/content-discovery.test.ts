@@ -10,6 +10,7 @@ import {
   readPost,
   validateArticleAssetPath,
 } from '../../src/server/content'
+import { readVisibility } from '../../src/server/visibility/read-visibility'
 import { IMPORTED_SLUGS } from '../imported-slugs'
 
 const temporaryRoots: string[] = []
@@ -37,9 +38,10 @@ describe('build-time content repository', () => {
       listPublishedPosts(),
     ])
     const publishedSlugs = new Set(published.map((post) => post.slug))
+    const hidden = new Set((await readVisibility()).posts)
     for (const slug of IMPORTED_SLUGS) {
       expect(slugs).toContain(slug)
-      expect(publishedSlugs.has(slug)).toBe(true)
+      expect(publishedSlugs.has(slug)).toBe(!hidden.has(slug))
       const post = await readPost(slug)
       expect(post.frontmatter.draft).not.toBe(true)
       expect(post.frontmatter.section).toBeDefined()
@@ -83,6 +85,9 @@ describe('build-time content repository', () => {
       'newer-post',
       'older-post',
     ])
+    expect(
+      (await listPublishedPosts(root, ['older-post'])).map((post) => post.slug),
+    ).toEqual(['newer-post'])
     expect(await createBlogStaticParams(root)).toEqual([
       { slug: 'newer-post' },
       { slug: 'older-post' },
