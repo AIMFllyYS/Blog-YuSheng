@@ -24,10 +24,10 @@ export const IMPORTED_SOURCE_EXPECTATIONS = [
   {
     sourceFile: 'AI编程方向概览/AI技术组发展方向与工程化思维分享（上册）.html',
     slug: 'ai-coding-engineering-mindset',
-    title: 'AI 技术组发展方向与工程化思维',
+    title: 'AI 编程发展方向与工程化思维简论',
     section: 'fullstack-learning',
     publishedAt: '2026-07-29T00:00:00+08:00',
-    bodyAnchors: ['树成林 · AI 社群技术组', '深度不是终点，广度才是护城河'],
+    bodyAnchors: ['1037Solo ▸ AI-Native', '深度不是终点，广度才是护城河'],
   },
   {
     sourceFile: 'AI编程方向概览/AI编程核心能力体系与工程实践指南（下册）.html',
@@ -35,7 +35,7 @@ export const IMPORTED_SOURCE_EXPECTATIONS = [
     title: 'AI 编程核心能力体系与工程实践',
     section: 'fullstack-learning',
     publishedAt: '2026-07-30T00:00:00+08:00',
-    bodyAnchors: ['这是第二次分享', '高耦合与低耦合'],
+    bodyAnchors: ['上一篇主要聊了 AI 编程的整体方向与工程化思维', '高耦合与低耦合'],
   },
   {
     sourceFile: 'AI编程范式笔记·羽升手记01-v0.3.pdf',
@@ -75,7 +75,7 @@ export const IMPORTED_SOURCE_EXPECTATIONS = [
     title: 'Agent的简单理解',
     section: 'fullstack-learning',
     publishedAt: '2026-08-08T00:00:00+08:00',
-    bodyAnchors: ['智能体方面的需求很大', '阿尔法go'],
+    bodyAnchors: ['智能体（Agent）方向的理解', 'AlphaFold'],
   },
   {
     sourceFile: 'Ai深度学习计划.txt',

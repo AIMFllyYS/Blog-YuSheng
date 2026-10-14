@@ -153,7 +153,7 @@ export const catalog = {
     },
     {
       "slug": "ai-coding-engineering-mindset",
-      "title": "AI 技术组发展方向与工程化思维",
+      "title": "AI 编程发展方向与工程化思维简论",
       "publishedAt": "2026-07-29T00:00:00+08:00",
       "section": "fullstack-learning",
       "sectionTitle": "全栈小白学习记",
