@@ -1,16 +1,22 @@
 'use client'
 
 import { useState } from 'react'
+import { useFallingToast } from '@/components/ui/falling-toast'
 import { AdminDesk, type AdminCatalog } from '@/features/admin/admin-desk'
+import { AdminLoginStage } from '@/features/admin/admin-login-stage'
+import styles from '@/features/admin/admin.module.css'
+import { RopeNavigation } from '@/features/navigation'
 
 const API_ROOT =
   process.env.NODE_ENV === 'development' ? 'http://127.0.0.1:9983' : ''
 
 export function AdminPanel() {
+  const { notify } = useFallingToast()
   const [token, setToken] = useState<string | undefined>()
   const [catalog, setCatalog] = useState<AdminCatalog | undefined>()
   const [error, setError] = useState<string | undefined>()
   const [pending, setPending] = useState(false)
+  const [loggingIn, setLoggingIn] = useState(false)
 
   async function loadCatalog(nextToken: string) {
     const response = await adminFetch('/api/admin/catalog', nextToken)
@@ -27,29 +33,35 @@ export function AdminPanel() {
     setToken(nextToken)
     setCatalog((await response.json()) as AdminCatalog)
     setError(undefined)
+    notify('已启封藏书司检校台')
   }
 
   async function onLogin(formData: FormData) {
     setError(undefined)
-    const response = await fetch(`${API_ROOT}/api/admin/login`, {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({
-        username: formData.get('username'),
-        password: formData.get('password'),
-        code: formData.get('code'),
-      }),
-    })
-    if (!response.ok) {
-      setError(await readError(response))
-      return
+    setLoggingIn(true)
+    try {
+      const response = await fetch(`${API_ROOT}/api/admin/login`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          username: formData.get('username'),
+          password: formData.get('password'),
+          code: formData.get('code'),
+        }),
+      })
+      if (!response.ok) {
+        setError(await readError(response))
+        return
+      }
+      const body = (await response.json()) as { token?: string }
+      if (!body.token) {
+        setError('登录没有返回会话')
+        return
+      }
+      await loadCatalog(body.token)
+    } finally {
+      setLoggingIn(false)
     }
-    const body = (await response.json()) as { token?: string }
-    if (!body.token) {
-      setError('登录没有返回会话')
-      return
-    }
-    await loadCatalog(body.token)
   }
 
   async function onApply(next: { posts: string[]; briefs: string[] }) {
@@ -65,83 +77,65 @@ export function AdminPanel() {
       setError(await readError(response))
       return
     }
-    setCatalog((await response.json()) as AdminCatalog)
+    const updated = (await response.json()) as AdminCatalog
+    setCatalog(updated)
+    notify('已同步可见性清单至仓库')
   }
 
   function logout() {
     setToken(undefined)
     setCatalog(undefined)
     setError(undefined)
+    notify('已封存退出检校台')
   }
 
   if (catalog && token) {
     return (
-      <AdminDesk
-        catalog={catalog}
-        error={error}
-        onApply={onApply}
-        onLogout={logout}
-        pending={pending}
-      />
+      <main className={styles.page} data-admin-page="desk">
+        <RopeNavigation />
+        <div className={styles.room}>
+          <AdminDesk
+            catalog={catalog}
+            error={error}
+            onApply={onApply}
+            onLogout={logout}
+            pending={pending}
+          />
+        </div>
+      </main>
     )
   }
 
   return (
-    <main className="mx-auto min-h-screen max-w-md px-6 py-16 text-[var(--ink)]">
-      <p className="text-sm text-[var(--ink-muted)]">羽升</p>
-      <h1 className="mt-1 text-3xl">可见性</h1>
-      {error ? (
-        <p className="mt-6 border border-[var(--line)] bg-[var(--bg-elevated)] px-4 py-3 text-sm" role="alert">
-          {error}
-        </p>
-      ) : null}
-      <form
-        className="mt-8 grid gap-4"
-        method="post"
-        onSubmit={(event) => {
-          event.preventDefault()
-          void onLogin(new FormData(event.currentTarget))
-        }}
-      >
-        <Field label="用户名" name="username" type="text" />
-        <Field label="密码" name="password" type="password" />
-        <Field autoComplete="one-time-code" inputMode="numeric" label="验证码" name="code" type="text" />
-        <button className="mt-2 border border-[var(--line)] bg-[var(--bg-elevated)] px-4 py-2" type="submit">
-          登录
-        </button>
-      </form>
-    </main>
-  )
-}
+    <main className={styles.page} data-admin-page="login">
+      <RopeNavigation />
+      <div className={styles.room}>
+        <header className={styles.header}>
+          <div>
+            <p className={styles.eyebrow}>羽升书房 · 藏书司印</p>
+            <h1 className={styles.title}>可见性</h1>
+          </div>
+          <div className={styles.headerAside}>
+            <p className={styles.intro}>
+              掌管长文卷藏与折晓早报的公开展陈。核验掌书三钥印信后，可在「总览沙盘」「3D 博客典籍」与「3D 早报台历」上即时调阅显隐并写回仓库。
+            </p>
+            <div className={styles.headerStats}>
+              <span className={styles.statPlaque}>
+                壹 <strong>掌书名牒</strong>
+              </span>
+              <span className={styles.statPlaque}>
+                贰 <strong>内库密令</strong>
+              </span>
+              <span className={styles.statPlaque}>
+                叁 <strong>陆位时符</strong>
+              </span>
+            </div>
+          </div>
+        </header>
 
-function Field({
-  label,
-  name,
-  type,
-  autoComplete = name === 'password' ? 'current-password' : 'username',
-  inputMode,
-}: {
-  label: string
-  name: string
-  type: 'text' | 'password'
-  autoComplete?: string
-  inputMode?: 'numeric'
-}) {
-  return (
-    <label className="grid gap-2 text-sm">
-      <span>{label}</span>
-      <input
-        autoComplete={autoComplete}
-        className="border border-[var(--line)] bg-[var(--bg-elevated)] px-3 py-2"
-        inputMode={inputMode}
-        maxLength={name === 'code' ? 6 : undefined}
-        name={name}
-        pattern={name === 'code' ? '[0-9]{6}' : undefined}
-        required
-        spellCheck={false}
-        type={type}
-      />
-    </label>
+        <AdminLoginStage error={error} loggingIn={loggingIn} onLogin={onLogin} />
+      </div>
+    </main>
   )
 }
 

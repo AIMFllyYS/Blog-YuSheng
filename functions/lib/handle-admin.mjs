@@ -50,7 +50,8 @@ export async function handleAdminRequest({
   }
 
   if (request.method === 'GET' && pathname === '/api/admin/catalog') {
-    return json({ canWrite, ...catalog }, 200, corsOrigin)
+    const currentCatalog = reloadCatalog ? await reloadCatalog() : catalog
+    return json({ canWrite, ...currentCatalog }, 200, corsOrigin)
   }
 
   if (request.method === 'PUT' && pathname === '/api/admin/visibility') {
@@ -58,7 +59,7 @@ export async function handleAdminRequest({
       return json(
         {
           error:
-            '线上部署不能写回仓库。请在本地 pnpm dev 里保存，再提交 content/visibility.json。',
+            '线上尚未配置 GITHUB_TOKEN，不能写回仓库。请在环境变量中配置 GITHUB_TOKEN，或在本地 pnpm dev 里保存后提交 content/visibility.json。',
         },
         409,
         corsOrigin,
@@ -77,9 +78,17 @@ export async function handleAdminRequest({
     if (unknownPost || unknownBrief) {
       return json({ error: '隐藏名单里有当前内容中不存在的项目' }, 400, corsOrigin)
     }
-    await writeVisibility(parsed.value)
-    const nextCatalog = await reloadCatalog()
-    return json({ canWrite: true, ...nextCatalog }, 200, corsOrigin)
+    try {
+      await writeVisibility(parsed.value)
+      const nextCatalog = await reloadCatalog()
+      return json({ canWrite: true, ...nextCatalog }, 200, corsOrigin)
+    } catch (error) {
+      const message =
+        error instanceof Error && error.message
+          ? error.message
+          : '写回可见性清单没有完成'
+      return json({ error: message }, 502, corsOrigin)
+    }
   }
 
   return json({ error: '没有这个接口' }, 404, corsOrigin)

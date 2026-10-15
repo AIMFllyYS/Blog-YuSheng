@@ -7,6 +7,12 @@ import {
   verifyAdminToken,
   verifyTotp,
 } from '../../functions/lib/admin-auth.mjs'
+import {
+  applyVisibilityToCatalog,
+  fetchGithubVisibility,
+  readGithubConfig,
+  writeGithubVisibility,
+} from '../../functions/lib/github-visibility.mjs'
 import { handleAdminRequest } from '../../functions/lib/handle-admin.mjs'
 
 const totpSecret = 'GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ'
@@ -49,7 +55,7 @@ describe('admin login', () => {
     expect(await verifyAdminToken(`${token}x`, secrets, issuedAt)).toBe(false)
   })
 
-  it('returns the catalog after login and refuses online writes', async () => {
+  it('returns the catalog after login and refuses online writes when no write handler is bound', async () => {
     const code = await totpAt(totpSecret)
     const login = await handleAdminRequest({
       request: new Request('https://blog.yusheng.email/api/admin/login', {
@@ -90,4 +96,64 @@ describe('admin login', () => {
     })
     expect(write.status).toBe(409)
   })
+
+  it('reads and writes content/visibility.json through GitHub Contents API', async () => {
+    const github = readGithubConfig({ GITHUB_TOKEN: 'ghp_test_token' })
+    expect(github).toEqual({
+      token: 'ghp_test_token',
+      repo: 'AIMFllyYS/Blog-YuSheng',
+      branch: 'main',
+      path: 'content/visibility.json',
+    })
+
+    const calls: { url: string; method: string; body?: string }[] = []
+    const mockFetch: typeof fetch = async (input, init) => {
+      const url = typeof input === 'string' ? input : input.toString()
+      const method = init?.method ?? 'GET'
+      const body = typeof init?.body === 'string' ? init.body : undefined
+      calls.push({ url, method, body })
+
+      if (method === 'GET') {
+        const content = btoa('{\n  "posts": [],\n  "briefs": []\n}\n')
+        return new Response(
+          JSON.stringify({ sha: 'sha-123', content, encoding: 'base64' }),
+          { status: 200, headers: { 'content-type': 'application/json' } },
+        )
+      }
+      return new Response(JSON.stringify({ commit: { sha: 'commit-456' } }), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      })
+    }
+
+    const fetched = await fetchGithubVisibility(github!, mockFetch)
+    expect(fetched).toEqual({
+      sha: 'sha-123',
+      visibility: { posts: [], briefs: [] },
+    })
+
+    await writeGithubVisibility(
+      github!,
+      { posts: ['alpha'], briefs: ['2026-09-14'] },
+      mockFetch,
+    )
+    expect(calls).toHaveLength(3)
+    expect(calls[2]?.method).toBe('PUT')
+    const putPayload = JSON.parse(calls[2]!.body!) as {
+      sha: string
+      branch: string
+      content: string
+    }
+    expect(putPayload.sha).toBe('sha-123')
+    expect(putPayload.branch).toBe('main')
+    expect(atob(putPayload.content)).toContain('"alpha"')
+
+    const overlaid = applyVisibilityToCatalog(catalog, {
+      posts: ['alpha'],
+      briefs: [],
+    })
+    expect(overlaid.posts[0]?.hidden).toBe(true)
+    expect(overlaid.briefs[0]?.hidden).toBe(false)
+  })
 })
+
