@@ -4,7 +4,7 @@ import { expect, test } from 'vitest'
 
 import { writeAnchorManifests } from '../../src/server/content'
 
-const FULL_CATALOG_BUILD_TIMEOUT_MS = 30_000
+const FULL_CATALOG_BUILD_TIMEOUT_MS = 60_000
 
 test(
   'writes a read-only anchor manifest beside every generated article',

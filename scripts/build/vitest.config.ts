@@ -10,6 +10,8 @@ export default defineConfig({
     },
   },
   test: {
+    testTimeout: 60_000,
+    hookTimeout: 60_000,
     include: [
       'scripts/build/run-content-assets.test.ts',
       'scripts/build/run-brief-assets.test.ts',

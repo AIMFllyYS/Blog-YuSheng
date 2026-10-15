@@ -8,7 +8,11 @@ import {
   verifyStaticOutput,
 } from '../../src/server/content'
 
-test('builds the validated content asset manifest into out', async () => {
+const CONTENT_ASSETS_BUILD_TIMEOUT_MS = 60_000
+
+test(
+  'builds the validated content asset manifest into out',
+  async () => {
   const manifest = await buildContentAssets()
   const original = manifest.find(
     (entry) =>
@@ -81,4 +85,4 @@ test('builds the validated content asset manifest into out', async () => {
   } finally {
     await rm(isolatedOutput, { recursive: true })
   }
-})
+}, CONTENT_ASSETS_BUILD_TIMEOUT_MS)

@@ -338,6 +338,11 @@ export const catalog = {
   ],
   "briefs": [
     {
+      "date": "2026-10-15",
+      "title": "把卡纸窗再对一遍 · 折晓早报 · 2026-10-15",
+      "hidden": false
+    },
+    {
       "date": "2026-10-14",
       "title": "先自己举到灯下看一眼 · 折晓早报 · 2026-10-14",
       "hidden": false
