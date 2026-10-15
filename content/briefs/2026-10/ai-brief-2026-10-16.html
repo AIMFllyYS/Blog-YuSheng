@@ -108,17 +108,19 @@
     box-shadow: 0 14px 0 #e0c9a6, 0 22px 28px rgba(90, 62, 32, 0.12);
   }
   .slip {
-    display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 6px 12px;
     background: rgba(255, 253, 248, 0.78);
     border-radius: 12px;
     padding: 10px 12px;
     margin-bottom: 10px;
   }
   .prompt {
-    margin: 0; flex: 1 1 240px;
+    margin: 0;
     font-size: 1.12rem; line-height: 1.45; font-weight: 650;
   }
-  .sub { flex: 1 1 100%; margin: 0; color: var(--muted); font-size: 0.95rem; }
+  .sub { margin: 0; color: var(--muted); font-size: 0.95rem; }
   .tag {
     border: 1px dashed var(--persimmon);
     background: var(--paper);
@@ -176,7 +178,7 @@
     100% { transform: translateY(-26px); opacity: 0; }
   }
   .hint {
-    margin: 2px 4px 0; color: var(--muted); font-size: 0.92rem;
+    margin: 10px 4px 8px; color: var(--muted); font-size: 0.95rem;
   }
   .compare { display: grid; grid-template-columns: 1fr; gap: 8px; }
   .compare .obj {
@@ -232,20 +234,17 @@
     content: ""; display: block; height: 2px; margin: 6px 6px 0; background: #e6d7bc;
   }
   #sack.is-done .recipe-peek { transform: translateY(-16px) rotate(-2deg); }
-  .sign-flip { width: 100%; height: 100%; perspective: 700px; }
-  .sign-inner {
-    position: relative; height: 100%; transform-style: preserve-3d;
-    transition: transform 0.65s var(--ease);
-  }
+  .sign-flip, .sign-inner { display: block; width: 100%; height: 104px; position: relative; }
   .sign-face {
     position: absolute; inset: 0; display: flex; flex-direction: column;
     align-items: center; justify-content: center; gap: 4px;
-    backface-visibility: hidden; -webkit-backface-visibility: hidden;
   }
-  .sign-back { transform: rotateY(180deg); }
-  #sign.is-done .sign-inner { transform: rotateY(180deg); }
+  .sign-back { display: none; }
+  #sign.is-done .sign-front { display: none; }
+  #sign.is-done .sign-back { display: flex; }
   .tent-board {
-    width: 96px; background: var(--paper); border: 2px solid var(--line);
+    width: 96px; max-width: 100%; box-sizing: border-box;
+    background: var(--paper); border: 2px solid var(--line);
     border-radius: 4px; padding: 8px 6px; font-size: 13px; line-height: 1.35; text-align: center;
   }
   .tent-stand {
@@ -422,15 +421,34 @@
   }
   .digest ul, .digest ol { padding-left: 1.2rem; }
   .digest li { margin: 0 0 0.45em; line-height: 1.7; }
+  @media (min-width: 720px) {
+    .slip { grid-template-columns: 1fr auto; grid-template-areas: "prompt button" "sub sub"; align-items: center; }
+    .prompt { grid-area: prompt; }
+    .tag { grid-area: button; }
+    .sub { grid-area: sub; }
+  }
   @media (min-width: 860px) {
     .compare { grid-template-columns: repeat(3, 1fr); }
     .compare .obj { flex-direction: column; text-align: center; justify-content: flex-start; }
     .pass-hint { display: block; }
     .bench { display: grid; grid-template-columns: 188px 1fr; gap: 12px; align-items: stretch; }
     .ledger:not([open]) { display: flex; }
-    .ledger:not([open]) > summary { flex: 1; display: flex; }
-    .ledger:not([open]) .cover { flex-direction: column; align-items: flex-start; justify-content: flex-end; min-height: 100%; }
-    .book-shape { width: 100%; height: 132px; }
+    .ledger:not([open]) > summary {
+      flex: 1; display: flex;
+      background:
+        linear-gradient(#2c4d3d, #2c4d3d) 0 0 / 16px 100% no-repeat,
+        #3e6b56;
+      border-radius: 3px 12px 12px 3px;
+      padding: 18px 12px 18px 26px;
+      box-shadow: 0 12px 0 rgba(90, 60, 30, 0.06);
+    }
+    .ledger:not([open]) .cover {
+      flex-direction: column; align-items: flex-start; justify-content: center;
+      min-height: 100%; width: 100%;
+      background: #fffdf8; border-radius: 4px; padding: 18px 12px;
+    }
+    .book-shape { display: none; }
+    .cover strong { font-size: 1.28rem; }
     .wall { height: 86px; }
     .window { width: 156px; height: 64px; }
   }
@@ -866,7 +884,7 @@
         </ol>
         <div class="tasting-actions">
           <button type="button" id="redactBtn" aria-pressed="false">把窄遮挡贴到事先说好的那一类上</button>
-          <button type="button" id="vetoBtn" aria-disabled="true">划掉整张评语</button>
+          <button type="button" id="vetoBtn">划掉整张评语</button>
         </div>
         <p id="vetoMsg" hidden>这一下做不到。评语还在，发表也不能被否决。</p>
         <p id="redactMsg" hidden>纸盖住了事先说好的那一类：客户数据、律师与客户之间的保密信息、模型架构。评测的人可以公开说，这样遮是否合理，只要不把被遮住的内容讲出来。</p>
@@ -984,6 +1002,7 @@
   }
   function showCard(name) {
     tray.hidden = false;
+    tray.scrollTop = 0;
     var cards = tray.querySelectorAll(".card");
     for (var i = 0; i < cards.length; i += 1) {
       cards[i].hidden = cards[i].id !== "card-" + name;
@@ -992,15 +1011,16 @@
     if (!card) return;
     var title = card.querySelector("h2");
     if (title) say(title.textContent);
-    if (!reduced && card.scrollIntoView) {
-      try { tray.scrollIntoView({ block: "nearest", behavior: "smooth" }); } catch (err) {}
-    }
+    var top = tray.getBoundingClientRect().top;
+    var limit = window.innerHeight * 0.58;
+    if (top > limit) window.scrollBy(0, top - limit);
   }
   function maybeGift() {
     if (!(state.cut && state.crock && state.sack && state.sign) || state.gift) return;
     state.gift = true;
     body.classList.add("is-gift");
     napkin.hidden = false;
+    try { napkin.scrollIntoView({ block: "center", behavior: reduced ? "auto" : "smooth" }); } catch (err) {}
     setPrompt("三处都碰过了。炉子旁边多了一片用浅色餐巾包好的面包，小卡片夹在里面。");
     hint.textContent = "餐巾上的那句话，就是今天想留下的。";
     blip(523);
@@ -1025,6 +1045,7 @@
       body.classList.remove("is-cutting");
       body.classList.add("is-cut");
       loafResult.hidden = false;
+      loaf.querySelector(".obj-name").textContent = "已经切开的这一炉";
       loaf.setAttribute("aria-label", "已经切开的这一炉");
       knife.setAttribute("aria-label", "刀已经递给外面的人");
       handBtn.textContent = "再看切开的这一炉";
