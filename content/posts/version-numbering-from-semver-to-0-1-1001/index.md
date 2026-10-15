@@ -118,9 +118,9 @@ SemVer 由 Tom Preston-Werner 建立，要解决的是**依赖地狱**：包管�
 ```mermaid
 flowchart LR
   A[本次改动] --> B{是否破坏公共 API 兼容性}
-  B -->|是| C[MAJOR +1<br/>MINOR 与 PATCH 归零]
+  B -->|是| C["MAJOR +1 · MINOR 与 PATCH 归零"]
   B -->|否| D{是否增加向下兼容的新功能}
-  D -->|是| E[MINOR +1<br/>PATCH 归零]
+  D -->|是| E["MINOR +1 · PATCH 归零"]
   D -->|否，只修复问题| F[PATCH +1]
 ```
 
@@ -499,8 +499,8 @@ Big Sur 跳到 11.0 时，为兼容写死“10.x”的旧软件，系统通过 `
 flowchart LR
   R[一次 release] --> M[机器轨]
   R --> H[人类轨]
-  M --> M1[versionCode / build<br/>单调、可比较]
-  H --> H1[versionName / marketing name<br/>可读、可叙事]
+  M --> M1["versionCode / build (单调、可比较)"]
+  H --> H1["versionName / marketing name (可读、可叙事)"]
 ```
 
 | 职能 | 回答的问题 | 常见载体 |
