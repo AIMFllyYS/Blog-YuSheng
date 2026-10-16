@@ -89,11 +89,32 @@ export function AdminPanel() {
     notify('已封存退出检校台')
   }
 
-  if (catalog && token) {
-    return (
-      <main className={styles.page} data-admin-page="desk">
+  return (
+    <main
+      className={styles.page}
+      data-admin-page={catalog && token ? 'desk' : 'login'}
+    >
+      {/* 顶部常驻绳挂顶棚：高度固定，不随下方工作区滚动而流失 */}
+      <div className={styles.topRopeBand}>
+        <div aria-hidden="true" className={styles.canopyCornerLeft}>
+          <span className={styles.canopySeal}>司印</span>
+          <span className={styles.canopyLabel}>羽升书房 · 藏书司内阁</span>
+        </div>
         <RopeNavigation />
-        <div className={styles.room}>
+        <div aria-hidden="true" className={styles.canopyCornerRight}>
+          <span className={styles.canopyLabel}>
+            {catalog && token
+              ? catalog.canWrite
+                ? 'GitHub 仓库直写已就绪'
+                : '只读快照检视模式'
+              : '三因子门禁待核验'}
+          </span>
+        </div>
+      </div>
+
+      {/* 下方全屏工作台壳体（占满剩余 100dvh 高度与 100vw 宽度，无空余白边） */}
+      <div className={styles.workbenchShell}>
+        {catalog && token ? (
           <AdminDesk
             catalog={catalog}
             error={error}
@@ -101,39 +122,13 @@ export function AdminPanel() {
             onLogout={logout}
             pending={pending}
           />
-        </div>
-      </main>
-    )
-  }
-
-  return (
-    <main className={styles.page} data-admin-page="login">
-      <RopeNavigation />
-      <div className={styles.room}>
-        <header className={styles.header}>
-          <div>
-            <p className={styles.eyebrow}>羽升书房 · 藏书司印</p>
-            <h1 className={styles.title}>可见性</h1>
-          </div>
-          <div className={styles.headerAside}>
-            <p className={styles.intro}>
-              掌管长文卷藏与折晓早报的公开展陈。核验掌书三钥印信后，可在「总览沙盘」「3D 博客典籍」与「3D 早报台历」上即时调阅显隐并写回仓库。
-            </p>
-            <div className={styles.headerStats}>
-              <span className={styles.statPlaque}>
-                壹 <strong>掌书名牒</strong>
-              </span>
-              <span className={styles.statPlaque}>
-                贰 <strong>内库密令</strong>
-              </span>
-              <span className={styles.statPlaque}>
-                叁 <strong>陆位时符</strong>
-              </span>
-            </div>
-          </div>
-        </header>
-
-        <AdminLoginStage error={error} loggingIn={loggingIn} onLogin={onLogin} />
+        ) : (
+          <AdminLoginStage
+            error={error}
+            loggingIn={loggingIn}
+            onLogin={onLogin}
+          />
+        )}
       </div>
     </main>
   )

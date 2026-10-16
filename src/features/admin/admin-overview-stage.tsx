@@ -15,23 +15,25 @@ export function AdminOverviewStage({
   rows,
   sections,
   months,
+  focusedKey,
   selected,
   writeDisabled,
   onSelectCategory,
+  onFocusRow,
   onToggleSelect,
   onSetHidden,
 }: {
   readonly rows: readonly AdminRow[]
   readonly sections: readonly AdminSectionSummary[]
   readonly months: readonly AdminMonthSummary[]
+  readonly focusedKey?: string
   readonly selected: ReadonlySet<string>
   readonly writeDisabled: boolean
   readonly onSelectCategory: (id: CategoryId) => void
+  readonly onFocusRow: (row: AdminRow) => void
   readonly onToggleSelect: (key: string) => void
   readonly onSetHidden: (targets: readonly AdminRow[], hidden: boolean) => void
 }) {
-  const hiddenRows = rows.filter((row) => row.hidden)
-
   return (
     <div className={styles.overviewRoot} data-admin-overview-stage>
       {/* 一、3D 藏书司双联舆图沙盘（左：长文各方向典籍，右：折晓早报各月份归档） */}
@@ -158,58 +160,12 @@ export function AdminOverviewStage({
         </section>
       </div>
 
-      {/* 二、内库封存专匣（集中展示当前已隐藏的篇目，支持一键启封） */}
-      <section aria-label="内库封存专匣" className={styles.vaultDrawer}>
-        <div className={styles.vaultHeader}>
-          <div className={styles.vaultHeaderLead}>
-            <span className={styles.vaultSealStamp}>封</span>
-            <div>
-              <h3 className={styles.vaultTitle}>内库封存专匣</h3>
-              <p className={styles.vaultSub}>
-                {hiddenRows.length > 0
-                  ? `当前共有 ${hiddenRows.length} 项卷藏处于隐藏封存状态，下一次构建导出时不会生成到公开站点。`
-                  : '内库清朗 · 当前筛选范围内所有长文与早报均处于公开展陈状态。'}
-              </p>
-            </div>
-          </div>
-
-          {hiddenRows.length > 0 ? (
-            <button
-              className={styles.vaultUnsealAllBtn}
-              disabled={writeDisabled}
-              onClick={() => onSetHidden(hiddenRows, false)}
-              type="button"
-            >
-              全部启封恢复显示（{hiddenRows.length}）
-            </button>
-          ) : null}
-        </div>
-
-        {hiddenRows.length > 0 ? (
-          <ul className={styles.vaultChips}>
-            {hiddenRows.map((item) => (
-              <li className={styles.vaultChip} key={item.key}>
-                <span className={styles.vaultChipBadge}>{item.badge}</span>
-                <span className={styles.vaultChipTitle}>{item.title}</span>
-                <button
-                  className={styles.vaultChipUnsealBtn}
-                  disabled={writeDisabled}
-                  onClick={() => onSetHidden([item], false)}
-                  type="button"
-                >
-                  启封显示
-                </button>
-              </li>
-            ))}
-          </ul>
-        ) : null}
-      </section>
-
-      {/* 三、全站立体藏书案陈列架 */}
+      {/* 二、全站立体藏书案陈列架（高密度多列自适应书卷网格） */}
       <div className={styles.stageViewport}>
         <ul className={styles.stageGrid}>
           {rows.map((row) => {
             const isSelected = selected.has(row.key)
+            const isFocused = focusedKey === row.key
             const spineStyle = {
               '--spine-color': row.spineColor,
               '--spine-dark': shadeColor(row.spineColor, -0.24),
@@ -220,7 +176,10 @@ export function AdminOverviewStage({
                 <div
                   className={`${styles.volumeObject} ${
                     row.hidden ? styles.volumeHidden : styles.volumeVisible
-                  } ${isSelected ? styles.volumeSelected : ''}`}
+                  } ${isSelected ? styles.volumeSelected : ''} ${
+                    isFocused ? styles.volumeFocused : ''
+                  }`}
+                  onClick={() => onFocusRow(row)}
                   style={spineStyle}
                 >
                   <div aria-hidden="true" className={styles.volumeTopEdge} />
@@ -253,7 +212,10 @@ export function AdminOverviewStage({
                     ) : null}
 
                     <div className={styles.volumeHeader}>
-                      <label className={styles.volumeCheckWrap}>
+                      <label
+                        className={styles.volumeCheckWrap}
+                        onClick={(e) => e.stopPropagation()}
+                      >
                         <input
                           aria-label={`选择 ${row.title}`}
                           checked={isSelected}
@@ -281,7 +243,10 @@ export function AdminOverviewStage({
                       </span>
                     </div>
 
-                    <div className={styles.volumeFooter}>
+                    <div
+                      className={styles.volumeFooter}
+                      onClick={(e) => e.stopPropagation()}
+                    >
                       {!row.hidden ? (
                         <Link
                           className={styles.previewLink}

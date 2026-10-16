@@ -12,21 +12,28 @@ const WEEKDAY_HEADS = ['一', '二', '三', '四', '五', '六', '日'] as const
 
 export function AdminBriefCalendar({
   months,
+  focusedKey,
   selected,
   writeDisabled,
+  onFocusRow,
   onToggleSelect,
+  onToggleBatchKeys,
   onSetHidden,
 }: {
   readonly months: readonly AdminCalendarMonth[]
+  readonly focusedKey?: string
   readonly selected: ReadonlySet<string>
   readonly writeDisabled: boolean
+  readonly onFocusRow: (row: AdminRow) => void
   readonly onToggleSelect: (key: string) => void
+  readonly onToggleBatchKeys: (keys: readonly string[], checked: boolean) => void
   readonly onSetHidden: (targets: readonly AdminRow[], hidden: boolean) => void
 }) {
   const [activeMonthKey, setActiveMonthKey] = useState<string | undefined>(
     months[0]?.key,
   )
   const [liftedWeek, setLiftedWeek] = useState<string | null>(null)
+  const [ledgerScope, setLedgerScope] = useState<'month' | 'all'>('month')
 
   const resolvedIndex = Math.max(
     0,
@@ -43,16 +50,71 @@ export function AdminBriefCalendar({
     setActiveMonthKey(target.key)
   }
 
+  const allBriefRows = months.flatMap((m) => m.rows)
+  const displayedRows =
+    ledgerScope === 'month' ? currentMonth.rows : allBriefRows
+  const selectedInMonth = currentMonth.rows.filter((r) => selected.has(r.key))
+  const allMonthSelected =
+    currentMonth.rows.length > 0 &&
+    selectedInMonth.length === currentMonth.rows.length
+
   return (
     <div className={styles.briefCalendarRoot} data-admin-brief-calendar>
+      {/* 顶部月份快切与当月批处理条 */}
       <div className={styles.subStageBar}>
-        <span className={styles.subStageHint}>
-          3D 螺旋铜圈报亭台历 · 点击左侧「周次」可抽出整周折报放大检阅 · 右侧竖签可切换归档月份
-        </span>
-        <span className={styles.subStageMeta}>
-          当前月：{currentMonth.label}（在架 {currentMonth.visibleCount} / 封存{' '}
-          {currentMonth.hiddenCount}）
-        </span>
+        <div className={styles.monthPillsBar} role="tablist" aria-label="月份快切">
+          {months.map((month, idx) => {
+            const active = idx === resolvedIndex
+            return (
+              <button
+                aria-selected={active}
+                className={`${styles.monthQuickPill} ${
+                  active ? styles.monthQuickPillActive : ''
+                }`}
+                key={month.key}
+                onClick={() => goToMonth(idx)}
+                role="tab"
+                type="button"
+              >
+                <span>{month.label}</span>
+                <span className={styles.monthQuickCount}>
+                  {month.visibleCount}/{month.count}
+                </span>
+              </button>
+            )
+          })}
+        </div>
+
+        <div className={styles.subStageActions}>
+          <button
+            className={styles.tomeActionMiniBtn}
+            onClick={() =>
+              onToggleBatchKeys(
+                currentMonth.rows.map((r) => r.key),
+                !allMonthSelected,
+              )
+            }
+            type="button"
+          >
+            {allMonthSelected ? '取消全选本月' : '全选本月'}
+          </button>
+          <button
+            className={styles.tomeActionMiniBtn}
+            disabled={writeDisabled || currentMonth.hiddenCount === 0}
+            onClick={() => onSetHidden(currentMonth.rows, false)}
+            type="button"
+          >
+            本月全显
+          </button>
+          <button
+            className={styles.tomeActionMiniBtn}
+            disabled={writeDisabled || currentMonth.visibleCount === 0}
+            onClick={() => onSetHidden(currentMonth.rows, true)}
+            type="button"
+          >
+            本月全隐
+          </button>
+        </div>
       </div>
 
       {/* 3D 书桌 + 螺旋铜圈台历舞台 */}
@@ -81,8 +143,9 @@ export function AdminBriefCalendar({
                     {currentMonth.label} · 折晓早报
                   </h3>
                   <span className={styles.calendarMonthSub}>
-                    共收录 {currentMonth.count} 期日报 · 在架 {currentMonth.visibleCount}{' '}
-                    期 · 封存 {currentMonth.hiddenCount} 期
+                    共收录 {currentMonth.count} 期日报 · 在架{' '}
+                    {currentMonth.visibleCount} 期 · 封存{' '}
+                    {currentMonth.hiddenCount} 期
                   </span>
                 </div>
 
@@ -130,7 +193,9 @@ export function AdminBriefCalendar({
                         aria-pressed={isLifted}
                         className={styles.calendarWeekTab}
                         onClick={() =>
-                          setLiftedWeek((prev) => (prev === week.key ? null : week.key))
+                          setLiftedWeek((prev) =>
+                            prev === week.key ? null : week.key,
+                          )
                         }
                         title="点击抽出或折回本周日报"
                         type="button"
@@ -150,23 +215,31 @@ export function AdminBriefCalendar({
                               }`}
                               key={cell.date}
                             >
-                              <span className={styles.calendarCellDay}>{cell.day}</span>
+                              <span className={styles.calendarCellDay}>
+                                {cell.day}
+                              </span>
                             </div>
                           )
                         }
 
                         const row = cell.row
                         const isSelected = selected.has(row.key)
+                        const isFocused = focusedKey === row.key
 
                         return (
                           <div
                             className={`${styles.calendarPaper} ${
                               row.hidden ? styles.calendarPaperHidden : ''
-                            } ${isSelected ? styles.calendarPaperSelected : ''}`}
+                            } ${isSelected ? styles.calendarPaperSelected : ''} ${
+                              isFocused ? styles.calendarPaperFocused : ''
+                            }`}
                             key={cell.date}
+                            onClick={() => onFocusRow(row)}
                           >
                             <div className={styles.calendarPaperTop}>
-                              <span className={styles.calendarPaperDay}>{cell.day}</span>
+                              <span className={styles.calendarPaperDay}>
+                                {cell.day}
+                              </span>
                               <span
                                 className={`${styles.calendarPaperStamp} ${
                                   row.hidden
@@ -179,9 +252,13 @@ export function AdminBriefCalendar({
                             </div>
 
                             <button
-                              aria-label={`${row.title}（点击勾选）`}
+                              aria-label={`${row.title}（点击检视并勾选）`}
                               className={styles.calendarPaperTitleBtn}
-                              onClick={() => onToggleSelect(row.key)}
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                onFocusRow(row)
+                                onToggleSelect(row.key)
+                              }}
                               title={row.title}
                               type="button"
                             >
@@ -190,7 +267,10 @@ export function AdminBriefCalendar({
                               </span>
                             </button>
 
-                            <div className={styles.calendarPaperQuickBar}>
+                            <div
+                              className={styles.calendarPaperQuickBar}
+                              onClick={(e) => e.stopPropagation()}
+                            >
                               <button
                                 className={styles.calendarQuickToggle}
                                 disabled={writeDisabled}
@@ -210,7 +290,9 @@ export function AdminBriefCalendar({
 
               <div className={styles.calendarMonthFoot}>
                 <span>SPIRAL ARCHIVE CALENDAR · 折晓早报检校司</span>
-                <span>点按日格标题可加入批量勾选 · 点按底部按钮立改显隐</span>
+                <span>
+                  点按日格可检视并勾选 · 点按底部按钮立改显隐 · 点击左侧「第N周」放大整周
+                </span>
               </div>
             </div>
           </div>
@@ -250,80 +332,118 @@ export function AdminBriefCalendar({
         </div>
       </div>
 
-      {/* 台历下方：早报检校签条明细（完整保留选择复选框与「显示 / 隐藏」双按钮） */}
-      <div className={styles.ledgerSheet} style={{ marginTop: '1.6rem' }}>
-        <ul className={styles.ledgerList}>
-          {months.flatMap((m) => m.rows).map((row) => (
-            <li
-              className={`${styles.ledgerRow} ${
-                row.hidden ? styles.ledgerRowHidden : ''
-              }`}
-              key={row.key}
-            >
-              <input
-                aria-label={`选择 ${row.title}`}
-                checked={selected.has(row.key)}
-                className="size-4"
-                onChange={() => onToggleSelect(row.key)}
-                type="checkbox"
-              />
-              <span
-                aria-hidden="true"
-                className={styles.ledgerSpineBar}
-                style={{ background: row.spineColor }}
-              />
-              <span className={styles.ledgerMain}>
-                <span className={styles.ledgerTitleRow}>
-                  <span
-                    className={`${styles.sealBadge} ${
-                      row.hidden ? styles.sealHidden : styles.sealVisible
-                    }`}
-                  >
-                    {row.hidden ? '封存' : '在架'}
+      {/* 台历下方：同步当月/全量早报多列检校签条网格 */}
+      <div className={styles.calendarLedgerSection}>
+        <div className={styles.calendarLedgerHeader}>
+          <span className={styles.calendarLedgerTitle}>
+            {ledgerScope === 'month'
+              ? `${currentMonth.label} · 早报明细（${currentMonth.rows.length} 期）`
+              : `全部筛选早报明细（${allBriefRows.length} 期）`}
+          </span>
+          {months.length > 1 ? (
+            <span className={styles.viewToggle} role="group">
+              <button
+                aria-pressed={ledgerScope === 'month'}
+                className={styles.viewButton}
+                onClick={() => setLedgerScope('month')}
+                type="button"
+              >
+                仅看当月 ({currentMonth.rows.length})
+              </button>
+              <button
+                aria-pressed={ledgerScope === 'all'}
+                className={styles.viewButton}
+                onClick={() => setLedgerScope('all')}
+                type="button"
+              >
+                全部月份 ({allBriefRows.length})
+              </button>
+            </span>
+          ) : null}
+        </div>
+
+        <div className={styles.ledgerSheet}>
+          <ul className={styles.ledgerGridList}>
+            {displayedRows.map((row) => (
+              <li
+                className={`${styles.ledgerRow} ${
+                  row.hidden ? styles.ledgerRowHidden : ''
+                } ${focusedKey === row.key ? styles.ledgerRowFocused : ''}`}
+                key={row.key}
+                onClick={() => onFocusRow(row)}
+              >
+                <input
+                  aria-label={`选择 ${row.title}`}
+                  checked={selected.has(row.key)}
+                  className="size-4"
+                  onChange={() => onToggleSelect(row.key)}
+                  onClick={(e) => e.stopPropagation()}
+                  type="checkbox"
+                />
+                <span
+                  aria-hidden="true"
+                  className={styles.ledgerSpineBar}
+                  style={{ background: row.spineColor }}
+                />
+                <span className={styles.ledgerMain}>
+                  <span className={styles.ledgerTitleRow}>
+                    <span
+                      className={`${styles.sealBadge} ${
+                        row.hidden ? styles.sealHidden : styles.sealVisible
+                      }`}
+                    >
+                      {row.hidden ? '封存' : '在架'}
+                    </span>
+                    <span className={styles.ledgerTitle} title={row.title}>
+                      {row.title}
+                    </span>
                   </span>
-                  <span className={styles.ledgerTitle}>{row.title}</span>
+                  <span className={styles.ledgerMeta}>{row.meta}</span>
                 </span>
-                <span className={styles.ledgerMeta}>{row.meta}</span>
-              </span>
-              {!row.hidden ? (
-                <Link
-                  className={styles.previewLink}
-                  href={row.href}
-                  prefetch={false}
-                  target="_blank"
+                {!row.hidden ? (
+                  <Link
+                    className={styles.previewLink}
+                    href={row.href}
+                    onClick={(e) => e.stopPropagation()}
+                    prefetch={false}
+                    target="_blank"
+                  >
+                    阅览 ↗
+                  </Link>
+                ) : (
+                  <span className={styles.previewLink}>已隐入内库</span>
+                )}
+                <span
+                  className={styles.choiceGroup}
+                  onClick={(e) => e.stopPropagation()}
                 >
-                  阅览 ↗
-                </Link>
-              ) : (
-                <span className={styles.previewLink}>已隐入内库</span>
-              )}
-              <span className={styles.choiceGroup}>
-                <button
-                  aria-pressed={!row.hidden}
-                  className={`${styles.choiceBtn} ${
-                    !row.hidden ? styles.choiceBtnActiveVisible : ''
-                  }`}
-                  disabled={writeDisabled}
-                  onClick={() => onSetHidden([row], false)}
-                  type="button"
-                >
-                  显示
-                </button>
-                <button
-                  aria-pressed={row.hidden}
-                  className={`${styles.choiceBtn} ${
-                    row.hidden ? styles.choiceBtnActiveHidden : ''
-                  }`}
-                  disabled={writeDisabled}
-                  onClick={() => onSetHidden([row], true)}
-                  type="button"
-                >
-                  隐藏
-                </button>
-              </span>
-            </li>
-          ))}
-        </ul>
+                  <button
+                    aria-pressed={!row.hidden}
+                    className={`${styles.choiceBtn} ${
+                      !row.hidden ? styles.choiceBtnActiveVisible : ''
+                    }`}
+                    disabled={writeDisabled}
+                    onClick={() => onSetHidden([row], false)}
+                    type="button"
+                  >
+                    显示
+                  </button>
+                  <button
+                    aria-pressed={row.hidden}
+                    className={`${styles.choiceBtn} ${
+                      row.hidden ? styles.choiceBtnActiveHidden : ''
+                    }`}
+                    disabled={writeDisabled}
+                    onClick={() => onSetHidden([row], true)}
+                    type="button"
+                  >
+                    隐藏
+                  </button>
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     </div>
   )
