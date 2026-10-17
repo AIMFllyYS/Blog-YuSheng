@@ -1,0 +1,1772 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light">
+<meta name="referrer" content="no-referrer">
+<link rel="icon" href="data:,">
+<title>先看清中间这一层 · 折晓早报 · 2026-10-18</title>
+<style>
+  :root {
+    --dawn: #f7f2e8;
+    --room: #ede6da;
+    --wood: #c9b59a;
+    --wood-deep: #b8a384;
+    --ceramic: #f5f0ea;
+    --ceramic-shade: #d9d0c4;
+    --coffee: #6b4f38;
+    --coffee-light: #8b6f4e;
+    --paper: #f3eee6;
+    --ink: #4a4036;
+    --whisper: #4e453c;
+    --muted: #7a6f63;
+    --shadow: rgba(61, 53, 41, 0.14);
+    --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+    --font: "Iowan Old Style", Palatino, "Palatino Linotype", "Songti SC", "Noto Serif SC", "Source Han Serif SC", "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", "WenQuanYi Micro Hei", "Droid Sans Fallback", sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    min-height: 100dvh;
+    color: var(--ink);
+    background: var(--room);
+    font-family: var(--font);
+    font-size: 16px;
+    line-height: 1.55;
+  }
+  body.book-open { overflow: hidden; }
+  button { font: inherit; color: inherit; cursor: pointer; }
+  a { color: #6d4c32; }
+  :focus-visible { outline: 2px solid #b4532a; outline-offset: 3px; }
+  [hidden] { display: none !important; }
+
+  #world {
+    min-height: 100dvh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background:
+      radial-gradient(900px 280px at 18% 0%, rgba(255, 250, 242, 0.95), transparent 60%),
+      var(--room);
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  #scene {
+    position: relative;
+    width: min(1180px, 100vw);
+    height: min(780px, 100dvh);
+    overflow: hidden;
+    touch-action: none;
+  }
+  .wall {
+    position: absolute;
+    inset: 0 0 58% 0;
+    background: linear-gradient(180deg, #f8f4ec 0%, #f3ece2 100%);
+  }
+  .window {
+    position: absolute;
+    left: 48px;
+    right: 48px;
+    top: 16px;
+    height: 148px;
+    border-radius: 18px 18px 8px 8px;
+    background: linear-gradient(180deg, #fbf7f0 0%, #f6efe3 78%, #efe4d4 100%);
+    box-shadow: inset 0 0 0 10px #eadfce, inset 0 0 0 12px rgba(255, 255, 255, 0.4);
+    overflow: hidden;
+  }
+  .window::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 0; bottom: 0; width: 72px;
+    background: linear-gradient(90deg, rgba(255, 252, 247, 0.92), rgba(255, 252, 247, 0.05));
+  }
+  .mullion { display: none; }
+  .date-line {
+    position: absolute;
+    right: 22px;
+    bottom: 12px;
+    margin: 0;
+    color: var(--muted);
+    font-size: 13px;
+  }
+  .sill {
+    position: absolute;
+    left: 28px;
+    right: 28px;
+    top: 164px;
+    height: 16px;
+    background: linear-gradient(180deg, #e5d5be, var(--wood-deep));
+    border-radius: 0 0 6px 6px;
+    box-shadow: 0 8px 16px rgba(61, 53, 41, 0.06);
+  }
+  .table {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    top: 180px;
+    background:
+      repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.035) 0 1px, transparent 1px 14px),
+      linear-gradient(180deg, #e7d8c2 0%, #d7c4a8 30%, #cbb892 100%);
+    clip-path: polygon(4% 0, 96% 0, 100% 100%, 0 100%);
+  }
+  .beam {
+    position: absolute;
+    left: 8%;
+    top: 168px;
+    width: 46%;
+    height: 70%;
+    background: linear-gradient(115deg, rgba(255, 250, 240, 0.38), rgba(255, 250, 240, 0));
+    pointer-events: none;
+  }
+  #whisper {
+    position: absolute;
+    left: 50%;
+    top: 188px;
+    transform: translateX(-50%);
+    width: min(640px, 86%);
+    margin: 0;
+    text-align: center;
+    color: var(--whisper);
+    font-size: 17px;
+    line-height: 1.45;
+    z-index: 6;
+    pointer-events: none;
+  }
+  #soundBtn {
+    position: absolute;
+    top: 22px;
+    right: 18px;
+    z-index: 7;
+    border: 0;
+    background: transparent;
+    color: var(--muted);
+    font-size: 13px;
+    padding: 6px 8px;
+  }
+
+  .rig {
+    position: absolute;
+    left: 432px;
+    top: 236px;
+    width: 280px;
+    z-index: 3;
+  }
+  .dripper { position: relative; height: 128px; z-index: 2; }
+  .dripper svg { width: 230px; height: 132px; display: block; margin: 0 auto; filter: drop-shadow(6px 10px 8px rgba(61, 53, 41, 0.12)); }
+  .bed {
+    position: absolute;
+    left: 58px;
+    top: 16px;
+    width: 124px;
+    height: 28px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 50% 40%, #2c211b, #1a1411 72%);
+    box-shadow: inset 0 6px 8px rgba(0, 0, 0, 0.28);
+    pointer-events: none;
+  }
+  .bed.has-paper {
+    background:
+      radial-gradient(circle at 30% 40%, rgba(255, 236, 210, 0.35) 0 1px, transparent 2px),
+      radial-gradient(circle at 60% 55%, #3a2a22 0 1px, transparent 2px),
+      radial-gradient(circle at 50% 45%, #6a4632, #3d2a22 70%);
+  }
+  .bed.blooming { transform: scale(1.04); }
+  .bed.bloomed {
+    background:
+      radial-gradient(circle at 50% 40%, #d8b48a 0 8px, transparent 9px),
+      radial-gradient(circle at 50% 50%, #7a5340, #4a3328 72%);
+  }
+  .bed.flooded {
+    background: radial-gradient(circle at 50% 50%, #4a3428, #2a1d16 80%);
+    box-shadow: inset 0 0 0 3px rgba(90, 60, 40, 0.35);
+  }
+  .bed.torn {
+    background:
+      radial-gradient(circle at 50% 50%, #140e0c 0 10px, transparent 11px),
+      radial-gradient(circle at 50% 50%, #6a4632, #3a2a22 72%);
+  }
+  .spill {
+    position: absolute;
+    left: 168px;
+    top: 78px;
+    width: 8px;
+    height: 0;
+    border-radius: 8px;
+    background: linear-gradient(#c4a07a, #8b6f4e);
+    opacity: 0;
+    transition: height 0.8s var(--ease), opacity 0.8s var(--ease);
+  }
+  .spill.show { height: 96px; width: 11px; opacity: 0.92; }
+  .drip-origin { position: absolute; left: 112px; top: 124px; width: 4px; height: 4px; }
+
+  .carafe { position: relative; margin-top: -8px; cursor: grab; }
+  .glass {
+    position: relative;
+    width: 236px;
+    height: 292px;
+    margin: 0 auto;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.42), rgba(255, 255, 255, 0.08) 18%, rgba(255, 255, 255, 0.16) 70%, rgba(255, 255, 255, 0.38));
+    border: 1.5px solid rgba(255, 255, 255, 0.72);
+    border-radius: 18px 18px 46px 46px;
+    box-shadow:
+      inset 0 0 0 1px rgba(170, 160, 148, 0.35),
+      inset 12px 0 18px rgba(255, 255, 255, 0.18),
+      8px 16px 18px rgba(61, 53, 41, 0.1);
+    overflow: hidden;
+  }
+  .glass .shine {
+    position: absolute;
+    left: 16px;
+    top: 18px;
+    bottom: 28px;
+    width: 10px;
+    border-radius: 8px;
+    background: linear-gradient(rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.05));
+    pointer-events: none;
+  }
+  .liquid {
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    height: 0;
+    overflow: hidden;
+    border-radius: 0 0 36px 36px;
+    background: linear-gradient(#8b6f4e, #6b4f38);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    transition: height 0.35s linear;
+  }
+  .liquid.clear { background: linear-gradient(#a07d58, #6b4f38 55%, #5c4030); }
+  .liquid.rushed { background: linear-gradient(#c2ad96, #7d654f 45%, #8d7360); }
+  .liquid.sludge {
+    background:
+      radial-gradient(circle at 30% 40%, #2a211b 0 2px, transparent 3px),
+      radial-gradient(circle at 62% 62%, #1a1410 0 3px, transparent 4px),
+      radial-gradient(circle at 48% 28%, #3a2e26 0 2px, transparent 3px),
+      linear-gradient(#6d5b4c, #3e3128);
+  }
+  .stories {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 10px 12px 4px;
+    pointer-events: none;
+  }
+  .story {
+    margin: 0;
+    color: #f6f0e6;
+    font-size: 13.5px;
+    line-height: 1.45;
+    text-shadow: 0 1px 0 rgba(40, 24, 12, 0.35);
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity 1s var(--ease), transform 1s var(--ease);
+  }
+  .story.show { opacity: 1; transform: none; }
+  .grit {
+    display: none;
+    margin: 6px 0 0;
+    padding: 4px 12px 8px;
+    color: #f0e2d2;
+    font-size: 13px;
+    line-height: 1.4;
+  }
+  .liquid.has-grit .grit { display: block; }
+  .server-neck {
+    width: 92px;
+    height: 12px;
+    margin: -2px auto 0;
+    background: linear-gradient(#efe6da, #d9cbb8);
+    border-radius: 4px;
+  }
+
+  .paper, .bad-paper {
+    position: absolute;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at 30% 28%, rgba(255, 255, 255, 0.7), transparent 42%),
+      repeating-linear-gradient(90deg, #f7f3ec 0 2px, #ebe4d8 2px 3px);
+    box-shadow: 10px 16px 18px rgba(61, 53, 41, 0.13);
+    z-index: 4;
+    touch-action: none;
+  }
+  .paper {
+    left: 168px;
+    top: 430px;
+    width: 176px;
+    height: 176px;
+    cursor: grab;
+  }
+  .paper .ink {
+    position: absolute;
+    left: 54%;
+    top: 42%;
+    width: 42%;
+    margin: 0;
+    color: #8a7968;
+    font-size: 14px;
+    line-height: 1.35;
+  }
+  .paper.fold-1 {
+    width: 92px;
+    height: 176px;
+    border-radius: 92px 0 0 92px;
+    background:
+      linear-gradient(90deg, rgba(90, 70, 50, 0.08), transparent 18%),
+      repeating-linear-gradient(90deg, #f7f3ec 0 2px, #e6ded2 2px 3px);
+  }
+  .paper.fold-1 .ink { left: 10px; top: 58px; width: 70px; }
+  .paper.fold-2 {
+    width: 150px;
+    height: 112px;
+    border-radius: 8px 8px 70px 70px;
+    clip-path: polygon(50% 100%, 6% 18%, 94% 18%);
+    background: linear-gradient(#fbf7f1, #e7dfd3);
+  }
+  .paper.fold-2 .ink { display: none; }
+  .paper.fold-2::after {
+    content: "";
+    position: absolute;
+    left: 28px;
+    right: 28px;
+    top: 16px;
+    height: 22px;
+    border-radius: 50%;
+    background: #f7f2ea;
+    box-shadow: inset 0 6px 6px rgba(90, 70, 50, 0.12);
+  }
+  .paper.parked, .bad-paper.parked { opacity: 0 !important; pointer-events: none !important; }
+  .bad-paper {
+    left: 78px;
+    top: 300px;
+    width: 132px;
+    height: 132px;
+    z-index: 5;
+    cursor: grab;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .bad-paper.out {
+    opacity: 1;
+    pointer-events: auto;
+    left: 248px;
+    top: 360px;
+  }
+
+  .box {
+    position: absolute;
+    left: 64px;
+    top: 268px;
+    width: 168px;
+    height: 92px;
+    z-index: 2;
+    cursor: pointer;
+  }
+  .box-body {
+    position: absolute;
+    left: 0; right: 18px; bottom: 0;
+    height: 62px;
+    background: linear-gradient(180deg, #f6f1e8, #e5d9c8);
+    border-radius: 4px 4px 8px 8px;
+    box-shadow: 6px 10px 14px rgba(61, 53, 41, 0.1);
+  }
+  .box-body span {
+    position: absolute;
+    left: 14px;
+    bottom: 10px;
+    color: #8d7b68;
+    font-size: 14px;
+  }
+  .box-lid {
+    position: absolute;
+    left: 0; right: 18px; top: 8px;
+    height: 28px;
+    background: linear-gradient(180deg, #fffaf4, #efe4d6);
+    border-radius: 4px 4px 0 0;
+    transform-origin: top center;
+    transition: transform 0.8s var(--ease);
+    box-shadow: 0 2px 0 rgba(255, 255, 255, 0.6);
+  }
+  .box.ajar .box-lid { transform: rotateX(42deg); }
+  .box.open .box-lid { transform: translateY(-18px) rotateX(8deg); }
+
+  .kettle {
+    position: absolute;
+    left: 830px;
+    top: 268px;
+    width: 250px;
+    height: 190px;
+    z-index: 5;
+    cursor: grab;
+    touch-action: none;
+    filter: drop-shadow(8px 14px 10px rgba(61, 53, 41, 0.12));
+  }
+  .kettle svg { width: 100%; height: 100%; display: block; }
+  .steam {
+    position: absolute;
+    left: 42px;
+    top: 8px;
+    width: 8px;
+    height: 28px;
+    border-radius: 8px;
+    background: linear-gradient(rgba(255, 255, 255, 0.55), transparent);
+    opacity: 0.0;
+    animation: steam 3.4s var(--ease) infinite;
+  }
+  .kettle.hot .steam { opacity: 1; }
+  .steam.b { left: 54px; animation-delay: 0.8s; }
+  .steam.c { left: 32px; animation-delay: 1.4s; }
+  @keyframes steam {
+    0% { transform: translateY(8px); opacity: 0; }
+    30% { opacity: 0.45; }
+    100% { transform: translateY(-16px); opacity: 0; }
+  }
+
+  .cup {
+    position: absolute;
+    left: 748px;
+    top: 530px;
+    width: 118px;
+    height: 96px;
+    z-index: 4;
+    cursor: grab;
+    touch-action: none;
+  }
+  .cup-body {
+    width: 92px;
+    height: 74px;
+    margin-top: 16px;
+    background: linear-gradient(90deg, #e7dfd4, #f8f4ee 42%, #ddd4c8);
+    border-radius: 0 0 16px 16px;
+    box-shadow: 6px 10px 12px rgba(61, 53, 41, 0.12), inset 0 8px 8px rgba(90, 70, 50, 0.08);
+    position: relative;
+    overflow: hidden;
+  }
+  .cup-body::before {
+    content: "";
+    position: absolute;
+    left: 6px; right: 6px; top: -8px;
+    height: 16px;
+    border-radius: 50%;
+    background: #f7f3ee;
+    box-shadow: inset 0 5px 6px rgba(80, 60, 40, 0.12);
+  }
+  .cup-coffee {
+    position: absolute;
+    left: 8px; right: 8px; bottom: 6px;
+    height: 0;
+    border-radius: 0 0 12px 12px;
+    background: linear-gradient(#8b6f4e, #5c4030);
+    transition: height 0.9s var(--ease);
+  }
+  .cup.clear .cup-coffee { height: 62%; background: linear-gradient(#a98460, #6b4f38); }
+  .cup.gritty .cup-coffee {
+    height: 62%;
+    background:
+      linear-gradient(#a98460, #6b4f38 70%),
+      repeating-linear-gradient(90deg, #3a2a22 0 2px, transparent 2px 6px);
+    background-blend-mode: multiply;
+    box-shadow: inset 0 -8px 0 #3a2e26;
+  }
+  .cup.muddy .cup-coffee { height: 66%; background: linear-gradient(#6d5b4c, #3e3128); }
+  .cup-handle {
+    position: absolute;
+    right: 6px;
+    top: 34px;
+    width: 22px;
+    height: 36px;
+    border: 6px solid #e6ddd2;
+    border-left: 0;
+    border-radius: 0 16px 16px 0;
+  }
+  #gift { display: none; }
+
+  .notebook {
+    position: absolute;
+    left: 36px;
+    bottom: 24px;
+    width: 176px;
+    height: 108px;
+    z-index: 5;
+    border: 0;
+    padding: 0;
+    background: transparent;
+    text-align: left;
+    filter: drop-shadow(6px 10px 8px rgba(61, 53, 41, 0.14));
+  }
+  .notebook .cover {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(180deg, #a88462, #8c6a4a);
+    border-radius: 3px 8px 8px 3px;
+    padding: 16px 12px 12px 22px;
+    position: relative;
+  }
+  .notebook .cover::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 0; bottom: 0; width: 10px;
+    background: #6e5238;
+    border-radius: 3px 0 0 3px;
+  }
+  .notebook strong, .notebook em {
+    display: block;
+    font-style: normal;
+    font-weight: 500;
+    color: #fbf6ee;
+  }
+  .notebook strong { font-size: 16px; }
+  .notebook em { margin-top: 6px; font-size: 13px; color: #f3e6d4; line-height: 1.35; }
+  .sticky {
+    position: absolute;
+    right: 28px;
+    bottom: 22px;
+    width: 232px;
+    z-index: 5;
+    margin: 0;
+    padding: 12px 12px 14px;
+    background: #f6e7b0;
+    color: #5c4e32;
+    font-size: 12.5px;
+    line-height: 1.45;
+    box-shadow: 4px 8px 12px rgba(61, 53, 41, 0.1);
+    transform: rotate(-1.5deg);
+  }
+  .sticky p { margin: 0 0 6px; }
+  .sticky p:last-child { margin: 0; }
+  .stain {
+    position: absolute;
+    left: 500px;
+    top: 620px;
+    width: 90px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(120, 96, 70, 0.16);
+    opacity: 0;
+    pointer-events: none;
+  }
+  #fx {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 8;
+  }
+
+  #book {
+    position: fixed;
+    inset: 0;
+    z-index: 30;
+    background: rgba(62, 52, 42, 0.46);
+    display: flex;
+    justify-content: center;
+  }
+  .sheet {
+    width: min(840px, 100%);
+    height: 100%;
+    overflow: auto;
+    background:
+      linear-gradient(90deg, rgba(180, 140, 90, 0.08), transparent 18px),
+      #fbf7f1;
+    color: #3e342c;
+    animation: rise 0.7s var(--ease);
+  }
+  @keyframes rise {
+    from { transform: translateY(18px); opacity: 0.4; }
+    to { transform: none; opacity: 1; }
+  }
+  .sheet-inner { max-width: 40rem; margin: 0 auto; padding: 28px 22px 80px; }
+  .sheet-top {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    align-items: flex-start;
+    position: sticky;
+    top: 0;
+    background: rgba(251, 247, 241, 0.94);
+    padding: 8px 0 12px;
+    z-index: 2;
+  }
+  .sheet h1 { font-size: 1.55rem; line-height: 1.35; font-weight: 600; margin: 0; }
+  .sheet .sub { margin: 6px 0 0; color: var(--muted); font-size: 0.95rem; }
+  #closeBook {
+    border: 0;
+    background: #f3eadf;
+    border-radius: 999px;
+    padding: 8px 14px;
+    flex: none;
+  }
+  .toc { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 0; padding: 0; list-style: none; }
+  .toc button {
+    border: 0;
+    background: #f3eadf;
+    border-radius: 999px;
+    padding: 6px 12px;
+    font-size: 14px;
+  }
+  .lead {
+    font-size: 1.08rem;
+    line-height: 1.8;
+    margin: 18px 0;
+  }
+  .note {
+    background: #f6f0e6;
+    border-radius: 12px;
+    padding: 12px 14px;
+    color: #5c5146;
+    line-height: 1.7;
+  }
+  .sheet h2 {
+    font-size: 1.28rem;
+    margin: 2.2rem 0 0.6rem;
+    font-weight: 600;
+    scroll-margin-top: 88px;
+  }
+  .sheet h3 { font-size: 1.08rem; line-height: 1.45; margin: 1.6rem 0 0.4rem; font-weight: 600; scroll-margin-top: 88px; }
+  .sheet p { line-height: 1.8; margin: 0.7rem 0; }
+  .kicker { margin: 0; color: #8d735c; font-size: 0.86rem; }
+  .stamp {
+    display: inline-block;
+    margin: 0 0 0 8px;
+    padding: 1px 8px;
+    border-radius: 999px;
+    background: #efe4d4;
+    color: #6d5c4b;
+    font-size: 12px;
+    vertical-align: 1px;
+  }
+  .stamp.single { background: #f4e3cc; }
+  .sources { font-size: 0.95rem; }
+  .sources a { margin-right: 0.7rem; }
+  .sheet ul { line-height: 1.75; padding-left: 1.2rem; }
+  .sheet li { margin: 0.35rem 0; }
+
+  @media (max-width: 860px) {
+    #scene { width: 100vw; height: 100dvh; }
+    .window { left: 12px; right: 12px; top: 8px; height: 78px; }
+    .date-line { font-size: 12px; right: 12px; bottom: 8px; }
+    .sill { left: 10px; right: 10px; top: 86px; }
+    .table { top: 102px; clip-path: none; }
+    #whisper { top: 108px; font-size: 15px; width: 92%; }
+    .rig { left: 50%; top: 168px; width: 200px; margin-left: -108px; }
+    .dripper svg { width: 180px; height: 104px; }
+    .bed { left: 42px; top: 12px; width: 96px; height: 22px; }
+    .drip-origin { left: 88px; top: 100px; }
+    .glass { width: 196px; height: 236px; }
+    .story { font-size: 12px; }
+    .paper { left: 12px; top: auto; bottom: 128px; width: 112px; height: 112px; }
+    .paper .ink { font-size: 12px; left: 50%; top: 36%; }
+    .paper.fold-1 { width: 64px; height: 118px; }
+    .paper.fold-2 { width: 108px; height: 84px; }
+    .kettle { left: auto; right: 0; top: 132px; width: 148px; height: 118px; }
+    .cup { left: auto; right: 8px; top: 430px; bottom: auto; width: 72px; height: 64px; z-index: 6; }
+    .cup-body { width: 72px; height: 58px; }
+    .box { left: 6px; top: 126px; transform: scale(0.62); transform-origin: top left; }
+    .bad-paper { left: 12px; top: 210px; width: 92px; height: 92px; }
+    .bad-paper.out { left: 108px; top: 430px; }
+    .notebook { left: 8px; bottom: 8px; width: 150px; height: 104px; }
+    .notebook .cover { padding: 10px 8px 8px 18px; }
+    .notebook strong { font-size: 14px; }
+    .notebook em { font-size: 12px; }
+    .sticky { left: 164px; right: 8px; width: auto; bottom: 8px; font-size: 11px; }
+    .stain { left: 40%; top: auto; bottom: 150px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+</style>
+</head>
+<body>
+<div id="world">
+  <div id="scene">
+    <div class="wall"></div>
+    <div class="window" aria-hidden="true">
+      <div class="mullion v"></div>
+      <div class="mullion h"></div>
+      <p class="date-line">折晓早报 · 10 月 18 日，星期日</p>
+    </div>
+    <div class="sill"></div>
+    <div class="table"></div>
+    <div class="beam" aria-hidden="true"></div>
+    <p id="whisper" aria-live="polite">按住滤纸的右边，折向左边。</p>
+    <button id="soundBtn" type="button">打开声音</button>
+
+    <div class="box" id="box">
+      <div class="box-lid"></div>
+      <div class="box-body"><span>滤纸</span></div>
+    </div>
+    <div class="bad-paper" id="badPaper" aria-hidden="true"></div>
+
+    <div class="rig" id="rig">
+      <div class="dripper" id="dripper">
+        <svg viewBox="0 0 230 132" aria-hidden="true">
+          <defs>
+            <linearGradient id="cer" x1="0" x2="1">
+              <stop offset="0" stop-color="#e4dcd2"/>
+              <stop offset="0.42" stop-color="#f8f4ee"/>
+              <stop offset="1" stop-color="#d5cbbf"/>
+            </linearGradient>
+          </defs>
+          <path d="M36 28 H194 L150 124 H80 Z" fill="url(#cer)"/>
+          <path d="M58 36 L96 116" stroke="#efe8df" stroke-width="3" fill="none"/>
+          <path d="M86 32 L112 120" stroke="#efe8df" stroke-width="3" fill="none"/>
+          <path d="M115 30 V122" stroke="rgba(255,255,255,0.7)" stroke-width="3"/>
+          <path d="M144 32 L128 118" stroke="#ddd4c8" stroke-width="3"/>
+          <path d="M170 36 L146 112" stroke="#ddd4c8" stroke-width="3"/>
+          <ellipse cx="115" cy="28" rx="82" ry="16" fill="#f7f3ee"/>
+          <ellipse cx="115" cy="28" rx="68" ry="11" fill="#2a211b"/>
+        </svg>
+        <div class="bed" id="bed"></div>
+        <div class="spill" id="spill"></div>
+        <div class="drip-origin" id="dripOrigin"></div>
+      </div>
+      <div class="server-neck"></div>
+      <div class="carafe" id="carafe">
+        <div class="glass" id="glass">
+          <div class="liquid" id="liquid">
+            <div class="stories" id="storiesClear">
+              <p class="story" data-at="0.3">船底和海水之间垫着微气泡。五万吨级的船对照了五个月，净节能约 5%，数字来自研发方。</p>
+              <p class="story" data-at="0.56">据年会新闻稿：药都用了，再戴降噪耳机，术后 48 小时恶心呕吐从 52.1% 降到 35.4%。期刊全文还没有。</p>
+              <p class="story" data-at="0.82">新增 4 例都在 21 天隔离里被发现，3 名是医护。130 名接触者里，128 名已隔离。</p>
+            </div>
+            <div class="stories" id="storiesRush" hidden>
+              <p class="story" data-at="0.34">据年会新闻稿：严重并发症约少 22%。再入院只在外科团队或护士审看时才降。期刊全文还没有。</p>
+              <p class="story" data-at="0.7">据年会新闻稿，英语水平有限的产妇接受血补丁的比例是 46.4%，英语组是 74.4%。非英语组只有 56 人，原因未明。</p>
+            </div>
+            <div class="stories" id="storiesSludge" hidden>
+              <p class="story" data-at="0.42">备份应用的钥匙本来就能开邮箱、文件和聊天。偷走之后，多因素认证也拦不住。据 Huntress，近 1000 个租户有登录，300 多个成功。关停服务清不掉事先埋下的新凭证。数据有没有被拿走，还没确认。</p>
+            </div>
+            <p class="grit" id="grit">已经混进去的渣，还在。</p>
+          </div>
+          <div class="shine"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="paper" id="paper" role="button" tabindex="0" aria-label="滤纸，按住右边折向左边">
+      <p class="ink">按住右边，折向左边</p>
+    </div>
+
+    <div class="kettle" id="kettle" role="button" tabindex="0" aria-label="细口手冲壶">
+      <span class="steam"></span>
+      <span class="steam b"></span>
+      <span class="steam c"></span>
+      <svg viewBox="0 0 280 210">
+        <path d="M118 78 C70 78 48 58 42 36" stroke="#c4beb4" stroke-width="16" fill="none" stroke-linecap="round"/>
+        <path d="M118 76 C74 76 54 58 48 38" stroke="#ece7e0" stroke-width="6" fill="none" stroke-linecap="round"/>
+        <ellipse cx="156" cy="118" rx="70" ry="52" fill="#c9c3b9"/>
+        <ellipse cx="156" cy="108" rx="70" ry="52" fill="#d9d4cb"/>
+        <ellipse cx="136" cy="92" rx="26" ry="12" fill="#f4f1ec" opacity="0.85"/>
+        <ellipse cx="156" cy="64" rx="52" ry="14" fill="#ece8e1"/>
+        <circle cx="156" cy="52" r="8" fill="#c4beb4"/>
+        <path d="M220 78 C258 74 262 150 214 150" stroke="#b7a898" stroke-width="11" fill="none" stroke-linecap="round"/>
+        <circle id="spoutTip" cx="42" cy="36" r="4" fill="#d9d4cb"/>
+      </svg>
+    </div>
+
+    <div class="cup" id="cup" role="button" tabindex="0" aria-label="杯子">
+      <div class="cup-body"><div class="cup-coffee" id="cupCoffee"></div></div>
+      <div class="cup-handle"></div>
+    </div>
+    <p id="gift"></p>
+    <div class="stain" id="stain"></div>
+
+    <button class="notebook" id="notebook" type="button" aria-label="打开咖啡笔记本，里面是今天的完整详细稿">
+      <span class="cover">
+        <strong>咖啡笔记本</strong>
+        <em>今天的完整详细稿</em>
+      </span>
+    </button>
+    <aside class="sticky" aria-label="便利贴">
+      <p>OpenCode 在 10 月 17 日扣款成功，10 美元。之前担心的续费中断这次没有发生。收据没写是不是 Go 订阅，这一点是推断。</p>
+      <p>StudySolo 用的 DeepSeek 余额是 19.97 元，跌破了 20 元的告警线。</p>
+      <p>「点开始录音一直卡在正在启动」已经修好上线。还没用真实麦克风测过，方便时自己点一次确认。</p>
+    </aside>
+    <canvas id="fx"></canvas>
+  </div>
+</div>
+
+<article id="book" hidden>
+  <div class="sheet">
+    <div class="sheet-inner">
+      <div class="sheet-top">
+        <div>
+          <h1>折晓早报 · 2026 年 10 月 18 日（星期日）</h1>
+          <p class="sub">完整详细稿。时间窗是北京时间 10 月 17 日早上六点，到 10 月 18 日早上六点。</p>
+          <ul class="toc">
+            <li><button type="button" data-jump="part-ai">人工智能</button></li>
+            <li><button type="button" data-jump="part-tech">科技</button></li>
+            <li><button type="button" data-jump="part-med">医学</button></li>
+            <li><button type="button" data-jump="part-you">你自己的事情</button></li>
+          </ul>
+        </div>
+        <button id="closeBook" type="button">合上笔记本</button>
+      </div>
+
+      <p class="note">这份详细稿收录的是上述时间窗里发生或首次公开的材料。时间窗正好落在美国的周五晚上到周六，所以一手发布比工作日少，很多内容来自周末开幕的学术会议、卫生机构公告和周六的国际会议。每一条都写了来源链接和核实状态：标为「多来源确认」的，用肯定的语气写；标为「单一来源」或「未能核实」的，会写明「据某来源称」或「尚未得到其他来源确认」。链接在新窗口打开。</p>
+
+      <p class="lead">很多事情的结果，不是由两头决定的，而是由夹在中间的那一层决定的。船底和海水之间垫一层微气泡，船就省下约 5% 的燃油；手术室噪声和病人之间隔一副降噪耳机，术后恶心呕吐就少了一截；病例和社区之间隔着 21 天的隔离观察，新病人一发烧就被发现。反过来，一款备份应用如果握着企业邮箱和文件的读写大权，它的钥匙一旦被偷，几百个企业的门会同时打开，连多因素认证都拦不住。所以今天最值得看清的，是中间那一层到底垫了什么、握着什么。</p>
+
+      <h2 id="part-ai">第一部分 · 人工智能</h2>
+
+      <h3 id="n1">1. DeepSeek 把 V4.1-Flash 更新到 1017 版，以 MIT 许可开放权重，还第一次把自家搜索引擎的接口卖给开发者 <span class="stamp">发布多来源，跑分厂商自报</span></h3>
+      <p class="kicker">背景</p>
+      <p>DeepSeek 是中国的大模型公司，此前已经发布了 V4.1-Flash，这是它面向大量调用、强调便宜和速度的小一号模型。智能体（也就是能自己拆解任务、调用工具、一步步把事情做完的 AI 程序）要上网查资料，通常需要一个搜索和抓取网页的工具。</p>
+      <p class="kicker">发生了什么</p>
+      <p>10 月 17 日，DeepSeek 在官方更新日志里写明，V4.1 Flash 已升级为 DeepSeek-V4.1-Flash-1017，网页版和 App 同步更新，API 调用方式和价格不变。Hugging Face 上的模型卡写道，这是一次「小更新」，但在推理、编程、智能体任务和视觉评测上都有明显提升，同时缩短了任务执行时间和输出长度，模型权重以 MIT 许可证开放。同一天，DeepSeek API 新增 Search 与 Fetch 两个接口，正式向公众开放；每日经济新闻报道两个接口价格均为每千次 5 元，The Decoder 写的是每千次 0.75 美元，并称在 2026 年 10 月 31 日之前，通过 DeepSeek Harness、Claude Code 和 Codex 里的服务端工具可以免费使用。</p>
+      <p class="kicker">数字（均为厂商自报）</p>
+      <p>据模型卡表格，Terminal-Bench 4.0 从 31.2 升到 42.3，DeepSWE v1.1 从 74.2 升到 77.0，不用工具的 HLE 从 36.8 升到 42.6；同一张表里 Claude Opus 5 的 HLE 为 56.3、Terminal-Bench 4.0 为 51.8。The Decoder 根据 DeepSeek 的成本图写道，新模型在 DeepSWE 上的平均成本「每个任务略低于 0.20 美元」，前代约 0.50 美元。</p>
+      <p>DeepSeek 这次不只是把模型做得更强、更省，还把「智能体和互联网之间的那一层」——搜索与抓取——做成了单独售卖的产品。所有分数都是厂商自报，The Decoder 也说独立评测还没有出来。</p>
+      <p class="sources">来源：<a href="https://api-docs.deepseek.com/updates" target="_blank" rel="noopener noreferrer">DeepSeek 官方更新日志</a><a href="https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017" target="_blank" rel="noopener noreferrer">Hugging Face 模型卡</a><a href="https://finance.yahoo.com/technology/ai/articles/deepseek-pushes-updated-ai-model-134714989.html" target="_blank" rel="noopener noreferrer">彭博（经 Yahoo Finance）</a><a href="https://the-decoder.com/deepseek-v4-1-flash-1017-beats-larger-rivals-in-agentic-tasks-while-once-again-massively-cutting-per-task-costs/" target="_blank" rel="noopener noreferrer">The Decoder</a><a href="http://www.21jingji.com/article/20261017/herald/e3282503a3885d19efd098f96976fe9e.html" target="_blank" rel="noopener noreferrer">每日经济新闻（经 21 经济网）</a></p>
+      <p>核实状态：发布事实与许可证为多来源确认；具体跑分与成本只有厂商一手数据，属于单一来源的自报数字，尚无第三方复现。</p>
+
+      <h3 id="n2">2. 中国拟把 23 项人工智能技术纳入出口禁止或限制目录，分析人士认为短期有适应成本 <span class="stamp">多来源确认</span></h3>
+      <p>商务部与科技部 10 月 16 日（周五）发布了出口管制目录的征求意见稿。据财新英文报道，草案涉及人工智能、生物医药和光伏制造共 40 项技术，其中 14 项拟禁止出口，其余 26 项需要出口许可。草案本身发布于时间窗之前，这里只作为背景。</p>
+      <p>窗内，南华早报在北京时间 10 月 17 日 20:00 发表分析稿，称草案中有 23 项与人工智能相关的技术会被禁止或限制出口，包括模型、智能体和芯片设计。艾媒咨询创始人张毅在文中说，这些措施不可避免会给正在开拓国际市场的中国公司带来短期适应成本。南华早报还指出，开放权重的模型会受到怎样的影响，是关键的不确定点。</p>
+      <p>它和第 1 条 DeepSeek 开放权重发生在同一天：一边是开放模型越来越强、越来越便宜，另一边是国家开始把模型和智能体当作需要管控的技术。</p>
+      <p class="sources">来源：<a href="https://www.scmp.com/tech/big-tech/article/3371247/chinas-proposed-ai-tech-export-bans-may-create-short-term-costs-long-term-gains-analysts" target="_blank" rel="noopener noreferrer">南华早报分析稿</a><a href="https://www.caixinglobal.com/2026-10-17/china-proposes-export-curbs-on-ai-and-solar-technology-102494151.html" target="_blank" rel="noopener noreferrer">财新英文（窗前背景）</a></p>
+      <p>核实状态：草案存在以及「23 项人工智能技术」「40 项技术、其中 14 项禁止」等基本事实由两家媒体相互印证，多来源确认；南华早报正文有付费墙，分析师观点只摘录了可见段落。</p>
+
+      <h3 id="n3">3. Anthropic 联合创始人 Jack Clark 在曼谷 IMF 与世界银行年会上说，AI 在加速，设防窗口只剩「少数几年」 <span class="stamp single">单一来源</span></h3>
+      <p>据路透社报道，Jack Clark 在周六的会上说，AI 能力快速提升会让各个领域的变化快得多；公司内部的一个模型估算，在特定条件下，到 2030 年美国经济产出可能增加近 50%，也就是从目前略高于 30 万亿美元增长到约 44 万亿美元。他自己也说这个数字「听起来很离谱」。他同时指出，生物研究是「我们希望有最严格的人类监督和透明度来保证安全」的领域；他说 AI 仍在人类控制之下，但随着能力增强，施加防护的窗口在缩小，现在只剩「少数几年」。</p>
+      <p>同一个人在同一段话里，一边讲 AI 会加速科学，一边点名生物研究需要最严格的监督。要提醒的是：GDP 数字是公司自家模型在假设条件下的推演，不是官方经济预测；据报道 Anthropic 正在准备 11 月上市，讲话有利益背景。目前只有同一篇路透社稿件的转载，尚未得到其他来源确认。</p>
+      <p class="sources">来源：<a href="https://finance.yahoo.com/economy/articles/anthropics-clark-says-ais-impact-091449774.html" target="_blank" rel="noopener noreferrer">路透社（经 Yahoo Finance）</a><a href="https://www.streetinsider.com/Reuters/AI+rapidly+improving%2C+could+vastly+boost+US+GDP%2C+Anthropics+Clark+tells+policymakers/27199125.html" target="_blank" rel="noopener noreferrer">路透社（经 StreetInsider）</a></p>
+
+      <h3 id="n4">4. IMF 总裁说，全球经济太依赖 AI 繁荣，「像单腿站立」 <span class="stamp">多来源确认</span></h3>
+      <p>在同一场年会的闭幕记者会上，IMF 总裁格奥尔基耶娃说：「当我们依赖某一个增长动力时，就像单腿站立。」她说能源出口国和 AI 价值链上的成员正在跑到前面，而不在这条链上的能源进口国「正在进一步掉队」。据 CNBC 报道，IMF 部长级委员会主席贾丹也说，全球经济在战争、能源与粮食安全威胁、高债务和 AI 快速发展的风险面前表现出「非凡的韧性」，同时许多不在 AI 价值链上的低收入国家担心自己落后。</p>
+      <p>它和第 3 条在同一个房间里：Clark 讲 AI 能把蛋糕做多大，IMF 讲全世界的增长都压在 AI 这一条腿上本身就是风险，而且收益分配不均。「单腿站立」这句原话只在 The Nation 里读到。</p>
+      <p class="sources">来源：<a href="https://www.cnbc.com/2026/10/17/imf-members-call-for-more-support-amid-war-shocks-advanced-intelligence-risks.html" target="_blank" rel="noopener noreferrer">CNBC</a><a href="https://www.nationthailand.com/business/economy/40072419" target="_blank" rel="noopener noreferrer">The Nation Thailand</a></p>
+
+      <h3 id="n5">5. Meta 删掉条款里「可用抓取内容训练」的措辞，法律专家说修改后仍然很宽 <span class="stamp">多来源确认</span></h3>
+      <p>据 The Verge 报道，Meta 在遭到批评后再次更新条款，删掉了暗示它可以抓取包括新闻网站在内的内容来训练 AI 的措辞。Meta 发言人说，整合后的抓取条款只适用于它的广告和商业产品，「这并不改变 Meta 使用网络爬虫的方式」，内容所有者照旧可以用 robots.txt 表达偏好（robots.txt 是网站放在根目录、告诉爬虫哪些页面别抓的一个文本文件，只是表达意愿，没有法律强制力）。康奈尔法学院教授 James Grimmelmann 对 Nieman Lab 说，这次修改「没有解决我的担忧」，「开发广告和商业产品」这一表述「宽到能开过一辆卡车」。Nieman Lab 写道，新条款定于 10 月 30 日生效，企业账户在此之前无法选择退出。</p>
+      <p>措辞改了，不等于边界真的收紧了。真正决定能抓什么的，是条款里中间那几个词。两家媒体对修改发生在哪一天说法不一致，所以这里只说「在本周末前后修改」。</p>
+      <p class="sources">来源：<a href="https://www.theverge.com/tech/1013409/meta-removes-language-that-may-have-allowed-it-to-scrape-news-sites" target="_blank" rel="noopener noreferrer">The Verge</a><a href="https://www.niemanlab.org/2026/10/legal-experts-warn-metas-new-terms-still-grant-broad-scraping-permissions-despite-language-changes/" target="_blank" rel="noopener noreferrer">Nieman Lab</a><a href="https://techcrunch.com/2026/10/17/meta-removes-language-that-raised-scraping-and-ai-training-concerns/" target="_blank" rel="noopener noreferrer">TechCrunch</a></p>
+
+      <h3 id="n6">6. 越来越多网站开始拦截 AI 智能体 <span class="stamp single">单一来源</span></h3>
+      <p>据 The Verge 的综述报道，最近几周，Meta 的 Muse、xAI 的 Grok、OpenAI 的 Dots 等服务的用户报告说，他们的智能体在多个大网站上被拦住。Yelp 对 TechCrunch 说，它只放行参加付费数据授权计划的智能体；达美航空不让智能体代用户订票；摩根大通和嘉信理财确认，出于安全考虑封锁智能体访问账户。AI 安全评估公司 EquiStamp 的 CEO Chris Canal 说，很多防护本来不是专门拦智能体的，而是拦试图诈骗或入侵的机器人程序，「这些 AI 智能体触发了同样的防护」。</p>
+      <p>它和第 5 条是一体两面：AI 公司想让智能体替人跑遍整个互联网，网站在中间加了一层拦截、收费和反爬虫。智能体有没有用，不只取决于模型能力，也取决于中间这层门开不开。各公司的做法由 The Verge 转述，尚未找到摩根大通、嘉信、达美的官方声明原文。</p>
+      <p class="sources">来源：<a href="https://www.theverge.com/ai-artificial-intelligence/1013195/ai-agents-blocked-web" target="_blank" rel="noopener noreferrer">The Verge</a></p>
+
+      <h3 id="n7">7. Replit CEO 澄清：OpenAI 取代 Anthropic 成为默认模型，但用户仍可以选 Claude <span class="stamp single">单一来源</span></h3>
+      <p>TechCrunch 在北京时间 10 月 18 日 02:48 更新了一篇报道（初版发布于 10 月 17 日 05:22，比时间窗早 38 分钟；收录的是窗内新增的澄清）。Replit CEO Amjad Masad 周末对 TechCrunch 说：「Replit 仍然不绑定模型，用户可以选择 Anthropic 的 Claude 或其他支持的模型……基于性能、经济性和合作关系，OpenAI 现在是驱动 Replit Agent 的首选伙伴。」报道指出，大多数用户只用默认模型，所以这次切换可能明显减少 Replit 在 Anthropic 上的花费。Masad 还说，企业合同去年约占收入的 2%，今年约 15%，B2B 收入超过一半。</p>
+      <p>平台和用户之间那一层「默认设置」，实际决定了大部分流量流向谁。只有 TechCrunch 一家，Replit 与 Anthropic 都没有正式公告。</p>
+      <p class="sources">来源：<a href="https://techcrunch.com/2026/10/17/replit-is-no-longer-working-with-anthropic-ceo-says/" target="_blank" rel="noopener noreferrer">TechCrunch</a></p>
+
+      <h2 id="part-tech">第二部分 · 科技</h2>
+
+      <h3 id="n8">8. 一家备份服务商的应用钥匙被盗，攻击者大批登录企业的 Microsoft 365 <span class="stamp">多来源确认</span></h3>
+      <p>ConnectWise Cloud Backup（前身叫 SkyKick）是一款帮企业备份邮件和文件的云服务。为了能备份，它在每个客户的 Microsoft 365 租户（可以理解成一家企业在微软云上的整套账号空间）里，早就被授予了读写邮箱、OneDrive、SharePoint 和 Teams 的大权限。</p>
+      <p>ConnectWise 在北京时间 10 月 17 日 13:01 的公告更新里说，发现 Cloud Backup 环境中的应用身份遭到未授权访问，作为保护措施将关闭 Cloud Backup 的应用访问，「这会中断备份服务，直到另行通知」。安全公司 Huntress 在窗内的更新里说，已发现近 1000 个 Entra 租户有来自可疑 IP 的登录活动，其中 300 多个成功；最初确认的数字是 162 个租户。Huntress 还发现 10 月 15 日有第二波定向尝试，针对 16 个政策、国家安全、贸易和关键矿产领域的租户。BleepingComputer 转引安全公司 Todyl 的话说，因为这款应用在每个租户里已经握有此前授予的大权限，这些登录让攻击者在技术上能够读写邮件和附件、OneDrive 与 SharePoint 文件以及 Teams 聊天。由于登录用的是应用自己的凭证、不经过任何用户，多因素认证也拦不住。ConnectWise 已吊销证书、停掉服务，但它也承认，这样做清除不了攻击者事先在客户租户里埋下的新凭证。凭证最初怎么泄露的，还在调查。</p>
+      <p>这是今天「中间那一层握着太多权限」最直白的例子：企业自己的门锁再好，也挡不住一把早就被允许开所有门的中间钥匙。受害规模和数据是否被拿走，原文都说「尚未确认」。首版公告与博客首发在窗前，窗内是更新与报道。</p>
+      <p class="sources">来源：<a href="https://www.connectwise.com/company/trust/advisories" target="_blank" rel="noopener noreferrer">ConnectWise 官方公告</a><a href="https://www.huntress.com/blog/vendor-credential-enables-unauthorized-access" target="_blank" rel="noopener noreferrer">Huntress 调查博客</a><a href="https://www.bleepingcomputer.com/news/security/hackers-breach-microsoft-365-tenants-via-connectwise-supply-chain-attack/" target="_blank" rel="noopener noreferrer">BleepingComputer</a></p>
+
+      <h3 id="n9">9. ASML 说每年扩产 30% 也追不上需求，暂缓接 2029 到 2030 年的订单 <span class="stamp single">单一来源</span></h3>
+      <p>《韩国时报》北京时间 10 月 17 日 11:00 发文，引用 ASML 本周三（10 月 14 日，窗前）财报电话会上的原话：CEO Fouquet 说，2027 年、2028 年各扩产 30%「将无法满足客户需求」；另一位高管 Dassen 说，不想先接 A、B、C 客户的单，再告诉还没下单的 D 客户「抱歉，卖完了」。文章把这一点和韩国龙仁、全南光州半导体集群的建厂时间表对照：SK 海力士龙仁首座工厂目标明年 10 月投产，三星龙仁首座工厂计划 2029 年投产；设备从下单到交付一般要 18 个月到两年。业内人士在文中也说，现在还谈不上瓶颈。</p>
+      <p>ASML 的话来自公开财报电话会，可以核查，但「设备可能拖慢韩国集群」这个判断目前只有《韩国时报》一家在讲。窗内是这篇新分析，高管原话在窗前。</p>
+      <p class="sources">来源：<a href="https://www.koreatimes.co.kr/business/companies/20261017/securing-equipment-emerges-as-new-variable-for-koreas-chip-expansion-plans" target="_blank" rel="noopener noreferrer">《韩国时报》</a></p>
+
+      <h3 id="n10">10. 韩国财长说芯片景气「至少延续到明年」，而同一周芯片股刚大跌 <span class="stamp single">单一来源</span></h3>
+      <p>韩国财长李亨一周六在曼谷年会期间对 CNBC 说：「目前我们的看法是，这种增长至少能延续到明年，因为半导体供需缺口仍然很大，供给还在扩张。」CNBC 同时写到，本周芯片股因加息担忧和中国公司竞争而大跌；韩国一篇专栏援引两位专家的话，预计到 2029 年存储市场可能出现「新供给洪流」，变成「红海」。只有 CNBC 一家采访，属于官方表态，不是新数据。</p>
+      <p class="sources">来源：<a href="https://www.cnbc.com/2026/10/17/south-korea-semiconductor-outlook-lee-hyoung-il.html" target="_blank" rel="noopener noreferrer">CNBC</a></p>
+
+      <h3 id="n11">11. 上船院发布第二代智能气泡润滑减阻系统，5 万吨级油化船实测净节能约 5% <span class="stamp">多来源，数字来自研发方</span></h3>
+      <p>船在水里走，最大的阻力之一是船体和海水之间的摩擦。帝企鹅逃命时会抖出羽毛里的空气，让身体周围包一层气泡，游得更快。</p>
+      <p>10 月 17 日，上船院向全球发布自主研发的第二代智能型船舶气泡润滑减阻系统。原理是从船底持续释放压缩空气，在船体和海水之间铺一层微气泡，降低摩擦阻力。第一代要船员手动操作，第二代按航速和吃水自动调节供气量。系统首次装在新建的 5 万吨级成品油和化学品船上，经过 5 个月实船营运测试：船上周期性地自动开、关系统，拿同一条船在不同吃水、航速下做能效对比，实测净节能约 5%。上船院研究员杨博说，一艘 5 万吨油轮一天通常耗油约 20 吨，节能 5% 就意味着每天省约 1 吨燃油。</p>
+      <p>它是今天「垫得刚好的一层」最具体的样子：不改船，也不改海，只在两者之间垫一层气泡。同一条船开关对照，很像临床试验的自身对照。两家媒体报道一致，但节能数字都来自研发方本身，还没有第三方独立测量。</p>
+      <p class="sources">来源：<a href="https://www.stdaily.com/web/gdxw/2026-10/17/content_597768.html" target="_blank" rel="noopener noreferrer">科技日报</a><a href="https://www.chinanews.com.cn/sh/2026/10-17/10716254.shtml" target="_blank" rel="noopener noreferrer">中国新闻网</a></p>
+
+      <h3 id="n12">12. 东华加速器中子源通过验收、转入正式运行 <span class="stamp single">单一来源</span></h3>
+      <p>据科技日报，10 月 16 日，东华理工大学的东华加速器中子源科学装置经专家验证达到设计指标，通过验收，从试运行转入正式运行。它的 35 兆电子伏电子束功率最大 72 千瓦，报道称是国内目前束流功率最大的电子直线加速器；短脉冲电子束最短 10 纳秒。学校依托该装置，在国内首次用光核反应开展铜-67 制备实验，辐照锌-68 靶材后，铜-67 产出活度达 2.13×10<sup>5</sup> 贝可。装置由东华理工大学联合中国工程物理研究院、中国原子能科学研究院等单位建设，前后用了 6 年。</p>
+      <p>铜-67 这类同位素和核医学相关。但要看清量级：10<sup>5</sup> 贝可离报道说的「居里级量产」还差很多个数量级（1 居里约等于 3.7×10<sup>10</sup> 贝可），目前仍在工艺和实验阶段。「国内最大」等说法是单位自己的表述。验收发生在 10 月 16 日，报道在窗内。窗内只找到科技日报这一篇。</p>
+      <p class="sources">来源：<a href="https://www.stdaily.com/web/gdxw/2026-10/17/content_598023.html" target="_blank" rel="noopener noreferrer">科技日报</a></p>
+
+      <h3 id="n13">13. 2026 世界航海装备大会在福州举行 <span class="stamp single">单一来源</span></h3>
+      <p>新华网报道，10 月 16 日至 19 日，2026 世界航海装备大会在福州举行，同期的海洋装备博览会有 7000 余件产品和成果亮相。宁德时代配套电池已装配于 1000 多艘电动及混动船舶；展区展出了 20 兆瓦级海上风电机组模型，该机组今年 2 月已在闽南海域并网发电（这是旧事件，这次是再展示）。新华社综述，企业数据没有独立核实。</p>
+      <p class="sources">来源：<a href="https://www.xinhuanet.com/20261017/7a45ea15f61c42b7b6602af1c8634160/c.html" target="_blank" rel="noopener noreferrer">新华网</a></p>
+
+      <h3 id="n14">14. Linux 7.3 发布前一天合入修复：打印线程启动得太早，部分多核机器开机偶发卡死 <span class="stamp single">单一来源</span></h3>
+      <p>据 Phoronix，Linux 7.3 正式版发布前，内核合入了一个修复。各地报上来的开机卡死症状五花八门，最后追到 2024 年 9 月引入的「非阻塞控制台打印线程」：这些线程启动得太早，在多核初始化阶段异步地开关中断，干扰了部分硬件平台的多核启动。Linutronix 工程师 John Ogness 的补丁把这些线程推迟到所有架构初始化完成之后再启动。</p>
+      <p>一个本来只负责「打印日志」的中间角色，插进了不该插的时机，就能让整台机器卡住。Phoronix 直接引用了补丁说明，但没能独立打开内核提交页面核对。</p>
+      <p class="sources">来源：<a href="https://www.phoronix.com/news/Linux-7.3-KThreads-NBCON" target="_blank" rel="noopener noreferrer">Phoronix</a></p>
+
+      <h3 id="n15">15. 广州首条常态化无人机血液运输航线在增城首飞 <span class="stamp single">单一来源</span></h3>
+      <p>据羊城晚报（新浪财经转载），广州首条常态化无人机血液运输航线成功首飞，无人机配备医疗温控转运箱，飞行全程可视化监控、数据实时回传；报道称相较地面运输，点对点配送时效「提升一倍以上」。报道没写具体日期、航线长度和对比基准，「提升一倍以上」只能当作宣传口径看。</p>
+      <p class="sources">来源：<a href="https://finance.sina.com.cn/jjxw/2026-10-17/doc-inivnvkv8205450.shtml" target="_blank" rel="noopener noreferrer">新浪财经转载羊城晚报</a></p>
+
+      <h2 id="part-med">第三部分 · 医学</h2>
+
+      <h3 id="n16">16. 肯尼亚埃博拉（本迪布焦型）确诊从 3 例增至 7 例，新增 4 例中有 3 名医护人员 <span class="stamp">多来源确认</span></h3>
+      <p>这次疫情与刚果（金）的埃博拉疫情相关。据半岛电视台概括，刚果（金）自 5 月正式发现疫情以来已记录超过 9,000 例、超过 4,300 例死亡（这是媒体概括，不是窗内官方精确数）。本次主导毒株是本迪布焦型，半岛电视台指出目前没有针对它的获批疫苗或治疗，这和更熟悉的扎伊尔型不同。</p>
+      <p>非洲疾控中心 10 月 17 日声明，肯尼亚卫生部确认新增 4 例本迪布焦型埃博拉病例，全国确诊总数达 7 例，其中 1 例死亡；新增病例包括 3 名医护人员和 1 名家属。130 名已识别的接触者中，128 名（98.5%）已追踪并隔离，另外 2 人仍在寻找；卫生部称目前没有社区传播的证据。据肯尼亚本地媒体转述的卫生部声明，4 名新病例都在隔离期内，所以「诊断得早」，降低了传给家人和社区的风险、提高了存活机会；在接触者 21 天观察期结束之前，仍可能出现新病例，「一旦出现症状，也会同样迅速地被发现和治疗」。据半岛电视台，肯尼亚首例病例 10 月 3 日飞抵内罗毕、10 月 5 日死亡；据本地媒体转述，3 名医护正是 10 月 3 日到 4 日在医院照护他的人。</p>
+      <p>隔离观察就是病例和社区之间那一层：它挡住了社区传播，让新病人一发烧就被抓住。同时，医护被感染也说明院内防护这一层有薄弱处。7 例、3 名医护加 1 名家属、128/130 名接触者已隔离这几个数字在各来源一致；卫生部 X 原帖本身未直接打开。</p>
+      <p class="sources">来源：<a href="https://africacdc.org/news-item/africa-cdc-reaffirms-support-to-kenya-following-confirmation-of-four-additional-ebola-cases/" target="_blank" rel="noopener noreferrer">非洲疾控中心声明</a><a href="https://www.aljazeera.com/news/2026/10/17/kenya-confirms-four-more-ebola-cases-bringing-total-to-seven" target="_blank" rel="noopener noreferrer">半岛电视台</a><a href="https://eastleighvoice.co.ke/health/413360/ministry-of-health-confirms-four-more-ebola-cases-bringing-total-caseload-to-seven" target="_blank" rel="noopener noreferrer">The Eastleigh Voice</a></p>
+
+      <h3 id="n17">17. 随机对照试验：全麻手术中戴降噪耳机，术后恶心呕吐从 52.1% 降到 35.4% <span class="stamp single">单一来源，会议新闻稿</span></h3>
+      <p>美国麻醉医师协会（ASA）在 ANESTHESIOLOGY 2026 年会上发布新闻稿：192 名 18 到 65 岁、在全麻下接受妇科微创手术的成人被随机分成两组，一半从麻醉开始到手术结束戴市售头戴式降噪耳机，另一半不戴；所有人都接受相同的麻醉和标准的术后恶心呕吐（PONV）预防用药。术后 48 小时内，戴耳机组 35.4% 发生 PONV，不戴组 52.1%，风险降低 32%；换句话说，每 100 名戴耳机的患者约少 17 人发生 PONV。戴耳机组在前 24 小时内 PONV 也更轻，不良事件没有增加。第一作者、苏州大学附属第一医院的刘华跃医生说：「全麻病人意识不到周围发生了什么，但这不代表大脑完全停止处理声音。」作者坦言机制尚不清楚。</p>
+      <p>按新闻稿数字换算，绝对风险降低约 16.7 个百分点，需治疗人数约为 6。这两个是按原文数字自行换算的，不是原文直接给出。耳机是加在药物之外的一层，不改麻醉、不改手术，只在噪声和大脑之间隔一下。所有数字来自 ASA 新闻稿，会议摘要阶段，尚无同行评审全文。</p>
+      <p class="sources">来源：<a href="https://www.newswise.com/articles/wearing-headphones-during-surgery-may-reduce-nausea-and-vomiting-afterward" target="_blank" rel="noopener noreferrer">ASA 新闻稿（Newswise）</a><a href="https://medicalxpress.com/news/2026-10-headphones-surgery-nausea-vomiting-afterward.html" target="_blank" rel="noopener noreferrer">MedicalXpress 转载</a></p>
+
+      <h3 id="n18">18. 38 项研究的分析：术后手机居家监测能降低严重并发症，但再入院率只在有人审看数据时才下降 <span class="stamp single">单一来源，会议新闻稿</span></h3>
+      <p>ASA 年会新闻稿称，研究者分析了 38 项研究、7,507 名患者。与标准术后护理相比，参加手机应用居家监测的患者严重并发症风险低 22%，急诊就诊风险低 22%，再入院风险低 15%。但并发症总数没有显著下降；而且只有当外科团队成员或护士审看患者上传的信息并能采取行动时，再入院率才下降，没有临床人员审看的项目没有降低。第一作者是多伦多大学的医学生。</p>
+      <p>技术本身不够，中间那一层「有没有人在看」才决定数据有没有用。应用拦不住问题发生，但能让问题在恶化前被发现。会议摘要阶段，暂无期刊全文可对照。</p>
+      <p class="sources">来源：<a href="https://www.eurekalert.org/news-releases/1146718" target="_blank" rel="noopener noreferrer">ASA 新闻稿（EurekAlert）</a><a href="https://medicalxpress.com/news/2026-10-mobile-app-complications-surgery.html" target="_blank" rel="noopener noreferrer">MedicalXpress 转载</a></p>
+
+      <h3 id="n19">19. 荟萃分析：剖宫产术中或术后用氯胺酮或艾司氯胺酮，与产后两周内抑郁症状小到中度减轻相关 <span class="stamp single">单一来源，会议新闻稿</span></h3>
+      <p>ASA 年会新闻稿称，研究者纳入 2015 年 1 月到 2025 年 9 月发表的 6 项随机对照试验、1,832 名择期剖宫产产妇。用了氯胺酮或艾司氯胺酮的产妇，抑郁症状评分小到中度降低（标准化均数差 -0.36），有统计学意义。第一作者、FIU 医学院医学生 Peter Hsin 说：「这很有希望，但现在说氯胺酮能预防临床诊断的产后抑郁、或者应当常规使用，还为时过早。」</p>
+      <p>结局是术后第 3 到 14 天的爱丁堡产后抑郁量表评分，这是筛查工具的分数，不等于临床诊断。标准化均数差是把不同量表的差值换算到同一把尺子上，-0.36 属于小到中度效应。布法罗大学团队计划开展前瞻性随机研究。会议摘要阶段。</p>
+      <p class="sources">来源：<a href="https://www.newswise.com/articles/ketamine-during-or-after-c-sections-may-ease-early-postpartum-depression-symptoms-new-study-suggests" target="_blank" rel="noopener noreferrer">ASA 新闻稿（Newswise）</a><a href="https://medicalxpress.com/news/2026-10-ketamine-sections-ease-early-postpartum.html" target="_blank" rel="noopener noreferrer">MedicalXpress 转载</a></p>
+
+      <h3 id="n20">20. 回顾性研究：英语水平有限的产妇发生硬脊膜穿破后头痛时，接受血补丁治疗的比例明显更低 <span class="stamp single">单一来源，会议新闻稿</span></h3>
+      <p>ASA 年会新闻稿称，研究者用人工智能加人工病历复核，分析了一个大型医疗系统 2015 到 2025 年间 556 名诊断为硬脊膜穿破后头痛的产科患者，其中 500 人首选英语，56 人首选其他语言。英语组 372 人（74.4%）接受了硬膜外血补丁，英语水平有限组只有 26 人（46.4%）；后者麻醉随访次数更少（5 次对 7 次）、随访时间更短（4 天对 5 天），接受血补丁的几率约低 70%。作者说研究不能说明差异为什么出现，但语言障碍可能影响沟通、复诊和持续随访。</p>
+      <p>硬脊膜穿破后头痛是坐起或站立时加重的体位性头痛，机制是脑脊液从穿刺孔漏出；硬膜外血补丁用患者自己的血封堵漏口，是中重度病例的标准治疗。病人和医生之间缺了「语言」这一层，标准治疗就送不到。非英语组只有 56 人，样本小，是回顾性研究。会议摘要阶段。</p>
+      <p class="sources">来源：<a href="https://www.newswise.com/articles/language-barriers-may-affect-access-to-standard-treatment-for-headaches-after-epidurals-for-new-moms" target="_blank" rel="noopener noreferrer">ASA 新闻稿（Newswise）</a><a href="https://medicalxpress.com/news/2026-10-language-barriers-affect-access-standard.html" target="_blank" rel="noopener noreferrer">MedicalXpress 转载</a></p>
+
+      <h3 id="n21">21. UEG Week 2026：到 2050 年，酒精相关肝硬化合并心力衰竭的伤残负担在美国和中东欧将明显上升 <span class="stamp single">单一来源，同一份新闻稿</span></h3>
+      <p>欧洲联合胃肠病学周 10 月 17 日至 20 日在巴塞罗那举行。据大会新闻稿（MedicalXpress 全文转载），研究者分析 1990 到 2023 年全球疾病负担数据，看的是伤残损失寿命年（YLD，衡量「带病生活」的时间，不包括死亡）。这期间西欧 YLD 率一直最高、上升 28.6%，中欧和东欧上升最快，分别为 82.9% 和 74.7%，美国上升 38.5%。建模预测到 2050 年，与 2023 年相比，美国可能上升 65.4%，中欧 49.6%，东欧 66.6%，西欧则下降 19.0%。70 岁及以上人群的 YLD 率是 15 到 49 岁人群的 10 到 16 倍，男性负担是女性的 1.86 到 3.27 倍。</p>
+      <p>它讲的是「心—肝轴」：酒精同时伤肝和伤心，可以和病理生理课上的酒精性心肌病、肝硬化对照着看。这是会议摘要和趋势外推，不是确定的未来。多个网站转载同一份新闻稿；UEG 官网原页未能直接打开，确切解禁时刻无法确认，但最早副本在窗内。</p>
+      <p class="sources">来源：<a href="https://medicalxpress.com/news/2026-10-disability-burden-linked-alcohol-cirrhosis.html" target="_blank" rel="noopener noreferrer">MedicalXpress 转载 UEG 新闻稿</a><a href="https://www.miragenews.com/alcohol-related-cirrhosis-heart-failure-burden-1762094/" target="_blank" rel="noopener noreferrer">Mirage News 转载</a><a href="https://ueg.eu/press" target="_blank" rel="noopener noreferrer">UEG 新闻中心</a></p>
+
+      <h3 id="n22">22. 教皇利奥十四世接受胸腔镜辅助右肺下叶切除术后第四天出院 <span class="stamp">多来源确认</span></h3>
+      <p>圣座新闻室 10 月 17 日上午宣布，教皇利奥十四世当天从杰梅利医院出院、返回梵蒂冈。据梵蒂冈新闻网，医生说当天上午的血液检查和胸片确认他的情况允许出院。据杰梅利医院官方新闻，教皇上周二上午入院，当天下午接受了约 90 分钟的手术，切除肺腺癌；为了根治，用电视胸腔镜辅助技术切除了右肺下叶。术后第一天他就恢复正常进食、开始呼吸物理治疗，随后逐步完全下床活动。</p>
+      <p>它完整展示了早期肺腺癌外科治疗和加速康复的典型路径。确诊和手术在 10 月 13 日，早于时间窗，窗内的新信息只有出院和康复过程；分期、淋巴结情况和是否需要辅助治疗，官方都没有公布，这里不做推断。</p>
+      <p class="sources">来源：<a href="https://press.vatican.va/content/salastampa/en/comunicazioni/2026/10/17/261017b.html" target="_blank" rel="noopener noreferrer">圣座新闻室</a><a href="https://www.vaticannews.va/en/pope/news/2026-10/pope-leo-xiv-discharged-from-hospital-lung-surgery.html" target="_blank" rel="noopener noreferrer">梵蒂冈新闻网</a><a href="https://www.policlinicogemelli.it/news-eventi/leone-xiv-lascia-il-gemelli-il-grazie-ai-medici-e-il-saluto-della-folla/" target="_blank" rel="noopener noreferrer">杰梅利医院</a></p>
+
+      <h2 id="part-you">第四部分 · 你自己的事情</h2>
+      <p class="note">这一部分来自你授权的邮箱和 GitHub，只是提醒，不是评价。本次没有可用的日历和笔记连接器，所以不包含课表类内容。私有仓库和邮箱本身的链接不放在这里。</p>
+
+      <h3 id="n23">23. OpenCode 在 10 月 17 日成功扣款 10 美元 <span class="stamp single">单一来源</span></h3>
+      <p>北京时间 10 月 17 日 13:21，邮箱收到一封 OpenCode 收据，金额 10.00 美元，正好落在原定授权截止日当天。收据只写了「Payment to OpenCode」，没写是不是 Go 订阅、也没写支付方式，所以「这是 Go 的续费」是根据 10 月 9 日那封提醒邮件推断的。窗内没有看到扣款失败或订阅状态变化的邮件。之前担心的续费中断这次没有发生。</p>
+
+      <h3 id="n24">24. StudySolo 用的 DeepSeek 账户余额 19.97 元，跌破 20 元告警线 <span class="stamp single">单一来源</span></h3>
+      <p>北京时间 10 月 18 日 01:02，1037Solo 运维系统发来告警：DeepSeek 账户余额 19.97 元，告警阈值 20 元，影响项目 StudySolo；如果持续不足会每 24 小时再提醒一次。同一天合入的 DeepSeek 搜索功能在没有单独配置时会回落到平台的 DeepSeek 密钥（见第 26 条）。</p>
+
+      <h3 id="n25">25. GitHub Pro 月费 10 月 17 日正常扣款 4 美元 <span class="stamp single">单一来源</span></h3>
+      <p>收据写明 GitHub Pro 月度订阅 4.00 美元，服务周期 10 月 16 日到 11 月 15 日。</p>
+
+      <h3 id="n26">26. StudySolo 这一天上线了好几样东西</h3>
+      <ul>
+        <li>课堂模块的持久化与云同步大更新（北京时间 10 月 17 日 16:43 合入 master）：课堂数据改成按课存进浏览器本地数据库，补上了旧数据和关页时的草稿恢复、云端课程分页、逐字稿冲突提示；PR 写明的本地测试全部通过，登录态的端到端测试被推迟；合入后的 ci 和部署都成功。多来源确认。</li>
+        <li>「点开始录音后一直卡在正在启动」已修复并上线（17:37）：原因是录音启动要等整个云同步队列跑完，以及音频上下文挂起时初始化会无限等待；修复后录音只等本地存档写好就开始，音频初始化最多等 15 秒。PR 说明没有用真实麦克风和登录账号测过，方便的时候可以自己点一次「开始录音」确认。多来源确认。</li>
+        <li>新增 DeepSeek 搜索作为第四个联网搜索来源（21:00）：由外部贡献者提交；PR 写明合入后还需要手动在价格配置里加上 DeepSeek 搜索的单价，否则按次计费的工具会被拒绝；作者没有用真实密钥测过。价格是否已补，未能核实。没有单独配置时会回落到平台的 DeepSeek 密钥。单一来源。</li>
+        <li>顶栏新增「Agent / Canvas」切换（23:10）：在 StudySolo 里一键切到完整的 ChatSolo 画布。两边写了安全约定：只允许 StudySolo 嵌入画布页，不通过跨页消息传令牌。这是把中间层握的权限主动收窄。多来源确认。</li>
+      </ul>
+
+      <h3 id="n27">27. 上午 StudySolo 的检查和部署连续失败，下午调整策略后恢复全绿 <span class="stamp">多来源确认</span></h3>
+      <p>北京时间 10 月 17 日 09:58 到 15:07，StudySolo 收到十多封失败通知。15:06 前后，八个 1037Solo 仓库同时合入了「只在批准合入主分支后跑检查」的流程调整（PR 正文写明是你批准的）；15:16 修 lint 的 PR 合入后，StudySolo 后续每次检查和部署都成功。</p>
+
+      <h3 id="n28">28. ChatSolo 主分支的后端测试仍然没有转绿 <span class="stamp">多来源确认</span></h3>
+      <p>窗内 ChatSolo 的部署和安全审计已经恢复成功，前端检查也通过，但 ci 里的 Pytest 这一步在 15:06 和 23:04 两次主分支运行中仍然失败。具体是哪条测试没展开日志看。</p>
+
+      <h3 id="n29">29. StudySolo 每日数据库备份连续第二天在「用量水位」这一步报错，但备份文件已经上传 <span class="stamp">多来源确认</span></h3>
+      <p>北京时间 10 月 17 日 07:53 的备份任务显示失败，但任务明细里「导出并加密」「上传加密备份」两步都成功了，失败的是最后一步用量水位检查；前一天同一任务也是这样。超了哪项用量，未核实。</p>
+
+      <h3 id="n30">30. deepseek-harness 的端到端测试失败，卡在沙箱环境准备步骤 <span class="stamp">多来源确认</span></h3>
+      <p>北京时间 10 月 17 日 12:22，失败发生在 CI 机器上准备沙箱的那一步，后面检查密钥和真正调用 DeepSeek 的步骤都被跳过，所以和余额、密钥无关。</p>
+
+      <h3 id="n31">31. 昨天的早报已经合入并同步 <span class="stamp">多来源确认</span></h3>
+      <p>10 月 17 日早报《拨一下，听它回不回应》已在北京时间 07:12 合入 Blog-YuSheng 主分支，07:18 同步到 dev。</p>
+
+      <h3 id="n32">32. 两封和工具链相关的产品通讯 <span class="stamp single">单一来源</span></h3>
+      <ul>
+        <li>一家第三方中转平台的推广邮件说，DeepSeek 已在 10 月 17 日把 V4.1 Flash 升级到 1017 版，建议 DeepSeek Harness 用户使用 v0.2.1-rc.1 或更高版本。</li>
+        <li>Claude Code 周报说，桌面端支持并行嵌套会话，云端会话能接着本地未提交的改动继续做，还可以在提示里给每个子智能体单独设推理强度；Haiku 5.5 发布，主打 1M 上下文。</li>
+      </ul>
+      <p>据早报仓库的 PR 说明，GitHub Actions 本月免费分钟数已经用完，预计 11 月 1 日重置（单一来源，节点不在时间窗内）。</p>
+
+      <h2 id="part-caveat">单一来源与未能核实清单</h2>
+      <ul>
+        <li>DeepSeek V4.1-Flash-1017 的全部跑分和每任务成本：厂商自报，尚无第三方复现。</li>
+        <li>Jack Clark 的讲话和「到 2030 年美国 GDP 增长近 50%」：只有路透社一篇，且是公司内部模型在特定条件下的推演。</li>
+        <li>网站拦截 AI 智能体：The Verge 一家综述，各公司官方声明原文未找到。</li>
+        <li>Replit 换默认模型的澄清：只有 TechCrunch。</li>
+        <li>ASML 可能拖慢韩国新厂：只有《韩国时报》在讲。</li>
+        <li>韩国财长的芯片景气判断：只有 CNBC 采访。</li>
+        <li>东华加速器中子源：只有科技日报一篇。</li>
+        <li>航海装备大会企业数据：新华社综述，企业自报。</li>
+        <li>Linux 开机卡死修复：Phoronix 一家，内核提交页未独立核对。</li>
+        <li>广州无人机运血：只有羊城晚报，「时效提升一倍以上」缺对比基准。</li>
+        <li>降噪耳机、手机居家监测、氯胺酮、语言障碍与血补丁、酒精心肝负担：都是会议新闻稿，尚无期刊全文。</li>
+        <li>气泡减阻「净节能约 5%」：两家媒体报道一致，但数字来自研发方本身。</li>
+        <li>个人部分：OpenCode 收据对应哪个订阅是推断；DeepSeek 搜索的价格配置是否补上、真实调用是否可用未能核实；ChatSolo 具体失败测试、备份水位超了哪项未展开核实。</li>
+      </ul>
+
+      <h2 id="part-window">时间窗边界说明</h2>
+      <ul>
+        <li>出口管制征求意见稿本身发布于 10 月 16 日，在窗前；窗内收录的是南华早报 10 月 17 日的分析稿。</li>
+        <li>ConnectWise 首版公告和 Huntress 首篇博客在窗前；窗内是服务关停的更新、扩大后的受害范围和媒体报道。</li>
+        <li>ASML 高管原话来自 10 月 14 日财报电话会，在窗前；窗内是《韩国时报》的新分析。</li>
+        <li>Replit 报道初版比窗口早 38 分钟；收录理由是窗内更新加入了新的澄清。</li>
+        <li>东华加速器中子源验收发生在 10 月 16 日，报道在窗内。</li>
+        <li>教皇的确诊和手术在 10 月 13 日；窗内只有出院。</li>
+        <li>20 兆瓦海上风机今年 2 月已并网，展会上是再展示。</li>
+        <li>刚果（金）的累计病例数是媒体概括，不是窗内官方精确数。</li>
+      </ul>
+
+      <h2>刻意没有收录的材料</h2>
+      <p>下面这些材料在窗内被大量转载，但核对后发现首次发布早于时间窗，所以没有当作今天的新闻：Politico 关于 Anthropic 推销 AI 安全法案的独家报道（比窗口早 15 分钟）；Reflection 发布 501B 开放权重模型 Beam；腾讯评测智能体非预期浏览；OpenAI 新增智能体失控事件披露、印度 CERT-In 通报等 10 月 15 到 16 日的材料；罗氏 Enspryng 获批甲状腺眼病（10 月 16 日）；NEJM 非胰岛素 2 型糖尿病 CGM 试验（10 月 14 日）；JAMA VITAL 麻醉试验（8 月）；《柳叶刀》10 月 17 日刊（实际上线早于窗口）；宾夕法尼亚麻疹疫情（一手发布在 10 月 14 到 15 日）；《自然·医学》10 月 16 日上线的癫痫人机协作论文。</p>
+    </div>
+  </div>
+</article>
+
+<script>
+(function () {
+  var scene = document.getElementById('scene');
+  var paper = document.getElementById('paper');
+  var badPaper = document.getElementById('badPaper');
+  var kettle = document.getElementById('kettle');
+  var carafe = document.getElementById('carafe');
+  var cup = document.getElementById('cup');
+  var box = document.getElementById('box');
+  var bed = document.getElementById('bed');
+  var liquid = document.getElementById('liquid');
+  var spill = document.getElementById('spill');
+  var stain = document.getElementById('stain');
+  var whisper = document.getElementById('whisper');
+  var gift = document.getElementById('gift');
+  var notebook = document.getElementById('notebook');
+  var book = document.getElementById('book');
+  var closeBook = document.getElementById('closeBook');
+  var soundBtn = document.getElementById('soundBtn');
+  var canvas = document.getElementById('fx');
+  var ctx = canvas.getContext('2d');
+  var spoutTip = document.getElementById('spoutTip');
+  var dripOrigin = document.getElementById('dripOrigin');
+  var storiesClear = document.getElementById('storiesClear');
+  var storiesRush = document.getElementById('storiesRush');
+  var storiesSludge = document.getElementById('storiesSludge');
+
+  var state = {
+    fold: 0,
+    good: 'table',
+    bad: 'boxed',
+    filter: 'none',
+    bloom: 'idle',
+    pourMs: 0,
+    bloomPourMs: 0,
+    pauseMs: 0,
+    fill: 0,
+    brew: 'none',
+    sediment: false,
+    cup: 'empty',
+    cupKind: 'none',
+    kettleDown: false,
+    serving: false,
+    stain: 0,
+    clearTold: false,
+    rushTold: false,
+    sludgeTold: false,
+    giftTold: false,
+    boxHinted: false
+  };
+
+  var paperX = 0, paperY = 0, paperScale = 1, paperLock = false;
+  var badX = 0, badY = 0, badScale = 1;
+  var kettleX = 0, kettleY = 0;
+  var cupY = 0;
+  var carafeRot = 0;
+  var drag = null;
+  var particles = [];
+  var audio = { ctx: null, master: null, pour: null, on: false, userSet: false };
+  var last = performance.now();
+  var arcMs = 0;
+
+  function setWhisper(text) {
+    if (whisper.textContent !== text) whisper.textContent = text;
+  }
+
+  function applyPaper() {
+    paper.style.transform = 'translate(' + paperX + 'px,' + paperY + 'px) scale(' + paperScale + ')';
+  }
+  function applyBad() {
+    badPaper.style.transform = 'translate(' + badX + 'px,' + badY + 'px) scale(' + badScale + ')';
+  }
+  function applyKettle() {
+    kettle.style.transform = 'translate(' + kettleX + 'px,' + kettleY + 'px)';
+  }
+  function applyCup() {
+    cup.style.transform = 'translateY(' + cupY + 'px)';
+  }
+  function applyCarafe() {
+    carafe.style.transformOrigin = '50% 80%';
+    carafe.style.transform = 'rotate(' + carafeRot + 'deg)';
+  }
+
+  function center(el) {
+    var s = scene.getBoundingClientRect();
+    var r = el.getBoundingClientRect();
+    return { x: r.left + r.width / 2 - s.left, y: r.top + r.height / 2 - s.top };
+  }
+  function hit(el, x, y, pad) {
+    var r = el.getBoundingClientRect();
+    return x >= r.left - pad && x <= r.right + pad && y >= r.top - pad && y <= r.bottom + pad;
+  }
+  function spoutOver() {
+    var p = center(spoutTip);
+    var s = scene.getBoundingClientRect();
+    return hit(bed, p.x + s.left, p.y + s.top, 46);
+  }
+
+  function resetCounters() {
+    state.pourMs = 0;
+    state.bloomPourMs = 0;
+    state.pauseMs = 0;
+    state.clearTold = false;
+    state.rushTold = false;
+  }
+
+  function ensureAudio() {
+    if (!audio.on) return null;
+    try {
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return null;
+      if (!audio.ctx) {
+        audio.ctx = new AC();
+        audio.master = audio.ctx.createGain();
+        audio.master.gain.value = 0.06;
+        audio.master.connect(audio.ctx.destination);
+      }
+      if (audio.ctx.state === 'suspended') audio.ctx.resume();
+      return audio.ctx;
+    } catch (err) {
+      return null;
+    }
+  }
+  function tone(freq, dur, type, gain) {
+    var c = ensureAudio();
+    if (!c) return;
+    var o = c.createOscillator();
+    var g = c.createGain();
+    o.type = type;
+    o.frequency.setValueAtTime(freq, c.currentTime);
+    g.gain.setValueAtTime(gain, c.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + dur);
+    o.connect(g);
+    g.connect(audio.master);
+    o.start();
+    o.stop(c.currentTime + dur);
+  }
+  function crinkle() {
+    var c = ensureAudio();
+    if (!c) return;
+    var n = c.createBufferSource();
+    var buffer = c.createBuffer(1, Math.floor(c.sampleRate * 0.16), c.sampleRate);
+    var data = buffer.getChannelData(0);
+    for (var i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * (1 - i / data.length);
+    n.buffer = buffer;
+    var f = c.createBiquadFilter();
+    f.type = 'bandpass';
+    f.frequency.value = 1300;
+    var g = c.createGain();
+    g.gain.value = 0.25;
+    n.connect(f);
+    f.connect(g);
+    g.connect(audio.master);
+    n.start();
+  }
+  function setPourSound(on) {
+    var c = ensureAudio();
+    if (!c) return;
+    if (on && !audio.pour) {
+      var buffer = c.createBuffer(1, c.sampleRate * 1, c.sampleRate);
+      var data = buffer.getChannelData(0);
+      for (var i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+      var src = c.createBufferSource();
+      src.buffer = buffer;
+      src.loop = true;
+      var f = c.createBiquadFilter();
+      f.type = 'lowpass';
+      f.frequency.value = 900;
+      var g = c.createGain();
+      g.gain.value = 0.12;
+      src.connect(f);
+      f.connect(g);
+      g.connect(audio.master);
+      src.start();
+      audio.pour = src;
+      audio.pourGain = g;
+    } else if (!on && audio.pour) {
+      try { audio.pour.stop(); } catch (err) { /* already stopped */ }
+      audio.pour = null;
+    }
+  }
+  function updateSoundBtn() {
+    soundBtn.textContent = audio.on ? '关掉声音' : '打开声音';
+  }
+  function armSoundFromGesture() {
+    if (!audio.userSet) {
+      audio.on = true;
+      updateSoundBtn();
+    }
+    ensureAudio();
+  }
+
+  function commitFold() {
+    if (state.fold >= 2 || state.good !== 'table') return;
+    state.fold += 1;
+    paper.classList.remove('fold-0', 'fold-1', 'fold-2');
+    paper.classList.add('fold-' + state.fold);
+    paper.style.transform = '';
+    paperX = 0;
+    paperY = 0;
+    paperScale = 1;
+    applyPaper();
+    crinkle();
+    if (state.fold === 1) {
+      paper.querySelector('.ink').textContent = '再折一次，收成锥形';
+      setWhisper('再折一次，收成一个锥形。');
+    } else {
+      setWhisper('把滤纸按进滤杯里。');
+      paper.setAttribute('aria-label', '折好的滤纸，按进滤杯');
+    }
+  }
+
+  function seatGood() {
+    if (paperLock || state.fold < 2 || state.good !== 'table') return;
+    var pr = paper.getBoundingClientRect();
+    var br = bed.getBoundingClientRect();
+    var dx = (br.left + br.width / 2) - (pr.left + pr.width / 2);
+    var dy = (br.top + br.height / 2) - (pr.top + pr.height / 2);
+    paperLock = true;
+    var x0 = paperX, y0 = paperY, s0 = paperScale;
+    var t0 = performance.now();
+    function step(now) {
+      var k = Math.min(1, (now - t0) / 680);
+      var e = 1 - Math.pow(1 - k, 3);
+      paperX = x0 + dx * e;
+      paperY = y0 + dy * e;
+      paperScale = s0 + (0.35 - s0) * e;
+      applyPaper();
+      if (k < 1) requestAnimationFrame(step);
+      else {
+        paper.classList.add('parked');
+        state.good = 'seated';
+        state.filter = 'good';
+        if (state.bad === 'seated') {
+          state.bad = 'table';
+          badPaper.classList.remove('parked');
+        }
+        paperLock = false;
+        kettle.classList.add('hot');
+        tone(180, 0.12, 'sine', 0.2);
+        if (state.sediment && state.brew === 'sludge' && state.fill > 0.08) {
+          setWhisper('滤纸换回来了。壶里的渣还在，捞不干净。');
+        } else if (state.sediment && state.fill <= 0.08) {
+          state.bloom = 'idle';
+          resetCounters();
+          setWhisper('滤纸换回来了。底下的渣还在。可以再慢慢注一次水。');
+        } else {
+          setWhisper('拿起细口壶，绕着圈慢慢注水。');
+        }
+      }
+    }
+    requestAnimationFrame(step);
+  }
+
+  function returnGood() {
+    paper.classList.remove('parked');
+    state.good = 'table';
+    paperLock = true;
+    var x0 = paperX, y0 = paperY, s0 = paperScale;
+    var t0 = performance.now();
+    function step(now) {
+      var k = Math.min(1, (now - t0) / 640);
+      var e = 1 - Math.pow(1 - k, 3);
+      paperX = x0 * (1 - e);
+      paperY = y0 * (1 - e);
+      paperScale = s0 + (1 - s0) * e;
+      applyPaper();
+      if (k < 1) requestAnimationFrame(step);
+      else paperLock = false;
+    }
+    requestAnimationFrame(step);
+  }
+
+  function seatBad() {
+    var pr = badPaper.getBoundingClientRect();
+    var br = bed.getBoundingClientRect();
+    var dx = (br.left + br.width / 2) - (pr.left + pr.width / 2);
+    var dy = (br.top + br.height / 2) - (pr.top + pr.height / 2);
+    var x0 = badX, y0 = badY, s0 = badScale;
+    var t0 = performance.now();
+    badPaper.style.transition = 'none';
+    function step(now) {
+      var k = Math.min(1, (now - t0) / 640);
+      var e = 1 - Math.pow(1 - k, 3);
+      badX = x0 + dx * e;
+      badY = y0 + dy * e;
+      badScale = s0 + (0.28 - s0) * e;
+      applyBad();
+      if (k < 1) requestAnimationFrame(step);
+      else {
+        badPaper.classList.add('parked');
+        state.bad = 'seated';
+        state.filter = 'bad';
+        if (state.good === 'seated') returnGood();
+        tone(160, 0.1, 'sine', 0.16);
+        setWhisper('看起来一样。再注一次水。');
+      }
+    }
+    requestAnimationFrame(step);
+  }
+
+  function openBox() {
+    box.classList.add('open');
+    box.classList.remove('ajar');
+    badPaper.classList.add('out');
+    if (state.bad === 'boxed') state.bad = 'table';
+    badPaper.removeAttribute('aria-hidden');
+  }
+
+  function pourOff() {
+    var wasRush = state.brew === 'rushed';
+    state.fill = 0;
+    state.brew = 'none';
+    state.bloom = 'idle';
+    resetCounters();
+    bed.classList.remove('blooming', 'bloomed', 'flooded');
+    spill.classList.remove('show');
+    state.stain = Math.min(1, state.stain + 0.45);
+    if (wasRush) setWhisper('倒掉了。这一次，粉胀开的时候停一下。');
+    else setWhisper('能倒掉的倒掉了。沉在底下的渣还在。');
+  }
+
+  function serve() {
+    if (state.cup !== 'empty' || state.serving) {
+      setWhisper('这杯已经倒好了。分享壶里的，就留在壶里看。');
+      return;
+    }
+    var kind = null;
+    if (state.brew === 'clear') kind = state.sediment ? 'gritty' : 'clear';
+    else if (state.brew === 'sludge') kind = 'muddy';
+    if (!kind) return;
+    state.serving = true;
+    arcMs = 860;
+    var start = state.fill;
+    var t0 = performance.now();
+    function step(now) {
+      var k = Math.min(1, (now - t0) / 860);
+      state.fill = start * (1 - k);
+      if (k < 1) requestAnimationFrame(step);
+      else {
+        state.fill = 0;
+        state.brew = 'none';
+        state.bloom = 'idle';
+        state.serving = false;
+        state.cup = 'filled';
+        state.cupKind = kind;
+        resetCounters();
+        bed.classList.remove('blooming', 'flooded');
+        tone(520, 0.08, 'sine', 0.08);
+        if (kind === 'clear') setWhisper('端起这杯。');
+        else if (kind === 'gritty') setWhisper('端起来。底下还有一点倒不掉的渣。');
+        else setWhisper('端起来。这杯是浑的。');
+      }
+    }
+    requestAnimationFrame(step);
+  }
+
+  function onCarafeRelease(rot) {
+    if (rot > 16) {
+      if (state.brew === 'rushed') setWhisper('这壶不均匀，先往左边倒掉。');
+      else if (state.cup !== 'empty') setWhisper('这杯已经倒好了。分享壶里的，就留在壶里看。');
+      else if (state.brew === 'clear' && state.fill >= 0.72) serve();
+      else if (state.brew === 'sludge' && state.fill >= 0.45) serve();
+      else if (state.brew === 'clear') setWhisper('再注一会儿，让它滴够。');
+      else setWhisper('壶里还没有可以倒的咖啡。');
+    } else if (rot < -16) {
+      if (state.brew === 'rushed' || state.brew === 'sludge') pourOff();
+      else if (state.brew === 'clear') setWhisper('这杯是清的。往右边，倒进杯子里。');
+    }
+    var from = carafeRot;
+    var t0 = performance.now();
+    function step(now) {
+      var k = Math.min(1, (now - t0) / 420);
+      carafeRot = from * (1 - k);
+      applyCarafe();
+      if (k < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  function maybeParkKettle() {
+    var parking = state.brew === 'sludge' || state.brew === 'rushed' || (state.brew === 'clear' && state.fill >= 0.9) || state.bloom === 'idle';
+    if (state.bloom === 'armed') return;
+    if (state.bloom === 'ok' && state.fill < 0.9) return;
+    if (!parking && state.bloom !== 'ok') return;
+    var x0 = kettleX;
+    var y0 = kettleY;
+    var t0 = performance.now();
+    function step(now) {
+      if (state.kettleDown) return;
+      var k = Math.min(1, (now - t0) / 700);
+      var e = 1 - Math.pow(1 - k, 3);
+      kettleX = x0 * (1 - e);
+      kettleY = y0 * (1 - e);
+      applyKettle();
+      if (k < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  function finishGift() {
+    if (state.giftTold) return;
+    state.giftTold = true;
+    state.cup = 'lifted';
+    cupY = -42;
+    applyCup();
+    tone(880, 0.09, 'sine', 0.08);
+    tone(1320, 0.12, 'sine', 0.05);
+    var line = '这杯是清的。垫得刚好的那一层，把不该过去的挡住了。';
+    if (state.cupKind === 'gritty') line = '上面是清的，底下还沉着倒不掉的渣。';
+    if (state.cupKind === 'muddy') line = '这杯是浑的。中间那一层开了口，该挡住的一起过去了。';
+    gift.textContent = line;
+    gift.classList.add('show');
+    setWhisper(line);
+    if (state.bad === 'boxed' && !state.boxHinted) {
+      state.boxHinted = true;
+      box.classList.add('ajar');
+      setTimeout(function () {
+        if (state.bad === 'boxed') setWhisper('盒子里还有一张滤纸，看起来一样。');
+      }, 1700);
+    }
+  }
+
+  function tickPour(dt, over) {
+    if (state.serving) return;
+    if (!state.kettleDown || !over) {
+      setPourSound(false);
+      if (!state.kettleDown && state.bloom === 'armed') {
+        state.pauseMs += dt;
+        bed.classList.add('blooming');
+        if (state.pauseMs > 1500) {
+          state.bloom = 'ok';
+          bed.classList.remove('blooming');
+          bed.classList.add('bloomed');
+          tone(660, 0.08, 'sine', 0.05);
+          setWhisper('有人看了一眼。继续绕着圈注水。');
+        }
+      }
+      return;
+    }
+    setPourSound(true);
+    if (state.filter === 'none') {
+      state.stain = Math.min(1, state.stain + dt / 1400);
+      setWhisper('还没有中间那一层，水直接漏下去了。');
+      return;
+    }
+    if (state.filter === 'bad') {
+      state.sediment = true;
+      state.brew = 'sludge';
+      state.bloom = 'idle';
+      state.fill = Math.min(1, state.fill + dt / 1400);
+      bed.classList.add('torn');
+      if (!state.sludgeTold) {
+        state.sludgeTold = true;
+        setWhisper('底部开着大口子。该挡住的，一起下去了。');
+      } else if (state.fill > 0.72) {
+        setWhisper('完整的那张已经回到桌上。壶里的渣还在，捞不干净。');
+      }
+      return;
+    }
+    if (state.brew === 'sludge' && state.fill > 0.08) {
+      state.fill = Math.min(1, state.fill + dt / 5000);
+      setWhisper('滤纸换回来了。已经混进去的渣，还在。');
+      return;
+    }
+    if (state.bloom === 'idle') {
+      state.pourMs += dt;
+      if (state.pourMs > 680) {
+        state.bloom = 'armed';
+        state.bloomPourMs = 0;
+        state.pauseMs = 0;
+        bed.classList.add('blooming');
+        setWhisper('先松开手。看咖啡粉胀开这一小会儿。');
+      }
+      return;
+    }
+    if (state.bloom === 'armed') {
+      state.bloomPourMs += dt;
+        if (state.bloomPourMs > 1200) {
+          state.bloom = 'rushed';
+          state.brew = 'rushed';
+          if (state.fill < 0.8) state.fill = 0.8;
+          bed.classList.remove('blooming', 'bloomed');
+          bed.classList.add('flooded');
+          spill.classList.add('show');
+          setWhisper('一口气倒完，没人看着，这壶就不均匀。');
+        }
+      return;
+    }
+    if (state.bloom === 'ok') {
+      state.brew = 'clear';
+      var prev = state.fill;
+      state.fill = Math.min(1, state.fill + dt / 3400);
+      if (state.fill > 0.93 && !state.clearTold) {
+        state.clearTold = true;
+        setWhisper(state.sediment
+          ? '上面这层是清的。底下的渣还在。按住分享壶，往杯子那边倾一倾。'
+          : '这杯是清的。按住分享壶，往杯子那边倾一倾。');
+      } else if (prev < 0.2 && state.fill >= 0.2) {
+        setWhisper('水穿过这一层，该留下的留下了。');
+      }
+      return;
+    }
+    if (state.bloom === 'rushed') {
+      state.brew = 'rushed';
+      state.fill = Math.min(1, state.fill + dt / 2200);
+      if (state.fill > 0.84 && !state.rushTold) {
+        state.rushTold = true;
+        setWhisper('往左边倾一倾，把这壶倒掉，再慢慢来一次。');
+      }
+    }
+  }
+
+  function render() {
+    var gritPart = state.sediment ? 0.2 : 0;
+    var h = Math.min(0.94, gritPart + state.fill * (state.sediment ? 0.72 : 0.86));
+    liquid.style.height = (h * 100) + '%';
+    liquid.classList.toggle('clear', state.brew === 'clear');
+    liquid.classList.toggle('rushed', state.brew === 'rushed');
+    liquid.classList.toggle('sludge', state.brew === 'sludge');
+    liquid.classList.toggle('has-grit', state.sediment);
+    storiesClear.hidden = state.brew !== 'clear';
+    storiesRush.hidden = state.brew !== 'rushed';
+    storiesSludge.hidden = state.brew !== 'sludge';
+    var active = state.brew === 'clear' ? storiesClear : state.brew === 'rushed' ? storiesRush : storiesSludge;
+    if (active) {
+      var nodes = active.querySelectorAll('.story');
+      for (var i = 0; i < nodes.length; i++) {
+        nodes[i].classList.toggle('show', state.fill >= Number(nodes[i].getAttribute('data-at')));
+      }
+    }
+    bed.classList.toggle('has-paper', state.filter === 'good' || state.filter === 'bad');
+    stain.style.opacity = String(state.stain);
+    cup.classList.remove('clear', 'gritty', 'muddy');
+    if (state.cup !== 'empty') cup.classList.add(state.cupKind);
+  }
+
+  function spawn(kind, from, to, dur, arc) {
+    if (particles.length > 90) particles.shift();
+    particles.push({ kind: kind, x: from.x, y: from.y, tx: to.x, ty: to.y, life: 0, dur: dur, arc: arc || 0 });
+  }
+  function fitCanvas() {
+    var dpr = Math.min(2, window.devicePixelRatio || 1);
+    canvas.width = scene.clientWidth * dpr;
+    canvas.height = scene.clientHeight * dpr;
+  }
+  function draw(dt) {
+    var dpr = Math.min(2, window.devicePixelRatio || 1);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.save();
+    ctx.scale(dpr, dpr);
+    for (var i = particles.length - 1; i >= 0; i--) {
+      var p = particles[i];
+      p.life += dt;
+      var k = Math.min(1, p.life / p.dur);
+      var x = p.x + (p.tx - p.x) * k;
+      var y = p.y + (p.ty - p.y) * k + Math.sin(k * Math.PI) * p.arc;
+      ctx.beginPath();
+      if (p.kind === 'ground') {
+        ctx.fillStyle = 'rgba(58, 40, 28, 0.85)';
+        ctx.arc(x, y, 2.4, 0, Math.PI * 2);
+      } else {
+        ctx.fillStyle = 'rgba(168, 132, 96, 0.75)';
+        ctx.arc(x, y, 1.7, 0, Math.PI * 2);
+      }
+      ctx.fill();
+      if (k >= 1) particles.splice(i, 1);
+    }
+    ctx.restore();
+  }
+
+  function frame(now) {
+    var dt = Math.min(40, now - last);
+    last = now;
+    var over = state.kettleDown && spoutOver();
+    if (over && !state.serving) {
+      var from = center(spoutTip);
+      var to = center(bed);
+      var angle = now / 280;
+      to.x += Math.cos(angle) * 10;
+      to.y += Math.sin(angle) * 4;
+      spawn(state.filter === 'bad' ? 'ground' : 'drop', from, to, 420, 0);
+      if (state.filter === 'good' || state.filter === 'bad') {
+        var drip = center(dripOrigin);
+        var surf = center(liquid);
+        surf.y = liquid.getBoundingClientRect().top - scene.getBoundingClientRect().top + 8;
+        spawn(state.filter === 'bad' ? 'ground' : 'drop', drip, surf, 520, 0);
+      }
+    }
+    if (arcMs > 0) {
+      arcMs -= dt;
+      var lip = center(document.getElementById('glass'));
+      var dest = center(cup);
+      spawn('drop', { x: lip.x + 40, y: lip.y }, dest, 420, -18);
+    }
+    tickPour(dt, over);
+    render();
+    draw(dt);
+    requestAnimationFrame(frame);
+  }
+
+  function beginDrag(kind, event) {
+    if (drag) return;
+    drag = {
+      kind: kind,
+      id: event.pointerId,
+      sx: event.clientX,
+      sy: event.clientY,
+      ox: kind === 'paper' ? paperX : kind === 'bad' ? badX : kind === 'kettle' ? kettleX : kind === 'cup' ? cupY : 0,
+      oy: kind === 'paper' ? paperY : kind === 'bad' ? badY : kind === 'kettle' ? kettleY : 0,
+      dist: 0
+    };
+    if (kind === 'kettle') state.kettleDown = true;
+    try { event.currentTarget.setPointerCapture(event.pointerId); } catch (err) { /* ignore */ }
+  }
+
+  paper.addEventListener('pointerdown', function (event) {
+    if (paperLock || state.good !== 'table') return;
+    armSoundFromGesture();
+    beginDrag(state.fold < 2 ? 'fold' : 'paper', event);
+    event.preventDefault();
+  });
+  badPaper.addEventListener('pointerdown', function (event) {
+    if (state.bad !== 'table') return;
+    armSoundFromGesture();
+    beginDrag('bad', event);
+    event.stopPropagation();
+    event.preventDefault();
+  });
+  kettle.addEventListener('pointerdown', function (event) {
+    armSoundFromGesture();
+    beginDrag('kettle', event);
+    event.preventDefault();
+  });
+  carafe.addEventListener('pointerdown', function (event) {
+    armSoundFromGesture();
+    beginDrag('carafe', event);
+    event.preventDefault();
+  });
+  cup.addEventListener('pointerdown', function (event) {
+    if (state.cup !== 'filled') return;
+    armSoundFromGesture();
+    beginDrag('cup', event);
+    event.preventDefault();
+  });
+  box.addEventListener('pointerdown', function (event) {
+    armSoundFromGesture();
+    openBox();
+    event.stopPropagation();
+  });
+  notebook.addEventListener('click', function () {
+    armSoundFromGesture();
+    book.hidden = false;
+    document.body.classList.add('book-open');
+  });
+  closeBook.addEventListener('click', function () {
+    book.hidden = true;
+    document.body.classList.remove('book-open');
+  });
+  document.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape' && !book.hidden) {
+      book.hidden = true;
+      document.body.classList.remove('book-open');
+    }
+  });
+  var jumps = document.querySelectorAll('[data-jump]');
+  for (var j = 0; j < jumps.length; j++) {
+    jumps[j].addEventListener('click', function (event) {
+      var id = event.currentTarget.getAttribute('data-jump');
+      var target = document.getElementById(id);
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  }
+  soundBtn.addEventListener('click', function (event) {
+    event.stopPropagation();
+    audio.userSet = true;
+    audio.on = !audio.on;
+    if (!audio.on) setPourSound(false);
+    updateSoundBtn();
+    ensureAudio();
+  });
+
+  window.addEventListener('pointermove', function (event) {
+    if (!drag || event.pointerId !== drag.id) return;
+    var dx = event.clientX - drag.sx;
+    var dy = event.clientY - drag.sy;
+    drag.dist = Math.hypot(dx, dy);
+    if (drag.kind === 'fold') {
+      paper.style.setProperty('--p', String(Math.min(1, drag.dist / 120)));
+      paper.style.transform = 'rotate(' + (-6 * Math.min(1, drag.dist / 120)) + 'deg)';
+    } else if (drag.kind === 'paper') {
+      paperX = drag.ox + dx;
+      paperY = drag.oy + dy;
+      applyPaper();
+    } else if (drag.kind === 'bad') {
+      badX = drag.ox + dx;
+      badY = drag.oy + dy;
+      applyBad();
+    } else if (drag.kind === 'kettle') {
+      kettleX = drag.ox + dx;
+      kettleY = drag.oy + dy;
+      applyKettle();
+    } else if (drag.kind === 'carafe') {
+      carafeRot = Math.max(-28, Math.min(28, dx / 5));
+      applyCarafe();
+    } else if (drag.kind === 'cup') {
+      cupY = Math.min(0, dy);
+      applyCup();
+    }
+  });
+  window.addEventListener('pointerup', function (event) {
+    if (!drag || event.pointerId !== drag.id) return;
+    var kind = drag.kind;
+    var dist = drag.dist;
+    var rot = carafeRot;
+    var lifted = cupY;
+    drag = null;
+    if (kind === 'kettle') {
+      state.kettleDown = false;
+      maybeParkKettle();
+    }
+    if (kind === 'fold' && dist > 78) commitFold();
+    else if (kind === 'fold') paper.style.transform = '';
+    else if (kind === 'paper' && hit(bed, event.clientX, event.clientY, 48)) seatGood();
+    else if (kind === 'bad' && hit(bed, event.clientX, event.clientY, 52)) seatBad();
+    else if (kind === 'carafe') onCarafeRelease(rot);
+    else if (kind === 'cup') {
+      if (lifted < -28) finishGift();
+      else {
+        cupY = 0;
+        applyCup();
+      }
+    }
+  });
+
+  setTimeout(function () {
+    if (state.fold === 0) setWhisper('滤纸就在靠前的位置。按住右边，折向左边。');
+  }, 12000);
+
+  window.addEventListener('resize', fitCanvas);
+  fitCanvas();
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+<!--
+DESIGN LESSON 2026-10-18 折晓早报
+STYLE: 周日晨光里的浅色窗台，陶瓷滤杯、玻璃分享壶，和一张决定什么能过去的滤纸
+GENRE: 折好滤纸、绕圈注水，看中间这一层挡住什么的二点五维小世界
+TITLE: 先看清中间这一层
+THESIS: 最值得看清的，是中间那一层垫了什么、握着什么。
+-->
+</html>
