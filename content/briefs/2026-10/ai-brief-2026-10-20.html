@@ -208,6 +208,24 @@
     border-radius: 0 0 8px 8px;
     box-shadow: 0 7px 0 #c99555;
   }
+  .gate {
+    position: absolute;
+    left: 50%;
+    bottom: 72px;
+    z-index: 3;
+    width: 96px;
+    height: 16px;
+    margin-left: -48px;
+    border-radius: 7px;
+    background: linear-gradient(#f6e0bf, #c4894a);
+    box-shadow: 0 5px 0 #a86d34, inset 0 2px 0 rgba(255, 255, 255, 0.45);
+    transform: translateY(-40px);
+    opacity: 0;
+    pointer-events: none;
+    transition: transform 0.45s var(--ease), opacity 0.35s var(--ease);
+  }
+  .hive.tight .gate { opacity: 1; transform: translateY(6px); }
+  .hive.marked .gate { opacity: 0; transform: translateY(-40px); }
   .bees {
     position: absolute;
     left: 0;
@@ -269,9 +287,10 @@
   .scent {
     position: absolute;
     z-index: 2;
-    left: 8px;
-    right: -20px;
-    bottom: 96px;
+    left: 50%;
+    bottom: calc(100% - 8px);
+    width: 232px;
+    transform: translateX(-58%);
     background: var(--paper);
     border-radius: 14px 14px 14px 6px;
     padding: 8px 10px;
@@ -282,8 +301,9 @@
   }
   .observer {
     position: absolute;
-    right: 46px;
-    top: 0;
+    right: 28px;
+    top: -6px;
+    z-index: 6;
     width: 64px;
     border: 0;
     background: transparent;
@@ -311,7 +331,7 @@
     padding: 6px 10px;
     cursor: pointer;
   }
-  .wax-spot { position: absolute; right: 8px; bottom: 28px; width: 74px; }
+  .wax-spot { position: absolute; right: -6px; bottom: 18px; width: 86px; z-index: 4; }
   .wax {
     width: 74px;
     border: 0;
@@ -322,8 +342,8 @@
   }
   .wax-hex {
     display: block;
-    width: 28px;
-    height: 32px;
+    width: 34px;
+    height: 38px;
     margin: 0 auto 2px;
     background: linear-gradient(#f8e7b8, #e7c27a);
     clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
@@ -332,38 +352,39 @@
   .wax.attention .wax-hex { animation: pulse 1.4s ease-out infinite; }
   .ant {
     position: absolute;
-    left: -36px;
-    bottom: 28px;
-    width: 26px;
-    height: 14px;
+    left: -54px;
+    bottom: 36px;
+    width: 40px;
+    height: 18px;
     transition: left 12s linear;
   }
-  .ant.walk { left: 18px; }
+  .ant.walk { left: 8px; }
   .ant span {
     position: absolute;
     background: #5c4638;
     border-radius: 50%;
   }
-  .ant span:nth-child(1) { width: 6px; height: 5px; left: 0; top: 5px; }
-  .ant span:nth-child(2) { width: 8px; height: 7px; left: 7px; top: 3px; }
-  .ant span:nth-child(3) { width: 6px; height: 5px; left: 16px; top: 5px; }
+  .ant span:nth-child(1) { width: 9px; height: 7px; left: 0; top: 6px; }
+  .ant span:nth-child(2) { width: 11px; height: 9px; left: 10px; top: 4px; }
+  .ant span:nth-child(3) { width: 8px; height: 7px; left: 22px; top: 6px; }
 
   .gift {
     position: absolute;
     left: 50%;
-    top: 18px;
+    bottom: 10px;
     transform: translateX(-50%);
-    width: min(300px, 86vw);
+    width: min(360px, 86vw);
     background: linear-gradient(#fffaf3, #fff3d4);
     border-radius: 18px;
-    padding: 14px 16px 12px;
+    padding: 12px 16px 10px;
     text-align: center;
     box-shadow: 0 16px 30px rgba(160, 100, 30, 0.16);
-    z-index: 4;
+    z-index: 5;
+    pointer-events: none;
   }
   .gift-kicker { margin: 0; color: #a56b12; font-size: 13px; }
-  .gift-line { margin: 8px 0 0; font-size: 20px; line-height: 1.45; font-weight: 700; }
-  .gift-foot { margin: 8px 0 0; color: var(--muted); font-size: 14px; }
+  .gift-line { margin: 6px 0 0; font-size: 18px; line-height: 1.4; font-weight: 700; }
+  .gift-foot { margin: 6px 0 0; color: var(--muted); font-size: 14px; }
 
   .note {
     position: absolute;
@@ -408,7 +429,7 @@
     z-index: 4;
     left: 14px;
     bottom: 12px;
-    width: 148px;
+    width: 184px;
     min-height: 168px;
     border-radius: 3px 12px 12px 3px;
     background: linear-gradient(90deg, #e7c48a 0 16px, #fffaf3 16px);
@@ -418,7 +439,7 @@
     cursor: pointer;
   }
   .book-kicker { display: block; color: #8a6a42; font-size: 12px; }
-  .book-title { display: block; margin-top: 8px; font-size: 18px; line-height: 1.35; font-weight: 700; }
+  .book-title { display: block; margin-top: 8px; font-size: 17px; line-height: 1.35; font-weight: 700; }
   .book-ribbon {
     position: absolute;
     top: 0;
@@ -487,7 +508,7 @@
     padding: 6px 10px;
     font-size: 14px;
   }
-  .sheet h1 { font-size: 1.65rem; line-height: 1.35; margin: 0.2em 0 0.6em; }
+  .sheet h1 { font-size: 1.5rem; line-height: 1.4; margin: 0.2em 0 0.6em; }
   .sheet h2 {
     font-size: 1.28rem;
     line-height: 1.4;
@@ -643,20 +664,28 @@
       padding: 8px 10px 8px 18px;
     }
     .book-title { margin-top: 0; font-size: 15px; }
+    .book-title br { display: none; }
     .book-ribbon { display: none; }
     .hive-scene { top: 58%; width: 270px; }
-    .note { top: auto; bottom: 8px; right: 8px; width: 92px; }
-    .note.open { top: 58px; bottom: auto; right: 8px; }
+    .note { top: 8px; right: 8px; bottom: auto; width: auto; max-width: 92px; }
+    .note small { display: none; }
+    .note.open { top: 8px; right: 8px; bottom: auto; z-index: 6; width: min(340px, calc(100% - 16px)); max-width: none; }
+    .note.open small { display: none; }
+    .gift { bottom: 4px; width: min(340px, 92vw); padding: 8px 12px; }
+    .gift-line { font-size: 16px; }
     .float-card { right: 8px; top: 48px; }
   }
   @media (min-width: 980px) and (min-height: 640px) {
-    .hive-scene { transform: translate(-46%, -52%) scale(1.08); }
-    .book { width: 164px; min-height: 188px; bottom: 22px; left: 22px; }
+    .hive-scene { transform: translate(-46%, -54%) scale(1.34); }
+    .book { width: 196px; min-height: 196px; bottom: 28px; left: 28px; }
   }
   @media (max-height: 560px) {
     .hive-scene { transform: translate(-50%, -58%) scale(0.82); }
-    .book { min-height: 0; }
+    .book { min-height: 0; width: 196px; }
     .flower { display: none; }
+    .gift { bottom: 2px; width: min(420px, 78vw); padding: 6px 12px 5px; }
+    .gift-kicker, .gift-foot { display: none; }
+    .gift-line { margin: 0; font-size: 15px; }
   }
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
@@ -710,6 +739,7 @@
           <div class="door" aria-hidden="true"><div class="bar" id="doorBar"></div></div>
         </div>
         <div class="board" aria-hidden="true"></div>
+        <div class="gate" id="gate" aria-hidden="true"></div>
         <div class="bees" id="bees">
           <div class="guard" aria-hidden="true">
             <span class="bob">
@@ -743,11 +773,11 @@
           <span class="wax-name" id="waxName">旧蜂蜡</span>
         </button>
       </div>
-      <div class="gift" id="gift" hidden>
-        <p class="gift-kicker">最后一格蜂蜜</p>
-        <p class="gift-line">能自己动起来的东西，需要一个认得清谁是谁的守门员。</p>
-        <p class="gift-foot" id="giftFoot" hidden></p>
-      </div>
+    </div>
+    <div class="gift" id="gift" hidden>
+      <p class="gift-kicker">最后一格蜂蜜</p>
+      <p class="gift-line">能自己动起来的东西，<br>需要一个认得清谁是谁的守门员。</p>
+      <p class="gift-foot" id="giftFoot" hidden></p>
     </div>
     <div class="note" id="note">
       <button type="button" class="note-toggle" id="noteToggle" aria-expanded="false">
@@ -767,7 +797,7 @@
         <span class="book-face">
           <span class="book-ribbon" aria-hidden="true"></span>
           <span class="book-kicker">养蜂人记录本</span>
-          <span class="book-title">今天的完整详细稿</span>
+          <span class="book-title">今天的<br>完整详细稿</span>
         </span>
         <span class="book-close">合上记录本</span>
       </summary>
@@ -783,7 +813,7 @@
 <a href="#part-window">时间窗</a>
 <a href="#part-skip">没有收录</a>
 </nav>
-<h1>折晓早报 · 2026 年 10 月 20 日（星期二）· 完整详细稿</h1>
+<h1>折晓早报 · 2026 年 10 月 20 日（星期二）<br>完整详细稿</h1>
 <blockquote><p>这份详细稿收录的是北京时间 2026 年 10 月 19 日早上六点整，到 10 月 20 日早上六点整之间发生或首次公开的材料。这段时间对应美国的周日下午到周一下午，也就是新一周的第一个工作日：华盛顿、硅谷和欧洲都恢复了上班节奏，所以今天的人工智能和科技部分明显比昨天热闹，有政府命令、有新模型、有安全事件，还有一颗赶在时间窗末尾升空的火星探测器；医学部分则来自 FDA 的一项重要批准、几本 Nature 系期刊在 10 月 19 日上线的论文、JAMA Network Open 的两篇研究，以及埃博拉疫情的最新通报。文中所有时间都已经换算成北京时间。每一条都写了来源链接和核实状态：标为「多来源确认」的，用肯定的语气来写；标为「单一来源」或「未能核实」的，正文里会写明「据某某称」「尚未得到其他来源确认」；凡是采集时自己推算出来的数字，也会直接说明是推算。如果某条新闻在窗内被报道，但事件或论文本身发生在窗口之前，条目里会单独讲清楚，文末还有一份汇总。</p></blockquote>
 <h2 id="part-open">今天想说的一件事</h2>
 <p>今天的材料放在一起读，会发现它们几乎都在讲同一件事：一样东西一旦能自己动起来，就需要一个守在门口、每一步都看一眼的守门员；守门员太松，坏东西会溜进来；守门员太严，自己人也会被挡在外面。真正好的守门员，不是一味地放或者一味地拦，而是认得清谁是谁。</p>
@@ -1380,11 +1410,17 @@
     const body = robber ? '#d38645' : spots ? '#f8ead0' : '#f6c445'
     const pollen = !spots && kind !== 'robber'
     const stripes = spots ? '' : '<path d="M70 50c6 16 6 22 0 34" stroke="#3d2a14" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M86 46c4 18 4 24 0 40" stroke="#3d2a14" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M102 52c3 12 3 16 0 28" stroke="#3d2a14" stroke-width="4" fill="none" stroke-linecap="round"/>'
-    const spotMarks = spots ? '<circle cx="74" cy="60" r="4" fill="#f0a36a"/><circle cx="90" cy="56" r="3.5" fill="#e7b15a"/><circle cx="104" cy="66" r="4" fill="#f0a36a"/><circle cx="80" cy="74" r="3" fill="#e7b15a"/><circle cx="98" cy="76" r="3.4" fill="#f3c27a"/><circle cx="112" cy="58" r="2.6" fill="#f0a36a"/>' : ''
+    const spotMarks = spots ? '<circle cx="78" cy="58" r="5" fill="#f0a36a"/><circle cx="96" cy="52" r="4" fill="#e7b15a"/><circle cx="112" cy="62" r="5" fill="#f0a36a"/><circle cx="84" cy="74" r="3.5" fill="#e7b15a"/><circle cx="104" cy="76" r="4" fill="#f3c27a"/><circle cx="70" cy="70" r="3" fill="#e7b15a"/>' : ''
     const bags = pollen ? '<circle cx="114" cy="80" r="7" fill="#f0a04a"/><circle cx="124" cy="72" r="5" fill="#e8923a"/>' : ''
     const satchel = helper ? '<rect x="102" y="46" width="16" height="11" rx="2" fill="#7eaa62"/>' : ''
     const glyph = kind === 'mimic' ? '<g class="glyph"><rect x="68" y="26" width="48" height="16" rx="4" fill="#fffaf2" stroke="#c47a3a"/><text x="92" y="38" text-anchor="middle" font-size="11" fill="#a85a22" font-family="ui-monospace,monospace">$(…)</text></g>' : ''
-    return '<svg viewBox="0 0 140 110" class="bee-art" aria-hidden="true"><ellipse class="wing" cx="78" cy="34" rx="24" ry="12" fill="#fff" fill-opacity="0.78"/><ellipse class="wing back" cx="100" cy="42" rx="18" ry="10" fill="#fff" fill-opacity="0.5"/><ellipse cx="86" cy="66" rx="32" ry="22" fill="' + body + '"/>' + stripes + spotMarks + '<circle cx="48" cy="62" r="16" fill="#f8d98a"/><circle cx="44" cy="60" r="2.1" fill="#3d2a14"/><circle cx="53" cy="58" r="1.5" fill="#3d2a14"/><path d="M44 68q6 4 12-1" stroke="#3d2a14" stroke-width="1.3" fill="none" stroke-linecap="round"/><path d="M42 48q-8-12-14-10" stroke="#3d2a14" stroke-width="1.5" fill="none"/><path d="M52 48q8-14 12-10" stroke="#3d2a14" stroke-width="1.5" fill="none"/>' + bags + satchel + glyph + '</svg>'
+    const wing = spots
+      ? '<ellipse class="wing" cx="70" cy="40" rx="14" ry="7" fill="#fff" fill-opacity="0.55"/>'
+      : '<ellipse class="wing" cx="78" cy="34" rx="24" ry="12" fill="#fff" fill-opacity="0.78"/><ellipse class="wing back" cx="100" cy="42" rx="18" ry="10" fill="#fff" fill-opacity="0.5"/>'
+    const bodyShape = spots
+      ? '<ellipse cx="92" cy="66" rx="28" ry="26" fill="' + body + '"/>'
+      : '<ellipse cx="86" cy="66" rx="32" ry="22" fill="' + body + '"/>'
+    return '<svg viewBox="0 0 140 110" class="bee-art" aria-hidden="true">' + wing + bodyShape + stripes + spotMarks + '<circle cx="48" cy="62" r="16" fill="#f8d98a"/><circle cx="44" cy="60" r="2.1" fill="#3d2a14"/><circle cx="53" cy="58" r="1.5" fill="#3d2a14"/><path d="M44 68q6 4 12-1" stroke="#3d2a14" stroke-width="1.3" fill="none" stroke-linecap="round"/><path d="M42 48q-8-12-14-10" stroke="#3d2a14" stroke-width="1.5" fill="none"/><path d="M52 48q8-14 12-10" stroke="#3d2a14" stroke-width="1.5" fill="none"/>' + bags + satchel + glyph + '</svg>'
   }
 
   function clearWaxTimer() {
@@ -1572,6 +1608,7 @@
     state.fixAction = null
     state.hintOverride = ''
     state.shownKind = ''
+    state.waxMessage = ''
     if (step === 'mimic') state.mimicLoose = true
     if (step === 'helper') state.helperTight = true
     render()
