@@ -1,0 +1,1413 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>折晓早报 · 2026-10-21 · 只有几粒是真的</title>
+<style>
+  :root {
+    color-scheme: light;
+    --ink: #3a3128;
+    --ink-soft: #5c5146;
+    --gold: #c9852a;
+    --gold-deep: #7a4e10;
+    --paper: #fffaf2;
+    --line: rgba(90, 70, 40, 0.14);
+  }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html, body {
+    margin: 0;
+    height: 100%;
+    overflow: hidden;
+    color: var(--ink);
+    font-family: "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", "WenQuanYi Micro Hei", "Droid Sans Fallback", sans-serif;
+  }
+  button, input { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  button:focus-visible, a:focus-visible { outline: 2px solid var(--gold-deep); outline-offset: 3px; }
+  body {
+    background:
+      radial-gradient(880px 420px at 16% -8%, #fff4d8 0%, rgba(255, 244, 216, 0) 58%),
+      linear-gradient(180deg, #f7f3ea 0%, #e8f5f0 42%, #d5ebe3 68%, #cfe4da 100%);
+  }
+  .stage {
+    height: 100%;
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+  }
+  .sun, .willow, .bank, .water, .pebble { position: absolute; pointer-events: none; }
+  .sun {
+    z-index: 0;
+    width: 220px;
+    height: 220px;
+    left: 6%;
+    top: -30px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 248, 220, 0.95) 0%, rgba(255, 226, 170, 0.45) 42%, rgba(255, 226, 170, 0) 70%);
+  }
+  .willow {
+    z-index: 0;
+    left: -30px;
+    top: 8px;
+    width: 200px;
+    height: 320px;
+    background:
+      radial-gradient(46px 90px at 48% 22%, rgba(150, 190, 150, 0.85), transparent 70%),
+      radial-gradient(54px 110px at 62% 46%, rgba(126, 176, 146, 0.7), transparent 72%),
+      radial-gradient(40px 100px at 34% 58%, rgba(150, 190, 160, 0.65), transparent 72%);
+  }
+  .bank {
+    z-index: 0;
+    left: -10%;
+    right: -10%;
+    bottom: 18%;
+    height: 120px;
+    background: linear-gradient(#f3ecdf, rgba(232, 244, 238, 0));
+    border-radius: 50% 50% 0 0;
+  }
+  .water {
+    z-index: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 34%;
+    background:
+      radial-gradient(40% 80% at 20% 0%, rgba(255, 255, 255, 0.45), transparent 60%),
+      linear-gradient(#e7f7f2, #c5e2d8 55%, #b7d7cc);
+    overflow: hidden;
+  }
+  .water::before, .water::after {
+    content: "";
+    position: absolute;
+    left: -20%;
+    width: 140%;
+    height: 46px;
+    background: radial-gradient(closest-side, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0));
+    animation: drift 9s ease-in-out infinite;
+  }
+  .water::before { top: 18%; }
+  .water::after { top: 48%; animation-delay: -4s; opacity: 0.7; }
+  .pebble {
+    z-index: 1;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #f7f1e6, #d9cbb6 62%, #c3b29a);
+    box-shadow: 0 8px 14px rgba(80, 90, 80, 0.12);
+  }
+  .p1 { width: 74px; height: 48px; left: 7%; bottom: 10%; }
+  .p2 { width: 46px; height: 32px; left: 18%; bottom: 6%; }
+  .p3 { width: 92px; height: 54px; right: 8%; bottom: 8%; }
+  .p4 { width: 36px; height: 26px; right: 22%; bottom: 14%; }
+  .p5 { width: 58px; height: 34px; left: 42%; bottom: 4%; opacity: 0.85; }
+  .top, .play, .dock, .hint, .gift { position: relative; z-index: 2; }
+  .top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px 0;
+    font-size: 13px;
+    color: var(--ink-soft);
+  }
+  .ghost {
+    border: 0;
+    background: rgba(255, 250, 242, 0.72);
+    border-radius: 999px;
+    padding: 6px 12px;
+    box-shadow: inset 0 0 0 1px var(--line);
+  }
+  .hint, .gift {
+    margin: 10px auto 0;
+    width: min(640px, calc(100% - 28px));
+    text-align: center;
+  }
+  .hint {
+    background: rgba(255, 250, 242, 0.9);
+    border-radius: 999px;
+    padding: 9px 16px;
+    box-shadow: 0 8px 20px rgba(80, 70, 50, 0.08);
+    line-height: 1.5;
+  }
+  .gift-line {
+    margin: 0;
+    font-size: clamp(18px, 2.5vw, 28px);
+    line-height: 1.45;
+    color: var(--gold-deep);
+    font-family: "Iowan Old Style", Palatino, "Palatino Linotype", "Songti SC", "STSong", "SimSun", serif;
+  }
+  .gift-note {
+    margin: 6px auto 0;
+    max-width: 40em;
+    color: var(--ink-soft);
+    font-size: 13px;
+    line-height: 1.55;
+  }
+  .metaphor {
+    position: relative;
+    z-index: 3;
+    margin: 4px auto 0;
+    width: fit-content;
+    max-width: calc(100% - 28px);
+    padding: 4px 12px;
+    border-radius: 999px;
+    background: rgba(255, 250, 242, 0.92);
+    color: var(--ink-soft);
+    font-size: 13px;
+    line-height: 1.5;
+    box-shadow: 0 6px 16px rgba(80, 70, 50, 0.06);
+  }
+  .play {
+    flex: 1;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: minmax(88px, 128px) minmax(0, 1fr) minmax(88px, 128px);
+    grid-template-rows: minmax(0, 1fr) auto;
+    align-items: center;
+    justify-items: center;
+    position: relative;
+    padding: 6px 22px 0;
+  }
+  body[data-gift="1"] .pan-wrap { width: min(52vw, 36svh, 360px); }
+  .pan-wrap {
+    grid-column: 2;
+    grid-row: 1;
+    width: min(72vw, 54svh, 540px);
+    aspect-ratio: 1;
+    position: relative;
+  }
+  #pan { width: 100%; height: 100%; display: block; touch-action: none; }
+  #hotspots { position: absolute; inset: 0; }
+  .hotspot {
+    position: absolute;
+    width: 48px;
+    height: 48px;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    transform: translate(-50%, -50%);
+  }
+  .hotspot:focus-visible { background: rgba(255, 236, 190, 0.35); }
+  .tools { display: contents; }
+  .vial, .side { align-self: end; margin-bottom: 10px; }
+  .vial { grid-column: 1; grid-row: 1; justify-self: center; }
+  .side { grid-column: 3; grid-row: 1; justify-self: center; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .tool-label { display: block; margin-top: 4px; font-size: 12px; text-align: center; color: var(--ink-soft); white-space: nowrap; }
+  .bottle { display: flex; flex-direction: column; align-items: center; }
+  .cork {
+    width: 18px;
+    height: 7px;
+    border-radius: 3px 3px 1px 1px;
+    background: linear-gradient(#f3ddb8, #b88848);
+    box-shadow: 0 1px 0 rgba(120, 80, 30, 0.25);
+  }
+  .neck {
+    width: 14px;
+    height: 8px;
+    margin-top: -1px;
+    background: linear-gradient(90deg, rgba(186, 214, 210, 0.55), rgba(255,255,255,0.82) 46%, rgba(176, 206, 204, 0.4));
+    box-shadow: inset 1px 0 0 rgba(90, 130, 128, 0.45), inset -1px 0 0 rgba(90, 130, 128, 0.45);
+  }
+  .vial-glass {
+    width: 44px;
+    height: 56px;
+    margin-top: -1px;
+    border-radius: 4px 4px 16px 16px;
+    background:
+      linear-gradient(90deg, rgba(255,255,255,0.2), rgba(255,255,255,0.78) 38%, rgba(255,255,255,0.15) 62%, rgba(190, 220, 214, 0.35)),
+      linear-gradient(#e7f4f1, #d5ebe4);
+    box-shadow: inset 0 0 0 2px rgba(96, 132, 130, 0.55), inset 8px 0 8px rgba(255,255,255,0.7);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-wrap: wrap-reverse;
+    align-content: flex-end;
+    justify-content: center;
+    gap: 3px;
+    padding: 6px 4px 6px;
+  }
+  .nugget, .pyrite, .pebble-dot { display: block; border-radius: 50%; }
+  .nugget { width: 10px; height: 10px; background: radial-gradient(circle at 35% 35%, #ffe7a2, #e2a82b 70%); }
+  .pyrite { width: 8px; height: 8px; border-radius: 2px; background: linear-gradient(#efe08a, #9a8a3a); }
+  .dish-bowl {
+    width: 74px;
+    height: 28px;
+    border-radius: 0 0 40px 40px;
+    background: radial-gradient(circle at 50% 0%, #f4faf6, #d5e6dc 70%);
+    box-shadow: inset 0 -6px 0 rgba(120, 150, 140, 0.18), 0 6px 0 rgba(90, 110, 100, 0.06);
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+    align-items: flex-end;
+    padding-bottom: 4px;
+  }
+  .pebble-dot { width: 9px; height: 9px; background: radial-gradient(circle at 35% 35%, #f7f1e4, #c8b89a); margin-bottom: 2px; }
+  .rush-row { grid-column: 1 / -1; }
+  .rush {
+    border: 0;
+    background: transparent;
+    color: var(--ink-soft);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    font-size: 13px;
+    padding: 0 0 4px;
+    margin-bottom: 6px;
+  }
+  .scoop {
+    position: absolute;
+    z-index: 4;
+    left: max(20px, calc(50% - 320px));
+    bottom: 30%;
+    border: 0;
+    background: transparent;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: bob 2.6s ease-in-out infinite;
+  }
+  .scoop-wood { position: relative; width: 104px; height: 96px; }
+  .scoop-handle {
+    position: absolute;
+    left: 44px;
+    top: 0;
+    width: 14px;
+    height: 72px;
+    border-radius: 8px;
+    background: linear-gradient(#f0d7ae, #c49255);
+    transform: rotate(18deg);
+    transform-origin: bottom center;
+  }
+  .scoop-bowl {
+    position: absolute;
+    left: 6px;
+    bottom: 0;
+    width: 76px;
+    height: 32px;
+    border-radius: 0 0 34px 34px;
+    background: linear-gradient(#f6e2c4, #d7a15d);
+    box-shadow: inset 0 6px 0 rgba(255,255,255,0.35);
+  }
+  .scoop-sand {
+    position: absolute;
+    left: 16px;
+    bottom: 6px;
+    width: 54px;
+    height: 14px;
+    border-radius: 40px;
+    background: radial-gradient(circle at 50% 30%, #f3ddaa, #d7b15a);
+  }
+  .scoop-tag, .assist {
+    background: var(--paper);
+    border-radius: 999px;
+    box-shadow: 0 8px 16px rgba(80, 70, 40, 0.1);
+  }
+  .scoop-tag { margin-top: 6px; padding: 4px 10px; font-size: 14px; }
+  .assist-row { grid-column: 1 / -1; grid-row: 2; }
+  .assist {
+    border: 0;
+    padding: 8px 14px;
+  }
+  .lens-slot {
+    position: absolute;
+    left: 50%;
+    bottom: 8px;
+    transform: translateX(-50%);
+    width: min(560px, calc(100% - 20px));
+    z-index: 5;
+  }
+  .lens-card, .slip-card {
+    background: #fffaf2;
+    border-radius: 18px;
+    box-shadow: 0 14px 40px rgba(60, 50, 30, 0.16);
+    padding: 12px;
+  }
+  .lens-card {
+    display: grid;
+    grid-template-columns: 148px minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr) auto;
+    column-gap: 10px;
+    max-height: min(42svh, 320px);
+    overflow: hidden;
+  }
+  .lens-copy { grid-column: 2; grid-row: 1; min-height: 0; overflow: auto; }
+  .lens-actions { grid-column: 1 / -1; grid-row: 2; padding-top: 8px; }
+  #clogCard { display: block; max-height: none; overflow: visible; }
+  .lens-visual {
+    grid-column: 1;
+    grid-row: 1;
+    align-self: start;
+    height: 112px;
+    border-radius: 14px;
+    background: radial-gradient(circle at 50% 45%, #fff8e8, #f0ddb4 72%);
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+  }
+  #closeup { width: 132px; height: 96px; touch-action: none; }
+  .lens-lead, .lens-body, .lens-foot, .clog-copy, .slip-card p { margin: 0 0 8px; line-height: 1.65; }
+  .lens-lead { font-weight: 650; }
+  .lens-body { font-size: 14.5px; }
+  .lens-foot, .gift-note { font-size: 12.5px; color: var(--ink-soft); }
+  .lens-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+  .primary, .reader-close, .sheet-bar button {
+    border: 0;
+    background: #f3e2c0;
+    color: var(--gold-deep);
+    border-radius: 999px;
+    padding: 8px 12px;
+    width: auto;
+    height: auto;
+    justify-self: start;
+    align-self: start;
+  }
+  .dock {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 12px;
+    padding: 6px 16px 14px;
+  }
+  .logbook {
+    width: min(210px, 46vw);
+    min-height: 86px;
+    text-align: left;
+    border: 1px solid #8fb3a8;
+    border-radius: 8px 14px 14px 8px;
+    background: linear-gradient(180deg, #e7f6f1, #c5ddd4);
+    box-shadow: 4px 5px 0 rgba(90, 120, 110, 0.12);
+    padding: 10px 12px;
+  }
+  .logbook-kicker { display: block; font-size: 12px; letter-spacing: 0.08em; color: #3f6d62; }
+  .logbook-title { display: block; margin-top: 3px; font-size: 15px; font-weight: 700; }
+  .logbook-open { display: block; margin-top: 6px; font-size: 12px; color: var(--ink-soft); }
+  .slip {
+    border: 0;
+    background: #fffaf2;
+    border-radius: 4px;
+    padding: 8px 10px;
+    box-shadow: 0 8px 14px rgba(80, 70, 40, 0.12);
+    transform: rotate(-6deg);
+  }
+  .slip-card {
+    position: absolute;
+    right: 16px;
+    bottom: 108px;
+    width: min(360px, calc(100% - 32px));
+    z-index: 6;
+    max-height: 46svh;
+    overflow: auto;
+  }
+  .slip-card h2 { margin: 0 0 8px; font-size: 16px; }
+  .slip-card p { font-size: 14px; }
+  #reader {
+    position: fixed;
+    inset: 0;
+    z-index: 20;
+    background: rgba(58, 49, 40, 0.28);
+    display: flex;
+    justify-content: center;
+    padding: 16px 12px;
+  }
+  .sheet {
+    position: relative;
+    width: min(840px, 100%);
+    height: 100%;
+    overflow: auto;
+    background:
+      linear-gradient(#fffdf9, #fffdf9),
+      radial-gradient(rgba(120, 90, 40, 0.04) 0.6px, transparent 0.7px);
+    background-size: auto, 3px 3px;
+    border-radius: 18px;
+    box-shadow: 0 24px 60px rgba(40, 30, 20, 0.2);
+  }
+  .sheet-head {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: rgba(255, 250, 243, 0.96);
+    backdrop-filter: blur(8px);
+  }
+  .sheet-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px 0;
+  }
+  .readbar { height: 3px; margin: 0 16px 8px; background: #efe6d6; border-radius: 99px; overflow: hidden; }
+  #readbar { display: block; height: 100%; width: 100%; background: #e0b15a; transform: scaleX(0); transform-origin: left center; }
+  #readerNav {
+    display: flex;
+    gap: 8px;
+    overflow: auto;
+    padding: 8px 16px 10px;
+  }
+  #readerNav button {
+    border: 0;
+    background: #f6f1e6;
+    border-radius: 999px;
+    padding: 6px 10px;
+    white-space: nowrap;
+    color: var(--ink-soft);
+  }
+  #readerNav button[aria-current="true"] { background: #f3e2c0; color: var(--gold-deep); }
+  .digest {
+    padding: 8px 28px 72px;
+    max-width: 42rem;
+    margin: 0 auto;
+    font-size: 17px;
+    line-height: 1.85;
+    font-family: "Iowan Old Style", Palatino, "Palatino Linotype", "Songti SC", "STSong", "PingFang SC", "Microsoft YaHei", serif;
+  }
+  .digest h1 { font-size: 1.55rem; line-height: 1.4; margin: 0.4rem 0 1rem; font-weight: 650; }
+  .digest h2 { font-size: 1.28rem; line-height: 1.4; margin: 2rem 0 0.8rem; scroll-margin-top: 128px; }
+  .digest h3 { font-size: 1.05rem; line-height: 1.5; margin: 0.4rem 0 0.7rem; }
+  .digest p { margin: 0.75rem 0; }
+  .digest ul { margin: 0.4rem 0 0.8rem; padding-left: 1.2rem; }
+  .digest li { margin: 0.35rem 0; }
+  .digest hr { border: 0; border-top: 1px solid var(--line); margin: 1.6rem 0; }
+  .digest blockquote { margin: 0 0 1rem; padding: 0.85rem 1rem; background: #f6f1e6; border-radius: 12px; color: #4e453c; }
+  .digest blockquote p { margin: 0; }
+  .digest a { color: #1d6b5c; text-underline-offset: 3px; }
+  .digest a[target="_blank"]::after { content: " ↗"; font-size: 0.82em; }
+  .digest code { font-family: ui-monospace, "Sarasa Mono SC", monospace; font-size: 0.9em; background: #f3ecdf; padding: 0 0.25em; border-radius: 4px; }
+  .entry {
+    background: rgba(255, 253, 248, 0.88);
+    border: 1px solid rgba(120, 90, 50, 0.08);
+    border-radius: 16px;
+    padding: 8px 16px 10px;
+    margin: 14px 0 18px;
+  }
+  .digest p.verify { background: #f8f1e2; border-left: 3px solid #e0b15a; padding: 0.55rem 0.8rem; border-radius: 0 12px 12px 0; }
+  .digest p.sources { background: #f3faf7; padding: 0.6rem 0.8rem; border-radius: 12px; }
+  .digest p.figures { background: #fff8ea; padding: 0.45rem 0.75rem; border-radius: 12px; }
+  @keyframes bob { 50% { transform: translateY(-6px); } }
+  @keyframes drift { 50% { transform: translateX(6%); } }
+  @media (max-width: 760px) {
+    .play { grid-template-columns: 1fr; padding-inline: 12px; row-gap: 10px; }
+    .metaphor { display: none; }
+    body[data-card="1"] .tools { visibility: hidden; }
+    .pan-wrap { grid-column: 1; grid-row: 1; width: min(86vw, 40svh, 420px); }
+    .tools {
+      display: flex;
+      grid-column: 1;
+      grid-row: 3;
+      justify-content: center;
+      align-items: flex-end;
+      gap: 48px;
+      width: 100%;
+    }
+    .vial, .side { grid-column: auto; grid-row: auto; margin-bottom: 0; }
+    .assist-row, .rush-row { grid-column: 1; grid-row: 2; }
+    .lens-card {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto minmax(0, 1fr) auto;
+      max-height: min(50svh, 440px);
+    }
+    .lens-visual { grid-column: 1; grid-row: 1; height: 78px; }
+    #closeup { width: 108px; height: 68px; }
+    .lens-copy { grid-column: 1; grid-row: 2; }
+    .lens-actions { grid-row: 3; }
+    #clogCard { display: block; }
+    .scoop { left: 8px; bottom: 28%; }
+    .digest { padding: 8px 16px 64px; font-size: 16px; }
+    .willow, .p5 { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .scoop, .water::before, .water::after { animation: none; }
+  }
+  @media (max-height: 640px) {
+    .top { padding-top: 6px; }
+    .hint { margin-top: 4px; padding: 6px 12px; }
+    .dock { padding-bottom: 8px; }
+    .logbook { min-height: 72px; }
+    .pan-wrap { width: min(58vw, 42svh, 420px); }
+  }
+</style>
+</head>
+<body data-phase="idle" data-gift="0" data-clogged="0">
+<div class="stage">
+  <div class="sun" aria-hidden="true"></div>
+  <div class="willow" aria-hidden="true"></div>
+  <div class="bank" aria-hidden="true"></div>
+  <div class="water" aria-hidden="true"></div>
+  <i class="pebble p1" aria-hidden="true"></i>
+  <i class="pebble p2" aria-hidden="true"></i>
+  <i class="pebble p3" aria-hidden="true"></i>
+  <i class="pebble p4" aria-hidden="true"></i>
+  <i class="pebble p5" aria-hidden="true"></i>
+
+  <header class="top">
+    <div>10 月 21 日 · 星期三</div>
+    <button type="button" class="ghost" id="soundBtn" aria-pressed="false">要听流水声</button>
+  </header>
+  <p class="hint" id="hint" aria-live="polite">从溪里舀一盘沙</p>
+  <div class="gift" id="gift" hidden>
+    <p class="gift-line" id="giftLine"></p>
+    <p class="gift-note">淘金的时候，大部分是泥沙，发亮的也不一定是金子，说不准的要换一种方法再看。诊断学课本里也有相近的说法：筛查先宽一点，落在灰区的再测一次。这些都是拿来理解的，不是今天的新闻。</p>
+  </div>
+
+  <div class="play" id="play">
+    <button type="button" class="scoop" id="scoop">
+      <span class="scoop-wood" aria-hidden="true">
+        <span class="scoop-handle"></span>
+        <span class="scoop-bowl"></span>
+      <span class="scoop-sand"></span>
+      </span>
+      <span class="scoop-tag">舀一盘沙</span>
+    </button>
+    <div class="pan-wrap">
+      <canvas id="pan" aria-label="淘金盘"></canvas>
+      <div id="hotspots"></div>
+    </div>
+    <div class="tools">
+      <div class="vial" id="vial" hidden>
+        <div class="bottle">
+          <div class="cork" aria-hidden="true"></div>
+          <div class="neck" aria-hidden="true"></div>
+          <div class="vial-glass" id="vialGlass"></div>
+        </div>
+        <span class="tool-label">玻璃瓶</span>
+      </div>
+      <div class="side" id="side">
+        <div class="dish" id="dish" hidden>
+          <div class="dish-bowl" id="dishBowl"></div>
+          <span class="tool-label">再看一眼</span>
+        </div>
+      </div>
+    </div>
+    <div class="assist-row">
+      <button type="button" class="assist" id="assist" hidden>慢慢晃一晃</button>
+    </div>
+    <div class="rush-row">
+      <button type="button" class="rush" id="rush" hidden>等不及，就先全部收进瓶子</button>
+    </div>
+    <div class="lens-slot" id="lensSlot">
+      <div class="lens-card" id="lensCard" hidden>
+        <div class="lens-visual"><canvas id="closeup" width="280" height="208" aria-label="放大镜下的颗粒"></canvas></div>
+        <div class="lens-copy">
+          <p class="lens-lead" id="lensLead"></p>
+          <p class="lens-body" id="lensBody"></p>
+          <p class="lens-foot" id="lensFoot" hidden>淘金和愚人金是常识，拿来帮忙看懂，不是这条新闻本身。</p>
+        </div>
+        <div class="lens-actions">
+          <button type="button" class="primary" id="scratchBtn">用指甲刮一下</button>
+          <button type="button" class="primary" id="actBtn" hidden></button>
+        </div>
+      </div>
+      <div class="lens-card" id="clogCard" hidden>
+        <p class="clog-copy">这些发亮的要是不看就全收进来，瓶子一下子就被塞满。维护一个项目的人也会遇到同样的事：看起来像那么回事的报告太多，每一份都要人看完，人就不够了。先倒回盘子里，再一颗一颗看。</p>
+        <button type="button" class="primary" id="unclog">把它们倒回盘子里</button>
+      </div>
+    </div>
+  </div>
+  <p class="metaphor" id="metaphor" hidden>盘子、愚人金和灰区，是拿来理解的说法，不是新闻。</p>
+
+  <footer class="dock">
+    <button type="button" class="logbook" id="logbook">
+      <span class="logbook-kicker">淘金日志</span>
+      <span class="logbook-title">今天的完整详细稿</span>
+      <span class="logbook-open">点开就能读</span>
+    </button>
+    <button type="button" class="slip" id="slip">打开溪边的纸条</button>
+  </footer>
+  <aside class="slip-card" id="slipCard" hidden>
+    <h2>溪边的纸条</h2>
+    <p>备份本身已经传上去了。据任务日志，出站流量大约到了 92.7%，数据库大约只用了 3.9%，水位检查因此报了警。值得看一眼，是哪里在大量往外传数据。这只来自那一次运行日志，还没有用别的后台对过。</p>
+    <p>另外，10 月 30 日起，在 public 模式下新建的表要显式写上授权，接口才访问得到。</p>
+    <p>华科 AI 创造者俱乐部的 HUSTAB ID，还差邮箱验证这最后一步。</p>
+    <p>窗外先说一声：11 月 13 日起，Google AI Plus 不能再选择 Pro 模型。今天没有读到日程。</p>
+    <button type="button" class="primary" id="slipClose">把纸条合上</button>
+  </aside>
+</div>
+
+<div id="reader" hidden>
+  <div class="sheet" id="sheet">
+    <div class="sheet-head">
+      <div class="sheet-bar">
+        <button type="button" id="readerClose">合上日志，回到溪边</button>
+      </div>
+      <nav id="readerNav" aria-label="详细稿的章节"></nav>
+      <div class="readbar" aria-hidden="true"><span id="readbar"></span></div>
+    </div>
+    <article class="digest" id="digest"><h1>折晓早报 · 2026 年 10 月 21 日（星期三）· 完整详细稿</h1><blockquote><p>这份详细稿收录的是北京时间 2026 年 10 月 20 日早上六点整，到 10 月 21 日早上六点整之间发生或首次公开的材料。这段时间对应美国东部的周一傍晚到周二傍晚、欧洲的周一深夜到周二白天，所以今天的人工智能和科技新闻大多集中在北京时间 10 月 20 日下午到 10 月 21 日凌晨：Anthropic、OpenAI、Mistral 和 DeepSeek 都有正式发布，伦敦的一座谷歌云机房断了电，PHP 提前一天发出了紧急补丁预告，开源基础设施的维护者在抱怨被 AI 生成的漏洞报告淹没；医学部分有 FDA 批准的第一款治疗慢性乙肝的反义寡核苷酸药物、一张几乎画满了 KCNQ1 所有可能变异的「变异效应图」，以及几篇 Nature Neuroscience 当天上线的论文。文中所有时间都已经换算成北京时间。每一条都写了来源链接和核实状态：标为「多来源确认」的，用肯定的语气来写；标为「单一来源」或「未能核实」的，正文里会写明「据某某称」「尚未得到其他来源确认」；凡是采集时自己推算出来的数字，也会直接说明是推算。有几条新闻昨天的详细稿已经写过一部分（国土安全部的 DeepSeek 命令、OpenAI 的低资源编程语言评测、亚马逊的 TorchNeuron），今天收录的是窗内出现的新进展，条目里会讲清楚哪些是旧的、哪些是新的；还有几条是「论文早已上线、新闻稿在窗内」，文末的「时间窗边界说明」有完整汇总。</p></blockquote><h2 id="sec-1">今天想说的一件事</h2><p>今天的材料放在一起读，会发现它们在反复讲同一件事：提出候选、发现问题，这件事正在变得非常便宜；真正稀缺的，是第二道检验，也就是从一大堆候选里认出哪几个是真的。第 1 条是最直观的例子：据 Anthropic 自己介绍，Claude 在 64 小时里一口气生成了 318,484 个针对蝎毒神经毒素的蛋白设计，可是真正送进实验室测试的只有 211 个，最后达到「结合体」标准的是 17 个；而且这 17 个能不能在细胞里真正中和毒素，Anthropic 明确说还没有证明，所以不敢称它为抗毒血清。第一步从零到三十多万只花了不到三天，第二步从三十多万到十几个，却要靠实验室、靠人、靠时间一点一点地筛。医学部分的第 20 条几乎是同一个故事的医学版本：范德堡大学的团队用高通量实验，把 KCNQ1 基因几乎所有可能的一万三千多个变异全都做出来、测了一遍功能，其中 1,757 个显示出较强的致病证据。临床基因检测最头疼的，从来不是「测不出变异」，而是测出一大堆「意义不明的变异」以后，分不清哪个才是真正会让人猝死的那一个；这张图要做的，正是给每一个候选提前准备好第二道检验的答案。</p><p>科技部分的第 10 条把这件事的另一面摆得很清楚：当提出候选变得太便宜，第二道检验的人会被淹没。据 Axios 报道，OpenSSL 过去一年收到大约 500 份漏洞报告，最后只有 63 个成为正式公开的漏洞，可是每一份都得有人认真看完才能下结论；curl 的维护者干脆说，项目已经被逼到「必须行动才能活下去」的地步，于是从 10 月 26 日起把中低危的报告改成在公开仓库里处理，让更多人一起分担判断的工作。这说明好的第二道检验不只是要「准」，还要能经得住数量：如果一份看起来像模像样、其实是 AI 拼凑出来的假报告，需要一个资深维护者花上半天才能判定是假的，那么再多的维护者也不够用。好的检验，要能对付这种「看起来像真的」的假货。人工智能部分的第 2 条给了一个提醒：OpenAI 宣布 GPT-6.1 Sol 在 COBOL 迁移评测上的准确率从 5.4% 跳到 86.6%，高推理档达到 97.9%，但 OpenAI 自己也写明，真正用到生产系统里，仍然需要专家审查，还要拿系统本身的业务规则和依赖关系去测试。模型能写出「看起来能跑」的代码，和这段代码在银行里每一笔账都算得对，中间隔着的就是第二道检验。</p><p>好的第二道检验还有一个特点：它不会只给「是」或「不是」两种答案，而是承认有一片灰区，并且给落在灰区里的人留一条「再看一眼」的路。医学部分的第 21 条正是这样设计的：波士顿大学的 GRAD 策略先只测一项血液指标 p-Tau217，结果明显阳性或明显阴性的人直接下结论；落在中间灰区的人，再结合其他血液标志物、年龄和 APOE 等遗传风险一起判断。在独立验证的 1,644 人里，有 630 人的 p-Tau217 落在灰区，GRAD 帮他们更好地判断有没有脑淀粉样蛋白，也减少了仍然需要去做 PET 检查的人数。你在诊断学里学的序贯检测、阈值和灰区，说的就是这件事：第一道检验负责快速、便宜地分出大部分人，第二道检验专门照顾那些说不清的人，既不放过真的，也不冤枉假的。</p><p>所以今天想留给你的一句话是：在一个提出答案越来越便宜的时代，值钱的是那个能认出「哪几个答案是真的」的环节；它要能识破看起来像真的假货，也要给说不清的那部分留一扇再看一眼的门。这句话放在你自己的事情里也成立：今天第四部分有两个 Cursor 代理开的草稿 PR，一个说「399 项单元测试全部通过，但仪器测试只编译、没在真机上跑」，一个说「1,685 条解剖结构名都补齐了中文，另有 39 条待复核」，它们都很诚实地把灰区留给了你，等你用真机和解剖学知识做最后那一道检验。（需要说明的是，上面这些对应关系是折晓为了帮助理解做的串联，不是这些新闻本身的结论；其中第 1 条 Anthropic 的数字目前是单一来源、属于厂商自报，第 21 条 GRAD 只有大学新闻稿，具体核实状态见各条和文末清单。）</p><p>下面分四个部分：人工智能、科技、医学，最后是你自己的事情。</p><hr><h2 id="sec-2">第一部分 · 人工智能</h2><section class="entry"><h3>1. Anthropic 发布研究：Claude 用 64 小时自主生成了 318,484 个针对蝎毒神经毒素的蛋白设计，从中选出的 211 个经实验测试，有 17 个达到结合体标准，但还没有证明它们能中和毒素</h3><p class="bg"><strong>背景。</strong> 「蛋白结合体」指的是专门设计出来、能牢牢抓住某个目标分子的小蛋白。抗毒血清的传统做法是把毒液注射给马之类的动物，再从动物血里提取抗体，成本高、批次之间差别大，还可能引起过敏反应；所以研究者一直希望能用计算的方法，直接「画」出一个能抓住毒素的蛋白。过去几年，蛋白设计工具进步很快，但通常需要有经验的研究者一步一步操作：选靶点、跑设计软件、预测结构、筛选、再送去实验室。这一次 Anthropic 想展示的，是让 AI 智能体自己把这一整串步骤串起来做完。</p><p class="what"><strong>发生了什么。</strong> Anthropic 官方 X 账号在北京时间 10 月 21 日 00:18 发帖介绍这项研究，官网文章署名日期是 10 月 20 日，同时在 Hugging Face 上公开了数据集。官网原文写道：「Claude 生成了 318,484 个蛋白设计，从中挑出 180 个用于测试；我们的团队在 Claude 的帮助下又补充了 31 个。我们的合作方 Adaptyv Bio 和 Twist Bioscience 对这 211 个设计全部做了实验测试，其中 17 个设计达到了我们对结合体的标准。我们还没有确认这些结合体能否在细胞环境中中和蝎毒，所以我们并不声称已经做出了一种抗毒血清。」文章还写到，Claude 一共用了 12 种设计工具，对 553,052 个「设计—毒素」组合做了共折叠预测和筛选；从研究人员给出最初提示算起，64 小时后 Claude 交出了最终的 180 个设计名单，整个项目大约消耗了 1 万 GPU 小时。据采集员概括，研究人员在过程中一共追加了四次提示来引导方向，其余的靶点选择、设计、筛选，甚至报告初稿，基本都由 Claude 自己完成；表现最好的两个结合体，对墨西哥蝎毒素 Cn2 的亲和力达到个位数纳摩尔级别。文章也写明了一个失败：「针对多种毒素同时设计的那些蛋白，没有一个能同时满足对一种以上毒素的标准。」</p><p class="figures"><strong>关键数字。</strong> 318,484 个设计、180 个由 Claude 选出、团队补充 31 个、共测试 211 个、17 个达标、12 种设计工具、553,052 个共折叠组合、64 小时、约 1 万 GPU 小时，全部出自 Anthropic 官网原文；「个位数纳摩尔」和「四次追加提示」来自采集员对原文的概括。</p><p class="why"><strong>为什么值得注意。</strong> 这条是今天核心思想最直接的例子。从零生成三十多万个候选只花了不到三天，可是从三十多万个里认出哪十几个是真的，仍然要靠湿实验室去一个个测；而且就算测出来能「结合」，也不等于能「中和」，后面还隔着细胞实验和动物实验两道关。你可以把它理解成药物研发漏斗的一个缩影：AI 让漏斗最上面的那一层变得又宽又便宜，但漏斗下面每一层的检验，一层都省不掉。Anthropic 把「没有证明能中和」「多毒素设计全部失败」写在显眼的位置，这种把局限说在前面的写法，也是读 AI 科研成果时值得养成的判断习惯。另一个值得记住的数字是约 1 万 GPU 小时：智能体能自己做科研，但它并不便宜。</p><p class="verify"><strong>核实状态。</strong> 单一来源。关键数字都出自 Anthropic 官网和它公开的数据集，属于厂商自己报告的结果，尚未经过同行评审。文中引用了两位外部专家（西班牙国家癌症研究中心的 Susana Vázquez Torres、丹麦技术大学的 Timothy P. Jenkins）的评价，但采集时没有找到独立机构的复现，尚未得到其他来源确认。</p><p class="sources"><strong>来源。</strong> <a href="https://www.anthropic.com/research/claude-scorpion-toxin-binder-design" target="_blank" rel="noopener noreferrer">Anthropic 官网文章</a>；<a href="https://x.com/AnthropicAI/status/2112579251555721573" target="_blank" rel="noopener noreferrer">Anthropic 官方 X 帖</a>；<a href="https://huggingface.co/datasets/Anthropic/scorpion-toxin-binder-design" target="_blank" rel="noopener noreferrer">Hugging Face 数据集</a>。</p></section><section class="entry"><h3>2. OpenAI 正式在官方账号宣布 MultiLangBench 和 COBOL 迁移评测：GPT-6 Astra 在 20 种语言上的平均通过率从 26.8% 提到 87.4%，GPT-6.1 Sol 的 COBOL 迁移准确率从 5.4% 提到 86.6%，但 OpenAI 也说上生产仍需专家审查</h3><p class="bg"><strong>背景。</strong> 「低资源编程语言」指的是网上公开代码很少、模型训练时见得不多的语言，比如 COBOL、Fortran、OCaml 和 Visual Basic。它们大多诞生于几十年前，今天会写的人越来越少，却仍然支撑着很多关键系统。昨天的详细稿已经写过这篇 OpenAI 文章，当时只有 OpenAI 官网一个来源，发布时刻也只能按美国日期估算；今天收录它，是因为窗内出现了三样新东西：OpenAI 官方 X 账号的正式宣布帖、两家独立媒体的报道，以及可以查到创建时间的 GitHub 评测仓库。</p><p class="what"><strong>发生了什么。</strong> OpenAI 官方 X 账号在北京时间 10 月 20 日 06:30 发帖宣布，正好在本次时间窗开始后半小时；官网文章的署名日期是美国时间 10 月 19 日，GitHub 仓库 openai/MultiLangBench 创建于北京时间 10 月 20 日 04:58。官网原文介绍两套评测：「MultiLangBench 测试模型能否用 20 种不同的编程语言，从零开始构建一个兼容 SQLite 的数据库引擎；我们的 COBOL 迁移评测则测试模型能否把现有程序迁移到另一种语言，同时保持程序的行为不变。」结果方面，原文写道：「在最高推理强度下，GPT-6 Astra 在 20 种语言上的平均测试通过率为 87.4%，而 GPT-5.6 Sol 为 26.8%。每一种被测试的语言都有提升，包括 COBOL（从 10.9% 到 72.1%）、OCaml（从 25.6% 到 85.8%）、Fortran（从 21.4% 到 83.5%）和 Visual Basic（从 27.5% 到 89.4%）。」在 COBOL 迁移评测上：「GPT-6.1 Sol 在低推理强度下的准确率为 86.6%，而 GPT-5.6 Sol 为 5.4%……在更高推理强度下，准确率达到 97.9%……不过，把它用到生产软件上，仍然需要专家审查，并且要依据系统的业务规则和依赖关系进行测试。」官网还写道，COBOL 支撑着 40% 以上的网上银行系统和 95% 的 ATM 交易。</p><p>developer-tech 和 The Decoder 两家媒体独立报道了这项发布，转述的数字和官网一致。需要注意一个口径问题：The Decoder 拿来对比的是 GPT-5.6 Terra（约 38%），而 OpenAI 官网用的是 GPT-5.6 Sol，两者不是同一个对照，引用时应以官网为准。</p><p class="figures"><strong>关键数字。</strong> 87.4% 对 26.8%（GPT-6 Astra 对 GPT-5.6 Sol，20 种语言平均）；COBOL 10.9%→72.1%、OCaml 25.6%→85.8%、Fortran 21.4%→83.5%、Visual Basic 27.5%→89.4%（同属 MultiLangBench）；86.6% 对 5.4%、高推理档 97.9%（GPT-6.1 Sol 对 GPT-5.6 Sol，COBOL 迁移评测）；40% 的网上银行系统、95% 的 ATM 交易。全部出自 OpenAI 官网原文，都是 OpenAI 自测。请注意不要把两组对比混在一起：87.4% 属于 GPT-6 Astra，86.6% 属于 GPT-6.1 Sol。</p><p class="why"><strong>为什么值得注意。</strong> 这条在今天的主线里，扮演的是「第一道检验做得再好，也还需要第二道」的角色。COBOL 迁移评测要求新程序的输出和老程序逐字节一致，这已经是一道很严格的检验了；可 OpenAI 自己仍然提醒，评测通过不等于可以直接上生产，因为真实的银行系统里有大量评测覆盖不到的业务规则和依赖关系。对正在学 AI 的你来说，可以把它和医学里「指标正常」与「病人真的没事」的区别放在一起理解：评测分数是一份很有用的化验单，但最后签字放行的，仍然需要懂这个系统的人。另外，OpenAI 公开测试集这一点值得肯定，因为别人可以拿同一套题自己复核。</p><p class="verify"><strong>核实状态。</strong> 多来源确认。数字出自 OpenAI 官网原文，developer-tech 与 The Decoder 的独立报道转述的数字一致；GitHub 仓库存在，创建时间可查。但所有成绩都是 OpenAI 自测，尚无第三方复现；The Decoder 的对照口径和官网不同。</p><p class="sources"><strong>来源。</strong> <a href="https://openai.com/index/low-resource-programming-languages/" target="_blank" rel="noopener noreferrer">OpenAI 官网文章</a>；<a href="https://x.com/OpenAI/status/2112310345863930168" target="_blank" rel="noopener noreferrer">OpenAI 官方 X 帖</a>；<a href="https://github.com/openai/MultiLangBench" target="_blank" rel="noopener noreferrer">GitHub：openai/MultiLangBench</a>；<a href="https://www.developer-tech.com/news/openai-reports-87-4-multilangbench-pass-rate-gpt-6-astra/" target="_blank" rel="noopener noreferrer">developer-tech 报道</a>；<a href="https://the-decoder.com/openai-says-gpt-6-is-much-better-with-legacy-programming-languages-such-as-cobol-and-fortran/" target="_blank" rel="noopener noreferrer">The Decoder 报道</a>。</p></section><section class="entry"><h3>3. DeepSeek 以 Apache-2.0 许可开源自家线上服务用的推理框架 DeepInfer，同时开源了和官方 API 处理逻辑一致的分词组件 deepseek-recipe</h3><p class="bg"><strong>背景。</strong> 一个大模型训练好以后，要让成千上万的用户同时用上，还需要一套「推理框架」负责把模型高效地跑起来：怎样把很多人的请求拼在一起算、怎样复用已经算过的中间结果、怎样在多块芯片之间分工。这一层决定了每回答一个问题要花多少电、多少钱，是 AI 公司真正的看家本领之一。过去大家常用的是开源社区的推理框架，各家公司自己线上用的那一套，通常不会公开。</p><p class="what"><strong>发生了什么。</strong> DeepSeek 官方 X 账号在北京时间 10 月 20 日 17:30 发帖宣布，GitHub 上的第一个公开提交出现在当天 12:09。官方帖子写道：「推出 DeepInfer，我们自研的推理框架，现在完全开源！它以高吞吐、低延迟大规模支撑着 DeepSeek-V4.1-Flash 的服务。我们分享自己的生产技术栈，是为了帮助社区降低算力成本、减少能耗……」GitHub 的说明文档写道：「DeepInfer 是支撑 DeepSeek 大规模生产服务的高性能推理框架。这次开源版本提供离线推理，以及大规模服务所需的核心功能……支持的硬件：英伟达 SM100 GPU；华为昇腾 950 NPU。构成完整推理服务所必需、但本次没有包含的部分：KV 缓存系统；视觉编码、预填充与解码的分离部署；跨数据并行副本的负载均衡。」同一串帖子的第三条还宣布：「同时开源 deepseek-recipe，这是我们生产环境中的 token 编码与解码组件，和官方 DeepSeek API 背后的处理逻辑保持一致。」据采集员用 GitHub 接口查询，仓库采用 Apache-2.0 许可，星标数已经超过 1.1 万。</p><p class="figures"><strong>关键数字。</strong> Apache-2.0 许可、支持英伟达 SM100 和华为昇腾 950、首个公开提交 12:09、官方宣布 17:30，均出自官方帖与 GitHub；星标超过 1.1 万是采集员通过 API 查到的，属于采集时刻的快照，会随时间变化。</p><p class="why"><strong>为什么值得注意。</strong> 对正在学 AI 的你来说，这条最好的用处是帮你看清「模型」和「把模型跑起来」是两件事。说明文档里那张「这次没有包含」的清单尤其值得读：KV 缓存（把已经算过的注意力中间结果存起来复用）、预填充与解码分离（把读题和写答案放到不同机器上做）、负载均衡，这些恰恰是线上服务最难的部分。也就是说，DeepSeek 开放的是一个很有分量的核心，但离「拿来就能搭出一个和它一样的线上服务」还有距离。同时支持英伟达和华为两种硬件，也说明推理框架正在成为连接不同芯片生态的一层。这条和第 4 条美国政府在联邦机构禁用 DeepSeek 发生在同一天，放在一起读会很有对照感：一边是代码完全公开，一边是整体被排除出政府系统。</p><p class="verify"><strong>核实状态。</strong> 多来源确认。GitHub 仓库和 DeepSeek 官方 X 帖互相印证，The AI News 等媒体也做了报道。性能方面的「高吞吐、低延迟」是官方说法，没有独立测试数据。</p><p class="sources"><strong>来源。</strong> <a href="https://github.com/deepseek-ai/DeepInfer" target="_blank" rel="noopener noreferrer">GitHub：deepseek-ai/DeepInfer</a>；<a href="https://x.com/deepseek_ai/status/2112476496283775135" target="_blank" rel="noopener noreferrer">DeepSeek 官方 X 帖（DeepInfer）</a>；<a href="https://x.com/deepseek_ai/status/2112476501065286085" target="_blank" rel="noopener noreferrer">DeepSeek 官方 X 帖（deepseek-recipe）</a>。</p></section><section class="entry"><h3>4. 美国国土安全部要求联邦民用机构移除并停止采购 DeepSeek 产品的命令，在窗内正式刊登于《联邦公报》，主流媒体集中报道；这份文件其实在前一天已经预先公示</h3><p class="bg"><strong>背景。</strong> 美国 2018 年通过了《联邦采购供应链安全法》，允许政府审查某些供应商的风险，并据此禁止联邦机构购买它们的产品。昨天的详细稿已经写过这项命令：当时的依据是 CyberScoop 和 BBC 的报道，说国土安全部在美国时间 10 月 19 日公开了命令，并定于周二正式刊登。今天收录的是窗内的新进展：命令按计划正式刊登在《联邦公报》上，采集员下载了公报原文 PDF 逐条核对，CNBC 等媒体也在窗内集中报道。</p><p class="what"><strong>发生了什么。</strong> 《联邦公报》第 91 卷第 201 期于美国时间 10 月 20 日正式刊登这份文件（编号 2026-21447）。原文写道：「国土安全部部长已下令：（1）在联邦民用机构的采购中，排除由杭州深度求索人工智能有限公司（DeepSeek）开发的信息技术产品和服务；（2）从民用机构的信息技术系统中，移除所有 DeepSeek 及其关联方的产品，以及利用 DeepSeek 的实现开发的第三方产品和服务。」CNBC 的报道发于北京时间 10 月 20 日 14:25，写道：「这项命令最初于 7 月 24 日发出，适用于联邦民用机构，包括财政部、国务院和司法部，但不包括国防部。」以及：「行政机构可以申请例外，包括推迟执行，方法是在命令发出后 60 天内向国土安全部提交书面理由。」据 CNBC 报道，国土安全部给出的理由是数据可能被传到中国、模型可能含有漏洞；中国外交部表示反对把国家安全概念泛化。</p><p>需要说清楚的是时间：据讯AI 证据包核对，这份文件在美国时间 10 月 19 日（周一）上午 8:45 已经在《联邦公报》的「预先公示」栏公开，对应北京时间 10 月 19 日 20:45，比本次时间窗早；昨天的详细稿报道的正是这次预先公开。窗内真正发生的，是正式刊登和主流媒体的集中报道。</p><p class="figures"><strong>关键数字。</strong> 第 91 卷第 201 期、文件编号 2026-21447，出自公报原文；7 月 24 日最初发出、60 天内申请例外，出自 CNBC。关于命令最初的日期，昨天详细稿引用的 CyberScoop 写的是 6 月 26 日签署，BBC 写的是 7 月底生效，今天 CNBC 写的是 7 月 24 日发出，各家说法仍不完全一致。</p><p class="why"><strong>为什么值得注意。</strong> 公报原文里最值得留意的一句，是连「利用 DeepSeek 的实现开发的第三方产品和服务」也要一起移除。开放权重模型可以下载到自己的服务器上运行，数据不一定会流出去，但这条规定并不区分具体怎么用，只看「是不是基于它做的」。用今天的主题来说，这是一种不做第二道检验的做法：不逐个判断某个具体用法风险高不高，而是把一整类东西直接挡在门外，省事，但也会把风险很低的用法一起挡掉。这条和第 3 条 DeepSeek 同日开源推理框架、第 9 条谷歌同日向美国政府推出智能体方案放在一起，能看出开源模型在中美之间的供应链博弈。</p><p class="verify"><strong>核实状态。</strong> 多来源确认。《联邦公报》原文 PDF 已由采集员下载并核对条文，CNBC、Bloomberg、CyberScoop 等多家媒体都有报道。命令最初的签署或发出日期，各家说法不一。</p><p class="sources"><strong>来源。</strong> <a href="https://www.govinfo.gov/content/pkg/FR-2026-10-20/pdf/2026-21447.pdf" target="_blank" rel="noopener noreferrer">《联邦公报》原文 PDF（govinfo）</a>；<a href="https://www.federalregister.gov/documents/2026/10/20/2026-21447/notice-of-order-regarding-exclusion-and-removal-of-deepseek-products-from-federal-civilian-executive" target="_blank" rel="noopener noreferrer">《联邦公报》网页版</a>（该站会拦截自动访问，用浏览器可以打开）；<a href="https://www.cnbc.com/2026/10/20/us-deepseek-federal-agency-ban.html" target="_blank" rel="noopener noreferrer">CNBC</a>。</p></section><section class="entry"><h3>5. Mistral 发布 Voxtral 3 语音模型家族和实时语音智能体 SDK，把「听、想、调用工具、说」串成一条流水线，官方称每轮对话不到一秒，可以走欧盟托管的 API，也可以自己部署</h3><p class="bg"><strong>背景。</strong> 语音智能体，就是能像人一样接电话、听你说话、想一想、查一查资料，然后开口回答的 AI。过去这类系统通常是三段拼起来的：先把语音转成文字，再让大模型想答案，最后把答案合成成语音。三段依次等待，加起来的延迟常常让对话显得很别扭，用户一插话，系统也停不下来。Mistral 是总部在法国的 AI 公司，一直强调「主权部署」，也就是让客户的数据留在自己能控制的地方。</p><p class="what"><strong>发生了什么。</strong> Mistral 官方 X 账号在北京时间 10 月 21 日 00:00 发帖宣布。官网原文写道：「我们推出 Voxtral 3：一个全新的、达到业界领先水平的语音转文字和文字转语音模型家族，同时推出一个语音智能体 SDK，把听、思考、调用工具和说话放进同一条实时流式流水线。」以及：「Voxtral 3 推出了基于 LiveKit 构建的语音智能体 SDK……每一个环节都不需要等前一个环节结束，所以每一轮对话都能在一秒以内完成，而且当来电者插话时，智能体会停下来。」官网列出的价格包括：Voxtral Mini Transcribe 3（批量转写）每分钟 0.0035 美元；Voxtral Speech 3（批量和实时，同一个 API）每百万字符 13 美元；使用 Mistral Small 4 做推理的语音智能体 API 每分钟 0.04 美元。据采集员概括，转写支持 50 多种语言，语音合成支持 35 种以上语言、50 多种方言，只需要 30 分钟录音就能做专业级的声音复刻；音频可以留在客户自己的机房里处理。官网的对比图注明由 gemini-3.8-flash 担任评审，也就是说，「领先」的结论来自厂商自己组织的评测。</p><p class="figures"><strong>关键数字。</strong> 每轮不到一秒、转写每分钟 0.0035 美元、合成每百万字符 13 美元、语音智能体每分钟 0.04 美元，出自 Mistral 官网；50 多种转写语言、35 种以上合成语言、30 分钟录音复刻，来自采集员对官网的概括。</p><p class="why"><strong>为什么值得注意。</strong> 这条代表语音智能体正在从演示走向客服、电话预约这类真实场景。「不等前一个环节结束」是一个很好理解的工程思路：就像你听别人说话时，不会等对方把整段话讲完才开始想，而是边听边想。从今天的主题看，这条也有一个值得注意的细节：性能对比用另一个 AI 模型当评审，这种「让模型给模型打分」的做法很便宜、很快，但它本身也需要被检验，所以厂商的领先说法在没有独立复测之前，只能先当作厂商的说法来看。至于 30 分钟就能复刻声音，便利的另一面是冒充风险，这也是语音技术普及后绕不开的问题。</p><p class="verify"><strong>核实状态。</strong> 多来源确认。Mistral 官网、官方 X 帖和 The Decoder 的报道一致；性能领先的说法来自厂商自评（由 gemini-3.8-flash 评审），尚无独立复测。</p><p class="sources"><strong>来源。</strong> <a href="https://mistral.ai/news/voxtral-3/" target="_blank" rel="noopener noreferrer">Mistral 官网</a>；<a href="https://x.com/MistralAI/status/2112574615318876178" target="_blank" rel="noopener noreferrer">Mistral 官方 X 帖</a>；<a href="https://the-decoder.com/mistral-ai-launches-voxtral-3-a-full-voice-agent-stack-that-listens-thinks-and-talks-in-real-time/" target="_blank" rel="noopener noreferrer">The Decoder 报道</a>。</p></section><section class="entry"><h3>6. OpenAI 宣布收购药物研发协作平台 Orchestra Bio，把它的团队和技术并入面向生命科学的 Rosalind 产品线，交易金额没有公开</h3><p class="bg"><strong>背景。</strong> 一款新药从发现靶点到获批上市，中间要经过靶点验证、先导化合物优化、临床前研究、几期临床试验、生产工艺开发和监管申报，参与的团队和外包机构非常多。很多时候拖慢进度的不是科学问题本身，而是项目管理：某个环节出了问题，别的环节要等多久、要怎么调整，往往要靠很多人开会对表才能弄清楚。Rosalind 是 OpenAI 面向生命科学研究的模型和工具系列。</p><p class="what"><strong>发生了什么。</strong> OpenAI 官方 X 账号在北京时间 10 月 21 日 02:10 发帖，官网文章署名日期为 10 月 20 日。官网原文写道：「OpenAI 已经收购了 Orchestra Bio，这是一个帮助生物医药团队协调复杂药物研发流程的平台。我们会把 Orchestra 的团队和技术，与 Rosalind（我们面向生命科学研究的 AI 模型和工具）整合在一起。」文章解释了为什么需要这样的工具：「开发一款新药极其复杂，在美国，从发现靶点到获得监管批准，平均大约需要 10 到 15 年。」并举了一个例子：「比如，一批生产失败可能会推迟一项临床试验的启动。Orchestra 的智能体可以帮助团队找出哪些工作和时间表会受到影响，收集相关信息，并比较不同的应对方式。」官网没有披露交易金额。据讯AI 采集员说明，同一天 ChatGPT 的发布说明里还开放了 Rosalind 学术计划的申请，美国高校实验室最多可以免费获得 30 个席位，为期 12 个月。</p><p class="figures"><strong>关键数字。</strong> 10 到 15 年的新药研发周期出自 OpenAI 原文；Rosalind 学术计划「最多 30 个席位、12 个月」来自采集员对 ChatGPT 发布说明的概括。交易金额未公开。</p><p class="why"><strong>为什么值得注意。</strong> 这条说明 AI 公司在生命科学里的野心，正在从「帮科学家想问题」延伸到「帮药企管项目」。对医学生来说，可以借这个例子理解新药研发为什么这么慢：不只是因为科学难，还因为环环相扣，一个环节出事，后面一串都要重新排。这条没有任何临床结果，所以放在人工智能部分，属于产业动作，不能理解成「AI 让新药更快上市了」。另外请留意一个和昨天详细稿不一致的地方：昨天讯AI 证据包把「GPT-Rosalind 学术计划」列为 10 月 15 日的窗外材料，而今天的证据包说同一天的发布说明里开放了申请，两者可能是同一计划的不同阶段，具体关系尚未核实。</p><p class="verify"><strong>核实状态。</strong> 单一来源。目前只看到 OpenAI 官网和官方帖，交易金额等细节没有公开，尚未得到其他来源确认。</p><p class="sources"><strong>来源。</strong> <a href="https://openai.com/index/openai-to-acquire-orchestra-bio" target="_blank" rel="noopener noreferrer">OpenAI 官网文章</a>；<a href="https://x.com/OpenAI/status/2112607347688583586" target="_blank" rel="noopener noreferrer">OpenAI 官方 X 帖</a>。</p></section><section class="entry"><h3>7. ChatGPT 推出「锁定聊天」：可以用 4 位账户 PIN 或设备自带的生物识别把选定的对话藏起来，但这不等于加密，重置 PIN 还会永久删除所有锁定内容</h3><p class="bg"><strong>背景。</strong> 很多人会在 ChatGPT 里聊比较私人的事情，比如身体状况、感情问题或者工作上的敏感内容。手机或电脑偶尔借给别人用，或者家人朋友坐在旁边，聊天记录就可能被看到。这次的新功能针对的就是这种「身边人看到」的场景。</p><p class="what"><strong>发生了什么。</strong> ChatGPT 官方发布说明在 10 月 20 日新增了这一条，TechCrunch 在北京时间 10 月 21 日 02:36 发出报道。官方发布说明写道：「锁定聊天让你可以把选定的对话保留在账户里，同时把它们从常规聊天记录、置顶聊天和搜索中隐藏起来。你可以用 4 位数的账户 PIN 或受支持的设备认证方式打开它们。你的数据保留和模型改进设置保持不变。」TechCrunch 补充写道：「OpenAI 指出，锁定一个聊天并不会创建端到端加密或单独的加密保险库，不会改变它保留这段聊天的时长，不会删除 ChatGPT 在锁定之前已经记住的信息，也不会改变『为所有人改进模型』这一设置。」以及：「OpenAI 表示，重置 PIN 会永久删除之前那个 PIN 所保护的所有锁定聊天、文件和其他内容。」据采集员转述 TechCrunch，ChatGPT for Healthcare 不提供这个功能。同一天的发布说明里还有 ChatGPT Slides、GPT-6 Pro 多智能体并行等更新。</p><p class="figures"><strong>关键数字。</strong> 4 位数 PIN，出自官方发布说明；其余是功能性描述，没有数字。</p><p class="why"><strong>为什么值得注意。</strong> 这条最值得记住的是它「防什么、不防什么」。它防的是坐在你旁边的人，不防服务器那一端：聊天仍然按原来的规则保存，原来的「是否用于改进模型」设置也不变，ChatGPT 在锁定之前已经记住的东西也还在。如果你想用它来放一些私人的学习或生活记录，可以放心地用来防止被身边人看到，但不要误以为它就是加密。还有一点特别需要注意：PIN 一旦忘了要重置，所有锁定内容会被永久删除，所以重要的内容最好另外有一份备份。用今天的主题来说，读产品说明时，分清「看起来像加密」和「真的加密」，本身就是一道小小的第二道检验。</p><p class="verify"><strong>核实状态。</strong> 多来源确认。OpenAI 官方发布说明和 TechCrunch 报道一致；ChatGPT for Healthcare 不提供该功能这一点只见于 TechCrunch。</p><p class="sources"><strong>来源。</strong> <a href="https://help.openai.com/en/articles/6825453-chatgpt-release-notes" target="_blank" rel="noopener noreferrer">ChatGPT 发布说明</a>；<a href="https://techcrunch.com/2026/10/20/chatgpt-now-lets-you-lock-your-chats/" target="_blank" rel="noopener noreferrer">TechCrunch</a>。</p></section><section class="entry"><h3>8. OpenAI API 新增 12 小时提示缓存：写入价从普通输入的 1.25 倍提高到 2.5 倍，读取价不变，长时间运行的智能体可以跨几个小时复用同一段上下文</h3><p class="bg"><strong>背景。</strong> 「提示缓存」可以理解成：模型已经读过一遍的开头部分，下次就不用从头再读。很多应用每次请求开头都是一大段相同的系统指令、工具说明和背景资料，如果每次都重新计算，既慢又贵。缓存把这部分的中间结果存下来，下一次请求开头一样时直接复用，计费也按更便宜的「缓存输入」价格算。过去 OpenAI 的缓存默认只保留 30 分钟，超过时间没用就失效。</p><p class="what"><strong>发生了什么。</strong> OpenAI 开发者官方账号在北京时间 10 月 21 日 01:56 发帖：「现在你可以在 API 中选择 12 小时的提示缓存。像 dots 这样的常驻智能体会在一整天里反复使用同一段上下文。你可以把共享的指令、工具和上下文缓存更长时间，即使两次请求相隔好几个小时，也能按更低的缓存输入价格计费。」官方文档里的计费规则写道：「对于 GPT-5.6 及更新的模型，在默认 30 分钟有效期下，缓存写入的价格是标准未缓存输入 token 价格的 1.25 倍。在 Responses API 中，你可以选择至少 12 小时的有效期，写入价格是普通输入的 2.5 倍。之后的读取价格在大多数这类模型上是普通输入的 0.1 倍，在 GPT-6.1 Sol 上是 0.05 倍，与所选的有效期无关。」</p><p class="figures"><strong>关键数字。</strong> 30 分钟默认有效期、写入 1.25 倍；12 小时有效期、写入 2.5 倍；读取 0.1 倍（GPT-6.1 Sol 为 0.05 倍），全部出自官方文档。</p><p class="why"><strong>为什么值得注意。</strong> 可以简单算一下账来理解（这是折晓按文档里的倍数做的示意，不是官方给的例子）：一段上下文如果一天里要被读很多次，第一次多付一点写入费，之后每次只付一成甚至半成的价格，读的次数越多越划算；反过来，如果一段上下文只会被用一两次，选 12 小时缓存反而更贵。这条技术性比较强，但它透露出一个趋势：API 的计费规则正在围绕「智能体整天开着、断断续续地工作」重新设计。你自己平时用的那些长时间运行的助手和定时任务，背后其实也是这类机制在帮忙省钱。</p><p class="verify"><strong>核实状态。</strong> 多来源确认。官方开发者帖和官方文档的计费表互相印证。</p><p class="sources"><strong>来源。</strong> <a href="https://x.com/OpenAIDevs/status/2112603916076781778" target="_blank" rel="noopener noreferrer">OpenAI 开发者官方 X 帖</a>；<a href="https://developers.openai.com/api/docs/guides/prompt-caching" target="_blank" rel="noopener noreferrer">官方文档：提示缓存</a>。</p></section><section class="entry"><h3>9. 谷歌公共部门发布面向美国政府机构的智能体方案「Gemini for government services」预览版，主打答案能追溯到原始法规和机构文件；发布具体时刻不明，可能落在窗外</h3><p class="bg"><strong>背景。</strong> 政府机构的日常工作里有大量重复又讲究准确的事情：回答关于政策条文的询问、处理信息公开申请时把敏感内容涂黑、比对采购文件是否合规、审核市民提交的材料。这些工作需要严格依据法规，出错代价很高，所以「AI 会不会胡编」是政务场景里最大的顾虑。谷歌此前已经推出过面向法律和金融行业的打包方案，这次轮到政府。</p><p class="what"><strong>发生了什么。</strong> 谷歌云新闻中心发布的美通社稿注明「华盛顿，2026 年 10 月 20 日」，没有标注具体时刻，谷歌云官方博客也有同题文章。新闻稿写道：「今天，谷歌公共部门发布了 Gemini for government services，这是一个面向政府机构复杂需求和工作流程、专门打造的企业级智能体解决方案……它最初以预览版的形式向美国联邦、州和地方政府开放，已经有部分联邦和州机构在使用，包括密苏里州和美国卫生与公众服务部。」新闻稿还写道：「Gemini for government services 不靠猜测，而是直接从官方法规和机构的实际文件中提取答案，并链接回确切的出处，方便工作人员在做决定之前轻松核对事实。」据采集员概括，这套方案还会继承各机构原有的权限控制。</p><p class="figures"><strong>关键数字。</strong> 这是产品发布，没有可以独立核验的数字。</p><p class="why"><strong>为什么值得注意。</strong> 从今天的主题看，这条最值得注意的是它的卖点：不是「AI 回答得多聪明」，而是「每个答案都能点回原文核对」。这等于在产品里内置了一道方便人做第二道检验的通道，把最后的判断留给工作人员。另外，它和第 4 条可以对照着读：同一天，美国政府一边把 DeepSeek 清出联邦民用系统，一边有美国公司向政府大规模推出 AI 智能体，政府并不是在拒绝 AI，而是在挑选用谁家的 AI。</p><p class="verify"><strong>核实状态。</strong> 单一来源。目前只有谷歌自己的新闻稿和博客，客户使用情况也是谷歌单方面的说法，尚未得到其他来源确认。时间上，新闻稿只有美国东部日期，没有钟点，按美东 10 月 20 日白天发布推算在窗内；如果实际是在美东 18:00 以后发布，就会落在时间窗之外。</p><p class="sources"><strong>来源。</strong> <a href="https://www.googlecloudpresscorner.com/2026-10-20-Google-Public-Sector-Launches-Gemini-for-Government-Services" target="_blank" rel="noopener noreferrer">谷歌云新闻中心（美通社稿）</a>；<a href="https://cloud.google.com/blog/products/ai-machine-learning/gemini-for-government-services" target="_blank" rel="noopener noreferrer">谷歌云官方博客</a>。</p></section><hr><h2 id="sec-3">第二部分 · 科技</h2><section class="entry"><h3>10. curl 和 OpenSSL 的维护者被大量 AI 生成的漏洞报告淹没：OpenSSL 一年收到约 500 份报告，只有 63 个成为正式漏洞；curl 宣布从 10 月 26 日起把中低危报告改到公开仓库处理</h3><p class="bg"><strong>背景。</strong> curl 是一个用来传输数据的开源命令行工具和程序库，几乎每台电脑、手机、路由器甚至汽车里都有它的身影；OpenSSL 是一套开源的加密程序库，大量网站的 HTTPS 加密连接都依赖它。这两个项目的核心维护者人数都不多，很多人是兼职或者靠捐助在做。按照惯例，安全漏洞要先私下报告给维护者，等修好了再公开，这样攻击者就没法抢在修补之前利用。可是过去一年，用 AI 工具批量挖漏洞、批量写报告变得非常容易，维护者收到的报告数量猛增，其中有相当一部分看起来很专业，实际上并不成立。</p><p class="what"><strong>发生了什么。</strong> The Register 在北京时间 10 月 21 日 01:30 发出报道，写道：「从 10 月 26 日起，低危和中危的报告应当提交到这个开源数据传输工具的公开 GitHub 仓库，维护者 Daniel Stenberg 表示。」并引用他的原话：「作为一个项目，我们在挣扎，所有核心维护者都感到压力大、负担过重，已经被逼到我们能承受的极限。我们必须采取行动才能活下去。」据讯科采集员概括，curl 称九成以上的提交很快就能判定为低于高危。</p><p>Axios 关于 OpenSSL 的报道日期为 10 月 20 日，页面只显示相对时间，精确发布时刻未能核实。报道写道：「今年 5 月到 7 月，OpenSSL 平均每月收到 71 份安全报告和咨询，而去年同期每月只有 9 份……到 8 月，这个数字攀升到 108 份。」以及：「过去一年，OpenSSL 收到大约 500 份漏洞报告，只有 63 份最终成为公开披露的漏洞。」报道还写到，有权批准代码修改的工程师人数「从 2024 年 7 月的 18 人增加到本月的 30 人」。</p><p class="figures"><strong>关键数字。</strong> 每月 71 份（去年同期 9 份）、8 月 108 份、一年约 500 份报告只有 63 个成为正式漏洞、有权批准修改的工程师从 18 人增至 30 人，均出自 Axios；10 月 26 日的改动日期出自 The Register。可以顺手算一下（这是折晓按 Axios 数字做的计算）：63 除以 500 约为 12.6%，也就是说，大约每八份报告里只有一份是真的。</p><p class="why"><strong>为什么值得注意。</strong> 这是今天核心思想在科技部分的主轴。发现问题这件事已经便宜到可以批量生产，可是判断一份报告真不真、要不要修、怎么修，仍然要靠少数几个最懂代码的人，而且每一份都得认真看完，因为万一漏掉一个真的，后果可能波及全世界的设备。curl 的应对是把一部分检验工作公开出去，让更多人一起看；代价也很明显：中低危的缺陷在修好之前就会被所有人看到，攻击者也能提前知道。这个取舍本身就说明，第二道检验已经成了整个开源安全体系里最紧缺的资源。顺带一提，这条的主体是开源工程和安全基础设施，AI 只是原因之一，所以放在科技部分。</p><p class="verify"><strong>核实状态。</strong> 多来源确认。The Register 和 Axios 分别独立报道 curl 与 OpenSSL 两个项目，各自援引维护者原话。curl 一则确定在窗内；Axios 文章的精确发布时刻未能核实，采集员按 Axios 科技频道的排序推断约为北京时间 10 月 21 日凌晨。「九成以上很快判定低于高危」是采集员对 The Register 报道的概括。</p><p class="sources"><strong>来源。</strong> <a href="https://www.theregister.com/security/2026/10/20/swamped-curl-maintainers-take-low-level-flaws-public-to-survive-vulnerability-avalanche/5304198" target="_blank" rel="noopener noreferrer">The Register</a>；<a href="https://www.axios.com/2026/10/20/ai-bug-reports-overwhelm-openssl-maintainers" target="_blank" rel="noopener noreferrer">Axios</a>。</p></section><section class="entry"><h3>11. 谷歌云伦敦区域的一个可用区断电，英国多家银行、法院的远程视频庭审系统和快递服务大面积中断；因为谷歌在英国只有这一个区域，没做多区域容灾的客户无处可切</h3><p class="bg"><strong>背景。</strong> 云服务商通常把一个「区域」分成几个相互独立的「可用区」，每个可用区有自己的供电、制冷和网络，目的就是让一个机房出事时，其他机房能接住。更稳妥的做法是跨区域容灾，也就是在另一座城市甚至另一个国家再放一份。europe-west2 是谷歌云在伦敦的区域，也是它在英国唯一的区域。</p><p class="what"><strong>发生了什么。</strong> 谷歌云状态页显示，事故开始于北京时间 10 月 20 日 14:08（美国太平洋时间 10 月 19 日 23:08），最终更新在北京时间 10 月 20 日 22:03。状态页写道：「我们正在处理 europe-west2 多项服务的问题，开始于 2026 年 10 月 19 日（周一）23:08（太平洋时间）。一次电力事件导致 europe-west2-b 可用区内发生中断。电力事件已经得到缓解。」</p><p>《卫报》在北京时间 10 月 20 日 17:45 首发报道，最后修改于 10 月 21 日 03:19，写道：「到下午 5 点，Revolut 网站上的大部分服务仍然显示有问题，列出的 27 项服务中只有 6 项（包括客服聊天和内部转账）被标为正常。」Computer Weekly 在北京时间 10 月 21 日 00:50 发出报道，写道：「因为 europe-west2 是谷歌在英国唯一的区域，没有建立多区域容灾能力的客户，没有第二个英国地点可以切换过去。」报道还转述一位管理员传达的谷歌工程更新：「虽然市电已经恢复，但在最初断电时，备用发电机没有启动。」据讯科采集员概括，受影响的包括 Revolut、劳埃德银行、汇丰、皇家邮政、DPD，以及英格兰和威尔士法院的远程视频庭审系统；另外两个可用区也没有完全接住负载。《卫报》还提到，英国金融行为监管局今年夏天刚获得监管关键云服务商的权力，这是它面对的第一次大考。谷歌承诺之后会发布事故分析。</p><p class="figures"><strong>关键数字。</strong> 事故开始于北京时间 14:08、最终更新 22:03，出自谷歌状态页；Revolut 27 项服务中只有 6 项正常，出自《卫报》。</p><p class="why"><strong>为什么值得注意。</strong> 这是一次典型的单点故障：可用区的设计本意是互为备份，但一来备用发电机据称没有启动，二来另外两个可用区没能完全接住，三来很多客户没有准备跨区域的第二份。用今天的主题来看，备用发电机就是供电系统的「第二道检验」，它平时一直闲着，看起来可有可无，只有在第一道失效时才知道它到底靠不靠得住；如果它从来没有在真实条件下被测试过，那就等于没有。对你自己的项目也是一样：StudySolo 的备份任务每天都在跑，但备份有没有真的被恢复演练过，是另一个值得想一想的问题。</p><p class="verify"><strong>核实状态。</strong> 多来源确认。谷歌官方状态页确认了时间、区域和「电力事件」这个原因，Computer Weekly 与《卫报》独立报道了影响范围。但「备用发电机没有启动」这一细节只来自 Computer Weekly 转述的一位管理员说法，属于单一来源，尚未得到谷歌官方证实。</p><p class="sources"><strong>来源。</strong> <a href="https://status.cloud.google.com/incidents/Xs2XTHzAVC9YnafnPyzj" target="_blank" rel="noopener noreferrer">谷歌云状态页</a>；<a href="https://www.computerweekly.com/news/366652539/Google-Cloud-power-event-knocks-out-UK-banks-courts-and-couriers" target="_blank" rel="noopener noreferrer">Computer Weekly</a>；<a href="https://www.theguardian.com/business/2026/oct/20/revolut-down-app-cards-service-disruption" target="_blank" rel="noopener noreferrer">《卫报》</a>。</p></section><section class="entry"><h3>12. PHP 官方提前一天预告：两个 CVSS 9.2 分的严重漏洞将在北京时间 10 月 21 日晚上 10 点紧急修补；安全公司称漏洞细节已在禁运期内提前泄露</h3><p class="bg"><strong>背景。</strong> PHP 是一种历史很久的网站编程语言，大量网站和内容管理系统（比如很多博客和论坛程序）都建立在它上面。安全漏洞通常有一个「禁运期」：发现者私下告诉维护者，大家约好一个日期同时公开漏洞和补丁，在那之前不对外说。CVSS 是给漏洞严重程度打分的通用标准，满分 10 分，9 分以上属于严重。</p><p class="what"><strong>发生了什么。</strong> php.net 的公告日期为 10 月 20 日，页面没有给出具体时刻。公告写道：「这次发布定于 2026 年 10 月 21 日（周三）14:00 UTC。它修复了两个严重漏洞，评分都是 CVSS v4.0 9.2。我们鼓励所有 PHP 用户现在就做好准备，以便补丁一发布就能升级。」14:00 UTC 对应北京时间 10 月 21 日 22:00。BleepingComputer 在北京时间 10 月 21 日 04:56 发出报道，引用安全公司 watchTowr 首席执行官 Benjamin Harris 的话：「就在过去一小时里，PHP 的两个远程代码执行漏洞被泄露了。这些漏洞原本处于禁运状态，计划在周四美国东部时间上午 11 点公开。」报道同时写道：「研究人员澄清，尽管信息据称在计划披露之前就泄露了，但他们还没有观察到这些漏洞在真实环境中被利用。」据讯科采集员概括，watchTowr 和一条已经被删除的 Hacker News 帖子称这两个漏洞是 CVSS 10 分、影响 PHP 5 到 8，并给出了编号 CVE-2026-109618 和 CVE-2026-109619；但受影响的版本和技术细节，PHP 官方尚未公布。</p><p class="figures"><strong>关键数字。</strong> CVSS v4.0 9.2、补丁时间 14:00 UTC（北京时间 10 月 21 日 22:00），出自 php.net；「CVSS 10」「影响 PHP 5 到 8」和两个 CVE 编号，只来自第三方说法。</p><p class="why"><strong>为什么值得注意。</strong> 官方提前一天发通知让大家「准备升级」，这种做法并不常见，原因据称就是禁运期内的信息已经泄露，等不到原定日期了。今天北京时间晚上十点补丁就会发布，如果你有任何用 PHP 搭的网站或服务，可以在今晚之后尽快升级。另外请注意不同来源的分数不一致：官方说 9.2，第三方说 10，这里以官方公告为准。在漏洞信息上，官方公告就是那道最终的检验，第三方传言在被它确认之前，都只能先当作传言。</p><p class="verify"><strong>核实状态。</strong> 多来源确认：PHP 官方公告确认了发布时间和 9.2 的评分，BleepingComputer 采访 watchTowr 补充了泄露情况。但漏洞编号、受影响版本和「CVSS 10」的说法仅来自第三方，官方尚未确认。</p><p class="sources"><strong>来源。</strong> <a href="https://www.php.net/" target="_blank" rel="noopener noreferrer">php.net 官方公告</a>；<a href="https://www.bleepingcomputer.com/news/security/php-warns-admins-of-two-critical-flaws-emergency-patches-coming-tomorrow/" target="_blank" rel="noopener noreferrer">BleepingComputer</a>。</p></section><section class="entry"><h3>13. 美国网络安全与基础设施安全局把六个正在被利用的漏洞列入「已知被利用漏洞」目录，其中四个可以串成针对 Plex 媒体服务器的「Plex2Shell」攻击链；补丁其实 8 月就有了</h3><p class="bg"><strong>背景。</strong> 美国网络安全与基础设施安全局（CISA）维护着一份「已知被利用漏洞」目录（KEV），凡是有证据显示正在被攻击者实际利用的漏洞都会被列进去，美国联邦机构必须在限定时间内修补。Plex 是很多人用来在家里的 NAS 或电脑上自建影音库的软件，可以把自己的电影、音乐通过网络串流到电视和手机上。</p><p class="what"><strong>发生了什么。</strong> CISA 公告的发布日期是美国时间 10 月 20 日，美国东部工作日发布，对应北京时间 10 月 20 日晚到 10 月 21 日凌晨，在窗内。公告写道：「根据存在主动利用的证据，CISA 已将六个新漏洞加入已知被利用漏洞目录。」列出的漏洞包括 Plex Media Server 的服务器端请求伪造漏洞（CVE-2026-96652）、Plex Media Server 的「文件名或路径的外部控制」漏洞（CVE-2026-96656），以及另外两个 Plex 漏洞（CVE-2026-96654、CVE-2026-96655），还有 EG Secure Solutions SiteGuard Server Edition 的操作系统命令注入漏洞（CVE-2026-106931）和西门子 Software Center 的「不受控的搜索路径」漏洞（CVE-2026-110936）。</p><p>安全资讯网站 breach-signal 的汇总文章在 10 月 20 日更新，写道：「Plex 表示，它已于 2026 年 8 月 4 日向所有用户发布了修补后的 Media Server 1.43.3.10861 版本。」以及：「概念验证代码发布后大约一天，攻击者就开始在真实环境中利用 Plex2Shell，攻击于 2026 年 10 月 17 日被观察到。」据讯科采集员概括，按 breach-signal 引用研究者的说法，这四个 Plex 漏洞单独评分只有 4.3 到 7.2，串在一起却能做到不需要登录的远程代码执行；概念验证代码在 10 月 16 日公开，攻击者用它来植入挖矿程序和住宅代理。</p><p class="figures"><strong>关键数字。</strong> 六个漏洞、四个属于 Plex，出自 CISA；修补版本 1.43.3.10861、8 月 4 日发布、10 月 17 日观察到攻击，出自 breach-signal；单独评分 4.3 到 7.2，是 breach-signal 引用研究者的说法。</p><p class="why"><strong>为什么值得注意。</strong> 这条有两个值得记住的点。第一，四个「中等」漏洞串起来，可以变成一个「严重」漏洞，单独看每一个都不吓人，组合起来却能让人不登录就控制服务器；这说明给漏洞逐个打分这种第一道检验，有时会漏掉组合风险。第二，补丁早在 8 月就有了，可很多家用服务器一直没更新，概念验证代码一公开，一天之内就被大规模利用。修补本身不难，难的是让每一台机器都真的装上。如果你或者家人用 Plex 自建影音库，可以确认一下版本是不是已经在 1.43.3.10861 或以上。</p><p class="verify"><strong>核实状态。</strong> 多来源确认。CISA 官方公告确认了 CVE 列表，breach-signal 汇总了 SecurityWeek 等十个来源的时间线与修复版本。</p><p class="sources"><strong>来源。</strong> <a href="https://www.cisa.gov/news-events/alerts/2026/10/20/cisa-adds-six-known-exploited-vulnerabilities-catalog" target="_blank" rel="noopener noreferrer">CISA 公告</a>；<a href="https://breach-signal.com/vulnerabilities/threat-actors-exploit-plex2shell-within-one-day-poc/" target="_blank" rel="noopener noreferrer">breach-signal 汇总</a>。</p></section><section class="entry"><h3>14. SpaceX 猎鹰 9 号执行 Bandwagon-5 拼车发射，送出 32 个载荷，其中包括 SpaceX 自己的第二个可回收返回舱「Starfall」，以及要在微重力下结晶一种抗癌药的 Varda W-7 返回舱</h3><p class="bg"><strong>背景。</strong> 「拼车发射」是把很多家客户的小卫星和实验载荷放在同一枚火箭上一起送上天，分摊发射成本。过去几年，太空里的「送上去」已经越来越便宜，而「拿回来」一直是难点：大部分卫星用完就留在轨道上或者烧毁，能把东西完整带回地面的返回舱很少。Varda 是一家美国公司，专门做在太空微重力环境下制造药物晶体、再带回地面的返回舱。</p><p class="what"><strong>发生了什么。</strong> 发射窗口在北京时间 10 月 20 日 18:30 开启（美国东部时间早上 6:30），NASASpaceFlight 和 SpaceNews 当天都有报道。NASASpaceFlight 写道：「SpaceX 的猎鹰 9 号于 10 月 20 日（周二）为 Bandwagon-5 任务额外发射了 32 个拼车载荷，因为回收区天气不佳推迟了一天。」关于 SpaceX 自己的 Starfall 返回舱，报道写道：「这个返回舱直径 3.1 米、高 0.75 米，质量 2,100 千克，最多能携带 1,000 千克的载荷。SpaceX 会用它来做点对点的货物运输，以及运送在微重力环境中制造的产品。」关于同一枚火箭上的 Varda 返回舱：「W-7 会装载一种名为 PROTAC 的新型抗癌药物，Varda 要测试微重力能否克服这种药溶解度差的问题。」据讯科采集员概括，助推器 B1085 完成了第 19 次飞行并成功回收；拼车价格按 NASASpaceFlight 原文为 50 千克以内 35 万美元。</p><p class="figures"><strong>关键数字。</strong> 32 个载荷、Starfall 直径 3.1 米、高 0.75 米、质量 2,100 千克、载荷上限 1,000 千克，出自 NASASpaceFlight；助推器第 19 次飞行、50 千克以内 35 万美元，来自采集员对报道的概括。</p><p class="why"><strong>为什么值得注意。</strong> 这条的看点不只是数量，而是「送上去还要拿回来」。对医学生来说，Varda W-7 那一段最有意思：PROTAC 是一类新型药物，它不是直接抑制目标蛋白，而是把目标蛋白拉到细胞自己的「垃圾处理系统」（泛素-蛋白酶体系统）旁边，让细胞把它降解掉（这是药理学上的一般机制，借来帮助理解）。这类分子通常比较大，溶解度差是常见难题，而药物的溶解度又和晶型密切相关；在微重力下没有对流和沉降，晶体可能长得更均匀，这就是要把它送上太空结晶、再带回地面检查的原因。至于晶型到底有没有改善，要等返回舱回来以后才能检验。</p><p class="verify"><strong>核实状态。</strong> 多来源确认。NASASpaceFlight 与 SpaceNews 独立报道了同一次发射和 Starfall 载荷。具体点火时刻没有从一手页面核实到分钟级，本条只写发射窗口开启时间。</p><p class="sources"><strong>来源。</strong> <a href="https://www.nasaspaceflight.com/2026/10/bandwagon-5/" target="_blank" rel="noopener noreferrer">NASASpaceFlight</a>；<a href="https://spacenews.com/spacex-launches-second-starfall-reentry-vehicle/" target="_blank" rel="noopener noreferrer">SpaceNews</a>。</p></section><section class="entry"><h3>15. 亚马逊的 TorchNeuron 在 PyTorch 北美大会上正式开源并进入公开测试，现有 PyTorch 代码写一句 <code>.to('neuron')</code> 就能跑在 Trainium 芯片上；官方同时坦白约 3.9 万个上游测试被有意跳过</h3><p class="bg"><strong>背景。</strong> PyTorch 是目前最流行的深度学习框架，英伟达在 AI 芯片上的优势，很大程度上靠的是 CUDA 软件生态：大家写的代码天然就适配英伟达显卡。Trainium 是亚马逊云服务自研的 AI 训练芯片。昨天的详细稿已经写过 TorchNeuron 的预告，当时只是宣布「将于 10 月 20 日开源」；今天收录的是它真正上线的这一步，以及 PyTorch 官方博客里披露的测试细节。</p><p class="what"><strong>发生了什么。</strong> PyTorch 官方博客和亚马逊新闻稿都标注，TorchNeuron 在 10 月 20 日的 PyTorch 北美大会上开源并进入公开测试，美国当地 10 月 20 日对应北京时间 10 月 20 日晚到 10 月 21 日凌晨。PyTorch 官方博客写道：「我们宣布推出 TorchNeuron，这是一个面向 Trainium 的开源原生 PyTorch 后端……TorchNeuron 将以 Apache 2.0 协议在 github.com/aws-neuron/torch-neuronx 开源，并于 10 月 20 日作为公开测试版上线。」博客还很坦白地交代了测试情况：「2026 年 8 月的那次运行产生了约 15.4 万个测试结果，其中约 6.9 万个因为合理原因被跳过……其余约 3.9 万个是 Neuron 有意跳过的。」亚马逊新闻稿写道：「今天，85% 的 AI 研究者和开发者用 PyTorch 写代码。」以及：「公司正在把修改贡献回 PyTorch 本身，和 PyTorch 社区一起，删除那些把框架绑定在特定芯片上的代码。」</p><p>据讯科采集员概括，TorchNeuron 是通过 PyTorch 官方的 PrivateUse1 扩展点，把 Trainium 注册成一个普通设备；约 3.9 万个被有意跳过的测试里，约 2.2 万个是因为对应的算子还没有原生实现。客户证言里，Deepgram 称每美元处理的音频秒数比它的 GPU 基线多约 60%。</p><p class="figures"><strong>关键数字。</strong> 约 15.4 万个测试结果、约 6.9 万个合理跳过、约 3.9 万个有意跳过，出自 PyTorch 官方博客；85% 的 AI 研究者和开发者用 PyTorch，是亚马逊的说法，没有给出出处；约 2.2 万个因算子未实现而跳过，来自采集员概括；每美元多处理约 60% 音频，是客户自述。</p><p class="why"><strong>为什么值得注意。</strong> 和昨天相比，今天最有价值的新信息是那组测试数字。「只改一行就能跑」是一句很诱人的宣传，而 PyTorch 官方博客自己把「有多少测试没跑、为什么没跑」摆了出来，这正是一个好的第二道检验应有的样子：不只报告通过了多少，也告诉你哪些地方还是灰区。对开发者来说，这意味着常见模型很可能可以直接迁移，但用到冷门算子时，仍然可能遇到还没实现的部分。亚马逊同时向 PyTorch 主仓库提交去掉 CUDA 硬编码假设的补丁，意图是削弱英伟达 CUDA 的「默认地位」，这条线值得长期关注。</p><p class="verify"><strong>核实状态。</strong> 多来源确认。PyTorch 官方博客、亚马逊官方新闻稿和 GitHub 仓库三处一致。性能数字是客户自述，没有独立验证。</p><p class="sources"><strong>来源。</strong> <a href="https://pytorch.org/blog/introducing-torchneuron-native-pytorch-backend-for-aws-trainium/" target="_blank" rel="noopener noreferrer">PyTorch 官方博客</a>；<a href="https://www.aboutamazon.com/news/innovation-at-amazon/torchneuron-pytorch-aws-trainium-chips-ai" target="_blank" rel="noopener noreferrer">亚马逊新闻稿</a>；<a href="https://github.com/aws-neuron/torch-neuronx" target="_blank" rel="noopener noreferrer">GitHub：aws-neuron/torch-neuronx</a>。</p></section><section class="entry"><h3>16. 马斯克在特斯拉第三季度财报电话会上确认：特斯拉和 SpaceX 已经各自成立特别委员会讨论合并，但他因利益冲突不参与讨论，双方尚未就任何条款达成一致</h3><p class="bg"><strong>背景。</strong> 特斯拉是上市公司，SpaceX 是私人公司，马斯克同时是两家的大股东和掌舵人。两家公司近年在芯片设计、制造和机器人等方面已经有合作。当一位大股东同时站在交易两边时，公司通常会成立由独立董事组成的「特别委员会」来谈判，以保护其他股东的利益。</p><p class="what"><strong>发生了什么。</strong> 特斯拉第三季度财报电话会在美国时间 10 月 20 日（周二）盘后举行，The Verge 在北京时间 10 月 21 日 05:30 发出报道，写道：「马斯克周二在特斯拉第三季度财报电话会上表示，特斯拉和 SpaceX 已经成立了特别委员会，讨论可能的合并。」并引用马斯克的原话：「因为我是有利益冲突的一方，所以我实际上不能参加特别委员会的讨论……特别是在特斯拉这一边，我们需要全部股份的 50% 投票赞成，不只是参与投票的那些，而是全体股东的 50%。这是一个相当高的门槛。」The Verge 还写道：「特斯拉与 SpaceX 的合并将是一笔重磅交易，会创造一个估值超过 3.6 万亿美元的超大实体。」据讯科采集员概括，两家公司已经在芯片设计、「TeraFab」和机器人上合作，马斯克称合并是「好主意」，但双方还没有就任何条款达成一致。</p><p class="figures"><strong>关键数字。</strong> 全体股份的 50% 赞成，出自马斯克原话；3.6 万亿美元，是 The Verge 的估算口径。</p><p class="why"><strong>为什么值得注意。</strong> 这条目前只是「正式开始评估」，还远不是一笔交易。值得注意的是马斯克自己讲到的门槛：不是参与投票股份的过半数，而是全部股份的过半数，那些不来投票的股东实际上也等于投了反对票，所以他自己也说这是很高的门槛。特别委员会和股东投票，本质上就是公司治理里的第二道检验：让不在交易两边的人来判断这件事对其他股东是否公平。</p><p class="verify"><strong>核实状态。</strong> 多来源确认。The Verge、Business Insider 报道一致，据采集员说明 Axios 科技频道同日也有同题报道。3.6 万亿美元是媒体估算。</p><p class="sources"><strong>来源。</strong> <a href="https://www.theverge.com/science/1014984/spacex-tesla-merger-elon-musk-special-committees" target="_blank" rel="noopener noreferrer">The Verge</a>；<a href="https://www.businessinsider.com/tesla-spacex-merger-exploratory-commitees-2026-10" target="_blank" rel="noopener noreferrer">Business Insider</a>。</p></section><section class="entry"><h3>17. 高通诉 Arm 反垄断案在美国特拉华联邦法院进行结案陈词，据彭博社报道，法官表示不愿介入高通下一代芯片要付给 Arm 的授权费谈判</h3><p class="bg"><strong>背景。</strong> Arm 不自己大量生产芯片，而是设计芯片架构，再把它授权给高通、苹果等公司使用，收取授权费。几乎所有手机芯片都建立在 Arm 架构上，所以授权费怎么定，会传导到整条半导体供应链。高通和 Arm 之间的授权纠纷已经持续了一段时间。</p><p class="what"><strong>发生了什么。</strong> Bloomberg Law 在北京时间 10 月 21 日 05:01 发出报道，结案陈词在美国时间 10 月 20 日（周二）进行。报道写道：「一位正在审理针对 Arm Holdings 反垄断主张的联邦法官，表示不愿介入高通为使用新技术而需要向 Arm 支付的授权费问题，这些新技术是设计下一代电脑、手机、汽车和数据中心芯片所必需的。」以及：「特拉华州的美国地区法官 Maryellen Noreika 周二听取了一场法官审理案的结案陈词，这场审理要判断 Arm 的行为是否违反加利福尼亚州的反垄断法；上周，陪审团已经认定该公司违反了与高通的授权协议。」</p><p>据讯科采集员说明，报道全文在付费墙后，采集时只读到开头两段；搜索摘要里提到高通称新费率可能是现行费率的约 15 倍、法官将在双方提交书面陈述后作出判决，但这些细节没能在原文里核对到，所以本条不采用。</p><p class="figures"><strong>关键数字。</strong> 本条可核对的原文里没有具体数字；「约 15 倍」只出现在搜索摘要中，未能核实，不采用。</p><p class="why"><strong>为什么值得注意。</strong> 这条讲的是一个很有意思的司法分工问题：陪审团已经认定 Arm 违约，但要不要由法院出面重新定一个授权费率，法官表现出犹豫。法院擅长判断「谁违反了规则」，却不一定适合替市场定价格。对普通人来说，这件事最终会影响到手机和电脑芯片的成本。由于目前只读到报道开头，判决结果和具体细节都要等后续消息。</p><p class="verify"><strong>核实状态。</strong> 单一来源。只有 Bloomberg 一篇可以访问的原文，而且只读到开头部分，其他报道是二手转述，尚未得到其他来源确认。</p><p class="sources"><strong>来源。</strong> <a href="https://news.bloomberglaw.com/antitrust/judge-reluctant-to-intervene-in-qualcomm-arm-licensing-talks" target="_blank" rel="noopener noreferrer">Bloomberg Law</a>。</p></section><section class="entry"><h3>18. 超微电脑发布初步季报：上一财季营收预计 185 亿到 195 亿美元，大幅高于此前 145 亿到 155 亿美元的指引，毛利率预计约 12%</h3><p class="bg"><strong>背景。</strong> 超微电脑（Supermicro）是一家做服务器整机的美国硬件公司，它把英伟达等公司的 GPU、CPU、内存和散热系统组装成可以直接放进数据中心的服务器。因为它处在 AI 数据中心采购链条的中间，它的订单和营收常被当作数据中心硬件需求的「温度计」。</p><p class="what"><strong>发生了什么。</strong> 超微通过 Business Wire 发布的新闻稿日期为美国时间 10 月 20 日，在美股收盘后发布；据讯科采集员说明，Bloomberg 相关快讯标注的时间是 20:48 UTC，即北京时间 10 月 21 日 04:48。新闻稿写道：「2027 财年第一季度的营收预计在 185 亿美元到 195 亿美元之间，而此前的指引为 145 亿美元到 155 亿美元，主要原因是对 AI 平台的需求增加。」以及：「毛利率预计在 12.0% 到 12.5% 之间，而此前的指引为 10.4% 到 10.8%，主要原因是客户和产品结构。」据采集员说明，这是未经审计的初步数据，正式财报定于美国东部时间 11 月 3 日。</p><p class="figures"><strong>关键数字。</strong> 营收 185 亿到 195 亿美元（指引 145 亿到 155 亿美元）、毛利率 12.0% 到 12.5%（指引 10.4% 到 10.8%），出自超微新闻稿。按区间中值算，190 亿对 150 亿，高出约 27%，这是采集员做的计算。</p><p class="why"><strong>为什么值得注意。</strong> 营收大涨说明 AI 服务器的需求仍然很旺，但毛利率只有 12% 左右，也说明整机组装这一环赚的是「体量钱」，大部分利润留在了芯片设计这一端。这些数字目前还没有经过审计，是公司自己的初步估计，真正的检验要等 11 月 3 日的正式财报。可以把它和第 19 条半导体指数的波动放在一起看：市场一边在担心 AI 投资过热，一边又不断收到需求仍在增长的信号。</p><p class="verify"><strong>核实状态。</strong> 单一来源。这是公司官方新闻稿，属于一手信息，但没有经过独立审计；据采集员说明，路透社和 Business Wire 有同步转载。</p><p class="sources"><strong>来源。</strong> <a href="https://www.supermicro.com/en/pressreleases/supermicro-provides-first-quarter-fiscal-year-2027-preliminary-business-update" target="_blank" rel="noopener noreferrer">超微官方新闻稿</a>。</p></section><section class="entry"><h3>19. 费城半导体指数周二早盘一度跌到 8 月初以来的最低点，随后反弹收复失地；据雅虎财经观察，买家更偏爱造芯片的公司，而不是卖设备给它们的公司</h3><p class="bg"><strong>背景。</strong> 费城半导体指数（SOX）由一批美国上市的半导体公司组成，常被用来观察整个芯片行业的市场情绪。据讯科采集员概括，这个指数此前已经连续下跌了八个交易日，周一才出现反弹。</p><p class="what"><strong>发生了什么。</strong> 雅虎财经在北京时间 10 月 20 日 22:46 和 23:42 先后发出两篇盘中报道。第一篇写道：「费城半导体指数抹去了早盘跌幅，上涨 1%，延续了周一 1.5% 以上的涨幅。」第二篇写道：「周二早盘，费城半导体指数跌到了 8 月初以来的最低点。这本该是周一在连跌八个交易日之后出现的反弹宣告失败的时刻。」报道还写道：「芯片设备制造商泛林集团、科磊和应用材料仍然处于下跌状态，Arm 也是如此……买家在挑选标的，更偏爱制造芯片的公司，而不是向它们出售工具的公司。」</p><p class="figures"><strong>关键数字。</strong> 上涨 1%、周一涨幅 1.5% 以上、8 月初以来最低点，出自雅虎财经盘中报道。这些都是盘中快照，收盘结果本包没有核实。</p><p class="why"><strong>为什么值得注意。</strong> 这条只是半导体板块的市场背景，适合给第 17 条（Arm）和第 18 条（超微）做底色，不适合单独当成主线。你可以从中看到市场对 AI 投资的情绪起伏得很快：早上还在担心，中午就反弹。盘中价格是最典型的「第一印象」，它变化太快，不能当成结论来用。</p><p class="verify"><strong>核实状态。</strong> 单一来源。同一家媒体雅虎财经的两位记者，都是盘中快照，收盘情况未能核实。</p><p class="sources"><strong>来源。</strong> <a href="https://finance.yahoo.com/markets/article/chip-stocks-recover-as-ai-jitters-fade-144605522.html" target="_blank" rel="noopener noreferrer">雅虎财经：芯片股随 AI 担忧消退而回升</a>；<a href="https://finance.yahoo.com/markets/article/chip-stocks-shrug-off-a-scary-morning-but-history-says-the-shakeout-isnt-over-154222842.html" target="_blank" rel="noopener noreferrer">雅虎财经：芯片股摆脱惊魂早盘</a>。</p></section><hr><h2 id="sec-4">第三部分 · 医学</h2><blockquote><p>这一部分的条目都尽量讲清机制。凡是来自论文或新闻稿的内容，都标了出处；凡是折晓为了帮助理解补充的教科书知识，会写明「这是教科书上的一般机制」。有几条是「论文较早上线、新闻稿在窗内」，条目里单独说明。</p></blockquote><section class="entry"><h3>20. 范德堡大学团队给 KCNQ1 基因画出了一张「变异效应图」：在一万三千多个可能的变异里，1,757 个显示出较强的致病证据，可能导致长 QT 综合征和心源性猝死</h3><p class="bg"><strong>背景。</strong> 先用你在生理课上学过的知识打个底（这是教科书上的一般机制）。心肌细胞每跳一次，都要先去极化、再复极化，复极化主要靠几种钾离子通道把钾离子送出细胞。KCNQ1 基因编码的就是其中一种钾通道的主要亚基，它负责的电流叫 IKs（缓慢激活的延迟整流钾电流）。如果这个通道的功能减弱，复极化就会变慢，心电图上表现为 QT 间期延长，这就是 1 型长 QT 综合征（LQT1）。QT 间期太长的心脏，容易出现尖端扭转型室速，严重时会导致猝死。</p><p>临床上的难题在于：给病人做基因检测时，常常会测出一个以前没人见过的 KCNQ1 变异，这时候医生没法判断它到底是致病的，还是无害的个体差异，只能把它归为「意义不明的变异」（VUS）。病人和家属拿到这样的报告，既不能放心，也没法据此做决定。</p><p class="what"><strong>发生了什么。</strong> 这篇论文发表在《循环》（Circulation）杂志上，按 Crossref 记录，在北京时间 10 月 20 日 17:00 上线；Medical Xpress 当天发出报道。报道写道：「在这项研究中，研究者使用了一种新兴的高通量遗传学技术，叫做多重变异效应检测（MAVE），生成并测量了 KCNQ1 编码的离子通道蛋白在氨基酸序列上几乎所有可能的变异（超过 13,000 个）对功能的影响。」研究者报告：「在研究的变异中，1,757 个显示出较强的致病证据，而 6,600 个显示出中等程度的良性证据。」报道还写道：「研究者随后检索了三个大型生物样本库中、DNA 已被测序的 70 多万人的匹配电子健康记录……」据讯医采集员概括，报道里还提到美国每年大约有 3,500 人因此猝死。</p><p class="figures"><strong>关键数字。</strong> 超过 13,000 个变异、1,757 个较强致病证据、6,600 个中等良性证据、70 多万人的电子健康记录，均出自 Medical Xpress 报道原文；每年约 3,500 人猝死，来自采集员对报道的概括。</p><p class="why"><strong>为什么值得注意。</strong> 这是今天核心思想在医学里最清楚的例子。测序已经便宜到可以给很多人做，「发现变异」不再稀缺；稀缺的是判断某个具体变异是不是真的会致病。MAVE 的思路是反过来做：不等病人带着一个新变异来，而是提前把几乎所有可能的变异都做出来、测一遍功能，等哪天临床上真的遇到了，直接查表就有一份实验证据。研究者还用 70 多万人的健康记录去检验这张图，看实验里判为致病的变异，在真实人群里是否确实和心脏问题相关，这又是一道检验。需要注意的是，「较强的致病证据」不等于「携带者一定会发病」，长 QT 综合征的外显率因人而异，图上的结论仍然要和病人的心电图、家族史一起解读。</p><p class="verify"><strong>核实状态。</strong> 多来源确认。Medical Xpress 和范德堡大学的机构稿，加上 Crossref 论文元数据，确认了标题和上线时间。但论文正文因为出版方拦截（403）没能直接打开，具体数字以报道原文为准。</p><p class="sources"><strong>来源。</strong> <a href="https://medicalxpress.com/news/2026-10-gene-variants-sudden-death.html" target="_blank" rel="noopener noreferrer">Medical Xpress 报道</a>；<a href="https://doi.org/10.1161/circulationaha.126.080900" target="_blank" rel="noopener noreferrer">论文 DOI</a>。</p></section><section class="entry"><h3>21. 波士顿大学提出两步走的 GRAD 血液检测策略：先看 p-Tau217，结果落在灰区的人再结合其他血液指标、年龄和遗传风险，判断脑内有没有淀粉样蛋白</h3><p class="bg"><strong>背景。</strong> 阿尔茨海默病的核心病理之一，是脑内出现 β-淀粉样蛋白斑块。过去要确认有没有斑块，主要靠淀粉样蛋白 PET 检查或者腰椎穿刺测脑脊液，前者贵，后者有创。近年血液检测进步很快，其中 p-Tau217（第 217 位苏氨酸磷酸化的 tau 蛋白）被认为是最有希望的血液标志物之一。但任何一项检测都会有一部分人的结果落在中间：不够高，不能说是阳性；不够低，也不能说是阴性。这片区域就叫灰区，落在灰区的人通常只能再去做 PET。</p><p class="what"><strong>发生了什么。</strong> 波士顿大学医学院在 10 月 20 日发布新闻稿，介绍一篇发表在《临床与转化神经病学年鉴》（Annals of Clinical and Translational Neurology）上的研究。新闻稿写道：「研究者用阿尔茨海默病神经影像学计划（ADNI）中 145 名有记忆或思维问题的参与者的数据开发了 GRAD。」以及：「他们随后在 A4/LEARN 研究中 1,644 名认知未受损的独立参与者里检验了同样的方法……在 p-Tau217 结果落在灰区的 630 名参与者中，GRAD 提高了识别淀粉样蛋白的能力，并减少了仍然需要做 PET 影像检查的人的比例。」新闻稿同时提醒：「虽然前景可观，但研究者也警告，GRAD 还不能取代确认性影像检查，在用于常规临床之前，仍然需要前瞻性的检验。」据讯医采集员概括，第二步会结合其他血液标志物、年龄和 APOE 等遗传风险一起判断；新闻稿没有给出具体的准确率数字。</p><p class="figures"><strong>关键数字。</strong> 开发队列 145 人、独立验证队列 1,644 人、其中 630 人落在灰区，出自新闻稿原文。新闻稿没有给出灵敏度、特异度或 PET 减少的具体比例，本文不替它补数字。</p><p class="why"><strong>为什么值得注意。</strong> 这条正好可以拿来复习诊断学里的序贯检测（这是教科书上的一般思路）：第一道检测要便宜、方便，用来把大部分人快速分开；对第一道说不清的那部分人，再加做第二道更有针对性的检测。这样做的好处是，不必让所有人都去做最贵的检查，也不会因为一刀切的阈值把灰区的人错判。值得注意的是验证队列的规模：1,644 人里有 630 人落在灰区，超过三分之一，说明灰区并不是少数人的边角问题，在认知还正常的人群里尤其明显。这也呼应了今天的核心思想：好的第二道检验，要专门给灰区的人留一条再看一眼的路。作者自己也强调，还需要前瞻性验证，现在还不能替代 PET。</p><p class="verify"><strong>核实状态。</strong> 单一来源。只有波士顿大学官方新闻稿；据采集员说明，Medical Xpress 也有同题转发，但那个页面没能打开，论文原文也没有核对，尚未得到其他来源确认。</p><p class="sources"><strong>来源。</strong> <a href="https://www.bumc.bu.edu/camed/news-events/articles/2026/researchers-develop-two-step-approach-to-more-accurately-detect-tau-in-uncertain-alzheimers-diseases-prognosis/" target="_blank" rel="noopener noreferrer">波士顿大学医学院新闻稿</a>。</p></section><section class="entry"><h3>22. FDA 批准 GSK 的 Hibsago（bepirovirsen）联合现有抗病毒药治疗部分慢性乙肝成人，这是第一款获批治疗慢性乙肝的反义寡核苷酸药物，一部分患者有机会停掉全部乙肝治疗</h3><p class="bg"><strong>背景。</strong> 慢性乙肝的标准治疗是核苷（酸）类似物，比如恩替卡韦和替诺福韦，它们能抑制病毒 DNA 的复制，把病毒量压得很低，但很难把病毒彻底清除，所以大多数患者需要长期甚至终身服药（这是教科书上的一般知识）。原因之一在于，乙肝病毒会在肝细胞核里留下一种叫 cccDNA 的稳定模板，还会持续产生大量表面抗原（HBsAg），这些表面抗原被认为会让免疫系统「疲惫」，难以清除病毒。所以医学界追求的目标是「功能性治愈」：停药后病毒仍然被控制，血里也测不到 HBsAg。</p><p class="what"><strong>发生了什么。</strong> FDA 新闻稿落款为美国东部时间 10 月 20 日；路透社稿件经 KSL 转载，显示美国山地时间 10 月 20 日 14:04 发布，约合北京时间 10 月 21 日 04:04。FDA 新闻稿写道：「美国食品药品监督管理局今天批准 Hibsago（bepirovirsen）注射液，与现有的抗病毒治疗联合使用，治疗部分没有肝硬化的成人慢性乙型肝炎病毒感染。Hibsago 是第一款获得 FDA 批准用于治疗慢性乙肝的反义寡核苷酸。」关于疗效：「在两项试验中，接受 Hibsago 治疗的患者有 24% 达到了停用原有药物的要求，而接受安慰剂的患者中没有人达到。在停止所有乙肝治疗 24 周后，接受 Hibsago 治疗的患者中有 19% 的人病毒仍然处于控制状态，而且血液中检测不到提示乙肝感染的一种蛋白（HBsAg）。」路透社写道：「全球有超过 2.5 亿人携带慢性乙肝，而目前的标准治疗只能帮助 1% 到 4% 的患者长期清除病毒，也就是医生所说的功能性治愈。」</p><p>据讯医采集员概括 FDA 原文，适用人群限定得很窄：没有肝硬化、已经接受抗病毒治疗至少六个月、HBsAg 不超过 3,000 IU/mL，而且必须用 FDA 授权的伴随诊断（罗氏 Elecsys HBsAg II quant II RxDx）来筛选；药品带有严重肝脏反应和血小板减少的黑框警告。</p><p class="mech"><strong>机制。</strong> 据采集员概括，这款药是一段反义核酸，它会结合病毒的 RNA，让病毒既少复制、又少产生表面抗原。反义寡核苷酸的一般原理是（这是教科书上的一般机制）：一段人工合成的短核酸链，按碱基互补配对的规则精确地贴到目标 RNA 上，再通过促进降解或阻断翻译，让这条 RNA 不能再被用来生产蛋白质。和只抑制 DNA 复制的核苷类药物相比，它多打击了一个环节，也就是表面抗原的产生，所以才有机会让一部分人达到 HBsAg 转阴。</p><p class="figures"><strong>关键数字。</strong> 24% 达到停药要求（安慰剂 0）、停药 24 周后 19% 病毒仍受控且 HBsAg 测不到、HBsAg 不超过 3,000 IU/mL，出自 FDA；全球超过 2.5 亿人、标准治疗功能性治愈率 1% 到 4%，出自路透社。</p><p class="why"><strong>为什么值得注意。</strong> 从 1% 到 4% 的功能性治愈率，到这款药 19% 的停药后持续控制，是一个很明显的进步，但也请注意它的适用范围很窄：只有表面抗原水平本来就比较低的、没有肝硬化的人才能用，而且要先用伴随诊断筛一遍。这个伴随诊断本身就是一道把关：先认出哪些人最有可能从药里获益，再给他们用药。黑框警告也提醒我们，这款药的风险需要密切监测，并不是人人适用的「乙肝根治药」。</p><p class="verify"><strong>核实状态。</strong> 多来源确认。FDA 官方新闻稿加路透社独立报道，两边说法一致。</p><p class="sources"><strong>来源。</strong> <a href="https://www.fda.gov/news-events/press-announcements/fda-approves-first-its-kind-chronic-hepatitis-b-treatment" target="_blank" rel="noopener noreferrer">FDA 新闻稿</a>；<a href="https://www.ksl.com/article/51638828/us-fda-approves-gsks-hepatitis-b-drug-offering-patients-chance-to-stop-long-term-treatment" target="_blank" rel="noopener noreferrer">路透社（KSL 转载）</a>。</p></section><section class="entry"><h3>23. 加拿大 EPCAT III 试验的机构新闻稿在窗内发布：髋、膝关节置换术后单用阿司匹林预防血栓，效果和安全性都不比「先用利伐沙班再换阿司匹林」差；论文本身 7 月已在 NEJM 上线</h3><p class="bg"><strong>背景。</strong> 髋关节和膝关节置换是骨科的大手术，术后病人活动少、手术本身又会损伤血管和激活凝血，所以发生深静脉血栓和肺栓塞（合称静脉血栓栓塞症，VTE）的风险很高（这是教科书上的一般知识，可以用 Virchow 三联征来理解：血流淤滞、血管内皮损伤、血液高凝）。术后预防血栓的方案有很多，包括低分子肝素、利伐沙班这类直接口服抗凝药，以及最便宜的阿司匹林。阿司匹林主要抑制血小板（不可逆地抑制环氧合酶，减少血栓素 A2 生成），而利伐沙班直接抑制凝血因子 Xa，两者作用在凝血的不同环节。</p><p class="what"><strong>发生了什么。</strong> 达尔豪斯大学医学院在当地时间 10 月 20 日发布新闻稿。需要特别说明的是，NEJM 论文本身按 Crossref 记录是 2026 年 7 月 12 日上线的，不在本次时间窗内；窗内的是这篇机构新闻稿。新闻稿写道：「研究发现，在预防全髋和全膝关节置换术后可能危及生命的血栓方面，单用阿司匹林和一种更复杂的方案（先用抗凝药利伐沙班、再换用阿司匹林）一样安全有效。」以及：「……支持这项研究在加拿大 15 家大学附属医疗中心纳入了 5,300 名患者。参与者和研究者都不知道每位患者接受的是哪种治疗，这有助于消除潜在的偏倚。」研究者还说：「没有任何药企或私人资金。全部来自加拿大卫生研究院。」</p><p>据讯医采集员说明，检索摘要里给出的是 5,429 人、90 天症状性 VTE 发生率 0.48% 对 0.45%，但这组精确数字没能打开 NEJM 全文核对，所以本文只采用机构新闻稿里的「5,300 名患者」。</p><p class="figures"><strong>关键数字。</strong> 15 家医疗中心、5,300 名患者、双盲、无药企资助，出自机构新闻稿。检索摘要里的 5,429 人和 0.48% 对 0.45% 未能核实，不采用。</p><p class="why"><strong>为什么值得注意。</strong> 这是讲「非劣效性试验」的一个好例子（这是临床流行病学的一般概念）：它要证明的不是新方案「更好」，而是「不比原来的差太多」，前提是新方案在别的方面有优势，比如更便宜、更简单、出血风险更低。阿司匹林一片很便宜，如果效果相当，就能省下大量费用，也减少换药带来的麻烦。还有一点值得注意：这项试验完全由公共资金资助。像「便宜的老药够不够用」这样的问题，药企通常没有动力去研究，正需要公共资金来回答。</p><p class="verify"><strong>核实状态。</strong> 多来源确认。机构新闻稿、NEJM DOI 和 PubMed 条目三方能对上；但试验的精确结局数字只算单一来源，未能核实。论文上线日期早于时间窗。</p><p class="sources"><strong>来源。</strong> <a href="https://medicine.dal.ca/news/2026/10/20/canadian_study_published_in_nejm_could_change_care_after_joint_replacement_surgery.html" target="_blank" rel="noopener noreferrer">达尔豪斯大学医学院新闻稿</a>；<a href="https://doi.org/10.1056/nejmoa2603649" target="_blank" rel="noopener noreferrer">NEJM 论文 DOI</a>；<a href="https://pubmed.ncbi.nlm.nih.gov/42437501/" target="_blank" rel="noopener noreferrer">PubMed</a>。</p></section><section class="entry"><h3>24. 纽约大学研究：用全基因组测序做循环肿瘤 DNA 液体活检，能比影像早几个月发现 IA 期肺腺癌复发；新闻稿在窗内，论文 7 月已上线</h3><p class="bg"><strong>背景。</strong> 肿瘤细胞死亡时，会把一些 DNA 碎片释放到血液里，这些碎片叫循环肿瘤 DNA（ctDNA）。「液体活检」就是通过抽血检测 ctDNA，来判断体内是否还残留肿瘤（这是一般概念）。手术后体内残留的、影像还看不见的极少量肿瘤细胞，叫做「微小残留病」（MRD）。早期肺癌手术后的复发监测，目前标准做法是定期做 CT。</p><p class="what"><strong>发生了什么。</strong> Elsevier 出版方的新闻稿经 Medical Xpress 在 10 月 20 日发布。需要说明的是，论文 DOI 在 Crossref 上 2026 年 7 月 30 日就已登记，论文本身不在窗内，窗内的是这篇新闻稿。新闻稿写道：「然而，即使是 I 期，疾病复发率也在 5% 到 19% 之间，影像随访仍然是标准的治疗方式。」以及：「最重要的发现是，肿瘤 DNA 检测阳性可以作为微小残留病的一个高度灵敏的生物标志物，能在影像显示出实体肿瘤之前数个月就发现微观复发；而检测阴性则和持续缓解有很强的相关性。」</p><p>据讯医采集员概括，研究者先用肿瘤组织和白细胞做全基因组测序，得到每位患者自己独有的肿瘤突变特征，之后每次随访都在血浆里寻找这个特征，并用 AI 模式识别辅助判断。用白细胞做对照，是为了把患者本人与生俱来的胚系变异，以及造血细胞自己出现的变异排除掉，只留下肿瘤特有的突变（这是这类方法的一般设计思路）。开发这项技术的 C2i Genomics 是合作方。</p><p class="figures"><strong>关键数字。</strong> I 期复发率 5% 到 19%，出自新闻稿。新闻稿没有给出具体的灵敏度、特异度和样本量，本文不替它补数字。</p><p class="why"><strong>为什么值得注意。</strong> 这个方法的巧妙之处，是把「找什么」提前定好：不是在血液里漫无目的地找所有可能的突变，而是带着每个病人自己的突变指纹去找，这样能大大降低把无关信号误认成肿瘤的概率。这本身就是一种对付「看起来像真的」干扰信号的检验设计。但请注意两点：第一，新闻稿没有给出关键的准确性数据，所以「比影像早几个月」到底有多可靠，还要看论文全文；第二，技术开发方 C2i Genomics 是合作方，存在利益关联，读结论时要留意。</p><p class="verify"><strong>核实状态。</strong> 单一来源。出版方新闻稿；论文 DOI 可以打开，但正文数据没有核对。论文上线早于时间窗。</p><p class="sources"><strong>来源。</strong> <a href="https://medicalxpress.com/news/2026-10-blood-lung-cancer-scans.html" target="_blank" rel="noopener noreferrer">Medical Xpress 报道</a>；<a href="https://doi.org/10.1016/j.jmoldx.2026.07.003" target="_blank" rel="noopener noreferrer">论文 DOI</a>。</p></section><section class="entry"><h3>25. 麦吉尔大学研究：中性粒细胞释放的弹性蛋白酶会破坏乳腺导管外面那层肌上皮屏障，这可能是导管原位癌发展成浸润癌的关键一步</h3><p class="bg"><strong>背景。</strong> 先复习一下病理课上的概念（这是教科书上的一般知识）。乳腺导管的内壁由腺上皮细胞组成，外面包着一层肌上皮细胞，再外面是基底膜。导管原位癌（DCIS）的意思是癌细胞还局限在导管里，没有突破肌上皮层和基底膜；一旦突破，就成了浸润癌，有可能转移。问题在于，很多 DCIS 可能一辈子都不会发展成浸润癌，但因为现在没法准确预测哪些会进展，很多患者都接受了手术甚至放疗，这就是所谓的「过度治疗」。</p><p class="what"><strong>发生了什么。</strong> 麦吉尔大学的稿件经 Medical Xpress 在 10 月 20 日发布。据讯医采集员说明，论文 DOI 在 Crossref 上 9 月 11 日就已登记，可能是先以「待刊」形式挂出，正式上线日期没能确认。报道写道：「研究发现，中性粒细胞，也就是最为人熟知的抗感染免疫细胞，会释放一种叫做中性粒细胞弹性蛋白酶的酶，削弱这道屏障。当研究者阻断这些细胞或者这种酶时，保护性屏障就保持完整。」报道还写道：「DCIS 是乳腺癌的一种早期形式，占筛查发现的癌症的大约五分之一到三分之一。」据采集员概括，研究同时用了小鼠、人乳腺组织和三维模型，作者认为这种酶将来或许能当作生物标志物，帮助减少过度治疗，但这一点目前还只是设想。</p><p class="mech"><strong>机制。</strong> 中性粒细胞弹性蛋白酶是一种丝氨酸蛋白酶，储存在中性粒细胞的颗粒里，本来的作用是分解细菌和受损组织（这是教科书上的一般知识）。这项研究的意思是，这把原本用来对付病原体的「剪刀」，可能被肿瘤微环境借去剪开了原位癌外面的那层屏障。</p><p class="figures"><strong>关键数字。</strong> DCIS 占筛查发现癌症的五分之一到三分之一，出自报道原文。</p><p class="why"><strong>为什么值得注意。</strong> 这条正好对上病理课里原位癌和浸润癌的区别：区别不在癌细胞本身，而在「屏障破没破」。如果能找到判断哪些 DCIS 正在破坏屏障的指标，就等于给 DCIS 加了一道第二道检验：把真正会进展的那一小部分认出来积极治疗，其余的人也许可以避免过度治疗。不过目前这还只是研究者的设想，离临床使用还很远。</p><p class="verify"><strong>核实状态。</strong> 单一来源。大学新闻稿经 Medical Xpress 转发；DOI 链接可以打开，但论文正式上线日期未能确认。</p><p class="sources"><strong>来源。</strong> <a href="https://medicalxpress.com/news/2026-10-immune-mechanism-discovery-early-breast.html" target="_blank" rel="noopener noreferrer">Medical Xpress 报道</a>；<a href="https://doi.org/10.1016/j.xcrm.2026.103050" target="_blank" rel="noopener noreferrer">论文 DOI</a>。</p></section><section class="entry"><h3>26. Nature Neuroscience：小鼠胚胎里的丘脑很早就分成「感觉」和「运动-联合」两条神经元谱系，转录因子 Sp9 决定视觉中继核（外侧膝状体背侧核）的身份</h3><p class="bg"><strong>背景。</strong> 丘脑是间脑的主要部分，常被比作大脑皮层的「中继站」（这是解剖学和神经科学的一般知识）。解剖课上会把丘脑核团分成几类：一级中继核把某一种感觉直接送到对应的皮层区，比如外侧膝状体背侧核（dLG）负责视觉，腹后内侧核（VPM）负责面部的躯体感觉；高级核则主要在皮层区域之间转递信息；还有和运动、联合功能有关的核团。你背过这些核团的名字和投射，但它们在发育中是怎么一个个分化出来的，课本上讲得不多。</p><p class="what"><strong>发生了什么。</strong> Nature Neuroscience 页面显示这篇论文 10 月 20 日发表，Crossref 记录为北京时间 10 月 20 日 17:02，在窗内。论文是开放获取的小鼠胚胎研究。摘要写道：「我们识别出两条主要的谷氨酸能谱系，与感觉相关的谱系和与运动-联合相关的谱系，它们各自由不同的基因调控程序和时间动态所控制。这两条谱系起源于空间上和分子上都不同的祖细胞区域，揭示了功能身份的早期分离。」以及：「在感觉谱系内部，我们解析出分支的感觉发育轨迹，分别通向一级视觉神经元和一级躯体感觉神经元，它们都来自一个共同的、类似高级核的状态。借助计算预测和活体扰动实验，我们发现 Sp9 是视觉丘脑命运的关键调控因子。」据讯医采集员概括，研究用了单细胞多组学、空间转录组和条形码谱系追踪，用 CRISPRi 敲低 Sp9 以后，dLG 明显变小。</p><p class="figures"><strong>关键数字。</strong> 这是一篇机制研究，摘要里没有需要特别引用的数字。</p><p class="why"><strong>为什么值得注意。</strong> 最有意思的结论是：一级感觉核在发育中会先经过一个「类似高级核」的中间状态，然后才分化成各自的一级中继核。这把你背过的丘脑核团分类，和「它们是怎么长出来的」接到了一起。顺带说一个学习方法：当解剖学的分类和发育学的来源能对应起来时，记忆会牢固很多，比如这里的「感觉」与「运动-联合」两大谱系，就可以当作记丘脑核团时的一个大框架。需要注意，这是小鼠研究，人类丘脑发育是否完全一样还需要验证。</p><p class="verify"><strong>核实状态。</strong> 单一来源。期刊原文，属于一手来源。</p><p class="sources"><strong>来源。</strong> <a href="https://www.nature.com/articles/s41593-026-02485-9" target="_blank" rel="noopener noreferrer">Nature Neuroscience 论文</a>。</p></section><section class="entry"><h3>27. 南京医科大学团队在 Nature Neuroscience 发文：ABCA1 介导的胆固醇转运异常推动帕金森病的神经退行，柠檬酸镁在小鼠模型中能减少多巴胺能神经元丢失</h3><p class="bg"><strong>背景。</strong> 帕金森病的主要病理特征，是中脑黑质的多巴胺能神经元逐渐丢失，神经元里出现由 α-突触核蛋白聚集形成的路易小体（这是教科书上的一般知识）。ABCA1 是一种 ATP 结合盒转运蛋白，你在生化课上可能在胆固醇逆向转运里见过它：它把细胞里多余的胆固醇和磷脂交给载脂蛋白 A-I，形成新生的高密度脂蛋白（HDL）。大脑里的胆固醇几乎都是在脑内自己合成的，主要由星形胶质细胞生产，再运送给神经元。</p><p class="what"><strong>发生了什么。</strong> 这篇论文 10 月 20 日在 Nature Neuroscience 发表，Crossref 记录为北京时间 10 月 20 日 17:02。摘要写道：「我们发现，在帕金森病患者死后脑组织的黑质中，以及一种帕金森病小鼠模型中，ABCA1 的表达都升高了……在机制上，星形胶质细胞中的 ABCA1 会驱动过度的胆固醇外流，导致神经元胆固醇过载。在神经元中，ABCA1 定位于溶酶体，在那里促进胆固醇的摄入，导致胆固醇蓄积、自噬受损和 α-突触核蛋白病理。」摘要还写道：「此外，我们发现柠檬酸镁是一种 ABCA1 抑制剂，并证明它能在一种帕金森病小鼠模型中减少多巴胺能神经元的丢失。」</p><p class="mech"><strong>机制梳理。</strong> 把摘要串起来，就是一条两段式的链条：星形胶质细胞这一头，ABCA1 把太多胆固醇往外送；神经元这一头，ABCA1 跑到溶酶体上，把胆固醇往里收。结果是神经元的溶酶体里胆固醇堆积，溶酶体是自噬的终点站，它一出问题，自噬就清不掉错误折叠的 α-突触核蛋白，于是病理蛋白越积越多。据讯医采集员概括，这条链也可以解释为什么单纯抑制胆固醇合成（比如他汀）效果有限：问题不在总量，而在转运和分布。</p><p class="figures"><strong>关键数字。</strong> 这是一篇机制研究，摘要里没有需要引用的数字；柠檬酸镁的结论只来自小鼠 PFF 模型（用预先形成的 α-突触核蛋白纤维诱导病理的模型，据采集员说明）。</p><p class="why"><strong>为什么值得注意。</strong> 这条能把生化课的胆固醇转运、细胞生物学的溶酶体与自噬、神经病学的帕金森病串成一条线，非常适合拿来做跨学科复习。但请特别注意：柠檬酸镁的效果只在小鼠模型里看到过，离临床还很远，不能理解成「补镁可以预防帕金森病」。从动物实验到人体，中间还有好几道检验没有做。</p><p class="verify"><strong>核实状态。</strong> 单一来源。期刊原文，属于一手来源。</p><p class="sources"><strong>来源。</strong> <a href="https://www.nature.com/articles/s41593-026-02487-7" target="_blank" rel="noopener noreferrer">Nature Neuroscience 论文</a>。</p></section><section class="entry"><h3>28. 名古屋大学研究：运动神经元受到 TDP-43 应激时，会通过 TBK1→IFNβ→免疫蛋白酶体这条通路自己清除异常蛋白，而 ALS 患者运动神经元上的 IFNβ 受体明显减少；新闻在窗内，论文 10 月 5 日已上线</h3><p class="bg"><strong>背景。</strong> 肌萎缩侧索硬化（ALS，俗称渐冻症）是一种运动神经元进行性死亡的疾病。绝大多数 ALS 患者的运动神经元里，都能看到 TDP-43 蛋白异常地离开细胞核、在细胞质里聚集（这是神经病理学的一般知识）。TBK1 是一种激酶，它的基因突变是已知的 ALS 致病原因之一；过去大家普遍认为，TBK1 主要通过促进自噬来帮助清除异常蛋白。</p><p class="what"><strong>发生了什么。</strong> News-Medical 在 10 月 20 日转发了名古屋大学的稿件。需要说明的是，EMBO Reports 论文页面显示 10 月 5 日发表，不在本次时间窗内，窗内的是这篇新闻稿。论文摘要写道：「我们在这里发现了一条 TBK1-IFNβ-免疫蛋白酶体轴，它是一条不依赖自噬、调控 TDP-43 清除的新型蛋白质稳态通路……重要的是，在有 TDP-43 病理的 ALS 患者的脊髓运动神经元中，IFNβ 受体的表达是下调的。」News-Medical 的报道写道：「因此，干扰素 β 看起来并不是治疗 ALS 的可行选择。他接着说：『在我们的下一个项目中，我们打算找出其他能在运动神经元中激活免疫蛋白酶体的化合物。』」</p><p class="mech"><strong>机制梳理。</strong> 据讯医采集员概括，这条通路是这样的：被激活的 TBK1 让细胞分泌干扰素 β（IFNβ），IFNβ 再作用于附近的神经元，让它们多造免疫蛋白酶体，把还没有聚集起来的单体 TDP-43 分解掉。免疫蛋白酶体你可能在免疫学里见过（这是教科书上的一般知识）：干扰素会诱导普通蛋白酶体换上几个特殊的催化亚基，变成免疫蛋白酶体，它切出的肽段更适合装到 MHC-I 分子上，提呈给 CD8+ T 细胞。这篇研究的新意在于，这套原本为「抗原提呈」服务的系统，在神经元里也承担了蛋白质质量控制的工作。</p><p class="figures"><strong>关键数字。</strong> 这是一篇机制研究，没有需要引用的数字。</p><p class="why"><strong>为什么值得注意。</strong> 这条把免疫学和神经病理学连在了一起，很适合拿来理解「同一套分子工具在不同细胞里可以有不同用途」。ALS 患者运动神经元上 IFNβ 受体减少这一发现，可以理解成神经元失去了接收「清理信号」的能力。作者也明确说，IFNβ 本身副作用太大，不适合直接拿来治疗 ALS，下一步要寻找别的能激活免疫蛋白酶体的化合物。</p><p class="verify"><strong>核实状态。</strong> 多来源确认。大学稿件转发加上期刊原文摘要，两边一致；但论文发表日期在时间窗之外。</p><p class="sources"><strong>来源。</strong> <a href="https://www.news-medical.net/news/20261020/Scientists-discover-natural-cellular-defense-mechanism-against-ALS-progression.aspx" target="_blank" rel="noopener noreferrer">News-Medical 报道</a>；<a href="https://link.springer.com/article/10.1038/s44319-026-00953-8" target="_blank" rel="noopener noreferrer">EMBO Reports 论文</a>。</p></section><section class="entry"><h3>29. FDA 批准第一款仿制版 Climara Pro：雌二醇加左炔诺孕酮的每周一贴透皮贴，适用于子宫完整的绝经期女性</h3><p class="bg"><strong>背景。</strong> 绝经以后，卵巢分泌的雌激素大幅减少，一部分女性会出现潮热、盗汗等血管舒缩症状，骨量也会加速流失。激素治疗是缓解这些症状的有效方法（这是教科书上的一般知识）。透皮贴剂让激素经皮肤直接吸收进入血液，不经过肝脏的首过代谢。</p><p class="what"><strong>发生了什么。</strong> FDA 新闻稿落款为 10 月 20 日，正文说批准发生在「昨天」，也就是 10 月 19 日。新闻稿没有标具体时刻，按美国东部 10 月 20 日发布推算，大致对应北京时间 10 月 20 日中午到 10 月 21 日凌晨。新闻稿写道：「美国食品药品监督管理局昨天批准了 Climara Pro 的第一款仿制药（雌二醇和左炔诺孕酮透皮给药系统，每天 0.045 毫克/0.015 毫克），这是一种每周贴一次、用于子宫完整女性的透皮激素治疗贴剂。」以及：「Climara Pro 和这款仿制的雌二醇左炔诺孕酮透皮给药系统专门批准用于子宫完整的女性，因为其中加入的孕激素成分可以降低单用雌激素时可能出现的子宫内膜增生风险。」据讯医采集员概括，适应症是中重度血管舒缩症状和预防绝经后骨质疏松，禁忌证包括乳腺癌、血栓史、肝病和易栓症，生产方是 Zydus。</p><p class="mech"><strong>机制。</strong> 这条在药理上很适合拿来复习：雌激素会刺激子宫内膜增生，如果子宫还在却只补雌激素，内膜持续受刺激，会增加内膜增生甚至内膜癌的风险；孕激素能让内膜转化、对抗雌激素的增殖作用（这是教科书上的一般机制）。所以对子宫完整的女性，激素治疗通常要雌激素加孕激素；已经切除子宫的女性，则可以单用雌激素。这片贴剂把两种激素做在一起，原因就在这里。</p><p class="figures"><strong>关键数字。</strong> 每天释放雌二醇 0.045 毫克、左炔诺孕酮 0.015 毫克，每周一贴，出自 FDA 新闻稿。</p><p class="why"><strong>为什么值得注意。</strong> 仿制药上市通常意味着价格下降，更多人能用得起。对医学生来说，这是一个把「为什么要这样配伍」讲清楚的好例子，也可以顺便记住它的禁忌证列表，这些都是考试和临床都会用到的内容。</p><p class="verify"><strong>核实状态。</strong> 单一来源。只有 FDA 官方新闻稿，但它本身就是一手的监管来源。实际批准发生在 10 月 19 日，窗内的是新闻稿。</p><p class="sources"><strong>来源。</strong> <a href="https://www.fda.gov/news-events/press-announcements/fda-approves-once-weekly-generic-hormone-therapy-patch-women" target="_blank" rel="noopener noreferrer">FDA 新闻稿</a>。</p></section><section class="entry"><h3>30. 世界卫生组织发布第一份全球性的非传染性疾病不平等报告：收入、教育、性别和城乡差别，都在影响谁更容易得病、谁能被诊断和治疗</h3><p class="bg"><strong>背景。</strong> 非传染性疾病（NCDs）主要包括癌症、心血管病、慢性呼吸系统疾病和糖尿病，是全球最主要的死亡原因。公共卫生里有一个重要概念叫「健康的社会决定因素」：一个人会不会生病、生病后能不能得到治疗，不只取决于生物学因素，也取决于收入、教育、住在哪里、什么性别（这是预防医学的一般概念）。</p><p class="what"><strong>发生了什么。</strong> WHO 新闻条目日期为日内瓦时间 10 月 20 日，对应北京时间 10 月 20 日中午之后，在窗内。原文写道：「报告覆盖四类主要的非传染性疾病，即癌症、心血管疾病、慢性呼吸系统疾病和糖尿病，以及主要危险因素，包括吸烟和饮酒、肥胖和不健康饮食、身体活动不足和空气污染。」以及：「来自中低收入国家的证据显示，受教育程度较低的人群往往有更高的高血压和糖尿病患病率。在各国，更贫困和受教育程度更低的女性更少接受宫颈癌筛查，而受教育程度较低的男性吸烟率仍然高于受教育程度较高的男性。」还有：「男性更可能吸烟和饮酒，在患有高血压时也更不容易被诊断和治疗。」据讯医采集员说明，WHO 称这是第一次在全球范围内系统测量非传染性疾病及其危险因素上的不平等。</p><p class="figures"><strong>关键数字。</strong> 原文主要是定性描述，没有给出可以直接引用的大数字。</p><p class="why"><strong>为什么值得注意。</strong> 这条适合预防医学和公共卫生的学习。最值得记住的是「男性高血压更不容易被诊断和治疗」和「贫困、低教育女性更少做宫颈癌筛查」这两点：筛查本身就是一道检验，可是如果最需要它的人根本走不到这道检验面前，再好的筛查手段也帮不上他们。把这一点和第 21 条 GRAD 放在一起看会很有意思：一个讲怎样把检验设计得更聪明，一个提醒检验首先要能被每个人用到。</p><p class="verify"><strong>核实状态。</strong> 单一来源。WHO 官方发布，属于一手来源。</p><p class="sources"><strong>来源。</strong> <a href="https://www.who.int/news/item/20-10-2026-who-report-examines-inequalities-in-noncommunicable-diseases-and-their-risk-factors" target="_blank" rel="noopener noreferrer">WHO 新闻条目</a>。</p></section><hr><h2 id="sec-5">第四部分 · 你自己的事情</h2><blockquote><p>先说一个缺口：今天的日历接口（Notion Calendar）调用被上游拒绝了，目前也没有可用的 Google 日历连接器，所以这一部分不包含今天的课表和日程安排，折晓没有替你编。其余内容来自你授权的两个邮箱（下面称为「你的 Gmail」和「另一个 Gmail」）和 GitHub，只是朋友式的提醒，不是评价。窗内两个邮箱一共 8 个邮件线程，其中两封是营销邮件（Suno 年付八折、Notion AI 会议记录），按惯例省略；窗内没有 OpenCode Go、Cursor、DeepSeek 等订阅的续费成功、扣款失败或状态变化邮件，也没有新设备登录提醒。为了保护隐私，这一部分不放邮箱链接和私有仓库链接，只用文字说明；Blog-YuSheng 的 PR 也只写编号。</p></blockquote><p>今天你自己的事情里，最值得花几分钟的有三件。第一件是 StudySolo 的 Supabase 出站流量：备份任务的水位检查显示已经用到脚本上限的约 92.7%，比昨天详细稿里的约 90.8% 又涨了一些，离顶不远了，这几天值得去后台看一眼是哪里在大量出站。第二件也和 Supabase 有关：两个 Gmail 都收到了「最后通知」，从 10 月 30 日起，在 public 模式下新建的表要显式写 GRANT 授权才能被前端访问，以后写新迁移时记得加上。第三件是两个 Cursor 代理开好的草稿 PR 在等你做最后的验收：PocketWebShell 需要你在真机上试一试，FORMA-ANATOMY-STUDIO 有 39 条解剖结构名等你用专业知识把关。这两件正好就是今天核心思想说的「第二道检验」，代理把能做的都做了，把灰区诚实地留给了你。</p><p>另外还有一件小事：你在华科 AI 创造者俱乐部注册 HUSTAB ID 的邮箱验证邮件已经到了，还差最后一步点确认。其余几条是昨天早报的收尾、deepseek-harness 的老问题和模型测评工作台的日常提交，都不用急着处理。</p><section class="entry"><h3>31. 昨天那期早报《闻一闻，再决定》已经合入 Blog-YuSheng 的 main 分支，并同步到 dev 分支</h3><p>北京时间 10 月 20 日 07:44，PR #191 合入 Blog-YuSheng 的 main 分支，合并提交是 003018cf，提交说明写的是「content(briefs): 2026-10-20 闻一闻，再决定 (#191)」，正文那句是：「星期二的早报做成浅色蜂箱门口：访客自己飞来，闻一闻再放行或拦下，松紧会让坏东西混进去，也会把自己人挡住。完整详细稿收在默认合上的养蜂人记录本里。」六分钟后，北京时间 07:50，同步 PR #192 把 main 合回 dev，说明是「chore: sync main → dev (2026-10-20 brief) — Sync after #191.」。合并之前，这个 PR 分别在 07:12、07:19、07:33 有过三次推送。</p><p>其中有一次推送值得一提：Cursor 的机器人推了一个修补提交 c89c1e0，说明是「fix(briefs): 2026-10-20 去掉登录细节与账号名、1.4% 措辞」。也就是说，昨天那期在合入之前，专门把个人板块里的登录细节和账号名拿掉了，还修正了一处关于 1.4% 的措辞。这和今天这一部分的写法要求是一致的：只说该说的，不写账号和设备细节。按以往的流程，合入 main 以后会自动触发腾讯云 Pages 部署。</p><p class="verify"><strong>核实状态。</strong> 多来源确认。GitHub 的 PR 页面、合并提交和你的 Gmail 里收到的 GitHub 推送通知邮件，三者时间和内容一致。</p><p class="sources"><strong>相关页面。</strong> Blog-YuSheng 仓库里的 PR #191 和 PR #192（这里只写编号，不放链接）。</p></section><section class="entry"><h3>32. StudySolo 的每日数据库备份任务又一次标红：备份本身成功上传了，标红是因为 Supabase 出站流量已经用到脚本上限的约 92.7%</h3><p>北京时间 10 月 20 日 08:40，StudySolo 的 supabase-backup 定时任务跑完，GitHub 往你的 Gmail 发来失败通知，标题是「Run failed: supabase-backup - master (17b5786)」。先说让人放心的部分：据连读采集员读取的任务日志，「导出并加密」和「上传加密备份」两步都成功了，导出时记录的行数分别是 auth.users 4 行、public.app_users 4 行、public.quota_grants 8 行、public.usage_ledger 774 行、public.redemption_codes 16 行、public.redemptions 2 行。任务之所以标红，是因为最后一步「用量水位」检查：脚本规定任何一项超过 80% 就报警退出。</p><p>这一次，数据库只用了约 3.9%（20,663,443 字节，上限 524,288,000 字节），出站流量却已经到了约 92.7%（4,976,690,239 字节，上限 5,368,709,120 字节，也就是 5 GiB）。昨天的详细稿记录的是约 90.8%（4,874,521,942 字节），两天对比，一天里大约又涨了 1 亿字节出头（这是折晓用两天的数字相减算出来的）。照这个速度，剩下的约 3.9 亿字节大概三四天就会用完，和昨天推算的「10 月 24 日前后」大体一致；但请记住，这只是两三个数据点的粗略线性推算，不是 Supabase 给出的预测，而且 5 GiB 是脚本里写死的上限，不一定等于你账单周期里的实际额度。</p><p>如果出站继续这样增长，本计费周期内可能会碰到额度，进而影响 StudySolo 的线上访问。这几天方便的时候，可以去 Supabase 后台看一眼真实的出站用量和账单周期还剩几天，再看看是哪部分请求在大量往外传数据。</p><p class="verify"><strong>核实状态。</strong> 单一来源。用量数据只来自 GitHub Actions 日志这一处，失败通知邮件只能证明运行失败，没有用 Supabase 控制台交叉核对；「三四天用完」是推算，未能核实。</p><p class="sources"><strong>相关页面。</strong> 这个仓库是私有的，这里不放链接；你可以在 StudySolo 仓库的 Actions 页面里找到 10 月 20 日早上那次 supabase-backup 运行，或者在你的 Gmail 里搜 supabase-backup 的通知。</p></section><section class="entry"><h3>33. Supabase 发来最后通知：从 10 月 30 日起，现有项目在 public 模式下新建的表，必须显式写 GRANT 授权，才能通过 Data API 被访问</h3><p>你的 Gmail 在北京时间 10 月 20 日 20:34 收到这封通知，另一个 Gmail 在 10 月 21 日 02:38 收到同样内容的邮件。邮件原文写道：「10 月 30 日，也就是十天以后，Supabase 将停止为现有项目在 public 模式下新建的表自动授予 Data API 访问权限。你现有的表不受影响，它们会保留当前的授权，依然可以通过 Data API 访问。」以及：「从那一天起，在 public 模式下新建的任何表，都需要一条显式的 GRANT 语句，supabase-js、PostgREST 或 GraphQL 才能访问它。如果没有，API 会返回一个『permission denied』错误，错误信息里会附上需要执行的语句。这也包括会重新创建数据库结构的迁移：新项目、预览分支，以及本地的『supabase db reset』。」</p><p>两个 Gmail 都收到了这封通知，说明两个账号下都有 Supabase 项目。实际影响是这样的：现有的表不用动；但 10 月 30 日以后，无论是新建的表，还是预览分支和本地 <code>supabase db reset</code> 重新建出来的表，都需要在同一个迁移文件里写好 GRANT，否则前端会报 permission denied。StudySolo 等项目以后写新迁移时，记得顺手加上这几行授权；如果哪天在本地重置数据库后前端突然报权限错误，先想到这一条，错误信息里会直接给出要补的语句。</p><p class="verify"><strong>核实状态。</strong> 多来源确认。两个邮箱收到同一份通知，Supabase 官方 GitHub 讨论页也可以打开。</p><p class="sources"><strong>相关页面。</strong> <a href="https://github.com/orgs/supabase/discussions/45329" target="_blank" rel="noopener noreferrer">Supabase 官方说明（GitHub 讨论）</a>。</p></section><section class="entry"><h3>34. deepseek-harness 的定时端到端测试又一次失败，仍然卡在准备 bubblewrap 沙盒那一步，连续 4 次下载请求返回 404，没有真正调用 DeepSeek API</h3><p>北京时间 10 月 20 日 12:47，deepseek-harness 的「E2E（real DeepSeek API）」定时测试跑了 41 秒就失败了，GitHub 往你的 Gmail 发来通知，对应的提交仍然是 c291e79。据连读采集员读取的日志，失败发生在「Prepare bubblewrap (unrestrict userns)」这一步：脚本 <code>scripts/prepare-ci-bubblewrap.sh</code> 里的下载地址连续 4 次返回 404，最后以退出码 22 结束。后面的 API 密钥预检、构建和真实 API 测试都被跳过了，所以这次同样没有调用 DeepSeek API，不会花掉你的额度。</p><p>这是和昨天详细稿写到的同一个老问题，失败和代码本身、和 DeepSeek 接口本身都没有关系，更像是脚本依赖的某个下载地址失效了。今天日志里还多了一个可以顺手留意的地方：安装依赖阶段有几条找不到 <code>dsh</code> 可执行文件的警告。等你有空的时候，把脚本里的下载地址或版本号更新一下，或者改成从系统包管理器安装，大概就能让它重新跑起来。</p><p class="verify"><strong>核实状态。</strong> 单一来源。来自 GitHub Actions 日志，邮件只确认运行失败；404 的具体地址没有用其他来源交叉核对。</p><p class="sources"><strong>相关页面。</strong> 这个仓库这里不放链接；你可以在 deepseek-harness 仓库的 Actions 页面里找到 10 月 20 日中午那次 E2E 运行。</p></section><section class="entry"><h3>35. PocketWebShell 开了一个草稿 PR #55，修复「制作应用」、网站图标和「强制刷新」三处问题，并整合了数据清理；399 项单元测试通过，但仪器测试只编译、没在真机上跑</h3><p>北京时间 10 月 20 日 17:06，PocketWebShell 新建了草稿 PR #55，目标分支是 dev。PR 正文写道：「浏览菜单的『制作应用』原先把普通网页禁用，保存方法也只处理导入文档；图标未接入 WebView 原生位图回调，SVG 无专用解码，首页『强制刷新』仅重新抓取元数据。本次接通这些入口与底层采集/缓存管理，使网页可以制作成持久应用，自动图标能够保存、更新并在各入口复用，强制刷新能够实际重新加载网页资源。」</p><p>测试情况，正文写的是：「合计 399 项单元测试，0 失败 / 错误 / 跳过。」但也坦白：「新增仪器测试……仅编译通过，未在设备执行：云端没有连接的 Android 设备，也没有 KVM。」以及：「保持版本 0.1.65 / 66，不附正式 APK，不合并、不打 tag、不发布 Release 或部署官网。草稿保留给维护者本地真机验收。」</p><p>所以这个 PR 现在正等着你。据采集员概括，需要你在本地真机上确认的有：真实 DeepSeek 页面能不能正常制作成应用、OPPO 和华为机型上的表现、Cookie 清理是否干净、Service Worker 注册是否正常。这正是今天核心思想说的那种情况：代理把能在云端检验的都检验了，把只有真机才能回答的问题，诚实地留给了你。</p><p class="verify"><strong>核实状态。</strong> 单一来源。PR 正文是 Cursor 代理的自述，测试结果没有经过独立 CI 复核。</p><p class="sources"><strong>相关页面。</strong> 这个仓库这里不放链接；你可以在 PocketWebShell 仓库的 Pull requests 页面找到草稿 PR #55。</p></section><section class="entry"><h3>36. FORMA-ANATOMY-STUDIO 开了草稿 PR #1，把 1,685 条解剖结构名全部补齐、校对成标准中文，另有 39 条等你复核；PR 同时提醒模型素材含非商用许可</h3><p>北京时间 10 月 20 日 19:14，FORMA-ANATOMY-STUDIO 新建了草稿 PR #1。正文写道：「运动、内脏、脉管（含淋巴）和神经的结构主名称改为标准中文。英文和拉丁文留在右侧讲解面板。」以及：「1685 条记录现在都有中文。原先 836 条空白已补译。另有 203 条旧译文被改掉（错译、语序、繁体、把神经写成动脉等）。」关于待复核的部分：「仍待复核（39 条）。完整表在 <code>tools/data/zh_review_pending.md</code>。界面徽标为『待审』。」正文还专门提醒了一个许可问题：「模型链路不得商用。Z-Anatomy 的 License.txt 写明内耳为 CC BY-NC-SA 4.0、肾为 CC BY-NC 4.0，系统级 GLB 没有把这些分件拆开。」</p><p>这个解剖工作台和你的系统解剖学学习、讲解视频制作直接相关。据采集员概括，PR 已经按教材习惯区分了「踇」和「拇」，待复核的 39 条里包括肝Ⅵ段、Ⅷ段的段号和英文方位不一致、若干淋巴结的叫法等，这些需要你用解剖学知识亲自把关。还有一点请记住：因为素材链路里有非商用许可的部分，用这个工作台做出来的内容不能用于商业用途；如果以后视频要接商单，需要先把这部分素材替换掉。</p><p class="verify"><strong>核实状态。</strong> 单一来源。PR 正文是 Cursor 代理自述，数字都出自 PR 正文，没有独立核对数据文件。</p><p class="sources"><strong>相关页面。</strong> 这个仓库这里不放链接；你可以在 FORMA-ANATOMY-STUDIO 仓库的 Pull requests 页面找到草稿 PR #1，待复核清单在 <code>tools/data/zh_review_pending.md</code>。</p></section><section class="entry"><h3>37. 模型测评工作台 TryProtocom-Model-Compare 的 dev 分支当天推送了 5 个提交，调整了 v2 评测题和工作台的视频预览</h3><p>北京时间 10 月 20 日 11:50 到 11:51 推送了 2 个提交，21:15 又推送了 2 个，21:35 推送了 1 个，都在 dev 分支上。几条提交说明写道：「feat(grader): free video length and rewrite v2 wishes」，意思是视频类题目改成推荐一个时长，而不再按时长误差扣分，动作检查也改成按影片长度的比例抽样；愿望类提示词去掉了规定的风格，V03 题改成要求讲一个三幕式的《我的世界》故事。另一条是「feat(grader): require the pelican page to switch between 2.5D and 3D」，意思是鹈鹕骑车那一页虽然风格放开了，但必须能用 SVG 和 Three.js 两种方式展示同一段骑行，并且有一个看得见的切换按钮，切换时保持骑行状态不变。还有一条修复：「fix(workbench): play the film for real video tasks」，让 T04 和 V08 两道题即使在 HyperFrames 项目里也有 index.html 的情况下，也能直接打开交付的 mp4 视频。据采集员概括，看板也改成了先按厂商、再按模型分组。</p><p>这是你做模型测评视频用的评测工作台，这几处改动的方向很一致：少规定形式，多检验结果是不是真的达到了要求。main 分支在窗内没有新提交，也没有对应的 PR，所以这些改动目前还只在 dev 上。</p><p class="verify"><strong>核实状态。</strong> 单一来源。来自 GitHub 提交记录本身。</p><p class="sources"><strong>相关页面。</strong> 这个仓库这里不放链接；你可以在 TryProtocom-Model-Compare 仓库切到 dev 分支查看这 5 个提交。</p></section><section class="entry"><h3>38. 你在华科 AI 创造者俱乐部注册了 HUSTAB ID，邮箱验证邮件已经到了，还差最后一步点确认</h3><p>北京时间 10 月 20 日 21:27，你的 Gmail 收到一封标题为「验证邮箱 · HUSTAB ID」的邮件，来自华科 AI 创造者俱乐部，邮件被标为重要。邮件正文的意思是：请点击邮件里的按钮验证邮箱，完成 HUSTAB ID 注册；如果不是本人操作，忽略即可。</p><p>所以现在的状态是：邮箱验证邮件已到，还差最后一步点确认。如果这是你自己发起的注册，打开你的 Gmail 里这封邮件点一下确认就好；如果不是你，忽略它就可以。邮件本身提醒不要转发验证链接，这里也不写。</p><p class="verify"><strong>核实状态。</strong> 单一来源。只有这一封验证邮件，没能确认验证是否已经完成。</p></section><section class="entry"><h3>窗外的小提醒</h3><p>这一条不在本次时间窗内，是北京时间 10 月 14 日 06:44 你的 Gmail 收到的一封 Google One 官方服务通知：从 2026 年 11 月 13 日起，只有 Google AI Pro 及以上的订阅用户，才能在 Gemini 应用和谷歌搜索的 AI 模式里选择 Pro 模型。原文写道：「从 2026 年 11 月 13 日起，在 Gemini 应用和谷歌搜索的 AI 模式中选择 Pro 模型的功能，将只向 Google AI Pro 及以上订阅用户提供。你仍然可以使用我们最新的 Flash-Lite 模型和 Flash，它们兼顾速度和智能。」</p><p>换句话说，11 月 13 日以后，你的 Google AI Plus 套餐就只能用 Flash 和 Flash-Lite 了，想继续用 Pro 模型需要升级到 AI Pro。离那一天还有三个多星期，钱紧的时候，可以趁这段时间想一想：你平时在 Gemini 里主要做的事，Flash 够不够用；如果不太需要 Pro，保留 Plus 还是直接停掉更划算。这条来自一封官方通知邮件，属于单一来源，没有另外核对帮助中心页面。</p></section><hr><h2 id="sec-6">单一来源与未能核实清单</h2><p>下面这些内容可以读，但请记住，它们目前只有一个来源，或者其中有一部分未能核实、是推算或推测，或者有容易写错的口径：</p><ul><li>第 1 条 Anthropic 蝎毒结合体：单一来源，318,484、211、17、64 小时、约 1 万 GPU 小时等数字都是 Anthropic 自报，未经同行评审，没有独立复现；17 个结合体能否在细胞里中和毒素尚未证明，不能称为抗毒血清；「个位数纳摩尔」和「四次追加提示」来自采集员概括。</li><li>第 2 条 OpenAI 低资源语言评测：事件多来源确认，但所有成绩都是 OpenAI 自测；87.4% 对 26.8% 属于 GPT-6 Astra 对 GPT-5.6 Sol，86.6% 对 5.4% 属于 GPT-6.1 Sol 对 GPT-5.6 Sol，两组不能混用；The Decoder 用 GPT-5.6 Terra（约 38%）做对照，和官网口径不同。</li><li>第 3 条 DeepInfer：「高吞吐、低延迟」是官方说法，没有独立测试；星标超过 1.1 万是采集时刻的快照。</li><li>第 4 条国土安全部 DeepSeek 命令：命令最初的日期各家说法不一（CNBC 写 7 月 24 日发出；昨天详细稿引用的 CyberScoop 写 6 月 26 日签署、BBC 写 7 月底生效）；国土安全部的理由和中国外交部的回应来自 CNBC 报道。</li><li>第 5 条 Mistral Voxtral 3：性能领先的说法是厂商自评，由 gemini-3.8-flash 担任评审，尚无独立复测；语言数量和 30 分钟声音复刻来自采集员概括。</li><li>第 6 条 OpenAI 收购 Orchestra Bio：单一来源，只有 OpenAI 官网和官方帖，交易金额未公开；Rosalind 学术计划「30 个席位、12 个月」来自采集员对发布说明的概括，和昨天证据包所说的「10 月 15 日 GPT-Rosalind 学术计划」之间的关系尚未核实。</li><li>第 7 条锁定聊天：「ChatGPT for Healthcare 不提供该功能」只见于 TechCrunch。</li><li>第 9 条谷歌政务智能体：单一来源，只有谷歌新闻稿和博客；客户使用情况是谷歌单方面说法；发布具体时刻不明，可能落在窗外。</li><li>第 10 条 curl 与 OpenSSL：Axios 文章的精确发布时刻未能核实；「九成以上很快判定低于高危」是采集员概括；「约每八份中一份是真的」是折晓按 Axios 数字做的计算。</li><li>第 11 条谷歌云伦敦断电：「备用发电机没有启动」只来自 Computer Weekly 转述的一位管理员说法，未经谷歌官方证实；「另外两个可用区没完全接住」来自采集员概括。</li><li>第 12 条 PHP 漏洞：漏洞编号 CVE-2026-109618、CVE-2026-109619，「CVSS 10」和「影响 PHP 5 到 8」都只来自第三方（watchTowr 和一条已删除的 Hacker News 帖子），官方未确认；官方评分是 9.2。</li><li>第 13 条 Plex2Shell：四个漏洞单独评分 4.3 到 7.2 是 breach-signal 引用研究者的说法；挖矿程序和住宅代理来自采集员概括。</li><li>第 14 条 SpaceX Bandwagon-5：具体点火时刻没有从一手页面核实到分钟级；助推器第 19 次飞行和拼车价格来自采集员对 NASASpaceFlight 的概括。</li><li>第 15 条 TorchNeuron：每美元多处理约 60% 音频是客户 Deepgram 的自述；「85% 的研究者用 PyTorch」是亚马逊说法，没有给出处；约 2.2 万个测试因算子未实现而跳过来自采集员概括。</li><li>第 16 条特斯拉与 SpaceX：3.6 万亿美元是 The Verge 的估算口径；目前只是成立委员会评估，没有任何交易条款。</li><li>第 17 条高通诉 Arm：单一来源，只读到 Bloomberg 报道开头两段；「新费率约为现行 15 倍」「书面陈述后判决」只见于搜索摘要，未能核实，没有采用。</li><li>第 18 条超微初步季报：单一来源，公司未经审计的初步数据；「高出约 27%」是采集员按区间中值做的计算；Bloomberg 快讯时刻来自采集员说明。</li><li>第 19 条半导体指数：单一来源（雅虎财经两位记者），盘中快照，收盘情况未能核实。</li><li>第 20 条 KCNQ1 变异效应图：论文正文因出版方拦截没能直接打开，数字以 Medical Xpress 报道为准；「每年约 3,500 人猝死」来自采集员对报道的概括。</li><li>第 21 条 GRAD：单一来源，只有波士顿大学新闻稿；没有给出准确率等具体数字；Medical Xpress 转发页没能打开，论文原文未核对；作者强调还需前瞻性验证，不能替代 PET。</li><li>第 23 条 EPCAT III：检索摘要里的 5,429 人、0.48% 对 0.45% 未能打开 NEJM 全文核对，没有采用，只用机构稿的 5,300 人。</li><li>第 24 条 ctDNA 肺癌复发：单一来源，出版方新闻稿没有给出灵敏度、特异度和样本量；技术开发方 C2i Genomics 是合作方，存在利益关联。</li><li>第 25 条 DCIS 与中性粒细胞弹性蛋白酶：单一来源；论文正式上线日期未能确认；「可作生物标志物、减少过度治疗」目前只是作者设想。</li><li>第 26 条丘脑谱系、第 27 条 ABCA1 与帕金森病：单一来源（期刊原文，属于一手来源）；都是小鼠研究，柠檬酸镁的效果只在小鼠 PFF 模型里看到，不能理解为补镁防帕金森病。</li><li>第 29 条仿制 Climara Pro：单一来源（FDA 新闻稿，一手监管来源）；适应症、禁忌证和生产方来自采集员对新闻稿的概括。</li><li>第 30 条 WHO 非传染性疾病不平等报告：单一来源（WHO 官方发布）；原文以定性描述为主，没有可引用的大数字。</li><li>第 32 条 StudySolo 出站流量：用量数据只来自 GitHub Actions 日志，没有用 Supabase 控制台核对；「一天涨 1 亿字节出头、三四天用完」是折晓用昨天和今天两个数据点做的粗略推算，不是 Supabase 的预测；5 GiB 是脚本里写死的上限，不一定等于账单额度。</li><li>第 34 条 deepseek-harness：单一来源，404 的具体下载地址没有交叉核对。</li><li>第 35 条 PocketWebShell 草稿 PR #55、第 36 条 FORMA-ANATOMY-STUDIO 草稿 PR #1：单一来源，PR 正文都是 Cursor 代理自述，测试结果和数字没有独立复核。</li><li>第 37 条 TryProtocom-Model-Compare 提交：单一来源，来自提交记录本身；看板分组的变化来自采集员概括。</li><li>第 38 条 HUSTAB ID：单一来源，只有一封验证邮件，没能确认验证是否已完成。</li><li>窗外的小提醒：单一来源，Google One 官方通知邮件，没有另外核对帮助中心页面。</li></ul><h2 id="sec-7">时间窗边界说明</h2><ul><li>第 2 条：OpenAI 官方 X 帖发于北京时间 10 月 20 日 06:30，在窗内；但官网文章署名日期是美国时间 10 月 19 日，GitHub 仓库创建于北京时间 10 月 20 日 04:58，都可能早于窗口，昨天的详细稿也已经按「美国 10 月 19 日发布」写过这篇文章。今天收录的是窗内的官方正式宣布帖和两家媒体的独立报道。</li><li>第 3 条：GitHub 首个公开提交在北京时间 10 月 20 日 12:09，官方宣布在 17:30，都在窗内。</li><li>第 4 条：《联邦公报》正式刊登日期为美国时间 10 月 20 日，CNBC 报道发于北京时间 10 月 20 日 14:25，都在窗内；但这份文件在美国时间 10 月 19 日上午 8:45 已在《联邦公报》「预先公示」栏公开，对应北京时间 10 月 19 日 20:45，早于本次时间窗，昨天的详细稿报道的正是这次预先公开；命令本身据 CNBC 称最初在 7 月 24 日发出，更早。</li><li>第 6、7、8 条：官方帖或报道时刻分别为北京时间 10 月 21 日 02:10、02:36、01:56，都在窗内。</li><li>第 9 条：谷歌新闻稿只注明美国东部日期 10 月 20 日，没有钟点；按美东白天发布推算在窗内，如果实际是在美东 18:00 以后发布，就落在窗外。</li><li>第 10 条：The Register 报道在北京时间 10 月 21 日 01:30，在窗内；Axios 关于 OpenSSL 的报道只显示相对时间，按频道排序推断约为北京时间 10 月 21 日凌晨，精确时刻未能核实；curl 的政策改动生效日期 10 月 26 日在窗外，属于预告。</li><li>第 11 条：断电开始于北京时间 10 月 20 日 14:08，在窗内。</li><li>第 12 条：php.net 公告只标日期 10 月 20 日；补丁定于北京时间 10 月 21 日 22:00 发布，在窗外，属于预告。</li><li>第 13 条：CISA 公告只标美国日期 10 月 20 日，按美东工作日发布推算在窗内；Plex 补丁（8 月 4 日）、概念验证代码公开（10 月 16 日）和首次观察到攻击（10 月 17 日）都早于窗口，只用作背景。</li><li>第 15 条：TorchNeuron 的预告昨天已写（北京时间 10 月 19 日晚的报道）；今天收录的是美国当地 10 月 20 日在 PyTorch 大会上的实际开源和公测，对应北京时间 10 月 20 日晚到 10 月 21 日凌晨。</li><li>第 16、17 条：特斯拉财报电话会和 Arm 案结案陈词都在美国时间 10 月 20 日；The Verge 报道在北京时间 10 月 21 日 05:30，Bloomberg Law 报道在 05:01，都卡在时间窗末尾、仍在窗内。</li><li>第 18 条：超微新闻稿在美股收盘后发布，据采集员说明对应北京时间 10 月 21 日 04:48 前后，在窗内；正式财报定于美国东部时间 11 月 3 日，在窗外。</li><li>第 20、26、27 条：Crossref 记录的上线时间分别为北京时间 10 月 20 日 17:00 和 17:02，都在窗内。</li><li>第 21、25、30 条：新闻稿或新闻条目只标当地日期 10 月 20 日，按当地白天发布推算在窗内；第 25 条的论文 DOI 早在 9 月 11 日就已在 Crossref 登记，正式上线日期未能确认。</li><li>第 22 条：FDA 新闻稿落款美国东部时间 10 月 20 日，路透社稿件约为北京时间 10 月 21 日 04:04，都在窗内。</li><li>第 23 条：达尔豪斯大学新闻稿在窗内；NEJM 论文按 Crossref 记录在 2026 年 7 月 12 日上线，早于窗口。</li><li>第 24 条：Medical Xpress 新闻稿在窗内；论文 DOI 在 2026 年 7 月 30 日已登记，早于窗口。</li><li>第 28 条：News-Medical 转发的名古屋大学稿件在窗内；EMBO Reports 论文 10 月 5 日发表，早于窗口。</li><li>第 29 条：FDA 新闻稿落款 10 月 20 日，在窗内；批准本身发生在 10 月 19 日，按美国日期推算可能早于窗口。</li><li>第 31 条：PR #191 和 #192 合入时间是北京时间 10 月 20 日 07:44 和 07:50，在窗内；它们发布的是前一天（10 月 20 日）的早报。</li><li>第 32 条：用来对比的约 90.8% 出站数据来自昨天的详细稿，采集于北京时间 10 月 19 日早上，在窗外，只用来推算增长速度。</li><li>第 33 条：两封通知分别在北京时间 10 月 20 日 20:34 和 10 月 21 日 02:38 收到，在窗内；规则生效日期 10 月 30 日在窗外，属于预告。</li><li>窗外的小提醒：Google One 通知邮件收到于北京时间 10 月 14 日 06:44，在窗外；对应的权益变化发生在 11 月 13 日。</li></ul><h2 id="sec-8">刻意没有收录的材料</h2><p>下面这些材料在采集中出现过，或者在窗内被转载报道，但核对后发现首次发布早于时间窗、属于对旧论文的二次报道，或者主体不属于对应领域，所以没有当作今天的新闻来写。</p><p><strong>人工智能方面（讯AI 证据包列出的窗外材料）：</strong> Meta Prometheus 超算集群工程博客（北京时间 10 月 19 日 21:00）；MiniMax M3.1 Flash（北京时间 10 月 19 日 19:56，昨天已写）；CERN 与 Mistral 的物理大模型意向书（10 月 15 日）；英伟达 Nemotron 3.5 Super VL 和 Bolt（10 月 15 日）；WIRED 报道 WhatsApp 帮助页暗藏大模型指令（北京时间 10 月 20 日 00:00，早于窗口）；OpenAI 工程师安装窃听器被捕（司法部通稿 10 月 13 日）；中国 AI 技术出口登记征求意见稿（10 月 16 日）。另外，Radical Numerics 用 AI 设计噬菌体治疗首例患者，主体是临床结果，讯AI 按分工没有收录，讯医证据包里也没有这一条，所以今天没有写。</p><p><strong>科技方面（讯科证据包列出的窗外材料）：</strong> 三星用台积电 3 纳米做英伟达 HBM 基底芯片（首发 10 月 18 日，昨天已写）；SK 海力士以大连设备许可作为美国新厂的前提（路透社 10 月 14 日）；Tenstorrent 15 亿美元 E 轮融资（官方在美国时间 10 月 19 日公布，早于窗口）；ASML 与 Xanadu 合作（9 月 9 日公布）。</p><p><strong>医学方面（讯医证据包「已查看但未收录」的材料）：</strong></p><ul><li>Gilead 口服 α4β7 抑制剂 emvistegrast 的 II 期 SWIFT 试验：官方稿落款 10 月 19 日，在欧洲胃肠病周上作为晚期突破摘要报告，早于窗口。</li><li>特朗普签署行政令，在 NIH 设立女性健康部门：HHS 稿落款 10 月 19 日，按美东时间推算早于北京时间 10 月 20 日 06:00。</li><li>肯尼亚第八例本迪布焦型埃博拉病例：路透社在北京时间 10 月 19 日 17:03 发布，在窗外；欧洲疾控中心汇总页这次没能打开。</li><li>JAMA 上 pelacarsen（Lp(a)HORIZON）阴性结果的新闻稿（Crossref 显示 9 月 25 日）和 OpenEvidence 使用情况研究（10 月 15 日），都在窗外。</li><li>Cell 上「肿瘤通过 SLC52A2 争夺维生素 B2，诱导 T 细胞铁死亡」：论文 10 月 6 日登记，在窗外，窗内只找到一篇内容很薄的二手转述。</li><li>绝经激素治疗与心血管风险：Endocrinology Advisor 10 月 20 日的报道，原论文是 JAMA Internal Medicine 9 月 8 日发表的，属于对旧论文的二次报道。</li></ul><p><strong>你自己的事情方面：</strong> 窗内两封营销邮件（Suno 年付八折、Notion AI 会议记录）按惯例省略；HUSTAB 验证邮件里的验证链接属于一次性凭证，没有记录，也没有写进来。</p></article>
+  </div>
+</div>
+<noscript><style>#reader[hidden]{display:block !important;position:static;height:auto;background:transparent;padding:0} .sheet{height:auto;overflow:visible}</style></noscript>
+<script>
+(function () {
+  const $ = (id) => document.getElementById(id)
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  const SWIRL_NEED = 11
+  let markNav = () => {}
+  const FINDS = [
+    {
+      id: 'venom',
+      kind: 'fool',
+      lead: '第一眼很像已经做出了抗毒血清。',
+      reveal: '据 Anthropic 自己的报告，Claude 用 64 小时生成了 318,484 个蛋白设计，从中挑出 180 个，团队又补了 31 个，一共 211 个送去实验室测。只有 17 个达到结合标准。他们写明，还没有证明这些结合体能在细胞里中和蝎毒，所以不能称为抗毒血清。这是厂商自己报的结果，还没有同行评审，也还没有别的来源确认。',
+      action: '把这粒放回溪里'
+    },
+    {
+      id: 'php',
+      kind: 'fool',
+      lead: '第一眼有人把它说成了满分。',
+      reveal: 'PHP 官方只确认有两个严重漏洞，评分都是 CVSS 9.2，补丁定在北京时间 10 月 21 日晚上 10 点。有人说是满分，还报出了具体编号和影响的版本，那些说法官方没有确认。',
+      action: '把这粒放回溪里'
+    },
+    {
+      id: 'cobol',
+      kind: 'fool',
+      lead: '第一眼很像可以直接拿去用。',
+      reveal: 'OpenAI 称，GPT-6.1 Sol 在低推理档的 COBOL 迁移准确率是 86.6%，上一代 GPT-5.6 Sol 是 5.4%，把推理开高一些可以到 97.9%。这些是 OpenAI 自己测的。官网同时写了，真正用到生产系统里，仍然需要专家审查，还要用系统自己的业务规则去测。另一组 87.4% 是 GPT-6 Astra 在另一种评测上的成绩，不要混在一起。',
+      action: '把这粒放回溪里'
+    },
+    {
+      id: 'kcnq1',
+      kind: 'true',
+      lead: '这粒刮不黑，颜色还是暖的。',
+      reveal: '范德堡的团队用高通量实验，把 KCNQ1 基因一万三千多种可能的变异都做出来测了功能。报道称，其中 1,757 个有较强的致病证据，6,600 个有中等程度的良性证据。论文正文这次没能打开，数字以报道和论文元数据为准。标题和上线时间有多个来源对得上。',
+      action: '把这粒收进玻璃瓶'
+    },
+    {
+      id: 'openssl',
+      kind: 'true',
+      lead: '这粒沉，刮开还是金子的颜色。',
+      reveal: 'OpenSSL 过去一年大约收到 500 份漏洞报告，最后成为正式披露漏洞的是 63 个。发亮的很多，留下的很少。Axios 这篇的精确发布时间还没有核实。curl 是另一个项目，维护者说已经快撑不住了，从 10 月 26 日起把中低危的报告改到公开仓库里处理。两边各自都有来源。',
+      action: '把这粒收进玻璃瓶'
+    },
+    {
+      id: 'grad',
+      kind: 'gray',
+      lead: '这粒刮完还是说不准。',
+      unsure: '刮完既不像金子，也不像愚人金。放到旁边的碟子里，换一种方法再看一眼。',
+      reveal: '波士顿大学的 GRAD 分两步。先看血液里的 p-Tau217，结果清楚的就先放下；落在中间的，再结合别的血液指标、年龄和遗传风险看一次。方法用 145 个人的数据做出来，又在另外 1,644 个认知还正常的人里试了试，其中 630 人的 p-Tau217 落在灰区。新闻稿说，这一步更能认出脑里的淀粉样蛋白，也少了一些人需要去做 PET，但是没有给出准确率。作者写明，它还不能代替确认用的影像。目前只看到这一份大学新闻稿。',
+      action: '放到再看一眼的碟子里'
+    },
+    {
+      id: 'ctdna',
+      kind: 'gray',
+      lead: '对着光看，还是模模糊糊。',
+      unsure: '这一下还不能下结论。放到碟子里，再看一眼。',
+      reveal: '据出版方的新闻稿称，用全基因组测序做液体活检，能比影像早几个月发现 IA 期肺腺癌的复发。稿子里没有写出灵敏度、特异度，也没有写出样本量，所以这里不补数字。开发技术的公司和研究者是合作方，读的时候要记得有利益关系。论文在 7 月已经上线，这次时间窗里新公开的是新闻稿。目前只有这一个来源。',
+      action: '放到再看一眼的碟子里'
+    }
+  ]
+
+  const silt = []
+  const pieces = []
+  const state = {
+    phase: 'idle',
+    swirl: 0,
+    pointer: false,
+    lastAng: 0,
+    sound: false,
+    selected: null,
+    clogged: false,
+    gift: false,
+    pourT: 0,
+    auto: false,
+    autoT: 0,
+    autoAng: 0,
+    scratch: 0,
+    failSafe: false
+  }
+  let audio = null
+  let width = 300
+  let height = 300
+  let dpr = 1
+  const canvas = $('pan')
+  const ctx = canvas.getContext('2d')
+  const closeup = $('closeup')
+  const cctx = closeup.getContext('2d')
+
+  function mulberry32(seed) {
+    let value = seed >>> 0
+    return function () {
+      value = (value + 0x6d2b79f5) >>> 0
+      let t = Math.imul(value ^ (value >>> 15), 1 | value)
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296
+    }
+  }
+
+  function boot() {
+    const rnd = mulberry32(20261021)
+    for (let i = 0; i < 72; i += 1) {
+      const angle = rnd() * Math.PI * 2
+      const dist = Math.sqrt(rnd()) * 0.7
+      silt.push({
+        kind: 'silt',
+        sx: (rnd() - 0.5) * 0.2,
+        sy: -1.35 - rnd() * 0.45,
+        tx: Math.cos(angle) * dist,
+        ty: Math.sin(angle) * dist,
+        x: 0,
+        y: -1.4,
+        r: 2.1 + rnd() * 2.2,
+        fade: 1,
+        tint: rnd(),
+        spark: rnd() > 0.62,
+        delay: rnd() * 0.28
+      })
+    }
+    FINDS.forEach((grain, index) => {
+      const angle = rnd() * Math.PI * 2
+      const dist = 0.12 + rnd() * 0.38
+      grain.sx = (rnd() - 0.5) * 0.16
+      grain.sy = -1.4 - index * 0.04
+      grain.tx = Math.cos(angle) * dist
+      grain.ty = Math.sin(angle) * dist
+      grain.x = grain.sx
+      grain.y = grain.sy
+      grain.r = 9
+      grain.fade = 1
+      grain.done = false
+      grain.dumped = false
+      grain.scratched = false
+      grain.reading = false
+      grain.dished = false
+      grain.delay = 0.05 + index * 0.03
+    })
+    pieces.push(...silt, ...FINDS)
+  }
+
+  function setPhase(phase) {
+    state.phase = phase
+    document.body.dataset.phase = phase
+    renderChrome()
+  }
+
+  function hintFor() {
+    if (state.phase === 'idle') return '从溪里舀一盘沙'
+    if (state.phase === 'pouring') return '满满一盘，大部分是泥沙。'
+    if (state.phase === 'swirl' || state.phase === 'settle') return '按住盘子，慢慢画圈。轻的会被水带走。'
+    if (state.clogged) return '瓶子被塞满了。倒回盘子里再看。'
+    return '点一颗发亮的，再用指甲刮一下。'
+  }
+
+  function renderChrome() {
+    $('scoop').hidden = state.phase !== 'idle'
+    $('assist').hidden = state.phase !== 'swirl'
+    const tools = state.phase === 'inspect'
+    const cardOpen = !!state.selected || state.clogged
+    $('vial').hidden = !tools
+    $('dish').hidden = !tools
+    $('rush').hidden = !tools || state.clogged || state.gift || cardOpen
+    $('metaphor').hidden = state.phase === 'idle' || state.phase === 'pouring' || state.gift || cardOpen
+    $('clogCard').hidden = !state.clogged
+    $('gift').hidden = !state.gift
+    $('hint').hidden = state.gift
+    if (!state.gift) $('hint').textContent = hintFor()
+    if (!state.selected || state.clogged) $('lensCard').hidden = true
+    $('soundBtn').textContent = state.sound ? '关掉流水声' : '要听流水声'
+    $('soundBtn').setAttribute('aria-pressed', state.sound ? 'true' : 'false')
+    document.body.dataset.gift = state.gift ? '1' : '0'
+    document.body.dataset.clogged = state.clogged ? '1' : '0'
+    document.body.dataset.card = cardOpen ? '1' : '0'
+    canvas.style.cursor = state.phase === 'swirl' ? 'grab' : 'default'
+  }
+
+  function geom() {
+    return { cx: width / 2, cy: height / 2 + 6, rx: width * 0.47, ry: height * 0.37 }
+  }
+
+  function mapGrain(grain) {
+    const pan = geom()
+    return [pan.cx + grain.x * pan.rx * 0.78, pan.cy + grain.y * pan.ry * 0.72]
+  }
+
+  function resize() {
+    const rect = canvas.getBoundingClientRect()
+    width = Math.max(1, rect.width)
+    height = Math.max(1, rect.height)
+    dpr = Math.min(window.devicePixelRatio || 1, 2)
+    canvas.width = Math.round(width * dpr)
+    canvas.height = Math.round(height * dpr)
+    layoutHotspots()
+  }
+
+  function layoutHotspots() {
+    const host = $('hotspots')
+    host.replaceChildren()
+    if (state.phase !== 'inspect' || state.clogged) return
+    FINDS.forEach((grain) => {
+      if (grain.done || grain.dumped) return
+      const [x, y] = mapGrain(grain)
+      const button = document.createElement('button')
+      button.type = 'button'
+      button.className = 'hotspot'
+      button.setAttribute('aria-label', '盘子里发亮的一颗')
+      button.style.left = x + 'px'
+      button.style.top = y + 'px'
+      button.addEventListener('click', (event) => {
+        event.stopPropagation()
+        selectGrain(grain.id)
+      })
+      host.appendChild(button)
+    })
+  }
+
+  function current() {
+    return FINDS.find((grain) => grain.id === state.selected) || null
+  }
+
+  function selectGrain(id) {
+    const grain = FINDS.find((item) => item.id === id)
+    if (!grain || grain.done || grain.dumped || state.phase !== 'inspect' || state.clogged) return
+    state.selected = id
+    state.scratch = 0
+    grain.scratched = false
+    grain.reading = false
+    $('lensCard').hidden = false
+    $('lensLead').textContent = '它在发光。用指甲轻轻刮一下，才知道是什么。'
+    $('lensBody').textContent = ''
+    $('lensFoot').hidden = true
+    $('scratchBtn').hidden = false
+    $('actBtn').hidden = true
+    drawCloseup()
+    renderChrome()
+    $('lensCard').hidden = false
+  }
+
+  function finishScratch() {
+    const grain = current()
+    if (!grain || grain.scratched) return
+    grain.scratched = true
+    state.scratch = 1
+    $('scratchBtn').hidden = true
+    $('lensLead').textContent = grain.lead
+    $('lensBody').textContent = grain.kind === 'gray' ? grain.unsure : grain.reveal
+    $('lensFoot').hidden = false
+    $('actBtn').hidden = false
+    $('actBtn').textContent = grain.action
+    drawCloseup()
+  }
+
+  function addDot(parent, className) {
+    const dot = document.createElement('i')
+    dot.className = className
+    parent.appendChild(dot)
+  }
+
+  function act() {
+    const grain = current()
+    if (!grain || !grain.scratched) return
+    if (grain.reading) {
+      state.selected = null
+      $('lensCard').hidden = true
+      grain.reading = false
+      renderChrome()
+      return
+    }
+    if (grain.kind === 'fool') {
+      grain.done = true
+      state.selected = null
+      $('lensCard').hidden = true
+    } else if (grain.kind === 'true') {
+      grain.done = true
+      addDot($('vialGlass'), 'nugget')
+      clink()
+      state.selected = null
+      $('lensCard').hidden = true
+    } else {
+      grain.done = true
+      grain.dished = true
+      grain.reading = true
+      addDot($('dishBowl'), 'pebble-dot')
+      $('lensLead').textContent = '换了一种看法。'
+      $('lensBody').textContent = grain.reveal
+      $('actBtn').textContent = '继续看盘子里的'
+    }
+    layoutHotspots()
+    checkGift()
+    renderChrome()
+    if (grain.reading) $('lensCard').hidden = false
+  }
+
+  function checkGift() {
+    if (state.clogged || state.gift) return
+    const foolOk = FINDS.some((grain) => grain.kind === 'fool' && grain.done)
+    const grayOk = FINDS.some((grain) => grain.kind === 'gray' && grain.done)
+    const trueOk = FINDS.filter((grain) => grain.kind === 'true').every((grain) => grain.done)
+    if (!(foolOk && grayOk && trueOk)) return
+    state.gift = true
+    document.body.dataset.gift = '1'
+    $('gift').hidden = false
+    $('hint').hidden = true
+    const first = '候选越来越便宜，'
+    const second = '稀缺的是认出真东西的第二道检验。'
+    const line = first + second
+    const target = $('giftLine')
+    const paint = (count) => {
+      target.replaceChildren()
+      const shown = line.slice(0, count)
+      if (shown.length <= first.length) {
+        target.textContent = shown
+        return
+      }
+      target.append(document.createTextNode(first), document.createElement('br'), document.createTextNode(shown.slice(first.length)))
+    }
+    if (reduce) {
+      paint(line.length)
+      return
+    }
+    let count = 0
+    const timer = window.setInterval(() => {
+      count += 1
+      paint(count)
+      if (count >= line.length) window.clearInterval(timer)
+    }, 38)
+  }
+
+  function rush() {
+    if (state.phase !== 'inspect' || state.clogged || state.gift) return
+    const left = FINDS.filter((grain) => !grain.done)
+    if (!left.length) return
+    left.forEach((grain) => { grain.dumped = true })
+    state.clogged = true
+    state.selected = null
+    $('lensCard').hidden = true
+    for (let i = 0; i < 14; i += 1) addDot($('vialGlass'), 'pyrite')
+    layoutHotspots()
+    renderChrome()
+  }
+
+  function unclog() {
+    FINDS.forEach((grain) => {
+      if (!grain.done) grain.dumped = false
+    })
+    state.clogged = false
+    $('vialGlass').querySelectorAll('.pyrite').forEach((node) => node.remove())
+    layoutHotspots()
+    renderChrome()
+  }
+
+  function applySwirl(delta) {
+    if (!delta) return
+    state.swirl += Math.abs(delta)
+    pieces.forEach((grain) => {
+      if (grain.fade <= 0 || grain.done || grain.dumped) return
+      const angle = Math.atan2(grain.y, grain.x) + delta * 0.92
+      let dist = Math.hypot(grain.x, grain.y)
+      if (grain.kind === 'silt') dist += Math.abs(delta) * 0.085
+      else dist = Math.max(0.08, dist * (1 - Math.abs(delta) * 0.02))
+      grain.x = Math.cos(angle) * dist
+      grain.y = Math.sin(angle) * dist
+      if (grain.kind === 'silt' && dist > 0.98) grain.fade -= Math.abs(delta) * 0.35
+    })
+    if (state.phase === 'swirl' && state.swirl >= SWIRL_NEED) finishSwirl()
+  }
+
+  function finishSwirl() {
+    if (state.phase === 'settle' || state.phase === 'inspect') return
+    state.auto = false
+    FINDS.forEach((grain, index) => {
+      const angle = -Math.PI / 2 + (index / FINDS.length) * Math.PI * 2
+      grain.tx = Math.cos(angle) * 0.48
+      grain.ty = Math.sin(angle) * 0.48
+    })
+    setPhase('settle')
+  }
+
+  function scoop() {
+    if (state.phase !== 'idle') return
+    state.pourT = 0
+    setPhase('pouring')
+  }
+
+  function startAuto() {
+    if (state.phase !== 'swirl' || state.auto) return
+    state.auto = true
+    state.autoT = 0
+    state.autoAng = 0
+    $('assist').disabled = true
+  }
+
+  function step(dt) {
+    if (state.phase === 'pouring') {
+      state.pourT += dt
+      const duration = reduce ? 180 : 880
+      const progress = Math.min(1, state.pourT / duration)
+      pieces.forEach((grain) => {
+        const local = Math.min(1, Math.max(0, (progress - grain.delay) / 0.72))
+        const eased = 1 - (1 - local) ** 3
+        grain.x = grain.sx + (grain.tx - grain.sx) * eased
+        grain.y = grain.sy + (grain.ty - grain.sy) * eased
+      })
+      if (progress >= 1) setPhase('swirl')
+    }
+    if (state.auto && state.phase === 'swirl') {
+      state.autoT += dt
+      const duration = reduce ? 280 : 2100
+      const progress = Math.min(1, state.autoT / duration)
+      const angle = progress * Math.PI * 4.3
+      applySwirl(angle - state.autoAng)
+      state.autoAng = angle
+      if (progress >= 1) finishSwirl()
+    }
+    if (state.phase === 'settle') {
+      let ready = true
+      FINDS.forEach((grain) => {
+        grain.x += (grain.tx - grain.x) * 0.12
+        grain.y += (grain.ty - grain.y) * 0.12
+        if (Math.hypot(grain.tx - grain.x, grain.ty - grain.y) > 0.03) ready = false
+      })
+      silt.forEach((grain) => { grain.fade = Math.max(0, grain.fade - 0.06) })
+      if (ready) {
+        setPhase('inspect')
+        layoutHotspots()
+      }
+    }
+  }
+
+  function drawPan(now) {
+    const pan = geom()
+    ctx.save()
+    ctx.translate(pan.cx, pan.cy + pan.ry * 0.72)
+    ctx.fillStyle = 'rgba(90, 120, 110, 0.16)'
+    ctx.beginPath()
+    ctx.ellipse(0, 0, pan.rx * 0.78, pan.ry * 0.22, 0, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.restore()
+
+    const rim = ctx.createLinearGradient(pan.cx, pan.cy - pan.ry, pan.cx, pan.cy + pan.ry)
+    rim.addColorStop(0, '#f4f7f6')
+    rim.addColorStop(0.4, '#c9d4d6')
+    rim.addColorStop(1, '#8ea0a6')
+    ctx.beginPath()
+    ctx.ellipse(pan.cx, pan.cy, pan.rx, pan.ry, 0, 0, Math.PI * 2)
+    ctx.fillStyle = rim
+    ctx.fill()
+
+    const basin = ctx.createRadialGradient(pan.cx - pan.rx * 0.2, pan.cy - pan.ry * 0.2, pan.rx * 0.08, pan.cx, pan.cy, pan.rx)
+    basin.addColorStop(0, '#f6e7c4')
+    basin.addColorStop(0.62, '#e2c48a')
+    basin.addColorStop(1, '#c49a58')
+    ctx.beginPath()
+    ctx.ellipse(pan.cx, pan.cy, pan.rx * 0.9, pan.ry * 0.88, 0, 0, Math.PI * 2)
+    ctx.fillStyle = basin
+    ctx.fill()
+
+    ctx.save()
+    ctx.beginPath()
+    ctx.ellipse(pan.cx, pan.cy, pan.rx * 0.9, pan.ry * 0.88, 0, 0, Math.PI * 2)
+    ctx.clip()
+    const shade = ctx.createLinearGradient(pan.cx, pan.cy - pan.ry, pan.cx, pan.cy + pan.ry * 0.2)
+    shade.addColorStop(0, 'rgba(120, 80, 40, 0.22)')
+    shade.addColorStop(0.35, 'rgba(120, 80, 40, 0)')
+    ctx.fillStyle = shade
+    ctx.fillRect(pan.cx - pan.rx, pan.cy - pan.ry, pan.rx * 2, pan.ry * 2)
+    ctx.strokeStyle = 'rgba(120, 84, 40, 0.2)'
+    ctx.lineWidth = 1.5
+    for (let i = 0; i < 4; i += 1) {
+      ctx.beginPath()
+      ctx.ellipse(pan.cx + pan.rx * 0.28, pan.cy + pan.ry * 0.12, pan.rx * 0.12 + i * 8, pan.ry * 0.1 + i * 5, -0.6, 0.2, Math.PI - 0.15)
+      ctx.stroke()
+    }
+    ctx.translate(pan.cx, pan.cy)
+    ctx.rotate(now * 0.00035 + state.swirl * 0.04)
+    const sheen = ctx.createLinearGradient(-pan.rx, 0, pan.rx, 0)
+    sheen.addColorStop(0, 'rgba(255,255,255,0)')
+    sheen.addColorStop(0.5, 'rgba(255,255,255,0.42)')
+    sheen.addColorStop(1, 'rgba(255,255,255,0)')
+    ctx.fillStyle = sheen
+    ctx.fillRect(-pan.rx, -pan.ry * 0.62, pan.rx * 2, pan.ry * 0.1)
+    ctx.restore()
+
+    ctx.beginPath()
+    ctx.ellipse(pan.cx, pan.cy, pan.rx * 0.9, pan.ry * 0.88, 0, 0, Math.PI * 2)
+    ctx.strokeStyle = 'rgba(255,255,255,0.8)'
+    ctx.lineWidth = 2
+    ctx.stroke()
+  }
+
+  function drawGrain(grain) {
+    if (grain.fade <= 0.02 || grain.done || grain.dumped) return
+    const [x, y] = mapGrain(grain)
+    const radius = grain.kind === 'silt' ? grain.r : grain.r
+    ctx.save()
+    ctx.globalAlpha = Math.max(0, Math.min(1, grain.fade))
+    ctx.translate(x, y)
+    ctx.fillStyle = 'rgba(90, 70, 40, 0.18)'
+    ctx.beginPath()
+    ctx.ellipse(1, 2, radius * 0.9, radius * 0.45, 0, 0, Math.PI * 2)
+    ctx.fill()
+    const color = grain.kind === 'silt'
+      ? (grain.spark ? '#e3c15a' : grain.tint > 0.5 ? '#e6d3ae' : '#cbb58a')
+      : '#e6b423'
+    ctx.fillStyle = color
+    ctx.beginPath()
+    ctx.arc(0, 0, radius, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.fillStyle = 'rgba(255,255,255,0.75)'
+    ctx.beginPath()
+    ctx.arc(-radius * 0.28, -radius * 0.32, radius * 0.28, 0, Math.PI * 2)
+    ctx.fill()
+    if (grain.id && grain.id === state.selected) {
+      ctx.strokeStyle = 'rgba(122, 78, 16, 0.7)'
+      ctx.lineWidth = 2
+      ctx.beginPath()
+      ctx.arc(0, 0, radius + 5, 0, Math.PI * 2)
+      ctx.stroke()
+    }
+    ctx.restore()
+  }
+
+  function draw(now) {
+    if (!ctx || width < 2) return
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+    ctx.clearRect(0, 0, width, height)
+    drawPan(now)
+    if (state.phase !== 'idle') {
+      silt.forEach(drawGrain)
+      FINDS.forEach(drawGrain)
+    }
+    if (state.selected) drawCloseup()
+  }
+
+  function drawCloseup() {
+    if (!cctx) return
+    const grain = current()
+    const w = closeup.width
+    const h = closeup.height
+    cctx.clearRect(0, 0, w, h)
+    cctx.fillStyle = '#f8edd2'
+    cctx.fillRect(0, 0, w, h)
+    const cx = w / 2
+    const cy = h / 2 + 4
+    cctx.fillStyle = 'rgba(90,70,40,0.15)'
+    cctx.beginPath()
+    cctx.ellipse(cx + 4, cy + 28, 36, 12, 0, 0, Math.PI * 2)
+    cctx.fill()
+    const body = cctx.createRadialGradient(cx - 16, cy - 18, 8, cx, cy, 48)
+    body.addColorStop(0, '#fff1c4')
+    body.addColorStop(0.45, '#e7b63a')
+    body.addColorStop(1, '#c48a22')
+    cctx.fillStyle = body
+    cctx.beginPath()
+    cctx.arc(cx, cy, 42, 0, Math.PI * 2)
+    cctx.fill()
+    if (grain && grain.scratched) {
+      cctx.strokeStyle = grain.kind === 'fool' ? '#3a342c' : grain.kind === 'gray' ? '#b7a888' : '#f6e7b0'
+      cctx.lineWidth = grain.kind === 'fool' ? 7 : 5
+      cctx.lineCap = 'round'
+      cctx.beginPath()
+      cctx.moveTo(cx - 34, cy + 8)
+      cctx.quadraticCurveTo(cx, cy - 6, cx + 36, cy + 4)
+      cctx.stroke()
+    } else if (state.scratch > 0 && grain) {
+      cctx.strokeStyle = 'rgba(80,60,30,0.35)'
+      cctx.lineWidth = 4
+      cctx.lineCap = 'round'
+      cctx.beginPath()
+      cctx.moveTo(cx - 34, cy + 8)
+      cctx.lineTo(cx - 34 + state.scratch * 70, cy + 8 - state.scratch * 4)
+      cctx.stroke()
+    }
+  }
+
+  function angleOf(event) {
+    const rect = canvas.getBoundingClientRect()
+    return Math.atan2(event.clientY - rect.top - rect.height / 2, event.clientX - rect.left - rect.width / 2)
+  }
+
+  function ensureAudio() {
+    const AudioContext = window.AudioContext || window.webkitAudioContext
+    if (!AudioContext) return null
+    if (!audio) {
+      const context = new AudioContext()
+      const buffer = context.createBuffer(1, context.sampleRate * 2, context.sampleRate)
+      const data = buffer.getChannelData(0)
+      for (let i = 0; i < data.length; i += 1) data[i] = Math.random() * 2 - 1
+      const source = context.createBufferSource()
+      source.buffer = buffer
+      source.loop = true
+      const filter = context.createBiquadFilter()
+      filter.type = 'lowpass'
+      filter.frequency.value = 680
+      const gain = context.createGain()
+      gain.gain.value = 0
+      source.connect(filter)
+      filter.connect(gain)
+      gain.connect(context.destination)
+      source.start()
+      audio = { context, gain }
+    }
+    if (audio.context.state === 'suspended') audio.context.resume()
+    return audio
+  }
+
+  function setSound(on) {
+    state.sound = on
+    try {
+      const node = ensureAudio()
+      if (node) node.gain.gain.value = on ? 0.018 : 0
+    } catch (error) {
+      state.sound = false
+    }
+    renderChrome()
+  }
+
+  function clink() {
+    if (!state.sound || !audio) return
+    try {
+      const osc = audio.context.createOscillator()
+      const gain = audio.context.createGain()
+      osc.type = 'sine'
+      osc.frequency.value = 920
+      gain.gain.setValueAtTime(0.03, audio.context.currentTime)
+      gain.gain.exponentialRampToValueAtTime(0.0001, audio.context.currentTime + 0.18)
+      osc.connect(gain)
+      gain.connect(audio.context.destination)
+      osc.start()
+      osc.stop(audio.context.currentTime + 0.2)
+    } catch (error) {
+      /* 声音不可用时，淘金本身仍然完整。 */
+    }
+  }
+
+  function openReader() {
+    $('reader').hidden = false
+    $('sheet').scrollTop = 0
+    $('readerClose').focus()
+    markNav()
+  }
+
+  function closeReader() {
+    $('reader').hidden = true
+  }
+
+  function buildNav() {
+    const nav = $('readerNav')
+    const labels = ['今天的一句', '人工智能', '科技', '医学', '你的事', '核实清单', '时间窗', '未收录']
+    const heads = [...$('digest').querySelectorAll('h2')]
+    heads.forEach((head, index) => {
+      const button = document.createElement('button')
+      button.type = 'button'
+      button.textContent = labels[index] || head.textContent
+      button.setAttribute('aria-current', index === 0 ? 'true' : 'false')
+      button.addEventListener('click', () => {
+        head.scrollIntoView({ behavior: 'auto', block: 'start' })
+      })
+      nav.appendChild(button)
+    })
+    const sheet = $('sheet')
+    markNav = () => {
+      if ($('reader').hidden) return
+      const bar = $('readbar')
+      const max = sheet.scrollHeight - sheet.clientHeight
+      bar.style.transform = 'scaleX(' + (max > 0 ? sheet.scrollTop / max : 0) + ')'
+      const head = sheet.querySelector('.sheet-head')
+      const edge = (head ? head.getBoundingClientRect().bottom : sheet.getBoundingClientRect().top) + 64
+      let current = 0
+      if (max > 0 && sheet.scrollTop >= max - 8) current = heads.length - 1
+      else {
+        heads.forEach((head, index) => {
+          if (head.getBoundingClientRect().top <= edge) current = index
+        })
+      }
+      ;[...nav.children].forEach((button, index) => {
+        button.setAttribute('aria-current', index === current ? 'true' : 'false')
+      })
+    }
+    sheet.addEventListener('scroll', markNav, { passive: true })
+  }
+
+  function scratchAt(clientX) {
+    const grain = current()
+    if (!grain || grain.scratched) return
+    const rect = closeup.getBoundingClientRect()
+    const local = (clientX - rect.left) / rect.width
+    state.scratch = Math.max(state.scratch, Math.min(1, Math.max(0, local)))
+    if (state.scratch > 0.62) finishScratch()
+    drawCloseup()
+  }
+
+  try {
+  $('scoop').addEventListener('click', scoop)
+  $('assist').addEventListener('click', startAuto)
+  $('scratchBtn').addEventListener('click', finishScratch)
+  $('actBtn').addEventListener('click', act)
+  $('rush').addEventListener('click', rush)
+  $('unclog').addEventListener('click', unclog)
+  $('soundBtn').addEventListener('click', () => setSound(!state.sound))
+  $('logbook').addEventListener('click', openReader)
+  $('readerClose').addEventListener('click', closeReader)
+  $('reader').addEventListener('click', (event) => {
+    if (event.target === $('reader')) closeReader()
+  })
+  $('slip').addEventListener('click', () => { $('slipCard').hidden = false })
+  $('slipClose').addEventListener('click', () => { $('slipCard').hidden = true })
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+      if (!$('reader').hidden) closeReader()
+      else $('slipCard').hidden = true
+    }
+  })
+
+  canvas.addEventListener('pointerdown', (event) => {
+    if (state.phase !== 'swirl') return
+    canvas.setPointerCapture(event.pointerId)
+    state.pointer = true
+    state.lastAng = angleOf(event)
+  })
+  window.addEventListener('pointermove', (event) => {
+    if (state.pointer && state.phase === 'swirl') {
+      const angle = angleOf(event)
+      let delta = angle - state.lastAng
+      while (delta > Math.PI) delta -= Math.PI * 2
+      while (delta < -Math.PI) delta += Math.PI * 2
+      state.lastAng = angle
+      applySwirl(delta)
+    }
+  })
+  window.addEventListener('pointerup', () => { state.pointer = false })
+  closeup.addEventListener('pointerdown', (event) => {
+    closeup.setPointerCapture(event.pointerId)
+    scratchAt(event.clientX)
+  })
+  closeup.addEventListener('pointermove', (event) => {
+    if (closeup.hasPointerCapture(event.pointerId)) scratchAt(event.clientX)
+  })
+  } catch (error) {
+    state.failSafe = true
+    const reader = $('reader')
+    if (reader) reader.hidden = false
+  }
+
+  boot()
+  buildNav()
+  resize()
+  window.addEventListener('resize', resize)
+  if (window.ResizeObserver) new ResizeObserver(resize).observe(canvas)
+  renderChrome()
+  let last = performance.now()
+  function frame(now) {
+    const dt = Math.min(34, now - last)
+    last = now
+    try {
+      step(dt)
+      draw(now)
+    } catch (error) {
+      if (!state.failSafe) {
+        state.failSafe = true
+        $('reader').hidden = false
+      }
+    }
+    window.requestAnimationFrame(frame)
+  }
+  window.requestAnimationFrame(frame)
+})()
+</script>
+</body>
+<!--
+DESIGN LESSON 2026-10-21 折晓早报
+STYLE: 清晨浅溪边一只浅色的淘金盘，晃掉泥沙以后再用指甲刮开看
+GENRE: 可以用手淘洗的二点五维小溪
+TITLE: 只有几粒是真的
+THESIS: 候选越来越便宜，稀缺的是认出真东西的第二道检验。
+-->
+</html>
