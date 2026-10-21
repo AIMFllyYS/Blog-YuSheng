@@ -1062,7 +1062,7 @@
 <p class="p labeled"><strong>发生了什么。</strong> 定时任务于北京时间约 2026-10-21 12:43 失败（运行约 44 秒；触发方式为 schedule）。失败步骤为 <code>bash scripts/prepare-ci-bubblewrap.sh</code>，日志连续四次 <code>curl: (22) The requested URL returned error: 404</code>，后续 API 密钥预检、构建和真实 API 测试被跳过。也就是说，这次失败和代码或 DeepSeek 接口本身无关，更像是脚本依赖的某个下载地址仍未修好。安装依赖阶段还有找不到 <code>dsh</code> 可执行文件的警告，可以一起留意。</p>
 <p class="p tip"><strong>轻提示。</strong> 若你还依赖这套定时绿灯做回归，优先修 prepare 脚本里的 URL 或镜像源；否则会一直在门口摔跤，测不到后面的真问题——又是「锁坏了，门后的房间进不去」。</p>
 <p class="p check"><strong>核实状态。</strong> 单一来源（GitHub Actions 日志；邮件只确认运行失败）。</p>
-<p class="p src"><strong>来源。</strong> <a href="https://github.com/AIMFllyYS/deepseek-harness/actions/runs/39545513235" target="_blank" rel="noopener noreferrer">Actions 运行 39545513235</a>。</p>
+<p class="p src"><strong>来源。</strong> deepseek-harness Actions 运行 39545513235（私有仓库，不放链接）。</p>
 <h3 id="item-27">27. FORMA-ANATOMY-STUDIO 的结构名中文化校对 PR #1 已合入 dev：1685 条有中文，补译 836，改正 203，仍有 39 条待审</h3>
 <p class="p labeled"><strong>发生了什么。</strong> PR #1 于北京时间 2026-10-21 18:00 合入 dev。PR 正文称：运动、内脏、脉管（含淋巴）和神经的结构主名称改为标准中文，英文和拉丁文留在右侧讲解面板；1685 条记录现在都有中文；原先 836 条空白已补译；另有 203 条旧译文被改掉（错译、语序、繁体、把神经写成动脉等）；仍待复核 39 条，完整表在 <code>tools/data/zh_review_pending.md</code>，界面徽标为「待审」。并提醒：模型链路不得商用；Z-Anatomy 的 License.txt 写明内耳为 CC BY-NC-SA 4.0、肾为 CC BY-NC 4.0，系统级 GLB 没有把这些分件拆开。</p>
 <p class="p tip"><strong>轻提示。</strong> 这份解剖工作台和系统解剖学学习、视频制作直接相关。数字均出自 PR 正文，尚未独立核对数据文件；那 39 条「待审」很适合你用解剖学知识做最后一道检验。商用许可限制请一直记在心上——开大门（中文名齐全）的同时，许可证是不能拆掉的锁。</p>
@@ -1072,12 +1072,12 @@
 <p class="p labeled"><strong>发生了什么。</strong> 草稿 PR #55 于北京时间 2026-10-21 18:12 合入；Release PR #56 于 18:45 合入；GitHub Release v0.1.66 于约 18:57 发布。说明覆盖：浏览菜单「制作应用」原先把普通网页禁用，本次接通采集/缓存管理，使网页可以制作成持久应用；自动图标能够保存、更新并在各入口复用；强制刷新能够实际重新加载网页资源；并整合分类浏览数据清理。测试自述：合计 399 项单元测试，0 失败/错误/跳过；新增仪器测试仅编译通过、未在设备执行（云端无连接的 Android 设备，也无 KVM）。</p>
 <p class="p tip"><strong>轻提示。</strong> 正式签名安装包若还要装到自己手机上，仍需按本地发布流程确认；仪器测试没上真机，灰区留给你——单元测试全绿不等于真机交互没洞，当天稍后的 0.1.67 就是证明。</p>
 <p class="p check"><strong>核实状态。</strong> 多来源确认（PR #55/#56 与 GitHub Release 页面一致）。</p>
-<p class="p src"><strong>来源。</strong> PR #55；PR #56；<a href="https://github.com/AIMFllyYS/PocketWebShell/releases/tag/v0.1.66" target="_blank" rel="noopener noreferrer">Release v0.1.66</a>。</p>
+<p class="p src"><strong>来源。</strong> PR #55；PR #56；PocketWebShell Release v0.1.66（私有，不放链接）。</p>
 <h3 id="item-29">29. PocketWebShell 紧接着发布 0.1.67，修好「重置离线资源」在缓存已清空后仍误报失败</h3>
 <p class="p labeled"><strong>发生了什么。</strong> 修复 PR #57 于北京时间 2026-10-21 20:13 合入；Release PR #58 于 20:16 合入；v0.1.67 于约 20:17 发布。说明：修复 0.1.66 中发现的两个问题（一个真实产品缺陷，一个失准的测试）。设备实测：缓存键已归零（n=0），但整体判定为 failed，用户看到「清理失败」的假提示。根因相关描述：惰性同源文档上 <code>serviceWorker.getRegistrations()</code> 抛 <code>InvalidStateError</code>，与缓存删除绑在同一 <code>Promise.all</code>。修复后：缓存删除决定结果，Service Worker 注销移入独立分支尽力而为。versionCode 68 / versionName 0.1.67；<code>testDebugUnitTest</code> 410 项通过；<code>:app:connectedDebugAndroidTest</code>（API 35 模拟器）22 项通过、0 失败。还顺手修了发布脚本被 <code>keytool</code> stderr 打断、以及「关闭全部标签」测试缺少滚动的问题。</p>
 <p class="p tip"><strong>轻提示。</strong> 这是今天个人事务里最贴核心思想的一条：0.1.66 刚把门开大（制作应用等能力），当天就连夜补洞发 0.1.67。若你已经装了 0.1.66，可以考虑升到 0.1.67 再测「重置离线资源」。</p>
 <p class="p check"><strong>核实状态。</strong> 多来源确认（PR #57/#58、Release 说明与测试数字互相一致；仪器测试结果为作者自述，未另开独立 CI 复核）。</p>
-<p class="p src"><strong>来源。</strong> PR #57；PR #58；<a href="https://github.com/AIMFllyYS/PocketWebShell/releases/tag/v0.1.67" target="_blank" rel="noopener noreferrer">Release v0.1.67</a>。</p>
+<p class="p src"><strong>来源。</strong> PR #57；PR #58；PocketWebShell Release v0.1.67（私有，不放链接）。</p>
 <h3 id="item-30">30. FORMA-ANATOMY-STUDIO 新开 PR #2：修「结构打开后无法返回」和「手机单击误进分析」；截至采集时仍为 open</h3>
 <p class="p labeled"><strong>发生了什么。</strong> PR #2 于北京时间 2026-10-21 21:39 创建，目标分支 dev，仍未合并。说明：AI/自动打开结构后无法返回；手机单击误进结构分析。现已让这些打开路径先记一帧场景；画布左上角返回始终可见；无上一级时文案为「返回全部结构」；讲解抽屉打开时面板顶部有同款返回。单击/点按只选中并显示中文名与侧栏概览；双击/双点（画布、名称标签、结构树）才进结构分析。改动：5 个文件，+91 / −31。</p>
 <p class="p tip"><strong>轻提示。</strong> 中文名校对合入后，当天又开了交互修复——又是开大门与补洞同一天。值得你在真机或窄屏宽度上自己点一遍再合；代理写的交互说明再完整，也替代不了你手指点下去的那一下。</p>
