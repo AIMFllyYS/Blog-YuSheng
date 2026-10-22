@@ -1,0 +1,1568 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>折晓早报 · 2026-10-23 · 只喷刚好那几个字</title>
+<style>
+  :root {
+    color-scheme: light;
+    --ink: #2f2924;
+    --soft: #6f6256;
+    --paper: #fffaf4;
+    --wall: #f6f1e8;
+    --ease: cubic-bezier(.22, .72, .2, 1);
+  }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html, body {
+    margin: 0;
+    height: 100%;
+    background: #efe6da;
+    color: var(--ink);
+    font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", "Noto Sans CJK SC", "Source Han Sans SC", "WenQuanYi Micro Hei", "Droid Sans Fallback", sans-serif;
+  }
+  body { overflow: hidden; }
+  button, input { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  button:focus-visible, a:focus-visible, [role="button"]:focus-visible, input:focus-visible {
+    outline: 2px solid #b86a22;
+    outline-offset: 3px;
+  }
+  .stage {
+    height: 100%;
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    background:
+      radial-gradient(900px 320px at 12% -10%, rgba(255, 244, 220, .9), transparent 60%),
+      linear-gradient(180deg, #f8f4ee 0%, #f3ebe2 100%);
+  }
+  .top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 16px 0;
+    color: var(--soft);
+    font-size: 14px;
+  }
+  .top p { margin: 0; }
+  .sound {
+    border: 0;
+    background: transparent;
+    color: var(--soft);
+    padding: 6px 2px;
+  }
+  .theater {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: auto;
+  }
+  .sizer { position: relative; flex: none; }
+  .room {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 760px;
+    height: 652px;
+    transform-origin: top left;
+    display: grid;
+    grid-template-columns: 156px 528px;
+    grid-template-rows: 378px 72px 0px 132px;
+    column-gap: 14px;
+    row-gap: 8px;
+    padding: 16px 28px 14px 22px;
+    justify-content: center;
+    align-content: start;
+    background:
+      radial-gradient(420px 180px at 8% 0%, rgba(255, 236, 206, .95), transparent 70%),
+      linear-gradient(180deg, #fbf7f1 0%, #f3ece3 100%);
+    box-shadow: 0 18px 50px rgba(80, 55, 30, .12);
+    overflow: hidden;
+  }
+  .side { position: relative; grid-column: 1; grid-row: 1 / 4; align-self: start; }
+  .board { grid-column: 2; grid-row: 1; }
+  .coach { grid-column: 2; grid-row: 2; align-self: center; }
+  .card { grid-column: 2; grid-row: 3; align-self: start; height: auto; }
+  .window {
+    height: 168px;
+    border-radius: 8px 8px 2px 2px;
+    background:
+      linear-gradient(180deg, #d7ebf8 0%, #f7fbff 55%, #ffe7c2 100%);
+    box-shadow: inset 0 0 0 8px #f7f4ef, 0 8px 16px rgba(90, 70, 40, .08);
+    position: relative;
+  }
+  .window::before, .window::after {
+    content: "";
+    position: absolute;
+    background: rgba(255, 255, 255, .55);
+  }
+  .window::before { left: 50%; top: 10px; bottom: 18px; width: 2px; }
+  .window::after { top: 46%; left: 10px; right: 10px; height: 2px; }
+  .sill {
+    position: absolute;
+    left: -8px;
+    right: -8px;
+    bottom: -10px;
+    height: 14px;
+    border-radius: 3px;
+    background: linear-gradient(180deg, #fff, #e7d3b8);
+    box-shadow: 0 4px 0 #d7c2a4;
+  }
+  .slip {
+    position: absolute;
+    left: 8px;
+    top: 188px;
+    width: 136px;
+    min-height: 92px;
+    padding: 10px 10px 12px;
+    text-align: left;
+    border: 0;
+    border-radius: 2px 3px 3px 2px;
+    background: linear-gradient(180deg, #fffdf8, #f3ead7);
+    box-shadow: 0 8px 14px rgba(80, 60, 30, .12);
+    transform: rotate(-2.5deg);
+    color: var(--ink);
+  }
+  .slip-kicker {
+    display: block;
+    font-size: 13px;
+    color: #8a5a32;
+    margin-bottom: 4px;
+  }
+  .slip-line { display: block; font-size: 13px; line-height: 1.45; }
+  .board {
+    position: relative;
+    width: 528px;
+    height: 378px;
+    border-radius: 6px;
+    background: #fffaf3;
+    box-shadow:
+      0 0 0 10px #f0e2cc,
+      0 0 0 12px #e4d0b0,
+      0 16px 28px rgba(90, 60, 30, .12);
+    overflow: hidden;
+  }
+  .board canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+  .screw {
+    position: absolute;
+    z-index: 4;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #fff, #c9b79a 45%, #8d7b64);
+    pointer-events: none;
+  }
+  .screw.a { left: 10px; top: 10px; }
+  .screw.b { right: 10px; top: 10px; }
+  .screw.c { left: 10px; bottom: 10px; }
+  .screw.d { right: 10px; bottom: 10px; }
+  .thesis {
+    position: absolute;
+    z-index: 3;
+    left: 24px;
+    right: 24px;
+    top: 12px;
+    margin: 0;
+    text-align: center;
+    font-size: 22px;
+    font-weight: 750;
+    letter-spacing: .02em;
+    color: #c24b3c;
+  }
+  .frame {
+    position: absolute;
+    z-index: 2;
+    width: 400px;
+    height: 52px;
+    border: 1.5px dashed rgba(130, 96, 52, .55);
+    border-radius: 8px;
+    pointer-events: none;
+  }
+  .frame.is-near { border-color: #2f9d78; background: rgba(47, 157, 120, .06); }
+  .plate {
+    position: absolute;
+    z-index: 5;
+    width: 400px;
+    height: 52px;
+    border-radius: 8px;
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, .35), transparent 40%),
+      repeating-linear-gradient(90deg, #e7c07a 0 11px, #d7a85a 11px 13px);
+    box-shadow: 0 10px 16px rgba(90, 55, 20, .18), inset 0 0 0 2px rgba(176, 112, 42, .35);
+    cursor: grab;
+    touch-action: none;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+  }
+  .plate.is-locked { cursor: default; }
+  .plate.is-on { box-shadow: 0 10px 16px rgba(90, 55, 20, .18), 0 0 0 3px #2f9d78; }
+  .plate.is-grabbing { cursor: grabbing; }
+  .plate.is-lifting { transition: transform .45s var(--ease), opacity .45s linear; transform: translateY(-28px) rotate(-4deg); opacity: 0; }
+  .plate.is-shake { animation: shake .28s linear; }
+  .hint { display: none !important; }
+  .coach {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+    line-height: 1.4;
+    min-height: 52px;
+  }
+  .card {
+    margin: 0;
+    padding: 8px 12px;
+    border-radius: 10px;
+    background: rgba(255, 252, 247, .88);
+    box-shadow: 0 6px 16px rgba(90, 60, 30, .06);
+    overflow: auto;
+    max-height: 156px;
+  }
+  .card p { margin: 0 0 6px; font-size: 14px; line-height: 1.55; color: #3a322c; }
+  .card p:last-child { margin-bottom: 0; }
+  .tools {
+    grid-column: 1 / -1;
+    grid-row: 4;
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 12px;
+    align-items: end;
+    padding: 8px 12px 10px;
+    border-radius: 16px;
+    background: linear-gradient(180deg, #f0d7b2, #e4c08a);
+    box-shadow: inset 0 2px 0 rgba(255, 255, 255, .45), 0 8px 0 #d2ae78;
+  }
+  .actions { display: flex; flex-direction: column; gap: 6px; align-items: flex-start; min-height: 86px; }
+  .cloth, .aim, .aperture {
+    border: 0;
+    border-radius: 999px;
+    padding: 8px 14px;
+    background: #fffaf3;
+    box-shadow: 0 4px 0 #e0c8a4;
+  }
+  .cloth { background: #f4d2c8; }
+  .aperture {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    border-radius: 12px;
+    font-size: 13px;
+    color: #6a4a28;
+  }
+  .aperture input { width: 210px; accent-color: #e2a325; }
+  .can {
+    position: relative;
+    width: 86px;
+    height: 108px;
+    touch-action: none;
+    user-select: none;
+  }
+  .can .cap, .can .body, .can .nozzle, .can .mist { position: absolute; display: block; }
+  .can .nozzle {
+    width: 18px; height: 8px; left: 6px; top: 6px;
+    background: #f7f4ef; border-radius: 2px; transform: rotate(-18deg);
+    box-shadow: 0 1px 0 #ddd;
+  }
+  .can .cap {
+    left: 20px; right: 14px; top: 14px; height: 22px;
+    border-radius: 6px 6px 2px 2px;
+    background: linear-gradient(90deg, #c4473c, #ff8b78 42%, #e15d50 80%);
+  }
+  .can .body {
+    left: 16px; right: 10px; top: 34px; bottom: 0;
+    border-radius: 7px 7px 12px 12px;
+    background: linear-gradient(90deg, #d5cfc6 0%, #fbf8f4 22%, #fff 48%, #f4f0ea 72%, #c9c3b8 100%);
+    box-shadow: 0 8px 14px rgba(80, 55, 30, .16), inset 0 0 0 1px rgba(255, 255, 255, .7);
+  }
+  .can-word {
+    position: absolute;
+    left: 0; right: 0; top: 28px;
+    text-align: center;
+    font-size: 13px;
+    color: #6f6256;
+  }
+  .can .mist {
+    width: 54px; height: 42px; left: -18px; top: -16px;
+    background: radial-gradient(circle, rgba(255, 255, 255, .75), rgba(210, 210, 210, .15) 62%, transparent 72%);
+    opacity: 0;
+    pointer-events: none;
+  }
+  .can.is-down { transform: translateY(3px) scale(.98); }
+  .can.is-down .mist { opacity: 1; }
+  .can.is-ready .cap { animation: bob 1.5s ease-in-out infinite; }
+  .caddy {
+    width: 132px;
+    min-height: 92px;
+    border: 0;
+    border-radius: 8px 8px 12px 12px;
+    padding: 22px 10px 10px;
+    text-align: left;
+    color: #3a2a1c;
+    background:
+      linear-gradient(#f3d7a2, #f3d7a2) 10px 8px / 112px 12px no-repeat,
+      linear-gradient(180deg, #e7b56a, #c9843a);
+    box-shadow: 0 8px 0 #b8742e, 0 12px 16px rgba(90, 50, 10, .18);
+    animation: caddy-in .8s var(--ease) both;
+  }
+  .caddy strong, .caddy em { display: block; font-style: normal; }
+  .caddy strong { font-size: 15px; font-weight: 750; line-height: 1.35; }
+  .caddy em { margin-top: 4px; font-size: 12px; color: #6a4018; }
+  .caddy.is-done { animation: wiggle 1.1s var(--ease) 1; }
+  .note-panel, .reader {
+    position: fixed;
+    z-index: 30;
+    background: rgba(47, 41, 36, .28);
+  }
+  .note-panel { inset: 0; }
+  .note-sheet, .reader-sheet {
+    background: var(--paper);
+    color: var(--ink);
+  }
+  .note-sheet {
+    width: min(440px, calc(100% - 28px));
+    margin: 48px auto;
+    padding: 18px 18px 22px;
+    border-radius: 12px;
+    box-shadow: 0 18px 50px rgba(40, 24, 10, .2);
+  }
+  .note-sheet h2 { margin: 0 0 8px; font-size: 18px; }
+  .note-sheet p { margin: 0 0 10px; line-height: 1.65; font-size: 15px; }
+  .note-close, .reader-close {
+    border: 0;
+    background: #fff;
+    border-radius: 999px;
+    padding: 8px 14px;
+    box-shadow: 0 3px 0 #eadfce;
+  }
+  .reader {
+    inset: 0;
+    z-index: 40;
+    overflow: auto;
+    background: #f6f1e8;
+  }
+  .reader-bar {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 18px;
+    background: rgba(246, 241, 232, .94);
+    border-bottom: 1px solid #eadfce;
+  }
+  .reader-bar p { margin: 0; color: var(--soft); }
+  .reader-sheet {
+    width: min(740px, 100%);
+    margin: 0 auto;
+    padding: 8px 22px 72px;
+  }
+  .reader-lead { color: var(--soft); line-height: 1.7; }
+  .jumps { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 18px; }
+  .jumps a {
+    text-decoration: none;
+    color: var(--ink);
+    background: #fff;
+    border: 1px solid #eadfce;
+    border-radius: 999px;
+    padding: 6px 10px;
+    font-size: 14px;
+  }
+  .reader h1 { font-size: 1.7rem; line-height: 1.35; margin: 0 0 .6rem; }
+  .reader h2 {
+    font-size: 1.28rem;
+    line-height: 1.4;
+    margin: 2.2rem 0 .8rem;
+    padding: .7rem 0 .2rem 12px;
+    border-top: 1px solid #eadfce;
+  }
+  #b-ai { box-shadow: inset 4px 0 0 #e15d50; }
+  #b-tech { box-shadow: inset 4px 0 0 #3a6fd8; }
+  #b-med { box-shadow: inset 4px 0 0 #1f8a68; }
+  #b-self { box-shadow: inset 4px 0 0 #e2a325; }
+  #b-ahead, #b-caveat, #b-src { box-shadow: inset 4px 0 0 #c4b39a; }
+  .reader h3 { font-size: 1.05rem; line-height: 1.5; margin: 1.5rem 0 .4rem; }
+  .reader p, .reader li { font-size: 1.02rem; line-height: 1.8; }
+  .reader p { margin: .8rem 0; }
+  .reader ul { padding-left: 1.2rem; }
+  .reader li { margin: .35rem 0; }
+  .reader blockquote {
+    margin: 0 0 1rem;
+    padding: .2rem 0 .2rem 1rem;
+    border-left: 3px solid #e2b15a;
+    color: #5c5146;
+  }
+  .reader a { color: #9a3f32; }
+  .reader hr { border: 0; border-top: 1px dashed #e4d5c0; margin: 1.6rem 0; }
+  .reader .sourced {
+    padding-left: .7rem;
+    border-left: 3px solid #e2b15a;
+  }
+  .reader strong { font-weight: 750; }
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
+  }
+  @keyframes shake {
+    0%, 100% { margin-left: 0; }
+    25% { margin-left: -7px; }
+    75% { margin-left: 7px; }
+  }
+  @keyframes wiggle {
+    0%, 100% { transform: rotate(0); }
+    30% { transform: rotate(-2deg); }
+    60% { transform: rotate(2deg); }
+  }
+  @keyframes caddy-in { from { transform: translateY(8px); opacity: 0; } to { transform: none; opacity: 1; } }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation: none !important;
+      transition: none !important;
+    }
+  }
+</style>
+</head>
+<body>
+<div class="stage" id="stage">
+  <header class="top">
+    <p>折晓早报 · 2026 年 10 月 23 日 · 星期五</p>
+    <button type="button" class="sound" id="sound" aria-pressed="false">喷罐声音：关</button>
+  </header>
+  <div class="theater" id="theater">
+    <div class="sizer" id="sizer">
+      <div class="room" id="room">
+        <aside class="side">
+          <div class="window" aria-hidden="true"><div class="sill"></div></div>
+          <button type="button" class="slip" id="slip">
+            <span class="slip-kicker">窗台上的纸条</span>
+            <span class="slip-line">备份做成了，出站大约 96%</span>
+          </button>
+        </aside>
+        <div class="board" id="board">
+          <canvas id="grain"></canvas>
+          <canvas id="kept"></canvas>
+          <canvas id="wet"></canvas>
+          <span class="screw a"></span><span class="screw b"></span>
+          <span class="screw c"></span><span class="screw d"></span>
+          <p class="thesis" id="thesis" hidden>越能干的帮手，越要只给刚好那一小块。</p>
+          <div class="frame" id="frame" hidden></div>
+          <div class="plate" id="plate" hidden tabindex="0" role="group" aria-label="漏字板"></div>
+          <p class="hint" id="hint" hidden>按住拖进虚线框</p>
+        </div>
+        <p class="coach" id="coach" aria-live="polite"></p>
+        <div class="card" id="card" hidden></div>
+        <div class="tools">
+          <div class="actions">
+            <button type="button" class="cloth" id="wipe" hidden>用布把墙擦干净</button>
+            <button type="button" class="aim" id="aim" hidden>帮我对准虚线框</button>
+            <label class="aperture" id="aperture-wrap" hidden>
+              <span>孔的宽窄</span>
+              <input id="aperture" type="range" min="0" max="100" value="12" aria-valuemin="0" aria-valuemax="100" aria-valuenow="12" aria-valuetext="还是太宽">
+              <span id="aperture-read">还是太宽</span>
+            </label>
+          </div>
+          <div class="can is-ready" id="can" role="button" tabindex="0" aria-label="按住喷漆">
+            <span class="nozzle"></span>
+            <span class="cap"></span>
+            <span class="body"><span class="can-word">喷漆</span></span>
+            <span class="mist"></span>
+          </div>
+          <button type="button" class="caddy" id="caddy" aria-label="打开颜料提箱，阅读今天的完整详细稿">
+            <strong>完整详细稿</strong>
+            <em>打开颜料提箱</em>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="note-panel" id="note-panel" hidden>
+  <div class="note-sheet" role="dialog" aria-modal="true" aria-labelledby="note-title">
+    <button type="button" class="note-close" id="note-close">把纸条折好</button>
+    <h2 id="note-title">窗台上的纸条</h2>
+    <p>StudySolo 的每日备份做成了，但数据库出站流量用到免费额度大约 96%，水位告警把这次运行标成了失败。运行记录和失败通知两处一致。</p>
+    <p>deepseek-harness 的端到端测试还是停在准备沙箱，下载地址返回 404。运行记录和失败通知一致，测试还没跑到接口那一步。</p>
+    <p>系统解剖学第 29 到 30 节，脉管系统总论和心脏（一），课堂材料和 11 道测验在合并请求 #237 里等着合并。据那份描述称，线上可能还看不到。</p>
+    <p>Cell-World 做了一次分阶段的大重组。22.9 GB 不能再生的素材已经在仓库外备份好，47.7 GB 的三维医学母库还没有。据提交记录称。</p>
+    <p>窗外提前提醒：据一封官方通知邮件称，11 月 13 日起 Google AI Plus 不能再选 Pro 模型。这封邮件不在今天的时间窗里。</p>
+  </div>
+</div>
+
+<div class="reader" id="reader" hidden>
+  <div class="reader-bar">
+    <button type="button" class="reader-close" id="reader-close">合上提箱</button>
+    <p>今天的完整详细稿</p>
+  </div>
+  <article class="reader-sheet">
+    <p class="reader-lead">墙上那几句，是今天收好的一小块。下面这份是完整详细稿，公开来源都可以点开。</p>
+    <nav class="jumps" aria-label="详细稿章节">
+      <a href="#b-core">核心思想</a>
+      <a href="#b-ai">人工智能</a>
+      <a href="#b-tech">科技</a>
+      <a href="#b-med">医学</a>
+      <a href="#b-self">你自己的事情</a>
+      <a href="#b-ahead">窗外</a>
+      <a href="#b-caveat">核实清单</a>
+      <a href="#b-src">来源</a>
+    </nav>
+    <h1 id="reader-title">折晓早报 · 2026 年 10 月 23 日（星期五）· 完整详细稿</h1>
+<blockquote><p>这份详细稿收录的是北京时间 2026 年 10 月 22 日 06:00 到 10 月 23 日 06:00 之间发生或首次公开的材料，大致对应美国东部 10 月 21 日傍晚到 10 月 22 日傍晚。美国圣何塞的 AGNTCon + MCPCon 大会和丹佛的 ASN Kidney Week 2026 开幕日都落在窗内，所以人工智能和肾脏病新闻多集中在北京时间 10 月 22 日晚到 10 月 23 日凌晨。文中所有时间都已换算成北京时间。</p>
+<p class="sourced">每一条都写了发生了什么、背景、为什么值得注意、关键数字、核实状态和来源。「多来源确认」的用肯定语气写；「单一来源」或「未能核实」的，正文写明「据某来源称」「尚未得到其他来源确认」。一手来源日期早于时间窗、而报道或进展落在窗内的几条，正文单独说明。1Password for Agents 同时出现在讯AI 和讯科两路，合并写在讯AI 第 1 节，两边细节和链接都保留。</p>
+<p>「你自己的事情」板块只写纯文本：私有仓库、博客仓库的 PR 和邮件线程都不放链接，也不写任何账号名。</p></blockquote>
+<hr>
+<h2 id="b-core">今天的核心思想</h2>
+<p>今天想留给你的一句话是：<strong>越是能干的帮手，越要给得精确——只放行它刚好需要的那一小块，而不是把整串钥匙、整片免疫系统都交出去或者一起打掉。给得太宽，出事的时候就要全部重来。</strong></p>
+<p>先解释两个今天会反复出现的词。第一个是「凭据」（credential）：它是你用来证明「我是我」的那样东西，可以是密码，也可以是一段长长的密钥（API key）、一个令牌（token，可以理解成一张有有效期的电子通行证）、或者某个应用被授权后拿到的身份。谁拿到了凭据，系统就会把他当成你。第二个是「最小权限原则」（principle of least privilege）：这是计算机安全里的一条老规矩，意思是任何一个人、一个程序、一个智能体，只应该拿到完成当前任务刚好需要的那一点权限，多一点都不给。它就像医院里护士站的药柜：值班护士能打开当班要发的药那一格，而不是整个药房的总钥匙。</p>
+<p><strong>做得好的一边，是「精确地只放行一小块」。</strong> 1Password 推出给 AI 智能体用的登录功能：你在自己的设备上批准，1Password 把密码直接填进网页，智能体拿到的只是「这一次、这一个网站的登录」，看不到密码本身。OpenAI 的 Decisions API 是另一种「收窄」：只让模型在给定的几个选项里作答。医学这边，IgA 肾病的两个新药都只拦住驱动疾病的那条信号——sibeprenlimab 只抑制 APRIL，atacicept 同时抑制 BAFF 和 APRIL——两项 III 期最终分析都把肾功能保住了；FDA 把帕博利珠单抗 TMB-H 适应证的门槛从 10 提到 13，把药更精确地给到更可能获益的人；首例体内先导编辑只改写肝细胞里出错的那一处 DNA；巴托利单抗获批治疗重症肌无力（只能确认「获批」这一事实）。</p>
+<p><strong>代价的一边，是「给得太宽」或者「整片打掉」。</strong> 微软披露，Storm-0940 拿到 ConnectWise 云备份服务被攻破的应用凭据——这些应用早就被客户授权进入自家 Microsoft 365——再用 AI 智能体框架 ARTEX 以每分钟约 2,900 次的速度尝试登录 2,250 多个租户。Railway 在凭据泄露后只好替所有用户强制作废存储桶密钥和 GitHub 令牌，这就是「给得太宽，出事就得全部重来」最直白的样子。Arista 的零日漏洞让任何普通登录用户都能提权成「超级运营者」（单一来源）；Arc 浏览器以「在 AI 时代已无法保持足够安全」为由将于 12 月 22 日停服（单一来源）。医学这边，JAMA 的一项随机试验显示，EGPA 维持治疗里把 B 细胞整片清掉的利妥昔单抗并不比硫唑嘌呤更好，严重感染反而更多（单一来源，JAMA 原文）。</p>
+<p>医学生最熟悉的对照，大概就是「靶向药和广谱免疫抑制」：靶向药只拦一条通路，副作用和代价也相对集中；广谱的免疫抑制把一大片免疫力一起压下去，病是控制住了，感染的风险也一起放大。计算机安全里的「最小权限」讲的是同一个道理。需要说明的是，这两条类比是帮助理解的课本常识，不是今天的新闻本身；把这些新闻串成同一句话，也是折晓为了帮你记住而做的串联，不是这些新闻各自的结论。和这句话关系不大的材料（智能体标准、融资与股市、岗位研报、芯片资助、Switch 2 越狱、发射缺口、MIRA2、埃博拉等）下面都完整保留，不硬套核心思想。</p>
+<p>这句话放在你自己的事情里也成立：StudySolo 的每日备份本身成功了，但数据库对外的「出站流量」已经用到免费额度的约 96%；Cell-World 那边，22.9 GB 不可再生的素材刚做完一次带校验的仓库外备份，可 47.7 GB 的 3D 医学母库还没有任何备份——备份也讲究「给得精确」：先把最不能丢的那一块护住。</p>
+<p>下面按讯AI、讯科、讯医三个板块来写，每个板块先放「只放行刚好那一小块」，再放「给得太宽的代价」，最后是其余材料；之后是你自己的事情、窗外前瞻、单一来源与未能核实清单和来源索引。四份证据包的每个条目都收录了。</p>
+<hr>
+<h2 id="b-ai">第一部分 · 讯AI（人工智能）</h2>
+<h3>1. 1Password 推出「1Password for Agents」：AI 智能体经你批准后用你保险库里的凭据登录网站，但智能体本身看不到密码</h3>
+<p>〔讯AI-4 + 讯科-4，同一事件合并〕</p>
+<p><strong>背景。</strong> 这两年「个人智能体」开始真正替人办事：帮你回邮件、交账单、订票、在网站上填表。几乎每一件事都会卡在同一步——登录。过去要么人亲自接手输密码，要么把密码直接贴给模型——后者方便，却等于把「证明我是我」的东西交给了一个可能被网页里的恶意指令诱导的程序。用核心思想的话说，这是把整串钥匙交了出去。密码管理器本来就是替你保管所有密码的「保险库」（vault）。</p>
+<p><strong>发生了什么。</strong> 1Password 于北京时间 2026 年 10 月 22 日 21:00 发布新闻稿，推出 1Password for Agents。官方新闻稿的描述是：智能体在不接收、也看不到凭据的情况下完成登录。当智能体走到一个登录表单时，它用一把独一无二的数字密钥向 1Password 证明自己的身份；你会看到它需要哪一条凭据、为什么需要，然后自己决定批不批准；批准这一步发生在你自己的设备上，以此确认许可确实来自你本人；接着 1Password 把凭据直接填进登录表单，而不是发给智能体。The Verge 报道说，这套访问系统设计成可以和多种主流 AI 智能体配合使用，点名列出了 Meta Muse、ChatGPT Work 和 Dots、Claude Duet、Grok Bot 以及 Town。讯科证据包引用的 1Password 官方博客也写明：智能体可以申请使用你保险库里的某条凭据，如果你批准，1Password 会把凭据自动填入目标网站，因此智能体接触不到凭据本身；官方列出已集成或即将集成的智能体有 Meta 的 Muse、Anthropic 的 Claude Duet、OpenAI 的 ChatGPT Work 等。</p>
+<p><strong>为什么值得注意。</strong> 首批合作方覆盖了 Meta、Anthropic、OpenAI 等主流智能体产品，采集员据此判断「人批准、AI 执行」正在成为行业默认的授权模式。它和讯科板块的 Storm-0940、Railway 正好是正反两面：那两条讲凭据被整块拿走之后要重来多少，这一条讲从一开始就不把凭据交出去。让智能体变能干，不一定要给它更多权限。</p>
+<p><strong>谁能用。</strong> 1Password 官方博客原文写道：「1Password for Agents 目前对 1Password.com 上的个人版和家庭版账户免费提供，不另收费；1Password.eu 或 1Password.ca 上的账户目前还不支持。」讯科证据包的采集员也指出，它正好接上 Storm-0940 和 Railway 那两条「凭据被拿走」的风险。</p>
+<p><strong>关键数字与细节。</strong> 新闻稿发布时间北京时间 10 月 22 日 21:00（官方博客只落款美国时间 10 月 22 日、未写时刻）；点名的智能体产品有 Meta Muse、ChatGPT Work 和 Dots、Claude Duet、Grok Bot、Town（出自 The Verge）；个人版与家庭版免费，.eu 与 .ca 账户暂不支持（出自官方博客）。</p>
+<p><strong>核实状态。</strong> 多来源确认。1Password 官方新闻稿、官方博客与 The Verge、TechCrunch 的报道一致（讯AI 与讯科两路分别核对，链接均可打开）。</p>
+<p><strong>来源。</strong> <a href="https://1password.com/press/2026/october/1password-for-agents-trust-layer-personal-ai-agents" target="_blank" rel="noopener noreferrer">1Password 官方新闻稿</a>；<a href="https://1password.com/blog/1password-for-ai-agents" target="_blank" rel="noopener noreferrer">1Password 官方博客</a>；<a href="https://www.theverge.com/ai-artificial-intelligence/1016399/1password-ai-agent-password-sign-in" target="_blank" rel="noopener noreferrer">The Verge</a>；<a href="https://techcrunch.com/2026/10/22/1password-launches-a-way-for-ai-agents-to-log-in-on-your-behalf-without-seeing-your-password/" target="_blank" rel="noopener noreferrer">TechCrunch</a>。</p>
+<h3>2. OpenAI 把只回答「有限选项」的 Decisions API 正式开放给所有开发者，只按输入 token 收费</h3>
+<p>〔讯AI-1〕</p>
+<p><strong>背景。</strong> 先解释几个词。API（应用程序接口）可以理解成开发者用代码去「调用」一个模型的窗口。token 是模型读写文字时的计量单位，大致相当于一个词或者一个字的一部分；模型的收费通常分成「输入 token」（你喂给它的内容）和「输出 token」（它写出来的内容）两部分。很多真实应用里，开发者需要模型做的其实是「选择题」：这封邮件归哪一类？智能体下一步走 A 还是 B？这类问题的答案是「有边界的」（bounded），可选项事先就列好了。用一个能自由写作的大模型去做选择题，往往又慢又贵。</p>
+<p><strong>发生了什么。</strong> OpenAI 于北京时间 2026 年 10 月 23 日 03:00 发布公告，宣布 Decisions API 正式全面开放（generally available）。官方原文说，Decisions API 基于 GPT‑6 Luna 构建，把 Luna 的智能集中在「答案有边界的问题」上，帮助应用和智能体根据文本、图片和结构化输入做出接近实时的决策，速度比通过 Responses API 调用 GPT‑6 Luna 快至多 10 倍。采集员的说明是：开发者给出问题和允许的答案，模型只返回概率、选项或分数，用来做分类、路由和智能体的下一步决策；每次请求最多可以放 400 个问题，是此前上限的两倍。</p>
+<p><strong>价格。</strong> 官方原文写明：每百万输入 token 0.10 美元，缓存过的输入每百万 token 0.01 美元；只按输入 token 付费，没有输出 token 的费用。</p>
+<p class="sourced"><strong>榜单位置。</strong> TechCrunch 指出，这是在追赶 TypeSafe 的 Jev 等「决策模型」新赛道。据 TechCrunch 称，公开榜单 AIM System One Index 和 Artificial Analysis Decision Index 往往更偏向 D1 Ultra；最新的 Jev 模型在两个榜单上分别排第七和第三，而 OpenAI 的决策模型分别排第八和第十四。这组排名只见于 TechCrunch。</p>
+<p><strong>为什么值得注意。</strong> 采集员把它称为「大模型被拆成又快又便宜的小判断器」这一趋势的清晰样本。它是「收窄」的另一种形态：1Password 收窄的是权限，Decisions API 收窄的是答案。不过「收窄」不等于「更聪明」，两个公开榜单上 OpenAI 的排名并不靠前。</p>
+<p><strong>关键数字。</strong> 至多快 10 倍；每次请求最多 400 个问题（此前上限的两倍）；每百万输入 token 0.10 美元、缓存输入 0.01 美元、无输出费用（以上出自 OpenAI 原文）；榜单排名第八和第十四（出自 TechCrunch）。</p>
+<p class="sourced"><strong>核实状态。</strong> 多来源确认。OpenAI 官方公告与 TechCrunch 采访报道一致；榜单排名仅见 TechCrunch，尚未得到其他来源确认。</p>
+<p><strong>来源。</strong> <a href="https://openai.com/index/decisions-api/" target="_blank" rel="noopener noreferrer">OpenAI 官方公告</a>；<a href="https://techcrunch.com/2026/10/22/openai-makes-its-jev-competitor-widely-available-as-decision-model-competition-heats-up/" target="_blank" rel="noopener noreferrer">TechCrunch</a>。</p>
+<h3>3. Anthropic、OpenAI、Hugging Face 和阿里巴巴同日把各自的智能体标准捐给 Linux 基金会旗下的 Agentic AI Foundation</h3>
+<p>〔讯AI-2〕</p>
+<p><strong>背景。</strong> Linux 基金会是一个中立的非营利组织，长期托管 Linux 内核、Kubernetes 等许多大型开源项目。它旗下的 Agentic AI Foundation（AAIF，智能体 AI 基金会）在 2025 年 12 月成立时有 3 个项目。所谓「把标准捐给基金会」，意思是某家公司把自己定义的一套格式或接口交出来，由中立机构和各家公司共同维护，而不再由一家公司单方面说了算。</p>
+<p><strong>发生了什么。</strong> Linux 基金会新闻稿署「SAN JOSE, Oct. 22, 2026」，Anthropic 页面署 2026 年 10 月 22 日，都没有注明具体时刻；它们随 AGNTCon + MCPCon 北美大会首日发布，按美西白天换算，约为北京时间 10 月 22 日夜间到 10 月 23 日凌晨，在窗内。AAIF 宣布新增四个项目：Anthropic 贡献的 Agent Skills、OpenAI 贡献的 Open Responses、Hugging Face 贡献的 OpenEnv、阿里巴巴贡献的 OpenSandbox。新闻稿说，这使 AAIF 在成立第一年里托管的项目达到 10 个，而成立时只有 3 个。</p>
+<p><strong>四个项目分别是什么。</strong> 按采集员的归纳，四个项目分别覆盖智能体的四件事：「学技能」——Agent Skills，就是用一个文件夹加一份 SKILL.md 说明文件来打包一项技能的格式；「跨厂商调用模型」——Open Responses；「强化学习训练环境」——OpenEnv（强化学习是让模型在一个环境里反复尝试、按结果得到奖励或惩罚来学习的方法，训练环境就是给它练习的场地）；「安全沙箱运行」——OpenSandbox（沙箱是一个和外界隔离的运行空间，程序在里面出了问题也不会波及外面）。</p>
+<p><strong>一些数字和一个缺席。</strong> Anthropic 页面说，自 2025 年 12 月发布这个标准以来，已有 70 多个智能体平台集成了 Agent Skills，包括 ChatGPT、Cursor、GitHub Copilot 和 VS Code；到目前为止已经发布了 100 万个技能、安装了将近 2.8 亿次。The New Stack 在谈 Open Responses 的支持方时指出，名单里缺了 OpenAI 的对手 Anthropic，后者有自己定义的 Messages API 供开发者调用模型。</p>
+<p><strong>为什么值得注意。</strong> 采集员的判断是：头部公司正在把智能体的底层接口交给中立机构共同维护，你在 Claude、Cursor 等工具里用到的「技能」机制，今后将由多家公司共同决定。但 Open Responses 暂时没有 Anthropic 的支持，离「所有人都用同一套」还有距离。</p>
+<p><strong>核实状态。</strong> 多来源确认。Linux 基金会、Anthropic 官方页面与 The New Stack 报道一致。</p>
+<p><strong>来源。</strong> <a href="https://www.linuxfoundation.org/press/agentic-ai-foundation-announces-four-new-projects-agent-skills-open-responses-openenv-and-opensandbox" target="_blank" rel="noopener noreferrer">Linux 基金会新闻稿</a>；<a href="https://www.anthropic.com/news/donating-agent-skills-to-the-agentic-ai-foundation" target="_blank" rel="noopener noreferrer">Anthropic 官方页面</a>；<a href="https://thenewstack.io/openai-donates-open-responses/" target="_blank" rel="noopener noreferrer">The New Stack</a>。</p>
+<h3>4. Google Cloud 推出专为 AI 智能体设计的计算服务 Agent Compute Engine，并开源 GKE 上的 Agent Substrate</h3>
+<p>〔讯AI-3〕</p>
+<p><strong>背景。</strong> 一个智能体干活时，大致是「想一想 → 调用一个工具（比如运行一段代码、打开一个网页）→ 再想一想」这样循环往复，这叫智能体循环（agentic loop）。调用工具时它要运行的代码往往不可信，所以常见做法是给每个智能体一台小虚拟机（microVM，可以理解为一台很轻、启动很快、和别人隔开的虚拟电脑）。问题在于，智能体有大量时间在「想」而不是在「跑」，一直占着机器就很浪费。GKE 是 Google Cloud 上管理容器化程序的服务。</p>
+<p><strong>发生了什么。</strong> Google Cloud 官方博客于北京时间 2026 年 10 月 22 日 21:19 发布。原文说，Google 在 AGNTCon + MCPCon 大会上推出 Agent Compute Engine，这是一项专门打造的计算服务，已经在支撑 Gemini 作为「工作任务智能体」运行；它将在未来几个月内开放预览，提供硬件隔离的运行时沙箱安全。原文还描述了核心机制：当智能体执行完一次工具调用、进入智能体循环中的「思考」阶段时，小虚拟机会发出空闲信号，宿主机把它从活跃状态转为空闲状态。配套开源的 Agent Substrate 在 GKE 上运行；原文称，在运行 20 万个智能体的基准测试中，Agent Substrate 维持每秒 500 次激活，挂起与恢复延迟低于 500 毫秒。</p>
+<p><strong>为什么值得注意。</strong> 采集员的判断是：智能体的竞争已经从「模型多聪明」延伸到「给它一台什么样的安全电脑」。硬件隔离的沙箱本身也是一种「只给刚好那一小块」。但 Agent Compute Engine 仍是「未来几个月预览」，尚未开放，性能数字都出自 Google 自己的博客。</p>
+<p class="sourced"><strong>核实状态。</strong> 单一来源。据 Google 官方博客称；采集员在 The New Stack 首页看到了同题报道的标题，但没有逐字核对正文，因此尚未得到其他来源确认。</p>
+<p><strong>来源。</strong> <a href="https://cloud.google.com/blog/topics/ai-infrastructure/introducing-agent-compute-engine-and-expanded-agent-governance" target="_blank" rel="noopener noreferrer">Google Cloud 官方博客</a>。</p>
+<h3>5. 欧洲议会全体会议就是否恢复「AI 责任法」激烈交锋，起因包括今年多起 AI 智能体参与的黑客事件</h3>
+<p>〔讯AI-8〕</p>
+<p><strong>背景。</strong> 「责任法」（liability rules）回答的是：一件产品伤了人，谁来赔？传统制造业里，产品有缺陷造成损害，制造商要承担责任。欧盟已经有一部覆盖面很广的《人工智能法》（AI Act），但那主要是事前的规范和合规要求；而专门处理「AI 造成伤害后怎么追责」的 AI 责任指令，采集员说明，欧盟委员会去年在「简化监管」中把它撤回了。</p>
+<p><strong>发生了什么。</strong> POLITICO Europe 标注发布时间为 2026 年 10 月 22 日下午 1:14 CET。采集员说明，10 月 22 日欧洲仍处于夏令时，如果实际是 CEST 就是北京时间 19:14，如果按页面所写的 CET 则是 20:14，两种情况都在窗内。据 POLITICO Europe 报道，支持欧盟委员会主席冯德莱恩的中间派政党在周四的欧洲议会全体会议上，就「是否要让 AI 公司为造成的伤害负责」发生了冲突。荷兰绿党欧洲议会议员 Kim van Sparrentak 说：「如果你家里的手机充电器爆炸了，我们从来不会说它很创新。我们会说它是便宜、危险的垃圾，并让制造商承担损害赔偿。」另一方则认为，欧盟已经有了一套全面的监管框架——《人工智能法》，其中一些部分甚至还没生效，欧盟应该专注于避免在全球 AI 竞赛中掉队。采集员归纳：中左翼和绿党要求重新立法，让 AI 公司像传统制造商一样对产品造成的伤害负责；中右翼坚持先保竞争力。报道还提到 Sam Altman 也曾提出，要为具备自主网络攻击能力的模型建立新的责任框架。</p>
+<p><strong>为什么值得注意。</strong> 采集员认为，这条反映出 AI 智能体安全事件正在直接推动立法讨论。和讯科板块的 Storm-0940 放在一起看会更清楚：当攻击者已经能用智能体框架以机器速度去试登录，「出了事谁负责」就不再是抽象问题。但必须说清楚：目前只是议会辩论，没有形成任何法案或决定。</p>
+<p class="sourced"><strong>核实状态。</strong> 单一来源。据 POLITICO Europe 现场报道；采集员没有找到欧洲议会官方纪要的同步链接，尚未得到其他来源确认。</p>
+<p><strong>来源。</strong> <a href="https://www.politico.eu/article/ursula-von-der-leyen-coalition-fractures-over-need-for-ai-liability-rules/" target="_blank" rel="noopener noreferrer">POLITICO Europe</a>。</p>
+<h3>6. CNBC：OpenAI 接近完成最高 300 亿美元融资，投前估值 1.25 万亿美元，由阿联酋投资方与 Coatue 领投</h3>
+<p>〔讯AI-5〕</p>
+<p><strong>背景。</strong> 「投前估值」（pre-money valuation）指的是这笔新钱进来之前公司被估的价值；CNBC 原文特别说明，1.25 万亿美元这个估值不包括这次新筹的资金。「过桥融资」（bridge）是指在下一件大事——这里是可能的首次公开募股（IPO，也就是公司股票第一次在交易所公开发售）——之前，先筹一笔钱把中间这段路接上。</p>
+<p class="sourced"><strong>发生了什么。</strong> CNBC 于北京时间 2026 年 10 月 23 日 04:15 发布报道。据 CNBC 援引不愿具名的知情人士称：这家总部在旧金山的 AI 公司正在以 1.25 万亿美元的估值筹集最多 300 亿美元；来自阿联酋的投资方和 Coatue 一起领投；这笔融资被定位为可能的 IPO 之前一笔「机会性」的过桥融资；OpenAI 周四告诉投资者，目标是在下周末之前完成签约，但最终规模仍在确定中。采集员补充，CNBC 同时提到 OpenAI 正与阿联酋谈判获取更多算力，而且此前向投资者表示，目标是到 2030 年总算力支出约 6000 亿美元。</p>
+<p><strong>为什么值得注意。</strong> 采集员建议把这条和下一条「市场抛售 AI 股」对照阅读：资本一边继续加码头部公司，一边开始追问回报。融资规模和条款都还没有最终确定。</p>
+<p class="sourced"><strong>核实状态。</strong> 单一来源。据 CNBC 援引匿名知情人士称；TipRanks 等其他页面都是转引 CNBC，OpenAI 没有公开确认，尚未得到其他来源确认。</p>
+<p><strong>来源。</strong> <a href="https://www.cnbc.com/2026/10/22/openai-funding-round-uae-investors.html" target="_blank" rel="noopener noreferrer">CNBC</a>。</p>
+<h3>7. Meta 宣布发行无投票权股票为 AI 投资融资后，次日 AI 相关股票遭集中抛售，Meta 跌 7%、纳指跌 2.6%</h3>
+<p>〔讯AI-6〕</p>
+<p><strong>背景。</strong> 「超大规模云厂商」（hyperscaler）指的是 Meta、微软、谷歌、亚马逊这类花几十亿、上百亿美元自建数据中心的公司。「无投票权股票」是一类可以拿到公司经济收益、但在股东大会上没有表决权的股份；公司发这类股票可以筹钱，又不稀释创始人的控制权，但会摊薄现有股东每股能分到的份额，这叫「稀释」。「自由现金流」（free cash flow）大致是公司经营赚到的现金减去资本支出（比如建数据中心）之后剩下的钱；它为负，就是说这一季在「烧钱」。</p>
+<p><strong>时间说明。</strong> 采集员特别说明：Meta 的财报和新股类别是在美东时间 10 月 21 日收盘后公布的，在本次时间窗之前；本条收录的是窗内发生的市场反应。路透社报道的是美股 10 月 22 日周四的交易时段；Investing.com 转载页显示发布于 2026 年 10 月 22 日下午 02:32，未注明时区，按美东时间推算约为北京时间 10 月 23 日 02:32，都在窗内。</p>
+<p><strong>发生了什么。</strong> 据路透社稿件（经 Investing.com 转载），投资者抛售了 Meta 以及许多处于 AI 交易核心位置的公司的股票，起因是前一天 Meta 宣布要发行一类新股票来帮助筹资。Meta 下跌 7%，是 7 月以来的最大跌幅；SpaceX 下跌 9%；被视为 AI 交易风向标的英伟达下跌 4%；纳斯达克综合指数下跌 2.6%，是 6 月 5 日以来的最大跌幅。路透社还写到，Meta 第三季度自由现金流为负 21.2 亿美元，而一年前同期为正 106.3 亿美元，这是 Meta 十多年来第一次「烧钱」。</p>
+<p><strong>为什么值得注意。</strong> 采集员认为，这为「AI 热潮的账单谁来付」提供了当天最直接的市场证据：投资者担心 AI 基建投入巨大、回报遥远，也开始担心发新股带来的稀释。和上一条 OpenAI 的融资传闻放在一起，就是同一枚硬币的两面。</p>
+<p><strong>核实状态。</strong> 多来源确认。路透社稿件为主要来源；Meta 发行 C 类股、第三季度自由现金流为负约 21 亿美元，也见于 AI Policy Daily 2026 年 10 月 22 日版对 The Verge、Fortune 的转述。</p>
+<p><strong>来源。</strong> <a href="https://www.investing.com/news/economy-news/steep-bill-for-ai-buildout-punishes-meta-other-tech-favorites-4967187" target="_blank" rel="noopener noreferrer">路透社稿件（Investing.com 转载）</a>；<a href="https://aipolicydaily.org/archive/daily/2026-10-22/" target="_blank" rel="noopener noreferrer">AI Policy Daily 2026-10-22</a>。</p>
+<h3>8. 高盛最新研报：AI 转型期内可能有最多 9% 的劳动者被替代，而大规模裁员更可能在经济衰退时集中出现</h3>
+<p>〔讯AI-9〕</p>
+<p><strong>背景。</strong> 「被替代」（displaced）在经济学里指的是原有岗位因为技术变化而消失、人被迫离开原来的工作；它和「招聘放缓」不同，后者是新岗位开得少了。「周期性放缓」（cyclical slowdown）指经济周期里的下行阶段，也就是常说的衰退或不景气。</p>
+<p><strong>发生了什么。</strong> Fortune 于北京时间 2026 年 10 月 23 日 02:20 发布报道，文中称高盛研报于周四即 10 月 22 日发布。据 Fortune 转述，高盛经济学家 Joseph Briggs 在「AI 最终让美国和其他发达经济体的生产率提升 15%」的预测之下，估算最多 9% 的劳动者可能在「AI 转型期间被替代」，招聘放缓还会再拖累 3% 的就业——大约相当于每 11 个劳动者里有 1 个。Briggs 回顾了几十年来技术替代劳动者的数据，发现「整体经济健康时，与自动化相关的劳动力冲击是有限的，但在周期性放缓期间会加速」。至于为什么现在还看不太出来，Briggs 的第一个回答是「还早」：只有 23% 的美国企业把 AI 纳入了日常工作流程，大部分由 AI 带来的生产率提升还在未来。</p>
+<p><strong>为什么值得注意。</strong> 采集员认为，更值得关注的是时间规律：自动化带来的岗位流失，在经济健康时有限，到经济下行时才集中爆发。所以眼下 AI 裁员不明显，并不代表影响很小。</p>
+<p class="sourced"><strong>核实状态。</strong> 单一来源。据 Fortune 报道高盛研报；研报原文是给客户的报告，未能公开获取；Investing.com 等页面有同题转引，但都不是独立核实，尚未得到其他来源确认。</p>
+<p><strong>来源。</strong> <a href="https://fortune.com/2026/10/22/goldman-sachs-forecast-how-many-jobs-lost-to-ai-9-percent/" target="_blank" rel="noopener noreferrer">Fortune</a>。</p>
+<h3>9. 前 OpenAI 科学负责人 Kevin Weil 创办 Warp Sciences，融资 2.15 亿美元，用 AI 和机器人自动化药物化学实验</h3>
+<p>〔讯AI-7〕</p>
+<p><strong>背景。</strong> 「湿实验」（wet lab）是指真正要动试剂、烧瓶、移液枪的实验，和只在电脑上算的「干实验」相对。「合同研究组织」（CRO，contract research organization）是替药企、生物技术公司外包做研究和实验的公司。在新药研发里，「先导化合物优化」是指已经找到一个有希望的分子（先导化合物）之后，再合成大量结构相近的「类似物」去比较，挑出效果更好、毒性更低、性质更合适的那一个——这一步非常费人力。</p>
+<p><strong>发生了什么。</strong> Business Wire 新闻稿（编号 20261022200104）与 TechCrunch 报道同日发布；TechCrunch 标注太平洋夏令时 10 月 22 日上午 11:38，即北京时间 10 月 23 日 02:38。新闻稿说，Warp Sciences 当天结束隐身状态，宣布获得 2.15 亿美元资金，用来建设帮助生物技术和制药公司更快发现新药的基础设施；公司正在建设一家总部在美国的化学 CRO，把专业化学家、AI 和机器人结合起来，制备并测试研究团队需要的分子。联合创始人兼 CEO Kevin Weil 说：「AI 已经大大加速了软件工程和数学，但在物理科学里还没有产生同样的影响。」TechCrunch 报道称，据 Weil 本人说，公司以 8.65 亿美元的估值融到了 2.15 亿美元；公司的人类化学家会戴着摄像头和传感手套，训练机器人完成各种实验室操作。</p>
+<p><strong>为什么值得注意。</strong> 这条主体是 AI 公司创业和「AI 进入湿实验」的方向，正好落在你的医学和 AI 两条学习线的交叉处。需要提醒：它不涉及任何具体的医学发现，也还没有公开的实验成果。</p>
+<p class="sourced"><strong>核实状态。</strong> 多来源确认（Business Wire 官方新闻稿与 TechCrunch 报道一致）；其中 8.65 亿美元估值只见于 TechCrunch，尚未得到其他来源确认。</p>
+<p><strong>来源。</strong> <a href="https://www.businesswire.com/news/home/20261022200104/en/Warp-Sciences-Emerges-From-Stealth-With-%24215-Million-to-Build-U.S.-Chemistry-Services-for-Drug-Research" target="_blank" rel="noopener noreferrer">Business Wire 新闻稿</a>；<a href="https://techcrunch.com/2026/10/22/former-openai-science-lead-launches-warp-science-to-automate-wet-labs-with-robots/" target="_blank" rel="noopener noreferrer">TechCrunch</a>。</p>
+<hr>
+<h2 id="b-tech">第二部分 · 讯科（科技）</h2>
+<p>讯科证据包第 4 条（1Password for Agents）与讯AI 第 4 条是同一事件，已合并写在讯AI 板块第 1 节，讯科那边的细节和链接都收进去了。</p>
+<h3>1. 微软披露：中国背景的 Storm-0940 借 ConnectWise 云备份被攻破的应用凭据，用 AI 智能体框架 ARTEX 以每分钟约 2,900 次的速度尝试登录 2,250 多个 Microsoft 365 租户</h3>
+<p>〔讯科-1〕</p>
+<p><strong>背景。</strong> 先解释几个词。「租户」（tenant）是云服务里的一个术语：一家公司在 Microsoft 365 上开的整套账号空间——它的邮箱、文档、员工身份——就是一个租户。ConnectWise 提供 IT 管理和云备份服务；企业为了让它备份，会授权它的「应用」进入自家 Microsoft 365，应用拿着「应用凭据」就能直接进去，不需要每次有人输密码，这叫非交互式登录。「供应链攻击」是指攻击者不直接打你，而是先打下你信任的供应商，再顺着供应商的权限进到你这里。</p>
+<p><strong>发生了什么。</strong> 微软安全博客的落款是美国时间 10 月 21 日，没有标具体时刻，可能早于时间窗；而媒体的大范围报道和归因细节是在窗内发出的：The Register 报道于北京时间 10 月 22 日 20:28、TechCrunch 报道于 10 月 23 日 00:47 发出。按采集员整理：攻击者先拿下 ConnectWise 云备份服务的应用身份，再借着客户早就授予这些应用的权限，不用交互式登录就进入下游企业的 Microsoft 365。微软博客原文写道：「在未经授权的访问之后，Storm-0940 使用 ARTEX 尝试登录超过 2,250 个租户，速度达到每分钟 2,900 次，这样的节奏让防守方几乎没有时间去发现和响应。」博客还写道：「其中几次由 ARTEX 驱动的攻击让攻击者获得了组织云基础设施的特权访问——包括多次从最初锁定目标到获得特权访问用时不到 3 小时。」The Register 补充说，大多数尝试失败了，但微软表示攻击者仍然在许多组织里建立了持久的特权访问；微软没有披露有多少客户被攻破，也没有说是否有数据被盗。</p>
+<p><strong>为什么值得注意。</strong> 这是今天「给得太宽」最典型的一例：客户为方便备份授予的长期权限，一旦落进攻击者手里，就成了能打开 2,250 多个租户的钥匙串。采集员称它是「信任链被反过来利用」的典型供应链事件，也直观地说明 AI 智能体会让防守方的反应时间急剧缩短。</p>
+<p><strong>关键数字。</strong> 2,250 多个租户；每分钟 2,900 次登录尝试；从锁定目标到获得特权访问最短不到 3 小时；10 月 10 日至 14 日间 151,000 多次失败登录。以上均出自微软博客原文。</p>
+<p><strong>核实状态。</strong> 多来源确认。微软官方博客为一手来源，The Register、TechCrunch 独立报道，数字一致。</p>
+<p><strong>来源。</strong> <a href="https://www.microsoft.com/en-us/security/blog/2026/10/21/storm-0940-uses-artex-agentic-ai-connectwise-supply-chain-compromise/" target="_blank" rel="noopener noreferrer">微软安全博客（一手）</a>；<a href="https://www.theregister.com/security/2026/10/22/microsoft-says-connectwise-breach-let-chinese-spies-loose-on-2250-cloud-tenants/5304687" target="_blank" rel="noopener noreferrer">The Register</a>；<a href="https://techcrunch.com/2026/10/22/chinese-hackers-spied-on-thousands-of-companies-after-breaching-it-giant-connectwise/" target="_blank" rel="noopener noreferrer">TechCrunch</a>。</p>
+<h3>2. Railway 在凭据泄露事件后强制重置所有存储桶密钥和 GitHub 令牌，并呼吁「所有用户」轮换密钥</h3>
+<p>〔讯科-3〕</p>
+<p><strong>背景。</strong> Railway 是一个很受个人开发者欢迎的云部署平台：你把代码连上去，它帮你把网站或后端跑起来。开发者通常会把 API 密钥、数据库密码这类敏感信息存成「环境变量」交给平台保管。「存储桶」（bucket）是对象存储服务里存文件的容器，S3 是这类服务最常见的接口标准，访问它要用一对「S3 凭据」。「轮换密钥」（rotate）是指把旧的密钥作废、换一把新的，这样就算旧的被偷了也没用了。</p>
+<p><strong>时间说明。</strong> 最初的安全披露落款为美国时间 10 月 21 日，可能早于时间窗。这一条收录的是窗内的新进展：Railway 的后续指南发布于 10 月 22 日（博客只标日期，没写时刻），TechCrunch 的报道发布于北京时间 10 月 22 日 22:03。</p>
+<p><strong>发生了什么。</strong> Railway 博客写道：「如果你的工作区有存储桶或 GitHub 连接，Railway 已经在事件响应中替你重置了这些凭据：每个存储桶的 S3 凭据，以及 Railway 为你的账户和服务持有的 GitHub 令牌。旧的值已经不能再用了。」但博客同时提醒了一个很容易漏掉的细节：存成「私有镜像仓库凭据」的 GitHub 个人令牌，「在你撤销之前在 GitHub 上仍然有效。Railway 不能替你创建新的 GitHub 令牌，所以你需要自己重新连接」。TechCrunch 报道称，Railway 没有说具体有多少用户受到影响，也没有说查明的根本原因是什么；Railway 创始人兼 CEO Jake Cooper 告诉 TechCrunch，公司计划发布这起事件的事后复盘。采集员补充：攻击者可能拿到了部分用户解密后的环境变量，里面通常存着 API 密钥和数据库密码；Railway 说这起事件可能属于一系列针对平台公司、意在攻破 AI 推理服务商的攻击。</p>
+<p><strong>为什么值得注意。</strong> 这就是「给得太宽，出事时就要全部重来」的现场：平台握着许多用户的钥匙，出事后只能全部作废、全部重配。采集员认为那个细节很有实操价值：平台作废的只是它自己能作废的那部分，存在别处的令牌还得自己去撤销，需要逐项检查、逐项轮换。</p>
+<p><strong>核实状态。</strong> 多来源确认。Railway 官方博客两篇加上 TechCrunch 独立报道。</p>
+<p><strong>来源。</strong> <a href="https://blog.railway.com/p/security-disclosure-recommendation-redeploy-buckets-and-reconnect-github-after-the-credential-reset" target="_blank" rel="noopener noreferrer">Railway 后续指南</a>；<a href="https://techcrunch.com/2026/10/22/developer-platform-railway-urges-all-users-to-revoke-secret-keys-after-cyberattack/" target="_blank" rel="noopener noreferrer">TechCrunch</a>；<a href="https://blog.railway.com/p/security-disclosure-wednesday-october-21st" target="_blank" rel="noopener noreferrer">Railway 最初披露（参考）</a>。</p>
+<h3>3. Arista 修补 VeloCloud Orchestrator 本地部署版中已被在野利用的严重零日漏洞 CVE-2026-114625</h3>
+<p>〔讯科-2〕</p>
+<p><strong>背景。</strong> 「零日漏洞」（zero-day）是指在厂商发布补丁之前就已经被攻击者知道、甚至已经在用的漏洞；「在野利用」就是已经被用于真实攻击，而不是只在实验室里证明可行。CVE 是给公开漏洞的统一编号。SD-WAN 是一种用软件统一管理企业各分支机构网络连接的技术，VeloCloud Orchestrator（VCO）就是企业用来集中管理 SD-WAN 网络和边缘设备的网页控制台。「SQL 注入」是一种常见攻击手法：攻击者在输入框之类的地方塞进一段数据库指令，让后台数据库把它当成正常命令去执行。「提权」就是把自己的权限从低级别抬到高级别。</p>
+<p class="sourced"><strong>发生了什么。</strong> BleepingComputer 于北京时间 2026 年 10 月 23 日 01:18 发布报道。据 BleepingComputer 称，这个编号为 CVE-2026-114625 的严重级漏洞，可以让拥有基本权限、能访问 VCO 网页界面并持有有效登录会话的攻击者，通过复杂度很低、无需用户交互的 SQL 注入来提升权限。报道引述的 Arista 公告原话是：「在受影响的系统上，任何经过认证的用户都可以获得运营者权限，并冒充本地的『超级运营者』用户。」报道还说，今年 Arista 已经修补了另外三个被在野利用的零日漏洞：5 月的 CVE-2026-7473、7 月的 CVE-2026-16812 和 9 月的 CVE-2026-93952。</p>
+<p><strong>为什么值得注意。</strong> 这个漏洞的危险之处，恰好和最小权限原则正面相撞：系统里本来分好了「普通用户」和「超级运营者」两档权限，漏洞却让任何一个普通登录用户一步跨到最高档。采集员的提醒是：网络基础设施的「管理面板」本身就是高价值攻击目标——拿下它，就等于拿下它管着的整张网。按报道，这是 Arista 今年修补的第四个在野利用零日。</p>
+<p class="sourced"><strong>核实状态。</strong> 单一来源。采集员只直接打开核实了 BleepingComputer，它引用的是 Arista 官方公告原话；Arista 公告页本身没有单独核对，尚未得到其他来源确认。</p>
+<p><strong>来源。</strong> <a href="https://www.bleepingcomputer.com/news/security/arista-patches-new-velocloud-orchestrator-zero-day-exploited-in-attacks/" target="_blank" rel="noopener noreferrer">BleepingComputer</a>。</p>
+<h3>4. The Browser Company 宣布 Arc 浏览器将于 2026 年 12 月 22 日停止服务，理由是「在 AI 时代已无法让 Arc 保持足够安全」，同时引导用户迁移到 Dia</h3>
+<p>〔讯科-5〕</p>
+<p><strong>背景。</strong> Arc 是 The Browser Company 做的浏览器，采集员称它曾是很受学生和开发者喜欢的「重新设计浏览器」的代表作；Dia 是这家公司后来做的另一款浏览器。</p>
+<p><strong>发生了什么。</strong> Arc 帮助中心写明「2026 年 10 月 22 日：我们宣布了 Arc 停止服务」，美国当天发布，落在窗内。帮助中心原文说：「在 AI 时代，让浏览器保持安全已经变得越来越难，我们已经无法让 Arc 保持它所需要的安全程度。我们的安全团队正在专注于 Dia，它是我们从零开始打造、用来抵御现代安全攻击的浏览器。」关键日期如下：10 月 22 日宣布停止服务，从这天起不能再创建新的 Arc 账户；11 月 23 日起手机端 Arc Search 的 AI 功能关闭（出自采集员整理）；12 月 15 日是申请导出或删除 Arc 账户相关个人数据的最后一天；12 月 22 日 Arc 停止服务。帮助中心还写明：账户停用后，会在 30 天内删除与账户相关的个人数据。</p>
+<p><strong>为什么值得注意。</strong> 采集员指出，官方把关停的理由直接归结为 AI 时代的安全维护成本，这一点很少见。实际提醒是：如果你或身边的同学在用 Arc，需要在 12 月 22 日前迁移数据；想导出个人数据，截止日是更早的 12 月 15 日。</p>
+<p><strong>核实状态。</strong> 单一来源。据官方帮助中心（一手来源，采集员已重新打开核对）；TechCrunch 也有同题报道《Arc browser sunsets December 22 as The Browser Company doubles down on Dia》，但采集员没有逐字核对那篇，因此暂按单一来源处理。</p>
+<p><strong>来源。</strong> <a href="https://resources.arc.net/hc/en-us/articles/44412972248471-Arc-Sunset-Key-Dates-and-What-to-Expect" target="_blank" rel="noopener noreferrer">Arc 帮助中心</a>。</p>
+<h3>5. 美国商务部与 4 家公司签署意向书，拟提供至多 3.89 亿美元 CHIPS 研发资助，聚焦功率半导体和关键材料，其中 Helion 拿到 1.75 亿美元，用于聚变电站的高压功率芯片</h3>
+<p>〔讯科-6〕</p>
+<p><strong>背景。</strong> 《芯片与科学法案》（CHIPS and Science Act）是美国用来资助本土半导体制造和研发的法律。「意向书」是正式合同之前的约定，金额通常写成「至多」。「功率半导体」和你熟悉的手机、显卡里那种做计算的芯片不同，它负责控制、转换和输送电能。「氮化镓」（GaN）是一种做功率器件的新材料，「垂直氮化镓」是其中一种器件结构。高纯石英是芯片制造上游要用到的关键材料。</p>
+<p><strong>发生了什么。</strong> NIST（美国国家标准与技术研究院）/商务部新闻稿和 Helion 新闻稿都落款为美国时间 2026 年 10 月 22 日；路透稿经 Yahoo/CNA 转载，推算为北京时间 10 月 22 日晚间。NIST 新闻稿说，商务部当天宣布签署了四份意向书，按《芯片与科学法案》提供至多 3.89 亿美元的联邦研发资助：Helion 至多 1.75 亿美元，Commonwealth Fusion Systems 至多 8,500 万美元，Vertical Semiconductor 至多 7,300 万美元、用于推进其垂直氮化镓功率半导体，Sibelco 至多 5,600 万美元、用于开发超高纯石英的新一代提纯和精加工技术。Helion 新闻稿说：「达到公司所需性能水平的半导体，目前只能从海外制造商那里获得。」TechCrunch 的报道标题说，聚变初创公司 Helion 正在开发可能让其电站输出翻倍的新半导体。</p>
+<p><strong>一个附加条件。</strong> NIST 原文写明，商务部会以获得每家公司少数、无投票权的股权作为发放资助的条件。</p>
+<p><strong>为什么值得注意。</strong> 采集员指出，这批资助的重点不是「算力芯片」，而是功率半导体和高纯石英这类上游材料；4 家里有 2 家是聚变公司，还有一家做的是给 AI 数据中心供电的垂直氮化镓器件。这个信号说明，能源和电力电子正在变成半导体政策的新重点。</p>
+<p><strong>核实状态。</strong> 多来源确认。商务部/NIST 与 Helion 两份官方新闻稿，加上路透经 CNA 转载、TechCrunch 报道。</p>
+<p><strong>来源。</strong> <a href="https://www.nist.gov/news-events/news/2026/10/department-commerce-announces-letters-intent-4-companies-389-million-rd" target="_blank" rel="noopener noreferrer">NIST 新闻稿</a>；<a href="https://www.helionenergy.com/newsroom/helion-signs-letter-of-intent-for-175-million-chips-award-to-advance-semiconductor-fusion-energy" target="_blank" rel="noopener noreferrer">Helion 新闻稿</a>；<a href="https://www.channelnewsasia.com/business/us-award-389-million-in-rd-funds-power-semiconductors-critical-materials-6482801" target="_blank" rel="noopener noreferrer">CNA 转载路透稿</a>；<a href="https://techcrunch.com/2026/10/22/fusion-startup-helion-is-developing-new-semiconductors-that-could-double-output-of-its-power-plants/" target="_blank" rel="noopener noreferrer">TechCrunch</a>。</p>
+<h3>6. 首个纯软件的 Nintendo Switch 2 越狱 ns2jb 引发广泛报道，作者称借助 OpenAI Codex 搭建了自动化测试台，并找到解释器和 fs 系统模块中的漏洞</h3>
+<p>〔讯科-7〕</p>
+<p><strong>背景。</strong> 「越狱」（jailbreak）是指绕过设备厂商的限制，让设备能运行厂商不允许的软件。「纯软件」越狱意味着不需要拆机、焊芯片这类硬件改动。「整数溢出」是一类常见漏洞：程序里一个数字超出了它能表示的范围，会「绕回去」变成一个意料之外的值，攻击者可以借此让程序读写本不该碰的内存；「缓冲区溢出」则是往一块内存里写入超过其容量的数据，溢出的部分会覆盖相邻的内容。fs 是文件系统模块。</p>
+<p><strong>时间说明。</strong> 作者个人博客落款为 2026 年 10 月 18 日，早于时间窗；The Verge 的报道发布于北京时间 10 月 23 日 01:21，广泛的媒体报道和讨论发生在窗内。采集员提醒主编自行权衡要不要采用，这份详细稿按「窗内的报道」收录，并把一手博客日期写清楚。</p>
+<p class="sourced"><strong>发生了什么。</strong> The Verge 报道说，据 Sammy Hajhamid（网名 pepsipu）称，OpenAI 的 Codex 帮助做出了这个「ns2jb」越狱；它是一个纯软件、tethered 的越狱，意味着每次开机后都要从一款游戏里运行它才能生效。按采集员整理，利用链从一款 Switch 1 上的编程游戏 SmileBASIC 里的整数溢出起步，再借文件系统模块的缓冲区溢出拿到更高权限。作者博客里有一句：「Codex 在解释器里找到了一个有用的 32 位整数溢出。」不过作者也特别澄清了外界的误解：「不，那只是一句玩笑式的配图说明。我给『用户态代码执行』设了一个 /goal，但并没有成功。越狱本身花了我大约两周的实打实的功夫。至于那个马里奥赛车世界，倒确实是一天之内全靠氛围编程（vibecoded）做出来的，只是好玩。」</p>
+<p><strong>为什么值得注意。</strong> 采集员认为，这个案例可以帮你分清「AI 帮人找漏洞」和「AI 自己完成破解」的区别：AI 帮忙找到了一个漏洞、搭了自动化测试台，但把整条利用链串起来的，是作者两周的人工工作。读到「AI 黑掉了某某」这类标题时，值得先问一句：AI 到底做了哪一段？</p>
+<p><strong>核实状态。</strong> 多来源确认。作者一手博客加上 The Verge 报道，Android Authority 和 Notebookcheck 也有报道。</p>
+<p><strong>来源。</strong> <a href="https://www.theverge.com/games/1016862/nintendo-switch-2-jailbreak-ai" target="_blank" rel="noopener noreferrer">The Verge</a>；<a href="https://pepsipu.com/blog/2026-10-switch2-jailbreak-ns2jb/" target="_blank" rel="noopener noreferrer">作者一手技术文章</a>。</p>
+<h3>7. 据 POLITICO 报道，SpaceX 逐步淘汰猎鹰 9 号，美国太空军近期为 3 次军事卫星发射招标时 SpaceX 没有报价，也没有其他公司投标</h3>
+<p>〔讯科-8〕</p>
+<p><strong>背景。</strong> 猎鹰 9 号（Falcon 9）是 SpaceX 的主力中型火箭，采集员称它是目前全球最主要的「太空班车」。星舰（Starship）是 SpaceX 正在发展的巨型新火箭。卫星在设计时就要匹配某种火箭的整流罩尺寸和接口，所以火箭换代时，按旧构型设计的卫星不一定能直接换乘。</p>
+<p class="sourced"><strong>发生了什么。</strong> POLITICO 原文网址日期为美国时间 2026 年 10 月 22 日，没写具体时刻；Political Risk Wire 的授权转载也落款 10 月 22 日。原站对抓取工具返回 403，采集员是通过授权转载核对正文的。据 POLITICO 援引两名知情人士称：太空军最近试图为三次未来的卫星任务订购发射服务，但 SpaceX 没有提供报价，也没有其他火箭公司愿意接这三次任务。报道说，SpaceX 是火箭行业里遥遥领先的主导者，对军方不可或缺，2025 年占美国发射次数的 85%；公司正在逐步淘汰猎鹰 9 号，为星舰让路，而很多军用卫星并不是按星舰来设计的。太空军准将 Eric Zarybnisky 回应说：「我不会说有哪些任务让我担心飞不了；我会说我们正在找出支持这些客户的正确方式。」采集员补充，报道提到 ULA 的 Vulcan 和蓝色起源的 New Glenn 都遇到了延误或事故，新的中型火箭还没有成功试飞。</p>
+<p><strong>为什么值得注意。</strong> 采集员的判断是，航天发射正从「过剩」转向「一箭难求」的结构性瓶颈：当一个供应商占了 85% 的份额，它的一次产品换代就足以让整个市场出现缺口。</p>
+<p class="sourced"><strong>核实状态。</strong> 单一来源。据 POLITICO 独家报道，依据两名知情人士；太空军官员的回应被引用，但他没有否认这件事。正文通过授权转载核对，原站对抓取工具返回 403。尚未得到其他来源确认。</p>
+<p><strong>来源。</strong> <a href="https://www.politico.com/news/2026/10/22/space-force-spacex-rocket-musk-01131131" target="_blank" rel="noopener noreferrer">POLITICO 原文</a>；<a href="https://politicalriskwire.com/space-force-scrambles-as-elon-musks-spacex-retires-its-major-rocket/" target="_blank" rel="noopener noreferrer">Political Risk Wire 授权转载</a>。</p>
+<h3>8. 亚马逊把 Kindle Unlimited 更名为 Kindle Plus，价格不变，并把 AI 朗读的「虚拟声音」有声书纳入订阅</h3>
+<p>〔讯科-9〕</p>
+<p><strong>背景。</strong> KDP Select 是亚马逊自助出版平台 Kindle Direct Publishing 的一个独家计划，加入的书会进入订阅库。</p>
+<p><strong>发生了什么。</strong> The Verge 的报道发布于北京时间 10 月 23 日 01:46，亚马逊官方 FAQ 同日更新。The Verge 写道，这项订阅服务现在叫 Kindle Plus，仍以每月 11.99 美元的价格，提供 Kindle 目录中精选电子书、漫画和杂志的无限访问。据 The Verge 援引 ZDNet 的说法，Kindle Plus 会把访问范围扩大到由 AI 朗读者朗读的「虚拟声音」有声书。The Verge 还写道：新加入 KDP Select 的书会自动获得虚拟声音有声书，已经出版的书则可以由作者自行选择是否加入 AI 朗读。采集员补充，借阅上限（20 本）也没变。</p>
+<p><strong>为什么值得注意。</strong> 采集员认为这条分量较轻，真正的变化是 AI 合成朗读的有声书大规模进入了订阅库，而且新书默认获得 AI 朗读版本。对喜欢「边听边读」的学生读者有一定参考价值。</p>
+<p><strong>核实状态。</strong> 多来源确认。The Verge 报道引用了亚马逊发言人的声明，亚马逊官方 About Amazon 页面也已更新，并确认能打开。</p>
+<p><strong>来源。</strong> <a href="https://www.theverge.com/tech/1016789/amazon-kindle-unlimited-plus-subscription-ai-audiobooks" target="_blank" rel="noopener noreferrer">The Verge</a>；<a href="https://www.aboutamazon.com/news/devices/what-is-kindle-plus" target="_blank" rel="noopener noreferrer">About Amazon</a>。</p>
+<hr>
+<h2 id="b-med">第三部分 · 讯医（医学）</h2>
+<h3>1. 选择性 APRIL 抑制剂 sibeprenlimab 在 IgA 肾病 III 期 VISIONARY 最终分析中让两年 eGFR 基本持平，复合肾脏结局风险降低 97.1%</h3>
+<p>〔讯医-1〕</p>
+<p><strong>先把术语讲清楚。</strong> IgA 肾病是全世界最常见的原发性肾小球肾炎之一：一种「半乳糖缺陷」的 IgA1 抗体（它分子上本该挂着的糖少了一截）被免疫系统当成异物，形成免疫复合物沉积在肾小球里，慢慢损伤肾脏。APRIL 的全称是「增殖诱导配体」（a proliferation-inducing ligand），是 B 细胞家族的一种信号分子，会促使 B 细胞存活并产生 IgA；讯医证据包的说法是，它在 IgA 肾病的发病链条里促使产生半乳糖缺陷 IgA1。所谓「选择性 APRIL 抑制剂」，就是只拦住 APRIL 这一条信号。eGFR 是「估算的肾小球滤过率」，用血肌酐等指标算出来，单位是 mL/min/1.73 m²（按标准体表面积换算后每分钟滤过的血浆毫升数），它是衡量肾功能最常用的数字，数值越低肾功能越差。「eGFR 斜率」就是 eGFR 每年变化多少：负数表示在下降，接近零表示基本持平。「复合肾脏结局」是把几种严重的肾脏事件（例如肾功能大幅下降、进入肾衰竭等）合在一起算的终点。「替代终点」是比较早就能测、被认为能预示长期结局的指标（这里是蛋白尿），「硬终点」则是患者真正关心的结局（肾功能、肾衰竭）。「加速批准」是美国 FDA 允许药物凭替代终点先上市、之后必须用确证试验补上硬终点证据的路径。</p>
+<p><strong>发生了什么。</strong> Otsuka（大冢）新闻稿约于北京时间 2026 年 10 月 22 日 22:03 发布（Yahoo Finance 转载链接时间戳为 UTC 14:03）；同一天，VISIONARY 试验在丹佛举行的 ASN Kidney Week 2026 开幕全会上报告，《新英格兰医学杂志》（NEJM）同步在线发表（HCPLive 报道时间为 UTC 15:30，即北京时间 23:30，引用 NEJM doi:10.1056/NEJMoa2609127）。Otsuka 新闻稿写道：在 510 名随机分组的患者中，接受 VOYXACT（sibeprenlimab 的商品名）治疗的 259 人里只有 1 人（0.4%）进展到复合肾功能结局，而安慰剂组 251 人里有 28 人（11.2%），相当于复合肾脏结局的风险降低了 97.1%。HCPLive 报道说：sibeprenlimab 组的年化 eGFR 斜率是每年 +0.3，安慰剂组是每年 −4.2（单位 mL/min/1.73 m²）；作为关键次要终点的组间年化斜率差为每年 4.5（95% 置信区间 3.6–5.4，P &lt; .001）。</p>
+<p><strong>怎么读这些数字。</strong> 用最白的话说：两年里，用药组的肾功能大致没往下掉，安慰剂组每年掉 4.2 个单位；严重肾脏事件是 1 例对 28 例。采集员说明，这款药此前只凭蛋白尿下降拿到美国加速批准，这次最终分析是从替代终点走向硬终点的一步。斜率差的 95% 置信区间 3.6–5.4 整个落在零以上，说明差别不太可能是偶然。</p>
+<p><strong>需要留心的地方。</strong> 新闻稿出自药企，采集员建议最好以 NEJM 原文为准（NEJM 原文页本身没有单独打开）。HCPLive 也提醒：不同试验在设计、终点定义和人群上有差别，限制了直接的横向比较；24 个月以后的疗效和安全性数据还没有，开放标签延长研究正在进行。所以「97.1%」这个数字很亮眼，但它说的是两年内的情况。</p>
+<p><strong>为什么值得注意。</strong> 这是今天核心思想在医学里最干净的一例：不是把整个免疫系统压下去，而是只拦住驱动 IgA 肾病的 APRIL 那一条信号，两年后肾功能基本保住。对医学生来说，它也是理解「替代终点（蛋白尿）到硬终点（eGFR、肾衰竭）」验证过程的好案例。</p>
+<p><strong>关键数字。</strong> 510 例随机；复合肾脏结局 1/259（0.4%）对 28/251（11.2%），风险降低 97.1%（出自 Otsuka 新闻稿）；年化 eGFR 斜率 +0.3 对 −4.2，差值 4.5（95% CI 3.6–5.4，P &lt; .001）（出自 HCPLive）。</p>
+<p><strong>核实状态。</strong> 多来源确认。企业新闻稿和独立医学媒体 HCPLive 给出的数字（510 例、0.4% 对 11.2%、斜率 +0.3 对 −4.2）一致，HCPLive 还写明了 NEJM 论文的 DOI 和大会报告场次；NEJM 原文页未单独打开。</p>
+<p><strong>来源。</strong> <a href="https://www.otsuka-us.com/Otsuka-Presents-Final-Phase-3-VISIONARY-Results" target="_blank" rel="noopener noreferrer">Otsuka 新闻稿</a>；<a href="https://www.hcplive.com/view/sibeprenlimab-stabilizes-egfr-over-24-months-in-iga-nephropathy-visionary" target="_blank" rel="noopener noreferrer">HCPLive</a>。</p>
+<h3>2. BAFF/APRIL 双靶点抑制剂 atacicept 在 IgA 肾病 III 期 ORIGIN 3 最终分析中全部预设终点达标，肾病进展复合事件风险降低约 76%</h3>
+<p>〔讯医-2〕</p>
+<p><strong>先把术语讲清楚。</strong> BAFF 是「B 细胞激活因子」（B-cell activating factor），和 APRIL 是同一家族的「亲戚」，同样帮助 B 细胞存活。atacicept 同时抑制 BAFF 和 APRIL 两条信号，比第 1 条只拦 APRIL 的范围稍宽一点，但仍然只针对 B 细胞这一条致病链。「风险比」（hazard ratio，HR）是比较两组发生某事件快慢的指标：HR 等于 0.24，大致可以理解为用药组发生事件的风险约是安慰剂组的四分之一，也就是降低了约 76%。「预设终点」是试验开始前就写进方案、规定要检验的指标，事后不能随便改。</p>
+<p><strong>发生了什么。</strong> Vera Therapeutics 新闻稿注明美国当地时间 2026 年 10 月 22 日，换算为北京时间 10 月 22 日晚间；HCPLive 访谈发布于 UTC 15:15，即北京时间 23:15。ORIGIN 3 和第 1 条在同一场 ASN Kidney Week 开幕全会上报告，NEJM 同步发表（doi:10.1056/NEJMoa2610103）。据 HCPLive 对 NEJM 论文的引用：第 52 周时，eGFR 相对基线的平均变化在 atacicept 组是 −0.11，在安慰剂组是 −5.69（单位 mL/min/1.73 m²），差值 5.58（95% CI 3.68–7.48，P &lt; .001）；到第 104 周，年化 eGFR 斜率是每年 −0.60 对 −5.60；肾病进展复合事件在 atacicept 组发生率为 5.1%，安慰剂组为 17.8%（风险比 0.24，95% CI 0.12–0.48，P &lt; .001）。Vera 新闻稿给出的安全性数据是：不良事件在 TRUTAKNA（atacicept 的商品名）组发生于 214 人中的 160 人（75%），安慰剂组 214 人中的 167 人（78%）；严重不良事件发生率 TRUTAKNA 组 7%，安慰剂组 15%。</p>
+<p><strong>一个试验设计上的看点。</strong> HCPLive 报道说，主讲人把 ORIGIN 3 称为第一个把终点从「2 年 eGFR 效应」提前到「1 年 eGFR 效应」的 IgA 肾病试验。采集员补充，试验是和 FDA 协商后这样调整的。终点能提前一年，意味着新药可能更早拿到确证证据。</p>
+<p><strong>为什么值得注意。</strong> 采集员认为，第 1、2 两条在同一个开幕全会上报告，说明 IgA 肾病正在从「只做支持治疗」转向「直接针对 B 细胞/IgA1 致病链条」。atacicept 组 52 周 eGFR 几乎没下降，安慰剂组下降约 5.7。主讲人 Barratt 也提醒，这类新药在英国、澳大利亚等很多高发地区还用不上——药好不好是一回事，病人能不能用上是另一回事。</p>
+<p><strong>关键数字。</strong> 52 周 eGFR 变化 −0.11 对 −5.69，差值 5.58（95% CI 3.68–7.48）；104 周年化斜率 −0.60 对 −5.60；复合进展 5.1% 对 17.8%，HR 0.24（95% CI 0.12–0.48）（以上出自 HCPLive 对 NEJM 的引用）；不良事件 160/214（75%）对 167/214（78%），严重不良事件 7% 对 15%（出自 Vera 新闻稿）。</p>
+<p><strong>核实状态。</strong> 多来源确认。企业新闻稿和 HCPLive 都确认了这项研究在开幕全会报告、NEJM 同步发表；具体 eGFR 和 HR 数字来自 HCPLive 对 NEJM 论文的引用，安全性数字来自企业新闻稿；NEJM 原文页未单独打开。</p>
+<p><strong>来源。</strong> <a href="https://ir.veratx.com/news-releases/news-release-details/vera-therapeutics-announces-positive-origin-3-final-efficacy" target="_blank" rel="noopener noreferrer">Vera Therapeutics 新闻稿</a>；<a href="https://www.hcplive.com/view/kidney-compass-origin-3-final-egfr-data-for-atacicept-in-iga-nephropathy" target="_blank" rel="noopener noreferrer">HCPLive</a>。</p>
+<h3>3. FDA 把帕博利珠单抗用于 TMB-H 实体瘤的加速批准转为常规批准，同时把 TMB-H 门槛从 ≥10 提高到 ≥13 mut/Mb</h3>
+<p>〔讯医-3〕</p>
+<p><strong>先把术语讲清楚。</strong> 帕博利珠单抗（pembrolizumab，商品名 Keytruda）是一种 PD-1 免疫检查点抑制剂，作用是「松开」免疫系统攻击肿瘤的刹车。TMB 是「肿瘤突变负荷」（tumor mutational burden），指肿瘤基因组里每一百万个碱基（一个「兆碱基」，Mb）上有多少个突变，单位写作 mut/Mb。TMB-H 就是「高肿瘤突变负荷」。直觉上，突变越多，肿瘤细胞表面「看起来不像自己」的地方越多，免疫系统越容易认出它们，所以免疫治疗可能更有效。「泛瘤种」（tissue-agnostic）适应证是不看肿瘤长在哪个器官、只看某个生物标志物就给药。ORR 是「客观缓解率」，即肿瘤明显缩小的患者比例；DOR 是「缓解持续时间」。「常规批准」（traditional approval）是在确证证据齐全后给的正式批准，和前面提到的「加速批准」相对。</p>
+<p><strong>发生了什么。</strong> FDA 页面元数据的发布时间是美东夏令时 2026 年 10 月 22 日 14:56，即北京时间 10 月 23 日约 02:56；OncLive 的报道发布于 UTC 19:15，即北京时间 10 月 23 日 03:15。需要特别标注：FDA 公告是在窗内发出的，但页面写明批准动作本身发生在 2026 年 10 月 16 日。FDA 原文写道：2026 年 10 月 16 日，FDA 授予帕博利珠单抗（Keytruda，默沙东）或帕博利珠单抗与 berahyaluronidase alfa-pmph（Keytruda Qlex，默沙东）常规批准，用于不可切除或转移性、高肿瘤突变负荷（TMB-H，≥13 mut/Mb）实体瘤的成人和儿童患者。原文接着写道：「这项批准把加速批准转为常规批准，并修订 TMB-H 适应证，把 TMB-H 定义为 ≥13 mut/Mb，因为在 TMB 为 10 到 &lt;13 mut/Mb 的患者中，支持常规批准的疗效没有得到证实。」疗效方面，FDA 原文写道：「在两组合计中，ORR 为 36%（95% CI：30，43），58% 的患者缓解持续时间达到 12 个月或更长。」讯医证据包还说明，FDA 页面与 OncLive 报道的样本量均为 220 例。</p>
+<p><strong>为什么值得注意。</strong> 这是监管层面的「把放行范围收窄到刚好」：门槛从 10 提到 13，药就更精确地给到更可能获益的人。采集员认为，这也说明加速批准之后的确证数据真的会修改适应证，而不只是走个形式，可以和课上讲的免疫治疗生物标志物对照着看。</p>
+<p><strong>关键数字。</strong> 门槛 ≥10 → ≥13 mut/Mb；220 例；ORR 36%（95% CI 30–43）；58% 的患者 DOR ≥12 个月；批准日期 10 月 16 日、公告时间北京时间 10 月 23 日约 02:56。均出自 FDA 页面，OncLive 一致。</p>
+<p><strong>核实状态。</strong> 多来源确认。FDA 官方页面和 OncLive 报道中的门槛（≥13）、样本量（220 例）、ORR 36%、DOR ≥12 个月比例 58% 都一致。</p>
+<p><strong>来源。</strong> <a href="https://www.fda.gov/drugs/resources-information-approved-drugs/fda-grants-traditional-approval-pembrolizumab-or-pembrolizumab-and-berahyaluronidase-alfa-pmph" target="_blank" rel="noopener noreferrer">FDA 公告</a>；<a href="https://www.onclive.com/view/fda-grants-full-approval-to-pembrolizumab-for-unresectable-metastatic-tmb-h-solid-tumors" target="_blank" rel="noopener noreferrer">OncLive</a>。</p>
+<h3>4. Nature 报道：首次在人体内直接使用先导编辑（prime editing）改写 DNA，用于治疗 Wilson 病</h3>
+<p>〔讯医-7〕</p>
+<p><strong>先把术语讲清楚。</strong> 「先导编辑」（prime editing）是一种基因编辑技术。常规的 CRISPR-Cas9 像一把剪刀，会把 DNA 双链剪断，再靠细胞自己修补；「碱基编辑」像一支只能改单个字母的修正笔；先导编辑则更像「查找并替换」，讯医证据包的说法是，它可以插入、删除或改写一段 DNA，比常规 CRISPR-Cas9 和碱基编辑更灵活。「体内编辑」（in vivo）是指把编辑工具直接送进患者体内、在体内的细胞里完成编辑；与之相对的「体外编辑」（ex vivo）要先把细胞取出来，在体外编辑好再回输。Wilson 病（肝豆状核变性）是一种遗传病：ATP7B 基因的突变让肝细胞没法正常把多余的铜排出去，铜在肝、脑等器官里越积越多。</p>
+<p><strong>发生了什么。</strong> Nature 新闻标注日期为 2026 年 10 月 22 日，英国时间这一整天都落在窗内。需要注意：Prime Medicine 宣布首例患者给药是在 2026 年 10 月 5 日，不在窗内；这里收录的是 Nature 当天的新闻报道。Nature 原文写道：「一种强大的基因编辑技术已经被用来在人体内直接编辑 DNA——这是已知的第一例此类治疗。」「在这个案例中，先导编辑被用来治疗一种叫 Wilson 病的疾病，方法是改写肝细胞里的 DNA，抹去一个让肝细胞无法清除多余铜的突变。」Nature 还写道：「到目前为止，还没有任何体内基因编辑疗法获批。不过 FDA 预计会在明年初就一种用于遗传性血管水肿的体内 CRISPR–Cas9 疗法作出决定。」采集员补充，先导编辑能修正 Wilson 病最常见的 ATP7B 突变；Prime Medicine 10 月 5 日的新闻稿标题显示，这项全球 I/II 期临床试验针对的是 H1069Q 突变型 Wilson 病，药物代号 PM577A；ClinicalTrials.gov 上对应的试验编号是 NCT07748403（来自搜索结果，采集员没有单独打开）。</p>
+<p><strong>为什么值得注意。</strong> 采集员认为，这次的意义在于编辑是在体内（肝细胞）直接完成的，不再需要把细胞取出来、在体外编辑后再回输，有可能更便宜、更快。放在核心思想里看，它是「只改那一处」的极致：不是替换整个器官，也不是压制整条通路，而是在出错的那一段 DNA 上做一次改写。</p>
+<p><strong>必须说清楚的边界。</strong> 目前只是第一例患者给药，疗效数据要到明年才有。不能把它理解成「已经治好」，这份详细稿也只确认「首例体内先导编辑给药」这一件事。</p>
+<p><strong>关键数字。</strong> 首例患者给药日期 10 月 5 日（窗外，仅作背景）；试验编号 NCT07748403（来自搜索结果，未单独打开）。</p>
+<p><strong>核实状态。</strong> 多来源确认（仅限「首例体内先导编辑给药」这一事实）。Nature 新闻和 Prime Medicine 新闻稿一致；疗效目前还没有任何数据。</p>
+<p><strong>来源。</strong> <a href="https://www.nature.com/articles/d41586-026-03371-x" target="_blank" rel="noopener noreferrer">Nature 新闻</a>；<a href="https://www.globenewswire.com/news-release/2026/10/05/3374466/0/en/prime-medicine-announces-first-patient-dosed-in-global-phase-1-2-clinical-trial-of-pm577a-for-h1069q-mutated-wilson-disease.html" target="_blank" rel="noopener noreferrer">Prime Medicine 10 月 5 日新闻稿（窗外，仅作背景）</a>。</p>
+<h3>5. 国家药监局批准巴托利单抗注射液（恩力达）上市，用于 AChR 抗体阳性成人全身型重症肌无力</h3>
+<p>〔讯医-4〕</p>
+<p><strong>先把术语讲清楚。</strong> 重症肌无力是一种自身免疫病：身体产生了攻击神经—肌肉接头的抗体，最常见的是抗乙酰胆碱受体（AChR）抗体，于是神经信号传不到肌肉，人会出现眼睑下垂、复视、四肢无力，严重时影响呼吸。「全身型」（gMG）是指不只眼部受累。FcRn 是「新生儿 Fc 受体」，它的一个重要功能是把 IgG 抗体从细胞内的降解途径里「捞回来」，让 IgG 在血液里活得更久。讯医证据包的说明是：巴托利单抗是一种 FcRn 抑制剂，通过加快 IgG 的降解来降低致病性自身抗体，属于「去掉致病抗体」的新一代重症肌无力治疗思路。</p>
+<p><strong>发生了什么。</strong> 中国食品药品网于北京时间 2026 年 10 月 22 日 19:55 转载（来源标注为国家药监局网站），动脉网同日 18:59 收录。通稿原文是：「近日，国家药品监督管理局批准佳曦控股有限公司申报的巴托利单抗注射液（商品名：恩力达）上市，与常规治疗药物联合用于治疗抗乙酰胆碱受体（AChR）抗体阳性的成人全身型重症肌无力（gMG）患者。该品种的上市为相关患者提供了新的治疗选择。」</p>
+<p><strong>需要说清楚的地方。</strong> 通稿本身很短，没有给出任何疗效数字，所以这份详细稿也不写疗效数据。采集员在搜索摘要里看到这款药由石药集团和和铂医药合作开发，但没有打开石药或和铂的原始公告核对，所以这里只写申报方「佳曦控股有限公司」，合作方信息尚未核实。国家药监局官网栏目页对抓取返回 412，没能直接打开原文。药物机制也没有经过一手核实。</p>
+<p><strong>为什么值得注意。</strong> 和第 1、2 条一样，这也是「针对致病环节」的思路：不是把整个免疫系统压下去，而是让已经产生的致病 IgG 清得更快。但因为没有疗效数字，这里只能停在「获批」这一事实上。</p>
+<p><strong>核实状态。</strong> 多来源确认（仅限「获批」这一事实）。中国食品药品网（标注来源为国家药监局网站）和动脉网的说法一致；药物机制和合作方信息未经一手核实。</p>
+<p><strong>来源。</strong> <a href="https://www.cnpharm.com/c/2026-10-22/1109299.shtml" target="_blank" rel="noopener noreferrer">中国食品药品网</a>；<a href="https://www.vbdata.cn/intelDetail/1125723" target="_blank" rel="noopener noreferrer">动脉网</a>。</p>
+<h3>6. JAMA 随机试验：嗜酸性肉芽肿性多血管炎（EGPA）维持治疗中，利妥昔单抗并不优于硫唑嘌呤，严重感染反而更多</h3>
+<p>〔讯医-5〕</p>
+<p><strong>先把术语讲清楚。</strong> EGPA（嗜酸性肉芽肿性多血管炎）是一种小血管炎，常伴哮喘和嗜酸性粒细胞增多，属于 ANCA 相关血管炎这一大类。「维持治疗」是指病情先被诱导缓解之后，用较温和的方案长期维持、防止复发。利妥昔单抗（rituximab）是抗 CD20 单抗，会把带 CD20 的 B 细胞大面积清除掉；硫唑嘌呤（azathioprine）是一种老牌的口服免疫抑制剂。泼尼松（prednisone）是糖皮质激素，「每天 7.5 毫克或以下」通常被当作低剂量、可长期耐受的激素水平。「双盲、双模拟」是指两组都同时拿到一种真药和另一种药的安慰剂（因为一个是输液、一个是口服），患者和医生都不知道谁用的是什么。「研究者发起试验」是由学术团队而不是药企主导的试验。「不优于」（not superior）的意思是没能证明比对照好。</p>
+<p><strong>发生了什么。</strong> JAMA 标注「2026 年 10 月 22 日在线发表」（美东时间当天），换算后落在北京时间 10 月 22 日中午到 10 月 23 日 06:00 之间，在窗内（doi:10.1001/jama.2026.15278）。JAMA 原文摘要写道：在每天泼尼松 7.5 毫克或以下的情况下，平均缓解时间在利妥昔单抗组为 91.1 周（95% CI 80.9–101.2），硫唑嘌呤组为 96.0 周（95% CI 85.6–106.5），P = .38。利妥昔单抗组的严重感染发生率更高（23 例，46.9%，对 12 例，24.5%），主要是严重的新冠病毒（SARS-CoV-2）感染。结论写道：对于新诊断或复发的 EGPA 患者，在 28 个月期间、每天泼尼松 7.5 毫克或以下的条件下，利妥昔单抗在改善总缓解持续时间方面并不优于硫唑嘌呤。采集员补充：这是法国血管炎研究组做的双盲、双模拟研究者发起试验，共 98 例；JAMA 在线首发列表上可以看到同日的社论。</p>
+<p><strong>怎么读。</strong> 「P = .38」意味着两组 91.1 周和 96.0 周的差别，很可能只是偶然波动，统计上看不出谁更好。真正拉开差距的是安全性：严重感染接近一半对四分之一。采集员也提醒了时代背景：严重感染偏多主要发生在新冠疫苗出现之前，解读时要考虑这一点。</p>
+<p><strong>为什么值得注意。</strong> 采集员说明，在 ANCA 相关血管炎里利妥昔单抗维持治疗已经很常见，这个阴性结果提醒大家不能简单地推广到 EGPA。和核心思想对照着读：把 B 细胞整片清掉，没有换来更长的缓解，却放大了感染的代价。这不意味着利妥昔单抗在别的病里不好。</p>
+<p><strong>关键数字。</strong> 98 例；缓解时间 91.1 周对 96.0 周（P = .38）；严重感染 23 例（46.9%）对 12 例（24.5%）；观察 28 个月；泼尼松 ≤7.5 mg/d。均出自 JAMA 原文摘要。</p>
+<p class="sourced"><strong>核实状态。</strong> 单一来源。数据直接来自 JAMA 原文摘要，属于一手来源，但没有找到独立媒体的二次报道来交叉核对，尚未得到其他来源确认。</p>
+<p><strong>来源。</strong> <a href="https://jamanetwork.com/journals/jama/fullarticle/10.1001/jama.2026.15278" target="_blank" rel="noopener noreferrer">JAMA 原文</a>；<a href="https://jamanetwork.com/journals/jama/newonline/2026/10" target="_blank" rel="noopener noreferrer">JAMA 在线首发列表</a>。</p>
+<h3>7. The Lancet MIRA2 试验：子宫内膜消融术中同时放置左炔诺孕酮宫内系统（曼月乐），两年内需要切除子宫的比例从 10% 降到约 4%</h3>
+<p>〔讯医-6〕</p>
+<p><strong>先把术语讲清楚。</strong> 「月经过多」（heavy menstrual bleeding）是很常见的妇科问题。「子宫内膜消融术」是用热、冷或其他能量破坏子宫内膜、减少出血的微创手术，用来替代切除子宫。「左炔诺孕酮宫内系统」（LNG-IUS，最常见的商品名是曼月乐 Mirena）是一种放进宫腔、缓慢释放孕激素的节育环，它本身也能显著减少月经量。「开放标签」是指医生和患者都知道自己分在哪一组。</p>
+<p><strong>发生了什么。</strong> Scimex 标注 Lancet 新闻稿的公开时间为澳东夏令时 2026 年 10 月 22 日 09:30，即 UTC 10 月 21 日 22:30、北京时间 10 月 22 日 06:30，刚好在窗开始之后；Medical Xpress 同日转发。Lancet 新闻稿（经 Scimex 转载）说：研究者在荷兰 34 家医院随访了 715 名女性两年，一半人在消融术中放了节育环，一半人没有；两年后，放了节育环的女性中约 4% 需要切除子宫，而只做消融的女性中是 10%。新闻稿还写道：术后 6 个月时，放节育环的一组有更多人完全停经（59% 对 46%）；两年随访中，联合治疗组需要额外药物控制出血的人更少（6% 对 16%）；两年时报告周期性痛经的人也更少（17% 对 25%）。不过研究者补充说，节育环的副作用很常见，可能导致停用，应在给患者的咨询中讲清楚。</p>
+<p><strong>为什么值得注意。</strong> 采集员说明，消融后仍有约十分之一的人最终要切除子宫，这项荷兰多中心随机试验用「术中顺手加一步」把这个比例降低了一半以上，说明把两种现有疗法组合起来就能改变结局。试验是开放标签设计、副作用较常见，需要在知情同意时讲清楚。</p>
+<p><strong>关键数字。</strong> 715 名女性、34 家医院、随访两年；子宫切除约 4% 对 10%；6 个月停经 59% 对 46%；额外用药 6% 对 16%；两年时周期性痛经 17% 对 25%。均出自 Lancet 新闻稿（Scimex 转载），Medical Xpress 一致。</p>
+<p><strong>核实状态。</strong> 多来源确认。Lancet 官方新闻稿（经 Scimex 转载）和 Medical Xpress 给出的样本量和比例一致；Lancet 原文页自动抓取被 Cloudflare 拦截（返回 403，这只是站点拦截抓取器，不代表页面不存在），原文中的相对风险数字没有直接核对。</p>
+<p><strong>来源。</strong> <a href="https://www.thelancet.com/journals/lancet/article/PIIS0140-6736(26)01536-9/abstract" target="_blank" rel="noopener noreferrer">The Lancet 原文</a>；<a href="https://www.scimex.org/newsfeed/adding-a-mirena-coil-during-surgery-can-reduce-the-risk-of-hysterectomy-in-women-with-heavy-menstrual-bleeding" target="_blank" rel="noopener noreferrer">Scimex 转载 Lancet 新闻稿</a>；<a href="https://medicalxpress.com/news/2026-10-adding-mirena-iud-surgery-hysterectomy.html" target="_blank" rel="noopener noreferrer">Medical Xpress</a>。</p>
+<h3>8. WHO 非洲区域办事处警告本迪布焦型埃博拉疫情已成为「区域性问题」：尼日利亚确认首例输入病例；刚果（金）累计数字各来源有出入</h3>
+<p>〔讯医-8〕</p>
+<p><strong>先把术语讲清楚。</strong> 埃博拉病毒病是一种严重的出血热。引起它的埃博拉病毒分好几个「种」（species），扎伊尔型和本迪布焦型（Bundibugyo）是其中两种。Ervebo 是目前获批的埃博拉疫苗，针对的是扎伊尔型。「交叉保护」是指针对一种病原体的疫苗，对另一种相近的病原体也有保护作用。「国际关注的突发公共卫生事件」（PHEIC）是 WHO 在《国际卫生条例》下能宣布的最高级别警报。「病死率」（case fatality rate）是确诊病例中死亡的比例。</p>
+<p><strong>发生了什么。</strong> WHO 非洲区周四举行了线上媒体吹风会；新华社英文稿时间戳为 2026 年 10 月 22 日 20:51:30，联合国新闻和半岛电视台同日发布，换算为北京时间 10 月 22 日晚间。据新华社报道，WHO 非洲区域主任 Mohamed Yakub Janabi 在线上吹风会上说：「埃博拉不会等待。它顺着人员流动传播，利用每一个漏洞，考验我们卫生系统的强度。」WHO 的 Patrick Otim 在联合国新闻的报道里说：「对于 Ervebo 疫苗——它是针对扎伊尔型的——和本迪布焦型之间是否有足够的交叉保护，我们目前还没有初步数据。」采集员补充：这次疫情 5 月在刚果（金）宣布，已经被 WHO 定为国际关注的突发公共卫生事件；目前刚果（金）、肯尼亚、尼日利亚都有活跃或近期病例，尼日利亚患者的感染来源还在追查；近期约六成死亡发生在治疗中心之外，说明社区传播仍然难以控制。</p>
+<p><strong>累计数字的出入（请特别注意）。</strong> 不同来源给出的刚果（金）累计数字不一样，这份详细稿把两组都如实写出来，不替任何一方取舍：</p>
+<ul><li>新华社称：据刚果（金）卫生部门周三晚间公布的最新数字，截至 10 月 20 日，该国累计确诊埃博拉病例 9,704 例，其中死亡 4,687 例，病死率 48.3%。</li><li>联合国新闻写的是：确诊 9,552 例，死亡 4,600 多例。</li></ul>
+<p>采集员的判断是数据截止日期可能不同。引用时请注明是哪个来源、截止到哪天，不要只写一个「约 9,700 例」或「约 9,500 例」就当作定论。</p>
+<p><strong>为什么值得注意。</strong> 采集员指出，本迪布焦型没有专用疫苗，现有的 Ervebo 针对扎伊尔型，交叉保护效果还没有数据，这和课上学的「病毒种型与疫苗特异性」直接相关。</p>
+<p><strong>核实状态。</strong> 多来源确认（新华社、联合国新闻、半岛电视台都报道了同一场 WHO 吹风会）；累计数字在不同来源之间有出入，截止日期可能不同。</p>
+<p><strong>来源。</strong> <a href="https://english.news.cn/africa/20261022/3e7e2b526c89400f89f9fd690e4fed1c/c.html" target="_blank" rel="noopener noreferrer">新华社</a>；<a href="https://news.un.org/en/story/2026/10/1168647" target="_blank" rel="noopener noreferrer">联合国新闻</a>；<a href="https://www.aljazeera.com/news/2026/10/22/who-warns-more-complex-ebola-outbreak-now-present-in-3-african-countries" target="_blank" rel="noopener noreferrer">半岛电视台</a>。</p>
+<hr>
+<h2 id="b-self">第四部分 · 你自己的事情（轻提示）</h2>
+<p>这一部分来自你授权的个人连接器，窗内一共 10 条，只写纯文本，不放仓库、PR 和邮件链接，也不写账号名。先放要你留意的三条，再放学业相关的一条，然后是 Cell-World 的大重组，最后是昨天早报的投递记录。</p>
+<p><strong>连接器的整体情况。</strong> 你的两个 Gmail 在窗内都没有续费成功、扣款失败或订阅状态变化的邮件（OpenCode Go、Cursor、DeepSeek、GitHub、Grok/X 都没有）。窗内收件箱里 2 封 GitHub Actions 失败通知已收录，其余是营销通讯和一封陌生 API 中转平台的冷推销，已省略。日历这一路没能读到（Notion Calendar 调用被拒，提示需要在 Notion 里连接日历，也没有其他日历连接器），所以今天的日程是空缺，没有编造任何日程；Notion 笔记窗内没有新内容。</p>
+<h3>1. StudySolo 的每日备份本身成功了，但 Supabase 出站流量已用到免费额度的约 96%，触发水位告警，工作流因此被标成失败</h3>
+<p>〔连读-1〕</p>
+<p><strong>发生了什么。</strong> 北京时间 10 月 22 日 08:14，StudySolo 仓库（1037Solo-StudySolo，私有）里名为 supabase-backup 的每日备份工作流运行结束，用时 23 秒，状态是失败；08:15 你收到了一封「Run failed」的通知邮件。可是日志显示，加密备份其实已经成功上传成了一个工件（artifact），大小 464,353 字节。真正让任务失败的是后面那一步「用量水位检查」：检查脚本把告警阈值设为 80%，而这次读到的出站流量是 5,171,183,264 字节，上限是 5,368,709,120 字节，比例约 0.963，也就是约 96%；相比之下，数据库体积是 20,671,635 字节，上限 524,288,000 字节，只占约 3.9%。脚本因此打出 alert:true，以退出码 2 结束。</p>
+<p><strong>白话解释。</strong> Supabase 是 StudySolo 用的托管数据库服务。「出站流量」（egress）是指数据从数据库流出去、发给用户或其他服务的总量；免费额度对它有上限。也就是说数据本身很小，但读出去的量快把出站额度用完了。采集员提醒，这和前几天证据包里「出站 89%」的趋势是连着的，继续上涨可能触发限速或超额。同一天北京时间 07:17 的 supabase-keepalive 保活任务是成功的。</p>
+<p><strong>为什么提一下。</strong> 和今天的核心思想刚好对上：备份这一块「给得精确」、做得好，但出站流量这一块像是「放得太宽」——谁来读、读多少，现在还没有收住。具体要不要查是哪里在大量读取、要不要加缓存，等你有空时再看就好。</p>
+<p><strong>核实状态。</strong> 多来源确认（失败通知邮件与 GitHub Actions 运行日志两处一致，数字均摘自运行日志原文）。</p>
+<p><strong>来源（纯文本）。</strong> StudySolo 私有仓库的 supabase-backup 运行记录；你的 Gmail 里同一时间的失败通知。</p>
+<h3>2. Cell-World 的 22.9 GB 不可再生素材做了一次仓库外备份，但 47.7 GB 的 3D 医学母库还没有备份</h3>
+<p>〔连读-9〕</p>
+<p><strong>发生了什么。</strong> 北京时间 10 月 22 日 23:40，Cell-World 仓库（私有）里的一次提交记录说明：GitHub 装不下 22.9 GB 的不可再生素材——包括 27 个成片 mp4、2,189 段配音 wav、字体和 glb 模型——所以这些二进制素材完全不进 Git。为此写了一个带 SHA256 校验的仓库外备份工具，并把全部 2,278 个文件的路径和 SHA256 写进了一份备份清单（backup-manifest.json）提交进仓库，这样不用把二进制放进 Git 也能审计备份。提交信息说，已经在 10 月 23 日备份到本机的一个独立备份目录，2,278 个文件、22.9 GB，所有哈希都校验通过。同一条提交信息自己点出了一个风险：47.7 GB 的 3D 医学母库还没有任何备份。</p>
+<p><strong>白话解释。</strong> SHA256 是一种「文件指纹」：同一个文件算出来的指纹永远一样，哪怕改了一个字节指纹也会完全不同。「不可再生」的意思是丢了就没法重新生成，比如已经渲染好的成片和录好的配音。</p>
+<p><strong>为什么提一下。</strong> 采集员认为这和你的视频归档习惯直接相关，属于值得提醒的待办：最不能丢的那一块已经护住了，体量更大的 3D 医学母库还没有任何备份。</p>
+<p><strong>核实状态。</strong> 单一来源（只有提交记录，数字均摘自提交信息原文）。</p>
+<p><strong>来源（纯文本）。</strong> Cell-World 私有仓库 10 月 22 日 23:40 的备份工具提交。</p>
+<h3>3. deepseek-harness 的真实 API 端到端测试又一次在准备沙箱环境时失败，下载地址连续返回 404</h3>
+<p>〔连读-2〕</p>
+<p><strong>发生了什么。</strong> 北京时间 10 月 22 日 12:41，deepseek-harness 仓库里名为「E2E (real DeepSeek API)」的定时端到端测试失败，用时 40 秒，你同时收到了失败通知邮件。它基于 master 上「Merge pull request #3977 … sync feedback and file refinements from release」那次合并。失败发生在运行 scripts/prepare-ci-bubblewrap.sh 下载依赖这一步：curl 连续四次返回 404，最后以退出码 22 结束。</p>
+<p><strong>白话解释。</strong> 「端到端测试」（E2E）是从头到尾模拟一次真实使用的测试；这里它要真的去调用 DeepSeek 的 API。bubblewrap 是 Linux 上一个轻量的沙箱工具，测试会先把它准备好，让被测程序在隔离环境里运行。404 就是「这个网址找不到」。所以这次失败的意思是：测试连沙箱都没准备好，根本没跑到调用 DeepSeek API 的那一步——这不代表 API 或代码逻辑坏了。采集员说，之前的证据包里也记录过它卡在下载安装包这一步，看起来是同一个老问题还没修。</p>
+<p><strong>核实状态。</strong> 多来源确认（失败通知邮件与 Actions 作业日志一致）。</p>
+<p><strong>来源（纯文本）。</strong> deepseek-harness 仓库的 E2E 运行记录；你的 Gmail 里同一时间的失败通知。</p>
+<h3>4. 系统解剖学第 29–30 节（脉管系统总论、心脏一）的课堂四材料和 11 道共享测验已经提成 PR，等待合并</h3>
+<p>〔连读-3〕</p>
+<p><strong>发生了什么。</strong> 北京时间 10 月 22 日 20:21，StudySolo 仓库（私有）里新建了 PR #237，状态仍为 open。PR 描述写明：课程是系统解剖学（anatomy），节次是课程内累计的第 29–30 节（授课日期 10 月 9 日，赵虎老师），主题是脉管系统总论和心脏（一）。内容包括 lesson.json（按 zod 严格模式校验）、89 KB 的逐字稿 recording.md、62 KB 的纪要 minutes.md、静态自包含的笔记 notes.html、29 张翻卡 cards.md（每张都小于 8,192 字节）；测验是 11 道单选，满分 110，限时 45，题目只取自逐字稿和笔记，内容引用的双哈希已经回填。PR 描述还说，原定用 cmdc（kimi-k3）做只读审查但没有响应（挂起后已终止），改用 Kimi 交叉核对，11 道题答案全部正确。采集员补充：PR 描述说各项检查都通过，只有一个已知的环境型单测失败（SKILL_PACKAGE_CHANGED），作者判断与课堂内容无关。</p>
+<p><strong>为什么提一下。</strong> 这条直接关系到你的复习：心脏这一节的逐字稿、纪要、笔记、29 张卡片和 11 道题都已经做好，但还在 PR 里，没合进主干，所以线上 StudySolo 可能还看不到。想用它复习心脏这一节的话，先把 PR #237 合进去会比较顺。</p>
+<p class="sourced"><strong>核实状态。</strong> 单一来源（只有 PR 描述本身；其中的测试情况是作者自报，采集员没有找到窗内这个 PR 的 CI 运行记录来独立印证，尚未得到其他来源确认）。</p>
+<p><strong>来源（纯文本）。</strong> StudySolo 私有仓库 PR #237。</p>
+<h3>5. Cell-World 视频工程仓库开始了一次分阶段的大重组：先建基线，再把第一代引擎和各学科剧集搬进新目录结构</h3>
+<p>〔连读-5〕</p>
+<p><strong>发生了什么。</strong> Cell-World 是细胞之城系列讲解视频的工程仓库。北京时间 10 月 22 日 15:31 到 17:38 之间，仓库里有一串分阶段的提交：先打了「重组前」的文字源码基线（stage 0）；然后 stage2 第一批把第一代引擎搬进新的 engine-v1 目录，成片挪到 releases，配音保护脚本挪进流水线包；stage2 的第 2 到 5 批把细胞生物学、生化、合集、诺奖、EP4、解剖等剧集分批迁移，旧版本归档；stage3 拆出了两套技能（单独使用版和项目版），补强了规范、标准、操作手册和架构文档，并加了 AGENTS 路由说明。采集员说明，窗内这个仓库一共有 16 个提交，这一条概括的是前半段的结构迁移。</p>
+<p><strong>核实状态。</strong> 单一来源（只有仓库提交记录；采集员用 GitHub API 的提交列表重新取回确认了这些提交和时间）。</p>
+<p><strong>来源（纯文本）。</strong> Cell-World 私有仓库 10 月 22 日 15:31–17:38 的 stage 0 至 stage3 提交。</p>
+<h3>6. Cell-World 把公共能力抽成 npm workspaces 共享包，统一了依赖</h3>
+<p>〔连读-6〕</p>
+<p><strong>发生了什么。</strong> 北京时间 10 月 22 日 19:13，Cell-World 的 stage4–6 提交引入了 npm workspaces，把公共能力拆成七个共享包——paper-core（纸张风格）、ink-core（粉笔墨迹）、histology（组织学）、molecular3d（分子 3D）、mechanism（机制动画）、render（渲染）和 cw（命令行工具）——并统一了依赖。19:16 又同步更新了文档、待办、AGENTS 说明和两套技能。中间还发现并修掉了一个隐患：.gitignore 里的 parts/ 规则把 64 个源码文件（src/**/parts/*.js）挡在了版本控制之外，现在改成只忽略输出目录 out/parts/。</p>
+<p><strong>白话解释。</strong> npm workspaces 是让一个仓库里同时管理多个 JavaScript 包、共用一套依赖的机制。拆成共享包之后，每一集视频就不用再各自复制一份引擎。.gitignore 是告诉 Git「哪些文件不要管」的清单；规则写得太宽，就会把本该保存的源码也一起忽略掉——这也是今天核心思想的一个小例子：规则要写得精确，刚好挡住输出目录就够了。</p>
+<p><strong>核实状态。</strong> 单一来源（只有提交记录，数字 64 摘自提交信息原文）。</p>
+<p><strong>来源（纯文本）。</strong> Cell-World 私有仓库 10 月 22 日 19:13 和 19:16 的提交，以及修正 .gitignore 的提交。</p>
+<h3>7. Cell-World 新增了高中版视频模板和 7 张封面</h3>
+<p>〔连读-7〕</p>
+<p><strong>发生了什么。</strong> 北京时间 10 月 22 日 23:15，Cell-World 的一次提交新增了高中版（high-school）视频模板：包括封面、教材原句、四个层级的讲解和片尾；同时落了 7 张封面，并记录为第 0005 号决策。</p>
+<p><strong>说明。</strong> 这是一个新的视频系列方向。提交信息很短，具体是哪些主题的封面没有写明，采集员没有展开去猜，这里也不猜。</p>
+<p><strong>核实状态。</strong> 单一来源（只有提交记录）。</p>
+<p><strong>来源（纯文本）。</strong> Cell-World 私有仓库 10 月 22 日 23:15 的高中版模板提交。</p>
+<h3>8. Cell-World 修好了渲染冒烟测试的误报和「失败也返回成功」的问题，并且缺中文字体时会直接报错</h3>
+<p>〔连读-8〕</p>
+<p><strong>发生了什么。</strong> 北京时间 10 月 22 日 23:40 的一次提交修改了 smoke.mjs：把原来稀疏的 160 点 readPixels 抽样网格，换成整帧统计（标准差加暗像素比例），修掉了「把有画面的帧误判为空白」的问题——提交里的例子是某一帧抽样标准差只有 3.5，实际整帧是 31.7。还加了黑帧检查，豁免了有意留白的占位画面，加了 120 秒的 READY 超时，并让失败时以退出码 1 结束（以前不管成败都返回 0）。同时环境检查脚本改成：缺少必需的中日韩（CJK）字体或注册失败时直接抛错，以前会悄悄把中文渲染成方块字（俗称「豆腐块」）。提交信息说，在本机验证过：六集 v2 剧集都通过了报告和冒烟测试、退出码正确；失败路径（没有 READY、未知的分镜）会返回 1。</p>
+<p><strong>白话解释。</strong> 「冒烟测试」（smoke test）是最基础的一道检查：先看程序能不能跑起来、画面是不是空的。「退出码」是程序结束时告诉外界「成功还是失败」的数字，0 通常表示成功。以前的检查不管怎样都报 0，等于形同虚设。</p>
+<p><strong>核实状态。</strong> 单一来源（只有提交记录，数字均摘自提交信息原文）。</p>
+<p><strong>来源（纯文本）。</strong> Cell-World 私有仓库 10 月 22 日 23:40 的冒烟测试修复提交。</p>
+<h3>9. Cell-World 重组后做了一轮核对，补了总览和交接清单，并修正了 14 处过期路径</h3>
+<p>〔连读-10〕</p>
+<p><strong>发生了什么。</strong> 北京时间 10 月 22 日 21:10，Cell-World 补了 overview.md、重组交接说明和核对清单，并在 engine-v1 和 08 号脚本里加了 cw 的 Python 入口；23:41 又根据核对结果修正了文档里 14 处还指向旧位置的路径，并注明解剖学共享库目前只有 README、没有构建产物。</p>
+<p><strong>为什么提一下。</strong> 大搬家之后文档里的路径很容易对不上，这一轮核对把它们找了出来。采集员特别提醒：解剖学共享库目前只有 README、没有构建产物，后续做系统解剖学视频时可能要留意。到北京时间 23:41 为止，这次重组在窗内告一段落。</p>
+<p><strong>核实状态。</strong> 单一来源（只有提交记录，数字 14 摘自提交信息原文）。</p>
+<p><strong>来源（纯文本）。</strong> Cell-World 私有仓库 10 月 22 日 21:10 和 23:41 的文档提交。</p>
+<h3>10. 10 月 22 日的早报《新的那扇门，要和旧锁同一天做完》已合入博客主干并同步到 dev，两次 CI 都通过</h3>
+<p>〔连读-4〕</p>
+<p><strong>发生了什么。</strong> 北京时间 10 月 22 日 07:11，Blog-YuSheng 仓库的 PR #195 合入 main（合并提交 6ddb049c），PR 描述写的是「2026-10-22 AI 早报（清晨玄关）。修补隐私：私有仓库来源改纯文本（6183e26）」；07:17，同步 dev 的 PR #196 合入（「chore: sync main → dev (2026-10-22 brief)」）。main 和 dev 两次 CI 运行的结论都是 success，合入 main 会自动触发腾讯云 Pages 部署。窗内博客仓库没有其他未合并的早报 PR。</p>
+<p><strong>核实状态。</strong> 多来源确认（PR 合并记录、合并提交 6ddb049c 与两次 CI 运行结果一致）。</p>
+<p><strong>来源（纯文本）。</strong> Blog-YuSheng 仓库 PR #195、PR #196 及对应的两次 CI 运行。</p>
+<hr>
+<h2 id="b-ahead">第五部分 · 窗外前瞻（不在本次时间窗内）</h2>
+<h3>A. 【不在窗内】Google AI Plus 从 2026 年 11 月 13 日起不能再选 Pro 模型</h3>
+<p><strong>发生了什么。</strong> 这封官方通知邮件在北京时间 10 月 14 日 06:44 到达你的邮箱，在时间窗之外；生效日期是 2026 年 11 月 13 日。邮件原文说：从 2026 年 11 月 13 日起，在 Gemini 应用和 Google 搜索的 AI 模式里选择 Pro 模型的功能，将只对 Google AI Pro 及以上的订阅用户开放；你仍然可以使用最新的 Flash-Lite 和 Flash 模型。</p>
+<p><strong>为什么提一下。</strong> 离生效还有大约三周。到那天之后，现有的 Google AI Plus 只能用 Flash 和 Flash-Lite。如果你平时依赖 Gemini Pro，可以提前想一想替代方案，或者判断这份订阅还值不值得继续——今天其他订阅都没有变化，这是唯一一条需要提前留意的。</p>
+<p><strong>核实状态。</strong> 单一来源（只有这封官方通知邮件）。</p>
+<p><strong>来源（纯文本）。</strong> 你的 Gmail 里 10 月 14 日收到的 Google AI Plus 变更通知。</p>
+<hr>
+<h2 id="b-caveat">第六部分 · 单一来源与未能核实清单</h2>
+<p class="sourced">下面这些条目或数字，正文里已经用「据某来源称」「尚未得到其他来源确认」标注过，这里集中列一遍。</p>
+<p><strong>整条为单一来源：</strong> 讯AI 的 Google Agent Compute Engine（只有 Google 博客，性能数字属厂商自报）、欧洲议会 AI 责任法辩论（只有 POLITICO Europe，目前只是辩论）、OpenAI 最高 300 亿美元融资（只有 CNBC 援引匿名知情人士，OpenAI 未确认）、高盛 9% 劳动者替代研报（只有 Fortune 转述）；讯科的 Arista CVE-2026-114625（只核实了 BleepingComputer）、Arc 浏览器停服（只核对了官方帮助中心）、太空军三次发射无人投标（只有 POLITICO 独家报道，经授权转载核对）；讯医的 EGPA 利妥昔单抗对硫唑嘌呤（JAMA 原文一手，但无独立媒体交叉核对）；个人板块的 StudySolo PR #237（只有 PR 描述，测试情况为作者自报）和 Cell-World 的全部六条（只有提交记录）；窗外的 Google AI Plus 变更（只有一封官方通知邮件）。</p>
+<p><strong>多来源、但部分数字只见于一处：</strong> Decisions API 的榜单排名（只见于 TechCrunch）；Warp Sciences 的 8.65 亿美元估值（只见于 TechCrunch，出自 Weil 本人在 X 上的公告）；sibeprenlimab 与 atacicept 的 NEJM 原文页都没有单独打开；MIRA2 的 Lancet 原文页被拦截，相对风险数字没有直接核对；巴托利单抗只确认「获批」，机制和合作方未经一手核实、没有疗效数字；首例体内先导编辑只确认「首例给药」，试验编号来自搜索结果、疗效没有任何数据。</p>
+<p><strong>数字有出入：</strong> 本迪布焦型埃博拉在刚果（金）的累计数字，新华社称截至 10 月 20 日确诊 9,704 例、死亡 4,687 例、病死率 48.3%；联合国新闻写的是确诊 9,552 例、死亡 4,600 多例。截止日期可能不同，引用时请写明来源和日期。</p>
+<hr>
+<h2 id="b-src">第七部分 · 来源索引</h2>
+<p>以下只列公开链接。个人板块的私有仓库、博客仓库 PR 和邮件线程按隐私约定不放链接。</p>
+<p><strong>讯AI</strong></p>
+<ul><li><a href="https://openai.com/index/decisions-api/" target="_blank" rel="noopener noreferrer">OpenAI</a></li><li><a href="https://techcrunch.com/2026/10/22/openai-makes-its-jev-competitor-widely-available-as-decision-model-competition-heats-up/" target="_blank" rel="noopener noreferrer">TechCrunch</a></li><li><a href="https://www.linuxfoundation.org/press/agentic-ai-foundation-announces-four-new-projects-agent-skills-open-responses-openenv-and-opensandbox" target="_blank" rel="noopener noreferrer">Linux 基金会</a></li><li><a href="https://www.anthropic.com/news/donating-agent-skills-to-the-agentic-ai-foundation" target="_blank" rel="noopener noreferrer">Anthropic</a></li><li><a href="https://thenewstack.io/openai-donates-open-responses/" target="_blank" rel="noopener noreferrer">The New Stack</a></li><li><a href="https://cloud.google.com/blog/topics/ai-infrastructure/introducing-agent-compute-engine-and-expanded-agent-governance" target="_blank" rel="noopener noreferrer">Google Cloud</a></li><li><a href="https://1password.com/press/2026/october/1password-for-agents-trust-layer-personal-ai-agents" target="_blank" rel="noopener noreferrer">1Password</a></li><li><a href="https://www.theverge.com/ai-artificial-intelligence/1016399/1password-ai-agent-password-sign-in" target="_blank" rel="noopener noreferrer">The Verge</a></li><li><a href="https://www.cnbc.com/2026/10/22/openai-funding-round-uae-investors.html" target="_blank" rel="noopener noreferrer">CNBC</a></li><li><a href="https://www.investing.com/news/economy-news/steep-bill-for-ai-buildout-punishes-meta-other-tech-favorites-4967187" target="_blank" rel="noopener noreferrer">Investing.com 转载路透社</a></li><li><a href="https://aipolicydaily.org/archive/daily/2026-10-22/" target="_blank" rel="noopener noreferrer">AI Policy Daily</a></li><li><a href="https://www.businesswire.com/news/home/20261022200104/en/Warp-Sciences-Emerges-From-Stealth-With-%24215-Million-to-Build-U.S.-Chemistry-Services-for-Drug-Research" target="_blank" rel="noopener noreferrer">Business Wire</a></li><li><a href="https://techcrunch.com/2026/10/22/former-openai-science-lead-launches-warp-science-to-automate-wet-labs-with-robots/" target="_blank" rel="noopener noreferrer">TechCrunch</a></li><li><a href="https://www.politico.eu/article/ursula-von-der-leyen-coalition-fractures-over-need-for-ai-liability-rules/" target="_blank" rel="noopener noreferrer">POLITICO Europe</a></li><li><a href="https://fortune.com/2026/10/22/goldman-sachs-forecast-how-many-jobs-lost-to-ai-9-percent/" target="_blank" rel="noopener noreferrer">Fortune</a></li></ul>
+<p><strong>讯科</strong></p>
+<ul><li><a href="https://www.theregister.com/security/2026/10/22/microsoft-says-connectwise-breach-let-chinese-spies-loose-on-2250-cloud-tenants/5304687" target="_blank" rel="noopener noreferrer">The Register</a></li><li><a href="https://techcrunch.com/2026/10/22/chinese-hackers-spied-on-thousands-of-companies-after-breaching-it-giant-connectwise/" target="_blank" rel="noopener noreferrer">TechCrunch</a></li><li><a href="https://www.microsoft.com/en-us/security/blog/2026/10/21/storm-0940-uses-artex-agentic-ai-connectwise-supply-chain-compromise/" target="_blank" rel="noopener noreferrer">微软安全博客</a></li><li><a href="https://www.bleepingcomputer.com/news/security/arista-patches-new-velocloud-orchestrator-zero-day-exploited-in-attacks/" target="_blank" rel="noopener noreferrer">BleepingComputer</a></li><li><a href="https://blog.railway.com/p/security-disclosure-recommendation-redeploy-buckets-and-reconnect-github-after-the-credential-reset" target="_blank" rel="noopener noreferrer">Railway</a></li><li><a href="https://techcrunch.com/2026/10/22/developer-platform-railway-urges-all-users-to-revoke-secret-keys-after-cyberattack/" target="_blank" rel="noopener noreferrer">TechCrunch</a></li><li><a href="https://blog.railway.com/p/security-disclosure-wednesday-october-21st" target="_blank" rel="noopener noreferrer">Railway</a></li><li><a href="https://1password.com/blog/1password-for-ai-agents" target="_blank" rel="noopener noreferrer">1Password</a></li><li><a href="https://techcrunch.com/2026/10/22/1password-launches-a-way-for-ai-agents-to-log-in-on-your-behalf-without-seeing-your-password/" target="_blank" rel="noopener noreferrer">TechCrunch</a></li><li><a href="https://resources.arc.net/hc/en-us/articles/44412972248471-Arc-Sunset-Key-Dates-and-What-to-Expect" target="_blank" rel="noopener noreferrer">Arc 帮助中心</a></li><li><a href="https://www.nist.gov/news-events/news/2026/10/department-commerce-announces-letters-intent-4-companies-389-million-rd" target="_blank" rel="noopener noreferrer">NIST</a></li><li><a href="https://www.helionenergy.com/newsroom/helion-signs-letter-of-intent-for-175-million-chips-award-to-advance-semiconductor-fusion-energy" target="_blank" rel="noopener noreferrer">Helion</a></li><li><a href="https://www.channelnewsasia.com/business/us-award-389-million-in-rd-funds-power-semiconductors-critical-materials-6482801" target="_blank" rel="noopener noreferrer">CNA 转载路透</a></li><li><a href="https://techcrunch.com/2026/10/22/fusion-startup-helion-is-developing-new-semiconductors-that-could-double-output-of-its-power-plants/" target="_blank" rel="noopener noreferrer">TechCrunch</a></li><li><a href="https://www.theverge.com/games/1016862/nintendo-switch-2-jailbreak-ai" target="_blank" rel="noopener noreferrer">The Verge</a></li><li><a href="https://pepsipu.com/blog/2026-10-switch2-jailbreak-ns2jb/" target="_blank" rel="noopener noreferrer">pepsipu</a></li><li><a href="https://www.politico.com/news/2026/10/22/space-force-spacex-rocket-musk-01131131" target="_blank" rel="noopener noreferrer">POLITICO</a></li><li><a href="https://politicalriskwire.com/space-force-scrambles-as-elon-musks-spacex-retires-its-major-rocket/" target="_blank" rel="noopener noreferrer">Political Risk Wire</a></li><li><a href="https://www.theverge.com/tech/1016789/amazon-kindle-unlimited-plus-subscription-ai-audiobooks" target="_blank" rel="noopener noreferrer">The Verge</a></li><li><a href="https://www.aboutamazon.com/news/devices/what-is-kindle-plus" target="_blank" rel="noopener noreferrer">About Amazon</a></li></ul>
+<p><strong>讯医</strong></p>
+<ul><li><a href="https://www.otsuka-us.com/Otsuka-Presents-Final-Phase-3-VISIONARY-Results" target="_blank" rel="noopener noreferrer">Otsuka</a></li><li><a href="https://www.hcplive.com/view/sibeprenlimab-stabilizes-egfr-over-24-months-in-iga-nephropathy-visionary" target="_blank" rel="noopener noreferrer">HCPLive</a></li><li><a href="https://ir.veratx.com/news-releases/news-release-details/vera-therapeutics-announces-positive-origin-3-final-efficacy" target="_blank" rel="noopener noreferrer">Vera Therapeutics</a></li><li><a href="https://www.hcplive.com/view/kidney-compass-origin-3-final-egfr-data-for-atacicept-in-iga-nephropathy" target="_blank" rel="noopener noreferrer">HCPLive</a></li><li><a href="https://www.fda.gov/drugs/resources-information-approved-drugs/fda-grants-traditional-approval-pembrolizumab-or-pembrolizumab-and-berahyaluronidase-alfa-pmph" target="_blank" rel="noopener noreferrer">FDA</a></li><li><a href="https://www.onclive.com/view/fda-grants-full-approval-to-pembrolizumab-for-unresectable-metastatic-tmb-h-solid-tumors" target="_blank" rel="noopener noreferrer">OncLive</a></li><li><a href="https://www.cnpharm.com/c/2026-10-22/1109299.shtml" target="_blank" rel="noopener noreferrer">中国食品药品网</a></li><li><a href="https://www.vbdata.cn/intelDetail/1125723" target="_blank" rel="noopener noreferrer">动脉网</a></li><li><a href="https://jamanetwork.com/journals/jama/fullarticle/10.1001/jama.2026.15278" target="_blank" rel="noopener noreferrer">JAMA</a></li><li><a href="https://jamanetwork.com/journals/jama/newonline/2026/10" target="_blank" rel="noopener noreferrer">JAMA</a></li><li><a href="https://www.thelancet.com/journals/lancet/article/PIIS0140-6736(26)01536-9/abstract" target="_blank" rel="noopener noreferrer">The Lancet</a></li><li><a href="https://www.scimex.org/newsfeed/adding-a-mirena-coil-during-surgery-can-reduce-the-risk-of-hysterectomy-in-women-with-heavy-menstrual-bleeding" target="_blank" rel="noopener noreferrer">Scimex</a></li><li><a href="https://medicalxpress.com/news/2026-10-adding-mirena-iud-surgery-hysterectomy.html" target="_blank" rel="noopener noreferrer">Medical Xpress</a></li><li><a href="https://www.nature.com/articles/d41586-026-03371-x" target="_blank" rel="noopener noreferrer">Nature</a></li><li><a href="https://www.globenewswire.com/news-release/2026/10/05/3374466/0/en/prime-medicine-announces-first-patient-dosed-in-global-phase-1-2-clinical-trial-of-pm577a-for-h1069q-mutated-wilson-disease.html" target="_blank" rel="noopener noreferrer">GlobeNewswire</a></li><li><a href="https://english.news.cn/africa/20261022/3e7e2b526c89400f89f9fd690e4fed1c/c.html" target="_blank" rel="noopener noreferrer">新华社</a></li><li><a href="https://news.un.org/en/story/2026/10/1168647" target="_blank" rel="noopener noreferrer">联合国新闻</a></li><li><a href="https://www.aljazeera.com/news/2026/10/22/who-warns-more-complex-ebola-outbreak-now-present-in-3-african-countries" target="_blank" rel="noopener noreferrer">半岛电视台</a></li></ul>
+<p><strong>你自己的事情与窗外前瞻（纯文本，不放链接）</strong></p>
+<ul><li>StudySolo 私有仓库：supabase-backup 运行记录、PR #237</li><li>deepseek-harness 仓库：E2E (real DeepSeek API) 运行记录</li><li>Cell-World 私有仓库：10 月 22 日 15:31–23:41 的 16 个提交</li><li>Blog-YuSheng 仓库：PR #195、PR #196 及两次 CI 运行</li><li>你的 Gmail：两封 GitHub Actions 失败通知、10 月 14 日的 Google AI Plus 变更通知</li></ul>
+  </article>
+</div>
+
+<script>
+(function () {
+  var ROOM_W = 760
+  var ROOM_H = 800
+  var BOARD_W = 528
+  var BOARD_H = 378
+  var SLOT_X = 64
+  var SLOT_W = 400
+  var SLOT_H = 52
+  var FONT = '700 22px "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", "WenQuanYi Micro Hei", "Droid Sans Fallback", sans-serif'
+
+  var phrases = [
+    { text: '替你登录，却看不见密码', color: '#d4534a' },
+    { text: '只在那几个选项里作答', color: '#1f8a68' },
+    { text: '只拦住致病的那一条', color: '#c4537a' },
+    { text: '门槛从十收到十三', color: '#c47c12' },
+    { text: '只改写出错的那一处', color: '#3a6fd8' }
+  ]
+
+  var steps = [
+    { id: 'bare', coach: '星期五早上，墙还是干净的。按住喷罐，先别盖漏字板。' },
+    {
+      id: 'mess',
+      wipe: true,
+      coach: '整面都花了。用布把墙擦干净，再请漏字板上场。',
+      card: [
+        '给得太宽，出事就要全部重来。',
+        '微软写道，Storm-0940 用智能体框架，以每分钟约 2,900 次的速度试登录 2,250 多个租户。Railway 只好把所有存储桶密钥和 GitHub 令牌强制重置。',
+        '据 BleepingComputer 称，Arista 的零日能让普通登录变成超级运营者。这条尚未得到其他来源确认。'
+      ]
+    },
+    {
+      id: 'login',
+      phrase: 0,
+      kind: 'text',
+      dx: 52,
+      dy: 22,
+      coach: '漏字板来了。按住它，拖进虚线框，对准以后再喷。',
+      card: [
+        '1Password 让智能体替你登录，密码却不经过它。',
+        '你在自己的设备上批准，由它直接填进网页。个人版和家庭版目前免费，欧洲站和加拿大站还不行。'
+      ]
+    },
+    {
+      id: 'choice',
+      phrase: 1,
+      kind: 'text',
+      dx: -46,
+      dy: 18,
+      coach: '这张只开了几个小孔。拖进虚线框，再按住喷罐。',
+      card: [
+        'OpenAI 的 Decisions API 已经正式开放，模型只在给定的选项里作答。',
+        '官方说它快至多 10 倍，每次最多 400 个问题，每百万输入 token 0.10 美元，缓存过的是 0.01 美元，不收输出的钱。token 是模型计量文字的单位。',
+        '据 TechCrunch 称，两个公开榜单上它排第八和第十四。这组名次只见于这一篇报道。'
+      ]
+    },
+    {
+      id: 'flood',
+      kind: 'flood',
+      slot: 2,
+      placed: true,
+      coach: '这张几乎全空。喷一下，看整片盖住会怎样。'
+    },
+    {
+      id: 'flooded',
+      wipe: true,
+      coach: '整片都盖住了。擦掉，换一条窄缝。',
+      card: [
+        '据《美国医学会杂志》原文称，嗜酸性肉芽肿性多血管炎的维持治疗里，把 B 细胞整片清掉的利妥昔单抗并不比硫唑嘌呤更好。',
+        '缓解时间 91.1 周对 96.0 周，严重感染 46.9% 对 24.5%。尚未得到其他来源确认。这一组是 98 人，观察 28 个月。'
+      ]
+    },
+    {
+      id: 'signal',
+      phrase: 2,
+      kind: 'text',
+      dx: 44,
+      dy: -12,
+      coach: '这条只留窄缝。拖进虚线框，再喷。',
+      card: [
+        'sibeprenlimab 只抑制 APRIL。510 人里，复合肾脏结局 1/259 对 28/251，风险降低 97.1%，两年肾功能基本持平。',
+        'atacicept 同时抑制 BAFF 和 APRIL，进展复合事件 5.1% 对 17.8%，风险比 0.24，大约降低 76%。',
+        '巴托利单抗已获批，用于抗乙酰胆碱受体抗体阳性的成人全身型重症肌无力。这里只写获批，不写疗效。'
+      ]
+    },
+    {
+      id: 'gate',
+      phrase: 3,
+      kind: 'text',
+      placed: true,
+      coach: '这张的孔开得太宽。先喷一下，看漆怎么溢出去。',
+      card: [
+        '美国食品药品监督管理局把帕博利珠单抗的高肿瘤突变负荷门槛，从每兆碱基至少 10 个突变提高到至少 13 个。10 到不满 13 这一档，支持常规批准的疗效没有得到证实。',
+        '两组合计 220 人，客观缓解率 36%。公告在今天的时间窗里，批准动作写的是 10 月 16 日。'
+      ]
+    },
+    {
+      id: 'letter',
+      phrase: 4,
+      kind: 'one',
+      dx: 48,
+      dy: 14,
+      coach: '最后一张只留一个字的孔。拖进虚线框再喷。',
+      card: [
+        '《自然》报道了已知的第一例人体内先导编辑，只改写威尔逊病患者肝细胞里出错的那一处。疗效还没有数据。',
+        '首例给药在 10 月 5 日，不在这期时间窗里。今天窗里的是这篇报道。'
+      ]
+    },
+    { id: 'gift', coach: '喷完了。这几句会留在墙上。完整的稿子在右边的颜料提箱里。' }
+  ]
+
+  var stage = document.getElementById('stage')
+  var theater = document.getElementById('theater')
+  var sizer = document.getElementById('sizer')
+  var room = document.getElementById('room')
+  var board = document.getElementById('board')
+  var coach = document.getElementById('coach')
+  var card = document.getElementById('card')
+  var plate = document.getElementById('plate')
+  var hint = document.getElementById('hint')
+  var frame = document.getElementById('frame')
+  var thesis = document.getElementById('thesis')
+  var can = document.getElementById('can')
+  var wipe = document.getElementById('wipe')
+  var aim = document.getElementById('aim')
+  var apertureWrap = document.getElementById('aperture-wrap')
+  var aperture = document.getElementById('aperture')
+  var apertureRead = document.getElementById('aperture-read')
+  var caddy = document.getElementById('caddy')
+  var soundBtn = document.getElementById('sound')
+  var slip = document.getElementById('slip')
+  var notePanel = document.getElementById('note-panel')
+  var noteClose = document.getElementById('note-close')
+  var reader = document.getElementById('reader')
+  var readerClose = document.getElementById('reader-close')
+  var grain = document.getElementById('grain')
+  var kept = document.getElementById('kept')
+  var wet = document.getElementById('wet')
+
+  var keptCtx
+  var wetCtx
+  var step = 0
+  var plateX = 0
+  var plateY = 0
+  var mask = null
+  var holeCount = 0
+  var drag = null
+  var spraying = false
+  var resolvedThisHold = false
+  var deposits = 0
+  var sprayStart = 0
+  var raf = 0
+  var painted = 0
+  var bled = false
+  var soundOn = false
+  var audioCtx = null
+  var sprayNodes = null
+  var giftNoted = false
+
+  function reduced() {
+    return window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  }
+
+  function clamp(value, min, max) {
+    return Math.max(min, Math.min(max, value))
+  }
+
+  function slotY(index) {
+    return 64 + index * 58
+  }
+
+  function targetFor(s) {
+    var index = s.slot !== undefined ? s.slot : s.phrase
+    return { x: SLOT_X, y: slotY(index) }
+  }
+
+  function scaleOfRoom() {
+    var width = room.getBoundingClientRect().width
+    return width > 0 ? width / ROOM_W : 1
+  }
+
+  function fit() {
+    var height = parseFloat(room.style.height) || 652
+    var scale = Math.min(theater.clientWidth / ROOM_W, theater.clientHeight / height)
+    if (!isFinite(scale) || scale <= 0) scale = 1
+    scale = Math.max(0.46, Math.min(scale, 1.08))
+    sizer.style.width = (ROOM_W * scale) + 'px'
+    sizer.style.height = (height * scale) + 'px'
+    room.style.transform = 'scale(' + scale + ')'
+  }
+
+  function sizeCanvas(canvas) {
+    var dpr = Math.min(window.devicePixelRatio || 1, 2)
+    canvas.width = Math.round(BOARD_W * dpr)
+    canvas.height = Math.round(BOARD_H * dpr)
+    var ctx = canvas.getContext('2d')
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+    return ctx
+  }
+
+  function drawGrain() {
+    var ctx = sizeCanvas(grain)
+    var image = ctx.getImageData(0, 0, grain.width, grain.height)
+    var data = image.data
+    for (var i = 0; i < data.length; i += 16) {
+      var shade = 210 + Math.floor(Math.random() * 40)
+      data[i] = shade
+      data[i + 1] = shade - 6
+      data[i + 2] = shade - 16
+      data[i + 3] = Math.random() > 0.82 ? 28 : 0
+    }
+    ctx.putImageData(image, 0, 0)
+  }
+
+  function syncCardRow() {
+    var open = !card.hidden
+    room.style.gridTemplateRows = open ? '378px 72px 156px 132px' : '378px 72px 0px 132px'
+    room.style.height = (open ? 808 : 652) + 'px'
+    fit()
+  }
+
+  function showCard(lines) {
+    card.hidden = false
+    syncCardRow()
+    card.replaceChildren()
+    for (var i = 0; i < lines.length; i++) {
+      var p = document.createElement('p')
+      p.textContent = lines[i]
+      card.appendChild(p)
+    }
+  }
+
+  function clearWet() {
+    wetCtx.clearRect(0, 0, BOARD_W, BOARD_H)
+  }
+
+  function drawPhrase(index) {
+    var phrase = phrases[index]
+    var y = slotY(index) + SLOT_H / 2
+    var x = SLOT_X + SLOT_W / 2
+    keptCtx.font = FONT
+    keptCtx.textAlign = 'center'
+    keptCtx.textBaseline = 'middle'
+    keptCtx.fillStyle = 'rgba(90, 60, 30, .12)'
+    keptCtx.fillText(phrase.text, x + 1, y + 1)
+    keptCtx.fillStyle = phrase.color
+    keptCtx.fillText(phrase.text, x, y)
+    if (index + 1 > painted) painted = index + 1
+  }
+
+  function buildPlate(s, wide) {
+    var canvas = document.createElement('canvas')
+    canvas.width = SLOT_W
+    canvas.height = SLOT_H
+    var g = canvas.getContext('2d')
+    g.fillStyle = '#000'
+    g.fillRect(0, 0, SLOT_W, SLOT_H)
+    g.globalCompositeOperation = 'destination-out'
+    g.font = FONT
+    g.textBaseline = 'middle'
+    g.fillStyle = '#000'
+    g.strokeStyle = '#000'
+    if (s.kind === 'flood') {
+      g.fillRect(14, 7, SLOT_W - 28, SLOT_H - 14)
+    } else if (s.kind === 'one') {
+      var full = phrases[s.phrase].text
+      var prefix = full.slice(0, -1)
+      g.textAlign = 'left'
+      var start = (SLOT_W - g.measureText(full).width) / 2
+      g.fillText(full.slice(-1), start + g.measureText(prefix).width, SLOT_H / 2)
+    } else {
+      var text = phrases[s.phrase].text
+      g.textAlign = 'center'
+      if (wide) {
+        g.lineWidth = 10
+        g.strokeText(text, SLOT_W / 2, SLOT_H / 2)
+      }
+      g.fillText(text, SLOT_W / 2, SLOT_H / 2)
+    }
+    mask = g.getImageData(0, 0, SLOT_W, SLOT_H)
+    holeCount = 0
+    for (var p = 3; p < mask.data.length; p += 16) {
+      if (mask.data[p] < 48) holeCount += 1
+    }
+    var url = canvas.toDataURL('image/png')
+    plate.style.webkitMaskImage = 'url("' + url + '")'
+    plate.style.maskImage = 'url("' + url + '")'
+  }
+
+  function isHole(u, v) {
+    if (!mask || holeCount < 20) {
+      return u > 0.08 && u < 0.92 && v > 0.18 && v < 0.82
+    }
+    var x = clamp(Math.floor(u * mask.width), 0, mask.width - 1)
+    var y = clamp(Math.floor(v * mask.height), 0, mask.height - 1)
+    return mask.data[(y * mask.width + x) * 4 + 3] < 48
+  }
+
+  function positionPlate() {
+    plate.style.left = plateX + 'px'
+    plate.style.top = plateY + 'px'
+    hint.style.left = plateX + 'px'
+    hint.style.top = (plateY - 18) + 'px'
+  }
+
+  function aligned() {
+    var s = steps[step]
+    if (!s || !s.kind) return false
+    var t = targetFor(s)
+    return Math.hypot(plateX - t.x, plateY - t.y) < 36
+  }
+
+  function updateAlignUI() {
+    var s = steps[step]
+    if (!s) return
+    var on = !!(s.kind && (s.placed || aligned()))
+    frame.classList.toggle('is-near', on)
+    plate.classList.toggle('is-on', on && !s.placed)
+    if ((s.kind === 'text' || s.kind === 'one') && !s.placed) {
+      if (on) coach.textContent = '对准了。按住喷罐。'
+      else if (coach.textContent.indexOf('对准了') === 0) coach.textContent = '再把漏字板拖进虚线框。'
+    }
+    if (s.kind && !s.placed && !plate.hidden) {
+      hint.textContent = on ? '对准了，去喷' : '按住拖进虚线框'
+    }
+    var ready = !s.wipe && s.id !== 'gift' && (s.id === 'bare' || s.id === 'flood' || on)
+    can.classList.toggle('is-ready', ready)
+  }
+
+  function enter() {
+    var s = steps[step]
+    room.dataset.phase = s.id
+    document.documentElement.dataset.phase = s.id
+    coach.textContent = s.coach
+    if (s.card && s.wipe) showCard(s.card)
+    wipe.hidden = !s.wipe
+    aim.hidden = !(s.kind === 'text' || s.kind === 'one') || !!s.placed
+    apertureWrap.hidden = s.id !== 'gate'
+    if (s.kind) {
+      plate.hidden = false
+      hint.hidden = false
+      frame.hidden = false
+      var t = targetFor(s)
+      frame.style.left = t.x + 'px'
+      frame.style.top = t.y + 'px'
+      plateX = t.x + (s.placed ? 0 : (s.dx || 0))
+      plateY = t.y + (s.placed ? 0 : (s.dy || 0))
+      plate.classList.remove('is-lifting', 'is-shake')
+      plate.classList.toggle('is-locked', !!s.placed)
+      var wide = s.id === 'gate' && Number(aperture.value) < 70
+      buildPlate(s, wide)
+      positionPlate()
+      if (s.placed) hint.textContent = s.id === 'gate' ? '孔还太宽' : '按住喷罐'
+    } else {
+      plate.hidden = true
+      hint.hidden = true
+      frame.hidden = true
+      mask = null
+    }
+    if (s.id === 'gift') {
+      thesis.hidden = false
+      caddy.classList.add('is-done')
+      if (!giftNoted) {
+        giftNoted = true
+        var extra = document.createElement('p')
+        extra.textContent = '越能干的帮手，越要只给刚好那一小块。课本里这叫最小权限，也像靶向药对着广谱免疫抑制。这两句是帮助理解的常识，不是今天的新闻。'
+        card.appendChild(extra)
+        card.scrollTop = card.scrollHeight
+      }
+    }
+    updateAlignUI()
+    syncCardRow()
+  }
+
+  function go(next) {
+    step = next
+    if (spraying) stopSpray()
+    enter()
+  }
+
+  function onSpraySuccess() {
+    var s = steps[step]
+    if (typeof s.phrase === 'number' && !(s.id === 'gate' && Number(aperture.value) < 70)) {
+      drawPhrase(s.phrase)
+      clearWet()
+    }
+    if (s.card && s.id !== 'mess' && s.id !== 'flooded') showCard(s.card)
+    blip(620)
+    window.setTimeout(function () { blip(880) }, 90)
+    if (s.kind) {
+      plate.classList.add('is-lifting')
+      window.setTimeout(function () { go(step + 1) }, reduced() ? 0 : 460)
+    } else {
+      go(step + 1)
+    }
+  }
+
+  function enough() {
+    var s = steps[step]
+    var held = performance.now() - sprayStart
+    if (s.id === 'bare') return held > 480 && deposits > 24
+    if (s.id === 'flood') return held > 380 && deposits > 24
+    return held > 360 && deposits > 10
+  }
+
+  function consider() {
+    if (resolvedThisHold || !spraying) return
+    var s = steps[step]
+    if (!s || !enough()) return
+    if (s.id === 'gate' && Number(aperture.value) < 70) {
+      resolvedThisHold = true
+      bled = true
+      coach.textContent = '溢出去了。把滑块拨到右边，收到刚好这一格，再喷一次。'
+      showCard(['孔开得太大，漆就糊成一片。门槛要收到刚好，字才立得住。'])
+      stopSpray()
+      return
+    }
+    if ((s.kind === 'text' || s.kind === 'one') && !s.placed && !aligned()) {
+      resolvedThisHold = true
+      coach.textContent = '孔还没对准，漆落在虚线框外面了。再把板拖近一点。'
+      plate.classList.add('is-shake')
+      stopSpray()
+      return
+    }
+    resolvedThisHold = true
+    stopSpray()
+    onSpraySuccess()
+  }
+
+  function blot(x, y, color, radius) {
+    wetCtx.beginPath()
+    wetCtx.fillStyle = color
+    wetCtx.globalAlpha = 0.72
+    wetCtx.arc(x, y, radius, 0, Math.PI * 2)
+    wetCtx.fill()
+    wetCtx.globalAlpha = 1
+  }
+
+  function emit() {
+    var s = steps[step]
+    var count = s.id === 'bare' ? 42 : (s.kind === 'one' ? 64 : 30)
+    var palette = ['#e07a6a', '#7aa0c4', '#e2b15a', '#8d8478', '#d07a9a']
+    for (var i = 0; i < count; i++) {
+      if (s.id === 'bare') {
+        blot(16 + Math.random() * (BOARD_W - 32), 16 + Math.random() * (BOARD_H - 32), palette[i % palette.length], 6 + Math.random() * 13)
+        deposits += 1
+        continue
+      }
+      var u = Math.random()
+      var v = Math.random()
+      var wide = s.id === 'gate' && Number(aperture.value) < 70
+      var hole = isHole(u, v)
+      if (!hole && !(wide && Math.random() < 0.4)) continue
+      var color = s.id === 'flood' ? '#8a8178' : (s.phrase !== undefined ? phrases[s.phrase].color : '#d07a6a')
+      var radius = s.id === 'flood' ? 8 : (wide ? 6.5 : 3.6)
+      blot(plateX + u * SLOT_W, plateY + v * SLOT_H, color, radius)
+      deposits += 1
+    }
+  }
+
+  function tick() {
+    if (!spraying) return
+    emit()
+    consider()
+    raf = requestAnimationFrame(tick)
+  }
+
+  function startSpray(event) {
+    if (spraying || !reader.hidden || !notePanel.hidden) return
+    if (event && event.button !== undefined && event.button > 0) return
+    var s = steps[step]
+    if (!s || s.wipe || s.id === 'gift') {
+      if (s && s.wipe) coach.textContent = s.id === 'mess'
+        ? '先用布把墙擦干净。'
+        : '先把这一片擦掉，再换窄缝。'
+      return
+    }
+    spraying = true
+    resolvedThisHold = false
+    deposits = 0
+    sprayStart = performance.now()
+    can.classList.add('is-down')
+    startHiss()
+    raf = requestAnimationFrame(tick)
+  }
+
+  function stopSpray() {
+    if (!spraying) return
+    var held = performance.now() - sprayStart
+    spraying = false
+    can.classList.remove('is-down')
+    stopHiss()
+    if (raf) cancelAnimationFrame(raf)
+    raf = 0
+    if (!resolvedThisHold && held > 160 && deposits > 0) {
+      coach.textContent = '再按住一会儿，让漆落稳。'
+    }
+  }
+
+  function audio() {
+    try {
+      var Ctx = window.AudioContext || window.webkitAudioContext
+      if (!Ctx) return null
+      if (!audioCtx) audioCtx = new Ctx()
+      if (audioCtx.state === 'suspended') audioCtx.resume()
+      return audioCtx
+    } catch (err) {
+      return null
+    }
+  }
+
+  function startHiss() {
+    if (!soundOn) return
+    var ctx = audio()
+    if (!ctx) return
+    stopHiss()
+    try {
+      var buffer = ctx.createBuffer(1, ctx.sampleRate, ctx.sampleRate)
+      var data = buffer.getChannelData(0)
+      for (var i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1
+      var src = ctx.createBufferSource()
+      src.buffer = buffer
+      src.loop = true
+      var filter = ctx.createBiquadFilter()
+      filter.type = 'highpass'
+      filter.frequency.value = 900
+      var gain = ctx.createGain()
+      gain.gain.value = 0.028
+      src.connect(filter)
+      filter.connect(gain)
+      gain.connect(ctx.destination)
+      src.start()
+      sprayNodes = { src: src, gain: gain }
+    } catch (err) {
+      sprayNodes = null
+    }
+  }
+
+  function stopHiss() {
+    if (!sprayNodes) return
+    try {
+      sprayNodes.gain.gain.setTargetAtTime(0.0001, audioCtx.currentTime, 0.03)
+      sprayNodes.src.stop(audioCtx.currentTime + 0.12)
+    } catch (err) { /* 声音停不掉也不影响喷漆 */ }
+    sprayNodes = null
+  }
+
+  function blip(freq) {
+    if (!soundOn) return
+    var ctx = audio()
+    if (!ctx) return
+    try {
+      var osc = ctx.createOscillator()
+      var gain = ctx.createGain()
+      osc.type = 'sine'
+      osc.frequency.value = freq
+      gain.gain.value = 0.035
+      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.16)
+      osc.connect(gain)
+      gain.connect(ctx.destination)
+      osc.start()
+      osc.stop(ctx.currentTime + 0.18)
+    } catch (err) { /* 没有声音设备时静音继续 */ }
+  }
+
+  function openReader() {
+    reader.hidden = false
+    try { stage.inert = true } catch (err) { /* 老浏览器没有 inert */ }
+    readerClose.focus()
+  }
+
+  function closeReader() {
+    if (reader.hidden) return
+    reader.hidden = true
+    try { stage.inert = false } catch (err) { /* 老浏览器没有 inert */ }
+    caddy.focus()
+  }
+
+  plate.addEventListener('pointerdown', function (event) {
+    var s = steps[step]
+    if (!s || !s.kind || s.placed || plate.classList.contains('is-lifting')) return
+    drag = { id: event.pointerId, x: event.clientX, y: event.clientY, px: plateX, py: plateY }
+    plate.setPointerCapture(event.pointerId)
+    plate.classList.add('is-grabbing')
+    clearWet()
+    event.preventDefault()
+    event.stopPropagation()
+  })
+  plate.addEventListener('pointermove', function (event) {
+    if (!drag || event.pointerId !== drag.id) return
+    var scale = scaleOfRoom()
+    plateX = clamp(drag.px + (event.clientX - drag.x) / scale, 8, BOARD_W - SLOT_W - 8)
+    plateY = clamp(drag.py + (event.clientY - drag.y) / scale, 40, BOARD_H - SLOT_H - 8)
+    positionPlate()
+    updateAlignUI()
+  })
+  function endDrag(event) {
+    if (!drag || (event && event.pointerId !== undefined && event.pointerId !== drag.id)) return
+    drag = null
+    plate.classList.remove('is-grabbing')
+    var s = steps[step]
+    if (!s || !s.kind || s.placed) return
+    var t = targetFor(s)
+    if (Math.hypot(plateX - t.x, plateY - t.y) < 48) {
+      plateX = t.x
+      plateY = t.y
+      positionPlate()
+      blip(740)
+    }
+    updateAlignUI()
+  }
+  plate.addEventListener('pointerup', endDrag)
+  plate.addEventListener('pointercancel', endDrag)
+  plate.addEventListener('animationend', function () { plate.classList.remove('is-shake') })
+
+  aim.addEventListener('click', function () {
+    var s = steps[step]
+    if (!s || !s.kind) return
+    var t = targetFor(s)
+    plateX = t.x
+    plateY = t.y
+    clearWet()
+    positionPlate()
+    updateAlignUI()
+    blip(740)
+  })
+
+  wipe.addEventListener('click', function () {
+    clearWet()
+    if (steps[step].wipe) go(step + 1)
+  })
+
+  aperture.addEventListener('input', function () {
+    var value = Number(aperture.value)
+    var tight = value >= 70
+    apertureRead.textContent = tight ? '收到刚好这一格' : '还是太宽'
+    aperture.setAttribute('aria-valuenow', String(value))
+    aperture.setAttribute('aria-valuetext', apertureRead.textContent)
+    var s = steps[step]
+    if (!s || s.id !== 'gate') return
+    buildPlate(s, !tight)
+    hint.textContent = tight ? '孔收到了' : '孔还太宽'
+    if (tight) {
+      clearWet()
+      var t = targetFor(s)
+      plateX = t.x
+      plateY = t.y
+      positionPlate()
+      coach.textContent = '刻度到了。再按住喷罐。'
+      can.classList.add('is-ready')
+    }
+  })
+
+  can.addEventListener('pointerdown', function (event) {
+    event.preventDefault()
+    startSpray(event)
+  })
+  board.addEventListener('pointerdown', function (event) {
+    if (event.target === plate || plate.contains(event.target)) return
+    startSpray(event)
+  })
+  window.addEventListener('pointerup', stopSpray)
+  window.addEventListener('pointercancel', stopSpray)
+  window.addEventListener('keydown', function (event) {
+    if (event.code === 'Escape') {
+      closeReader()
+      notePanel.hidden = true
+      return
+    }
+    var typing = event.target && event.target.closest && event.target.closest('input, a, button')
+    if ((event.code === 'Space' || event.code === 'Enter') && !typing) {
+      if (event.repeat) return
+      event.preventDefault()
+      startSpray(event)
+    }
+    if (event.target && event.target.id === 'aperture') return
+    var s = steps[step]
+    if (!s || !s.kind || s.placed || plate.hidden) return
+    var moved = false
+    if (event.key === 'ArrowLeft') { plateX -= 14; moved = true }
+    if (event.key === 'ArrowRight') { plateX += 14; moved = true }
+    if (event.key === 'ArrowUp') { plateY -= 10; moved = true }
+    if (event.key === 'ArrowDown') { plateY += 10; moved = true }
+    if (!moved) return
+    event.preventDefault()
+    plateX = clamp(plateX, 8, BOARD_W - SLOT_W - 8)
+    plateY = clamp(plateY, 40, BOARD_H - SLOT_H - 8)
+    positionPlate()
+    updateAlignUI()
+  })
+  window.addEventListener('keyup', function (event) {
+    if (event.code === 'Space' || event.code === 'Enter') stopSpray()
+  })
+
+  soundBtn.addEventListener('click', function () {
+    soundOn = !soundOn
+    soundBtn.textContent = soundOn ? '喷罐声音：开' : '喷罐声音：关'
+    soundBtn.setAttribute('aria-pressed', soundOn ? 'true' : 'false')
+    if (soundOn) blip(520)
+    else stopHiss()
+  })
+
+  slip.addEventListener('click', function () { notePanel.hidden = false; noteClose.focus() })
+  noteClose.addEventListener('click', function () { notePanel.hidden = true; slip.focus() })
+  notePanel.addEventListener('click', function (event) { if (event.target === notePanel) notePanel.hidden = true })
+  caddy.addEventListener('click', openReader)
+  readerClose.addEventListener('click', closeReader)
+
+  document.fonts.ready.then(function () {
+    var s = steps[step]
+    if (s && s.kind) buildPlate(s, s.id === 'gate' && Number(aperture.value) < 70)
+  }).catch(function () { /* 字体晚到也不挡住喷漆 */ })
+
+  try {
+    keptCtx = sizeCanvas(kept)
+    wetCtx = sizeCanvas(wet)
+    drawGrain()
+    go(0)
+    fit()
+    window.addEventListener('resize', fit)
+  } catch (err) {
+    reader.hidden = false
+  }
+})()
+</script>
+</body>
+<!--
+DESIGN LESSON 2026-10-23 折晓早报
+STYLE: 星期五清晨的浅色白墙，薄木漏字板和一罐明快喷漆
+GENRE: 把漏字板对准再按住喷罐，只让漆从刚好的孔里过去
+TITLE: 只喷刚好那几个字
+THESIS: 越能干的帮手，越要只给刚好那一小块。
+-->
+</html>
