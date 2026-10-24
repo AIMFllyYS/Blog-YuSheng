@@ -1,0 +1,1736 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>折晓早报 · 2026-10-25 · 顺着水管走到头</title>
+<style>
+  :root {
+    color-scheme: light;
+    --ink: #24382e;
+    --soft: #5c6d62;
+    --paper: #fffdf8;
+    --line: #eadfce;
+    --ease: cubic-bezier(.22, .72, .2, 1);
+    --pop: cubic-bezier(.2, 1.05, .32, 1);
+    --sage: #6e9476;
+    --water: #7ebfd8;
+  }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html, body { margin: 0; height: 100%; }
+  body {
+    color: var(--ink);
+    background: #f4f7f2;
+    font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", "Noto Sans CJK SC", "Source Han Sans SC", "WenQuanYi Micro Hei", "Droid Sans Fallback", sans-serif;
+    overflow: hidden;
+  }
+  button, summary { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  button:focus-visible, a:focus-visible, summary:focus-visible {
+    outline: 2px solid #2f7a55;
+    outline-offset: 3px;
+  }
+  .vh {
+    position: absolute;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+  .world {
+    height: 100%;
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+    background: #f4f7f2;
+  }
+  header {
+    flex: none;
+    display: flex;
+    align-items: center;
+    gap: 12px 16px;
+    padding: 8px 14px 4px;
+  }
+  .brand { margin: 0; min-width: 11rem; }
+  .brand .name, .brand .date { display: block; margin: 0; }
+  .brand .name { font-size: 15px; font-weight: 700; letter-spacing: .04em; }
+  .brand .date { font-size: 12px; color: var(--soft); margin-top: 1px; }
+  .guide {
+    flex: 1;
+    margin: 0;
+    font-size: 16.5px;
+    line-height: 1.45;
+  }
+  #sound, .memo-btn, .knots button, .sheet-bar button, .memo-card button {
+    appearance: none;
+    border: 1px solid var(--line);
+    background: var(--paper);
+    border-radius: 999px;
+    min-height: 36px;
+    padding: 4px 12px;
+  }
+  #sound { flex: none; white-space: nowrap; }
+  .play {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    background: linear-gradient(180deg, #f7fbf6 0%, #e7f3e6 16%, #f7f3ea 34%, #f3ebdd 100%);
+  }
+  .stage {
+    position: relative;
+    flex: 1;
+    min-width: 0;
+    touch-action: none;
+  }
+  .stage svg { width: 100%; height: 100%; display: block; }
+  .hit {
+    position: absolute;
+    width: 84px;
+    height: 84px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    transform: translate(-50%, -50%);
+    touch-action: none;
+    z-index: 3;
+  }
+  .hit[data-current="true"] {
+    box-shadow: 0 0 0 2px rgba(90, 164, 168, .85), 0 0 0 10px rgba(158, 212, 196, .28);
+  }
+  .hit[aria-disabled="true"] { pointer-events: none; }
+  .ghost {
+    position: absolute;
+    left: 50%;
+    top: 42%;
+    width: 18px;
+    height: 18px;
+    margin-left: -9px;
+    border-radius: 50%;
+    background: rgba(255, 253, 248, .92);
+    box-shadow: 0 0 0 2px rgba(47, 122, 85, .45);
+    opacity: 0;
+    pointer-events: none;
+  }
+  .hit[data-current="true"] .ghost { opacity: 1; }
+  .hit-faucet[data-current="true"] .ghost { animation: ghost-down 1.35s var(--ease) infinite; }
+  .hit-kink[data-current="true"] .ghost,
+  .hit-valve[data-current="true"] .ghost { animation: ghost-right 1.35s var(--ease) infinite; }
+  .hit-joint[data-current="true"] .ghost { animation: ghost-orbit 1.5s linear infinite; }
+  .hit-nozzle[data-current="true"] .ghost { animation: ghost-press 1.2s var(--ease) infinite; }
+  @keyframes ghost-down {
+    0%, 15% { transform: translateY(-8px); }
+    70%, 100% { transform: translateY(26px); }
+  }
+  @keyframes ghost-right {
+    0%, 15% { transform: translateX(-10px); }
+    70%, 100% { transform: translateX(24px); }
+  }
+  @keyframes ghost-orbit {
+    0% { transform: translate(16px, -6px); }
+    25% { transform: translate(8px, 16px); }
+    50% { transform: translate(-16px, 8px); }
+    75% { transform: translate(-8px, -14px); }
+    100% { transform: translate(16px, -6px); }
+  }
+  @keyframes ghost-press {
+    0%, 100% { transform: scale(1); }
+    45% { transform: scale(.62); }
+  }
+  .fx { position: absolute; z-index: 2; pointer-events: none; width: 0; height: 0; }
+  .drip i, .spray i {
+    position: absolute;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #8ecae4;
+    opacity: 0;
+  }
+  .world[data-step="joint"] .drip i { animation: drip 1s ease-in infinite; }
+  .drip i:nth-child(2) { animation-delay: .28s; left: 8px; }
+  .drip i:nth-child(3) { animation-delay: .55s; left: -7px; }
+  @keyframes drip {
+    0% { transform: translateY(8px); opacity: .85; }
+    100% { transform: translateY(36px); opacity: 0; }
+  }
+  .world[data-step="wait"] .spray i,
+  .world[data-step="gift"] .spray i { animation: spray 1.05s ease-out infinite; }
+  .spray i:nth-child(2) { animation-delay: .12s; }
+  .spray i:nth-child(3) { animation-delay: .24s; }
+  .spray i:nth-child(4) { animation-delay: .36s; }
+  .spray i:nth-child(5) { animation-delay: .18s; }
+  .spray i:nth-child(6) { animation-delay: .42s; }
+  @keyframes spray {
+    0% { transform: translate(0, 0) scale(1); opacity: .9; }
+    100% { transform: translate(92px, 16px) scale(.6); opacity: 0; }
+  }
+  .spray i:nth-child(odd) { animation-name: spray-up; }
+  @keyframes spray-up {
+    0% { transform: translate(0, 0); opacity: .85; }
+    100% { transform: translate(78px, -20px); opacity: 0; }
+  }
+  .memo-btn {
+    position: absolute;
+    z-index: 4;
+    top: 14px;
+    left: 14px;
+    border-radius: 3px 12px 12px 4px;
+    transform: rotate(-2deg);
+    box-shadow: 0 8px 14px rgba(90, 70, 40, .08);
+    min-height: 34px;
+  }
+  .memo-btn::before {
+    content: "";
+    position: absolute;
+    left: 10px;
+    top: -7px;
+    width: 8px;
+    height: 8px;
+    border: 1.5px solid #c4b092;
+    border-radius: 50%;
+  }
+  .garden {
+    position: relative;
+    width: min(380px, 40vw);
+    flex: none;
+    min-height: 0;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px 14px 8px 4px;
+  }
+  .rain { position: absolute; inset: 0; pointer-events: none; display: none; z-index: 6; }
+  .garden.ready .rain { display: block; }
+  .rain i {
+    position: absolute;
+    width: 7px;
+    height: 9px;
+    border-radius: 50%;
+    background: #8ecae4;
+    opacity: 0;
+    animation: fall 1s ease-in infinite;
+  }
+  .rain i:nth-child(1) { left: 18%; top: 34%; }
+  .rain i:nth-child(2) { left: 28%; top: 42%; animation-delay: .25s; }
+  .rain i:nth-child(3) { left: 16%; top: 58%; animation-delay: .45s; }
+  .rain i:nth-child(4) { left: 30%; top: 66%; animation-delay: .1s; }
+  .rain i:nth-child(5) { left: 42%; top: 78%; animation-delay: .33s; }
+  @keyframes fall {
+    0% { transform: translateY(-14px); opacity: .9; }
+    100% { transform: translateY(22px); opacity: 0; }
+  }
+  .tin {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    padding: 0;
+    text-align: left;
+  }
+  .tin-body {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: linear-gradient(#f8fcf7, #d5ead8);
+    border: 2px solid #b7d2bc;
+    border-radius: 999px;
+    padding: 7px 14px 7px 7px;
+    box-shadow: 0 8px 16px rgba(80, 110, 80, .12), inset 0 1px 0 #fff;
+  }
+  .tin-lid {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    flex: none;
+    background:
+      radial-gradient(circle at 32% 34%, #fff 0 2.5px, transparent 3px),
+      radial-gradient(circle at 58% 42%, #d5ecc8 0 3px, transparent 3.5px),
+      radial-gradient(circle at 42% 62%, #fff 0 2px, transparent 2.6px),
+      radial-gradient(circle at 35% 35%, #fff, #e7f6ea 42%, #b7d7bf);
+    border: 2px solid #8fb59a;
+    box-shadow: inset 0 -4px 0 rgba(80, 120, 90, .16);
+  }
+  .tin-text strong { display: block; font-size: 15px; }
+  .tin-text small { display: block; color: var(--soft); font-size: 12px; margin-top: 1px; }
+  .pots {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 8px;
+    justify-items: center;
+    align-items: end;
+    padding-top: 16px;
+  }
+  .pot {
+    position: relative;
+    width: 124px;
+    height: 158px;
+    border: 0;
+    background: transparent;
+    padding: 0;
+  }
+  .pot[data-current="true"]::before {
+    content: "";
+    position: absolute;
+    z-index: 6;
+    left: 16px;
+    right: 16px;
+    top: auto;
+    height: 86px;
+    bottom: -4px;
+    border-radius: 20px;
+    box-shadow: 0 0 0 3px rgba(126, 191, 216, .72);
+    pointer-events: none;
+  }
+  .pot[aria-disabled="true"] { cursor: default; }
+  .pot-cup { width: 96px; height: 112px; grid-column: 1 / -1; }
+  .flag {
+    position: absolute;
+    z-index: 5;
+    top: -18px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 2px 7px;
+    font-size: 12px;
+    white-space: nowrap;
+    color: #3d5246;
+    opacity: 0;
+  }
+  .garden.ready .flag { opacity: 1; }
+  .plant {
+    position: absolute;
+    z-index: 2;
+    left: 50%;
+    bottom: 58px;
+    width: 84px;
+    height: 86px;
+    transform: translateX(-50%) scale(.2);
+    transform-origin: 50% 100%;
+    opacity: 0;
+    transition: transform .9s var(--ease), opacity .5s var(--ease);
+  }
+  .plant svg { width: 100%; height: 100%; overflow: visible; display: block; }
+  .garden.ready .pot-arrive .plant { transform: translateX(-50%) scale(1); opacity: 1; transition-delay: .12s; }
+  .garden.ready .pot-years .plant { transform: translateX(-50%) scale(1); opacity: 1; transition-delay: .28s; }
+  .garden.ready .pot-cup .plant {
+    transform: translateX(-50%) scale(1);
+    opacity: 1;
+    transition-delay: .45s;
+  }
+  .pot-wait .plant {
+    z-index: 5;
+    transform: translateX(-50%) scale(var(--sprout, .16));
+    opacity: var(--leaf, 0);
+    transition: none;
+  }
+  .pot-cup .plant { width: 64px; height: 52px; bottom: 40px; }
+  .soil {
+    position: absolute;
+    z-index: 3;
+    left: 24px;
+    right: 24px;
+    bottom: 54px;
+    height: 16px;
+    border-radius: 50%;
+    background: #c9aa84;
+    transition: background .6s var(--ease);
+  }
+  .garden.ready .pot:not(.pot-dry) .soil { background: #644832; }
+  .pot-dry .soil { background: #e2cbae; }
+  .chart {
+    position: absolute;
+    z-index: 4;
+    left: 50%;
+    bottom: 14px;
+    width: 76px;
+    height: 34px;
+    transform: translateX(-50%);
+    opacity: 0;
+  }
+  .garden.ready .chart { opacity: 1; }
+  .clay {
+    position: absolute;
+    z-index: 1;
+    left: 18px;
+    right: 18px;
+    bottom: 0;
+    height: 68px;
+    background: linear-gradient(90deg, #f3c3a6, #e08b68 42%, #c96b4c);
+    clip-path: polygon(12% 0, 88% 0, 100% 100%, 0 100%);
+    border-radius: 0 0 16px 16px;
+    filter: drop-shadow(0 8px 8px rgba(120, 70, 40, .12));
+  }
+  .pot::after {
+    content: "";
+    position: absolute;
+    z-index: 3;
+    left: 20px;
+    right: 20px;
+    bottom: 58px;
+    height: 15px;
+    border-radius: 50%;
+    background: linear-gradient(#f8d7c2, #e39a78);
+    box-shadow: inset 0 -2px 0 rgba(140, 70, 40, .2);
+    pointer-events: none;
+  }
+  .pot-dry::after { background: linear-gradient(#f4e3d4, #e4cbb8); }
+  .pot-dry .clay { filter: saturate(.65) drop-shadow(0 8px 8px rgba(120, 70, 40, .08)); }
+  .pot-cup .soil { bottom: 34px; left: 18px; right: 18px; }
+  .pot-cup::after { bottom: 30px; left: 14px; right: 14px; height: 12px; }
+  .pot-cup .clay {
+    height: 46px;
+    left: 16px;
+    right: 16px;
+    background: linear-gradient(90deg, #f7e4d6, #e4c3ae);
+  }
+  .pot-wait[data-current="true"] .chart { filter: drop-shadow(0 2px 0 rgba(255, 253, 248, .8)); }
+  footer {
+    flex: none;
+    padding: 6px 14px 10px;
+    background: rgba(255, 253, 248, .94);
+    border-top: 1px solid var(--line);
+  }
+  .ribbon {
+    margin: 0 0 6px;
+    padding: 6px 10px;
+    border-radius: 10px;
+    background: #e7f4e6;
+    font-size: 16px;
+    font-weight: 700;
+  }
+  .fact {
+    margin: 0;
+    padding-left: 10px;
+    border-left: 3px solid #c5dcc8;
+    font-size: 15px;
+    line-height: 1.6;
+    max-width: 72rem;
+  }
+  .knots { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .knots:empty { display: none; }
+  .knots button[aria-current="true"] { background: #e7f2e6; border-color: #b7d2bc; }
+  .memo-card {
+    position: absolute;
+    z-index: 6;
+    top: 58px;
+    left: 16px;
+    width: min(360px, calc(100% - 32px));
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 12px 14px 14px;
+    box-shadow: 0 16px 40px rgba(60, 50, 30, .14);
+  }
+  .memo-card h2 { margin: 0 0 8px; font-size: 16px; }
+  .memo-card ol { margin: 0; padding-left: 1.2rem; }
+  .memo-card li { margin: .45rem 0; font-size: 14.5px; line-height: 1.55; }
+  .memo-card button { margin-top: 8px; }
+  .sheet {
+    position: fixed;
+    inset: 0;
+    z-index: 8;
+    background: #fbf8f2;
+    display: flex;
+    flex-direction: column;
+    transform-origin: 80% 20%;
+    animation: sheet-in .28s var(--pop);
+  }
+  @keyframes sheet-in {
+    from { opacity: 0; transform: scale(.96); }
+    to { opacity: 1; transform: none; }
+  }
+  .sheet-bar {
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--line);
+    background: #fbf8f2;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
+  .sheet-bar p { margin: 0; font-size: 15px; }
+  .sheet-bar button { border-radius: 999px; }
+  .sheet-body {
+    flex: 1;
+    overflow: auto;
+    display: grid;
+    grid-template-columns: 168px minmax(0, 40rem);
+    justify-content: center;
+    gap: 8px 32px;
+    padding: 18px 22px 64px;
+  }
+  .toc { position: sticky; top: 0; align-self: start; padding-top: 8px; }
+  .toc a {
+    display: block;
+    padding: 6px 0;
+    color: #3d5246;
+    text-decoration: none;
+    font-size: 14px;
+    line-height: 1.4;
+  }
+  .toc a:hover { color: #1f6a4a; }
+  .prose { font-size: 17px; line-height: 1.8; color: #24382e; }
+  .prose h1 { font-size: 1.5rem; line-height: 1.35; margin: .2rem 0 1rem; }
+  .prose h2 {
+    font-size: 1.24rem;
+    line-height: 1.4;
+    margin: 2.3rem 0 .7rem;
+    padding-top: .8rem;
+    border-top: 1px solid var(--line);
+    scroll-margin-top: 64px;
+  }
+  .prose h3 { font-size: 1.06rem; line-height: 1.5; margin: 1.7rem 0 .35rem; scroll-margin-top: 64px; }
+  .prose p { margin: .75rem 0; }
+  .prose .marker {
+    display: inline-block;
+    margin: .2rem 0;
+    padding: .05rem .55rem;
+    background: #e7f2e6;
+    border-radius: 999px;
+    font-size: 13px;
+    color: #2f5a40;
+  }
+  .prose blockquote {
+    margin: .8rem 0 1.2rem;
+    padding: .7rem 1rem;
+    background: #f3f7f1;
+    border-left: 3px solid #8fb394;
+  }
+  .prose blockquote p { margin: .4rem 0; }
+  .prose .status { background: #fff6e8; border-radius: 12px; padding: .6rem .8rem; }
+  .prose .numbers { background: #f2f7fb; border-radius: 12px; padding: .6rem .8rem; }
+  .prose .caution { background: #fdeeea; border-radius: 12px; padding: .6rem .8rem; }
+  .prose .src { color: #3d5246; }
+  .prose strong { font-weight: 700; }
+  .prose a { color: #1a6d78; }
+  .prose code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: .88em;
+    background: #f3eee6;
+    padding: 0 .25em;
+    border-radius: 4px;
+  }
+  .prose ul { margin: .4rem 0 .8rem; padding-left: 1.25rem; }
+  .prose li { margin: .35rem 0; }
+  .prose hr { border: 0; border-top: 1px solid var(--line); margin: 1.5rem 0; }
+  @media (max-width: 860px) {
+    body { overflow: auto; height: auto; }
+    .world { height: auto; overflow: visible; }
+    header { flex-wrap: wrap; }
+    .guide { flex-basis: 100%; }
+    .play { flex-direction: column; }
+    .stage { height: 470px; flex: none; }
+    .garden { width: auto; overflow: visible; padding: 4px 12px 12px; }
+    .sheet-body { grid-template-columns: 1fr; padding: 12px 16px 48px; }
+    .toc {
+      display: flex;
+      gap: 10px 14px;
+      overflow: auto;
+      position: sticky;
+      top: 0;
+      background: #fbf8f2;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--line);
+    }
+    .toc a { white-space: nowrap; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: .01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: .01ms !important;
+    }
+  }
+</style>
+</head>
+<body>
+<div class="world" id="world" data-step="faucet">
+  <header>
+    <p class="brand">
+      <span class="name">折晓早报</span>
+      <span class="date">2026 年 10 月 25 日 · 星期日</span>
+    </p>
+    <p class="guide" id="guide">先拧开左边的水龙头。水要自己走到花盆里。</p>
+    <button type="button" id="sound" aria-pressed="false">水声关</button>
+  </header>
+  <div class="play">
+    <div class="stage" id="stage">
+      <svg id="art" viewBox="0 0 900 560" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+        <defs>
+          <linearGradient id="glass" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#f7fbf8"/>
+            <stop offset="1" stop-color="#d5e7d4"/>
+          </linearGradient>
+          <filter id="soft" x="-30%" y="-30%" width="160%" height="160%">
+            <feDropShadow dx="0" dy="5" stdDeviation="4" flood-color="#c9b89a" flood-opacity=".28"/>
+          </filter>
+        </defs>
+        <g opacity=".45" stroke="#e6d8c6" fill="none">
+          <path d="M0 390 H900 M0 470 H900"/>
+          <path d="M140 330 V560 M320 330 V560 M500 330 V560 M680 330 V560"/>
+        </g>
+        <line x1="0" y1="318" x2="900" y2="318" stroke="#eadfce" stroke-width="2"/>
+        <g>
+          <rect x="228" y="28" width="268" height="156" rx="16" fill="#f6f1e6"/>
+          <rect x="242" y="42" width="240" height="128" rx="10" fill="url(#glass)"/>
+          <path d="M242 128 Q330 104 400 126 T482 124 V170 H242 Z" fill="#d7e8d2"/>
+          <path d="M242 146 Q360 124 482 150 V170 H242 Z" fill="#c5dcc0"/>
+          <path d="M242 42 H292 Q284 100 300 170 H242 Z" fill="#fffaf3" opacity=".78"/>
+          <path d="M430 42 H482 V170 H424 Q446 96 430 42 Z" fill="#fffaf3" opacity=".5"/>
+          <path d="M362 42 V170 M242 104 H482" stroke="#f6f1e6" stroke-width="4"/>
+        </g>
+        <circle cx="790" cy="62" r="46" fill="#ffe7ad" opacity=".28"/>
+        <circle cx="790" cy="62" r="26" fill="#ffe3a4"/>
+        <ellipse cx="430" cy="500" rx="180" ry="22" fill="#ffe9c6" opacity=".45"/>
+        <g filter="url(#soft)">
+          <rect x="46" y="188" width="42" height="70" rx="12" fill="#f3e2c8"/>
+          <rect x="55" y="200" width="24" height="46" rx="6" fill="#e4cba0"/>
+          <path d="M88 236 H150 Q178 236 178 270 V322" fill="none" stroke="#e4bc72" stroke-width="18" stroke-linecap="round"/>
+          <path d="M88 229 H150 Q184 229 184 270 V314" fill="none" stroke="#f8e6c2" stroke-width="5" stroke-linecap="round"/>
+          <circle cx="88" cy="236" r="12" fill="#d7a85a"/>
+          <circle cx="178" cy="328" r="8" fill="#c9964a"/>
+        </g>
+        <g id="handle">
+          <rect x="81" y="184" width="14" height="52" rx="7" fill="#f7e4c0" stroke="#b8883e" stroke-width="1.5"/>
+        </g>
+        <path id="hose-shadow" d="M 184 348 C 240 350, 300 352, 340 348 C 370 344, 410 270, 392 228 C 348 176, 300 210, 330 270 C 380 360, 470 400, 548 386 C 630 352, 692 316, 748 344 C 808 374, 848 358, 882 350" fill="none" stroke="#e5d3bc" stroke-width="28" stroke-linecap="round" transform="translate(0 8)" opacity=".55"/>
+        <path id="hose-body" d="M 184 348 C 240 350, 300 352, 340 348 C 370 344, 410 270, 392 228 C 348 176, 300 210, 330 270 C 380 360, 470 400, 548 386 C 630 352, 692 316, 748 344 C 808 374, 848 358, 882 350" fill="none" stroke="#6e9476" stroke-width="22" stroke-linecap="round"/>
+        <path id="hose-sheen" d="M 184 348 C 240 350, 300 352, 340 348 C 370 344, 410 270, 392 228 C 348 176, 300 210, 330 270 C 380 360, 470 400, 548 386 C 630 352, 692 316, 748 344 C 808 374, 848 358, 882 350" fill="none" stroke="#d7ecd4" stroke-width="6" stroke-linecap="round"/>
+        <path id="hose-water" d="M 184 348 C 240 350, 300 352, 340 348 C 370 344, 410 270, 392 228 C 348 176, 300 210, 330 270 C 380 360, 470 400, 548 386 C 630 352, 692 316, 748 344 C 808 374, 848 358, 882 350" fill="none" stroke="#8ecae4" stroke-width="8" stroke-linecap="round" stroke-dasharray="10000 10000" stroke-dashoffset="10000"/>
+        <g id="pinch" opacity="1">
+          <ellipse rx="22" ry="8" fill="#f4efe4" stroke="#3f6848" stroke-width="3.5"/>
+        </g>
+        <g id="leak">
+          <ellipse cx="548" cy="414" rx="5" ry="8" fill="#8ecae4"/>
+          <ellipse cx="536" cy="430" rx="4" ry="7" fill="#9fd4ea"/>
+          <ellipse cx="558" cy="438" rx="3.5" ry="6" fill="#b7e0f0"/>
+        </g>
+        <g id="joint-gfx">
+          <circle r="20" fill="#f8efdf" stroke="#e2bc74" stroke-width="8"/>
+          <circle r="10" fill="none" stroke="#f6e4c0" stroke-width="3"/>
+        </g>
+        <g id="valve-gfx">
+          <circle r="18" fill="#f8efdf" stroke="#d7b56a" stroke-width="4"/>
+          <rect id="valve-lever" x="-7" y="-50" width="14" height="56" rx="7" fill="#d4654e"/>
+          <circle id="valve-knob" cx="0" cy="-50" r="9" fill="#d4654e"/>
+          <circle r="6" fill="#fffaf3"/>
+        </g>
+        <g id="nozzle-gfx">
+          <rect x="-26" y="-13" width="40" height="26" rx="9" fill="#f3ddc0" stroke="#e2c79a"/>
+          <circle id="nozzle-tip" cx="16" cy="0" r="8" fill="#d5e7ef" stroke="#8eb8cc"/>
+        </g>
+      </svg>
+      <button type="button" class="hit hit-faucet" id="hit-faucet" aria-label="拧开水龙头"><span class="ghost"></span></button>
+      <button type="button" class="hit hit-kink" id="hit-kink" aria-label="把折弯顺着捋直"><span class="ghost"></span></button>
+      <button type="button" class="hit hit-joint" id="hit-joint" aria-label="把漏水的接头转紧"><span class="ghost"></span></button>
+      <button type="button" class="hit hit-valve" id="hit-valve" aria-label="扳开小阀门"><span class="ghost"></span></button>
+      <button type="button" class="hit hit-nozzle" id="hit-nozzle" aria-label="按住喷头洒水"><span class="ghost"></span></button>
+      <div class="fx drip" id="drip" aria-hidden="true"><i></i><i></i><i></i></div>
+      <div class="fx spray" id="spray" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+      <button type="button" class="memo-btn" id="open-memo">三件小事</button>
+    </div>
+    <aside class="garden" id="garden">
+      <div class="rain" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+      <button type="button" class="tin" id="open-digest" aria-haspopup="dialog">
+        <span class="tin-body">
+          <span class="tin-lid" aria-hidden="true"></span>
+          <span class="tin-text">
+            <strong>完整详细稿</strong>
+            <small>点开这只种子盒</small>
+          </span>
+        </span>
+      </button>
+      <div class="pots">
+        <button type="button" class="pot pot-arrive" id="pot-arrive" aria-disabled="true" aria-label="靠喷头的花盆">
+          <span class="flag">这盆已经发芽</span>
+          <span class="plant" aria-hidden="true"><svg viewBox="0 0 80 86"><path d="M40 84 C40 62 38 48 40 32" fill="none" stroke="#3d7a45" stroke-width="3" stroke-linecap="round"/><ellipse cx="24" cy="50" rx="16" ry="8" fill="#8fca78" transform="rotate(-38 24 50)"/><ellipse cx="56" cy="44" rx="16" ry="8" fill="#6eb45f" transform="rotate(30 56 44)"/><ellipse cx="40" cy="24" rx="7" ry="12" fill="#5ea25a"/></svg></span>
+          <span class="soil" aria-hidden="true"></span>
+          <span class="clay" aria-hidden="true"></span>
+        </button>
+        <button type="button" class="pot pot-wait" id="pot-wait" aria-disabled="true" aria-label="按住这盆等一会儿">
+          <span class="flag">按住等一会儿</span>
+          <span class="plant" aria-hidden="true"><svg viewBox="0 0 80 86"><path d="M40 84 C40 62 38 42 40 24" fill="none" stroke="#3d7a45" stroke-width="3" stroke-linecap="round"/><ellipse cx="24" cy="40" rx="15" ry="7" fill="#a6d894" transform="rotate(-42 24 40)"/><ellipse cx="56" cy="36" rx="15" ry="7" fill="#78b86a" transform="rotate(36 56 36)"/><ellipse cx="40" cy="16" rx="6" ry="11" fill="#5ea25a"/></svg></span>
+          <svg class="chart" viewBox="0 0 92 48" aria-hidden="true"><rect x="2" y="8" width="88" height="34" rx="9" fill="#5c4030"/><clipPath id="chartClip"><rect id="chartClipRect" x="0" y="0" width="0" height="48"></rect></clipPath><g clip-path="url(#chartClip)"><path d="M10 30 H82" fill="none" stroke="#f6e6d0" stroke-width="3" stroke-linecap="round"/><path d="M10 27 H42 C54 27 66 12 82 10" fill="none" stroke="#b6ef8a" stroke-width="3" stroke-linecap="round"/></g></svg>
+          <span class="soil" aria-hidden="true"></span>
+          <span class="clay" aria-hidden="true"></span>
+        </button>
+        <button type="button" class="pot pot-years" id="pot-years" aria-disabled="true" aria-label="已经开花的花盆">
+          <span class="flag">这盆开了五年</span>
+          <span class="plant" aria-hidden="true"><svg viewBox="0 0 80 86"><path d="M40 84 C42 60 36 48 40 32" stroke="#3d7a45" stroke-width="3" fill="none" stroke-linecap="round"/><ellipse cx="22" cy="54" rx="14" ry="7" fill="#6aaa62" transform="rotate(-34 22 54)"/><ellipse cx="58" cy="50" rx="14" ry="7" fill="#7db86e" transform="rotate(28 58 50)"/><g transform="translate(40 16) scale(1.45)"><circle cx="-8" cy="2" r="6" fill="#f7c4d0"/><circle cx="8" cy="2" r="6" fill="#f7c4d0"/><circle cy="8" r="6" fill="#f3b7c6"/><circle cy="-7" r="6" fill="#f8d0da"/><circle r="6.5" fill="#f4b4c4"/><circle r="3.2" fill="#f2d48a"/></g></svg></span>
+          <span class="soil" aria-hidden="true"></span>
+          <span class="clay" aria-hidden="true"></span>
+        </button>
+        <button type="button" class="pot pot-dry" id="pot-dry" aria-disabled="true" aria-label="还是干的花盆">
+          <span class="flag">这盆还是干的</span>
+          <span class="soil" aria-hidden="true"></span>
+          <span class="clay" aria-hidden="true"></span>
+        </button>
+        <button type="button" class="pot pot-cup pot-ebola" id="pot-ebola" aria-disabled="true" aria-label="小小的苗杯">
+          <span class="flag">刚沾到第一滴</span>
+          <span class="plant" aria-hidden="true"><svg viewBox="0 0 70 56"><path d="M35 54 V30" stroke="#3d7a45" stroke-width="2.4" fill="none" stroke-linecap="round"/><ellipse cx="24" cy="30" rx="10" ry="5" fill="#a6d894" transform="rotate(-40 24 30)"/><ellipse cx="46" cy="29" rx="10" ry="5" fill="#78b86a" transform="rotate(40 46 29)"/></svg></span>
+          <span class="soil" aria-hidden="true"></span>
+          <span class="clay" aria-hidden="true"></span>
+        </button>
+      </div>
+    </aside>
+  </div>
+  <footer>
+    <p class="ribbon" id="ribbon" hidden>修好要一路送到最后一节，亲眼看到它生效才算完成。</p>
+    <p class="fact" id="fact">星期日的阳台。水管有一处折着，有一个接头在漏，后面还有没打开的阀门和喷头。</p>
+    <div class="knots" id="knots"></div>
+  </footer>
+  <div class="vh" id="live" aria-live="polite"></div>
+</div>
+<div class="memo-card" id="memo" hidden>
+  <h2>栏杆上的三件小事</h2>
+  <ol>
+    <li>StudySolo 的出站流量已经略微超过 5 GiB 免费额度，比例是 1.0017。数据库本身只用了大约 3.9%。备份从 10 月 21 日起连续四天在报警。有空的时候看一眼，是哪里在大量读取。</li>
+    <li>deepseek-harness 从 10 月 20 日到 24 日，连续五天的定时测试都失败了。下载地址返回 404，测试还没走到调用接口那一步，和额度、密钥无关。改一下地址，或者先把定时任务停掉。</li>
+    <li>好消息已经浇到花上了：ChatSolo 0.6.1 审计报出的 4 个严重级漏洞，大约四十分钟后由 0.6.2 修好，合并后审计、持续集成和部署都复查通过。</li>
+  </ol>
+  <button type="button" id="close-memo">先放回栏杆</button>
+</div>
+<div class="sheet" id="sheet" hidden role="dialog" aria-modal="true" aria-labelledby="digest-title">
+  <div class="sheet-bar">
+    <p>种子盒 · 今天的完整详细稿</p>
+    <button type="button" id="close-sheet">合上种子盒</button>
+  </div>
+  <div class="sheet-body">
+    <nav class="toc" aria-label="详细稿的部分">
+      <a href="#core">今天的核心思想</a>
+      <a href="#ai">讯AI</a>
+      <a href="#tech">讯科</a>
+      <a href="#med">讯医</a>
+      <a href="#self">你自己的事情</a>
+      <a href="#ahead">窗外前瞻</a>
+      <a href="#flags">需要留意的清单</a>
+      <a href="#index">来源索引</a>
+    </nav>
+    <article class="prose" id="digest">
+<h1 id="digest-title">折晓早报 · 2026 年 10 月 25 日（星期日）· 完整详细稿</h1>
+<blockquote><p>这份详细稿收录的是北京时间 2026 年 10 月 24 日 06:00 到 10 月 25 日 06:00 之间发生或首次公开的材料，大致对应美国东部 10 月 23 日傍晚到 10 月 24 日傍晚，也就是美国的周五晚上到周六。这个时间段一手发布明显偏少，四路采集员都按「宁缺毋滥」的原则收材料：人工智能 5 条、科技 7 条、医学 9 条，你自己的事情 10 条，一共 31 条。医学部分的主线是马德里 ESMO 2026 主席专场 I（北京时间 10 月 24 日 22:30 到 10 月 25 日 00:15）和丹佛 ASN Kidney Week 2026 的最后一天。文中所有时间都已换算成北京时间。</p><p>每一条都写了背景、发生了什么、为什么值得注意、关键数字、核实状态和来源。「多来源确认」的内容用肯定语气写；「单一来源」或「未能核实」的内容，正文会写明「据某来源称」「尚未得到其他来源确认」。有几条的原始报告或补丁早于时间窗、而窗内出现的是新进展或新报道，正文会单独说明窗内的新增量是什么。常识性的解释会明确标出「这是常识，不是今天的新闻」。</p><p>「你自己的事情」板块只写纯文本：私有仓库、博客仓库的 PR、运行记录和邮件线程都不放链接，也不写任何账号名。</p></blockquote>
+<hr>
+<h2 id="core">今天的核心思想</h2>
+<p><strong>一件好事从源头出发，要一路送到最后一节才算真的到了：修复写进源码还得发版，补丁装上还得真正启用，疗效和投资也要等时间把它们送到终点才看得出来。所以要顺着整条管子走到头，亲眼看到水真的流出来，才算完成。</strong></p>
+<p>今天三个领域，再加上你自己的项目，都在讲「做到一半」和「做到最后一节」的差别。科技这边，Brotli 解压库的越界写漏洞，修复代码 2 月 27 日就写进了源码，却拖到 10 月 21 日才有正式版本把它带出去（据 The Hacker News）；而且每个软件都自带一份 Brotli 拷贝，Node.js、Bun、Python 的 Brotli 包都得各自升级。BlackX 启动套件攻击的机器全都打满了补丁，但微软那个补丁要管理员手动触发证书吊销才会真正生效，这一步没做，安全启动照样被绕过。PHP2Shell 的补丁 10 月 21 日就发了，到周五晚上已经出现确认的入侵。</p>
+<p>AI 这边，OpenAI 让自家最强的模型攻打训练沙箱，顺带在 Brotli 里找到了这个洞（「由 OpenAI 发现」这一点只出自 OpenAI 官方 X）。另一条管子是钱和算力：据路透社报道，亚马逊 CEO Jassy 说 AWS 2027 年的产能基本卖完了；阿波罗首席经济学家 Slok 却认为，在科技巨头之外，AI 还没有给美国企业带来任何财务回报。源头的水量很大，但还没流进大多数公司的花盆。</p>
+<p>医学这边，管子的长度就是时间。个体化 mRNA 疫苗 intismeran 前 6 个月和对照组几乎没有差别（HR 0.99），6 个月之后获益才明显（HR 0.42），总生存期还不成熟；达罗他胺的 DASL-HiCaP 试验无转移生存改善了，总生存在中期分析时还看不出差别；relatlimab 的 RELATIVITY-047 走到了五年这一节，获益依然存在。</p>
+<p>你自己的事情里有一组完整的正面例子：ChatSolo 0.6.1 上线后安全审计报出 4 个严重级漏洞，不到四十分钟 0.6.2 修复合入，合并后再跑一遍审计转为通过，「修好、发出去、再复查」一路走到了头。也有停在半路的：deepseek-harness 的定时端到端测试连续第五天卡在一个返回 404 的下载地址上；StudySolo 的备份工作流连续第四天因为出站流量超过免费额度而报警。</p>
+<p>医学生熟悉的课本对照是「替代终点和硬终点的区别」「随访时间不够，就不能下生存结论」；写代码的人熟悉的对照是「合并不等于发布，发布不等于部署，部署不等于生效」。这些是帮助理解的常识，不是今天的新闻。</p>
+<hr>
+<h2 id="ai">第一部分 · 讯AI（人工智能）</h2>
+<p>这一部分共 5 条。时间窗正好是美国周五晚上到周六，一手发布明显偏少，讯AI 采集员只收了这 5 条。第一条是 OpenAI 补充披露：它在给训练环境做红队测试时，顺带找到了 Brotli 压缩库里一个远程代码执行漏洞，这条和科技部分的第 4 条是同一个漏洞的两面。第二条是英国财政部公布的 AI 一揽子计划，其中新设一个 AI 生物安全实验室。第三条和第五条要放在一起读：一边是亚马逊说 AWS 的算力 2027 年已经基本卖完，一边是阿波罗首席经济学家说科技巨头之外还看不到 AI 的财务回报。第四条是一项研究：被逼着「只准选一个候选人」时，两款大模型的党派倾向截然相反。</p>
+<p>讯AI 采集员还列出了一批热门但首发早于窗口、因此没有收录的材料，包括 OpenAI 训练环境全面断网的博客、Anthropic 与英国 AISI 的 Mythos 5 调查、Kimi K3.1 Pro、腾讯混元 Hy-Nomas 视频世界模型、瑞典政府办公厅从 10 月 26 日起封禁 ChatGPT 和 Claude、宾夕法尼亚州《AI 欺骗性广告法》（州长 10 月 22 日已签署）等；The Information 的几条付费独家因为打不开原文，也没有收录。如果你在别处看到这些消息，它们都不属于今天这一窗。</p>
+<h3>1. OpenAI 补充披露：给训练环境做红队测试时，自家模型还顺带找到了 Brotli 压缩库里一个无需认证就能远程执行代码的漏洞</h3>
+<p class="marker">〔讯AI-1〕</p>
+<p><strong>背景。</strong> Brotli 是 Google 开发的一种数据压缩格式和对应的程序库，网页传输和各种运行时都在大量使用它。浏览器向网站要内容时，常会在请求里写上「我能解压 br」（br 就是 Brotli 的缩写），服务器于是把内容压缩后发回来，接收方再解压。「远程代码执行」（remote code execution，简称 RCE）是最严重的一类漏洞：攻击者隔着网络就能让你的程序运行他写的代码。「越界写」（out-of-bounds write）是指程序把数据写到了本不该写的内存位置，这是 C 语言这类不自动检查内存边界的语言里最常见、也最危险的错误之一。「红队」（red team）是专门扮演攻击者、去找系统漏洞的一方。以上这些是帮助理解的常识，不是今天的新闻。</p>
+<p>前一天的早报已经写过 OpenAI 的训练环境安全长帖：OpenAI 说前沿模型训练已全面断开实时互联网，并让自家最强的模型组队去攻打训练环境的「围栏」。今天这一条，是那篇长帖之后的补充。</p>
+<p><strong>发生了什么。</strong> OpenAI 官方 X 账号在北京时间 2026 年 10 月 24 日 06:55 发帖，引用了它 03:46 发的那条训练环境安全长帖，原文写道：「在这次红队测试中，我们还发现了一个漏洞，它允许在 Brotli 中进行无需认证的远程代码执行。Brotli 是一个被广泛部署的压缩库，包含在 Node.js、Bun、Envoy 等许多软件里。」</p>
+<p>漏洞本身的修复比这条帖子更早。google/brotli 在北京时间 10 月 22 日 03:27 前后发布了 v1.2.1、v1.1.1、v1.0.10 三个修复版本，v1.2.1 的发布说明写着：「CVE-2026-111497：越界写，可导致远程代码执行」。Bun 的安全通告在北京时间 10 月 23 日 17:31 发布，原文说明受影响的 Brotli 版本是「1.0.3 到 1.2.0，修复版 1.0.10 和 1.1.1 除外」，并解释了攻击是怎么够到解码器的：Bun 的 <code>fetch</code> 默认会在请求里带上 <code>Accept-Encoding: gzip, deflate, br, zstd</code>，收到 <code>Content-Encoding: br</code> 的响应会自动解压，「所以应用程序连接的服务器，就能把数据送进解码器」。Node.js 也在它的 10 月安全版本里修复了这个问题。</p>
+<p><strong>白话解释。</strong> 换句话说，只要你的程序会去访问一个网址，而对方（或者中间被人动了手脚的服务器）回了一段精心构造的 Brotli 压缩数据，你的程序在自动解压的那一刻，就可能被对方接管。你自己什么都不用做错，只是「去访问了一下」。</p>
+<p class="why"><strong>为什么值得注意。</strong> 讯AI 采集员认为，这件事说明「用 AI 去测 AI 的笼子」不只加固了 OpenAI 自己的训练环境，还顺带给整个开源生态补了一个洞。从今天的核心思想来看，这也是一个「一路送到最后一节」的例子：漏洞被发现之后，经过 Brotli 维护者发版、Node.js 和 Bun 各自打包进安全版本，修复才真正流到用户手里。对你来说最实际的一点是：如果本地还在用旧版 Node.js 或 Bun，应该升级到修复版。具体要升到哪个版本号，见科技部分第 4 条。</p>
+<p class="numbers"><strong>关键数字和名称。</strong> 漏洞编号 CVE-2026-111497；受影响的 Brotli 版本 1.0.3 到 1.2.0（1.0.10、1.1.1 除外）；修复版本 v1.2.1、v1.1.1、v1.0.10。以上都出自 google/brotli 发布页和 Bun 安全通告原文。</p>
+<p class="status"><strong>核实状态。</strong> 多来源确认，但要分开看。漏洞本身、受影响版本和修复版本，有 google/brotli 发布页、Bun 安全通告、Node.js 安全通告三处一手来源互相印证。「这个漏洞是 OpenAI 的红队发现的」只出自 OpenAI 官方 X 这一个一手来源，Brotli 和 Bun 的页面都没有写发现者，所以这一点要读作「据 OpenAI 称」。另外，OpenAI 的博客正文没有点名 Brotli，只笼统地说向维护者披露了开源漏洞。（科技部分第 4 条引用的 The Hacker News 写明漏洞由 OpenAI 的 Codex Security 团队报告，这是另一个旁证。）</p>
+<p class="src"><strong>来源。</strong> <a href="https://x.com/OpenAI/status/2113766354386084338" target="_blank" rel="noopener noreferrer">OpenAI 官方 X</a>；<a href="https://github.com/google/brotli/releases/tag/v1.2.1" target="_blank" rel="noopener noreferrer">google/brotli v1.2.1 发布页</a>；<a href="https://github.com/oven-sh/bun/security/advisories/GHSA-663w-cv8g-jj2p" target="_blank" rel="noopener noreferrer">Bun 安全通告</a>；<a href="https://nodejs.org/en/blog/vulnerability/october-2026-security-releases" target="_blank" rel="noopener noreferrer">Node.js 2026 年 10 月安全版本</a>。</p>
+<h3>2. 英国公布约 6 亿英镑的 AI 安全与发展一揽子计划：其中 1 亿英镑设立「AI 生物安全实验室」，OpenAI 和 Anthropic 合计再提供最多 2 亿英镑的模型额度</h3>
+<p class="marker">〔讯AI-2〕</p>
+<p><strong>背景。</strong> 先解释几个机构。英国 AI 安全研究所（AI Security Institute，简称 AISI）是英国政府设立的机构，负责在前沿模型发布前后评测它们的风险，前几天的早报里它刚和 Anthropic 一起复盘过一次模型测评事故。UKHSA 是英国卫生安全局，负责传染病和公共卫生威胁；MHRA 是英国药品和保健品监管局，相当于英国的药监部门。「生物安全」（biosecurity）在这里指的是预防、发现和应对生物威胁，比如新发传染病或者有人蓄意制造的病原体。AI 和生物安全被放在一起讨论，是因为一些 AI 公司自己也在警告：能力越来越强的模型，可能会被人用来协助制造生物威胁。这些是背景常识，不是今天的新闻。</p>
+<p><strong>发生了什么。</strong> 英国政府网站 GOV.UK 在北京时间 10 月 24 日 07:01 发布《Introducing the AI Biosecurity Lab》（介绍 AI 生物安全实验室），13:00 又发布《Chancellor unveils Britain's ambitious plan for AI》（财政大臣公布英国雄心勃勃的 AI 计划）。BBC 在北京时间 10 月 24 日 08:05、Bloomberg Law 在 07:01 分别做了报道。</p>
+<p>GOV.UK 关于实验室的原文写道：「AI 生物安全实验室将是全球第一个专门的 AI 生物安全机构。它获得 1 亿英镑政府资金支持，以及来自 OpenAI 和 Anthropic 最多 2 亿英镑的企业承诺，将发展技术能力，帮助英国更好地理解、预防、发现和应对生物威胁。」两家公司的分工也写得很清楚：「OpenAI 将通过 Rosalind Biodefense 项目提供 1 亿英镑的算力和模型额度，以及对其最强相关模型的可信访问；Anthropic 将提供最多 1 亿英镑的模型额度、可信模型访问和专门的技术支持。」</p>
+<p>财政大臣的整体计划里还包括另外几笔钱，原文写道：「向 AI 安全研究所追加投资 1.2 亿英镑……投入 6000 万英镑建设一个使用智能体 AI 改善英国网络防御的国家网络盾牌……一个新的、7000 万英镑的国家暴露面与实时漏洞中心（NERV）将部署 AI 工具来识别网络漏洞。」</p>
+<p><strong>这个实验室要做什么。</strong> 按讯AI 采集员的归纳，这套计划会放进英国下周的预算案。核心是新设一个独立的非营利机构，用前沿 AI 更早发现生物威胁，并加快疫苗和药物等医学对策的研发；它还会和 UKHSA、MHRA 合作，参与「AI 设计药物」的监管准备。</p>
+<p class="why"><strong>为什么值得注意。</strong> 这条横跨 AI 安全和公共卫生两个领域，正好和你的医学背景、正在学的 AI 都有关系。一个有意思的地方是：政府开始拿 AI 公司的模型额度来做生物防御，而这些公司自己也在警告模型可能帮人制造生物威胁，等于是让「可能带来风险的能力」同时成为「防御风险的工具」。今天医学部分第 9 条写的本迪布焦型埃博拉疫情，恰好是「需要更快研发医学对策」的现实例子：那种病毒目前还没有专门获批的疫苗。</p>
+<p class="numbers"><strong>关键数字。</strong> AI 生物安全实验室政府资金 1 亿英镑；OpenAI 和 Anthropic 合计最多 2 亿英镑（各 1 亿英镑）；AISI 追加 1.2 亿英镑；国家网络盾牌 6000 万英镑；NERV 中心 7000 万英镑。讯AI 采集员还记录到 GOV.UK 原文中有一个 1.65 亿英镑的数字。以上数字都出自 GOV.UK 原文。</p>
+<p class="caution"><strong>需要说明的两点。</strong> 第一，标题里的「约 6 亿英镑」不是英国政府的官方合计数，而是行业组织 techUK 在 GOV.UK 页面里的一句引语（原文是「£600m+ package」，即「6 亿英镑以上的一揽子计划」）。第二，GOV.UK 原文写的是「Chancellor of the Exchequer, John Healey MP」（财政大臣约翰·希利议员），BBC 也这样引用；采集员提醒这可能和通常的认知不一致，这里照原文写。</p>
+<p class="status"><strong>核实状态。</strong> 多来源确认。两份 GOV.UK 原文是一手来源，BBC 和 Bloomberg Law 做了独立报道。</p>
+<p class="src"><strong>来源。</strong> <a href="https://www.gov.uk/government/news/introducing-the-ai-biosecurity-lab" target="_blank" rel="noopener noreferrer">GOV.UK：介绍 AI 生物安全实验室</a>；<a href="https://www.gov.uk/government/news/chancellor-unveils-britains-ambitious-plan-for-ai" target="_blank" rel="noopener noreferrer">GOV.UK：财政大臣公布 AI 计划</a>；<a href="https://www.bbc.co.uk/news/articles/cqdjv8xllvyyo" target="_blank" rel="noopener noreferrer">BBC</a>；<a href="https://news.bloomberglaw.com/artificial-intelligence/uk-vows-100-million-for-biosecurity-lab-with-openai-anthropic" target="_blank" rel="noopener noreferrer">Bloomberg Law</a>。</p>
+<h3>3. 据路透社报道，亚马逊 CEO Jassy 说 AWS 的算力产能 2027 年已经基本卖完，2028 年也卖出了「一大块」</h3>
+<p class="marker">〔讯AI-3〕</p>
+<p><strong>背景。</strong> AWS（Amazon Web Services）是亚马逊的云计算业务，也是全球最大的云服务商之一。「算力产能」在这里指的是数据中心里能出租给客户的计算资源，尤其是训练和运行 AI 模型用的 GPU 等加速芯片。「按需」（on demand）是指客户随用随买、不提前签长约的那部分资源；EC2 是 AWS 出租虚拟服务器的服务，Bedrock 是 AWS 提供各家大模型调用的推理服务。「资本支出」（capital expenditure）是公司花在建厂房、买设备这类长期资产上的钱。这些是背景常识。</p>
+<p><strong>发生了什么。</strong> 据路透社北京时间 10 月 24 日 07:06 的报道（Yahoo Finance、Investing.com、CNA 都转载了同一篇稿子），亚马逊 CEO Andy Jassy 在周五说，AWS 的云计算产能「到 2027 年已基本卖完，相当可观的承诺已经延伸到 2028 年」，原因是 AI 基础设施的需求不断增长。</p>
+<p>路透社引用的 Jassy 原话是：「2027 年基本卖完了。我们总会留一定量给按需使用和我们的推理服务 Bedrock，或者 EC2，但大块的基本都卖完了。2028 年也有一大块卖掉了。」路透社稿内的背景信息还写道：「今年早些时候，亚马逊曾表示 2026 年的资本支出约为 2200 亿美元。」</p>
+<p><strong>白话解释。</strong> 按讯AI 采集员的归纳，Jassy 是在 a16z 的视频播客里说这番话的，意思是 AI 实验室和企业对算力的需求远远超过了亚马逊建设数据中心的速度，2026 年的产能早就卖光了，现在连两年后的产能都被提前订走了一大部分。</p>
+<p class="why"><strong>为什么值得注意。</strong> 这一条要和第 5 条放在一起看：一边是算力被抢购一空，源头的水量非常大；另一边是阿波罗首席经济学家指出，在科技巨头之外，买家还没看到回报。对正在学 AI 的你来说，这也能帮你理解，为什么各家模型的额度、价格和限流最近都这么紧：底层的算力本身就是供不应求的。</p>
+<p class="numbers"><strong>关键数字。</strong> 2027 年产能基本卖完；2028 年「一大块」已卖出；亚马逊 2026 年资本支出约 2200 亿美元（出自路透社稿内背景）。</p>
+<p class="status"><strong>核实状态。</strong> 单一来源。原始报道只有路透社一家，Yahoo Finance、Investing.com、CNA 都是转载同一篇路透社稿；讯AI 采集员没有找到并打开播客原视频，所以 Jassy 的原话以路透社的引述为准，尚未得到其他来源确认。</p>
+<p class="src"><strong>来源。</strong> <a href="https://finance.yahoo.com/technology/articles/amazon-cloud-capacity-sold-2027-230625002.html" target="_blank" rel="noopener noreferrer">路透社（经 Yahoo Finance 转载）</a>；<a href="https://www.investing.com/news/stock-market-news/amazon-cloud-capacity-sold-out-through-2027-ceo-jassy-says-4970506" target="_blank" rel="noopener noreferrer">路透社（经 Investing.com 转载）</a>；<a href="https://www.channelnewsasia.com/business/amazon-cloud-capacity-sold-out-through-2027-ceo-jassy-says-6488181" target="_blank" rel="noopener noreferrer">路透社（经 CNA 转载）</a>。</p>
+<h3>4. 康奈尔教授主导的测试发现：被逼着「只准选一个人」时，Grok 4.7 九成以上推荐共和党候选人，GPT-6.1 Sol 九成以上推荐民主党候选人</h3>
+<p class="marker">〔讯AI-4〕</p>
+<p><strong>背景。</strong> 美国 2026 年中期选举会改选众议院全部席位、参议院约三分之一席位和多个州的州长。大模型被问到政治问题时，消费端产品（比如 ChatGPT 和 Grok 的应用）通常会拒绝直接推荐候选人；但开发者通过 API（应用程序接口，也就是程序直接调用模型的通道）调用模型时，行为可能和应用里不一样。「系统提示」（system prompt）是在用户的问题之前、由服务方预先塞给模型的一段指令，用户通常看不到。这些是帮助理解的常识。</p>
+<p><strong>发生了什么。</strong> TechCrunch 在北京时间 10 月 24 日 23:00 报道了一项由康奈尔大学教授主导、Convovo 发布的测试，TokenPost 在北京时间 10 月 25 日 03:37 跟进。TechCrunch 原文写道：「一项新研究发现，当被迫在今年即将到来的中期选举中做出选择时，SpaceXAI 的 Grok 4.7 在 92% 的回答中推荐共和党候选人，而 OpenAI 的 GPT-6.1 Sol 在 97% 的回答中选择民主党人。在近 500 场选举中，两个模型意见一致的情况不到 10%。」</p>
+<p>TokenPost 给出了具体计数：「Grok 4.7 在 1,038 个有效回答中有 952 个推荐了共和党候选人，约 92%；GPT-6.1 Sol 在 1,111 个有效回答中有 1,082 个推荐了民主党人，约 97%。计数不包括拒答，以及没有点名民主党或共和党候选人的回答。」</p>
+<p><strong>测试是怎么做的。</strong> 按讯AI 采集员的归纳，研究者通过 API、在开着联网搜索的情况下，就 2026 年中期选举的众议院、参议院和州长选举逐场发问，并要求模型「只说一个名字，别和稀泥」。消费端的 ChatGPT 和 Grok 应用会拒答；OpenAI 也强调，API 测试不代表普通用户的体验。</p>
+<p><strong>倾向从哪里来：权重、检索，还是看不见的系统提示。</strong> 这项研究最有意思的地方是机制上的差别。据 TechCrunch 称，关掉联网搜索之后，GPT 仍然偏向民主党（30 场里有 24 场选民主党），研究者认为这种倾向「在权重里」，也就是来自模型训练时学到的东西；Grok 关掉搜索后大多拒绝选择（30 场里 27 场拒答），研究者认为它的倾向主要来自搜索词和信息源的选择。TechCrunch 还写道：「研究指出，通过 xAI 的 API 发给 Grok 的每一个请求，都带有大约 1,240 个 token 的额外输入，这些内容不是研究者写的，研究者也看不到、删不掉。」也就是说，在研究者写的提示之外，还有一段他们看不见的内容被一起发给了模型。</p>
+<p class="why"><strong>为什么值得注意。</strong> 采集员认为，这条很适合用来理解「模型偏见从哪里来」：它可能来自训练出来的权重，可能来自检索到的资料，也可能来自用户看不见的系统提示。从核心思想的角度看，这也提醒我们：你在 API 这一端看到的行为，和最终用户在应用那一端看到的行为，中间还隔着好几节管子，不能直接互相替代。</p>
+<p class="numbers"><strong>关键数字。</strong> Grok 4.7：952/1,038，约 92% 推荐共和党；GPT-6.1 Sol：1,082/1,111，约 97% 推荐民主党；近 500 场选举中两模型一致不到 10%（以上出自 TechCrunch 和 TokenPost）。关掉搜索后 GPT 30 场里 24 场选民主党、Grok 27 场拒答，以及「约 1,240 个 token 的额外输入」，只出自 TechCrunch。</p>
+<p class="status"><strong>核实状态。</strong> 多来源确认。TechCrunch 和 TokenPost 是两家独立报道，研究方 Convovo 的页面也能打开，写明了提问原文和测试的模型。需要说明：「1,240 tokens」和「关掉搜索后的 30 场结果」只见于 TechCrunch，尚未得到其他来源确认；采集员在 Convovo 页面上没有看到完整的方法学文档，Convovo 页面也没有标注发布日期。</p>
+<p class="src"><strong>来源。</strong> <a href="https://convovo.ai/ballot/" target="_blank" rel="noopener noreferrer">Convovo 研究页面</a>；<a href="https://techcrunch.com/2026/10/24/forced-to-pick-groks-ai-model-chooses-republicans-openais-picks-democrats/" target="_blank" rel="noopener noreferrer">TechCrunch</a>；<a href="https://www.tokenpost.com/news/technology/40272" target="_blank" rel="noopener noreferrer">TokenPost</a>。</p>
+<h3>5. 阿波罗首席经济学家 Slok：在科技巨头之外，AI 还没有给美国企业带来任何财务回报；主流公司开始把 token 支出当成压缩利润率的成本</h3>
+<p class="marker">〔讯AI-5〕</p>
+<p><strong>背景。</strong> 阿波罗（Apollo）是美国一家大型资产管理公司，它的首席经济学家 Torsten Slok 每天发一篇简短的市场评论，栏目叫 The Daily Spark。「七巨头」（Magnificent 7，简称 Mag 7）是对苹果、微软、谷歌母公司、亚马逊、英伟达、Meta、特斯拉这七家美国大型科技公司的统称；「标普 493」（S&amp;P 493）是指标普 500 指数里除去这七家之外的其余 493 家公司。「人均营收」是公司营收除以员工数；「全要素生产率」是经济学里衡量技术进步和效率提升的指标。Ramp 是一家美国企业支出管理公司，它会根据客户的消费数据发布行业趋势。这些是背景常识。</p>
+<p><strong>发生了什么。</strong> 阿波罗 The Daily Spark 页面标注日期为美国时间 2026 年 10 月 24 日（整天都落在窗口内）；TokenPost 在北京时间 10 月 25 日 04:30 跟进，Techmeme 在 05:30 收录。阿波罗原文写道：「尽管对人工智能投入了巨额资金、炒作铺天盖地，这项技术在科技行业之外，给美国企业带来的财务回报是零。七巨头的人均营收在上升，但标普 493 持平……七巨头的利润率在上升，但标普 493 持平……而且仍然看不到 AI 推动生产率增长的迹象。」</p>
+<p>原文还写道：「风投支持的公司在 token 上花的钱越来越多，但主流的美国企业并不需要最新的模型，也不愿意为它付钱。」</p>
+<p>TokenPost 在跟进报道里引用了 Ramp 的数据：「对比截至 9 月 13 日和 10 月 11 日的两周，支出增长了 23%，而 token 用量增长了 52.4%。同期，OpenAI 和 Anthropic 的 token 综合价格下降了 25.4%，降到每百万 0.64 美元。」</p>
+<p><strong>白话解释。</strong> 按讯AI 采集员的归纳，Slok 用五张图对比了七巨头和标普 493：只有前者的人均营收和利润率在涨，全要素生产率也看不出 AI 的拉动。他的结论是，AI 的故事最终要看那 493 家公司，能不能用越来越便宜的智能换来增长。</p>
+<p class="why"><strong>为什么值得注意。</strong> 这条和第 3 条正好形成对照：一边是算力被抢购一空，一边是大多数买家还在等回报。用今天的核心思想来说，水龙头已经开得很大，但水还没有流到管子末端的大多数花盆里。采集员建议把它当成一个冷静的提醒：模型能力的进步，不会自动变成社会层面的生产率，中间还有很长的一段路要走。</p>
+<p class="numbers"><strong>关键数字。</strong> 支出增长 23%；token 用量增长 52.4%；OpenAI 和 Anthropic 的 token 综合价格下降 25.4%，降到每百万 0.64 美元。这几个数字出自 TokenPost 对 Ramp 数据的引用，在阿波罗页面正文里没有出现。</p>
+<p class="caution"><strong>需要说明的一点。</strong> 阿波罗原文是观点性的市场评论，用的是加总的趋势数据。TokenPost 也特别说明，这些数字没有单独剥离 AI 对个别公司的影响，也不能证明 AI 造成了七巨头和其余公司之间的差距。所以「零回报」应理解为 Slok 的判断，而不是一个被严格证明的结论。</p>
+<p class="status"><strong>核实状态。</strong> 多来源确认（阿波罗原文是一手来源，TokenPost 和 Techmeme 独立跟进）；但 23%、52.4%、25.4%、0.64 美元这几个数字只来自 TokenPost 转引的 Ramp 数据。</p>
+<p class="src"><strong>来源。</strong> <a href="https://www.apollo.com/wealth/insights-news/insights/daily-spark/no-signs-of-ai-payoff-outside-the-tech-sector" target="_blank" rel="noopener noreferrer">阿波罗 The Daily Spark</a>；<a href="https://www.tokenpost.com/news/business/40314" target="_blank" rel="noopener noreferrer">TokenPost</a>；<a href="https://x.com/Techmeme/status/2114107381575713258" target="_blank" rel="noopener noreferrer">Techmeme X</a>。</p>
+<hr>
+<h2 id="tech">第二部分 · 讯科（科技）</h2>
+<p>这一部分共 7 条。前两条是 Linux 底层的好消息：systemd 第一次允许用 Rust 写新程序，Linux 7.4 合入一个让启动期内存登记快了几千倍的算法优化。第三条是你做视频可能会用到的 OBS Studio 33.0。第四到第六条是网络安全，主题都是「老底层代码的内存安全债」和「修复有没有真正走到最后一步」：Brotli 漏洞的影响范围从 Node.js 扩大到 Bun、Python、Envoy；PHP2Shell 进入「已确认有受害者」的阶段；BlackX 启动套件在「打满补丁」的 Windows 上照样绕过安全启动。最后一条是乌克兰称 Starlink/Starshield 的限速已经解除。</p>
+<p>讯科采集员说明，这个时间窗是美国周五晚到周六，科技新闻明显偏少；有几条事件最早是在窗外首发的，这次收录的是窗内出现的新进展或新报道，每条都写清楚了窗内的新增量是什么。</p>
+<h3>1. systemd 正式合并 Rust 支持：以后新的 systemd 小程序可以用 Rust 来写，但只限「叶子组件」，而且不用 Cargo、不引入第三方库</h3>
+<p class="marker">〔讯科-1〕</p>
+<p><strong>背景。</strong> systemd 是绝大多数 Linux 发行版里负责启动系统、管理后台服务的那套程序，可以把它理解成 Linux 系统的「总管家」，开机后第一个运行的就是它。它一直是用 C 语言写的。C 语言快，但不会自动检查内存边界，越界读写这类错误很容易出现，也是大量安全漏洞的来源。Rust 是一种「内存安全」的编程语言，编译器会在编译阶段挡住大部分这类错误。Cargo 是 Rust 官方的构建和包管理工具，crates.io 是 Rust 的公共软件包仓库（一个 crate 就是一个 Rust 包）；meson 是 systemd 一直在用的另一套构建系统。「ABI」（应用二进制接口）是编译好的程序之间互相调用时要遵守的底层约定，Rust 目前没有像 C 那样稳定的 ABI。这些都是背景常识，不是今天的新闻。</p>
+<p><strong>发生了什么。</strong> systemd 的 GitHub PR #44324 在北京时间 10 月 24 日 14:22 合并；Phoronix 在北京时间 10 月 24 日 19:11 报道，原文写道：「从今天起，在 systemd 的 Git 仓库里，systemd 的程序已经可以用 Rust 编程语言来写，作为 C 之外的另一个选择。」</p>
+<p>PR 描述里写明了这次引入 Rust 的边界：「Rust 只用于新的叶子组件。现有的 C 代码不做移植，其他组件所依赖的东西也都不用 Rust 写。不用 cargo，一切都用 meson 构建。只使用 core、alloc 和 libc 这三个 crate。」</p>
+<p>Phoronix 还给出了一组对比：「systemd 的 Rust 组件编译出来比 C 稍大，一个测试程序是 32KB，而它的 C 版本是 20KB。至少目前，systemd 的 Rust 支持是可选的，由 meson 的 -Drust= 选项控制，默认值是 auto。」</p>
+<p><strong>白话解释。</strong> 「叶子组件」是指依赖关系树最末端的小程序：别人不依赖它，它出了问题也不会牵连其他部分。按讯科采集员的归纳，第一个计划用 Rust 写的组件是 systemd-keyring-setup。维护者之间为这件事争论了将近两个月，最后的折中方案是：不用 Cargo，不引入第三方 crate，对外只保留 C 接口。理由是担心 crates.io 的供应链风险（也就是第三方包被人投毒），以及 Rust 没有稳定 ABI。</p>
+<p class="why"><strong>为什么值得注意。</strong> 采集员认为，这说明内存安全语言正在进入 Linux 最核心的基础设施，但进入的方式非常保守、带着很多限制，可以和 Linux 内核引入 Rust 的历程对照着看。它也和今天第 4、5 条形成呼应：那两条讲的正是用 C 写成的老代码里的内存错误。</p>
+<p class="numbers"><strong>关键数字。</strong> Rust 测试程序 32KB，对应的 C 版本 20KB（出自 Phoronix 原文）。</p>
+<p class="status"><strong>核实状态。</strong> 多来源确认。GitHub 官方 PR 页面（采集员通过 API 核对了合并时间和描述）与 Phoronix 报道一致。</p>
+<p class="src"><strong>来源。</strong> <a href="https://github.com/systemd/systemd/pull/44324" target="_blank" rel="noopener noreferrer">systemd PR #44324</a>；<a href="https://www.phoronix.com/news/systemd-Merges-Rust-Programs" target="_blank" rel="noopener noreferrer">Phoronix</a>。</p>
+<h3>2. Linux 7.4 合入一个启动期内存分配器优化：把线性扫描换成二分查找，最坏情况下的耗时从约 268 秒降到约 50 毫秒</h3>
+<p class="marker">〔讯科-2〕</p>
+<p><strong>背景。</strong> 电脑开机时，Linux 内核在正式的内存管理系统就绪之前，要先用一个很简单的「早期分配器」记账：哪些物理内存可用、哪些已经被占用。这个早期分配器叫 memblock，代码在 mm/memblock.c。KHO（Kexec HandOver，内核交接）是一种让一个内核在切换到另一个内核时，把部分内存原样保留下来交给新内核的机制。算法复杂度里，O(N²) 表示工作量随数据量的平方增长，数据多一倍，耗时大约变成四倍；O(N log N) 增长得慢得多。「二分查找」是在有序列表里每次从中间切一半、快速定位的方法。这些是计算机课本里的常识，不是今天的新闻。</p>
+<p><strong>发生了什么。</strong> Phoronix 在北京时间 10 月 24 日 21:00 报道：「今天为 Linux 7.4 内核送出了一组 memblock 改进，最值得注意的是 mm/memblock.c 里的一项性能优化，这个文件实现的是内核早期启动阶段的物理内存分配器。」</p>
+<p>补丁本身最早在 2026 年 9 月 3 日由 Google 的 Tarun Sahu 发到内核邮件列表，原文写道：「在内存严重碎片化的情况下（比如 KHO 保留页面时登记了几十万个互不相连的 folio），每次插入和隔离都从索引 0 开始扫描，导致 O(N²) 的复杂度，使得启动期的内存取回要花好几分钟（39.3 万个页面约 268 秒）。」以及：「使用二分查找把最坏情况的复杂度降到 O(N log N)（顺序追加时为 O(N)），把 KHO 内存取回时间从约 268 秒缩短到约 50 毫秒。」</p>
+<p><strong>白话解释。</strong> 原来的做法是：每登记一块内存，都要从头一个一个往后找该放在哪里；内存块一多，越往后越慢，整体耗时按平方增长。换成二分查找后，每次只需要对半切几次就能找到位置。在 39.3 万个页面这种高度碎片化的场景下，耗时从四分多钟变成了眨一下眼。</p>
+<p class="why"><strong>为什么值得注意。</strong> 讯科采集员认为，这是一个很好的教学例子：算法复杂度从 O(N²) 降到 O(N log N)，在真实系统里会带来几个数量级的差别。你正在学 AI 和编程，这个例子能直观地说明「选对数据结构和算法」有多重要。从核心思想看，这个补丁从 9 月的邮件列表一路走到 7.4 的拉取请求，也是一条「送到最后一节」的路。</p>
+<p class="numbers"><strong>关键数字。</strong> 约 268 秒降到约 50 毫秒；39.3 万个页面（393k pages）。以上都出自补丁原文。</p>
+<p class="caution"><strong>一处笔误。</strong> Phoronix 正文有一处写成了「238 seconds」，但它引用的补丁原文和它自己的标题都是 268 秒，以补丁原文为准。</p>
+<p class="status"><strong>核实状态。</strong> 多来源确认（Phoronix 报道和内核邮件列表里的补丁原文数字一致）。需要说明：patchew 和 lore 上的 7.4 拉取请求页面这次没能打开（一个超时，一个返回 403），所以「10 月 24 日送出拉取请求」这一点只有 Phoronix 一个来源，尚未得到其他来源确认。</p>
+<p class="src"><strong>来源。</strong> <a href="https://www.phoronix.com/news/Linux-7.4-memblock" target="_blank" rel="noopener noreferrer">Phoronix</a>；<a href="https://lists.openwall.net/linux-kernel/2026/09/03/2268" target="_blank" rel="noopener noreferrer">内核邮件列表补丁原文</a>。</p>
+<h3>3. OBS Studio 33.0 发布：内置浏览器内核从 2024 年 7 月的版本一次升级到 2026 年 9 月，插件加载机制全面重做</h3>
+<p class="marker">〔讯科-3〕</p>
+<p><strong>背景。</strong> OBS Studio 是最常用的开源录屏和直播软件。它里面内置了一个精简版的 Chromium 浏览器框架，叫 CEF（Chromium Embedded Framework），用来实现「浏览器源」（把一个网页当成画面素材叠到视频里）和「停靠面板」（把网页工具嵌进 OBS 的界面）。插件是第三方开发者给 OBS 加功能的扩展程序。这些是背景常识。</p>
+<p><strong>发生了什么。</strong> OBS 在 GitHub 上的 33.0 版本于北京时间 10 月 24 日 06:20 发布，Phoronix 在 07:15 报道。官方发布说明写道：「CEF 从 127/6533 升级到 150/7871……这是对浏览器源和停靠面板所用底层框架的一次大规模更新，从 2024 年 7 月的版本升级到 2026 年 9 月的版本。」</p>
+<p>插件方面，发布说明写道：「插件加载全面重做……第一方插件现在放在一个名为 core 的新文件夹里……现有的第三方插件在 OBS Studio 34.0 之前，会继续从旧位置加载。」另外一条是：「在 Arm64 上启用了 NVENC。」（NVENC 是 NVIDIA 显卡上的硬件视频编码器，启用后可以用显卡来编码视频、减轻处理器负担。）</p>
+<p class="why"><strong>为什么值得注意。</strong> 讯科采集员提到，这个版本在 Hacker News 当天首页排第一。对你更实际的一点是：你平时会做讲解视频和录屏，如果用 OBS 录制并装了第三方插件，升级到 33.0 之后要留意插件还能不能正常加载、浏览器源有没有出现异常；旧的插件位置只兼容到 34.0，下一个大版本之前最好确认用到的插件已经适配新目录。</p>
+<p class="numbers"><strong>关键数字。</strong> CEF 127/6533 → 150/7871；旧插件位置兼容到 34.0。</p>
+<p class="status"><strong>核实状态。</strong> 多来源确认（GitHub 官方发布页，采集员通过 API 核对了发布时间，与 Phoronix 报道一致）。</p>
+<p class="src"><strong>来源。</strong> <a href="https://github.com/obsproject/obs-studio/releases/tag/33.0.0" target="_blank" rel="noopener noreferrer">OBS Studio 33.0.0 发布页</a>；<a href="https://www.phoronix.com/news/OBS-Studio-33.0" target="_blank" rel="noopener noreferrer">Phoronix</a>。</p>
+<h3>4. Brotli 解码器漏洞（CVE-2026-111497）的影响范围从 Node.js 扩大到 Bun、Python 的 Brotli 与 brotlicffi 包、Envoy、Istio 等；修复代码 2 月就进了源码，却拖到 10 月才发版</h3>
+<p class="marker">〔讯科-4〕</p>
+<p><strong>背景。</strong> 这一条和人工智能部分第 1 条是同一个漏洞：Google 的 Brotli 解压 C 代码里有一个越界写错误，可以导致远程代码执行。那一条讲的是「谁发现的」，这一条讲的是「影响到哪些软件、各自要升到哪个版本」。Envoy 是一个广泛使用的网络代理软件，Istio 是建在 Envoy 之上的服务网格（用来管理大量微服务之间的通信）；requests、urllib3、httpx、aiohttp 都是 Python 里最常用的网络请求库。这些是背景常识。</p>
+<p><strong>发生了什么，窗内的新增量是什么。</strong> 漏洞和 Brotli 修复版本最早在 10 月 21 日公开（Brotli v1.2.1 发布于北京时间 10 月 22 日 03:27），Bun 的安全公告发布于北京时间 10 月 23 日 17:31，这些都在窗外。窗内的新内容是 The Hacker News 在北京时间 10 月 24 日 19:09 发布的跨产品影响面汇总，以及对 Python 生态的风险提示。</p>
+<p>The Hacker News 原文写道：「Google Brotli 解码器里的一个内存破坏缺陷，存在于许多解压 Brotli 数据的程序中，其中包括 Bun、Python 的 Brotli 和 brotlicffi 包，以及配置为解压 Brotli 的 Envoy 代理。」</p>
+<p>关于 Python，原文写道：「在 Python 里，风险来自只要装了 Brotli 或 brotlicffi 包。一旦装了其中任何一个，requests、urllib3、httpx 和 aiohttp 这些 HTTP 客户端就会自己去解码 Brotli 响应，所以一个应用即使自己的代码从来没有 import 过 Brotli，也可能暴露在风险之下。」</p>
+<p>关于修复为什么迟到，原文写道：「堵上这个漏洞的改动，在 2 月 27 日就加进了 Brotli 的源代码，但直到 10 月 21 日，才有新的 Brotli 版本把它带出来。」</p>
+<p><strong>各自要升到哪个版本。</strong> 按讯科采集员摘自 The Hacker News 原文表格的版本号：Node.js 升到 22.23.4、24.22.1 或 26.12.1；Bun 升到 1.4.4；Python 的 Brotli 升到 1.2.1，brotlicffi 升到 1.2.1.0。之所以要每个软件各自升级，是因为它们都自带了一份 Brotli 的 C 代码拷贝，上游修好了，下游不重新打包发版，用户手里的还是旧代码。</p>
+<p class="why"><strong>为什么值得注意。</strong> 这条是今天核心思想最直接的例子。修复代码 2 月 27 日就写好了，但「写进源码」和「发出版本」之间隔了将近八个月，这段时间里所有用户实际上都没有得到保护。讯科采集员说得很直接：「修了但没发布」同样是一种风险。对你来说最实用的一点是：Python 项目只要装了 Brotli 包，requests、httpx 这些常用库就会自动解压 br 响应，就算自己的代码从没 import 过它，也一样会受影响；本地的 Node.js、Bun 和 Python 环境都值得检查一下版本。</p>
+<p class="caution"><strong>风险程度。</strong> The Hacker News 原文明确写了「目前没有在野利用报告」，Imperva 只在一个 Node.js 构建上演示过代码执行。漏洞由 OpenAI 的 Codex Security 团队报告（据 The Hacker News），这部分见人工智能部分第 1 条。</p>
+<p class="numbers"><strong>关键数字。</strong> 修复进入源码 2 月 27 日；首个带修复的版本 10 月 21 日；Node.js 22.23.4 / 24.22.1 / 26.12.1；Bun 1.4.4；Python Brotli 1.2.1；brotlicffi 1.2.1.0（版本号都出自 The Hacker News 原文表格）。</p>
+<p class="status"><strong>核实状态。</strong> 多来源确认（Bun 官方 GitHub 安全公告、Brotli 官方发布页和 The Hacker News 报道互相吻合）。</p>
+<p class="src"><strong>来源。</strong> <a href="https://thehackernews.com/2026/10/brotli-decoder-flaw-behind-nodejs-rce.html" target="_blank" rel="noopener noreferrer">The Hacker News</a>；<a href="https://github.com/oven-sh/bun/security/advisories/GHSA-663w-cv8g-jj2p" target="_blank" rel="noopener noreferrer">Bun 安全公告</a>；<a href="https://github.com/google/brotli/releases/tag/v1.2.1" target="_blank" rel="noopener noreferrer">google/brotli v1.2.1 发布页</a>。</p>
+<h3>5. PHP2Shell 后续：TechCrunch 复盘称，到周五晚已经出现确认的入侵和入侵后活动；Unit 42 看到攻击者用 AI 智能体平台在两小时内拿到密码哈希和 MFA 密钥</h3>
+<p class="marker">〔讯科-5〕</p>
+<p><strong>背景。</strong> PHP 是一种历史很长、用得极广的网站编程语言。PHP2Shell 是本周早些时候曝光的一组 PHP 远程代码执行漏洞的俗称，对应编号 CVE-2026-109618 和 CVE-2026-109619，前几天的早报已经写过它的修补过程。「禁运期」（embargo）是指漏洞细节在补丁发布前暂时保密、只在少数厂商之间共享的阶段。「入侵后活动」（post-exploit activity）是攻击者攻进系统之后进一步偷数据、扩大控制的行为。「密码哈希」是密码经过单向加密后存下的结果；「MFA 密钥」是多因素认证（比如手机验证器里的动态码）背后的那串种子密钥，拿到它就能自己生成验证码。Unit 42 是网络安全公司 Palo Alto Networks 的威胁研究团队，Cortex Xpanse 是它的互联网暴露面扫描产品。这些是背景常识。</p>
+<p><strong>发生了什么，窗内的新增量是什么。</strong> 补丁在 10 月 21 日已经发布。Unit 42 关于攻击者用 AI 智能体做入侵后操作的更新，发布于美西时间 10 月 23 日 12:30，换算成北京时间是 10 月 24 日 03:30，在窗外，这里只作为佐证。窗内的是 TechCrunch 在北京时间 10 月 24 日 23:30 发布的复盘报道，原文写道：「但截至周五晚，根据安全巨头 Palo Alto Networks 和 Trail of Bits 的说法，已经出现了与这个 PHP 漏洞相关的确认入侵和入侵后活动。」</p>
+<p>TechCrunch 还写道：「大约 70% 面向公网的互联网依赖 PHP，不过这些年它的使用率在缓慢下降，逐渐让位给更新、更安全的编程语言。」</p>
+<p>Unit 42 的报告原文写道：「在一个案例中，攻击者瞄准了欧洲的一个政府实体，在首次利用后的两小时内，他们就成功拿到了密码哈希和多因素认证密钥。」以及：「Cortex Xpanse 发现了超过 2260 万个可能存在漏洞的暴露实例。」</p>
+<p><strong>白话解释。</strong> 按讯科采集员的归纳，TechCrunch 的复盘把整件事讲得很清楚：这个漏洞 2024 年就被发现了，但当时被认为没法利用；这次在禁运期间仍然被提前利用；而 PHP 这种不自动检查内存的老技术，还支撑着大量网站。事情已经从「抢修补丁」进入「确认有受害者」的阶段。</p>
+<p class="why"><strong>为什么值得注意。</strong> 用今天的核心思想来看，补丁已经发出去了，但「发出去」和「每一台服务器都装上」之间还有最后一节，攻击者就是从这一节钻进来的，而且借助 AI 智能体，从攻进去到拿走关键凭据只用了两小时。采集员建议把这一条和第 1 条（systemd 引入 Rust）、第 4 条（Brotli）放在一起看，主题都是「老底层代码的内存安全债」。</p>
+<p class="numbers"><strong>关键数字。</strong> 约 70% 面向公网的互联网依赖 PHP（出自 TechCrunch）；超过 2260 万个可能存在漏洞的暴露实例、两小时内拿到密码哈希和 MFA 密钥（出自 Unit 42）。</p>
+<p class="status"><strong>核实状态。</strong> 多来源确认。TechCrunch（窗内）和 Palo Alto Networks Unit 42 官方威胁简报（窗外的 10 月 23 日更新）在入侵后活动这一点上一致。需要说明：Trail of Bits 那一方的确认，采集员没有找到它自己的原文，只有 TechCrunch 的转述，这一点尚未得到其他来源确认。</p>
+<p class="src"><strong>来源。</strong> <a href="https://techcrunch.com/2026/10/24/php-ocalypse-how-two-critical-web-bugs-almost-broke-the-internet/" target="_blank" rel="noopener noreferrer">TechCrunch 复盘</a>；<a href="https://unit42.paloaltonetworks.com/cve-2026-109618-cve-2026-109619/" target="_blank" rel="noopener noreferrer">Unit 42 威胁简报</a>。</p>
+<h3>6. BlackX UEFI 启动套件：利用 2022 年的 Baton Drop 漏洞，在「已经打满补丁」的 Windows 上绕过安全启动，原因是补丁要手动触发证书吊销才真正生效</h3>
+<p class="marker">〔讯科-6〕</p>
+<p><strong>背景。</strong> UEFI 是电脑开机时在操作系统之前运行的固件。「安全启动」（Secure Boot）是 UEFI 的一项功能：开机时只允许加载经过可信证书签名的引导程序，用来防止恶意代码在操作系统启动之前就潜伏进来。「启动套件」（bootkit）就是专门攻击这一段的恶意软件，它比操作系统先运行，所以很难被杀毒软件发现。BlackLotus 是 2023 年前后被公开的一个著名 UEFI 启动套件。Baton Drop 是 2022 年披露的一个安全启动绕过漏洞。「证书吊销」是把某张证书列入黑名单，让用它签过名的东西不再被信任。APT41 是安全业界对一个长期活跃的国家背景黑客组织的命名。这些是背景常识。</p>
+<p><strong>发生了什么，窗内的新增量是什么。</strong> 卡巴斯基在 Securelist 上的原始报告发布于 10 月 22 日，在窗外；窗内的是 BleepingComputer 在北京时间 10 月 24 日 22:17 的报道。BleepingComputer 原文写道：「卡巴斯基说，所有 BlackX 的受害者用的都是打满补丁的 Windows 版本。但这个启动套件依然成功了，因为管理员没有手动启用额外的安全启动吊销。」</p>
+<p>卡巴斯基原文解释了原因：「Baton Drop 漏洞的补丁，是为了吊销用来给有漏洞的 UEFI 组件签名的『Windows Production PCA 2011』证书。但是，这个吊销并不会在安装补丁时自动发生，需要用户手动触发。」以及：「2026 年 10 月 19 日，这张证书过期了，但只要它没有被列入黑名单，过期并不能阻止有漏洞的二进制文件被加载。」</p>
+<p><strong>白话解释。</strong> 按讯科采集员的归纳，卡巴斯基发现，一个被认为与 APT41 有关的组织（卡巴斯基给出的置信度是「中等」），用仿照 BlackLotus 写的启动套件 BlackX，攻击了塔吉克斯坦、乌兹别克斯坦、土库曼斯坦的外交机构。受害机器其实都装了全部补丁，但微软的这个补丁只是「把开关准备好」，真正吊销证书的那一下要管理员自己按。这一步没做，有漏洞的旧引导程序就照样能加载，安全启动形同虚设。证书本身在 10 月 19 日过期，也挡不住它们。</p>
+<p class="why"><strong>为什么值得注意。</strong> 这是今天核心思想里最典型的「停在最后一节」：补丁装上了，但没有真正启用。采集员总结的教训是：「装了补丁」不等于「修好了」，修复步骤要真正执行完、验证过才算数。这一点在医学里也有对应：开了处方不等于病人按时吃了药，这是常识类比，不是今天的新闻。</p>
+<p class="status"><strong>核实状态。</strong> 多来源确认（卡巴斯基 Securelist 原始报告和 BleepingComputer 报道内容一致）。需要说明：原始报告在窗外，窗内的是 BleepingComputer 的报道；归因于 APT41 是卡巴斯基「中等置信度」的判断，不是定论。</p>
+<p class="src"><strong>来源。</strong> <a href="https://www.bleepingcomputer.com/news/security/blackx-uefi-bootkit-exploits-baton-drop-flaw-to-bypass-secure-boot/" target="_blank" rel="noopener noreferrer">BleepingComputer</a>；<a href="https://securelist.com/uefi-bootkit-blackx/121539/" target="_blank" rel="noopener noreferrer">卡巴斯基 Securelist</a>。</p>
+<h3>7. 乌克兰国防部称 Starlink/Starshield 限速已经解除，无人机在每小时 400 公里以上也能稳定连接；马斯克称乌方违反了服务条款</h3>
+<p class="marker">〔讯科-7〕</p>
+<p><strong>背景。</strong> Starlink 是 SpaceX 的低轨卫星互联网服务，Starshield 是它面向军事和政府用途的版本。乌克兰军队大量使用这套系统给前线通信和无人机提供网络连接。「服务条款」是服务商和用户之间约定的使用规则。这些是背景常识。这一条涉及战争和政治，下面只写科技层面的事实，不做立场判断。</p>
+<p><strong>发生了什么。</strong> Kyiv Independent 在北京时间 10 月 24 日 15:57 首发（之后在当地时间 23:47 更新），原文写道：「泽连斯基总统确认，截至 10 月 24 日上午，Starlink 和埃隆·马斯克的卫星互联网系统的军用版本 Starshield 已经全速运行；此前它被限制在每小时 161 公里（约每小时 100 英里）。」</p>
+<p>Axios 引用了乌克兰国防部「周六」的声明（没有标具体时刻）：「我们的监测系统检测到 Starlink/Starshield 的速度已经恢复。我们记录到每小时 400 公里以上的速度，连接稳定。」TechCrunch 在北京时间 10 月 25 日 04:46 报道：「此前有 10 天，乌克兰的无人机在以大约每小时 100 英里的速度飞行时会失去网络连接，导致军方失去了对部分无人机的控制……」</p>
+<p><strong>白话解释。</strong> 按讯科采集员的归纳，在大约两周里，SpaceX 的卫星终端只要移动速度超过大约每小时 161 公里就会断网，导致乌克兰的拦截无人机没法正常工作。10 月 24 日乌方确认限速已经恢复，但仍然没有收到官方解释；马斯克则称，这是在封堵违反服务条款的「漏洞」。</p>
+<p class="why"><strong>为什么值得注意。</strong> 采集员认为，这件事的科技层面意义在于：一家私营公司可以靠一条软件规则，远程改变一个国家关键通信基础设施的能力。所以欧洲和乌克兰都在找替代方案：据采集员记录，窗外的 10 月 22 日，乌克兰已经和 Nokia、ICEYE 签了主权卫星通信意向书。</p>
+<p class="numbers"><strong>关键数字。</strong> 此前限速约每小时 161 公里；恢复后记录到每小时 400 公里以上（都出自原文）；限速持续约 10 天（出自 TechCrunch）。</p>
+<p class="status"><strong>核实状态。</strong> 多来源确认：Kyiv Independent、Axios、TechCrunch 三家独立报道都引用了乌克兰国防部的声明。需要说明：限速的原因和由谁下令，各方说法不一，目前没有核实。</p>
+<p class="src"><strong>来源。</strong> <a href="https://kyivindependent.com/starshield-operations-restored-above-400-km-h-ukraines-defense-ministry-says/" target="_blank" rel="noopener noreferrer">Kyiv Independent</a>；<a href="https://www.axios.com/2026/10/24/musk-ukraine-starlink-starshield-speed" target="_blank" rel="noopener noreferrer">Axios</a>；<a href="https://techcrunch.com/2026/10/24/starlink-seems-to-be-working-normally-again-in-ukraine/" target="_blank" rel="noopener noreferrer">TechCrunch</a>。</p>
+<hr>
+<h2 id="med">第三部分 · 讯医（医学）</h2>
+<p>这一部分共 9 条。主线是马德里 ESMO 2026（欧洲肿瘤内科学会年会，10 月 23 日到 27 日）的主席专场 I，时间是马德里 10 月 24 日 16:30 到 18:15，也就是北京时间 10 月 24 日 22:30 到 10 月 25 日 00:15。前四条都来自这个专场：小细胞肺癌的 tarlatamab 维持治疗、不能用顺铂的膀胱癌的 VOLGA、个体化 mRNA 黑色素瘤疫苗 intismeran、极高危前列腺癌的达罗他胺。接下来三条是同一天在线发表的论文：relatlimab 五年随访、GDF-15 抗体的小样本膀胱癌研究、SGLT2 抑制剂升高血红蛋白的荟萃分析。第八条是儿童肿瘤的纳米孔测序，最后一条是本迪布焦型埃博拉疫情的跨境扩散。</p>
+<p>读这一部分时，有一条线索可以贯穿：好几项试验的主要终点改善了，但总生存期还要等更长的随访才能看清，这正是今天核心思想在医学里的样子。另外，讯医采集员列出了一批因为首发早于窗口或无法亲自打开原文而没有收录的材料，包括 retatrutide 治疗阻塞性睡眠呼吸暂停的 NEJM 论文（10 月 21 日上线）、BMS 的多发性硬化 CAR-T 死亡病例、FDA 批准儿童每周一次胰岛素 Awiqli、WHO 埃博拉疾病暴发新闻 DON622 本身（10 月 23 日）、NEJM 的两篇卒中取栓论文和 ravulizumab IgA 肾病论文、Lancet 的 PRABITAS 结直肠癌试验（DOI 在窗内注册，但页面对采集员返回 403，按宁缺毋滥没有收录），以及被重发的 2021 年旧闻 PYLARIFY 获批。</p>
+<h3>1. 广泛期小细胞肺癌一线维持治疗：tarlatamab 加度伐利尤单抗把中位总生存期从 12.7 个月延长到 21.1 个月（DeLLphi-305 三期）</h3>
+<p class="marker">〔讯医-1〕</p>
+<p><strong>背景。</strong> 小细胞肺癌约占肺癌的一成多，生长快、早期就容易转移，大多数患者确诊时已是「广泛期」，也就是病灶超出一侧胸腔、无法用单一放疗野覆盖。标准一线治疗是含铂化疗加免疫检查点抑制剂，之后进入「维持治疗」阶段，用药物尽量延缓复发。度伐利尤单抗（durvalumab）是一种 PD-L1 抑制剂。tarlatamab 是「双特异性 T 细胞衔接器」（BiTE）：它一头抓住肿瘤细胞表面的 DLL3，一头抓住 T 细胞表面的 CD3，把 T 细胞直接拉到肿瘤细胞旁边去杀伤。DLL3 在大多数小细胞肺癌细胞上高表达，在正常组织里很少。「细胞因子释放综合征」（CRS）是这类让 T 细胞大规模激活的疗法常见的副作用，表现为发热、低血压等，分 1 到 4 级。「风险比」（HR）小于 1 表示治疗组的事件风险更低，0.42 大致意味着死亡风险降低约 58%。以上是教材里的常识，不是今天的新闻。</p>
+<p><strong>发生了什么。</strong> NEJM 标注 2026 年 10 月 24 日在线发表，与 ESMO 主席专场 I 同步；Targeted Oncology 的大会汇总稿发布于北京时间 10 月 25 日 00:18；主讲单位 Dana-Farber 癌症研究所也发了新闻稿。NEJM 摘要原文写道：「共有 563 名患者被随机分配接受 tarlatamab 加度伐利尤单抗（282 人）或度伐利尤单抗（281 人）……tarlatamab 加度伐利尤单抗组估计的中位总生存期为 21.1 个月（95% 置信区间 20.8 到无法估计），度伐利尤单抗组为 12.7 个月（95% 置信区间 11.2 到 14.8）（死亡风险比 0.42；95% 置信区间 0.32 到 0.54；P&lt;0.001）。」</p>
+<p>安全性方面，NEJM 原文写道：「3 级或以上不良事件在 tarlatamab 加度伐利尤单抗组的发生率为 46.8%，在单用度伐利尤单抗组为 40.6%。接受 tarlatamab 加度伐利尤单抗的患者中，近一半出现细胞因子释放综合征，主要为 1 级或 2 级。」</p>
+<p>Targeted Oncology 补充了亚组数据：「12 个月总生存率为 79% 对 53%。获益在各亚组中都保持一致，包括有脑转移的患者（HR 0.49；95% CI 0.26–0.93）和有肝转移的患者（HR 0.41；95% CI 0.28–0.61）。」</p>
+<p class="why"><strong>为什么值得注意。</strong> 按讯医采集员的归纳，tarlatamab 此前只在二线治疗中证明有效，这次是把它前移到一线化疗免疫治疗之后的维持阶段。中位总生存期从 12.7 个月延长到 21.1 个月，对一个以预后极差著称的癌种来说幅度很大，主讲人称它应成为新的标准维持治疗。需要留意的是：这是中期分析，随访约 16 个月；代价是近一半患者出现细胞因子释放综合征（多为 1 到 2 级）。这条很适合拿来复习双特异性抗体的作用机制和毒性管理。</p>
+<p class="numbers"><strong>关键数字。</strong> 563 例（282 对 281）；中位总生存期 21.1 对 12.7 个月；HR 0.42（95% CI 0.32–0.54）；12 个月总生存率 79% 对 53%；3 级以上不良事件 46.8% 对 40.6%；脑转移亚组 HR 0.49，肝转移亚组 HR 0.41。</p>
+<p class="status"><strong>核实状态。</strong> 多来源确认（NEJM 原文、Targeted Oncology 大会报道与 Dana-Farber 新闻稿三方一致；数字取自 NEJM 摘要和 Targeted Oncology 原文）。</p>
+<p class="src"><strong>来源。</strong> <a href="https://www.nejm.org/doi/full/10.1056/NEJMoa2609482" target="_blank" rel="noopener noreferrer">NEJM 论文</a>；<a href="https://www.targetedonc.com/view/esmo-2026-presidential-symposium-i-late-breaking-recap" target="_blank" rel="noopener noreferrer">Targeted Oncology 主席专场 I 汇总</a>；<a href="https://www.dana-farber.org/newsroom/news-releases/2026/immunotherapy-combo-extends-survival-for-patients-with-aggressive-small-cell-lung-cancer-based-on-trial-results-presented-by-dana-farber-at-esmo-congress-2026" target="_blank" rel="noopener noreferrer">Dana-Farber 新闻稿</a>。</p>
+<h3>2. 不能用顺铂的肌层浸润性膀胱癌：围手术期度伐利尤单抗加新辅助恩诺单抗（enfortumab vedotin）同时改善了无事件生存期和总生存期；再加一种药的三药组毒性更高，总生存改善反而不显著（VOLGA 三期）</h3>
+<p class="marker">〔讯医-2〕</p>
+<p><strong>背景。</strong> 「肌层浸润性膀胱癌」（MIBC）是指肿瘤已经长进膀胱壁肌肉层的膀胱癌，标准治疗是根治性膀胱切除，手术前通常先做以顺铂为基础的「新辅助」化疗来提高治愈率。但相当一部分患者因为肾功能差、听力或心功能问题，不能耐受顺铂。「围手术期」是指手术前后这段时间；「新辅助」是手术前的治疗，「辅助」是手术后的治疗。恩诺单抗（enfortumab vedotin，简称 EV）是一种「抗体偶联药物」（ADC）：抗体负责找到表达 Nectin-4 的肿瘤细胞，再把挂在抗体上的细胞毒药物送进去。tremelimumab 是 CTLA-4 抑制剂。「无事件生存期」（EFS）把复发、进展、无法手术和死亡都算作事件。「病理完全缓解」（pCR）是指手术切下来的标本里已经找不到残留癌细胞。这些是教材常识。</p>
+<p><strong>发生了什么。</strong> NEJM 标注 10 月 24 日在线发表，与 ESMO 主席专场 I 同步。NEJM 摘要原文写道：「共有 233 名患者被分到度伐利尤单抗加恩诺单抗组，233 名分到度伐利尤单抗加 tremelimumab 加恩诺单抗组，229 名分到对照组。度伐利尤单抗加恩诺单抗组 24 个月估计无事件生存率为 63.5%……对照组为 45.1%（事件或死亡风险比 0.51；95% CI 0.38–0.67；P&lt;0.001）；24 个月估计总生存率分别为 78.4% 和 69.4%（死亡风险比 0.58；95% CI 0.40–0.83；P=0.003）。」</p>
+<p>安全性方面，NEJM 原文写道：「3 级或以上不良事件在度伐利尤单抗加恩诺单抗组发生率为 71.1%（治疗相关的为 30.7%），在度伐利尤单抗加 tremelimumab 加恩诺单抗组为 79.5%（治疗相关的为 44.5%），在对照组为 50.2%。」</p>
+<p>Targeted Oncology 补充：「按当地评估，病理完全缓解率为 45% 对 10%……Powles 指出，三药组额外的毒性，可能是它总生存改善较小的原因。」</p>
+<p><strong>白话解释。</strong> 按讯医采集员的归纳，不能耐受顺铂的膀胱癌患者过去基本只能直接做根治性膀胱切除。VOLGA 证明，手术前先用三个周期的 EV 加 PD-L1 抑制剂、术后继续用度伐利尤单抗，可以把复发或死亡风险降低约一半（HR 0.51），总生存期也显著获益（HR 0.58）。</p>
+<p class="why"><strong>为什么值得注意。</strong> 采集员特别提醒「加药越多不一定越好」：再加一种 CTLA-4 抑制剂的三药组毒性更高，总生存期在中期分析时没有达到显著。用今天的核心思想说，药物要真正「送到」病人身上并带来生存获益，中间还隔着毒性、停药、能不能按计划手术这几节；源头加得越多，未必越能送到终点。这条也可以和本部分第 6 条放在一起看：同样是不适合顺铂的膀胱癌，三期大试验和小样本探索研究的证据强度差别很大。</p>
+<p class="numbers"><strong>关键数字。</strong> 233 / 233 / 229 例；24 个月无事件生存率 63.5% 对 45.1%（HR 0.51）；24 个月总生存率 78.4% 对 69.4%（HR 0.58，P=0.003）；病理完全缓解率 45% 对 10%（当地评估）；3 级以上不良事件 71.1%（双药）、79.5%（三药）、50.2%（对照）。</p>
+<p class="status"><strong>核实状态。</strong> 多来源确认（NEJM 原文与 Targeted Oncology 大会报道一致；数字取自 NEJM 摘要和 Targeted Oncology 原文）。</p>
+<p class="src"><strong>来源。</strong> <a href="https://www.nejm.org/doi/full/10.1056/NEJMoa2608323" target="_blank" rel="noopener noreferrer">NEJM 论文</a>；<a href="https://www.targetedonc.com/view/esmo-2026-presidential-symposium-i-late-breaking-recap" target="_blank" rel="noopener noreferrer">Targeted Oncology 主席专场 I 汇总</a>。</p>
+<h3>3. 个体化 mRNA 新抗原疫苗 intismeran 联合帕博利珠单抗在 ESMO 正式报告完整数据：已切除黑色素瘤复发或死亡风险降低 42%，前 6 个月两组几乎没有差别、6 个月后才明显分开，总生存期数据仍不成熟（INTerpath-001 三期）</h3>
+<p class="marker">〔讯医-3〕</p>
+<p><strong>背景。</strong> 「新抗原」是肿瘤细胞因为基因突变而产生的、正常细胞没有的蛋白片段，免疫系统可以把它们当作「异物」识别。「个体化新抗原疫苗」的做法是：先给每位患者的肿瘤做测序，找出他自己的突变，再据此定制一支 mRNA 疫苗，教免疫系统去识别这些新抗原。帕博利珠单抗（pembrolizumab）是 PD-1 抑制剂。「无复发生存期」（RFS）是从术后到复发或死亡的时间。「分段分析」（piecewise analysis）是把随访时间切成几段，分别看每一段里两组的差别。这些是教材常识。</p>
+<p><strong>发生了什么，窗内的新增量是什么。</strong> 完整数据在 ESMO 主席专场 I 正式报告（北京时间约 10 月 24 日 22:30 之后），Targeted Oncology 的汇总稿发布于北京时间 10 月 25 日 00:18。讯医采集员特别提醒：核心数字在 10 月 22 日已经因为数据泄露被两家公司提前公布，Nature 新闻在 10 月 23 日报道了泄露经过（窗外，仅作佐证）。Nature 原文写道：「这项三期试验的数据原定于 10 月 24 日在马德里的欧洲肿瘤内科学会会议上公布。但当数据在 10 月 22 日被泄露到网上时，两家公司公布了关键结果。」所以窗内的新增量是大会的正式报告，以及分段分析、安全性等细节。</p>
+<p>Targeted Oncology 原文写道：「这项双盲试验把 1137 名患者按 2:1 随机分配到 intismeran 组（1 毫克肌肉注射，每 3 周一次，共 9 剂；757 人）或安慰剂组（380 人），两组都联用帕博利珠单抗……在 2026 年 6 月 30 日的数据截止时点、中位随访 24.6 个月时，联合治疗使复发或死亡风险降低 42%（HR 0.58；95% CI 0.45–0.75；P &lt; .001）。估计的 24 个月无复发生存率为 82.2% 对 70.0%。分段分析显示，前 6 个月两组没有分开（HR 0.99；95% CI 0.66–1.49），之后获益明显（HR 0.42；95% CI 0.30–0.58）。」</p>
+<p>关于总生存期，原文写道：「总生存期数据尚不成熟，没有达到预设的显著性界值（HR 0.77；95% CI 0.45–1.31；P = .33）。」</p>
+<p class="why"><strong>为什么值得注意。</strong> 按讯医采集员的归纳，intismeran 有可能成为第一个获批的 mRNA 癌症疫苗。最有教学价值的细节是：前 6 个月两组几乎没有差别（HR 0.99），6 个月之后获益才明显（HR 0.42）。这符合「疫苗需要时间诱导 T 细胞应答」的生物学直觉。这正是今天核心思想在医学里的样子：疫苗打进去只是源头，要等免疫系统一节一节把效应送到终点，曲线才会分开。总生存期仍然不显著，Nature 报道里的专家也提醒，两年以后的效果还需要继续观察。</p>
+<p class="numbers"><strong>关键数字。</strong> 1137 例（757 对 380）；中位随访 24.6 个月；HR 0.58（复发或死亡风险降低 42%）；24 个月无复发生存率 82.2% 对 70.0%；前 6 个月 HR 0.99，6 个月后 HR 0.42；总生存 HR 0.77，P = .33。</p>
+<p class="status"><strong>核实状态。</strong> 多来源确认（Targeted Oncology 大会报道与 Nature 新闻的关键数字一致）。需要说明：核心结果在窗外已经提前公开，窗内新增的是正式报告和细节。</p>
+<p class="src"><strong>来源。</strong> <a href="https://www.targetedonc.com/view/esmo-2026-presidential-symposium-i-late-breaking-recap" target="_blank" rel="noopener noreferrer">Targeted Oncology 主席专场 I 汇总</a>；<a href="https://www.nature.com/articles/d41586-026-03417-0" target="_blank" rel="noopener noreferrer">Nature 新闻（10 月 23 日，窗外佐证）</a>。</p>
+<h3>4. 据 Targeted Oncology 报道，极高危局限性前列腺癌中，放疗加雄激素剥夺治疗再加达罗他胺，转移或死亡风险降低 58%；总生存期在中期分析时没有差异（DASL-HiCaP 三期）</h3>
+<p class="marker">〔讯医-4〕</p>
+<p><strong>背景。</strong> 「局限性前列腺癌」是指肿瘤还局限在前列腺及其周围、没有远处转移。对其中「极高危」的患者，标准根治方案之一是放疗加「雄激素剥夺治疗」（ADT，用药物把体内雄激素压到很低，因为前列腺癌依赖雄激素生长）。达罗他胺（darolutamide）是新一代雄激素受体抑制剂，直接挡住雄激素和受体的结合。「无转移生存期」（MFS）是从入组到出现转移或死亡的时间；这里的「MFS-CI」指的是用常规影像（CT、骨扫描）判断的无转移生存。「替代终点」是用来代替总生存这类「硬终点」、能更早得到结果的指标，它是否可靠，要看它和硬终点之间的关联是否被证明过。这些是教材常识。</p>
+<p><strong>发生了什么。</strong> 这是 ESMO 主席专场 I 的第四个晚期突破摘要，在北京时间约 10 月 24 日 22:30 之后报告，Targeted Oncology 的汇总稿发布于北京时间 10 月 25 日 00:18。据 Targeted Oncology 报道：「这项安慰剂对照试验把 1106 名患者按 1:1 随机分配到达罗他胺组（600 毫克，每日两次）或安慰剂组，用药 96 周，两组都接受 96 周的雄激素剥夺治疗，以及针对前列腺或前列腺床和盆腔淋巴结的放疗。」</p>
+<p>疗效方面：「达罗他胺使转移或死亡风险降低 58%（HR 0.42；95% CI 0.27–0.66；P = .0001），越过了预设的 .012 拒绝界值。达罗他胺组有 27 例无转移生存事件（5%），安慰剂组 63 例（11%）；4 年无转移生存率分别为 95% 和 88%。」</p>
+<p>总生存方面：「在这次中期分析中，总生存期没有显著差异（HR 0.88；95% CI 0.49–1.59），死亡人数分别为 21 和 24。」</p>
+<p class="why"><strong>为什么值得注意。</strong> 按讯医采集员的归纳，主要终点「常规影像下的无转移生存期」显著改善，但总生存期在中期分析时没有差异；报告方用「这个终点是总生存的公认替代终点」来论证结果的意义。这正好可以作为理解替代终点的课堂例子：替代终点改善得很漂亮，硬终点还要等时间来证明。死亡事件只有 21 对 24 例，说明随访还远没有走到能看清总生存的那一节。</p>
+<p class="numbers"><strong>关键数字。</strong> 1106 例；达罗他胺 600 毫克每日两次，96 周；HR 0.42（转移或死亡风险降低 58%），P = .0001；事件 27 例（5%）对 63 例（11%）；4 年无转移生存率 95% 对 88%；总生存 HR 0.88，死亡 21 对 24 例。</p>
+<p class="status"><strong>核实状态。</strong> 单一来源。讯医采集员目前只打开到 Targeted Oncology 的大会报道，没有找到可访问的论文原文或主办方新闻稿，以上数字尚未得到其他来源确认。</p>
+<p class="src"><strong>来源。</strong> <a href="https://www.targetedonc.com/view/esmo-2026-presidential-symposium-i-late-breaking-recap" target="_blank" rel="noopener noreferrer">Targeted Oncology 主席专场 I 汇总</a>。</p>
+<h3>5. RELATIVITY-047 五年随访：relatlimab 加纳武利尤单抗在晚期黑色素瘤中的无进展生存、总生存和黑色素瘤特异性生存获益持续存在（Nature Medicine）</h3>
+<p class="marker">〔讯医-5〕</p>
+<p><strong>背景。</strong> LAG-3（淋巴细胞活化基因 3）和 PD-1 一样，是 T 细胞表面的「刹车」分子，肿瘤会利用这些刹车让 T 细胞「疲惫」、失去杀伤力。纳武利尤单抗（nivolumab）是 PD-1 抑制剂，relatlimab 是第一个上市的 LAG-3 抑制剂，两者联用相当于同时松开两个刹车。「黑色素瘤特异性生存」（MSS）只把死于黑色素瘤算作事件。「原发耐药」是指一开始治疗就没有反应。这些是教材常识。</p>
+<p><strong>发生了什么。</strong> Nature Medicine 网络版标注的发表日期是 2026 年 10 月 24 日（页面元数据没有给出具体时刻；按伦敦时间当天发布换算，主体落在窗内）。论文摘要原文写道：「在这项二到三期双盲试验中，转移性或不可切除的黑色素瘤患者按 1:1 随机分配到纳武利尤单抗 480 毫克加 relatlimab 160 毫克组（355 人）或纳武利尤单抗 480 毫克组（359 人），每 4 周静脉给药一次。」</p>
+<p>结果方面：「在这项预设的 5 年分析中，最短随访 57.3 个月，纳武利尤单抗加 relatlimab 相比纳武利尤单抗，在无进展生存（风险比 0.77；95% CI 0.65–0.92）、总生存（风险比 0.78；95% CI 0.64–0.95）和黑色素瘤特异性生存（风险比 0.71；95% CI 0.57–0.88）上，持续显示出有临床意义的获益。」</p>
+<p>生物标志物方面：「在 PD-L1 ≥1% 亚组里可评估生物标志物的患者中，分析发现，外周血或肿瘤中 LAG-3 阳性 CD8 细胞水平高，与单用纳武利尤单抗效果较差相关。在纳武利尤单抗基础上加用 relatlimab，与原发耐药的发生率较低相关。」</p>
+<p class="why"><strong>为什么值得注意。</strong> 按讯医采集员的归纳，这是这项关键试验目前最长的随访，证明 PD-1 加 LAG-3 双阻断的获益在五年后依然存在，而且总生存期也有统计学差异（HR 0.78）。生物标志物分析提示，LAG-3 阳性 CD8 T 细胞多的患者单用纳武利尤单抗效果更差，加上 relatlimab 能减少原发耐药，这对理解「免疫检查点为什么要联合」很直观。和第 3、4 条对比着看：那两条的总生存还没走到能下结论的那一节，这一条则已经走到了五年这一节，硬终点也站住了。</p>
+<p class="numbers"><strong>关键数字。</strong> 355 对 359 例；最短随访 57.3 个月；无进展生存 HR 0.77，总生存 HR 0.78，黑色素瘤特异性生存 HR 0.71。</p>
+<p class="status"><strong>核实状态。</strong> 单一来源。这是论文原文，属于一手来源，数据直接取自论文摘要；采集员没有看到同一窗口内的其他报道。</p>
+<p class="src"><strong>来源。</strong> <a href="https://www.nature.com/articles/s41591-026-04756-1" target="_blank" rel="noopener noreferrer">Nature Medicine 论文</a>。</p>
+<h3>6. 不适合顺铂的肌层浸润性膀胱癌：新辅助纳武利尤单抗加 GDF-15 中和抗体 visugromab，病理完全缓解率 33%，安慰剂组 8%；但只有 31 例患者，属于探索性信号（GDFATHER-NEO 二期 a，Nature Medicine）</h3>
+<p class="marker">〔讯医-6〕</p>
+<p><strong>背景。</strong> GDF-15（生长分化因子 15）在教材里常被当作和恶病质、食欲下降有关的应激因子来讲。近年的研究发现，它在肿瘤里也会帮助肿瘤逃避免疫攻击，可能是 PD-1 抑制剂失效的原因之一。「中和抗体」是能结合并「中和」掉某个分子、让它失去作用的抗体。「主要病理缓解」（MPR）指手术标本里残留的活肿瘤细胞很少（通常不超过 10%）。「二期 a」是规模较小的早期临床研究，主要用来看安全性和初步疗效信号。这些是教材常识。</p>
+<p><strong>发生了什么。</strong> Nature Medicine 网络版标注的发表日期是 10 月 24 日（没有给出具体时刻）。论文原文写道：「GDF-15 在肌层浸润性膀胱癌中过度表达，最近被确认为克服 PD-1/PD-L1 阻断耐药的潜在治疗靶点。」以及：「31 名不适合或拒绝顺铂的初诊肌层浸润性膀胱癌患者……接受纳武利尤单抗加 visugromab 的患者病理完全缓解率为 33%（15 例中 5 例，95% 置信区间 12–62%），纳武利尤单抗加安慰剂组为 8%（13 例中 1 例，95% 置信区间 0–36%）；主要病理缓解率分别为 60%（95% CI 32–84%）和 23%（95% CI 5–54%），影像学总缓解率分别为 60%（95% CI 32–84%）和 15%（95% CI 2–45%）。」</p>
+<p>安全性方面：「没有因治疗相关原因停药或推迟手术；3 到 4 级治疗相关不良事件，在纳武利尤单抗加 visugromab 组和纳武利尤单抗加安慰剂组分别发生于 2 例（13%）和 3 例（20%）。」</p>
+<p class="why"><strong>为什么值得注意。</strong> 按讯医采集员的归纳，这项研究换了一个角度看 GDF-15：不是当作恶病质因子，而是当作肿瘤免疫逃逸的靶点，用抗体中和后再配合 PD-1 抑制剂。结果数字看着亮眼，但只有 31 例患者、置信区间很宽（比如 12–62%），只能算探索性信号，需要更大规模的试验验证。和第 2 条 VOLGA 放在一起看很有教学价值：同样是不适合顺铂的膀胱癌，一个是近 700 例的三期试验，一个是 31 例的二期 a 研究，证据强度差别非常大。</p>
+<p class="numbers"><strong>关键数字。</strong> 31 例；病理完全缓解率 33%（5/15）对 8%（1/13）；主要病理缓解率 60% 对 23%；影像学总缓解率 60% 对 15%；3 到 4 级治疗相关不良事件 13% 对 20%。</p>
+<p class="status"><strong>核实状态。</strong> 单一来源（论文原文，一手来源；样本量小，属于探索性研究）。</p>
+<p class="src"><strong>来源。</strong> <a href="https://www.nature.com/articles/s41591-026-04740-9" target="_blank" rel="noopener noreferrer">Nature Medicine 论文</a>。</p>
+<h3>7. 纳入 85 项随机对照试验、7 万余人的 JAMA 荟萃分析：SGLT2 抑制剂让血红蛋白平均升高约 0.6 g/dL，并伴随 EPO 升高和铁储备下降，作者认为不只是血液浓缩，但临床意义尚不明确</h3>
+<p class="marker">〔讯医-7〕</p>
+<p><strong>背景。</strong> SGLT2 抑制剂（达格列净、恩格列净等）通过抑制肾小管对葡萄糖的重吸收，让葡萄糖从尿里排出，最早用于 2 型糖尿病，后来在心衰和慢性肾病中也证明了心肾保护作用，是药理学里一定会学到的一类药。它会让血红蛋白和红细胞压积轻度升高，过去常被解释为利尿导致的「血液浓缩」。EPO（促红细胞生成素）是肾脏分泌、刺激骨髓造红细胞的激素。铁蛋白反映体内储存铁，转铁蛋白饱和度反映血液中可用于造血的铁。「荟萃分析」是把多项研究的数据合并起来做统计；I² 是衡量这些研究之间结果差异（异质性）大小的指标。这些是教材常识，不是今天的新闻。</p>
+<p><strong>发生了什么。</strong> JAMA 标注 10 月 24 日在线发表，同时在 ASN Kidney Week 2026（丹佛，10 月 24 日）报告；Crossref 显示 DOI 注册于北京时间 10 月 25 日 04:30，落在窗内。论文要点原文写道：「这项荟萃分析纳入 85 项随机临床试验、70,543 名有心血管病、糖尿病、心衰和/或慢性肾病的人，与对照相比，使用 SGLT2 抑制剂与血红蛋白和红细胞压积显著升高相关（血红蛋白平均变化 0.60 g/dL，红细胞压积 2.36%）。」</p>
+<p>次要结局方面：「6 项次要结局中有 4 项与 SGLT2 抑制剂显著相关，包括 EPO 升高（SGLT2 抑制剂组 2.35 mIU/mL，对照组 0.04 mIU/mL；差值 2.11 mIU/mL [95% CI 0.5–3.71 mIU/mL]；P = .01）以及转铁蛋白饱和度下降……」论文还写道：「红细胞压积与血红蛋白的斜率为 3.73，超过了约 3.0 的预期比值（P &lt; .001）。」</p>
+<p>另外一个细节：「一位研究作者使用 ASReview LAB 2.1.1 版（乌得勒支大学 AI 实验室）筛选标题和摘要，这是一个基于人工智能的主动机器学习平台。」</p>
+<p><strong>白话解释。</strong> 按讯医采集员的归纳，这篇荟萃分析发现，除了血红蛋白升高，EPO 和红细胞数也上升，铁蛋白和转铁蛋白饱和度下降。作者认为这更像是真正的红细胞生成增加、动用了储存铁，而不只是血液被浓缩了。不过升幅小，异质性高（血红蛋白的 I² 为 82.3%），作者明确说临床意义还不清楚。</p>
+<p class="why"><strong>为什么值得注意。</strong> 这条和你的药理学课程直接相关：过去「血液浓缩」的解释可能不完整，药物在体内的效应链条比课本写的要长一节。同时，文献初筛用了主动学习 AI 工具 ASReview，这是「AI 辅助做系统综述」的一个真实例子，和你同时在学的 AI 也能连起来。</p>
+<p class="numbers"><strong>关键数字。</strong> 85 项随机对照试验；70,543 人；血红蛋白平均升高 0.60 g/dL，红细胞压积 2.36%；EPO 差值 2.11 mIU/mL（P = .01）；红细胞压积与血红蛋白斜率 3.73（预期约 3.0）；血红蛋白 I² 82.3%。</p>
+<p class="status"><strong>核实状态。</strong> 单一来源（JAMA 论文原文，一手来源；论文自述已在 ERA 2026 和 Kidney Week 2026 报告）。</p>
+<p class="src"><strong>来源。</strong> <a href="https://jamanetwork.com/journals/jama/fullarticle/10.1001/jama.2026.19921" target="_blank" rel="noopener noreferrer">JAMA 论文</a>。</p>
+<h3>8. 加拿大团队用纳米孔测序的「自适应采样全基因组测序」，一次检测覆盖儿童肿瘤的融合基因、点突变、拷贝数变异和甲基化分型，多数关键变异在测序头 24 小时内就能检出（Genome Medicine）</h3>
+<p class="marker">〔讯医-8〕</p>
+<p><strong>背景。</strong> 儿童肿瘤的分子诊断，现在通常要分别做核型分析、FISH（荧光原位杂交）、外显子组测序、转录组测序等多项检测，耗时又耗钱。纳米孔测序是一种让 DNA 单链穿过纳米级小孔、根据电流变化读出碱基的技术，它可以实时出数据。「自适应采样」（adaptive sampling）是纳米孔测序的一项功能：测序仪在一条 DNA 刚开始穿孔时就实时判断它是不是感兴趣的区域，不是就把它「弹出去」，从而把测序资源集中在目标区域。「融合基因」是两个基因断裂后拼接在一起形成的异常基因；SNV 是单核苷酸变异，indel 是小的插入或缺失；CNV 是拷贝数变异；「甲基化分型」是根据 DNA 甲基化模式给肿瘤分类。这些是背景常识。</p>
+<p><strong>发生了什么。</strong> Genome Medicine 页面显示「Published: 24 October 2026」（没有给出具体时刻）。论文原文写道：「我们设计了一个包含 380 个临床相关位点的自适应采样全基因组测序方案，并用它测序了 36 份儿童肿瘤和对照样本。为了支持实时解读，我们开发了一个开源生物信息学流程（nf-core-oncoseq），可以在测序过程中边测边分析。」</p>
+<p>结果方面：「自适应采样全基因组测序可靠地检出了所有类别的临床可干预变异，包括融合基因（20/20）、小变异（SNV 和 indel，59 个突变基因中检出 58 个）和大的拷贝数变异（20/21）。」以及：「所有克隆性变异都在测序头 24 小时产生的数据中，以超过 5 条支持读段被识别出来（20/20 个融合和 47/47 个等位基因频率超过 25% 的 SNV），其中一些，比如大的拷贝数变异和甲基化预测，在第一个小时内就能检出。」</p>
+<p class="why"><strong>为什么值得注意。</strong> 按讯医采集员的归纳，这项研究让测序仪在测序过程中实时「挑选」380 个临床相关位点重点读，同时保留全基因组的低深度覆盖，用一次检测拿到几乎所有类型的变异，并配了开源的实时分析流程。它很好地展示了「测序加实时计算」怎样把诊断时间压缩到一天以内。需要留意：样本只有 36 例，作者也说临床落地还需要进一步验证。</p>
+<p class="numbers"><strong>关键数字。</strong> 380 个位点；36 份样本；融合基因 20/20；小变异 58/59 个突变基因；大拷贝数变异 20/21；头 24 小时内 20/20 个融合、47/47 个高频 SNV 被检出。</p>
+<p class="status"><strong>核实状态。</strong> 单一来源（期刊论文原文，一手来源，开放获取）。</p>
+<p class="src"><strong>来源。</strong> <a href="https://link.springer.com/article/10.1186/s13073-026-01815-7" target="_blank" rel="noopener noreferrer">Genome Medicine 论文</a>。</p>
+<h3>9. 本迪布焦型埃博拉疫情继续跨境扩散：据新华社报道，肯尼亚出现第 2 例死亡，尼日利亚病例与肯尼亚首例的病毒序列只差 1 个突变，刚果（金）启动二/三期疫苗试验</h3>
+<p class="marker">〔讯医-9〕</p>
+<p><strong>背景。</strong> 埃博拉病毒病是一种病死率很高的出血热。埃博拉病毒有几个不同的种，最常见、研究最多的是扎伊尔型，现有获批的疫苗和抗体疗法主要针对它；这次流行的是本迪布焦型（Bundibugyo），没有专门获批的疫苗。「粗病死率」是死亡数除以确诊数，在疫情进行中会受到统计滞后的影响。「基因组流行病学」是通过比对不同病人体内病毒的基因序列，来推断传播链。「二/三期试验」是把评估疗效和扩大规模合在一起的临床试验设计。这些是背景常识。</p>
+<p><strong>发生了什么。</strong> 新华社英文稿发布于北京时间 10 月 24 日 18:09，在窗内。需要说明：稿子里所写的肯尼亚死亡病例、尼日利亚测序结果和疫苗试验启动，都发生在当地时间 10 月 23 日（星期五），也就是北京时间 10 月 23 日晚到 10 月 24 日凌晨，和时间窗起点有重叠。</p>
+<p>新华社原文写道：「肯尼亚卫生部周五晚间宣布，一名正在接受埃博拉治疗的 65 岁女性死亡，使该国 9 例确诊病例中的死亡人数升至 2 人……随后的 8 例感染全部与首例病例有关，其中包括 4 名家庭成员和 4 名医护人员。」</p>
+<p>关于尼日利亚：「尼日利亚卫生和社会福利协调部长穆罕默德·阿里·帕特周五表示，基因组测序显示，该国唯一一例确诊埃博拉病例中检测到的病毒，与肯尼亚首例输入病例中的病毒『高度相似』，『只差一个突变』。」</p>
+<p>关于疫苗试验：「一项评估针对本迪布焦病毒疫苗的大型临床试验周五在刚果（金）受灾最严重的伊图里省首府布尼亚启动。这项二/三期试验以第一位受试者接种疫苗为标志正式开始。尽管当前疫情规模很大，但目前还没有专门针对本迪布焦病毒获批的疫苗。」</p>
+<p>WHO 在 10 月 23 日发布的疾病暴发新闻 DON622（窗外，仅作佐证）写道：「截至 2026 年 10 月 20 日，八个省的 66 个卫生区共报告确诊病例 9704 例，其中死亡 4687 例（粗病死率 48.3%）。」</p>
+<p class="why"><strong>为什么值得注意。</strong> 按讯医采集员的归纳：第一，肯尼亚 9 例中有 4 例是医护人员，提示院内感染控制仍是薄弱环节。第二，尼日利亚病例与肯尼亚首例的病毒序列只差一个突变，说明基因组流行病学正在被用来追溯两人可能在乌干达机场交集的传播链。第三，刚果（金）启动的自适应平台疫苗试验很关键，因为现有获批疫苗不针对这个型。第四，政策上有分歧：WHO 仍然不建议限制旅行和贸易，而乌干达已经禁止有刚果（金）旅行史的人过境。和人工智能部分第 2 条的英国 AI 生物安全实验室联系起来看，这正是「更快研发医学对策」的现实需求。</p>
+<p class="numbers"><strong>关键数字。</strong> 肯尼亚 9 例确诊、2 例死亡，8 例续发感染中 4 名家庭成员、4 名医护人员；尼日利亚 1 例确诊，与肯尼亚首例差 1 个突变；刚果（金）截至 10 月 20 日确诊 9704 例、死亡 4687 例，粗病死率 48.3%，涉及 8 个省 66 个卫生区（出自 WHO DON622）。</p>
+<p class="status"><strong>核实状态。</strong> 部分多来源确认：刚果（金）累计病例和死亡数在新华社与 WHO DON622 中一致。肯尼亚第 2 例死亡和疫苗试验启动，目前只在新华社稿中看到，属单一来源，尚未得到其他来源确认。</p>
+<p class="src"><strong>来源。</strong> <a href="https://english.news.cn/africa/20261024/f4d830edcbaf4aa8a60a91b29219b674/c.html" target="_blank" rel="noopener noreferrer">新华社英文稿</a>；<a href="https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON622" target="_blank" rel="noopener noreferrer">WHO 疾病暴发新闻 DON622（10 月 23 日，窗外佐证）</a>。</p>
+<hr>
+<h2 id="self">第四部分 · 你自己的事情（轻提示）</h2>
+<p>这一部分来自你授权的个人连接器，窗内一共 10 条。按约定只写纯文本：私有仓库、PR、运行记录和邮件线程都不放链接，也不写任何账号名。先放需要你留意的两件事（StudySolo 的出站流量已经超过免费额度、deepseek-harness 的定时测试连续失败），再放 ChatSolo 当天上午「上线、报警、修好、复查」的一整组（三条），然后是昨天早报的投递记录、AI-Days 视频工程的整理，最后是三类邮件（Ollama 注册欢迎信、模型中转商的上线通知、两封营销邮件）。</p>
+<p><strong>连接器的整体情况。</strong> 两个 Gmail 在窗内一共 7 封邮件，全部看过：其中一个邮箱 6 封，另一个邮箱 1 封。窗内没有任何订阅续费成功、扣款失败或订阅状态变化的邮件（OpenCode Go、Cursor、DeepSeek 等都没有），也没有新设备登录提醒。GitHub 这一路覆盖了窗内全部活动：14 个提交、6 个 PR，并读了三条失败工作流的日志和近几天的运行历史。Notion 按创建日期 10 月 24 日到 25 日检索，没有新页面。日历、云盘这一路当前没有可用的连接器，今天没有日程和学业安排信息，这里也不编造任何日程。窗外也没有找到临近的截止日期或约定。</p>
+<h3>1. StudySolo 的 Supabase 备份工作流连续第四天失败，这次是因为出站流量已经略超免费额度</h3>
+<p class="marker">〔连读-1〕</p>
+<p><strong>发生了什么。</strong> 北京时间 10 月 24 日 08:02，你的邮箱收到 StudySolo 仓库（私有）supabase-backup 工作流的失败通知：这次运行在 master 分支、提交 39445c8 上，用时 25.0 秒，backup 作业失败。日志里记录的用量是：数据库 20,679,827 字节，上限 524,288,000 字节，比例约 0.0394；出站流量 5,377,635,882 字节，上限 5,368,709,120 字节，比例 1.0017。检查脚本的逻辑是「数据库比例或出站流量比例只要有一项达到阈值就报警」，报警后以退出码 2 结束，所以工作流显示为失败。</p>
+<p><strong>白话解释。</strong> 连读采集员说明，这条备份任务每天北京时间早上八点左右跑一次，脚本的报警阈值是 0.8。数据库本身只用了约 3.9%，压力全在「出站流量」（egress，也就是数据从数据库流出去、发给用户或其他服务的总量）上，而且这次已经略微超过了 5,368,709,120 字节（5 GiB）的免费额度。失败本身是这个「水位告警」设计的结果，备份产物有没有上传需要另外看。</p>
+<p class="why"><strong>为什么提一下。</strong> 运行历史显示，10 月 21、22、23、24 日连续四次 supabase-backup 都是失败，而同期的 supabase-keepalive 都是成功的。这次的比例已经越过了 1。采集员提醒，流量超额这件事值得你留意，可能会影响 StudySolo 的线上访问。有空的时候看一眼是哪里在大量读取、要不要加缓存，会比较安心。</p>
+<p class="status"><strong>核实状态。</strong> 多来源确认（Gmail 失败通知、GitHub 作业日志、工作流运行历史三方一致）。</p>
+<p class="src"><strong>来源（纯文本）。</strong> StudySolo 私有仓库 Actions 运行 40042873094（supabase-backup，master，39445c8）；你邮箱里 10 月 24 日 08:02 的失败通知。</p>
+<h3>2. deepseek-harness 的真实 API 端到端测试连续第五天失败，还是卡在准备沙箱时下载地址返回 404</h3>
+<p class="marker">〔连读-5〕</p>
+<p><strong>发生了什么。</strong> 北京时间 10 月 24 日 12:34，你的邮箱收到 deepseek-harness 仓库（私有）「E2E (real DeepSeek API)」工作流的失败通知：master 分支，提交 c291e79，用时 48.0 秒。日志显示，失败发生在运行 scripts/prepare-ci-bubblewrap.sh 这一步：curl 连续 4 次返回「The requested URL returned error: 404」，最后以退出码 22 结束。</p>
+<p><strong>白话解释。</strong> 「端到端测试」（E2E）是从头到尾模拟一次真实使用的测试，这里它本来要真的去调用 DeepSeek 的 API。bubblewrap 是 Linux 上一个轻量的沙箱工具，测试会先把它准备好；404 就是「这个网址找不到」。采集员说明，测试根本没走到调用 DeepSeek API 那一步，所以和 API 额度、密钥都无关，也不代表代码本身有问题。</p>
+<p class="why"><strong>为什么提一下。</strong> 运行历史显示，10 月 20 日到 24 日每天一次的定时测试全部失败，属于一直没修的老问题。采集员判断，这个下载地址大概率已经失效：改一下脚本里的下载地址，或者先把定时任务停掉，就不会每天多一封失败邮件。用今天的核心思想说，这条测试管子在第一节就堵住了，水一直没流到真正要测的地方。</p>
+<p class="status"><strong>核实状态。</strong> 多来源确认（Gmail 失败通知、GitHub 作业日志、连续五天的运行历史一致）。</p>
+<p class="src"><strong>来源（纯文本）。</strong> deepseek-harness 私有仓库 Actions 运行 40062791983（E2E (real DeepSeek API)，master，c291e79）；你邮箱里 10 月 24 日 12:34 的失败通知。</p>
+<h3>3. ChatSolo 0.6.1 发布：Canvas 新增「输出阅读地图」和 Thinking 阅读器（实验功能，需手动开启）</h3>
+<p class="marker">〔连读-4〕</p>
+<p><strong>发生了什么。</strong> 北京时间 10 月 24 日 08:26，ChatSolo 仓库（私有）合并了 PR #61「feat(canvas): add experimental output maps and Thinking reader」；08:27 合并了发布 PR #62「chore(release): publish 0.6.1 canvas output optimization」。PR 描述原文写道：Canvas 现在可以把已有的 Markdown 按段落整理成阅读地图，有简要和详细两种视图，支持折叠和恢复、聚焦阅读，以及一个固定大小的 Thinking 面板；这个功能需要手动开启，只作用于 Canvas，并且会保留原始消息、执行节点、连线和模型请求。</p>
+<p>验证部分写的是：这个功能通过了 145 项针对性的 Vitest 测试、6 个 Chromium 界面场景，以及 TypeScript 检查、代码规范检查和生产构建。</p>
+<p><strong>白话解释。</strong> 简单说，Canvas 里的长输出以后可以变成「先看提纲、需要时再展开细节」的阅读方式，不会动到原来的内容。Vitest 是前端单元测试工具，Chromium 界面场景是用浏览器自动点一遍界面来测试。</p>
+<p class="why"><strong>为什么提一下。</strong> 这是你自己项目在窗内的一次功能更新。也正是这次发布，触发了下面第 4 条的安全审计。</p>
+<p class="status"><strong>核实状态。</strong> 单一来源（只有 PR 正文和提交记录，采集员没有在线上实际打开这个功能验证）。</p>
+<p class="src"><strong>来源（纯文本）。</strong> ChatSolo 私有仓库 PR #61、PR #62。</p>
+<h3>4. ChatSolo 0.6.1 合并后，自动安全审计报出 4 个严重级漏洞，其中包括 Next.js 的未授权远程代码执行</h3>
+<p class="marker">〔连读-2〕</p>
+<p><strong>发生了什么。</strong> 北京时间 10 月 24 日 08:28，你的邮箱收到 ChatSolo 仓库 security-audit 工作流的失败通知：main 分支，提交 49689ee。两个作业都失败了：「pnpm audit (prod, high+)」和「pip-audit (backend requirements)」。</p>
+<p>作业日志里，前端依赖审计的结果是「31 vulnerabilities found」，其中「10 low | 12 moderate | 5 high | 4 critical」（10 个低危、12 个中危、5 个高危、4 个严重）；严重级里有一条是「Next.js: Unauthenticated Remote Code Execution」（Next.js 未授权远程代码执行），受影响版本是 16.0.0 到 16.4.0。后端的 pip-audit 结果是「Found 37 known vulnerabilities in 1 package」，问题出在 pillow 12.3.0（漏洞编号之一是 CVE-2026-112895），修复版本是 13.0.0。</p>
+<p><strong>白话解释。</strong> 按连读采集员的归纳，严重级的漏洞包括两条 Next.js 未授权远程代码执行和一条 DOMPurify 绕过。「未授权远程代码执行」意思是攻击者不用登录，隔着网络就可能让服务器执行他的代码，这是最严重的一类问题（和科技部分第 4、5 条是同一类）。pnpm audit 和 pip-audit 分别是检查前端 JavaScript 依赖和后端 Python 依赖里已知漏洞的工具。</p>
+<p class="why"><strong>为什么提一下。</strong> 采集员注意到，部署工作流在同一时间仍然是成功的，也就是说带漏洞的 0.6.1 版本曾短暂上线，直到下面第 5 条的修复合入。</p>
+<p class="status"><strong>核实状态。</strong> 多来源确认（Gmail 失败通知、GitHub 作业日志）。</p>
+<p class="src"><strong>来源（纯文本）。</strong> ChatSolo 私有仓库 Actions 运行 40045050943（security-audit，main，49689ee）；你邮箱里 10 月 24 日 08:28 的失败通知。</p>
+<h3>5. ChatSolo 在约四十分钟内发布 0.6.2 安全依赖修复，合并后安全审计、CI 和部署全部通过</h3>
+<p class="marker">〔连读-3〕</p>
+<p><strong>发生了什么。</strong> 北京时间 10 月 24 日 09:05，ChatSolo 仓库合并了 PR #63「fix(security): remediate dependencies and validate 0.6.2 compatibility」；09:06 合并了发布 PR #64「chore(release): publish 0.6.2 security dependency fixes」。合并后 main 分支上的 security-audit 运行 40048227918（创建于 09:06）结果为成功。</p>
+<p>PR 描述原文写道：修复 0.6.1 发布审计中的生产依赖漏洞，并覆盖实际 Python 锁文件及开发工具的遗漏项；更新依赖及安全下限，把 pnpm overrides 迁到有效配置位置，后端流水线同时审计声明和部署锁文件。验证结果是：pnpm 生产及完整依赖审计均为 0 漏洞；Python 锁定版本及直接声明审计均未发现已知漏洞；前端 2,227 项测试通过、11 项跳过；后端完整 pytest 退出码 0；Playwright 16 项通过、1 项条件跳过。</p>
+<p><strong>白话解释。</strong> 从审计报警（08:28）到修复版合入（09:06）不到四十分钟。工作流历史显示，合并后的 security-audit、ci、deploy-mainecs 三项全部成功。「锁文件」是记录每个依赖具体用哪个版本的文件；这次修复特意把「声明的依赖」和「实际部署用的锁文件」都纳入审计，避免「声明修了、实际装的还是旧版」。</p>
+<p class="why"><strong>为什么提一下。</strong> 这一组（第 3、4、5 条）是今天核心思想在你自己项目里最好的正面例子：发现问题、修好、发出去、再跑一遍审计复查，一路走到了最后一节。尤其是把锁文件也纳入审计这一点，正好对应科技部分第 4 条讲的「源码修了、下游没跟上」的问题。</p>
+<p class="status"><strong>核实状态。</strong> 多来源确认（PR 正文与合并后的工作流运行结果一致）。</p>
+<p class="src"><strong>来源（纯文本）。</strong> ChatSolo 私有仓库 PR #63、PR #64，Actions 运行 40048227918。</p>
+<h3>6. 10 月 24 日的早报《先敲一敲再走过去》已合入博客主分支，并在 6 分钟后同步到 dev</h3>
+<p class="marker">〔连读-6〕</p>
+<p><strong>发生了什么。</strong> 北京时间 10 月 24 日 07:21，Blog-YuSheng 仓库的 PR #199「content(briefs): 2026-10-24 先敲一敲再走过去」合并进 main（合并提交 f0bb070d）；07:27，PR #200「chore: sync main → dev (2026-10-24 brief)」把它同步到 dev。PR 里写的核心思想是「看起来结实不算数，推过、试过、证明过才算数」，成品是自包含单文件 content/briefs/2026-10/ai-brief-2026-10-24.html，网页显示改动为 1 个文件、+1857 行。</p>
+<p class="why"><strong>为什么提一下。</strong> 这说明早报的投递链路在窗内是正常的，没有遗留未合并的早报 PR。</p>
+<p class="status"><strong>核实状态。</strong> 多来源确认（GitHub API 检索，加上采集员重新打开 PR #199 网页确认状态为已合并）。</p>
+<p class="src"><strong>来源（纯文本）。</strong> Blog-YuSheng 仓库 PR #199、PR #200。</p>
+<h3>7. AI-Days 视频工程当晚第一次加上版本控制，并把 23 集的入口统一到共享的导演层</h3>
+<p class="marker">〔连读-7〕</p>
+<p><strong>发生了什么。</strong> 北京时间 10 月 24 日 21:10 到 22:19，AI-Days 仓库（私有）一共有 5 个提交（0f960165、9406cd91、1e2dd176、fb61adc8、66202f21）。提交信息原文包括：「chore: 初始化版本控制，冻结现有 35 集现场」「refactor: 统一 23 集入口到 lib/director 并新增共享层 WebUI」「docs: 补齐 ARCHITECTURE/PIPELINE/QUALITY/ARCHIVE 与三份经验文档，道具库接入 WebUI」「chore: 归档分层 deliver/archive 落地，封面统一转 JPG」。</p>
+<p><strong>白话解释。</strong> 按连读采集员的归纳，你当晚给 AI-Days 视频工程第一次加上了 Git 管理：现有 35 集的现场先被冻结保存，其中 23 集的入口统一改到共享的 lib/director 目录，还补了架构、流水线、质量、归档几份文档。归档分成「交付」和「存档」两层，封面统一转成 JPG，这和你之前定下的「每个视频一个干净的归档文件夹」的习惯是一致的。</p>
+<p class="why"><strong>为什么提一下。</strong> 这是窗内最晚、也最集中的一段个人工程活动。给 35 集现场先「冻结」再重构，等于在动手改之前先存了一份可以随时回去的底稿，是很稳妥的做法。</p>
+<p class="status"><strong>核实状态。</strong> 单一来源（只有提交信息，采集员没有逐个打开提交内容核对）。</p>
+<p class="src"><strong>来源（纯文本）。</strong> AI-Days 私有仓库的 5 个提交（0f960165、9406cd91、1e2dd176、fb61adc8、66202f21）。</p>
+<h3>8. 你注册了 Ollama 账号，账号自带免费的云端模型用量</h3>
+<p class="marker">〔连读-8〕</p>
+<p><strong>发生了什么。</strong> 北京时间 10 月 24 日 14:37，你的邮箱收到 Ollama 的注册欢迎信。原文写道：「感谢加入 Ollama。如果还没有下载，请记得下载应用。」以及：「对于大到装不进你电脑的模型，你的账号包含免费的云端模型用量。如需更多用量，可以选择 Ollama 的 Pro 和 Max 套餐。」</p>
+<p><strong>白话解释。</strong> Ollama 是一个在自己电脑上运行开源大模型的工具，现在也提供云端运行大模型的服务。按采集员的归纳，邮件说明账号自带免费的云端用量，超出部分才需要付费套餐；邮件里还列了接入 Claude Code、OpenClaw 等工具的文档入口，可以作为学习 AI 的小参考。</p>
+<p class="why"><strong>为什么提一下。</strong> 你最近很在意额度开销，免费的云端用量可以拿来试一些本地跑不动的模型；用之前看一下免费额度的具体范围，避免不小心用到付费部分。</p>
+<p class="status"><strong>核实状态。</strong> 单一来源（只有这封欢迎邮件）。</p>
+<p class="src"><strong>来源（纯文本）。</strong> 你邮箱里 10 月 24 日 14:37 的 Ollama 欢迎信。Ollama 套餐页的公开地址是 https://ollama.com/pricing（出自邮件原文）。</p>
+<h3>9. 一家第三方模型中转服务商发来 Kimi K3.1 Pro 上线通知，标价折合每百万 Token 6 元</h3>
+<p class="marker">〔连读-9〕</p>
+<p><strong>发生了什么。</strong> 北京时间 10 月 24 日 13:11，你的邮箱收到一封模型上线通知。原文写道：「面向复杂编程、大型项目和长流程任务，Kimi K3.1 Pro 现已上线。」「模型 ID · 复制即可配置: kimi-k3.1-pro」「15 倍率 · 折合 6 元／百万 Tokens」「1M Tokens（100 万）上下文」「仅支持思考模式」。</p>
+<p><strong>白话解释。</strong> 连读采集员说明，发件方是第三方中转平台「贵数智能」，不是月之暗面官方，这是一封营销通知。「中转」是指这类平台把各家模型的接口打包转卖，「倍率」是它们内部的计价系数。</p>
+<p class="why"><strong>为什么提一下。</strong> 它和你的模型使用、额度开销有关，所以保留下来作为参考。邮件里的数字（15 倍率、折合 6 元每百万 Token、100 万上下文）都来自邮件原文，但模型本身的能力描述没有经过独立核实；Kimi K3.1 Pro 本身是前一天早报已经写过的新模型。</p>
+<p class="status"><strong>核实状态。</strong> 单一来源（中转商营销邮件，没有核实官方发布）。</p>
+<p class="src"><strong>来源（纯文本）。</strong> 你邮箱里 10 月 24 日 13:11 的中转商通知邮件。</p>
+<h3>10. 窗内其余两封都是营销邮件：Canva 校园版入门引导、Notion 商业版试用推广</h3>
+<p class="marker">〔连读-10〕</p>
+<p><strong>发生了什么。</strong> 北京时间 10 月 24 日 21:11，你的一个邮箱收到 Canva 的邮件，原文标题是「New to using Canva for school? Start here」（刚开始在学校用 Canva？从这里开始），内容是专业设计师做的模板推荐。23:00，另一个邮箱收到 Notion 的邮件，原文是「Unlock the best features in Notion — Get access to AI Meeting Notes, Agents and free 1:1 help on a Business trial.」（解锁 Notion 最好的功能：在商业版试用中使用 AI 会议记录、智能体和免费的一对一帮助）。</p>
+<p class="why"><strong>为什么提一下。</strong> 这两封都是推广类邮件，没有账单、到期或需要处理的动作。放在这里只是为了说明窗口内的邮件已经全部看完；另一个邮箱在整个窗口里只有这一封 Notion 推广。可以直接忽略。</p>
+<p class="status"><strong>核实状态。</strong> 单一来源（各自只有一封营销邮件）。</p>
+<p class="src"><strong>来源（纯文本）。</strong> 你两个邮箱里各一封营销邮件。</p>
+<hr>
+<h2 id="ahead">第五部分 · 窗外前瞻（不在本次时间窗内）</h2>
+<p>今天没有窗外前瞻。连读采集员在窗外没有找到临近的截止日期或约定：没有日历连接器，邮件和 GitHub 里也没有出现带明确日期的待办。</p>
+<hr>
+<h2 id="flags">第六部分 · 单一来源、未能核实与需要特别留意的清单</h2>
+<p>下面这些条目或数字，正文里已经用「据某来源称」「尚未得到其他来源确认」标注过，这里集中列一遍，方便你判断哪些可以直接引用、哪些要再等等。</p>
+<p><strong>整条为单一来源：</strong></p>
+<ul><li>讯AI 第 3 条，AWS 产能 2027 年基本卖完：原始报道只有路透社一家，Yahoo Finance、Investing.com、CNA 都是转载同一篇稿子；播客原视频没有找到，Jassy 的原话以路透社引述为准；「2026 年资本支出约 2200 亿美元」是路透社稿内的背景信息。</li><li>讯医第 4 条，DASL-HiCaP：只有 Targeted Oncology 的大会报道，没有找到可访问的论文原文或主办方新闻稿。</li><li>讯医第 5 条，RELATIVITY-047 五年随访：只有 Nature Medicine 论文原文（一手来源，数据直接取自摘要），窗内没有其他报道。</li><li>讯医第 6 条，GDFATHER-NEO：只有 Nature Medicine 论文原文；31 例、非随机分配、置信区间很宽，属于探索性研究。</li><li>讯医第 7 条，SGLT2 抑制剂荟萃分析：只有 JAMA 论文原文（一手来源）。</li><li>讯医第 8 条，儿童肿瘤纳米孔测序：只有 Genome Medicine 论文原文（一手来源，开放获取），36 份样本。</li><li>你自己的事情：ChatSolo 0.6.1 Canvas 功能（只有 PR 正文，没有线上验证）、AI-Days 版本控制（只有提交信息）、Ollama 欢迎信、中转商 Kimi K3.1 Pro 上线通知（营销邮件，模型能力未核实）、Canva 和 Notion 营销邮件。</li></ul>
+<p><strong>多来源确认、但其中某些内容只见于一处：</strong></p>
+<ul><li>讯AI 第 1 条，Brotli 漏洞：漏洞本身和修复版本有三处一手来源互相印证；「由 OpenAI 的红队发现」只出自 OpenAI 官方 X，OpenAI 博客正文没有点名 Brotli；The Hacker News 写的是由 OpenAI 的 Codex Security 团队报告。</li><li>讯AI 第 2 条，英国 AI 计划：「约 6 亿英镑」不是政府官方合计数，而是 techUK 在 GOV.UK 页面里的引语「£600m+ package」；GOV.UK 原文把财政大臣写作「John Healey MP」，BBC 也这样引用，采集员提醒这可能和通常的认知不一致，正文照原文写。</li><li>讯AI 第 4 条，模型党派倾向测试：「约 1,240 个 token 的额外输入」和「关掉搜索后 30 场里 GPT 有 24 场选民主党、Grok 有 27 场拒答」只出自 TechCrunch；Convovo 页面没有完整的方法学文档，也没有标注日期。</li><li>讯AI 第 5 条，阿波罗评论：属于观点性的市场评论；23%、52.4%、25.4%、每百万 0.64 美元这几个数字只来自 TokenPost 引用的 Ramp 数据，阿波罗原文没有；这些数字不能证明 AI 造成了差距。</li><li>讯科第 2 条，Linux 7.4 memblock：「10 月 24 日送出 7.4 拉取请求」只有 Phoronix 一个来源（patchew 超时、lore 返回 403）；Phoronix 正文有一处笔误写成 238 秒，以补丁原文的 268 秒为准。</li><li>讯科第 5 条，PHP2Shell：Trail of Bits 的确认只见于 TechCrunch 转述；Unit 42 的更新在窗外（北京时间 10 月 24 日 03:30），只作佐证。</li><li>讯科第 6 条，BlackX：归因于 APT41 是卡巴斯基「中等置信度」的判断；卡巴斯基原始报告在窗外（10 月 22 日），窗内的是 BleepingComputer 的报道。</li><li>讯科第 7 条，Starlink/Starshield：限速的原因和由谁下令，各方说法不一，没有核实；乌克兰和 Nokia、ICEYE 签意向书是窗外（10 月 22 日）的事。</li><li>讯医第 3 条，intismeran：核心数字在 10 月 22 日已经因为数据泄露被提前公开，窗内新增的是大会正式报告和分段分析等细节；总生存期不成熟。</li><li>讯医第 9 条，埃博拉：刚果（金）累计数字新华社和 WHO 一致；肯尼亚第 2 例死亡和疫苗试验启动只见于新华社；WHO DON622 本身是 10 月 23 日发布的，在窗外，只作佐证。</li></ul>
+<p><strong>贴着窗口边、或发布时刻不精确的材料：</strong></p>
+<ul><li>讯AI 第 1 条：Brotli 修复版本（北京时间 10 月 22 日）和 Bun 安全通告（10 月 23 日）都在窗外，窗内的是 OpenAI 的补充披露（10 月 24 日 06:55）。</li><li>讯科第 4 条：窗内的是 The Hacker News 的跨产品影响面汇总，漏洞首次公开在窗外。</li><li>讯医第 5、6、8 条：期刊页面只标注了 10 月 24 日，没有具体时刻，按当天发布换算主体落在窗内。</li><li>讯医第 9 条：新华社稿发布于窗内，但所述事件发生在当地时间 10 月 23 日，与时间窗起点有重叠。</li></ul>
+<p><strong>厂商或当事方自报、需要特别留意的：</strong></p>
+<ul><li>讯AI 第 1 条「由 OpenAI 发现」是 OpenAI 的自述。</li><li>讯医第 3 条 intismeran 的结果由两家开发公司先行公布，后经大会正式报告。</li><li>你自己的事情第 5 条 ChatSolo 0.6.2 的测试数字（前端 2,227 项通过等）来自 PR 正文自述，但合并后的工作流运行结果独立印证了审计通过。</li><li>你自己的事情第 9 条中转商的价格和模型能力描述，是营销邮件里的自报。</li></ul>
+<hr>
+<h2 id="index">第七部分 · 来源索引</h2>
+<p>以下只列公开链接。「你自己的事情」部分的私有仓库、博客仓库 PR、运行记录和邮件线程，按隐私约定不放链接。</p>
+<p><strong>讯AI</strong></p>
+<ul><li><a href="https://x.com/OpenAI/status/2113766354386084338" target="_blank" rel="noopener noreferrer">OpenAI 官方 X：Brotli 漏洞补充披露</a></li><li><a href="https://github.com/google/brotli/releases/tag/v1.2.1" target="_blank" rel="noopener noreferrer">google/brotli v1.2.1 发布页</a></li><li><a href="https://github.com/oven-sh/bun/security/advisories/GHSA-663w-cv8g-jj2p" target="_blank" rel="noopener noreferrer">Bun 安全通告 GHSA-663w-cv8g-jj2p</a></li><li><a href="https://nodejs.org/en/blog/vulnerability/october-2026-security-releases" target="_blank" rel="noopener noreferrer">Node.js 2026 年 10 月安全版本</a></li><li><a href="https://www.gov.uk/government/news/introducing-the-ai-biosecurity-lab" target="_blank" rel="noopener noreferrer">GOV.UK：介绍 AI 生物安全实验室</a></li><li><a href="https://www.gov.uk/government/news/chancellor-unveils-britains-ambitious-plan-for-ai" target="_blank" rel="noopener noreferrer">GOV.UK：财政大臣公布 AI 计划</a></li><li><a href="https://www.bbc.co.uk/news/articles/cqdjv8xllvyyo" target="_blank" rel="noopener noreferrer">BBC：英国 AI 计划</a></li><li><a href="https://news.bloomberglaw.com/artificial-intelligence/uk-vows-100-million-for-biosecurity-lab-with-openai-anthropic" target="_blank" rel="noopener noreferrer">Bloomberg Law：AI 生物安全实验室</a></li><li><a href="https://finance.yahoo.com/technology/articles/amazon-cloud-capacity-sold-2027-230625002.html" target="_blank" rel="noopener noreferrer">路透社（经 Yahoo Finance 转载）：AWS 产能</a></li><li><a href="https://www.investing.com/news/stock-market-news/amazon-cloud-capacity-sold-out-through-2027-ceo-jassy-says-4970506" target="_blank" rel="noopener noreferrer">路透社（经 Investing.com 转载）：AWS 产能</a></li><li><a href="https://www.channelnewsasia.com/business/amazon-cloud-capacity-sold-out-through-2027-ceo-jassy-says-6488181" target="_blank" rel="noopener noreferrer">路透社（经 CNA 转载）：AWS 产能</a></li><li><a href="https://convovo.ai/ballot/" target="_blank" rel="noopener noreferrer">Convovo 研究页面</a></li><li><a href="https://techcrunch.com/2026/10/24/forced-to-pick-groks-ai-model-chooses-republicans-openais-picks-democrats/" target="_blank" rel="noopener noreferrer">TechCrunch：模型党派倾向</a></li><li><a href="https://www.tokenpost.com/news/technology/40272" target="_blank" rel="noopener noreferrer">TokenPost：模型党派倾向</a></li><li><a href="https://www.apollo.com/wealth/insights-news/insights/daily-spark/no-signs-of-ai-payoff-outside-the-tech-sector" target="_blank" rel="noopener noreferrer">阿波罗 The Daily Spark</a></li><li><a href="https://www.tokenpost.com/news/business/40314" target="_blank" rel="noopener noreferrer">TokenPost：AI 回报与 token 支出</a></li><li><a href="https://x.com/Techmeme/status/2114107381575713258" target="_blank" rel="noopener noreferrer">Techmeme X</a></li></ul>
+<p><strong>讯科</strong></p>
+<ul><li><a href="https://github.com/systemd/systemd/pull/44324" target="_blank" rel="noopener noreferrer">systemd PR #44324</a></li><li><a href="https://www.phoronix.com/news/systemd-Merges-Rust-Programs" target="_blank" rel="noopener noreferrer">Phoronix：systemd 合并 Rust</a></li><li><a href="https://www.phoronix.com/news/Linux-7.4-memblock" target="_blank" rel="noopener noreferrer">Phoronix：Linux 7.4 memblock</a></li><li><a href="https://lists.openwall.net/linux-kernel/2026/09/03/2268" target="_blank" rel="noopener noreferrer">内核邮件列表：memblock 补丁原文</a></li><li><a href="https://github.com/obsproject/obs-studio/releases/tag/33.0.0" target="_blank" rel="noopener noreferrer">OBS Studio 33.0.0 发布页</a></li><li><a href="https://www.phoronix.com/news/OBS-Studio-33.0" target="_blank" rel="noopener noreferrer">Phoronix：OBS Studio 33.0</a></li><li><a href="https://thehackernews.com/2026/10/brotli-decoder-flaw-behind-nodejs-rce.html" target="_blank" rel="noopener noreferrer">The Hacker News：Brotli 解码器漏洞</a></li><li><a href="https://techcrunch.com/2026/10/24/php-ocalypse-how-two-critical-web-bugs-almost-broke-the-internet/" target="_blank" rel="noopener noreferrer">TechCrunch：PHP2Shell 复盘</a></li><li><a href="https://unit42.paloaltonetworks.com/cve-2026-109618-cve-2026-109619/" target="_blank" rel="noopener noreferrer">Unit 42：CVE-2026-109618 / CVE-2026-109619</a></li><li><a href="https://www.bleepingcomputer.com/news/security/blackx-uefi-bootkit-exploits-baton-drop-flaw-to-bypass-secure-boot/" target="_blank" rel="noopener noreferrer">BleepingComputer：BlackX 启动套件</a></li><li><a href="https://securelist.com/uefi-bootkit-blackx/121539/" target="_blank" rel="noopener noreferrer">卡巴斯基 Securelist：BlackX</a></li><li><a href="https://kyivindependent.com/starshield-operations-restored-above-400-km-h-ukraines-defense-ministry-says/" target="_blank" rel="noopener noreferrer">Kyiv Independent：Starshield 恢复</a></li><li><a href="https://www.axios.com/2026/10/24/musk-ukraine-starlink-starshield-speed" target="_blank" rel="noopener noreferrer">Axios：Starlink/Starshield 限速</a></li><li><a href="https://techcrunch.com/2026/10/24/starlink-seems-to-be-working-normally-again-in-ukraine/" target="_blank" rel="noopener noreferrer">TechCrunch：Starlink 在乌克兰恢复正常</a></li></ul>
+<p><strong>讯医</strong></p>
+<ul><li><a href="https://www.nejm.org/doi/full/10.1056/NEJMoa2609482" target="_blank" rel="noopener noreferrer">NEJM：DeLLphi-305</a></li><li><a href="https://www.targetedonc.com/view/esmo-2026-presidential-symposium-i-late-breaking-recap" target="_blank" rel="noopener noreferrer">Targeted Oncology：ESMO 2026 主席专场 I 汇总</a></li><li><a href="https://www.dana-farber.org/newsroom/news-releases/2026/immunotherapy-combo-extends-survival-for-patients-with-aggressive-small-cell-lung-cancer-based-on-trial-results-presented-by-dana-farber-at-esmo-congress-2026" target="_blank" rel="noopener noreferrer">Dana-Farber 新闻稿：tarlatamab</a></li><li><a href="https://www.nejm.org/doi/full/10.1056/NEJMoa2608323" target="_blank" rel="noopener noreferrer">NEJM：VOLGA</a></li><li><a href="https://www.nature.com/articles/d41586-026-03417-0" target="_blank" rel="noopener noreferrer">Nature 新闻：intismeran 数据泄露经过</a></li><li><a href="https://www.nature.com/articles/s41591-026-04756-1" target="_blank" rel="noopener noreferrer">Nature Medicine：RELATIVITY-047 五年随访</a></li><li><a href="https://www.nature.com/articles/s41591-026-04740-9" target="_blank" rel="noopener noreferrer">Nature Medicine：GDFATHER-NEO</a></li><li><a href="https://jamanetwork.com/journals/jama/fullarticle/10.1001/jama.2026.19921" target="_blank" rel="noopener noreferrer">JAMA：SGLT2 抑制剂与血红蛋白</a></li><li><a href="https://link.springer.com/article/10.1186/s13073-026-01815-7" target="_blank" rel="noopener noreferrer">Genome Medicine：儿童肿瘤自适应采样测序</a></li><li><a href="https://english.news.cn/africa/20261024/f4d830edcbaf4aa8a60a91b29219b674/c.html" target="_blank" rel="noopener noreferrer">新华社英文稿：埃博拉跨境扩散</a></li><li><a href="https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON622" target="_blank" rel="noopener noreferrer">WHO 疾病暴发新闻 DON622</a></li></ul>
+<p><strong>你自己的事情（只有一个公开链接）</strong></p>
+<ul><li><a href="https://ollama.com/pricing" target="_blank" rel="noopener noreferrer">Ollama 套餐页（出自欢迎邮件原文）</a></li></ul>
+    </article>
+  </div>
+</div>
+<script>
+(function () {
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  var WAIT_S = reduce ? 2.2 : 5.2
+  var world = document.getElementById('world')
+  var stage = document.getElementById('stage')
+  var art = document.getElementById('art')
+  var garden = document.getElementById('garden')
+  var guideEl = document.getElementById('guide')
+  var factEl = document.getElementById('fact')
+  var liveEl = document.getElementById('live')
+  var ribbon = document.getElementById('ribbon')
+  var pinch = document.getElementById('pinch')
+  var hoseBody = document.getElementById('hose-body')
+  var hoseShadow = document.getElementById('hose-shadow')
+  var hoseSheen = document.getElementById('hose-sheen')
+  var hoseWater = document.getElementById('hose-water')
+  var handle = document.getElementById('handle')
+  var jointGfx = document.getElementById('joint-gfx')
+  var valveGfx = document.getElementById('valve-gfx')
+  var valveLever = document.getElementById('valve-lever')
+  var valveKnob = document.getElementById('valve-knob')
+  var nozzleGfx = document.getElementById('nozzle-gfx')
+  var nozzleTip = document.getElementById('nozzle-tip')
+  var leak = document.getElementById('leak')
+  var chartRect = document.getElementById('chartClipRect')
+  var sheet = document.getElementById('sheet')
+  var memo = document.getElementById('memo')
+  var soundBtn = document.getElementById('sound')
+  var hits = {
+    faucet: document.getElementById('hit-faucet'),
+    kink: document.getElementById('hit-kink'),
+    joint: document.getElementById('hit-joint'),
+    valve: document.getElementById('hit-valve'),
+    nozzle: document.getElementById('hit-nozzle')
+  }
+  var pots = {
+    arrive: document.getElementById('pot-arrive'),
+    wait: document.getElementById('pot-wait'),
+    years: document.getElementById('pot-years'),
+    dry: document.getElementById('pot-dry'),
+    ebola: document.getElementById('pot-ebola')
+  }
+  var state = { step: 'faucet', splitShown: false, waitIntro: false, ready: false }
+  var anim = {
+    faucet: { v: 0, target: 0 },
+    kink: { v: 0, target: 0 },
+    joint: { v: 0, target: 0 },
+    valve: { v: 0, target: 0 },
+    nozzle: { v: 0, target: 0 },
+    flow: 0,
+    wait: 0,
+    holding: false,
+    holdStamp: 0
+  }
+  var fracs = { kink: 0.22, joint: 0.48, valve: 0.74, nozzle: 0.98 }
+  var soundOn = false
+  var soundPref = 'auto'
+  var audioCtx = null
+  var waterGain = null
+  var lastDrip = 0
+  var opener = null
+
+  var NOTES = {
+    intro: {
+      guide: '先拧开左边的水龙头。水要自己走到花盆里。',
+      fact: '星期日的阳台。水管有一处折着，有一个接头在漏，后面还有没打开的阀门和喷头。'
+    },
+    atKink: {
+      guide: '水在折弯处停住了。按住那一折，顺着管子捋直。',
+      fact: '水龙头开了，水却停在半路。这一节不捋直，后面都不用看。'
+    },
+    kink: {
+      guide: '这个接头在漏水。按住它，转上一圈拧紧。',
+      fact: '这一折像 Brotli 的修复。改动 2 月 27 日就写进了源码，据 The Hacker News，正式版本拖到 10 月 21 日才带出去。Node.js、Bun 和 Python 还要各自再升级一次。'
+    },
+    joint: {
+      guide: '这只小阀门还关着。按住它，向右扳开。',
+      fact: '接头刚才在漏。PHP2Shell 的补丁 10 月 21 日就发了，到周五晚上仍然有确认的入侵。Unit 42 看到攻击者在两小时里拿到了密码哈希和多因素认证密钥。Trail of Bits 的确认只见于 TechCrunch 的转述。'
+    },
+    valve: {
+      guide: '喷头还关着。按住喷头，让水洒到花上。',
+      fact: '这只阀门要亲手开。BlackX 碰到的机器补丁都打满了，可证书吊销要管理员手动触发，这一步没做，安全启动照样被绕过。卡巴斯基把相关活动归到 APT41，给出的是中等置信度，还不是定论。'
+    },
+    nozzle: {
+      guide: '水浇到土上了。按住标着「等一会儿」的那盆花，先别松手。',
+      fact: '喷头打开，水才算浇到土上。据 OpenAI 称，红队在测试训练沙箱时顺带找到了这个洞，并送到了下游。「由 OpenAI 发现」只出自 OpenAI 官方账号，是它的自述。ChatSolo 0.6.1 审计报出 4 个严重级漏洞，大约四十分钟后 0.6.2 合入，合并后审计、持续集成和部署都复查通过。'
+    },
+    waitStart: {
+      fact: '按住不放。个体化疫苗 intismeran 前 6 个月和对照几乎叠在一起，风险比 0.99。这些核心数字 10 月 22 日已经因为泄露提前公开，不是今天第一次公布。'
+    },
+    waitSplit: {
+      fact: '后半段分开了，风险比 0.42。总生存还不成熟。疗效要等时间把它送到终点，这是常识，不是今天的新闻。'
+    },
+    wait: {
+      fact: 'intismeran 前 6 个月风险比 0.99，之后是 0.42，总生存还不成熟。核心数字不是今天第一次公布。据 Targeted Oncology 称，达罗他胺让无转移生存改善了，总生存在中期还看不出差别，尚未得到其他来源确认。VOLGA 里再加一种药的三药组毒性更高，总生存的改善反而没有达到显著。'
+    },
+    arrive: {
+      fact: 'Linux 的 memblock 补丁从大约 268 秒降到大约 50 毫秒，从 9 月的邮件列表走到了 7.4。「10 月 24 日送出拉取请求」只有 Phoronix 一家报道。systemd 争论了将近两个月，Rust 支持已经合并，而且只用于新的叶子组件。'
+    },
+    years: {
+      fact: 'RELATIVITY-047 走到五年随访，无进展生存、总生存和黑色素瘤特异性生存的获益仍在。这是论文原文，尚未得到其他来源确认。'
+    },
+    dry: {
+      fact: '据路透社报道，亚马逊的 Jassy 说 AWS 2027 年的产能已经基本卖完，尚未得到其他来源确认。阿波罗首席经济学家 Slok 认为，科技巨头之外人工智能还没有带来财务回报。这是他的观点，不是定论。'
+    },
+    ebola: {
+      fact: '据新华社报道，刚果（金）本迪布焦型埃博拉疫苗的二期、三期试验，第一位受试者已经接种，尚未得到其他来源确认。这一滴才刚落下。'
+    },
+    gift: {
+      guide: '可以再点一盆花，看它走到了哪一节。种子盒里是今天的完整详细稿。',
+      fact: '替代终点还不是硬终点，随访不够就不能下生存结论。合并不等于发布，发布不等于生效。这是课本上的常识，不是今天的新闻。'
+    }
+  }
+
+  var KNOTS = [
+    ['kink', '折弯那里'],
+    ['joint', '漏水的接头'],
+    ['valve', '小阀门'],
+    ['nozzle', '喷头'],
+    ['arrive', '已经发芽的'],
+    ['wait', '还要等的'],
+    ['years', '开了五年的'],
+    ['dry', '还是干的'],
+    ['ebola', '刚沾到水的']
+  ]
+  var knotEls = {}
+  var knotBox = document.getElementById('knots')
+  KNOTS.forEach(function (item) {
+    var button = document.createElement('button')
+    button.type = 'button'
+    button.textContent = item[1]
+    button.hidden = true
+    button.addEventListener('click', function () {
+      show(item[0], true)
+    })
+    knotBox.appendChild(button)
+    knotEls[item[0]] = button
+  })
+
+  var KINKED = [
+    184, 348,
+    240, 350, 300, 352, 340, 348,
+    370, 344, 410, 270, 392, 228,
+    348, 176, 300, 210, 330, 270,
+    380, 360, 470, 400, 548, 386,
+    630, 352, 692, 316, 748, 344,
+    808, 374, 848, 358, 882, 350
+  ]
+  var SMOOTH = [
+    184, 348,
+    250, 350, 300, 348, 350, 346,
+    400, 344, 450, 342, 490, 348,
+    510, 350, 520, 354, 530, 360,
+    536, 368, 542, 378, 548, 386,
+    630, 352, 692, 316, 748, 344,
+    808, 374, 848, 358, 882, 350
+  ]
+
+  function hoseNums(k) {
+    var nums = []
+    for (var i = 0; i < KINKED.length; i += 1) nums.push(KINKED[i] + (SMOOTH[i] - KINKED[i]) * k)
+    return nums
+  }
+
+  function hoseD(k) {
+    var nums = hoseNums(k)
+    var d = 'M ' + nums[0].toFixed(1) + ' ' + nums[1].toFixed(1)
+    for (var c = 2; c < nums.length; c += 6) {
+      d += ' C ' + nums[c].toFixed(1) + ' ' + nums[c + 1].toFixed(1) + ', ' +
+        nums[c + 2].toFixed(1) + ' ' + nums[c + 3].toFixed(1) + ', ' +
+        nums[c + 4].toFixed(1) + ' ' + nums[c + 5].toFixed(1)
+    }
+    return d
+  }
+
+  function kinkPoint() {
+    var nums = hoseNums(anim.kink.v)
+    return [nums[12], nums[13]]
+  }
+
+  function show(id, keepGuide) {
+    var note = NOTES[id]
+    if (!note) return
+    if (note.guide && !keepGuide) guideEl.textContent = note.guide
+    if (note.fact) factEl.textContent = note.fact
+    liveEl.textContent = guideEl.textContent + ' ' + factEl.textContent
+    if (knotEls[id]) {
+      knotEls[id].hidden = false
+      Object.keys(knotEls).forEach(function (key) {
+        if (!knotEls[key].hidden) knotEls[key].setAttribute('aria-current', key === id ? 'true' : 'false')
+      })
+    }
+  }
+
+  function setStep(next) {
+    state.step = next
+    world.dataset.step = next
+    var map = { kink: 'atKink', joint: 'kink', valve: 'joint', nozzle: 'valve', wait: 'nozzle' }
+    if (map[next]) show(map[next], false)
+    tone(next)
+  }
+
+  function flowTarget() {
+    if (state.step === 'faucet') return 0
+    if (state.step === 'kink') return fracs.kink
+    if (state.step === 'joint') return fracs.joint
+    if (state.step === 'valve') return fracs.valve
+    if (state.step === 'nozzle') return fracs.nozzle
+    return 1
+  }
+
+  function commit(stepName, next) {
+    if (state.step !== stepName) return
+    anim[stepName].v = 1
+    anim[stepName].target = 1
+    setStep(next)
+  }
+
+  function bindSlide(el, axis, key, next) {
+    var start = 0
+    var dragging = false
+    function pos(e) { return axis === 'x' ? e.clientX : e.clientY }
+    el.addEventListener('pointerdown', function (e) {
+      if (state.step !== key) return
+      dragging = true
+      start = pos(e)
+      if (el.setPointerCapture) el.setPointerCapture(e.pointerId)
+      gesture()
+    })
+    el.addEventListener('pointermove', function (e) {
+      if (!dragging) return
+      var progress = Math.max(0, Math.min(1, (pos(e) - start) / 90))
+      anim[key].v = progress
+      anim[key].target = progress
+      if (progress >= 0.98) {
+        dragging = false
+        commit(key, next)
+      }
+    })
+    function end(e) {
+      if (!dragging) return
+      dragging = false
+      if (pos(e) - start >= 74) commit(key, next)
+      else anim[key].target = 0
+    }
+    el.addEventListener('pointerup', end)
+    el.addEventListener('pointercancel', end)
+    el.addEventListener('keydown', function (e) {
+      if (e.key !== 'Enter' && e.key !== ' ') return
+      if (state.step !== key) return
+      e.preventDefault()
+      gesture()
+      commit(key, next)
+    })
+  }
+
+  function bindRotate(el) {
+    var dragging = false
+    var last = 0
+    var acc = 0
+    function angle(e) {
+      var rect = el.getBoundingClientRect()
+      return Math.atan2(e.clientY - (rect.top + rect.height / 2), e.clientX - (rect.left + rect.width / 2))
+    }
+    el.addEventListener('pointerdown', function (e) {
+      if (state.step !== 'joint') return
+      dragging = true
+      last = angle(e)
+      if (el.setPointerCapture) el.setPointerCapture(e.pointerId)
+      gesture()
+    })
+    el.addEventListener('pointermove', function (e) {
+      if (!dragging) return
+      var now = angle(e)
+      var delta = now - last
+      if (delta > Math.PI) delta -= Math.PI * 2
+      if (delta < -Math.PI) delta += Math.PI * 2
+      last = now
+      acc += Math.abs(delta)
+      var progress = Math.min(1, acc / (Math.PI * 1.25))
+      anim.joint.v = progress
+      anim.joint.target = progress
+      if (progress >= 1) {
+        dragging = false
+        commit('joint', 'valve')
+      }
+    })
+    el.addEventListener('pointerup', function () { dragging = false })
+    el.addEventListener('pointercancel', function () { dragging = false })
+    el.addEventListener('keydown', function (e) {
+      if ((e.key === 'Enter' || e.key === ' ') && state.step === 'joint') {
+        e.preventDefault()
+        gesture()
+        commit('joint', 'valve')
+      }
+    })
+  }
+
+  function bindHold(el, key, next, ms) {
+    var timer = 0
+    var downAt = 0
+    function clear() {
+      if (timer) window.clearInterval(timer)
+      timer = 0
+    }
+    el.addEventListener('pointerdown', function (e) {
+      if (state.step !== key) return
+      downAt = performance.now()
+      if (el.setPointerCapture) el.setPointerCapture(e.pointerId)
+      gesture()
+      clear()
+      timer = window.setInterval(function () {
+        var progress = Math.min(1, (performance.now() - downAt) / ms)
+        anim[key].v = progress
+        anim[key].target = progress
+        if (progress >= 1) {
+          clear()
+          commit(key, next)
+        }
+      }, 30)
+    })
+    function end() {
+      if (state.step !== key) { clear(); return }
+      clear()
+      if (anim[key].v < 1) anim[key].target = 0
+    }
+    el.addEventListener('pointerup', end)
+    el.addEventListener('pointercancel', end)
+    el.addEventListener('keydown', function (e) {
+      if ((e.key === 'Enter' || e.key === ' ') && state.step === key) {
+        e.preventDefault()
+        gesture()
+        anim[key].v = 1
+        anim[key].target = 1
+        commit(key, next)
+      }
+    })
+  }
+
+  bindSlide(hits.faucet, 'y', 'faucet', 'kink')
+  bindSlide(hits.kink, 'x', 'kink', 'joint')
+  bindRotate(hits.joint)
+  bindSlide(hits.valve, 'x', 'valve', 'nozzle')
+  bindHold(hits.nozzle, 'nozzle', 'wait', 680)
+
+  var suppressWaitClick = false
+  pots.wait.addEventListener('pointerdown', function (e) {
+    if (state.step !== 'wait') return
+    anim.holding = true
+    anim.holdStamp = 0
+    if (pots.wait.setPointerCapture) pots.wait.setPointerCapture(e.pointerId)
+    gesture()
+    pots.wait.classList.add('holding')
+  })
+  function stopHold() {
+    anim.holding = false
+    pots.wait.classList.remove('holding')
+  }
+  pots.wait.addEventListener('pointerup', function () {
+    suppressWaitClick = true
+    stopHold()
+  })
+  pots.wait.addEventListener('pointercancel', stopHold)
+  pots.wait.addEventListener('click', function () {
+    if (suppressWaitClick) { suppressWaitClick = false; return }
+    if (state.step === 'gift') show('wait', true)
+  })
+  pots.wait.addEventListener('keydown', function (e) {
+    if (e.key !== 'Enter' && e.key !== ' ') return
+    if (state.step === 'wait') {
+      if (e.repeat) return
+      e.preventDefault()
+      anim.holding = true
+      gesture()
+    } else if (state.step === 'gift') {
+      e.preventDefault()
+      show('wait', true)
+    }
+  })
+  pots.wait.addEventListener('keyup', function (e) {
+    if (e.key === 'Enter' || e.key === ' ') stopHold()
+  })
+  ;['arrive', 'years', 'dry', 'ebola'].forEach(function (id) {
+    pots[id].addEventListener('click', function () {
+      if (state.step === 'wait' || state.step === 'gift') show(id, true)
+    })
+  })
+
+  function screenPoint(x, y) {
+    if (!art.getScreenCTM) return null
+    var point = art.createSVGPoint()
+    point.x = x
+    point.y = y
+    var matrix = art.getScreenCTM()
+    if (!matrix) return null
+    var mapped = point.matrixTransform(matrix)
+    var rect = stage.getBoundingClientRect()
+    return { x: mapped.x - rect.left, y: mapped.y - rect.top }
+  }
+
+  function place(el, x, y) {
+    var p = screenPoint(x, y)
+    if (!p) return
+    el.style.left = p.x + 'px'
+    el.style.top = p.y + 'px'
+  }
+
+  function updateFracs(d) {
+    hoseBody.setAttribute('d', d)
+    var len = hoseBody.getTotalLength()
+    if (!len) return
+    function near(x, y) {
+      var best = 0
+      var bestD = 1e12
+      var steps = 90
+      for (var i = 0; i <= steps; i += 1) {
+        var p = hoseBody.getPointAtLength(len * i / steps)
+        var dist = (p.x - x) * (p.x - x) + (p.y - y) * (p.y - y)
+        if (dist < bestD) { bestD = dist; best = i / steps }
+      }
+      return best
+    }
+    var kink = kinkPoint()
+    fracs.kink = near(kink[0], kink[1])
+    fracs.joint = near(548, 386)
+    fracs.valve = near(748, 344)
+    fracs.nozzle = near(882, 350)
+  }
+
+  function render() {
+    var d = hoseD(anim.kink.v)
+    updateFracs(d)
+    hoseShadow.setAttribute('d', d)
+    hoseSheen.setAttribute('d', d)
+    hoseWater.setAttribute('d', d)
+    var len = hoseWater.getTotalLength() || 1
+    hoseWater.style.strokeDasharray = len + ' ' + len
+    hoseWater.style.strokeDashoffset = String(len * (1 - anim.flow))
+    handle.setAttribute('transform', 'rotate(' + (anim.faucet.v * 74).toFixed(1) + ' 88 236)')
+    jointGfx.setAttribute('transform', 'translate(548 386) rotate(' + (anim.joint.v * 330).toFixed(1) + ')')
+    valveGfx.setAttribute('transform', 'translate(748 344) rotate(' + (6 + anim.valve.v * 84).toFixed(1) + ')')
+    var leverFill = anim.valve.v > 0.85 ? '#f6e2b8' : '#d4654e'
+    valveLever.setAttribute('fill', leverFill)
+    valveKnob.setAttribute('fill', leverFill)
+    nozzleGfx.setAttribute('transform', 'translate(882 350) rotate(-8)')
+    nozzleTip.setAttribute('fill', anim.nozzle.v > 0.6 || state.step === 'wait' || state.step === 'gift' ? '#7ec8e4' : '#d5e7ef')
+    var kink = kinkPoint()
+    pinch.setAttribute('transform', 'translate(' + kink[0].toFixed(1) + ' ' + kink[1].toFixed(1) + ') rotate(-28)')
+    pinch.setAttribute('opacity', String(Math.max(0, 1 - anim.kink.v * 1.2)))
+    leak.setAttribute('opacity', String(Math.max(0, 1 - anim.joint.v * 1.15)))
+    place(hits.faucet, 88, 210)
+    place(hits.kink, kink[0], kink[1])
+    place(hits.joint, 548, 386)
+    place(hits.valve, 748, 344)
+    place(hits.nozzle, 882, 350)
+    place(document.getElementById('drip'), 548, 400)
+    place(document.getElementById('spray'), 882, 350)
+    Object.keys(hits).forEach(function (key) {
+      var on = state.step === key
+      hits[key].setAttribute('data-current', on ? 'true' : 'false')
+      hits[key].setAttribute('aria-disabled', on ? 'false' : 'true')
+      hits[key].tabIndex = on ? 0 : -1
+    })
+    if ((state.step === 'wait' || state.step === 'gift') && anim.flow > 0.97 && !state.ready) {
+      state.ready = true
+      garden.classList.add('ready')
+      Object.keys(pots).forEach(function (id) {
+        pots[id].setAttribute('aria-disabled', 'false')
+        pots[id].tabIndex = 0
+      })
+    }
+    pots.wait.setAttribute('data-current', state.step === 'wait' ? 'true' : 'false')
+    var sprout = anim.wait < 0.58 ? 0.2 + anim.wait * 0.2 : 0.32 + ((anim.wait - 0.58) / 0.42) * 0.68
+    var leaf = anim.wait <= 0 ? 0 : (anim.wait < 0.58 ? 0.55 : 1)
+    pots.wait.style.setProperty('--sprout', String(sprout))
+    pots.wait.style.setProperty('--leaf', String(leaf))
+    if (chartRect) chartRect.setAttribute('width', String(anim.wait <= 0 ? 0 : 6 + anim.wait * 86))
+    if (waterGain && audioCtx) {
+      var volume = soundOn ? Math.min(0.045, anim.flow * 0.04) : 0
+      waterGain.gain.setTargetAtTime(volume, audioCtx.currentTime, 0.08)
+    }
+  }
+
+  function loop(now) {
+    ;['faucet', 'kink', 'joint', 'valve', 'nozzle'].forEach(function (key) {
+      var item = anim[key]
+      item.v += (item.target - item.v) * (reduce ? 1 : 0.35)
+      if (Math.abs(item.target - item.v) < 0.004) item.v = item.target
+    })
+    var target = flowTarget()
+    anim.flow += (target - anim.flow) * (reduce ? 1 : 0.07)
+    if (Math.abs(target - anim.flow) < 0.002) anim.flow = target
+    if (anim.holding && state.step === 'wait') {
+      if (!anim.holdStamp) anim.holdStamp = now
+      var dt = Math.min(0.05, (now - anim.holdStamp) / 1000)
+      anim.holdStamp = now
+      anim.wait = Math.min(1, anim.wait + dt / WAIT_S)
+      if (!state.waitIntro && anim.wait > 0.02) {
+        state.waitIntro = true
+        factEl.textContent = NOTES.waitStart.fact
+        liveEl.textContent = guideEl.textContent + ' ' + factEl.textContent
+      }
+      if (!state.splitShown && anim.wait >= 0.58) {
+        state.splitShown = true
+        factEl.textContent = NOTES.waitSplit.fact
+        liveEl.textContent = factEl.textContent
+        tone('split')
+      }
+      if (anim.wait >= 1) finishGift()
+    } else {
+      anim.holdStamp = 0
+    }
+    if (soundOn && state.step === 'joint' && audioCtx && now - lastDrip > 700) {
+      lastDrip = now
+      blip(520, 0.06, 'triangle', 0.02)
+    }
+    render()
+    window.requestAnimationFrame(loop)
+  }
+
+  function finishGift() {
+    if (state.step === 'gift') return
+    state.step = 'gift'
+    world.dataset.step = 'gift'
+    anim.holding = false
+    ribbon.hidden = false
+    var waitFlag = pots.wait.querySelector('.flag')
+    if (waitFlag) waitFlag.textContent = '这盆等了才分开'
+    show('gift', false)
+    ;['arrive', 'wait', 'years', 'dry', 'ebola'].forEach(function (id) {
+      if (knotEls[id]) knotEls[id].hidden = false
+    })
+    tone('gift')
+  }
+
+  function gesture() {
+    if (soundPref === 'auto') {
+      soundOn = true
+      soundPref = 'on'
+      paintSound()
+    }
+    if (soundOn) unlockAudio()
+  }
+
+  function paintSound() {
+    soundBtn.textContent = soundOn ? '水声开' : '水声关'
+    soundBtn.setAttribute('aria-pressed', soundOn ? 'true' : 'false')
+  }
+
+  soundBtn.addEventListener('click', function () {
+    soundOn = !soundOn
+    soundPref = soundOn ? 'on' : 'off'
+    paintSound()
+    if (soundOn) unlockAudio()
+    else if (waterGain && audioCtx) waterGain.gain.setTargetAtTime(0, audioCtx.currentTime, 0.05)
+  })
+
+  function unlockAudio() {
+    try {
+      var Ctx = window.AudioContext || window.webkitAudioContext
+      if (!Ctx) return
+      if (!audioCtx) {
+        audioCtx = new Ctx()
+        var rate = audioCtx.sampleRate
+        var buffer = audioCtx.createBuffer(1, rate * 2, rate)
+        var data = buffer.getChannelData(0)
+        for (var i = 0; i < data.length; i += 1) data[i] = Math.random() * 2 - 1
+        var source = audioCtx.createBufferSource()
+        source.buffer = buffer
+        source.loop = true
+        var filter = audioCtx.createBiquadFilter()
+        filter.type = 'bandpass'
+        filter.frequency.value = 900
+        filter.Q.value = 0.6
+        waterGain = audioCtx.createGain()
+        waterGain.gain.value = 0
+        source.connect(filter)
+        filter.connect(waterGain)
+        waterGain.connect(audioCtx.destination)
+        source.start()
+      }
+      if (audioCtx.state === 'suspended') audioCtx.resume()
+    } catch (error) {
+      soundOn = false
+      paintSound()
+    }
+  }
+
+  function blip(freq, dur, type, gainValue) {
+    if (!soundOn || !audioCtx) return
+    try {
+      var osc = audioCtx.createOscillator()
+      var gain = audioCtx.createGain()
+      osc.type = type
+      osc.frequency.value = freq
+      gain.gain.setValueAtTime(gainValue, audioCtx.currentTime)
+      gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + dur)
+      osc.connect(gain)
+      gain.connect(audioCtx.destination)
+      osc.start()
+      osc.stop(audioCtx.currentTime + dur + 0.02)
+    } catch (error) { /* 声音不可用时页面照常玩 */ }
+  }
+
+  function tone(kind) {
+    if (kind === 'kink') blip(440, 0.08, 'sine', 0.03)
+    if (kind === 'joint') blip(494, 0.08, 'sine', 0.03)
+    if (kind === 'valve') blip(554, 0.09, 'sine', 0.03)
+    if (kind === 'nozzle') blip(659, 0.12, 'sine', 0.035)
+    if (kind === 'wait') blip(587, 0.12, 'triangle', 0.03)
+    if (kind === 'split') blip(698, 0.16, 'sine', 0.03)
+    if (kind === 'gift') {
+      blip(523, 0.18, 'sine', 0.035)
+      window.setTimeout(function () { blip(659, 0.22, 'sine', 0.03) }, 140)
+    }
+  }
+
+  function openSheet() {
+    opener = document.activeElement
+    sheet.hidden = false
+    document.getElementById('close-sheet').focus()
+  }
+  function closeSheet() {
+    if (sheet.hidden) return
+    sheet.hidden = true
+    if (opener && opener.focus) opener.focus()
+  }
+  document.getElementById('open-digest').addEventListener('click', openSheet)
+  document.getElementById('close-sheet').addEventListener('click', closeSheet)
+  document.getElementById('open-memo').addEventListener('click', function () {
+    memo.hidden = false
+    document.getElementById('close-memo').focus()
+  })
+  document.getElementById('close-memo').addEventListener('click', function () {
+    memo.hidden = true
+    document.getElementById('open-memo').focus()
+  })
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') {
+      closeSheet()
+      memo.hidden = true
+    }
+    if (e.key !== 'Tab' || sheet.hidden) return
+    var nodes = sheet.querySelectorAll('button, a[href]')
+    if (!nodes.length) return
+    var first = nodes[0]
+    var last = nodes[nodes.length - 1]
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault()
+      last.focus()
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault()
+      first.focus()
+    }
+  })
+
+  show('intro', false)
+  world.dataset.step = 'faucet'
+  window.requestAnimationFrame(loop)
+})()
+</script>
+<!--
+DESIGN LESSON 2026-10-25 折晓早报
+STYLE: 浅色星期日阳台，柔和日光里的一根浇水管
+GENRE: 用手把水管一节节理通，再按住花等它发芽
+TITLE: 顺着水管走到头
+THESIS: 修好要一路送到最后一节，亲眼看到它生效才算完成。
+-->
+</html>
