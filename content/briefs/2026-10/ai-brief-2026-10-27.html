@@ -76,6 +76,7 @@
     font-size: 12px;
     white-space: nowrap;
   }
+  .tools { display: flex; gap: 8px; flex: none; }
   .topbar button {
     appearance: none;
     border: 1px solid var(--line);
@@ -470,9 +471,20 @@
   .reader[open] {
     position: absolute;
     inset: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
     background: #f6f1e7;
   }
+  .reader[open]::details-content {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
   .reader[open] summary {
+    flex: none;
     height: 48px;
     display: flex;
     align-items: center;
@@ -481,7 +493,11 @@
     font-weight: 700;
   }
   .reader[open] .when-closed { display: none; }
-  .digest-scroll { height: calc(100% - 48px); overflow: auto; }
+  .digest-scroll {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: auto;
+  }
   .digest-nav {
     position: sticky;
     top: 0;
@@ -553,11 +569,33 @@
     .counter, .fridge, .story, .window { grid-column: 1; }
     .window { grid-row: 1; }
     .counter { grid-row: 2; overflow: auto; }
-    .story { grid-row: 3; max-height: 24vh; }
-    .fridge { grid-row: 4; max-height: 104px; }
-    .surface { grid-template-columns: 1fr 1fr; min-height: 460px; }
-    .spot { grid-column: auto; }
+    .story { grid-row: 3; max-height: 22vh; min-height: 0; }
+    .fridge { grid-row: 4; max-height: 92px; }
+    .surface {
+      grid-template-columns: 1fr 1fr;
+      min-height: 0;
+      gap: 2px 8px;
+      padding: 8px 8px 6px;
+    }
+    .spot { grid-column: auto; padding-bottom: 24px; }
     .spot:nth-of-type(n) { margin-top: 0; }
+    .note { width: 100%; font-size: 14px; padding: 12px 8px 8px; }
+    .trace {
+      position: absolute;
+      left: 50%;
+      bottom: 0;
+      width: min(100%, 148px);
+      height: 24px;
+      transform: translateX(-50%);
+    }
+    .sill {
+      min-height: 50px;
+      align-items: center;
+      padding: 4px 8px 4px 86px;
+    }
+    #sill-card { max-width: 11em; }
+    .jar { height: 54px; }
+    .shaker { width: 68px; }
     #guide { font-size: 14px; }
     .brand { min-width: auto; }
   }
@@ -576,6 +614,43 @@
     .jar { height: 60px; }
     .kitchen { overflow: auto; }
   }
+  @media (max-width: 860px) and (max-height: 740px) {
+    .kitchen { overflow: hidden; }
+    .sky { height: 46px; }
+    .fridge { max-height: 84px; }
+    .story { position: static; max-height: 18vh; }
+    .jar { height: 54px; }
+  }
+  @media (max-width: 860px) {
+    .mag { left: 8px; bottom: 8px; }
+    body.phase-glass .sill { padding-left: 8px; }
+    body.phase-glass .shaker.parked { left: 4px; bottom: 2px; }
+    body.phase-glass .letters {
+      flex: none;
+      width: calc(100% - 76px);
+      margin-left: 76px;
+      flex-wrap: nowrap;
+      gap: 6px;
+    }
+    body.phase-glass .letter-wrap { flex: 1 1 0; min-width: 0; }
+    body.phase-glass .letter {
+      width: 100%;
+      min-height: 0;
+      font-size: 12px;
+      line-height: 1.35;
+      padding: 12px 4px 6px;
+    }
+    body.phase-glass:not(.phase-gift) #sill-card { display: none; }
+    body.phase-gift .shaker,
+    body.phase-gift .mag { visibility: hidden; }
+    body.phase-gift .letters { width: 100%; margin-left: 0; }
+    body.phase-gift #sill-card {
+      display: block;
+      flex: 1 0 100%;
+      max-width: none;
+      margin: 6px 0 0;
+    }
+  }
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
       animation: none !important;
@@ -590,8 +665,10 @@
     <p class="brand"><b>折晓早报</b><span>2026 年 10 月 27 日 · 星期二</span></p>
     <p id="guide">按住面粉罐，在纸条旁边撒一撒。</p>
     <p id="pill">五张纸条都还盖着</p>
-    <button type="button" id="sound" aria-pressed="false">打开沙沙声</button>
-    <button type="button" id="replay">再撒一遍</button>
+    <div class="tools">
+      <button type="button" id="sound" aria-pressed="false">打开沙沙声</button>
+      <button type="button" id="replay">再撒一遍</button>
+    </div>
     <p class="vh">也可以用键盘：按 Tab 选到一张纸条，再按回车，面粉会落在那一张上。</p>
   </header>
   <div class="kitchen">
@@ -1211,11 +1288,6 @@
   var lastSound = 0
   var moved = 0
   var origin = null
-  var reduceMotion = false
-  try {
-    reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  } catch (err) {}
-
   var surface = document.getElementById('surface')
   var canvas = document.getElementById('flour')
   var ctx = canvas.getContext('2d')
@@ -1558,8 +1630,12 @@
     buttons.forEach(function (button) {
       button.addEventListener('click', function () {
         var target = document.getElementById(button.getAttribute('data-target'))
-        if (!target) return
-        target.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' })
+        var scroller = document.querySelector('.digest-scroll')
+        if (!target || !scroller) return
+        var navBar = document.querySelector('.digest-nav')
+        var navHeight = navBar ? navBar.offsetHeight : 0
+        var top = target.getBoundingClientRect().top - scroller.getBoundingClientRect().top + scroller.scrollTop - navHeight - 8
+        scroller.scrollTop = Math.max(0, top)
       })
     })
     var scroller = document.querySelector('.digest-scroll')
