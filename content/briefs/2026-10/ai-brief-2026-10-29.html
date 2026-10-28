@@ -1,0 +1,1480 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>折晓早报 · 先盛三小杯，再倒给大家 · 2026-10-29</title>
+<style>
+  :root {
+    color-scheme: light;
+    --ink: #3a3128;
+    --muted: #74685c;
+    --mint: #2f8f6e;
+    --mint-soft: #d9f3e6;
+    --apricot: #f0b27a;
+    --paper: #fffaf3;
+    --wood: #efdcc0;
+    --wood-deep: #c4a06a;
+    --clay: #e09258;
+    --milk: #f3d07a;
+    --foam: #fff6dc;
+    --sky: #fff7ef;
+    --ease: cubic-bezier(.22, .7, .2, 1);
+  }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    color: var(--ink);
+    background:
+      radial-gradient(520px 220px at 18% 0%, rgba(255, 236, 214, .9), transparent 70%),
+      var(--sky);
+    font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", "Noto Sans CJK SC", "Source Han Sans SC", sans-serif;
+    overflow: auto;
+  }
+  button, summary { font: inherit; color: inherit; }
+  :focus-visible { outline: 2px solid var(--mint); outline-offset: 3px; }
+  .app { height: 100%; min-height: 640px; display: flex; flex-direction: column; }
+  .top {
+    flex: none;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 6px 14px;
+    align-items: center;
+    padding: 10px 14px 6px;
+    position: sticky;
+    top: 0;
+    z-index: 12;
+    background: linear-gradient(var(--sky), rgba(255, 247, 239, .92) 70%, transparent);
+  }
+  .brand { margin: 0; font-size: 13px; letter-spacing: .08em; color: var(--muted); }
+  .date { margin: 2px 0 0; font-size: 12px; color: var(--muted); }
+  .guide {
+    margin: 0;
+    font-size: 17px;
+    line-height: 1.45;
+    font-weight: 650;
+  }
+  .tools { display: flex; gap: 8px; align-items: center; }
+  .tools button, .dots { background: transparent; border: 0; }
+  .tools button {
+    font-size: 12px;
+    color: var(--muted);
+    cursor: pointer;
+    padding: 4px 2px;
+  }
+  .dots { display: flex; gap: 6px; list-style: none; margin: 0; padding: 0; }
+  .dots li {
+    width: 9px; height: 9px; border-radius: 50%;
+    background: #e6d5c0;
+    box-shadow: inset 0 0 0 1px rgba(90, 60, 30, .12);
+  }
+  .dots li.on { background: var(--mint); }
+  .scene {
+    position: relative;
+    flex: 1 1 auto;
+    min-height: 520px;
+    width: min(1080px, 100%);
+    margin: 0 auto;
+  }
+  .sun {
+    position: absolute;
+    left: 16%;
+    top: 10px;
+    width: 78px; height: 78px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #fff8e4 0 28%, #ffd7a4 46%, rgba(255, 215, 164, 0) 72%);
+    pointer-events: none;
+  }
+  .hills {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 48%;
+    pointer-events: none;
+    background:
+      radial-gradient(70% 90% at 8% 100%, #d7f0e4 0 40%, transparent 41%),
+      radial-gradient(60% 80% at 92% 120%, #e7f6ee 0 34%, transparent 35%);
+  }
+  .awning {
+    position: absolute;
+    left: 3%; right: 3%; top: 0;
+    height: 62px;
+    z-index: 1;
+    pointer-events: none;
+    background: repeating-linear-gradient(90deg, #fff8f1 0 26px, #f6dcc6 26px 52px);
+    border-radius: 8px 8px 0 0;
+    box-shadow: 0 10px 18px rgba(180, 130, 80, .08);
+  }
+  .awning .scallop {
+    position: absolute;
+    left: 0; right: 0; bottom: -14px;
+    height: 16px;
+    background: radial-gradient(circle at 14px 0, transparent 13px, #f3d4b8 14px) left top / 28px 16px repeat-x;
+  }
+  .bench {
+    position: absolute;
+    left: 0; right: 0;
+    bottom: 72px;
+    height: 430px;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: minmax(112px, .78fr) minmax(190px, 1.05fr) minmax(250px, 1.35fr) minmax(140px, .9fr);
+    align-items: end;
+    gap: 8px;
+    padding: 0 28px 0 22px;
+  }
+  .counter {
+    position: absolute;
+    left: 4%;
+    right: 4%;
+    bottom: 52px;
+    height: 168px;
+    z-index: 1;
+    border-radius: 16px 16px 8px 8px;
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, .28), transparent 28px),
+      repeating-linear-gradient(90deg, rgba(150, 100, 50, .04) 0 1px, transparent 1px 10px),
+      linear-gradient(#f7e7d0, #efd4b4);
+    box-shadow: 0 14px 0 #e2c39a, 0 18px 22px rgba(90, 60, 30, .06);
+    pointer-events: none;
+  }
+  .col { position: relative; height: 100%; min-width: 0; }
+  .cart {
+    position: absolute;
+    left: 3%; right: 3%;
+    bottom: 30px;
+    height: 34px;
+    z-index: 1;
+    border-radius: 6px;
+    background: repeating-linear-gradient(90deg, #f3e2c8 0 40px, #e7d0ae 40px 43px);
+    box-shadow: 0 11px 0 #d9bc90, 0 16px 18px rgba(90, 60, 30, .08);
+  }
+  .wheel {
+    position: absolute;
+    bottom: 8px;
+    width: 46px; height: 46px;
+    border-radius: 50%;
+    z-index: 0;
+    background: radial-gradient(circle at 50% 50%, #f7f1e6 0 7px, #c9aa78 8px 11px, #8d6844 12px);
+  }
+  .wheel.l { left: 7%; }
+  .wheel.r { right: 7%; }
+  .plaque {
+    position: absolute;
+    left: 50%;
+    top: 18px;
+    transform: translateX(-50%);
+    z-index: 4;
+    margin: 0;
+    padding: 6px 14px;
+    font-size: 15px;
+    font-weight: 700;
+    background: rgba(255, 250, 243, .92);
+    border-radius: 999px;
+    box-shadow: 0 6px 0 rgba(180, 130, 80, .08);
+    white-space: nowrap;
+  }
+  .side-col { display: flex; flex-direction: column; justify-content: flex-end; align-items: center; }
+  .plug {
+    position: absolute;
+    left: 28px;
+    bottom: 128px;
+    top: auto;
+    width: 58px; height: 58px;
+    border-radius: 50%;
+    border: 0;
+    padding: 0;
+    cursor: grab;
+    background: radial-gradient(circle at 35% 35%, #f6ead6, #c9956a 62%, #a87448);
+    box-shadow: inset 0 0 0 3px rgba(255, 255, 255, .35), 0 6px 0 rgba(90, 50, 20, .08);
+    color: #6a4328;
+    font-size: 13px;
+    font-weight: 700;
+    touch-action: none;
+    z-index: 4;
+  }
+  .plug.shut { left: 26px; top: auto; bottom: 86px; }
+  .mess {
+    width: 112px;
+    border: 0;
+    background: transparent;
+    padding: 0;
+    cursor: pointer;
+    text-align: center;
+  }
+  .pipe {
+    display: block;
+    width: 28px; height: 18px;
+    margin: 0 auto;
+    background: linear-gradient(#e7b184, #c9844c);
+    border-radius: 0 0 8px 8px;
+  }
+  .drips { position: relative; display: block; height: 36px; }
+  .drips i {
+    position: absolute;
+    left: 50%;
+    width: 7px; height: 9px;
+    margin-left: -3px;
+    border-radius: 50%;
+    background: #e0c08a;
+    animation: fall 1.15s linear infinite;
+  }
+  .drips i:nth-child(2) { animation-delay: .35s; }
+  .drips i:nth-child(3) { animation-delay: .7s; }
+  .mess.shut .drips i { display: none; }
+  .bowl {
+    display: block;
+    position: relative;
+    width: 86px; height: 32px;
+    margin: 0 auto;
+    border-radius: 0 0 40px 40px;
+    background: linear-gradient(#f7f1e8, #e7d3bc);
+    box-shadow: inset 0 -6px 0 rgba(180, 140, 90, .2);
+    overflow: hidden;
+  }
+  .scrap {
+    position: absolute;
+    width: 22px; height: 14px;
+    background: #f3e6d4;
+    border: 1px solid rgba(120, 80, 40, .15);
+  }
+  .scrap:nth-child(1) { left: 8px; top: 8px; transform: rotate(-12deg); }
+  .scrap:nth-child(2) { left: 30px; top: 6px; transform: rotate(8deg); background: #f6d7c8; }
+  .scrap:nth-child(3) { left: 48px; top: 12px; transform: rotate(-4deg); }
+  .mess.shut .bowl { background: linear-gradient(#e7f6ee, #d5ecdf); }
+  .mess.shut .scrap { opacity: 0; }
+  .mess-label { display: block; margin-top: 4px; font-size: 13px; color: #8a5a3a; font-weight: 650; }
+  .pot-col { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; }
+  .ladle {
+    position: absolute;
+    left: calc(50% - 48px);
+    margin-left: 0;
+    right: auto;
+    top: auto;
+    bottom: 108px;
+    width: 96px; height: 52px;
+    z-index: 5;
+  }
+    border: 0;
+    padding: 0;
+    background: transparent;
+    cursor: grab;
+    z-index: 5;
+    opacity: .4;
+    touch-action: none;
+  }
+  .ladle.awake { opacity: 1; }
+  .ladle-bowl {
+    position: absolute;
+    left: 0; top: 8px;
+    width: 34px; height: 26px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 40% 35%, #fffaf0, #f0c56e 58%, #d7a14e);
+    box-shadow: inset 0 0 0 3px #e8b85e;
+  }
+  .ladle-handle {
+    position: absolute;
+    left: 26px; top: 18px;
+    width: 58px; height: 8px;
+    border-radius: 8px;
+    background: linear-gradient(#f6ecda, #c9a56c);
+    transform: rotate(-16deg);
+  }
+  .pot-wrap { position: relative; width: 230px; height: 230px; }
+  .pot {
+    position: absolute;
+    left: 16px; bottom: 4px;
+    width: 156px; height: 132px;
+    background: radial-gradient(circle at 45% 28%, #f3c9a2, #e09258 48%, #c56b3c);
+    border-radius: 46% 46% 42% 42%;
+    box-shadow: inset -12px -14px 0 rgba(140, 70, 30, .16), 0 8px 0 rgba(90, 50, 20, .05);
+  }
+  .rim {
+    position: absolute;
+    left: -8px; right: -8px; top: -4px;
+    height: 24px;
+    border-radius: 50%;
+    background: radial-gradient(ellipse at 50% 40%, #f8dcc0, #e39a62 64%, #c47842);
+    box-shadow: 0 3px 0 #b86838;
+  }
+  .milk-surface {
+    position: absolute;
+    left: 12px; right: 12px; top: 3px;
+    height: 14px;
+    border-radius: 50%;
+    background: radial-gradient(ellipse at 50% 40%, #fff8e2, #f0c86e 74%);
+  }
+  .spout {
+    position: absolute;
+    right: 8px; top: 96px;
+    width: 58px; height: 22px;
+    background: linear-gradient(#f0b888, #d4844c);
+    border-radius: 0 10px 10px 0;
+  }
+  .spout-hit { position: absolute; right: 0; top: 48px; width: 92px; height: 84px; }
+  .pot-drop { position: absolute; right: 0; top: 36px; width: 140px; height: 100px; z-index: 2; }
+  .steam { position: absolute; left: 48px; top: 18px; width: 70px; height: 36px; pointer-events: none; }
+  .steam i {
+    position: absolute;
+    bottom: 0;
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, .75);
+    filter: blur(.4px);
+    animation: rise 2.6s ease-in infinite;
+  }
+  .steam i:nth-child(1) { left: 10px; }
+  .steam i:nth-child(2) { left: 28px; animation-delay: .6s; }
+  .steam i:nth-child(3) { left: 46px; animation-delay: 1.1s; }
+  .gauze {
+    position: absolute;
+    left: 0; top: 8px;
+    width: 116px; height: 74px;
+    border: 0;
+    border-radius: 8px;
+    padding: 0;
+    cursor: grab;
+    touch-action: none;
+    z-index: 4;
+    color: #1d6a50;
+    font-weight: 750;
+    font-size: 16px;
+    background:
+      repeating-linear-gradient(0deg, rgba(255, 255, 255, .72) 0 1px, transparent 1px 6px),
+      repeating-linear-gradient(90deg, rgba(255, 255, 255, .72) 0 1px, transparent 1px 6px),
+      linear-gradient(165deg, #eef8f3, #b9e2cd);
+    box-shadow: 0 8px 14px rgba(50, 90, 70, .12), inset 0 0 0 2px rgba(255, 255, 255, .55);
+  }
+  .gauze.on { left: 62%; top: 36%; width: 36%; height: 22%; font-size: 13px; }
+  .gauze.lifted { left: 46%; top: 0; width: 50%; height: 30%; }
+  .arrow {
+    display: none;
+    position: absolute;
+    left: 112px; top: 32px;
+    width: 34px; height: 16px;
+    background: var(--mint);
+    clip-path: polygon(0 32%, 60% 32%, 60% 0, 100% 50%, 60% 100%, 60% 68%, 0 68%);
+    pointer-events: none;
+  }
+  body[data-phase="gauze"] .arrow { display: block; animation: nudge 1.1s ease-in-out infinite; }
+  .dish {
+    position: absolute;
+    left: 56%; top: 32%;
+    width: 74px; height: 16px;
+    border-radius: 50%;
+    background: #f3e6d2;
+    box-shadow: inset 0 0 0 2px rgba(160, 120, 70, .15);
+    opacity: 0;
+    pointer-events: none;
+  }
+  .gauze.lifted ~ .dish { opacity: 1; }
+  .dish i {
+    position: absolute;
+    top: 5px;
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: #c8a36e;
+  }
+  .dish i:nth-child(1) { left: 16px; }
+  .dish i:nth-child(2) { left: 32px; background: #b88858; }
+  .dish i:nth-child(3) { left: 48px; }
+  .pour-line { display: none; }
+  .gate-wrap {
+    width: min(200px, 100%);
+    margin-top: 6px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--muted);
+    opacity: .55;
+  }
+  body[data-phase="wide"] .gate-wrap,
+  body[data-phase="done"] .gate-wrap { opacity: 1; }
+  .gate-wrap span { display: block; margin-bottom: 3px; }
+  input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 18px;
+    border-radius: 999px;
+    background: #e7d3b4;
+    box-shadow: inset 0 0 0 2px #c9ae82;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 26px; height: 26px;
+    border-radius: 6px;
+    background: #f7efe2;
+    border: 2px solid #a87a4e;
+    cursor: grab;
+  }
+  input[type="range"]::-moz-range-thumb {
+    width: 26px; height: 26px;
+    border-radius: 6px;
+    background: #f7efe2;
+    border: 2px solid #a87a4e;
+    cursor: grab;
+  }
+  .cup-col { display: flex; flex-direction: column; justify-content: flex-end; align-items: center; }
+  .tray-label { margin: 0 0 8px; font-size: 14px; font-weight: 700; color: #6d5344; }
+  .tray {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: nowrap;
+    background: linear-gradient(#f8ecda, #edd6b4);
+    padding: 12px 12px 8px;
+    border-radius: 12px 12px 8px 8px;
+    box-shadow: 0 8px 0 rgba(120, 80, 40, .05);
+  }
+  .cup {
+    position: relative;
+    width: 72px; height: 54px;
+    border: 0;
+    padding: 0 0 16px;
+    cursor: pointer;
+    background: linear-gradient(#fff, #f6f0e6);
+    border-radius: 0 0 22px 22px;
+    box-shadow: inset 0 -7px 0 #efe4d4, 0 8px 0 rgba(90, 60, 30, .05);
+  }
+  .cup { overflow: hidden; }
+  .cup .fill {
+    position: absolute;
+    left: 0; right: 0; bottom: 14px;
+    height: 0;
+    background: linear-gradient(#fff3c8, #e7b84a);
+    transition: height .45s var(--ease);
+  }
+  .cup.filled .fill { height: 62%; }
+  .cup.spoiled .fill { height: 20px; background: #d7c4a6; }
+  .cup-name {
+    position: absolute;
+    left: 0; right: 0; bottom: 2px;
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .bucket-col { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; }
+  .bucket {
+    position: relative;
+    width: 148px; height: 168px;
+    background: repeating-linear-gradient(90deg, #f0ddc2 0 14px, #e5cbab 14px 16px);
+    border-radius: 10px 10px 36px 36px;
+    box-shadow: inset 0 0 0 3px #d1b48a, 0 10px 0 rgba(90, 60, 30, .05);
+    overflow: visible;
+  }
+  .lid {
+    position: absolute;
+    left: 8%; right: 8%; top: -6px;
+    height: 22px;
+    border-radius: 50%;
+    background: radial-gradient(ellipse at 50% 40%, #f8efe2, #d7b48a);
+    transform-origin: center center;
+    transition: transform .7s var(--ease);
+    z-index: 3;
+  }
+  .bucket.open .lid { transform: translate(-10px, -20px) rotate(-14deg); }
+  .band {
+    position: absolute;
+    left: -4px; right: -4px; top: 46px;
+    height: 12px;
+    background: var(--apricot);
+    border-radius: 3px;
+    z-index: 2;
+    transition: opacity .45s var(--ease);
+  }
+  .bucket.open .band { opacity: 0; }
+  .bucket-milk {
+    position: absolute;
+    left: 8%; right: 8%; bottom: 12px;
+    height: 0;
+    border-radius: 0 0 28px 28px;
+    background: linear-gradient(var(--foam), var(--milk));
+    transition: height .8s var(--ease) .1s;
+  }
+  .bucket.open .bucket-milk { height: 62%; }
+  .bucket-label { margin: 8px 0 0; font-size: 14px; font-weight: 700; color: #6d5344; }
+  .digest-details {
+    position: absolute;
+    top: 8px; right: 12px;
+    z-index: 8;
+  }
+  .digest-details > summary { list-style: none; cursor: pointer; }
+  .digest-details > summary::-webkit-details-marker { display: none; }
+  .book-cover {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 6px;
+    width: 112px;
+    min-height: 132px;
+    padding: 14px 12px 14px 16px;
+    border-radius: 2px 8px 8px 2px;
+    background: linear-gradient(90deg, #c45c3a 0 9px, #f0c2ae 9px);
+    box-shadow: 5px 10px 0 rgba(120, 70, 40, .12);
+    text-align: left;
+  }
+  .book-kicker { font-size: 12px; color: #7a4e3e; }
+  .book-title { font-size: 18px; line-height: 1.35; font-weight: 700; color: #2c1c16; }
+  .when-open { display: none; }
+  .digest-details[open] {
+    position: fixed;
+    inset: 0;
+    z-index: 30;
+    overflow: auto;
+    background: var(--paper);
+    color: var(--ink);
+  }
+  .digest-details[open] > summary {
+    display: block;
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    background: #fffaf3;
+  }
+  .digest-details[open] .when-closed { display: none; }
+  .digest-details[open] .when-open {
+    display: block;
+    padding: 14px 18px;
+    background: #fffaf3;
+    border-bottom: 1px solid rgba(90, 60, 30, .08);
+    color: var(--mint);
+    font-weight: 700;
+  }
+  .digest-body { max-width: 42rem; margin: 0 auto; padding: 8px 22px 72px; }
+  .digest-body h2 { font-size: 1.35rem; margin: 1.8rem 0 .6rem; }
+  .digest-body h3 { font-size: 1.08rem; line-height: 1.45; margin: 0 0 .55rem; }
+  .digest-body p { margin: 0 0 .9rem; font-size: 17px; line-height: 1.75; }
+  .lede {
+    font-size: 18px;
+    line-height: 1.7;
+    padding: 12px 14px;
+    background: #fff6ea;
+    border-radius: 12px;
+  }
+  .meta-line { color: var(--muted); font-size: 14px !important; }
+  .toc { display: flex; flex-wrap: wrap; gap: 8px 12px; margin: 14px 0 8px; }
+  .toc a { color: var(--mint); font-size: 14px; }
+  .filters { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0; }
+  .filters button {
+    border: 1px solid rgba(90, 60, 30, .14);
+    background: #fff;
+    border-radius: 999px;
+    padding: 6px 12px;
+    cursor: pointer;
+  }
+  .filters button[aria-pressed="true"] { background: var(--mint-soft); border-color: transparent; color: #1d6a50; }
+  #filter-note { color: var(--muted); font-size: 14px !important; }
+  .piece {
+    margin: 0 0 1.5rem;
+    padding: 0 0 .2rem 14px;
+    border-left: 3px solid var(--mint-soft);
+  }
+  .piece[data-kind="single"] { border-left-color: #f0c9a0; }
+  .piece.dim { opacity: .38; }
+  .badge {
+    display: inline-block;
+    margin-bottom: 8px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 12px;
+    background: #e5f6ee;
+    color: #1d6b4e;
+  }
+  .badge.single { background: #fff1e4; color: #9a6230; }
+  .badge.opinion { background: #f3eee8; color: #6a5c52; }
+  .src { color: var(--muted); font-size: 14px !important; }
+  .src a, .digest-body a { color: var(--mint); }
+  .note-details { position: absolute; left: 18px; bottom: 6px; z-index: 8; }
+  .note-details > summary { list-style: none; cursor: pointer; }
+  .note-details > summary::-webkit-details-marker { display: none; }
+  .pin {
+    display: block;
+    width: 78px;
+    transform: rotate(-7deg);
+    background: #fff8e6;
+    padding: 8px 8px 10px;
+    box-shadow: 0 8px 14px rgba(80, 60, 30, .12);
+    font-size: 13px;
+    line-height: 1.35;
+    font-weight: 700;
+    color: #5c4a3a;
+    text-align: center;
+  }
+  .pin::before {
+    content: "";
+    display: block;
+    width: 8px; height: 8px;
+    margin: 0 auto 4px;
+    border-radius: 50%;
+    background: #e07a62;
+  }
+  .note-card {
+    display: none;
+    position: absolute;
+    left: 0;
+    bottom: 72px;
+    width: min(380px, 78vw);
+    padding: 14px 14px 12px;
+    background: #fff8e8;
+    border-radius: 12px;
+    box-shadow: 0 16px 36px rgba(80, 60, 30, .16);
+    text-align: left;
+  }
+  .note-details[open] .note-card { display: block; }
+  .note-details[open] .pin-closed { display: none; }
+  .note-details[open] .when-open { display: inline; }
+  .note-details[open] .pin { width: auto; min-width: 78px; transform: none; }
+  .note-card h2 { margin: 0 0 8px; font-size: 16px; }
+  .note-card p { margin: 0 0 8px; font-size: 14.5px; line-height: 1.6; }
+  .slip-host {
+    position: absolute;
+    top: 74px;
+    left: 12px;
+    right: 124px;
+    max-width: 520px;
+    max-height: min(248px, 38%);
+    overflow: auto;
+    z-index: 6;
+    background: var(--paper);
+    border-radius: 14px;
+    padding: 10px 12px 12px;
+    box-shadow: 0 14px 32px rgba(90, 60, 30, .14);
+  }
+  .slip-host h3 { margin: 0 0 6px; font-size: 16px; line-height: 1.4; }
+  .slip-host p { margin: 0 0 8px; font-size: 14px; line-height: 1.55; }
+  #slip-close {
+    display: block;
+    margin: 0 0 6px auto;
+    border: 0;
+    background: transparent;
+    color: var(--mint);
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .hinting { animation: halo 1.5s ease-in-out infinite; }
+  .dragging { z-index: 30 !important; transition: none !important; cursor: grabbing; }
+  .gauze, .ladle, .plug { transition: left .35s var(--ease), top .35s var(--ease); }
+  @keyframes halo {
+    50% { box-shadow: 0 0 0 7px rgba(47, 143, 110, .22); }
+  }
+  @keyframes nudge {
+    50% { transform: translateX(8px); }
+  }
+  @keyframes rise {
+    0% { transform: translateY(8px); opacity: 0; }
+    25% { opacity: .8; }
+    100% { transform: translateY(-26px); opacity: 0; }
+  }
+  @keyframes fall {
+    0% { transform: translateY(0); opacity: 0; }
+    20% { opacity: 1; }
+    100% { transform: translateY(32px); opacity: 0; }
+  }
+  @media (max-width: 760px) {
+    .top { grid-template-columns: 1fr auto; }
+    .guide { grid-column: 1 / -1; font-size: 16px; }
+    .scene { min-height: 780px; }
+    .bench {
+      top: 112px;
+      bottom: auto;
+      height: auto;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: auto auto;
+      align-items: end;
+    }
+    .counter, .cart, .wheel { display: none; }
+    .cup-col { padding-top: 50px; }
+    .ladle { top: 0; right: auto; left: 6px; margin-left: 0; bottom: auto; }
+    .side-col { padding-top: 72px; }
+    .plug { top: 0; left: 12px; bottom: auto; }
+    .tray { flex-wrap: wrap; }
+    .plaque { top: 72px; left: 10px; right: auto; transform: none; font-size: 13px; }
+    .pot-col { grid-column: 1; grid-row: 1; }
+    .cup-col { grid-column: 2; grid-row: 1; }
+    .side-col { grid-column: 1; grid-row: 2; }
+    .bucket-col { grid-column: 2; grid-row: 2; }
+    .plaque { font-size: 12px; }
+    .slip-host { right: 12px; max-height: 180px; }
+    .book-cover { width: 92px; min-height: 112px; }
+    .book-title { font-size: 15px; }
+    .pot-wrap { width: 168px; height: 176px; }
+    .cup { width: 56px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation: none !important;
+      transition: none !important;
+    }
+    .hinting { outline: 2px dashed var(--mint); }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div>
+      <p class="brand">折晓早报</p>
+      <p class="date">2026-10-29 · 星期四</p>
+    </div>
+    <p id="guide" class="guide" role="status">把这块薄荷绿的纱布，拖到壶嘴上。</p>
+    <div class="tools">
+      <ol class="dots" id="dots" aria-label="进行到哪一步">
+        <li data-k="gauze" aria-label="扣上纱布"></li>
+        <li data-k="cups" aria-label="接三小杯"></li>
+        <li data-k="residue" aria-label="看拦住的"></li>
+        <li data-k="side" aria-label="堵住旁边"></li>
+        <li data-k="wide" aria-label="倒进大桶"></li>
+      </ol>
+      <button type="button" id="sound" aria-pressed="false">打开声音</button>
+      <button type="button" id="reset">再来一锅</button>
+    </div>
+  </header>
+  <main class="scene" id="scene">
+    <div class="sun" aria-hidden="true"></div>
+    <div class="hills" aria-hidden="true"></div>
+    <div class="awning" aria-hidden="true"><div class="scallop"></div></div>
+    <div class="counter" aria-hidden="true"></div>
+    <div class="cart" aria-hidden="true"></div>
+    <div class="wheel l" aria-hidden="true"></div>
+    <div class="wheel r" aria-hidden="true"></div>
+    <h1 class="plaque">先盛三小杯，再倒给大家</h1>
+
+    <details class="digest-details" id="digest">
+      <summary>
+        <span class="when-closed book-cover">
+          <span class="book-kicker">点开这本</span>
+          <span class="book-title">今天的<br>详细稿</span>
+        </span>
+        <span class="when-open">合上详细稿</span>
+      </summary>
+      <article class="digest-body">
+        <p class="meta-line">折晓每日早报 · 2026 年 10 月 29 日 星期四</p>
+        <p class="lede">一样东西在交给所有人之前，先让它过一道筛——先给一小圈人试、先查一遍，过关的才放行。</p>
+        <p class="meta-line">时间范围：北京时间 2026 年 10 月 28 日早上六点，到 10 月 29 日早上六点。</p>
+        <p>标注说明：写着「已核实」的条目，编辑打开过原文核对；写着「单一来源」的条目，目前只有一个来源这么说，读的时候请留一分保留；写着「据某某称」的内容是对方的说法，不是定论。</p>
+        <nav class="toc" aria-label="详细稿目录">
+          <a href="#sec-ai">人工智能</a>
+          <a href="#sec-tech">科技</a>
+          <a href="#sec-med">医学</a>
+          <a href="#sec-self">个人事务</a>
+          <a href="#sec-how">材料从哪来</a>
+        </nav>
+        <div class="filters" role="group" aria-label="按核实程度看">
+          <button type="button" data-filter="all" aria-pressed="true">全部摊开</button>
+          <button type="button" data-filter="verified" aria-pressed="false">只强调已核实的</button>
+          <button type="button" data-filter="single" aria-pressed="false">只强调还要保留的</button>
+        </div>
+        <p id="filter-note">十六条都摊开着。点上面的按钮，只是把另一类调暗，字不会少。</p>
+
+        <h2 id="sec-ai">一、人工智能</h2>
+
+        <section class="piece" data-kind="verified" id="item-1">
+          <p class="badge">已核实</p>
+          <h3>1. Google 发布最强模型 Gemini 4 Carbon，但先只交给一小部分网络安全防守方</h3>
+          <p><strong>背景。</strong>两周前，Google DeepMind 刚发布了 Gemini 4 Argon。北京时间 10 月 29 日凌晨一点，它又发布了下一代前沿模型 Gemini 4 Carbon，官方称这是它目前最强的模型，主打两件事：网络安全，以及能连续工作很长时间的智能体任务。</p>
+          <p><strong>发生了什么。</strong>官方博客说，Carbon 在新版 Artificial Analysis Intelligence Index v5.0（一个综合多项测试的模型能力排行）上以 59 分排名第一。网络安全方面，它在找漏洞的 SEC-bench Pro 上拿到 88.2%，在验证漏洞能否被利用的 ExploitGym 上拿到 54.8%，在修补漏洞根因的 CWE-bench 上拿到 71.0%。官方还说，内部团队看到它能连续运行好几天去追一个复杂的工程问题；在内部真实编码环境里，高严重度的「失准」告警（模型做出不该做的事）下降了将近 80%，在 Terminal-Bench 4.0 上成功作弊的比例降到 0.0%。</p>
+          <p><strong>最值得注意的地方：发布方式。</strong>Carbon 没有一上来就开放给所有人。官方原话是：从这周开始，先把 Carbon 提供给「一部分网络安全防守方」，再通过 Fairwind 计划分批开放给更多可信伙伴；同时参与美国政府的发布前自愿测试流程，继续收集反馈、调整防护措施，然后才面向开发者、企业和普通用户。价格方面，起步价与 Argon 相同，每百万输入 token 2 美元、输出 10 美元，起步期结束后为输入 4 美元、输出 20 美元。</p>
+          <p><strong>为什么值得你注意。</strong>能力越强、越能找漏洞的模型，也越可能被拿去攻击。所以「先给防守方、再慢慢放开」本身就是一道筛。你平时用的 AI 工具以后接入 Carbon，大概率也要等这几轮筛完。</p>
+          <p class="src">来源：<a href="https://deepmind.google/blog/gemini-4-carbon-our-next-frontier-model/" target="_blank" rel="noopener noreferrer">Google DeepMind 官方博客</a></p>
+        </section>
+
+        <section class="piece" data-kind="verified" id="item-2">
+          <p class="badge">已核实</p>
+          <h3>2. GitHub 年度报告：四成多的代码改动先由智能体起草，再由人审查</h3>
+          <p><strong>背景。</strong>Octoverse 是 GitHub 每年发布的平台数据报告。今年的报告在北京时间 10 月 29 日零点前后发布，统计窗口是 2025 年 10 月 1 日到 2026 年 9 月 30 日。</p>
+          <p><strong>发生了什么。</strong>报告说，过去十二个月开发者向 GitHub 推送代码 179 亿次，比 2024 和 2025 两年加起来还多；合并的拉取请求（PR，就是「我改好了，请把我的改动合进主干」的申请）达到 13 亿个。到 2026 年 9 月，超过 40% 的 PR 是智能体先起草的，而 3 月时只有 17%。智能体起草的 PR 在两周内被合并的比例，从 2 月的 83% 涨到 9 月的 90%。报告专门写了一句：「审查，是开发者塑造返回结果的地方。」此外，61% 自选模型的 Copilot 用户会混用不止一个模型；增长最快的厂商主导仓库里，前三名是 anthropics/claude-code、openai/codex 和 anomalyco/opencode。</p>
+          <p><strong>为什么值得你注意。</strong>你自己的项目也在大量用智能体写代码。这份报告用全平台数据说明：智能体写得越多，人类那道「审查再合并」的筛子就越重要。</p>
+          <p class="src">来源：<a href="https://github.blog/news-insights/octoverse/octoverse-commits-pushes-reach-new-highs-in-2026-as-developers-build-with-agents/" target="_blank" rel="noopener noreferrer">GitHub Octoverse 2026</a></p>
+        </section>
+
+        <section class="piece" data-kind="verified" id="item-3">
+          <p class="badge">已核实</p>
+          <h3>3. GitHub Copilot Fusion 正式开放：它先当研究预览跑了近六万次</h3>
+          <p><strong>发生了什么。</strong>在 GitHub Universe 2026 大会上，GitHub 发布了 GitHub Copilot app 和 Copilot Fusion。根据 Octoverse 原文，Fusion 的前身叫 Project HydraFusion，一开始只是「模型编排」的研究预览，在命令行和 Copilot app 里路由了将近六万次会话，验证之后才正式开放。它的作用是在一个任务里，给计划、实现、检查这几步分别挑最合适的模型。</p>
+          <p><strong>为什么值得你注意。</strong>这又是一个「先在小范围跑、看过数据再正式上线」的例子。</p>
+          <p class="src">来源：<a href="https://github.blog/news-insights/company-news/github-universe-2026-evolving-every-layer-of-the-stack/" target="_blank" rel="noopener noreferrer">GitHub Universe 2026 官方博客</a> · <a href="https://github.blog/news-insights/octoverse/octoverse-commits-pushes-reach-new-highs-in-2026-as-developers-build-with-agents/" target="_blank" rel="noopener noreferrer">Octoverse 原文里对 Fusion 的说明</a></p>
+        </section>
+
+        <section class="piece" data-kind="single" id="item-4">
+          <p class="badge single">单一来源</p>
+          <h3>4. 犹他州先让 34 名公务员开发者试用 Claude Code 四周</h3>
+          <p><strong>发生了什么。</strong>据 Claude Code 负责人 Boris Cherny 在 X 上发文称，美国犹他州给 10 个州政府部门的 34 名开发者提供了 Claude Code，试点为期四周。据他称，80% 的开发者在 30 分钟内搭好了可用环境，71% 的开发者在试点结束前报告节省了 20 小时以上。</p>
+          <p><strong>怎么看。</strong>这是产品方自己公布的数据，原帖在本次采集中无法直接打开，内容来自 AIHOT 的转述，尚未得到其他来源确认。但「先挑一小组人试四周再决定推不推广」这个做法本身很典型。</p>
+          <p class="src">来源：<a href="https://x.com/bcherny/status/2115491259381072269" target="_blank" rel="noopener noreferrer">Boris Cherny 的 X 帖子</a></p>
+        </section>
+
+        <section class="piece" data-kind="single" id="item-5">
+          <p class="badge single">单一来源</p>
+          <h3>5. 安全公司 Cathedral 称从第三方软件钻进了 Anthropic 内部系统，双方说法不一</h3>
+          <p><strong>发生了什么。</strong>据 The Decoder 报道，网络安全初创公司 Cathedral 称，它的 AI 智能体通过一个第三方业务软件进入了 Anthropic 的内部系统，不到十二小时就接触到会议记录、薪资数据和 Slack 消息，随后通过漏洞赏金计划披露了问题。Anthropic 与 Cathedral 对事件影响范围的说法不一致，目前没有定论。</p>
+          <p><strong>为什么值得你注意。</strong>问题出在「接进来的第三方软件」这道门上，而不是主系统本身。这是今天核心思想的反面对照：有一道门没筛严，后面再坚固也会被绕过去。</p>
+          <p class="src">来源：<a href="https://the-decoder.com/ai-agents-hacked-anthropic-maker-of-arguably-the-most-capable-ai-models-for-cyberdefense/" target="_blank" rel="noopener noreferrer">The Decoder 报道</a>。报道原文这次没有打开。</p>
+        </section>
+
+        <section class="piece" data-kind="single" id="item-6">
+          <p class="badge single">单一来源</p>
+          <h3>6. 微软通过 Foundry 开放 Copilot harness</h3>
+          <p><strong>发生了什么。</strong>据微软官方博客，微软把 GitHub 团队打造的 Copilot harness 通过 Microsoft Foundry 开放给外部开发者和企业。harness 可以理解成「让模型干活的那套外壳和流程」，它此前已经在 Copilot Code、Copilot Studio、GitHub Copilot app 和命令行里先跑熟了。</p>
+          <p class="src">来源：<a href="https://blogs.microsoft.com/blog/2026/10/28/introducing-the-microsoft-copilot-harness-unlocking-the-potential-of-truly-multi-model-agentic-work/" target="_blank" rel="noopener noreferrer">微软官方博客</a>。原文这次没有打开，目前只看到这一处来源。</p>
+        </section>
+
+        <section class="piece" data-kind="single" id="item-7">
+          <p class="badge single">单一来源</p>
+          <h3>7. Alphabet 第三季度：Google Cloud 收入增长 103%</h3>
+          <p><strong>发生了什么。</strong>据 Sundar Pichai 北京时间 10 月 29 日凌晨四点在 X 上发布的业绩摘要（经 AIHOT 转述），Alphabet 年化收入达到 5000 亿美元，总收入同比增长 25%，Google Cloud 收入增长 103%，自家模型的 API 每分钟处理将近 320 亿个 token，比上季度增加 40%。</p>
+          <p><strong>怎么看。</strong>大模型已经实打实地在拉动云业务收入。原帖本次无法直接打开，数字请以财报原文为准。</p>
+          <p class="src">来源：<a href="https://x.com/sundarpichai/status/2115535455156642066" target="_blank" rel="noopener noreferrer">Sundar Pichai 的 X 帖子</a></p>
+        </section>
+
+        <section class="piece" data-kind="single" id="item-8">
+          <p class="badge opinion">单一来源 · 观点</p>
+          <h3>8. 评论：Ed Zitron 批评 Anthropic 招股书只给外界看了一部分</h3>
+          <p><strong>发生了什么。</strong>评论人 Ed Zitron 撰文批评 Anthropic 本周提交的上市文件（S-1），据他称文件只披露了第二季度盈利，没有给出第三季度的现金状况和付款明细，同时背着超过 4300 亿美元的不可撤销算力承诺。这是观点文章，不是新数据。</p>
+          <p><strong>为什么值得你注意。</strong>它提醒外部读者：别人递给你的材料是一部分，自己要对照原文再查一遍。</p>
+          <p class="src">来源：<a href="https://www.wheresyoured.at/exit-liquidity/" target="_blank" rel="noopener noreferrer">Where's Your Ed At</a>。原文这次没有打开。</p>
+        </section>
+
+        <h2 id="sec-tech">二、科技</h2>
+
+        <section class="piece" data-kind="single" id="item-9">
+          <p class="badge single">单一来源</p>
+          <h3>9. 英国一次公众咨询里，76% 的回复是机器自动提交的</h3>
+          <p><strong>发生了什么。</strong>据 Tech Startups 当日科技汇总，研究人员发现，英国政府的一次公众咨询中，有 76% 的回复是自动化提交的。</p>
+          <p><strong>为什么值得你注意。</strong>征集公众意见的入口如果不先筛一下「是不是真人」，结果就会被机器淹没。这是今天核心思想的又一个反面对照。研究原文本次未能打开，尚未得到其他来源确认。</p>
+          <p class="src">来源：<a href="https://techstartups.com/2026/10/28/tech-news-today-october-28-2026-google-openai-oracle-nvidia-scale-ai-sk-hynix-more/" target="_blank" rel="noopener noreferrer">Tech Startups 10 月 28 日科技汇总</a></p>
+        </section>
+
+        <section class="piece" data-kind="single" id="item-10">
+          <p class="badge single">单一来源</p>
+          <h3>10. 特拉华州草案拟允许「由 AI 智能体管理的公司」，先设 30 个月监管沙盒</h3>
+          <p><strong>发生了什么。</strong>据 The Morning Build 10 月 28 日的日报，美国特拉华州的一份草案拟允许指定 AI 智能体来管理公司、开展业务，银行业除外，并设立一个 30 个月的监管沙盒。「沙盒」就是先在划定的小范围里试、规则宽一点，观察一段时间再决定要不要正式放开。美国众议院监督委员会主席已致函索要相关文件。</p>
+          <p class="src">来源：<a href="https://themorningbuild.com/digest/2026-10-28/" target="_blank" rel="noopener noreferrer">The Morning Build 10 月 28 日</a>。草案原文这次没有打开。</p>
+        </section>
+
+        <section class="piece" data-kind="single" id="item-11">
+          <p class="badge single">单一来源</p>
+          <h3>11. SK 海力士公布创纪录季度业绩</h3>
+          <p><strong>发生了什么。</strong>据 Tech Startups 汇总，韩国芯片厂 SK 海力士公布的季度收入约 755 亿美元，营业利润接近 630 亿美元，并称产能基本已经被订到 2029 年。驱动力是 AI 服务器对高端内存的需求。具体数字以公司财报为准。</p>
+          <p class="src">来源：<a href="https://techstartups.com/2026/10/28/tech-news-today-october-28-2026-google-openai-oracle-nvidia-scale-ai-sk-hynix-more/" target="_blank" rel="noopener noreferrer">Tech Startups 10 月 28 日科技汇总</a></p>
+        </section>
+
+        <section class="piece" data-kind="single" id="item-12">
+          <p class="badge single">单一来源</p>
+          <h3>12. 苹果发布首款触控 OLED 屏 MacBook Pro</h3>
+          <p><strong>发生了什么。</strong>据新闻汇总页转述 The Verge 的报道，苹果发布了搭载 M5 Pro 和 M5 Max 芯片的新 MacBook Pro，第一次加入触控屏并换用 OLED 屏幕，起价 2899 美元，续航仍为最长 24 小时。</p>
+          <p class="src">来源：<a href="https://savedelete.com/news/archive/2026/10/28/" target="_blank" rel="noopener noreferrer">SaveDelete 10 月 28 日科技新闻汇总</a></p>
+        </section>
+
+        <h2 id="sec-med">三、医学</h2>
+
+        <section class="piece" data-kind="verified" id="item-13">
+          <p class="badge">已核实</p>
+          <h3>13. 人脑在出生前后，会清掉大约四分之一基因组严重异常的神经元</h3>
+          <p><strong>背景。</strong>神经元出生后基本不再分裂，要用一辈子，所以它的基因组「出厂质量」很关键。拷贝数变异（CNV）指的是一大段 DNA 多了一份或少了一份，它和不少神经发育、精神类疾病有关。</p>
+          <p><strong>发生了什么。</strong>这项 10 月 28 日发表在 Nature 上的研究，用两种单细胞全基因组测序方法测了从胎儿到出生后人脑里的 2,357 个单个神经元。结果发现，胎儿期平均有 25.9%（范围 12.7% 到 46%）的皮层神经元带有涉及多条染色体的大范围 CNV；出生后，这个比例下降了大约 4.5 倍。这些严重异常的神经元主要在围产期（出生前后那段时间）被清除，时间上大致与程序性细胞死亡的时期重合；而 CNV 负担小的神经元，则随年龄慢慢减少。存活下来的神经元里，CNV 很少落在对剂量敏感的基因和神经发育疾病相关基因上。作者认为，这可能是一次重要的「发育期基因组质量检查」，而这道检查出问题时，可能和神经发育疾病有关。</p>
+          <p><strong>和你的课有什么关系。</strong>学神经发育和细胞凋亡时，可以把它当成一个很好的例子：身体也会先多做一批，再筛掉不合格的，最后才让通过的上岗。</p>
+          <p class="src">来源：<a href="https://www.nature.com/articles/s41586-026-11190-3" target="_blank" rel="noopener noreferrer">Nature 原文</a></p>
+        </section>
+
+        <section class="piece" data-kind="single" id="item-14">
+          <p class="badge single">单一来源</p>
+          <h3>14. 新器械获批：不用再开胸，就能堵上人工心脏瓣膜旁边的漏</h3>
+          <p><strong>背景。</strong>心脏瓣膜坏了修不好时，会换上机械瓣或生物瓣。手术后，人工瓣膜和自身组织之间有时会留下或慢慢出现小缝，血从缝里倒流，这叫瓣周漏（PVL）。据雅培新闻稿，二尖瓣置换后的发生率是 7% 到 17%，主动脉瓣置换后是 5% 到 10%。它会引起心衰样症状，还可能让红细胞被挤坏，造成严重贫血。</p>
+          <p><strong>发生了什么。</strong>据雅培 10 月 28 日的新闻稿，美国 FDA 批准了 Amplatzer Paraclose PVL 封堵器，这是美国第一个、也是目前唯一一个专门设计来经导管治疗瓣周漏的器械：从腿部动脉或静脉把导管送进去，把缝堵上，不必再做一次开胸手术。批准依据是 PARADIGM 研究，一项前瞻性、多中心、单臂、纳入 200 名患者的研究。</p>
+          <p><strong>为什么值得你注意。</strong>新器械也是先在 200 名患者里验证过，才放给更多人用。FDA 原始批文本次未单独核对。</p>
+          <p class="src">来源：<a href="https://abbott.mediaroom.com/press-releases?item=124787" target="_blank" rel="noopener noreferrer">雅培新闻稿</a></p>
+        </section>
+
+        <section class="piece" data-kind="verified" id="item-15">
+          <p class="badge">已核实</p>
+          <h3>15. 迄今规模最大的阿尔茨海默病遗传研究：常见变异的作用被低估了</h3>
+          <p><strong>发生了什么。</strong>这项 10 月 28 日发表在 Nature 上的研究汇总了多种族人群数据：109,479 名患者、74,141 名代理病例、2,131,799 名对照和 499,708 名代理对照，在多种族联合分析中找到 118 个风险位点，在单一族群分析里又找到 9 个，其中 48 个是新的。研究估计常见变异（SNP）能解释的遗传度是 16%，几乎是以往估计的三倍。风险基因集中在两类变化上：在小胶质细胞（大脑里的免疫细胞）里上调，在神经元里下调。</p>
+          <p><strong>为什么值得你注意。</strong>以前有人觉得能找的常见风险变异已经差不多找完了，这项研究说明：样本更大、人群更多样时，结论会变。</p>
+          <p class="src">来源：<a href="https://www.nature.com/articles/s41586-026-11206-y" target="_blank" rel="noopener noreferrer">Nature 原文</a></p>
+        </section>
+
+        <section class="piece" data-kind="single" id="item-16">
+          <p class="badge single">单一来源</p>
+          <h3>16. 约 20% 的癌症共用一种机制：BAF 突变让 CTCF 改写 DNA 的三维折叠</h3>
+          <p><strong>背景。</strong>BAF 复合物是细胞核里的「染色质整理工」，负责把 DNA 打开或收拢，决定哪些基因能被读到。编码它亚基的基因突变，出现在淋巴瘤、乳腺癌、卵巢癌、肝癌等很不一样的肿瘤里，但共同机制一直不清楚。</p>
+          <p><strong>发生了什么。</strong>据 Weill Cornell 医学院 10 月 28 日的新闻稿，这项发表在 Nature 上的研究发现，BAF 突变会让 CTCF 这种决定 DNA 三维结构的蛋白大范围重塑染色质，把基因活动推向促癌方向；在动物模型里删除 CTCF，可以逆转这种效果。PBAF 和 ISWI 两个复合物是 CTCF 的关键搭档，删掉它们也能挡住 BAF 突变的效应。研究认为 CTCF、PBAF 和 ISWI 可能成为未来治疗的靶点。</p>
+          <p class="src">来源：<a href="https://news.weill.cornell.edu/news/2026/10/a-unifying-mechanism-for-cancer-driving-mutations" target="_blank" rel="noopener noreferrer">Weill Cornell 新闻稿</a>。Nature 论文原文这次没有单独打开。</p>
+        </section>
+
+        <h2 id="sec-self">四、你的个人事务（轻提示）</h2>
+        <section class="piece" data-kind="note">
+          <ul>
+            <li>期末复习工作站那个仓库的数据库自动备份任务，北京时间 10 月 28 日早上 8:44 运行失败了，有空可以看一眼原因，免得备份断档。（来源：GitHub 通知邮件，1037Solo-StudySolo 仓库 supabase-backup 工作流）</li>
+            <li>deepseek-harness 仓库调用真实接口的端到端测试，10 月 28 日下午 1:39 运行失败，可能和接口额度、密钥或代码有关，要打开运行记录才知道。（来源：GitHub 通知邮件）</li>
+            <li>另外有两封营销邮件（NVIDIA、Mobbin），不用处理。</li>
+            <li>日历和笔记类连接器今天没有可读的数据，所以这里没有日程提醒。</li>
+          </ul>
+        </section>
+
+        <h2 id="sec-how">五、今天的材料是怎么来的</h2>
+        <section class="piece" data-kind="note">
+          <p>今天的四路采集原本应该由四个互相隔离的采集员分别完成，但派发采集任务的系统审查服务报错，任务派不出去，所以四份证据包都由编辑按同一份采集说明直接整理。每一条都附了原文链接；标「单一来源」的条目，原文本次没有打开或只有一个来源，读的时候请保留判断。</p>
+        </section>
+      </article>
+    </details>
+
+    <details class="note-details" id="note">
+      <summary class="pin"><span class="pin-closed">两件小事</span><span class="when-open">收起这两件小事</span></summary>
+      <div class="note-card">
+        <h2>两件小事，有空看一眼就好</h2>
+        <p>期末复习工作站那个仓库的数据库自动备份，昨天早上 8:44 没有跑成。有空可以看一眼原因，免得备份断档。</p>
+        <p>deepseek-harness 仓库调用真实接口的测试，昨天下午 1:39 也失败了。可能和接口额度、密钥或代码有关，要打开运行记录才知道。</p>
+        <p>再点一次「收起这两件小事」，就把这张纸条合上。</p>
+      </div>
+    </details>
+
+    <div class="bench" id="bench">
+      <div class="col side-col" id="side-col">
+        <div id="plug" class="plug" role="button" tabindex="0" aria-label="木塞，拖去堵住没扣纱布的那只嘴">木塞</div>
+        <button type="button" class="mess" id="mess" aria-label="没扣纱布的那只嘴，点开看会怎样">
+          <span class="pipe" aria-hidden="true"></span>
+          <span class="drips" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="bowl" aria-hidden="true"><i class="scrap"></i><i class="scrap"></i><i class="scrap"></i></span>
+          <span class="mess-label">没扣纱布</span>
+        </button>
+      </div>
+      <div class="col pot-col" id="pot-col">
+        <div class="pot-wrap" id="pot-wrap">
+          <div class="steam" aria-hidden="true"><i></i><i></i><i></i></div>
+          <div class="pot" id="pot">
+            <div class="rim" aria-hidden="true"></div>
+            <div class="milk-surface" aria-hidden="true"></div>
+          </div>
+          <div class="spout" aria-hidden="true"></div>
+          <div class="spout-hit" id="spout-hit"></div>
+          <div class="pot-drop" id="pot-drop"></div>
+          <div id="gauze" class="gauze" role="button" tabindex="0" aria-label="纱布，拖到壶嘴上"><span id="gauze-label">纱布</span></div>
+          <div class="arrow" aria-hidden="true"></div>
+          <div class="dish" aria-hidden="true"><i></i><i></i><i></i></div>
+          <div class="pour-line" aria-hidden="true"></div>
+        </div>
+        <label class="gate-wrap">
+          <span id="gate-label">把开口往右推</span>
+          <input id="gate" type="range" min="0" max="100" value="16" aria-labelledby="gate-label">
+        </label>
+      </div>
+      <div class="col cup-col">
+        <div id="ladle" class="ladle" role="button" tabindex="0" aria-label="勺子，拖到小杯上">
+          <span class="ladle-bowl" id="ladle-bowl" aria-hidden="true"></span>
+          <span class="ladle-handle" aria-hidden="true"></span>
+        </div>
+        <p class="tray-label">先给这一小圈</p>
+        <div class="tray">
+          <button type="button" class="cup" id="cup-0" aria-label="第一只小杯"><span class="fill" aria-hidden="true"></span><span class="cup-name">第一只</span></button>
+          <button type="button" class="cup" id="cup-1" aria-label="第二只小杯"><span class="fill" aria-hidden="true"></span><span class="cup-name">第二只</span></button>
+          <button type="button" class="cup" id="cup-2" aria-label="第三只小杯"><span class="fill" aria-hidden="true"></span><span class="cup-name">第三只</span></button>
+        </div>
+      </div>
+      <div class="col bucket-col">
+        <div class="bucket" id="bucket">
+          <div class="lid" aria-hidden="true"></div>
+          <div class="band" aria-hidden="true"></div>
+          <div class="bucket-milk" aria-hidden="true"></div>
+        </div>
+        <p class="bucket-label">大家的桶</p>
+      </div>
+    </div>
+
+    <div id="slip-host" class="slip-host" hidden role="region" aria-label="刚揭开的纸条">
+      <button type="button" id="slip-close">收起这张纸条</button>
+      <article id="slip-gauze" hidden>
+        <h3>纱布扣上了</h3>
+        <p>出这只壶之前，都要从这层布过去。先接小杯，先给一小圈，过关了再进大家的桶。</p>
+      </article>
+      <article id="slip-c0" hidden>
+        <h3>第一只：先给防守的人</h3>
+        <p>Google 发布了目前最强的模型 Gemini 4 Carbon，但没有直接交给所有人。官方说，这周先给一部分网络安全防守方，再经 Fairwind 计划分批开放。</p>
+        <p>综合排行 59 分第一。找漏洞 88.2%，验证能否利用 54.8%，修补根因 71.0%。起步价和 Argon 相同，输入每百万 token 2 美元、输出 10 美元。细情在详细稿里。</p>
+        <p class="src">已核实。来源：<a href="https://deepmind.google/blog/gemini-4-carbon-our-next-frontier-model/" target="_blank" rel="noopener noreferrer">Google DeepMind 官方博客</a></p>
+      </article>
+      <article id="slip-c1" hidden>
+        <h3>第二只：人看过才算数</h3>
+        <p>GitHub 年度报告说，到 2026 年 9 月，超过 40% 的拉取请求由智能体先起草，3 月时是 17%。报告里的原话是：审查，是开发者塑造返回结果的地方。</p>
+        <p>Copilot Fusion 正式开放前，研究预览先路由了将近六万次会话。据微软官方博客，Copilot harness 也是先在自家产品里跑熟，再经 Foundry 对外开放。harness 这一条目前只看到这一处来源。</p>
+        <p class="src">来源：<a href="https://github.blog/news-insights/octoverse/octoverse-commits-pushes-reach-new-highs-in-2026-as-developers-build-with-agents/" target="_blank" rel="noopener noreferrer">GitHub Octoverse 2026</a> · <a href="https://github.blog/news-insights/company-news/github-universe-2026-evolving-every-layer-of-the-stack/" target="_blank" rel="noopener noreferrer">GitHub Universe 2026</a> · <a href="https://blogs.microsoft.com/blog/2026/10/28/introducing-the-microsoft-copilot-harness-unlocking-the-potential-of-truly-multi-model-agentic-work/" target="_blank" rel="noopener noreferrer">微软官方博客</a></p>
+      </article>
+      <article id="slip-c2" hidden>
+        <h3>第三只：小范围试完再放行</h3>
+        <p>据雅培新闻稿，FDA 批准了 Amplatzer Paraclose，经导管堵住人工瓣膜旁边的漏，依据是 200 名患者的研究。FDA 原始批文这次没有单独核对。</p>
+        <p>据产品方称，犹他州 34 名开发者试用了四周，原帖这次没打开，尚未得到其他来源确认。据一份日报，特拉华州草案拟先设 30 个月监管沙盒，银行业除外，草案原文这次没有打开。</p>
+        <p class="src">来源：<a href="https://abbott.mediaroom.com/press-releases?item=124787" target="_blank" rel="noopener noreferrer">雅培新闻稿</a> · <a href="https://x.com/bcherny/status/2115491259381072269" target="_blank" rel="noopener noreferrer">Boris Cherny 的 X 帖子</a> · <a href="https://themorningbuild.com/digest/2026-10-28/" target="_blank" rel="noopener noreferrer">The Morning Build</a></p>
+      </article>
+      <article id="slip-residue" hidden>
+        <h3>纱布上拦住的</h3>
+        <p>Nature 上一项 10 月 28 日的研究，测了 2,357 个单个神经元。胎儿期大约四分之一的皮层神经元带有大范围拷贝数变异，平均 25.9%，范围 12.7% 到 46%。出生后这个比例下降了大约 4.5 倍。严重异常的那些，主要在出生前后被清掉。作者把这叫做发育期的基因组质量检查。</p>
+        <p>跟这层纱布是同一件事：先多准备一些，查一遍，过关的才留下。</p>
+        <p class="src">已核实。来源：<a href="https://www.nature.com/articles/s41586-026-11190-3" target="_blank" rel="noopener noreferrer">Nature 原文</a></p>
+      </article>
+      <article id="slip-side" hidden>
+        <h3>这只嘴没有纱布</h3>
+        <p>据 The Decoder 报道，安全公司 Cathedral 称，智能体从一个第三方业务软件进了 Anthropic 内部，不到十二小时接触到会议记录、薪资数据和 Slack 消息。Anthropic 和 Cathedral 对影响范围的说法不一致，还没有定论。报道原文这次没有打开。</p>
+        <p>据 Tech Startups 当天的汇总，英国一次公众咨询里，76% 的回复是机器自动提交的。研究原文这次没能打开，尚未得到其他来源确认。入口不过一遍，不该进来的会占满。</p>
+        <p class="src">来源：<a href="https://the-decoder.com/ai-agents-hacked-anthropic-maker-of-arguably-the-most-capable-ai-models-for-cyberdefense/" target="_blank" rel="noopener noreferrer">The Decoder 报道</a> · <a href="https://techstartups.com/2026/10/28/tech-news-today-october-28-2026-google-openai-oracle-nvidia-scale-ai-sk-hynix-more/" target="_blank" rel="noopener noreferrer">Tech Startups 10 月 28 日科技汇总</a></p>
+      </article>
+      <article id="slip-raw" hidden>
+        <h3>这勺还没过滤</h3>
+        <p>纱布还没扣上，这杯是浑的，不能算接住。先把纱布拖到壶嘴上，再盛。</p>
+      </article>
+      <article id="slip-gift" hidden>
+        <h3>可以倒给大家了</h3>
+        <p>三只小杯接过了，拦住的看过了，没滤的那只嘴也堵住了。开口一大，这锅就进了大家的桶。</p>
+        <p>其余的消息，写在挂着的那本详细稿里。</p>
+      </article>
+    </div>
+  </main>
+</div>
+<script>
+'use strict';
+(function () {
+  var state = {
+    gauze: false,
+    cups: [false, false, false],
+    residue: false,
+    side: false,
+    wide: false,
+    sound: false,
+    hint: ''
+  };
+  var pourLock = false;
+  var guide = document.getElementById('guide');
+  var gauze = document.getElementById('gauze');
+  var gauzeLabel = document.getElementById('gauze-label');
+  var ladle = document.getElementById('ladle');
+  var bowl = document.getElementById('ladle-bowl');
+  var plug = document.getElementById('plug');
+  var gate = document.getElementById('gate');
+  var gateLabel = document.getElementById('gate-label');
+  var potWrap = document.getElementById('pot-wrap');
+  var slipHost = document.getElementById('slip-host');
+  var mess = document.getElementById('mess');
+  var bucket = document.getElementById('bucket');
+  var book = document.getElementById('digest');
+  var cups = [document.getElementById('cup-0'), document.getElementById('cup-1'), document.getElementById('cup-2')];
+  var soundBtn = document.getElementById('sound');
+  var audioCtx = null;
+  var ordinal = ['一', '二', '三'];
+
+  function cupCount() {
+    return state.cups.filter(Boolean).length;
+  }
+
+  function phase() {
+    if (!state.gauze) return 'gauze';
+    if (cupCount() < 3) return 'cups';
+    if (!state.residue) return 'residue';
+    if (!state.side) return 'side';
+    if (!state.wide) return 'wide';
+    return 'done';
+  }
+
+  function defaultGuide() {
+    var n = cupCount();
+    switch (phase()) {
+      case 'gauze':
+        return '把这块薄荷绿的纱布，拖到壶嘴上。';
+      case 'cups':
+        return '纱布扣好了。把勺子拖到第' + ordinal[n] + '只小杯上。';
+      case 'residue':
+        return '三小杯都接住了。向上揭开纱布，看看它拦住了什么。';
+      case 'side':
+        return '左边那只嘴没扣纱布，正往外涌。把木塞拖过去堵住。';
+      case 'wide':
+        return '可以了。把壶嘴下面的木片往右推，开口大一些。';
+      default:
+        return '这锅筛过了，已经倒进大家的桶里。挂着的那本，是今天的详细稿。';
+    }
+  }
+
+  function render() {
+    var p = phase();
+    document.body.dataset.phase = p;
+    gauze.classList.toggle('on', state.gauze);
+    gauze.classList.toggle('lifted', state.residue);
+    gauze.classList.toggle('hinting', p === 'gauze' || p === 'residue');
+    gauzeLabel.textContent = p === 'residue' ? '向上揭开' : '纱布';
+    ladle.classList.toggle('hinting', p === 'cups');
+    ladle.classList.toggle('awake', state.gauze && !state.wide);
+    plug.classList.toggle('hinting', p === 'side');
+    plug.classList.toggle('shut', state.side);
+    mess.classList.toggle('shut', state.side);
+    gate.classList.toggle('hinting', p === 'wide');
+    cups.forEach(function (cup, i) {
+      cup.classList.toggle('filled', state.cups[i]);
+      cup.setAttribute('aria-pressed', state.cups[i] ? 'true' : 'false');
+    });
+    bucket.classList.toggle('open', state.wide);
+    book.classList.toggle('hinting', p === 'done');
+    if (state.wide) {
+      gate.value = '100';
+      gate.disabled = true;
+      gateLabel.textContent = '已经倒进大家的桶里';
+    } else {
+      gateLabel.textContent = '把开口往右推';
+    }
+    paintGate();
+    var flags = [state.gauze, cupCount() === 3, state.residue, state.side, state.wide];
+    document.querySelectorAll('#dots li').forEach(function (dot, i) {
+      dot.classList.toggle('on', flags[i]);
+    });
+    guide.textContent = state.hint || defaultGuide();
+    gauze.setAttribute('aria-label', state.gauze
+      ? (state.residue ? '纱布已经揭开' : '纱布已经扣在壶嘴上，接完三杯后可以向上揭开')
+      : '纱布，拖到壶嘴上');
+  }
+
+  function paintGate() {
+    var v = Number(gate.value);
+    gate.style.background = 'linear-gradient(90deg, #f0c56a ' + v + '%, #e7d3b4 ' + v + '%)';
+  }
+
+  function showSlip(id) {
+    slipHost.querySelectorAll('article').forEach(function (a) { a.hidden = true; });
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.hidden = false;
+    slipHost.hidden = false;
+  }
+
+  function hideSlip() {
+    slipHost.hidden = true;
+  }
+
+  function blip(freq) {
+    if (!state.sound) return;
+    try {
+      var Ctx = window.AudioContext || window.webkitAudioContext;
+      if (!Ctx) return;
+      audioCtx = audioCtx || new Ctx();
+      var o = audioCtx.createOscillator();
+      var g = audioCtx.createGain();
+      o.type = 'sine';
+      o.frequency.value = freq || 520;
+      g.gain.setValueAtTime(0.0001, audioCtx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.05, audioCtx.currentTime + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.22);
+      o.connect(g);
+      g.connect(audioCtx.destination);
+      o.start();
+      o.stop(audioCtx.currentTime + 0.24);
+    } catch (err) {
+      /* 音频不可用时，页面照常可以玩 */
+    }
+  }
+
+  function placeGauze() {
+    if (state.gauze) return;
+    state.gauze = true;
+    state.hint = '';
+    blip(640);
+    render();
+    showSlip('slip-gauze');
+  }
+
+  function pour(index) {
+    if (!state.gauze) {
+      cups[index].classList.add('spoiled');
+      window.setTimeout(function () { cups[index].classList.remove('spoiled'); }, 900);
+      state.hint = '这杯是浑的。先把纱布拖到壶嘴上，再接。';
+      showSlip('slip-raw');
+      render();
+      return;
+    }
+    if (state.cups[index]) {
+      showSlip('slip-c' + index);
+      return;
+    }
+    if (pourLock) return;
+    var expect = state.cups.findIndex(function (v) { return !v; });
+    if (index !== expect) {
+      state.hint = '先接第' + ordinal[expect] + '只小杯。';
+      render();
+      return;
+    }
+    pourLock = true;
+    window.setTimeout(function () { pourLock = false; }, 320);
+    state.cups[index] = true;
+    state.hint = '';
+    blip(520 + index * 36);
+    render();
+    showSlip('slip-c' + index);
+  }
+
+  function liftGauze() {
+    if (!state.gauze) {
+      placeGauze();
+      return;
+    }
+    if (cupCount() < 3) {
+      state.hint = '先把三小杯接完，再揭开纱布。';
+      render();
+      return;
+    }
+    if (state.residue) {
+      showSlip('slip-residue');
+      return;
+    }
+    state.residue = true;
+    state.hint = '';
+    blip(430);
+    render();
+    showSlip('slip-residue');
+  }
+
+  function closeSide() {
+    if (state.side) {
+      showSlip('slip-side');
+      return;
+    }
+    state.side = true;
+    state.hint = '';
+    blip(300);
+    render();
+    showSlip('slip-side');
+  }
+
+  function readyForWide() {
+    return state.gauze && cupCount() === 3 && state.residue && state.side;
+  }
+
+  var adjusting = false;
+  gate.addEventListener('input', function () {
+    if (adjusting || state.wide) return;
+    paintGate();
+    var v = Number(gate.value);
+    if (!readyForWide()) {
+      if (v > 24) {
+        adjusting = true;
+        gate.value = '16';
+        adjusting = false;
+        paintGate();
+        state.hint = '开口先别开大。三小杯、纱布上拦住的、旁边那只嘴，都过一遍再推。';
+        render();
+      }
+      return;
+    }
+    if (v >= 78) {
+      state.wide = true;
+      state.hint = '';
+      adjusting = true;
+      gate.value = '100';
+      adjusting = false;
+      blip(720);
+      render();
+      showSlip('slip-gift');
+    }
+  });
+
+  function centerIn(el, target, pad) {
+    if (!el || !target) return false;
+    var A = el.getBoundingClientRect();
+    var B = target.getBoundingClientRect();
+    var cx = A.left + A.width / 2;
+    var cy = A.top + A.height / 2;
+    var p = pad || 0;
+    return cx >= B.left - p && cx <= B.right + p && cy >= B.top - p && cy <= B.bottom + p;
+  }
+
+  function bindDrag(el, opts) {
+    var dragging = false;
+    var moved = false;
+    var sx = 0;
+    var sy = 0;
+    var sl = 0;
+    var st = 0;
+    var pid = -1;
+
+    function clearInline() {
+      el.style.left = '';
+      el.style.top = '';
+      el.style.right = '';
+      el.style.bottom = '';
+    }
+
+    el.addEventListener('pointerdown', function (e) {
+      if (e.button !== undefined && e.button !== 0) return;
+      dragging = true;
+      moved = false;
+      pid = e.pointerId;
+      try { el.setPointerCapture(pid); } catch (err) { /* 捕获失败也继续 */ }
+      var parent = el.offsetParent || el.parentElement;
+      var pr = parent.getBoundingClientRect();
+      var r = el.getBoundingClientRect();
+      sl = r.left - pr.left;
+      st = r.top - pr.top;
+      sx = e.clientX;
+      sy = e.clientY;
+      el.style.left = sl + 'px';
+      el.style.top = st + 'px';
+      el.style.right = 'auto';
+      el.style.bottom = 'auto';
+      el.classList.add('dragging');
+    });
+
+    el.addEventListener('pointermove', function (e) {
+      if (!dragging || e.pointerId !== pid) return;
+      var dx = e.clientX - sx;
+      var dy = e.clientY - sy;
+      if (Math.hypot(dx, dy) > 6) moved = true;
+      el.style.left = (sl + dx) + 'px';
+      el.style.top = (st + dy) + 'px';
+    });
+
+    function end(e) {
+      if (!dragging) return;
+      if (e && e.pointerId !== undefined && e.pointerId !== pid) return;
+      dragging = false;
+      el.classList.remove('dragging');
+      var wasMoved = moved;
+      if (!wasMoved) {
+        clearInline();
+        if (opts.onClick) opts.onClick();
+        return;
+      }
+      var ok = opts.onDrop ? opts.onDrop() : false;
+      clearInline();
+      if (!ok && opts.onMiss) opts.onMiss();
+    }
+
+    el.addEventListener('pointerup', end);
+    el.addEventListener('pointercancel', function (e) {
+      if (!dragging) return;
+      dragging = false;
+      el.classList.remove('dragging');
+      clearInline();
+    });
+
+    el.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        if (opts.onClick) opts.onClick();
+      }
+    });
+  }
+
+  bindDrag(gauze, {
+    onClick: function () { liftGauze(); },
+    onDrop: function () {
+      if (!state.gauze && (centerIn(gauze, potWrap, 36) || centerIn(gauze, document.getElementById('spout-hit'), 24))) {
+        placeGauze();
+        return true;
+      }
+      if (state.gauze && !state.residue && cupCount() === 3) {
+        var r = gauze.getBoundingClientRect();
+        var p = potWrap.getBoundingClientRect();
+        if (r.top < p.top + p.height * 0.28) {
+          liftGauze();
+          return true;
+        }
+      }
+      return false;
+    }
+  });
+
+  bindDrag(ladle, {
+    onClick: function () {
+      var expect = state.cups.findIndex(function (v) { return !v; });
+      if (expect === -1) {
+        showSlip('slip-c2');
+        return;
+      }
+      pour(expect);
+    },
+    onDrop: function () {
+      var i;
+      for (i = 0; i < cups.length; i += 1) {
+        if (centerIn(bowl, cups[i], 26) || centerIn(ladle, cups[i], 16)) {
+          pour(i);
+          return true;
+        }
+      }
+      if (centerIn(ladle, bucket, 12)) {
+        state.hint = '大家的桶还盖着。先把三小杯接完。';
+        render();
+      }
+      return false;
+    }
+  });
+
+  bindDrag(plug, {
+    onClick: function () { closeSide(); },
+    onDrop: function () {
+      if (centerIn(plug, mess, 40)) {
+        closeSide();
+        return true;
+      }
+      return false;
+    }
+  });
+
+  cups.forEach(function (cup, i) {
+    cup.addEventListener('click', function () { pour(i); });
+  });
+  mess.addEventListener('click', function () { showSlip('slip-side'); });
+  document.getElementById('slip-close').addEventListener('click', hideSlip);
+
+  soundBtn.addEventListener('click', function () {
+    state.sound = !state.sound;
+    soundBtn.textContent = state.sound ? '关掉声音' : '打开声音';
+    soundBtn.setAttribute('aria-pressed', state.sound ? 'true' : 'false');
+    if (state.sound) blip(600);
+  });
+
+  document.getElementById('reset').addEventListener('click', function () {
+    state.gauze = false;
+    state.cups = [false, false, false];
+    state.residue = false;
+    state.side = false;
+    state.wide = false;
+    state.hint = '';
+    pourLock = false;
+    gate.disabled = false;
+    gate.value = '16';
+    cups.forEach(function (c) { c.classList.remove('spoiled'); });
+    [gauze, ladle, plug].forEach(function (el) {
+      el.style.left = '';
+      el.style.top = '';
+      el.style.right = '';
+      el.style.bottom = '';
+    });
+    hideSlip();
+    if (book.open) book.open = false;
+    var note = document.getElementById('note');
+    if (note.open) note.open = false;
+    render();
+  });
+
+  document.querySelectorAll('.filters button').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var f = btn.getAttribute('data-filter');
+      document.querySelectorAll('.filters button').forEach(function (b) {
+        b.setAttribute('aria-pressed', b === btn ? 'true' : 'false');
+      });
+      document.querySelectorAll('.piece').forEach(function (piece) {
+        var kind = piece.getAttribute('data-kind');
+        var dim = f !== 'all' && kind !== f && kind !== 'note';
+        piece.classList.toggle('dim', dim);
+      });
+      document.getElementById('filter-note').textContent = f === 'all'
+        ? '十六条都摊开着。点上面的按钮，只是把另一类调暗，字不会少。'
+        : '另一类已经调暗，字都还在，可以照常往下读。';
+    });
+  });
+
+  render();
+})();
+</script>
+</body>
+<!--
+DESIGN LESSON
+STYLE: 星期四清晨的浅色早市，木推车盛着蜂蜜色豆浆，壶嘴上盖着一块薄荷绿纱布。
+GENRE: 用手把纱布扣上壶嘴，先接三小杯，再把开口推大，倒进大家的桶里。
+TITLE: 先盛三小杯，再倒给大家
+THESIS: 交给所有人之前，先过一道筛，过关才放行。
+-->
+</html>
