@@ -247,7 +247,7 @@
     padding: 0 8px 8px;
     overflow: auto;
   }
-  .slot { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; align-items: stretch; }
+  .slot { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; align-items: stretch; scroll-margin: 8px 0 14px; }
   .door { display: block; width: 100%; text-align: left; }
   .frame {
     position: relative;
@@ -516,6 +516,16 @@
     .window { width: 46px; height: 54px; }
     .skyband { padding-right: 58px; }
     .tray { flex: 1 0 100%; }
+    .alarm { display: none !important; }
+    .bell {
+      position: absolute;
+      right: 58px;
+      top: 8px;
+      z-index: 3;
+      width: 56px;
+      background: rgba(255, 253, 248, .86);
+      border-radius: 10px;
+    }
     .hint { font-size: 15px; }
     .ring-label { min-width: 0; max-width: 46%; }
     .sticky { width: 76px; padding: 6px; }
@@ -619,7 +629,7 @@
           <button type="button" class="tool" id="tool-drawer" data-act="tool" data-id="drawer">
             <span class="cylicon" aria-hidden="true" style="opacity:.35"></span>
             空的坯料匣
-            <small>钥匙坯见底了</small>
+            <small>坯料见底了</small>
           </button>
         </div>
         <p id="alarm" class="alarm" hidden></p>
@@ -1364,6 +1374,23 @@
       d.gapPeeked && state.bellRead
     ].filter(Boolean).length;
   }
+  var lastReveal = "";
+  function reveal(id) {
+    if (!id || id === lastReveal || anyDialog()) return;
+    var el = $(id);
+    if (id.indexOf("door-") === 0) {
+      var slot = $("slot-" + id.slice(5));
+      if (slot) el = slot;
+    }
+    if (!el || el.hidden) return;
+    var r = el.getBoundingClientRect();
+    var ring = document.querySelector(".ring").getBoundingClientRect();
+    var limit = document.querySelector(".ring").contains(el) ? window.innerHeight - 4 : ring.top - 2;
+    var outside = r.top < 52 || r.bottom > limit || r.left < 4 || r.right > window.innerWidth - 4;
+    if (!outside) { lastReveal = id; return; }
+    lastReveal = id;
+    el.scrollIntoView({ block: "nearest", inline: "nearest" });
+  }
   function render() {
     maybeGiveMol();
     if (!state.finished && tidyUnlocked() && allHung()) {
@@ -1456,6 +1483,7 @@
     $("btn-sound").textContent = state.sound ? "声音开" : "声音关";
     $("btn-sound").setAttribute("aria-pressed", state.sound ? "true" : "false");
     $("tool-screw").textContent = state.doors.gapScrewed ? "螺丝拧上了，缝还在" : "把松掉的螺丝拧上";
+    reveal(s.pulse);
   }
   function handle(el) {
     var act = el.getAttribute("data-act");
@@ -1564,6 +1592,7 @@
     else if (kind === "peg") onPeg(hit.getAttribute("data-id"));
     else if (kind === "dish") onDish();
   }
+  window.addEventListener("resize", function () { lastReveal = ""; render(); });
   document.addEventListener("pointerup", endDrag);
   document.addEventListener("pointercancel", function () { drag = null; $("ghost").hidden = true; });
   render();
