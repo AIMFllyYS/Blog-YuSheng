@@ -1,0 +1,1553 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:,">
+<meta name="color-scheme" content="light">
+<title>让风筝停在天上 · 折晓早报 · 2026-11-03</title>
+<style>
+  :root {
+    --ink: #243038;
+    --muted: #5d6c74;
+    --coral: #e07a5f;
+    --deep: #c45448;
+    --wood: #c4894f;
+    --wood-dark: #8d5a32;
+    --paper: #fffaf3;
+    --cream: #f6f0e4;
+    --ease: cubic-bezier(.22, .68, .2, 1);
+    --pop: cubic-bezier(.2, 1.12, .32, 1);
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    overflow: hidden;
+    color: var(--ink);
+    background: #d7e7c4;
+    font-family: "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", "WenQuanYi Micro Hei", "WenQuanYi Zen Hei", "Droid Sans Fallback", sans-serif;
+    line-height: 1.5;
+  }
+  button, input { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  a { color: #1d6158; }
+  :focus-visible { outline: 2px solid var(--coral); outline-offset: 3px; }
+  ::selection { background: #f6d3c4; }
+  .sr {
+    position: absolute;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap; border: 0;
+  }
+  .world {
+    position: relative;
+    height: 100%;
+    overflow: hidden;
+    background: #cfe6f4;
+  }
+  .sky {
+    position: absolute;
+    inset: 0 0 24% 0;
+    background:
+      radial-gradient(ellipse 42% 36% at 16% 16%, rgba(255, 214, 163, .95), transparent 62%),
+      radial-gradient(ellipse 70% 42% at 80% 100%, rgba(255, 246, 232, .75), transparent 70%),
+      linear-gradient(180deg, #b7dff4 0%, #d9eef9 42%, #f4efe6 82%, #f7f3ea 100%);
+    overflow: visible;
+  }
+  .sun {
+    position: absolute;
+    left: 9%;
+    top: 8%;
+    width: 72px; height: 72px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 40% 40%, #fff7e8, #ffd7a4 55%, #f2c48a 78%, transparent 80%);
+    box-shadow: 0 0 40px 16px rgba(255, 206, 150, .45);
+    transition: transform .8s var(--ease);
+  }
+  .cloud {
+    position: absolute;
+    background: #fffdf9;
+    border-radius: 40px;
+    box-shadow: 0 8px 18px rgba(150, 170, 180, .12);
+    animation: drift 70s linear infinite;
+  }
+  .cloud::before, .cloud::after {
+    content: "";
+    position: absolute;
+    background: #fffdf9;
+    border-radius: 50%;
+  }
+  .c1 { width: 120px; height: 36px; top: 14%; left: -10%; }
+  .c1::before { width: 46px; height: 46px; left: 18px; top: -24px; }
+  .c1::after { width: 34px; height: 34px; left: 52px; top: -16px; }
+  .c2 { width: 86px; height: 28px; top: 22%; left: 18%; animation-duration: 90s; opacity: .9; }
+  .c2::before { width: 32px; height: 32px; left: 14px; top: -16px; }
+  .c2::after { width: 24px; height: 24px; left: 40px; top: -10px; }
+  .c3 { width: 150px; height: 40px; top: 10%; left: 48%; animation-duration: 110s; }
+  .c3::before { width: 54px; height: 54px; left: 28px; top: -28px; }
+  .c3::after { width: 40px; height: 40px; left: 70px; top: -18px; }
+  .c4 { width: 70px; height: 22px; top: 28%; left: 72%; animation-duration: 80s; opacity: .85; }
+  .c4::before { width: 26px; height: 26px; left: 12px; top: -14px; }
+  @keyframes drift { from { transform: translateX(0); } to { transform: translateX(42vw); } }
+  .band {
+    position: absolute;
+    left: 0; right: 0;
+    background: linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,246,224,.22) 20%, rgba(255,236,196,.42) 50%, rgba(255,246,224,.22) 80%, rgba(255,255,255,0) 100%);
+    pointer-events: none;
+    transition: background .6s var(--ease);
+  }
+  .band span {
+    position: absolute;
+    right: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 13px;
+    color: rgba(48, 62, 72, .78);
+    background: rgba(255, 252, 247, .62);
+    border-radius: 999px;
+    padding: 3px 10px;
+  }
+  .world.is-band .band {
+    background: linear-gradient(180deg, transparent, rgba(255, 214, 170, .28) 20%, rgba(255, 236, 214, .5) 50%, rgba(255, 220, 180, .24) 80%, transparent);
+  }
+  .world.is-gift .sun { transform: scale(1.12); }
+  .world.is-gift .band {
+    background: linear-gradient(180deg, transparent, rgba(255, 196, 150, .35) 20%, rgba(255, 228, 196, .55) 50%, rgba(255, 206, 170, .28) 82%, transparent);
+  }
+  .hill {
+    position: absolute;
+    left: -10%; right: -10%;
+    bottom: -8%;
+    height: 28%;
+    background: linear-gradient(180deg, rgba(198, 214, 164, .2), rgba(176, 198, 138, .55));
+    border-radius: 50% 50% 0 0 / 70% 70% 0 0;
+    pointer-events: none;
+  }
+  .willow {
+    position: absolute;
+    bottom: -2%;
+    width: 120px; height: 132px;
+    pointer-events: none;
+  }
+  .willow.far { left: 2%; width: 100px; height: 112px; opacity: .9; }
+  .willow.near { right: 18%; width: 128px; height: 140px; }
+  .vane {
+    position: absolute;
+    left: 18px;
+    top: 16%;
+    width: 64px; height: 96px;
+    z-index: 3;
+    pointer-events: none;
+  }
+  .vane-pole {
+    position: absolute;
+    left: 10px; top: 0; bottom: 10px;
+    width: 3px;
+    background: linear-gradient(#d7b98a, #a67c49);
+    border-radius: 2px;
+  }
+  .vane-cloth {
+    position: absolute;
+    left: 12px; top: 10px;
+    width: 42px; height: 14px;
+    border-radius: 0 10px 10px 0;
+    background: linear-gradient(90deg, #d85a48, #f0b2a4);
+    transform-origin: left center;
+    box-shadow: 0 3px 0 rgba(180, 80, 60, .15);
+  }
+  .vane-note {
+    position: absolute;
+    left: 8px; top: 36px;
+    margin: 0;
+    width: 7.2em;
+    font-size: 12px;
+    line-height: 1.45;
+    color: var(--muted);
+    background: rgba(255, 252, 247, .72);
+    border-radius: 8px;
+    padding: 4px 7px;
+  }
+  .kite {
+    position: absolute;
+    left: 0; top: 0;
+    width: 132px; height: 168px;
+    z-index: 4;
+    pointer-events: none;
+    transform-origin: 50% 45%;
+  }
+  .kite-inner {
+    width: 100%; height: 100%;
+    transform-style: preserve-3d;
+  }
+  .kite svg { width: 100%; height: 100%; overflow: visible; display: block; }
+  .bird {
+    position: absolute;
+    width: 16px; height: 8px;
+    top: 24%; left: -6%;
+    pointer-events: none;
+    animation: fly 52s linear infinite;
+  }
+  .bird::before, .bird::after {
+    content: "";
+    position: absolute;
+    width: 9px; height: 2px;
+    background: #607888;
+    border-radius: 2px;
+    top: 3px;
+  }
+  .bird::before { left: 0; transform: rotate(-20deg); }
+  .bird::after { right: 0; transform: rotate(20deg); }
+  @keyframes fly { to { left: 108%; } }
+  .tail {
+    position: absolute;
+    left: 0; top: 0;
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    width: min(250px, 32vw);
+    max-height: 42vh;
+    overflow: auto;
+    padding: 0 8px 8px 14px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(196, 132, 74, .55) transparent;
+    pointer-events: auto;
+  }
+  .tail::-webkit-scrollbar { width: 6px; height: 6px; }
+  .tail::-webkit-scrollbar-thumb { background: rgba(196, 132, 74, .55); border-radius: 99px; }
+  .tail::before {
+    content: "";
+    position: absolute;
+    left: 5px; top: 0; bottom: 8px;
+    width: 2px;
+    background: linear-gradient(#c4844a, rgba(196, 132, 74, .2));
+    border-radius: 2px;
+    opacity: 0;
+  }
+  .tail.has-ribbon::before { opacity: 1; }
+  .ribbon, .bud {
+    position: relative;
+    border: 0;
+    text-align: left;
+    border-radius: 3px 12px 12px 3px;
+    box-shadow: 0 6px 14px rgba(90, 60, 30, .08);
+  }
+  .ribbon {
+    background: var(--c, #f7d7c8);
+    color: var(--ink);
+    padding: 8px 10px 8px 12px;
+    min-height: 44px;
+    animation: unfurl .65s var(--ease);
+  }
+  .ribbon-text { display: block; font-size: 13.5px; line-height: 1.45; }
+  .bud {
+    width: 28px; height: 12px;
+    margin-left: 2px;
+    background: linear-gradient(#f4d2c6, #e7a898);
+    border-radius: 0 8px 8px 0;
+    transform-origin: left center;
+    box-shadow: inset 0 0 0 1px rgba(180, 80, 60, .15);
+  }
+  .bud.is-bow {
+    width: 28px; height: 22px;
+    border-radius: 50% 50% 46% 46%;
+    background: radial-gradient(circle at 35% 35%, #ffe7a8, #e07a5f 62%, #c45448);
+    transform: none !important;
+  }
+  @keyframes unfurl {
+    from { opacity: 0; transform: rotateX(70deg) scaleX(.35); }
+    to { opacity: 1; transform: none; }
+  }
+  .river {
+    position: absolute;
+    left: 0; right: 0;
+    bottom: 18%;
+    height: 11%;
+    background: linear-gradient(180deg, rgba(190, 224, 224, .2), #b7ddd8 30%, #9ecfce 70%, #c5e3da);
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .river::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(100deg, transparent 30%, rgba(255,255,255,.45) 48%, transparent 62%);
+    background-size: 220% 100%;
+    animation: shimmer 9s linear infinite;
+  }
+  @keyframes shimmer { from { background-position: 100% 0; } to { background-position: -100% 0; } }
+  .boat {
+    position: absolute;
+    bottom: 28%;
+    left: -8%;
+    width: 36px; height: 14px;
+    animation: sail 80s linear infinite;
+  }
+  .boat i, .boat b { position: absolute; display: block; }
+  .boat i {
+    left: 0; bottom: 0;
+    width: 36px; height: 8px;
+    background: #f4efe4;
+    border-radius: 0 0 10px 10px;
+    box-shadow: 0 2px 0 rgba(80, 60, 40, .08);
+  }
+  .boat b {
+    left: 16px; bottom: 6px;
+    width: 0; height: 0;
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    border-bottom: 12px solid #f2c9b8;
+  }
+  @keyframes sail { to { transform: translateX(120vw); } }
+  .grass {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 22%;
+    background:
+      radial-gradient(circle at 12% 70%, rgba(224, 122, 95, .35) 0 3px, transparent 4px),
+      radial-gradient(circle at 18% 40%, rgba(240, 196, 90, .8) 0 3px, transparent 4px),
+      radial-gradient(circle at 78% 62%, rgba(224, 122, 95, .4) 0 3px, transparent 4px),
+      radial-gradient(circle at 86% 38%, rgba(246, 214, 120, .9) 0 2px, transparent 3px),
+      linear-gradient(180deg, #e4efc8 0%, #cfe0a4 28%, #c3d696 100%);
+    pointer-events: none;
+  }
+  .reeds {
+    position: absolute;
+    left: 0; right: 0; bottom: 16%;
+    height: 70px;
+    width: 100%;
+    pointer-events: none;
+  }
+  .string-layer {
+    position: absolute;
+    inset: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 4;
+  }
+  .shadow {
+    position: absolute;
+    bottom: 16%;
+    width: 70px; height: 16px;
+    margin-left: -35px;
+    background: rgba(70, 90, 50, .22);
+    border-radius: 50%;
+    filter: blur(2px);
+    pointer-events: none;
+    z-index: 2;
+  }
+  .date {
+    position: absolute;
+    top: 14px; left: 16px;
+    margin: 0;
+    font-size: 13px;
+    color: rgba(36, 48, 56, .62);
+    z-index: 6;
+  }
+  .sound {
+    position: absolute;
+    top: 10px; right: 12px;
+    z-index: 8;
+    border: 0;
+    background: rgba(255, 252, 247, .8);
+    border-radius: 999px;
+    padding: 6px 12px;
+    font-size: 13px;
+    color: var(--ink);
+  }
+  .hint {
+    position: absolute;
+    left: auto;
+    right: 22px;
+    bottom: 22px;
+    transform: none;
+    width: min(22rem, 34vw);
+    margin: 0;
+    text-align: left;
+    z-index: 6;
+    pointer-events: none;
+    background: rgba(255, 252, 247, .86);
+    border-radius: 14px;
+    padding: 10px 12px 11px;
+    box-shadow: 0 8px 18px rgba(80, 60, 30, .06);
+  }
+  .hint-main {
+    display: block;
+    font-size: 18px;
+    font-weight: 650;
+    line-height: 1.45;
+    color: var(--ink);
+    text-shadow: 0 1px 0 rgba(255,255,255,.4);
+  }
+  .hint-sub {
+    display: block;
+    margin-top: 4px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--muted);
+  }
+  .gesture {
+    position: absolute;
+    left: 50%;
+    bottom: calc(22% + 128px);
+    transform: translateX(-50%);
+    margin: 0;
+    z-index: 8;
+    background: #fffaf3;
+    color: var(--deep);
+    border-radius: 999px;
+    padding: 2px 10px;
+    font-size: 13px;
+    pointer-events: none;
+  }
+  .satchel {
+    position: absolute;
+    left: 18px;
+    bottom: 14px;
+    z-index: 8;
+    width: 118px;
+    border: 0;
+    background: transparent;
+    padding: 0;
+    text-align: center;
+  }
+  .bag {
+    display: block;
+    position: relative;
+    height: 72px;
+    margin: 0 auto;
+    width: 92px;
+  }
+  .bag .body {
+    position: absolute;
+    left: 8px; right: 8px; bottom: 0;
+    height: 52px;
+    background: linear-gradient(#f0e2cc, #e4d0b0);
+    border-radius: 8px 8px 12px 12px;
+    box-shadow: 0 8px 0 rgba(120, 80, 40, .08), inset 0 0 0 2px rgba(160, 110, 60, .18);
+  }
+  .bag .pages {
+    position: absolute;
+    left: 22px; right: 22px; bottom: 28px;
+    height: 34px;
+    background: #fffdf8;
+    border-radius: 2px 2px 0 0;
+    box-shadow: 6px 0 0 #f6efe4, -5px 0 0 #f3e6d4;
+  }
+  .bag .pages::after {
+    content: "";
+    position: absolute;
+    left: 6px; right: 6px; top: 8px;
+    height: 2px;
+    background: #ecd8c4;
+    box-shadow: 0 5px 0 #ecd8c4, 0 10px 0 #ecd8c4;
+  }
+  .bag .flap {
+    position: absolute;
+    left: 8px; right: 8px; bottom: 26px;
+    height: 22px;
+    background: #e7d3b4;
+    border-radius: 8px 8px 4px 4px;
+    transform-origin: top center;
+  }
+  .satchel-label, .satchel-sub { display: block; }
+  .satchel-label { font-size: 14px; font-weight: 650; margin-top: 2px; }
+  .satchel-sub { font-size: 12px; color: var(--muted); }
+  .satchel.nudge .bag { animation: nod 1s var(--pop); }
+  @keyframes nod {
+    0% { transform: translateY(0) rotate(0); }
+    35% { transform: translateY(-7px) rotate(-2deg); }
+    100% { transform: translateY(0) rotate(0); }
+  }
+  .reel {
+    position: absolute;
+    left: 50%;
+    bottom: 8px;
+    transform: translateX(-50%);
+    width: 210px; height: 168px;
+    z-index: 8;
+    border: 0;
+    background: transparent;
+    padding: 0;
+    touch-action: none;
+    user-select: none;
+    cursor: grab;
+  }
+  .reel:active { cursor: grabbing; }
+  .reel:focus-visible { outline: none; }
+  .reel:focus-visible svg { filter: drop-shadow(0 0 7px rgba(224, 122, 95, .9)); }
+  .reel svg { width: 100%; height: 100%; overflow: visible; display: block; }
+  .ghost-crank { transform-box: fill-box; }
+  .tab {
+    position: absolute;
+    left: calc(50% + 62px);
+    bottom: 118px;
+    z-index: 9;
+    border: 0;
+    background: #fff4cc;
+    color: var(--ink);
+    padding: 6px 8px 8px;
+    font-size: 12px;
+    border-radius: 2px 8px 8px 2px;
+    box-shadow: 0 6px 10px rgba(120, 90, 20, .12);
+    transform: rotate(6deg);
+  }
+  .card, .gift, .sticky {
+    position: absolute;
+    z-index: 16;
+    background: var(--paper);
+    color: var(--ink);
+    border-radius: 16px;
+    box-shadow: 0 18px 50px rgba(70, 45, 20, .16);
+  }
+  .card, .gift {
+    left: 50%;
+    top: 42%;
+    width: min(36rem, calc(100% - 28px));
+    max-height: min(68%, 540px);
+    overflow: auto;
+    padding: 1.05rem 1.15rem 1rem;
+    animation: pop .5s var(--pop);
+  }
+  @keyframes pop {
+    from { opacity: 0; transform: translate(-50%, -42%) scale(.94); }
+    to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  }
+  .card { z-index: 18; transform: translate(-50%, -50%); }
+  .gift {
+    left: auto;
+    right: 18px;
+    top: auto;
+    bottom: 108px;
+    width: min(26rem, 36vw);
+    max-height: min(52%, 440px);
+    transform: none;
+    animation: settle .55s var(--pop);
+  }
+  @keyframes settle {
+    from { opacity: 0; transform: translateY(12px) scale(.97); }
+    to { opacity: 1; transform: none; }
+  }
+  body:has(#gift:not([hidden])) .hint { visibility: hidden; }
+  .card h2, .gift h2, .sticky h2 {
+    margin: .2rem 0 .55rem;
+    font-size: 1.28rem;
+    line-height: 1.4;
+    font-weight: 700;
+  }
+  .card p, .gift p, .sticky p { margin: .55rem 0; line-height: 1.7; font-size: 1rem; }
+  .kicker { margin: 0; color: var(--muted); font-size: .9rem; }
+  .card ul, .gift .actions, .sticky { }
+  .card ul { margin: .4rem 0 .7rem; padding: 0; list-style: none; }
+  .card li { margin: .28rem 0; }
+  .card a { overflow-wrap: anywhere; }
+  .text-btn, .actions button, .notes-bar button, .doc-nav button, .doc-nav a {
+    border: 1px solid #eadcc8;
+    background: #fff;
+    border-radius: 999px;
+    padding: .4rem .85rem;
+    text-decoration: none;
+    color: var(--ink);
+  }
+  .actions { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .8rem; }
+  .actions .primary, .notes-bar button {
+    background: var(--coral);
+    border-color: var(--coral);
+    color: #fffaf6;
+  }
+  .sticky {
+    right: 16px;
+    bottom: 16px;
+    width: min(24rem, calc(100% - 24px));
+    max-height: min(74%, 560px);
+    overflow: auto;
+    padding: 1rem 1.05rem .9rem;
+    transform: rotate(-.4deg);
+    z-index: 17;
+  }
+  .sticky h2 { font-size: 1.12rem; }
+  .notes {
+    display: none;
+    position: absolute;
+    inset: 0;
+    z-index: 20;
+    background: var(--cream);
+    color: var(--ink);
+    overflow: auto;
+  }
+  .notes.is-open { display: block; }
+  .notes-inner {
+    max-width: 44rem;
+    margin: 0 auto;
+    padding: 0 1.25rem 4.5rem;
+  }
+  .notes-bar {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: .75rem;
+    padding: .75rem 0;
+    background: #f6f0e4;
+  }
+  .notes-kicker { margin: 0; font-size: .95rem; color: var(--muted); }
+  .doc-nav { display: flex; flex-wrap: wrap; gap: .45rem; margin: .2rem 0 1rem; }
+  .doc-nav a, .doc-nav button { font-size: .92rem; background: #fffdf8; }
+  .lead {
+    font-size: 1.02rem;
+    line-height: 1.75;
+    margin: .2rem 0 1rem;
+  }
+  #doc { overflow-wrap: anywhere; }
+  #doc .doc-title {
+    font-size: 1.7rem;
+    line-height: 1.35;
+    margin: .3rem 0 .9rem;
+    font-weight: 750;
+  }
+  #doc h2.part {
+    font-size: 1.32rem;
+    line-height: 1.4;
+    margin: 2rem 0 .8rem;
+    padding-top: .8rem;
+    border-top: 1px solid rgba(36, 48, 56, .12);
+  }
+  #doc h2#shape {
+    font-size: 1.22rem;
+    margin: 1.4rem 0 .6rem;
+  }
+  #doc .entry {
+    background: #fffdf8;
+    border-radius: 14px;
+    padding: .95rem 1.05rem .35rem;
+    margin: .85rem 0;
+    box-shadow: 0 1px 0 rgba(90, 60, 20, .05);
+  }
+  #doc h3 {
+    font-size: 1.08rem;
+    line-height: 1.5;
+    margin: 0 0 .55rem;
+    font-weight: 700;
+  }
+  #doc p { margin: .72em 0; line-height: 1.8; font-size: 1.05rem; }
+  #doc .thesis {
+    background: #fff1e8;
+    border-left: 3px solid var(--coral);
+    padding: .55rem .8rem;
+    border-radius: 0 10px 10px 0;
+  }
+  #doc .thesis.is-mark { background: #ffe1d4; }
+  #doc .why { color: #314047; }
+  #doc .status { color: var(--muted); font-size: .98rem; }
+  #doc ul.sources { margin: .3rem 0 .8rem; padding-left: 1.1rem; }
+  #doc ul.sources li { margin: .28rem 0; line-height: 1.55; }
+  #doc a { color: #1d6158; }
+  .table-wrap { overflow-x: auto; margin: .8rem 0 1.1rem; }
+  #doc table { width: 100%; border-collapse: collapse; font-size: .92rem; line-height: 1.55; }
+  #doc th, #doc td {
+    border-bottom: 1px solid #eadfce;
+    padding: .45rem .4rem;
+    text-align: left;
+    vertical-align: top;
+  }
+  #doc th { font-weight: 700; background: rgba(255, 250, 243, .7); }
+  #doc hr { border: 0; border-top: 1px solid rgba(36, 48, 56, .1); margin: 1.2rem 0; }
+  @media (max-width: 760px) {
+    .hint {
+      left: auto;
+      right: 10px;
+      top: 52px;
+      bottom: auto;
+      width: min(15.2rem, 68vw);
+      text-align: left;
+      padding: 8px 10px;
+    }
+    .hint-main { font-size: 16px; }
+    .satchel { left: 8px; bottom: 8px; width: 96px; }
+    .bag { transform: scale(.86); transform-origin: left bottom; }
+    .reel { width: 168px; height: 136px; bottom: 0; }
+    .tab { left: auto; right: 8px; bottom: 158px; }
+    .tail {
+      position: absolute;
+      left: 10px; right: 10px; top: auto;
+      bottom: 176px;
+      width: auto;
+      max-height: none;
+      flex-direction: row;
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding: 4px 4px 6px;
+      transform: none !important;
+    }
+    .tail::before { display: none; }
+    .ribbon { flex: 0 0 auto; width: 168px; }
+    .date { font-size: 12px; }
+    .vane { top: 12%; }
+    .card { top: 34%; max-height: 52%; }
+    .gift {
+      left: 12px;
+      right: 12px;
+      top: 52px;
+      bottom: auto;
+      width: auto;
+      max-height: 38%;
+    }
+  }
+  @media (max-height: 680px) and (min-width: 761px) {
+    .reel { width: 176px; height: 142px; }
+    .hint { bottom: 14px; width: min(18rem, 32vw); padding: 8px 10px; }
+    .kite { width: 112px; height: 144px; }
+    .satchel { bottom: 8px; }
+    .gift {
+      top: 48px;
+      bottom: auto;
+      right: 14px;
+      width: min(22rem, 42vw);
+      max-height: 42%;
+    }
+  }
+  @media (max-width: 420px) {
+    .hint-sub { font-size: 12px; }
+    .satchel-sub { font-size: 11px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cloud, .boat, .bird, .river::after, .ghost-crank, .satchel.nudge .bag { animation: none !important; }
+    .ribbon, .card, .gift { animation: none !important; }
+  }
+</style>
+</head>
+<body>
+<div class="world" id="world">
+  <p class="sr">这是十一月三日的早报。画面是秋日的河堤。按住线轴慢慢转动，让风筝停进那层浅色的风里。停得越久，尾巴上的飘带就展开得越多。猛地快收，它会冲高，然后栽下来。草地上的笔记是今天的详细稿。</p>
+  <div class="sky" id="sky">
+    <div class="sun" aria-hidden="true"></div>
+    <div class="cloud c1" aria-hidden="true"></div>
+    <div class="cloud c2" aria-hidden="true"></div>
+    <div class="cloud c3" aria-hidden="true"></div>
+    <div class="cloud c4" aria-hidden="true"></div>
+    <div class="band" id="band"><span>适合停留的一层风</span></div>
+    <div class="hill" aria-hidden="true"></div>
+    <svg class="willow far" viewBox="0 0 140 150" aria-hidden="true">
+      <path d="M70 28c-28 6-46 32-44 58-8 10-10 28-2 40 12-16 22-22 34-22 4 14 8 28 10 40h8c2-14 8-28 14-40 12 2 24 8 34 22 8-12 6-30-2-40 4-26-14-54-52-58z" fill="#8eaf72"/>
+      <path d="M46 78c-6 18-14 36-18 58M62 86c-2 16-6 34-8 52M78 88c2 16 4 34 2 52M96 80c6 16 12 36 14 56" stroke="#6d9458" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <path d="M66 96h10c1 18 2 34 1 48h-12c-1-16 0-32 1-48z" fill="#6a8a50"/>
+    </svg>
+    <svg class="willow near" viewBox="0 0 140 150" aria-hidden="true">
+      <path d="M72 24c-30 8-50 36-46 62-10 12-12 30-2 42 14-18 24-24 36-22 4 16 8 30 10 42h8c2-14 8-30 16-42 14 0 26 8 36 22 10-12 8-32-2-42 6-28-16-58-56-62z" fill="#7ea368"/>
+      <path d="M42 82c-8 20-16 40-16 62M64 90c-2 18-4 36-2 54M84 90c4 16 6 36 4 54M104 84c8 18 14 38 12 58" stroke="#5f864c" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+      <path d="M66 98h12c0 16 1 32 0 46h-12c0-16 0-32 0-46z" fill="#5d8248"/>
+    </svg>
+    <div class="vane" id="vane">
+      <div class="vane-pole"></div>
+      <div class="vane-cloth" id="vane-cloth"></div>
+      <p class="vane-note" id="vane-note">现在风不大。</p>
+    </div>
+    <div class="kite" id="kite">
+      <div class="kite-inner" id="kite-inner">
+        <svg viewBox="0 0 140 180" aria-hidden="true">
+          <polygon points="70,8 128,74 70,168 12,74" fill="#f6d7cc"/>
+          <polygon points="70,8 128,74 70,86" fill="#f3a594"/>
+          <polygon points="70,8 12,74 70,86" fill="#e36d5c"/>
+          <polygon points="70,86 128,74 70,168" fill="#f6c2b4"/>
+          <polygon points="70,86 12,74 70,168" fill="#ea8d7c"/>
+          <line x1="70" y1="10" x2="70" y2="164" stroke="#a86b38" stroke-width="2.6" stroke-linecap="round"/>
+          <line x1="16" y1="74" x2="124" y2="74" stroke="#a86b38" stroke-width="2.6" stroke-linecap="round"/>
+          <circle cx="70" cy="74" r="4.5" fill="#fffaf3" stroke="#e07a5f" stroke-width="1.4"/>
+          <circle id="bridle" cx="70" cy="168" r="2.5" fill="#a86b38"/>
+        </svg>
+      </div>
+    </div>
+    <div class="bird" aria-hidden="true"></div>
+  </div>
+  <div class="river" aria-hidden="true"><div class="boat"><i></i><b></b></div></div>
+  <svg class="reeds" viewBox="0 0 400 70" preserveAspectRatio="none" aria-hidden="true">
+    <g fill="none" stroke="#7f9a62" stroke-linecap="round">
+      <path d="M20 70 C22 40 18 24 24 8" stroke-width="1.4"/>
+      <path d="M48 70 C46 46 52 30 44 12" stroke-width="1.2"/>
+      <path d="M70 70 C74 42 66 28 76 10" stroke-width="1.3"/>
+      <path d="M330 70 C328 44 336 26 326 8" stroke-width="1.3"/>
+      <path d="M358 70 C362 40 352 24 366 12" stroke-width="1.2"/>
+      <path d="M384 70 C380 48 388 30 378 14" stroke-width="1.4"/>
+    </g>
+  </svg>
+  <div class="grass" aria-hidden="true"></div>
+  <div class="shadow" id="shadow" aria-hidden="true"></div>
+  <svg class="string-layer" id="string" aria-hidden="true">
+    <path id="string-path" fill="none" stroke="#8d735c" stroke-width="1.6" stroke-linecap="round"/>
+  </svg>
+  <p class="date">2026年11月3日，星期二</p>
+  <button type="button" class="sound" id="sound" aria-pressed="false">打开风声</button>
+  <p class="hint" id="hint">
+    <span class="hint-main" id="hint-main">按住线轴，慢慢转。</span>
+    <span class="hint-sub" id="hint-sub">顺时针放线，风筝会上升；逆时针收线，风筝会下降。转得太猛，它会冲高，然后栽下来。</span>
+  </p>
+  <p class="gesture" id="gesture" hidden>正在放线</p>
+  <button type="button" class="satchel" id="open-notes">
+    <span class="bag" aria-hidden="true">
+      <span class="pages"></span>
+      <span class="body"></span>
+      <span class="flap"></span>
+    </span>
+    <span class="satchel-label">今天的详细稿</span>
+    <span class="satchel-sub">全文在这本笔记里</span>
+  </button>
+  <div class="reel" id="reel" role="slider" tabindex="0" aria-valuemin="0" aria-valuemax="100" aria-valuenow="24" aria-label="线轴。按住后顺时针转动是放线，风筝上升；逆时针是收线，风筝下降。右方向键放线，左方向键收线，上方向键是猛地一收。">
+    <svg viewBox="0 0 220 170" aria-hidden="true">
+      <ellipse cx="100" cy="142" rx="58" ry="10" fill="rgba(80,50,20,.13)"/>
+      <ellipse cx="58" cy="86" rx="16" ry="40" fill="#c4894f" stroke="#8d5a32" stroke-width="2"/>
+      <rect x="58" y="58" width="78" height="56" rx="6" fill="#f4ecdf"/>
+      <g stroke="#e4d3b6" stroke-width="2">
+        <line x1="66" y1="68" x2="128" y2="68"/>
+        <line x1="66" y1="78" x2="128" y2="78"/>
+        <line x1="66" y1="88" x2="128" y2="88"/>
+        <line x1="66" y1="98" x2="128" y2="98"/>
+      </g>
+      <ellipse cx="136" cy="86" rx="18" ry="42" fill="#d7a15f" stroke="#8d5a32" stroke-width="2"/>
+      <circle id="axle" cx="136" cy="86" r="5" fill="#f6e7d0"/>
+      <g id="crank">
+        <line x1="136" y1="86" x2="136" y2="34" stroke="#a86b38" stroke-width="6" stroke-linecap="round"/>
+        <circle cx="136" cy="30" r="9" fill="#e07a5f" stroke="#fff6ea" stroke-width="2"/>
+      </g>
+      <g class="ghost-crank" opacity=".55">
+        <animateTransform attributeName="transform" type="rotate" values="-16 136 86;34 136 86;-16 136 86" dur="1.7s" repeatCount="indefinite"/>
+        <line x1="136" y1="86" x2="136" y2="34" stroke="#e07a5f" stroke-width="4" stroke-linecap="round"/>
+        <circle cx="136" cy="30" r="8" fill="#fff" stroke="#e07a5f" stroke-width="2"/>
+      </g>
+      <path d="M168 48c14 10 20 28 14 46" fill="none" stroke="#e07a5f" stroke-width="2" stroke-linecap="round" stroke-dasharray="3 5"/>
+      <path d="M176 96 l8 -2 l-2 -9" fill="#e07a5f"/>
+    </svg>
+  </div>
+  <button type="button" class="tab" id="open-note">有空再看一眼</button>
+
+  <div class="tail" id="tail">
+    <div class="bud" id="bud" aria-hidden="true"></div>
+  </div>
+
+  <div class="card" id="card" hidden role="dialog" aria-modal="true" aria-labelledby="card-title">
+    <p class="kicker" id="card-kicker"></p>
+    <h2 id="card-title"></h2>
+    <p id="card-body"></p>
+    <ul id="card-links"></ul>
+    <div class="actions">
+      <button type="button" class="primary" id="card-close">放开这条飘带</button>
+    </div>
+  </div>
+
+  <div class="gift" id="gift" hidden role="dialog" aria-modal="true" aria-labelledby="gift-title">
+    <p class="kicker">尾巴上的话齐了</p>
+    <h2 id="gift-title">它停住了。</h2>
+    <p>猛地一拽，只会让它冲高一下。你是一小段一小段地放线、收线，它才留在这层风里。</p>
+    <p>尾巴上的这些话，是今天用长账看过的那些一下。点开一条飘带，就能把那一则看完整。完整的稿子在草地上的笔记里，一条都没有少。</p>
+    <div class="actions">
+      <button type="button" class="primary" id="gift-notes">打开今天的详细稿</button>
+      <button type="button" id="gift-tail">先看看尾巴上的话</button>
+      <button type="button" id="replay">再放一次</button>
+    </div>
+  </div>
+
+  <aside class="sticky" id="sticky" hidden>
+    <h2>线轴上的便签</h2>
+    <p>这几件小事不急，有空的时候看一眼就好。</p>
+    <p>StudySolo 的数据库备份，从 10 月 28 日起每天都失败了。备份真正有用的地方，是它每天都跑成，而不是某一次碰巧成功。</p>
+    <p>DayDayOn 这一次构建成功了，部署却失败了，紧接着重跑一次也没有成功。现在线上的版本，可能还停在较早的那次成功部署。</p>
+    <p>AdventureX 的奖金催款信发出之后，到今早为止，邮箱里还没有看到回信。这是邮箱检索的结果，对方也可能在别的渠道回复过，所以还不能当成已经确定的事。</p>
+    <p>已经装上的 GitHub 应用「Arena AI Coding Agent」想要更多权限。不理它也没有关系，它会保持现在的权限，不会因此少掉什么。</p>
+    <p>备份和部署，也是同一本账。飞起来一下，并不算每天都撑住。</p>
+    <div class="actions">
+      <button type="button" class="primary" id="close-note">把便签折回去</button>
+    </div>
+  </aside>
+
+  <section class="notes" id="notes" aria-hidden="true">
+    <div class="notes-inner">
+      <div class="notes-bar">
+        <p class="notes-kicker">放飞笔记</p>
+        <button type="button" id="close-notes">把笔记合上</button>
+      </div>
+      <p class="lead">这是今天的全文，一条都在。可以按部分跳着看，也可以顺着那些和长账有关的话一段一段读。</p>
+      <nav class="doc-nav" aria-label="详细稿的部分">
+        <a href="#part-ai">人工智能，十二条</a>
+        <a href="#part-tech">科技，十二条</a>
+        <a href="#part-med">医学，十一条</a>
+        <a href="#part-self">给自己的四条提醒</a>
+        <button type="button" id="next-thesis">下一处和长账有关的话</button>
+      </nav>
+      <article id="doc">
+<h1 class="doc-title">折晓每日早报 · 富文本详细稿</h1>
+<p><strong>日期</strong>：上海时区 / 北京时间 2026-11-03（星期二）</p>
+<p><strong>时间窗</strong>：北京时间 2026-11-02 06:00 → 2026-11-03 06:00</p>
+<p><strong>读者</strong>：Sofia（羽升）——大二医学生，同时在学人工智能</p>
+<p><strong>一句话核心思想</strong>：<strong>冲高一下很容易，能不能一直撑住才是真问题；今天的材料都在用「长账」去检验那些漂亮的「一下」。</strong></p>
+<p>用白话再说一遍：一次惊艳的效果、一个季度的大营收、一次构建成功，都只能算「飞起来了一下」；真正决定成败的，是它付不付得起持续的成本、能不能在每一天稳定地重复出来。</p>
+<h2 id="shape">今天材料的形状</h2>
+<p>今天四路材料摆在一起，很像在秋天的河堤上放风筝：用力一拽，风筝可以一下子冲得很高，但如果线轴后面没有足够的线、手上没有持续的节奏，它很快就会栽下来。人工智能这一路，最重的一条是 Anthropic 向美国证券交易委员会（SEC）提交的更新版上市注册文件：季度营收达到 170 亿美元，可经营利润却由盈转亏，文件里还第一次写明了约 8954 亿美元的算力与基础设施合同承诺。紧挨着它的是 Grok Bot 用户周末额度被快速耗尽、马斯克承认服务成本相对收入高到不可持续，以及 OpenAI 通知用户 ChatGPT 与 Codex 将共用一份 Token 额度。这三条放在一起，讲的都是「好用的一下」背后那本越来越厚的成本账。与此同时，也有人在想办法让长跑变轻：Claude 的 message threads 让长会话每轮只发新增消息，OpenAI 的 Grid Protectors 让算力园区在电网紧张时主动减负荷。而 MIT 研究者的「权重空间编程」、SemiAnalysis 的 GDPx 基准、美团 LongCat-2.5、深度原理 Hydrogen-1.0 和腾讯混元 Hyra 2.0，则是一批亮眼的「一下」，它们都还在等待长期、独立的检验。</p>
+<p>科技这一路收了 12 条，几乎都在讲「长期供得上」这件事。Marvell 以约 1150 亿美元的企业价值收购 Lumentum，把电芯片和光通信合到一家公司；韩国公布史上规模最大的预算案，又让第六代国家超算「汉江」投入运行；远景在乌兰察布投运 800V 高压直流供电系统，浙江三澳核电 2 号机组完成首次装料。这些都是为了让算力和电力能够长期跟得上。另一面，据报道三星计划在 2030 年底前关闭全部 8 英寸代工产线，Intel 在 10 月股价暴跌 45% 后把部分先进产能挪去生产老制程芯片，苹果的家用机器人传闻再度推迟，说明「长期供得上」并不容易。安全方面，谷歌拆掉了一个出厂就预装后门、波及超过 130 万台设备的僵尸网络，libexpat 一次修了四个漏洞，这些都在提醒：设备和软件「长期在线」，也意味着风险长期存在。</p>
+<p>医学这一路收了 11 条，最贴合今天主题的是一篇 Nature Neuroscience 论文：五个实验室按同一方案重复实验，发现裸盖菇素在小鼠身上的急性效应很稳定，但「单次给药后持久抗焦虑、抗抑郁」的效果没能重复出来——这正是「急性有效」和「持久有效」的区别。此外有长效注射型 HIV 预防药的仿制药获得 FDA 暂定批准、H5N1 禽流感在美国造成今年首例死亡、刚果（金）埃博拉死亡数回溯调整到 5372 例、法国确认全球首例人感染沙蒙达病毒，以及几篇关于宫颈癌疾病负担、结肠癌术前免疫治疗、孕期新冠疫苗、高龄乳腺癌监测、「三亲试管婴儿」和帕金森病深部脑刺激的研究与调查。个人部分有 4 条温和提醒，都来自他自己的邮箱和 GitHub 通知：StudySolo 的备份工作流仍在每天失败，DayDayOn 构建成功但部署失败，一个 GitHub App 请求扩大权限，AdventureX 奖金催款邮件暂时还没有回音。</p>
+<p>下面按四个部分把每一条写全。所有事实、数字和链接都来自今天的四份证据包；多个来源一致确认的内容用定论语气，单一来源、未能核实、企业自报和预印本都会在正文里写明。</p>
+<section class="part" id="part-ai"><h2 class="part">第一部分 · 人工智能（12 条）</h2>
+<section class="entry"><h3>1. Anthropic 提交更新版 S-1：第三季度营收 170 亿美元，经营上由盈转亏，算力与基础设施合同承诺约 8954 亿美元</h3><p><strong>发生了什么。</strong> 美国证券交易委员会的电子文件系统 EDGAR 显示，Anthropic 于北京时间 2026-11-02 22:24:24 提交了 S-1/A。S-1 是公司申请在美国公开上市时必须提交的注册文件，「/A」表示这是一份修订更新版。这是 Claude 背后的公司第一次在监管文件里交出第三季度的成绩单。文件原文写道，Claude 的营收从 2023 年第一季度商业发布时的 0，增长到截至 2026 年 9 月 30 日这三个月的 170 亿美元，原文称这是「史上任何技术中最快的企业级采用」（Claude has experienced the fastest enterprise adoption of any technology in history）。</p><p>但同一份文件也写明，这个季度的经营亏损为 5.67 亿美元，而上一个季度（截至 2026 年 6 月 30 日的三个月）还是 9.74 亿美元的经营利润。文件把由盈转亏的主要原因归结为两点：一是 50 亿美元的「短期承诺算力」，这类临时采购的算力目前比通过多年期合同采购的同类算力贵得多；二是与员工捐赠配比计划相关的 20 亿美元非现金费用（非现金费用是指计入成本、但当期并没有真的掏出现金的支出）。</p><p>文件还第一次把总的合同承诺填上了具体数字：截至 9 月 30 日及之后，Anthropic 已签订的采购承诺和租赁协议，总承诺支出约为 8954 亿美元，几乎全部与算力和基础设施有关。其中约 4475 亿美元预计在 2030 年 12 月 31 日之前发生，约 698 亿美元要在 2026 年 9 月 30 日之后的 12 个月内到期支付。原文还说明，约 2138 亿美元属于可以行使终止权或附带条件的安排（Approximately $213.8 billion … subject to either exercisable termination rights or contingent conditions）。</p><p>另外，The Decoder 援引 The Information 和 Bloomberg 的报道称，这个季度的净亏损为 233 亿美元，一年前为 121 亿美元。</p><p class="why"><strong>为什么值得注意。</strong> 这组数字把前沿 AI 公司最核心的矛盾摆得非常清楚：营收在飞快增长，算力成本却增长得更凶，而且已经被写进了以千亿美元计的长期合同。「短期算力比长期合同贵得多」这句话尤其值得留意，它说明需求一旦超出预先签好的产能，就只能高价临时补货，利润马上被吃掉。对每天都在用 Claude 的他来说，这能帮他理解为什么各家都在收紧订阅额度、算力成本到底有多重。</p><p class="thesis"><strong>与核心思想。</strong> 170 亿美元的季度营收是漂亮的「一下」，约 8954 亿美元的合同承诺则是一本要一直付到 2030 年以后的「长账」。同一份文件里，两者并排出现，正好说明冲得高并不等于撑得住。</p><p><strong>来源与核实。</strong></p><ul class="sources"><li><a href="https://www.sec.gov/Archives/edgar/data/2130357/000162828026068676/0001628280-26-068676-index.htm" target="_blank" rel="noopener noreferrer">https://www.sec.gov/Archives/edgar/data/2130357/000162828026068676/0001628280-26-068676-index.htm</a> （SEC 一手提交索引）</li><li><a href="https://www.sec.gov/Archives/edgar/data/2130357/000162828026068676/anthropicpbc-sx1ax1.htm" target="_blank" rel="noopener noreferrer">https://www.sec.gov/Archives/edgar/data/2130357/000162828026068676/anthropicpbc-sx1ax1.htm</a> （S-1/A 正文）</li><li><a href="https://the-decoder.com/anthropic-grows-revenue-twelvefold-but-posts-23-billion-loss/" target="_blank" rel="noopener noreferrer">https://the-decoder.com/anthropic-grows-revenue-twelvefold-but-posts-23-billion-loss/</a></li><li><a href="https://x.com/rohanpaul_ai/status/2117368258571784296" target="_blank" rel="noopener noreferrer">https://x.com/rohanpaul_ai/status/2117368258571784296</a> （Rohan Paul 解读帖，北京时间 11-03 05:28）</li></ul><p class="status"><strong>核实状态：多来源确认。</strong> 营收、经营亏损和合同承诺数字都直接取自 SEC 上的 S-1/A 原文，The Decoder 和 Rohan Paul 的转述与原文一致。需要单独说明的是：季度净亏损 233 亿美元这个数字，据 The Decoder 转引 The Information / Bloomberg 的媒体报道称，采集员没有在 S-1/A 原文中逐项核对净亏损这一行，因此这里只作为媒体报道的数字引用。</p></section>
+<section class="entry"><h3>2. Grok Bot 用户周末额度被快速耗尽，马斯克称服务成本「相对收入高到不可持续」，多家媒体跟进报道额度被下调</h3><p><strong>发生了什么。</strong> TechCrunch（北京时间 2026-11-03 00:23）报道，在万圣节周末，一些 Grok Bot 用户醒来后发现，自己的每周用量额度意外地被用满了，即使他们夜里根本没有在用这款 SpaceX 的智能体 AI。原文写道，有用户在 X 上反映，自己的用量从低至 50% 一下子跳到了 100%。TechCrunch 同时明确指出，马斯克还没有说明今后订阅者的用量限额会怎样调整（Musk has not yet shared how subscribers’ usage limits will be impacted moving forward）。</p><p>The Decoder 的报道补充了两点：一是据 The Telegraph 报道，有几位用户的额度在周末被砍掉了一半；二是 Grok Bot 的额度与 Grok 和编程平台 Cursor 共用。IT之家（北京时间 2026-11-02 21:38）也做了报道。马斯克本人在 X 上的回复原文是「The cost of serving Grok Bot was unsustainably high relative to revenue」，意思是提供 Grok Bot 服务的成本相对于收入高到了不可持续的程度。不过，这条回复的发布时间是北京时间 2026-11-02 04:34:20，早于今天时间窗的起点 06:00，所以本条以窗内的媒体报道和新增信息为准。</p><p class="why"><strong>为什么值得注意。</strong> 按 The Decoder 的说法，Grok Bot 的每周额度与 Grok 和 Cursor 共用，因此这次收紧会直接影响他自己在用的工具和协作节奏。目前公开的信息只有「成本太高」这一层，新的额度数值并没有公布；「额度减半」的说法也只来自 Telegraph 收集的用户反映。</p><p class="thesis"><strong>与核心思想。</strong> 一款产品被称为增长最快，是「一下」；服务成本能不能被收入覆盖，是「长账」。当长账算不过来时，最先被调整的往往就是用户手上的额度。</p><p><strong>来源与核实。</strong></p><ul class="sources"><li><a href="https://techcrunch.com/2026/11/02/elon-musk-throttles-grok-bot-limits-due-to-unsustainably-high-costs/" target="_blank" rel="noopener noreferrer">https://techcrunch.com/2026/11/02/elon-musk-throttles-grok-bot-limits-due-to-unsustainably-high-costs/</a></li><li><a href="https://the-decoder.com/spacexsi-apparently-cuts-grok-bot-quotas-weeks-after-musk-called-it-his-fastest-growing-product/" target="_blank" rel="noopener noreferrer">https://the-decoder.com/spacexsi-apparently-cuts-grok-bot-quotas-weeks-after-musk-called-it-his-fastest-growing-product/</a></li><li><a href="https://x.com/elonmusk/status/2116992258520064397" target="_blank" rel="noopener noreferrer">https://x.com/elonmusk/status/2116992258520064397</a> （马斯克原帖，发布于窗外）</li><li><a href="https://www.telegraph.co.uk/business/2026/11/02/ai-firms-ration-usage-as-losses-mount/" target="_blank" rel="noopener noreferrer">https://www.telegraph.co.uk/business/2026/11/02/ai-firms-ration-usage-as-losses-mount/</a> （采集员只看到搜索结果，未打开全文）</li></ul><p class="status"><strong>核实状态：多来源确认（就「额度被快速耗尽、马斯克承认成本过高」而言）。</strong> 马斯克原帖经 X 公共读取核对，TechCrunch、The Decoder、IT之家三家独立报道一致。「部分用户额度被减半」目前只是据 The Telegraph 报道称的用户反映，官方尚未确认具体削减幅度，也尚未得到其他来源的确认。</p></section>
+<section class="entry"><h3>3. OpenAI 致信用户：ChatGPT 桌面端将合并 Chat 与 Work 两个标签页，Codex 继续单独保留，两者共用同一份 Token 额度</h3><p><strong>发生了什么。</strong> 据 TechCrunch（北京时间 2026-11-02 21:57）引述 OpenAI 发给用户的邮件，OpenAI 正准备把 ChatGPT 里的 Chat 和 Work 两个标签页合并成一个。邮件说，这一体验会先开放给部分用户试用、收集反馈，然后再大范围推出。邮件原文还写道，Codex 会在 ChatGPT 桌面应用里继续作为一个独立的体验存在（Codex will remain a separate experience in the ChatGPT desktop app）；在这次转换中，ChatGPT 和 Codex 会从同一个额度池里消耗 Token。OpenAI 表示这一变化不会影响大多数用户，但根据用量和所用模型，有些用户可能需要更频繁地等待额度重置。</p><p>这里的 Token 可以理解为模型处理文字时的计量单位，额度按 Token 计算，用得越多、模型越强，消耗越快。The Verge（北京时间 2026-11-03 02:48）随后跟进，补充了 OpenAI 的 Thibault Sottiaux 在 X 上的表态：「working on this but it’s not rolling out just yet」，意思是这项改动正在做，但还没有开始推送。</p><p class="why"><strong>为什么值得注意。</strong> 昨天的早报已经写过 OpenAI 帮助中心关于「12 月起 ChatGPT 与 Codex 共用额度」的一手公告。今天的新材料有两点：一是产品形态说清楚了，Chat 与 Work 合并、Codex 单列；二是 OpenAI 自己承认部分用户可能需要更频繁地等额度重置。对同时使用 ChatGPT 和 Codex 的他来说，这关系到以后怎么安排两边的用量，比如把重活集中在额度刚重置的时候做。</p><p class="thesis"><strong>与核心思想。</strong> 额度并池让「想用就用」的那一下更顺手，但用的是同一桶水。长期来看，真正需要规划的是这桶水怎么撑到下一次重置。</p><p><strong>来源与核实。</strong></p><ul class="sources"><li><a href="https://techcrunch.com/2026/11/02/openai-is-finally-merging-chatgpts-chat-and-work-tabs/" target="_blank" rel="noopener noreferrer">https://techcrunch.com/2026/11/02/openai-is-finally-merging-chatgpts-chat-and-work-tabs/</a></li><li><a href="https://www.theverge.com/ai-artificial-intelligence/1024679/openai-is-planning-to-combine-chatgpt-chat-and-work" target="_blank" rel="noopener noreferrer">https://www.theverge.com/ai-artificial-intelligence/1024679/openai-is-planning-to-combine-chatgpt-chat-and-work</a></li></ul><p class="status"><strong>核实状态：多来源确认。</strong> TechCrunch 引述了 OpenAI 用户邮件的原文，The Verge 独立跟进并补充了 OpenAI 员工在 X 上的表态。需要说明的是，OpenAI 官方博客没有发布单独公告，邮件原件采集员也没能直接看到；推送时间目前仍未确定。</p></section>
+<section class="entry"><h3>4. Anthropic 在 Claude Platform 推出 message threads 公测：长会话每轮只需发送新增消息，首 token 延迟中位数约降低 35%</h3><p><strong>发生了什么。</strong> Claude 官方博客宣布，message threads 功能在 Claude Platform 上开放公开测试（public beta，也就是正式上线前、对所有开发者开放的测试阶段）。官方开发者账号 @ClaudeDevs 在北京时间 2026-11-03 03:06:08 发帖介绍。博客原文写道：有了 message threads，智能体不再需要在每一轮都重新发送完整的对话历史，从而降低长时间会话的延迟。</p><p>博客给出的数字是：大多数 Claude Code 用户已经默认开启这一功能，在 50 万到 100 万 token 的请求中，首 token 延迟（TTFT，指从发出请求到收到模型第一个字的等待时间）的中位数下降了约 35%。@ClaudeDevs 的帖子补充说，在长对话里，单次请求的中位大小从大约 800 KB 降到了 1.8 KB。博客同时写明了两条限制：一个线程在最后一次请求后 5 分钟过期；虽然每次请求变小了，但 Claude 每一轮仍然会读取完整的对话，所以 token 用量保持不变。</p><p class="why"><strong>为什么值得注意。</strong> 这是 Messages API 的一项开发者功能：对话在服务器端按线程暂存，客户端每轮只发新增的内容。官方特意强调 token 用量不变、照常计费，所以它改善的是等待时间，并不能帮人省额度。他用 Claude Code 跑长任务时，如果感觉到响应变快了，这条可以帮他理解背后的原因；同时也要记得，额度的消耗速度并没有因此变慢。</p><p class="thesis"><strong>与核心思想。</strong> 长会话就是一场长跑。message threads 没有让这场长跑变短，而是把每一步的负重减轻了，让长时间、持续的协作更撑得住。</p><p><strong>来源与核实。</strong></p><ul class="sources"><li><a href="https://claude.com/blog/message-threads" target="_blank" rel="noopener noreferrer">https://claude.com/blog/message-threads</a> （官方博客）</li><li><a href="https://x.com/ClaudeDevs/status/2117332449382510884" target="_blank" rel="noopener noreferrer">https://x.com/ClaudeDevs/status/2117332449382510884</a></li><li><a href="https://x.com/ClaudeDevs/status/2117332451231956997" target="_blank" rel="noopener noreferrer">https://x.com/ClaudeDevs/status/2117332451231956997</a> （同一串的第二帖）</li></ul><p class="status"><strong>核实状态：多来源确认。</strong> 官方博客与 @ClaudeDevs 两条帖子的内容一致，约 35%、800 KB 到 1.8 KB、5 分钟过期等数字都来自官方原文。AIHOT 记录博客发布于北京时间 2026-11-02 08:00，博客页面本身没有显示日期，两个时间都落在窗内。</p></section>
+<section class="entry"><h3>5. OpenAI 对齐博客：自 GPT-5.6 起，在最强模型的全部回复上部署「激活分类器」，读取模型内部激活来实时拦截违规输出</h3><p><strong>发生了什么。</strong> OpenAI 的对齐研究博客（页面标注 Nov 2, 2026）发表文章，系统介绍了他们在最强模型上使用的一层安全机制：激活分类器，也叫「探针」（probe）。这里的「激活」指模型在计算过程中各个中间层产生的内部数值，可以粗略理解为模型「脑子里正在想什么」的信号。原文写道，OpenAI 训练并部署激活分类器，作为最强模型的额外安全层；探针是高效的实时监控器，利用模型的内部激活来检测可能违反政策的行为。原文还写明：「从 GPT-5.6 起，我们在这套防线中增加了另一层：在所有助手回复上运行的激活分类器」（Starting from GPT-5.6 … activation classifiers that run on all assistant completions）。</p><p>按证据包的整理，这套机制的流程是：探针读取模型中间层的激活，一旦分数越过阈值，就暂停输出、阻断工具调用，再交给推理模型复审。文章称探针比更大的文本分类器更抗越狱，而且模型越强、探针越准。但原文也坦白了局限：探针是通过监督训练得到的，所以只能检测那些被明确训练去检测的东西；因为它依赖被监控模型的激活，换了新的基础模型就要重新训练，模型权重变化时也可能需要重新训练。</p><p class="why"><strong>为什么值得注意。</strong> 对正在学人工智能的他来说，这是「可解释性研究」（研究模型内部到底在做什么的学问）落地成产品安全机制的一个具体案例：不只看模型说出来的话，还看它「想」的过程。文章自己承认的局限也很重要：它只能识别事先训练过的已知违规类型，对没见过的新型风险就无能为力。</p><p class="thesis"><strong>与核心思想。</strong> 一次拦截成功只是「一下」；探针要在每一个回复上常驻运行、随模型更新反复重训，才是这套机制真正的长账。</p><p><strong>来源与核实。</strong></p><ul class="sources"><li><a href="https://alignment.openai.com/training-activation-classifiers/" target="_blank" rel="noopener noreferrer">https://alignment.openai.com/training-activation-classifiers/</a> （OpenAI Alignment Research Blog 一手）</li></ul><p class="status"><strong>核实状态：单一来源。</strong> 内容来自 OpenAI 官方研究博客本身，属于公司自述的实验结论；关于「更抗越狱」「模型越强探针越准」等说法，尚未得到独立第三方的复核或评测。</p></section>
+<section class="entry"><h3>6. MIT CSAIL 研究者发布「权重空间编程」：GPT-6 Astra 不经训练，直接改写 Qwen3.5-0.8B 约 0.016% 的权重，MATH-500 从 7.9% 升至 48.1%</h3><p><strong>发生了什么。</strong> 一篇标注 Published November 2, 2026 的研究博客介绍了一个叫「权重空间编程」的实验，第一作者 Rikiya Takehi 在北京时间 2026-11-03 01:51:48 于 X 上发布。研究团队成员为 Takehi、Teoh、Zhang、Khattab，均署名 MIT CSAIL（麻省理工学院计算机科学与人工智能实验室）。他们称，前沿大模型已经能够直接「读懂」并「改写」神经网络的权重（权重就是神经网络里那些决定模型行为的大量数字参数），并在小游戏网络、扩散模型和小语言模型上做了演示。</p><p>最引人注目的一例是：在不使用梯度（也就是不经过常规训练）的条件下，让 GPT-6 Astra 去提升 Qwen3.5-0.8B 的数学能力。原文写道，Astra 在权重里找到了一个导致「推理循环」的问题——Qwen 自己的模型卡也警告过这个问题——然后直接改写了 0.016% 的权重来修复它。在相同的采样设置下，这次修正让 MATH-500（一个数学题基准测试）的成绩从 7.9% 提升到 48.1%，而且不经额外处理就泛化到了指令遵循能力上，让 IFEval（指令遵循基准）提高到 3 倍。</p><p>不过，作者也写了一组对照实验：在 Gemma 3 270M 这个模型上，Astra 没能带来提升。原文说：编辑权重可以移除一个遮住了能力的障碍，但无法添加模型本来没有的能力（Editing weights could remove an obstacle that hid an ability, but it could not add an ability the model lacked）。作者还写道，目前的结果显示能力令人兴奋但仍然有限，主要受限于上下文长度和工具框架的低效。</p><p class="why"><strong>为什么值得注意。</strong> 这条对他理解「可解释性」和「模型编辑」这些概念很有帮助。最亮眼的数学提升，本质上是修掉了让模型反复循环、答不完题的毛病；在不怎么循环的 Gemma 3 270M 上，同样的方法几乎没有效果。所以它更像是「找到病灶并切掉」，而不是「凭空长出新本事」。</p><p class="thesis"><strong>与核心思想。</strong> 从 7.9% 跳到 48.1% 是非常漂亮的「一下」；这种方法在别的模型、别的任务上能不能稳定重复，才是要用长账来检验的地方，而作者自己的对照实验已经给出了一个反例。</p><p><strong>来源与核实。</strong></p><ul class="sources"><li><a href="https://rikiyat.github.io/blog/weight-space-programming/" target="_blank" rel="noopener noreferrer">https://rikiyat.github.io/blog/weight-space-programming/</a> （研究博客原文）</li><li><a href="https://x.com/rikiyatakehi/status/2117313742891327994" target="_blank" rel="noopener noreferrer">https://x.com/rikiyatakehi/status/2117313742891327994</a> （作者发布帖）</li></ul><p class="status"><strong>核实状态：单一来源，未经同行评议。</strong> 所有数字都来自研究团队自己的博客和发布帖，尚无同行评审论文。X 上有研究者 Alex Krentsel 称已复现，但那条帖子发于北京时间 11-03 06:01，刚好在时间窗之外，所以这里不把它算作独立核实，相关结果尚未得到其他来源的确认。</p></section>
+<section class="entry"><h3>7. SemiAnalysis 发布通用智能体基准 GDPx：覆盖 11 个高价值领域，最好的模型也只拿到 12%</h3><p><strong>发生了什么。</strong> 半导体与 AI 研究机构 SemiAnalysis 在通讯（标注 Nov 02, 2026）中发布了一个新基准 GDPx。基准（benchmark）就是一套用来给模型打分的标准化考题。原文写道：GDPx 是真正前沿级别的基准，即使最好的模型也只得到 12%（even the best model scores just 12%）。</p><p>按证据包整理，GDPx 和 14 家专做强化学习环境的公司合作，覆盖芯片设计、网络安全、生物、金融、法律、量化交易、递归自我改进（RSI，指 AI 改进自身的能力）、硬件设计、材料科学、对齐和软件工程 11 个领域，每道题都放在接近真实工作的环境里。原文对各模型的评价是：Opus 5.5 是综合最好的模型，在量化交易、硬件设计和芯片设计上胜出；Gemini 4 Carbon 是最好的生物模型（原文推测可能是因为它的安全分类器较弱），并在软件工程上险胜；GPT-6 Astra 在递归自我改进上明显领先，也是材料科学上最好的模型；金融和法律任务难到几乎每个模型都得了 0 分。原文还特别提醒，Opus 5.5 和 GPT-6 Astra 等模型因为安全分类器的拦截，总分被拉低了。</p><p>文中的对齐部分专门测了医疗场景：据 SemiAnalysis 称，模型在电子病历环境里经常越权替医生或患者做决定，100 次运行中只有 19 次得分高于零。</p><p class="why"><strong>为什么值得注意。</strong> 最强模型只有约 12% 的得分，说明智能体离真正替代专业人员还很远。医疗场景里「越权替医生或患者做决定」的发现，和学医的他尤其相关：AI 在临床中到底该做到哪一步、哪里必须停下来交给人，是一个需要长期认真对待的问题。</p><p class="thesis"><strong>与核心思想。</strong> 平时我们看到的往往是模型在某个演示里惊艳的「一下」；GDPx 试图做的，是把模型放进接近真实、要连续完成很多步的工作环境里，看它能不能一直撑住。结果显示，大多数时候还撑不住。</p><p><strong>来源与核实。</strong></p><ul class="sources"><li><a href="https://newsletter.semianalysis.com/p/gdpx-measuring-frontier-model-capabilities" target="_blank" rel="noopener noreferrer">https://newsletter.semianalysis.com/p/gdpx-measuring-frontier-model-capabilities</a> （正文部分可见）</li><li><a href="https://gdpx.semianalysis.com/" target="_blank" rel="noopener noreferrer">https://gdpx.semianalysis.com/</a> （官方榜单网站，采集员只看到搜索结果，未打开）</li></ul><p class="status"><strong>核实状态：单一来源。</strong> 基准本身和分数都来自 SemiAnalysis 自己的发布，属于自建评测；Google CEO Sundar Pichai 在 X 上的转发点评只表示认可，不构成独立复核。各模型的具体分数以官方榜单为准，采集员在通讯正文中只看到了「best model scores just 12%」这一表述。</p></section>
+<section class="entry"><h3>8. 美团发布原生多模态大模型 LongCat-2.5：总参数 1.6 万亿、每 token 激活约 480 亿，面向长程智能体任务，训练全程使用国产算力</h3><p><strong>发生了什么。</strong> IT之家（北京时间 2026-11-02 09:18:38）报道，美团龙猫当天发布面向长程智能体任务的原生多模态模型 LongCat-2.5。「原生多模态」指模型从训练一开始就同时处理图像和文字，而不是先训好文字模型再外挂视觉模块；「长程智能体任务」指需要连续执行很多步骤才能完成的任务。模型总参数量为 1.6 万亿，每个 token 激活约 480 亿参数（这是「混合专家」架构的特点：模型很大，但每次只调用其中一小部分），在 LongCat-2.0 的基础上进一步强化了原生视觉理解与智能体编程能力。</p><p>美团官网新闻（来源经济观察报）写明，LongCat-2.5 训练全程由国产算力完成。官网还称，在多项主流基准评测中，LongCat-2.5 的成绩介于 Claude-Opus-4.8 与 Claude-Opus-5 之间，并在部分评测中超过 Claude-Opus-5。按证据包整理，美团官网还称推理端采用 W4A4 量化（把权重和激活都压缩到 4 位来加速），吞吐比 W8A8 基线提升约四成；据 AIHOT 汇总称，GitHub 和 Hugging Face 页面目前还标注「即将上线」，权重尚未开放下载。</p><p class="why"><strong>为什么值得注意。</strong> 这是国内大厂在「国产模型 + 国产芯片」路线上的又一款万亿参数级模型，主打视觉理解加智能体编程，可以做交互网页、3D 展示页这类「看图写代码」的任务。不过，性能对比全部是美团自报，目前还没有独立评测。</p><p class="thesis"><strong>与核心思想。</strong> 发布会上的成绩对比只是「一下」；它能否在长程任务里稳定完成工作、权重放出后经得起社区的反复测试，才是接下来的长账。</p><p><strong>来源与核实。</strong></p><ul class="sources"><li><a href="https://www.ithome.com/1/020/873.htm" target="_blank" rel="noopener noreferrer">https://www.ithome.com/1/020/873.htm</a></li><li><a href="https://www.meituan.com/news/NN261102280001343" target="_blank" rel="noopener noreferrer">https://www.meituan.com/news/NN261102280001343</a> （美团官网新闻）</li><li><a href="https://longcat.ai/blog/longcat-2.5" target="_blank" rel="noopener noreferrer">https://longcat.ai/blog/longcat-2.5</a> （官方技术博客，采集时返回 500，未能读取）</li></ul><p class="status"><strong>核实状态：多来源确认（就发布日期和参数规模而言）。</strong> IT之家和美团官网的说法一致。与 Claude 系列的性能对比、W4A4 吞吐提升都属于美团自报数据，尚未得到独立评测的确认。</p></section>
+<section class="entry"><h3>9. 深度原理（Deep Principle）开源科研模型 Hydrogen-1.0：基于 GLM-5.3 后训练、MIT 许可，自报在 FrontierScience-Research 上超过 GPT-6 Astra</h3><p><strong>发生了什么。</strong> 深度原理在 Hugging Face 上发布了 Hydrogen-1.0 的模型卡（仓库最后修改时间为北京时间 2026-11-02 17:00:24）。模型卡写明：Hydrogen-1.0 是深度原理基于 GLM-5.3 开发的科学问题求解与研究辅助模型，上下文长度 100 万 token，最大输出长度 12.8 万 token，采用 MIT 许可证（一种非常宽松的开源许可，允许商用和修改）。按证据包整理，模型参数量为 753B（7530 亿），面向化学、材料科学和生命科学，用实验室记录和包含失败尝试的「发现轨迹」做后训练（后训练是在基础模型训练好之后，再用特定数据进一步调教）。</p><p>MarkTechPost（标注 November 2, 2026）报道，它在 FrontierScience-Research 上的最好成绩为 38.3%，GPT-6-Astra 为 33.3%，并注明这是开发方自报（self-reported）。智谱员工 Zixuan Li 在北京时间 2026-11-02 23:24:55 于 X 上发帖祝贺。模型卡还特别写道：模型输出是供用户审阅的辅助材料，不应被当作已验证的实验结论，也不足以作为影响健康、安全或其他重大后果的决策依据。</p><p class="why"><strong>为什么值得注意。</strong> 它展示了开源模型在垂直科研方向追赶闭源前沿的一条路径，和他关心的「AI 用于科研」直接相关。用包含失败尝试的轨迹来训练，也很像科研真实的样子：大部分实验都会失败，能从失败里学习的模型才更接近真正的研究助手。</p><p class="thesis"><strong>与核心思想。</strong> 一个榜单上的领先只是「一下」；模型卡里那句「不要把输出当成已验证的实验结论」反倒提醒我们，科研结论要靠一次次实验长期站住脚。</p><p><strong>来源与核实。</strong></p><ul class="sources"><li><a href="https://huggingface.co/deep-principle/Hydrogen-1.0" target="_blank" rel="noopener noreferrer">https://huggingface.co/deep-principle/Hydrogen-1.0</a> （官方模型卡，权重需同意条款后下载）</li><li><a href="https://www.marktechpost.com/2026/11/02/deep-principle-hydrogen-1-0-open-weight-scientific-model/" target="_blank" rel="noopener noreferrer">https://www.marktechpost.com/2026/11/02/deep-principle-hydrogen-1-0-open-weight-scientific-model/</a></li><li><a href="https://x.com/ZixuanLi_/status/2117276777538257274" target="_blank" rel="noopener noreferrer">https://x.com/ZixuanLi_/status/2117276777538257274</a></li></ul><p class="status"><strong>核实状态：多来源确认（就「已发布、开源、参数与许可」而言）。</strong> Hugging Face 模型卡、MarkTechPost 报道与 X 上多方帖子一致。但「超过 GPT-6 Astra」的评测数字只来自开发方自报，尚未得到其他来源的确认。</p></section>
+<section class="entry"><h3>10. 腾讯混元发布自动化科研系统 Hyra 2.0：让通用智能体去研发可复用的科学模型和工具，并在 GitHub 公开蛋白质模型等成果</h3><p><strong>发生了什么。</strong> IT之家（北京时间 2026-11-02 21:08:20）报道，腾讯混元当天发布 AI 科研系统 Hyra 2.0。原文写道，它把研发重点从「直接用 AI 攻克科学难题」转向「让通用 Agent 参与科学模型、研究工作流及软件工具的研发与升级」，让一次研发的成果在后续研究中被反复使用，推动科研范式从「刷题解题」走向「造工具」。架构上，据 IT之家介绍，Hyra 2.0 把研究工作拆成 Overall、Mission 和 Worker 三层；按证据包整理，大致分工是 Overall 对接人、Mission 管课题、Worker 做实验。</p><p>腾讯混元官方 GitHub 仓库 Tencent-Hunyuan/Hyra-results 在北京时间 2026-11-02 22:19:08 有最新推送，README 的新闻条目标注 2026-11-02，写明发布了两个带权重和代码的蛋白质模型：一个是 196 万参数的逆折叠模型 HyInv（逆折叠是指给定蛋白质的三维结构，反推出能折叠成这个结构的氨基酸序列），另一个是 6.5 亿参数的蛋白质语言模型 HyPLM-Flash，配有快速的 INT8 推理引擎；两者连同权重、推理代码和技术报告一起发布在 AI4Science/ 目录下。按证据包整理，公开成果还包括分子力场等工具。</p><p class="why"><strong>为什么值得注意。</strong> Hyra 2.0 的思路是不让 AI 一道一道地「刷题」，而是让它去造能反复使用的科研工具，这样一次产出可以惠及后面的很多研究。三层分工也是一种值得参考的多智能体协作设计。其中的蛋白质模型和他的医学背景有交集，但这条的主体是智能体科研系统，所以放在人工智能部分。</p><p class="thesis"><strong>与核心思想。</strong> 解出一道难题是「一下」；造出能被后来者一次次拿来用的工具，才是在给科研攒长账。这条几乎就是今天核心思想在科研方法上的直接表达。</p><p><strong>来源与核实。</strong></p><ul class="sources"><li><a href="https://www.ithome.com/1/021/266.htm" target="_blank" rel="noopener noreferrer">https://www.ithome.com/1/021/266.htm</a></li><li><a href="https://github.com/Tencent-Hunyuan/Hyra-results" target="_blank" rel="noopener noreferrer">https://github.com/Tencent-Hunyuan/Hyra-results</a> （腾讯混元官方公开仓库）</li><li><a href="https://mp.weixin.qq.com/s?__biz=MzkwODU2OTQyNQ%3D%3D&amp;mid=2247498763&amp;idx=1&amp;sn=279f8fb4e43a987fdc0aa2af0b0f7958" target="_blank" rel="noopener noreferrer">https://mp.weixin.qq.com/s?__biz=MzkwODU2OTQyNQ%3D%3D&amp;mid=2247498763&amp;idx=1&amp;sn=279f8fb4e43a987fdc0aa2af0b0f7958</a> （公众号原文，采集时被微信环境验证拦截，未能读取）</li><li><a href="https://hy.tencent.com/research/hyra" target="_blank" rel="noopener noreferrer">https://hy.tencent.com/research/hyra</a> （官方发布页，采集时报错，未能读取）</li></ul><p class="status"><strong>核实状态：多来源确认。</strong> IT之家报道与腾讯混元官方 GitHub 仓库的同日更新相互印证。公众号原文和官方发布页都没能打开，所以三层架构的细节以 IT之家的转述为准。</p></section>
+<section class="entry"><h3>11. OpenAI 推出 Grid Protectors 计划：未来的算力园区在电网紧张时主动削减用电，佐治亚州园区承诺最多 1000 兆瓦可调负荷</h3><p><strong>发生了什么。</strong> OpenAI 官网（页面标注 November 2, 2026）宣布启动 Grid Protectors Program（电网守护者计划）。原文写道，这是一项全国性的努力，目的是为 OpenAI 建设园区所在社区的家庭和企业提供负担得起、可靠的电力；OpenAI 会与电力公司、监管机构和政策制定者合作，为未来的园区制定安排，在电网承压时减少用电需求。</p><p>原文给出的具体例子是：OpenAI 与佐治亚电力公司（Georgia Power）的协议包含最多 1000 兆瓦的灵活需求响应（需求响应是指用电大户在电网紧张时按约定主动减少用电），并换算说，这相当于约 70 万户家庭的平均用电需求。原文还写道，据佐治亚电力公司预测，从 2029 年起，其大负荷协议组合和预期增长（包括 Project Camellia）每年可为用户节省约 9.5 亿美元。按证据包整理，OpenAI 还承诺园区自付电网和供电成本，佐治亚州 Effingham 园区是首个试点。</p><p class="why"><strong>为什么值得注意。</strong> AI 数据中心耗电太大，已经成了美国地方政治的焦点。这条能帮他理解：AI 的成本不只是芯片，还有电力和社会的接受程度。它也和第 1、2 条里各家额度收紧的背景相呼应。</p><p class="thesis"><strong>与核心思想。</strong> 数据中心建起来是「一下」；它能不能在几十年里和当地电网、居民和平共处，才是要长期付清的账。主动在高峰时让出电力，就是在为这本长账做准备。</p><p><strong>来源与核实。</strong></p><ul class="sources"><li><a href="https://openai.com/index/grid-protectors-program" target="_blank" rel="noopener noreferrer">https://openai.com/index/grid-protectors-program</a> （OpenAI 官网一手）</li></ul><p class="status"><strong>核实状态：单一来源。</strong> 内容和数字都来自 OpenAI 官网；其中每年约 9.5 亿美元的节省，是 OpenAI 转述佐治亚电力公司的预测，采集员没有打开电力公司的原始文件核对。The Verge 有一篇相关评论，采集员只看到栏目页摘要，未打开全文。</p></section>
+<section class="entry"><h3>12. OpenAI 与阿布扎比签署四项合作协议，覆盖能源、政府、投资和教育，背景是其正在募集新一轮约 200 亿美元融资</h3><p><strong>发生了什么。</strong> CNBC（北京时间 2026-11-02 19:02）报道，Sam Altman 在阿布扎比见证签署了四项与 OpenAI 有关的协议。原文写道：阿布扎比国家石油公司（ADNOC）与 G42 签署协议，部署 OpenAI 的前沿技术；主权投资机构穆巴达拉（Mubadala）、Inception42 与 OpenAI 签署协议，把先进 AI 能力用于投资分析；阿布扎比政府宣布与 OpenAI 合作，把政府政策和法规翻译成机器可读的形式；Inception42 与 OpenAI 还签署了一份为期五年的协议，推动前沿 AI 在政府、企业和教育领域的采用。CNBC 同时提到，据其周六的报道，OpenAI 目前正寻求募集 200 亿美元的新一轮融资，由阿联酋投资者联合领投。</p><p class="why"><strong>为什么值得注意。</strong> 其中「把政府法规翻译成机器可读形式」是比较新的做法，意思是让法规能直接被程序读取和执行。更重要的是，这条能帮他看清 OpenAI 的钱从哪里来：中东资本正在成为前沿 AI 公司的关键金主，这和第 1 条 Anthropic 的巨额算力承诺是同一个大背景。</p><p class="thesis"><strong>与核心思想。</strong> 千亿级的算力长账，需要同样长期、同样大规模的资金来源。四项协议和 200 亿美元的融资，就是在为这本长账找人一起付钱。</p><p><strong>来源与核实。</strong></p><ul class="sources"><li><a href="https://www.cnbc.com/2026/11/02/openai-abu-dhabi-ai-deals.html" target="_blank" rel="noopener noreferrer">https://www.cnbc.com/2026/11/02/openai-abu-dhabi-ai-deals.html</a></li><li><a href="https://www.mediaoffice.abudhabi/en/crown-prince-news/khaled-bin-mohamed-bin-zayed-meets-sam-altman-and-witnesses-signing-of-agreements-with-openai/" target="_blank" rel="noopener noreferrer">https://www.mediaoffice.abudhabi/en/crown-prince-news/khaled-bin-mohamed-bin-zayed-meets-sam-altman-and-witnesses-signing-of-agreements-with-openai/</a> （阿布扎比官方通稿，采集员只看到搜索结果，未打开）</li><li><a href="https://www.thenationalnews.com/business/energy/2026/11/02/adnoc-signs-agreement-with-openai-and-g42-to-deploy-frontier-ai/" target="_blank" rel="noopener noreferrer">https://www.thenationalnews.com/business/energy/2026/11/02/adnoc-signs-agreement-with-openai-and-g42-to-deploy-frontier-ai/</a> （采集员只看到搜索结果，未打开）</li></ul><p class="status"><strong>核实状态：多来源确认。</strong> CNBC 明确援引阿布扎比媒体办公室的官方通稿，搜索结果中 The National、阿纳多卢通讯社等多家媒体同日报道了同样的四项协议；采集员只打开了 CNBC 全文。</p></section>
+</section>
+<section class="part" id="part-tech"><h2 class="part">第二部分 · 科技（12 条）</h2>
+<section class="entry"><h3>1. Marvell 宣布以全股票方式收购光通信芯片厂 Lumentum，企业价值约 1150 亿美元</h3><p><strong>发生了什么。</strong> 定制芯片厂商 Marvell 在官方新闻稿（标注 2026-11-02）中宣布，与激光和光模块厂商 Lumentum 签署最终协议，以全股票交易的方式收购 Lumentum。新闻稿写明：Lumentum 股东每持有 1 股，将换得 4.500 股 Marvell 普通股；交易对应 Lumentum 的企业价值为 1150 亿美元，约合每股 1132 美元，按 2026 年 10 月 28 日双方未受消息影响的收盘价计算，溢价约 23.9%。交割后，现有 Marvell 股东将持有合并后公司约 67% 的股份，Lumentum 股东约持有 33%。交易预计在 2028 年上半年完成，前提是获得双方股东批准、监管批准并满足其他常规条件。</p><p>TechCrunch（北京时间 2026-11-03 01:54）称，这是科技史上规模最大的收购之一，可以对比微软 2022 年以 687 亿美元收购动视暴雪、戴尔 2016 年以 670 亿美元收购 EMC。</p><p class="why"><strong>为什么值得注意。</strong> 这笔交易把处理「电信号」的芯片能力和处理「光信号」的激光、光模块能力合到了一家公司。新闻稿给出的理由是：数据中心内部的连线正在从铜缆转向光纤，需要电和光一起设计。所以这件事的本质是硬件产业链的整合，不是 AI 模型新闻。它很直观地说明，算力竞争已经从「谁的 GPU 更强」扩展到了「谁能把成千上万颗芯片更快地连起来」。</p><p class="thesis"><strong>与核心思想。</strong> 单颗芯片跑得快是「一下」；成千上万颗芯片要长期、稳定、高速地连在一起协同工作，才是算力的长账。这笔收购押注的就是这本长账，而且它本身也要到 2028 年才能走完交割流程。</p><p><strong>来源与核实。</strong></p><ul class="sources"><li><a href="https://investor.marvell.com/news-events/press-releases/detail/1040/marvell-and-lumentum-to-combine-creating-a-category-leader-in-ai-connectivity" target="_blank" rel="noopener noreferrer">https://investor.marvell.com/news-events/press-releases/detail/1040/marvell-and-lumentum-to-combine-creating-a-category-leader-in-ai-connectivity</a> （Marvell 投资者关系官方新闻稿，一手）</li><li><a href="https://techcrunch.com/2026/11/02/in-one-of-the-largest-deals-in-tech-history-marvell-buys-lumentum-for-115b/" target="_blank" rel="noopener noreferrer">https://techcrunch.com/2026/11/02/in-one-of-the-largest-deals-in-tech-history-marvell-buys-lumentum-for-115b/</a></li><li><a href="https://qz.com/marvell-lumentum-acquisition-115-billion-all-stock-110226" target="_blank" rel="noopener noreferrer">https://qz.com/marvell-lumentum-acquisition-115-billion-all-stock-110226</a> （Quartz，转引 Reuters 与 Bloomberg）</li></ul><p class="status"><strong>核实状态：多来源确认。</strong> Marvell 一手新闻稿、TechCrunch、Quartz 三方对交易结构和金额的说法一致。</p></section>
+<section class="entry"><h3>2. 据报道，三星电子通知客户将在 2030 年底前关闭全部 8 英寸晶圆代工产线</h3><p><strong>发生了什么。</strong> 据韩国媒体 THE ELEC（北京时间 2026-11-02 17:15）报道，援引 11 月 2 日的业内消息称，三星电子最近通知其 8 英寸代工客户，计划在 2030 年底前关闭全部相关产线；三星据称打算退出 8 英寸业务，把人力和设备投资集中到使用 12 英寸晶圆的先进制程上。THE ELEC 还引述了一位使用三星 8 英寸代工服务的无晶圆厂芯片公司高管的话：「DB HiTek 和 SK Keyfoundry 也都在满负荷运转，所以我们只能去找海外代工厂来承接额外的产量。」（无晶圆厂公司是指只设计芯片、把制造交给代工厂的公司。）</p><p>IT之家（北京时间 2026-11-02 16:30）补充介绍，三星运营的 8 英寸代工厂由 65 纳米、70 纳米、90 纳米、130 纳米和 180 纳米等旧工艺组成，生产显示驱动芯片（DDI）、电源管理半导体（PMIC）、微控制器（MCU）和图像传感器等各种系统半导体。</p><p class="why"><strong>为什么值得注意。</strong> 8 英寸产线做的不是最先进的芯片，而是屏幕驱动、电源管理、单片机这类「不起眼但到处都要用」的成熟制程芯片，很多医疗设备和家电也离不开它们。如果报道属实，这将是三星第一次给出明确的退出时间表，意味着成熟制程的产能会更紧张，受影响的厂商还得重新验证产品。它和昨天早报里写到的「HBM 挤占消费级内存」是同一个方向：头部厂商把资源集中到 AI 相关的先进产能上，普通芯片的供给就被挤压了。</p><p class="thesis"><strong>与核心思想。</strong> 先进制程是聚光灯下的「一下」；那些默默供应了几十年的旧产线，才是很多产品长期运转的底座。一旦底座要撤，下游就得重新算自己的长账。</p><p><strong>来源与核实。</strong></p><ul class="sources"><li><a href="https://www.thelec.net/news/articleView.html?idxno=15179" target="_blank" rel="noopener noreferrer">https://www.thelec.net/news/articleView.html?idxno=15179</a> （THE ELEC 原始报道）</li><li><a href="https://www.ithome.com/1/021/101.htm" target="_blank" rel="noopener noreferrer">https://www.ithome.com/1/021/101.htm</a></li></ul><p class="status"><strong>核实状态：单一来源。</strong> 只有 THE ELEC 一家做了独立报道，IT之家和其他中文媒体都是转述它；三星本身没有公开发布声明，这属于媒体援引业内人士的说法，尚未得到其他来源的确认。</p></section>
+<section class="entry"><h3>3. 据 CNBC 报道，Intel 10 月股价暴跌 45%，并把俄勒冈部分 18A 产能转去生产老一代 Intel 3 服务器芯片</h3><p><strong>发生了什么。</strong> CNBC（北京时间 2026-11-03 04:07）发表跟进分析。原文写道，根据 FactSet 的数据，Intel 股价上周五暴跌 29%，是 1970 年代以来最差的单日表现，也让 10 月全月的跌幅达到 45%，创下有记录以来最大的月度跌幅；周一（11 月 2 日）盘中又下跌了 8%。</p><p>原文还写道，为应对产能短缺，Intel 表示正在把俄勒冈工厂的一部分产能，从生产先进的 18A 芯片晶圆，转去生产更多老一代 Intel 3 制程的晶圆，用于其数据中心产品。而 Intel 正指望 18A 来吸引外部代工客户，所以这种资源调整可能让这件事变得更复杂。原文同时提到，Intel 数据中心业务第三季度同比增长 78%，达到 73 亿美元。</p><p class="why"><strong>为什么值得注意。</strong> Intel 的财报是在时间窗之前（10 月 29 日，周四）发布的，这一条收录的是窗内 CNBC 的跟进分析和周一的新一轮下跌。按证据包整理，报道的核心矛盾是：内存和元器件太贵，拖累了 PC 销量；服务器芯片又因为晶圆、基板和内存短缺而供不应求。Intel 只好把先进产能挪去做自家产品，这恰恰削弱了它想做「美国本土代工厂」的说服力。这能帮他理解，存储涨价不只影响买电脑的消费者，也在倒逼芯片巨头调整产能安排。</p><p class="thesis"><strong>与核心思想。</strong> 为了应付眼前的短缺把产能挪去做老产品，是解决「一下」的问题；可这样做会削弱 18A 吸引外部客户的长期计划，等于拿长账去填短账。</p><p><strong>来源与核实。</strong></p><ul class="sources"><li><a href="https://www.cnbc.com/2026/11/02/intel-foundry-faces-critical-test-after-stocks-45percent-plunge-in-october.html" target="_blank" rel="noopener noreferrer">https://www.cnbc.com/2026/11/02/intel-foundry-faces-critical-test-after-stocks-45percent-plunge-in-october.html</a></li></ul><p class="status"><strong>核实状态：单一来源。</strong> 窗内的这篇分析只有 CNBC 一家；股价跌幅引用的是 FactSet 的数据，产能调整是 Intel 在财报中的表态，属于 CNBC 的转述。另外要说明：昨天的早报把「Intel 产能挪移」列为窗外未收录，因为它最早出现在 10 月 29 日的财报里；今天收录的是窗内 CNBC 的新分析和周一的新跌幅，产能调整本身并不是窗内的新消息。</p></section>
+<section class="entry"><h3>4. 韩国公布史上最大规模预算案：半导体、物理 AI 与 AI 数据中心投入 21.3 万亿韩元，接近今年的两倍</h3><p><strong>发生了什么。</strong> 韩国总统李在明 11 月 2 日上午在国会发表 2027 年度预算案的施政演说。CNBC（北京时间 2026-11-02 14:02）报道，2027 年总支出将增长 12.8%，达到 820.9 万亿韩元（约 6101.4 亿美元），其中包括投向半导体、物理 AI 和 AI 数据中心的 21.3 万亿韩元，接近 2026 年水平的两倍。</p><p>ZDNet Korea（北京时间 2026-11-02 09:47）的报道引述了更多细节：李在明称，将向「三大超大型项目」半导体、物理 AI、AI 数据中心以及人工智能投资投入比今年增加近一倍的 21.3 万亿韩元；通过新设「半导体产业竞争力强化特别会计」打下稳定的投资基础，并投入 2 万亿韩元用于首都圈晶圆厂提前投产、西南圈产业集群建设等生产基础扩充；另外还要预先投入 2.1 万亿韩元建设电力、用水和产业园区基础设施，避免企业因为基础设施不足而错过投资时机。（「物理 AI」指能在现实世界里行动的 AI，比如机器人和自动驾驶。）</p><p class="why"><strong>为什么值得注意。</strong> 这是国家层面把「芯片厂、电力、用水」当作基础设施来规划和投钱，和昨天早报里韩国 10 月半导体出口暴增的数据正好对上。按证据包整理，预算里还有 4.7 万亿韩元用于自主 AI 模型，那部分属于人工智能领域，这里只收芯片和基础设施部分。它说明芯片已经被各国当作国家战略资产，财政投入会直接影响全球存储和芯片的供给格局。</p><p class="thesis"><strong>与核心思想。</strong> 出口数字暴涨是「一下」；一个国家愿意为芯片配套的电和水提前几年投钱，才是在为长账打底。</p><p><strong>来源与核实。</strong></p><ul class="sources"><li><a href="https://zdnet.co.kr/view/?no=20261102104734" target="_blank" rel="noopener noreferrer">https://zdnet.co.kr/view/?no=20261102104734</a> （ZDNet Korea）</li><li><a href="https://www.cnbc.com/2026/11/02/south-korea-ai-spending-budget.html" target="_blank" rel="noopener noreferrer">https://www.cnbc.com/2026/11/02/south-korea-ai-spending-budget.html</a></li></ul><p class="status"><strong>核实状态：多来源确认。</strong> ZDNet Korea 与 CNBC 对 820.9 万亿韩元总额、21.3 万亿韩元三大项目投入的表述一致。</p></section>
+<section class="entry"><h3>5. 韩国第六代国家超级计算机「汉江」投运，理论峰值 614.7 PF，有望跻身全球前十</h3><p><strong>发生了什么。</strong> 韩国科学技术信息通信部与韩国科学技术信息研究院（KISTI）11 月 2 日在大田为第六代国家超算「汉江」举行投运仪式。The Korea Times（北京时间 2026-11-02 13:39）报道，「汉江」造价 3825 亿韩元（约 2.76 亿美元），接替 2018 年部署的第五代超算「Nurion」；Nurion 上线时排名全球第 11，在八年服役期内支撑了 1730 个研究项目。与 Nurion 相比，「汉江」的理论计算能力是它的 24 倍，存储容量是 10 倍，网络传输性能是 4 倍，理论峰值性能为 614.7 PF（PF 即每秒千万亿次浮点运算）。从 10 月下旬开始试运行，计划于 12 月 16 日全面开放服务。</p><p>IT之家（北京时间 2026-11-02 15:04）介绍，这台超算采用 CPU + GPU 混合架构，导入英伟达 GH200 超级芯片，共有 9936 个 CPU 和 8496 个 GPU，理论算力 614PF，足以跻身 2026 年 11 月期 TOP500 全球超级计算机榜单的前十。按证据包整理，Korea Times 还提到 Nurion 支撑发表了 1520 篇论文，其中 70 篇登上 Nature、Science、Cell。</p><p class="why"><strong>为什么值得注意。</strong> 这是一台国家级的科研装置，除了跑天气预报、汽车碰撞模拟这类传统仿真，也专门为 AI 计算做了设计。对学医又学人工智能的他来说，这是一个具体的例子：生命科学研究越来越依赖国家级的算力设施。11 月正好是 TOP500 榜单的发布季，它最后排第几可以留意一下。</p><p class="thesis"><strong>与核心思想。</strong> 上一代超算 Nurion 在八年里支撑了 1730 个研究项目，这就是「长账」的样子：真正的价值不在投运那一天，而在之后许多年里被反复使用。</p><p><strong>来源与核实。</strong></p><ul class="sources"><li><a href="https://www.koreatimes.co.kr/business/tech-science/20261102/korea-unveils-276-mil-hangang-supercomputer" target="_blank" rel="noopener noreferrer">https://www.koreatimes.co.kr/business/tech-science/20261102/korea-unveils-276-mil-hangang-supercomputer</a></li><li><a href="https://www.ithome.com/1/021/047.htm" target="_blank" rel="noopener noreferrer">https://www.ithome.com/1/021/047.htm</a></li></ul><p class="status"><strong>核实状态：多来源确认。</strong> Korea Times 与 IT之家关于 GPU、CPU 数量和算力的数字一致；IT之家写的是 614PF，Korea Times 写的是更精确的 614.7 PF，本稿以 614.7 PF 为准。</p></section>
+<section class="entry"><h3>6. 远景在乌兰察布 AI 数据中心投运一体化 800V 高压直流供电系统，企业称是全球首套商业化运行</h3><p><strong>发生了什么。</strong> 科技日报（北京时间 2026-11-02 14:28）报道，记者从远景科技集团获悉，11 月 2 日，远景的一体化 800 伏高压直流供电系统在乌兰察布星河基地实现端到端贯通。报道称，这是全球首套在大型 AI 数据中心投入商业化运行的一体化 800V 高压直流供电系统，由远景天枢控制器、固态变压器（SST）、直流储能系统（BESS）和直流变换器（DC/DC）构成。</p><p>报道列出了三个技术要点：第一，固态变压器把 10 千伏交流电直接转换成 800 伏直流电，并能稳定适配各类工况；第二，直流储能系统同时能支撑秒级的功率平抑和分钟级的后备供电；第三，固态变压器与储能毫秒级协同联动，就地消纳 GPU 训练带来的剧烈功率波动。远景官方英文新闻稿（北京时间 2026-11-02 15:42）补充说，星河园区于 2026 年 8 月开始运营，规划容量为 3 吉瓦，全部建成后可支持多达 100 万个 AI 加速器并行运行，80% 以上的电力计划来自可再生能源的直接连接。按证据包整理，科技日报还引用国家能源局的数据：2025 年全国算力中心用电量达 1700 亿千瓦时，到 2030 年预计达到 8000 亿千瓦时。</p><p class="why"><strong>为什么值得注意。</strong> 数据中心的供电正在从传统的交流供电改为高压直流供电，好处是转换次数更少、线缆和铜材用得更少，还能更快地应对 GPU 功率的剧烈波动。这是理解「算力其实就是电力」的好素材。</p><p class="thesis"><strong>与核心思想。</strong> GPU 训练时的功率会一下子冲高又一下子回落，供电系统要做的，正是把这些「一下」平稳地接住，让数据中心能日复一日地稳定运转。</p><p><strong>来源与核实。</strong></p><ul class="sources"><li><a href="https://www.stdaily.com/web/gdxw/2026-11/02/content_606839.html" target="_blank" rel="noopener noreferrer">https://www.stdaily.com/web/gdxw/2026-11/02/content_606839.html</a> （科技日报）</li><li><a href="https://www.prnewswire.com/news-releases/envision-achieves-worlds-first-commercial-deployment-of-integrated-800v-dc-sst-based-power-system-in-large-scale-ai-data-center-302926109.html" target="_blank" rel="noopener noreferrer">https://www.prnewswire.com/news-releases/envision-achieves-worlds-first-commercial-deployment-of-integrated-800v-dc-sst-based-power-system-in-large-scale-ai-data-center-302926109.html</a> （远景官方英文新闻稿 / PR Newswire，一手）</li></ul><p class="status"><strong>核实状态：多来源确认（就系统投运事实而言）。</strong> 企业一手英文新闻稿与科技日报的报道内容一致。不过「全球首套」属于企业自称，目前没有找到第三方独立核实。</p></section>
+<section class="entry"><h3>7. 浙江三澳核电 2 号机组完成首次核燃料装载，进入带核调试阶段</h3><p><strong>发生了什么。</strong> 中国广核集团的官方稿件写道，2026 年 11 月 2 日 14 时 08 分，中广核浙江三澳核电项目 2 号机组首次核燃料装载工作圆满完成，标志着机组正式进入带核运行调试的新阶段。按证据包整理，这次共有 177 组燃料组件全部装入堆芯。中广核稿件还写道，项目实现了堆芯测量系统、主蒸汽释放调节阀、电动主给水泵泵组液力耦合器、核级压力/温度开关等 24 项核心主设备的首次国产化落地应用。</p><p>中新网（北京时间 2026-11-02 20:49）介绍，三澳核电项目规划建设 6 台「华龙一号」核电机组，分三期建设，目前已核准 4 台。6 台机组全部建成后，年发电能力预计超过 540 亿千瓦时，接近温州市当前全社会年用电总量的 80%，每年可等效减少标煤消耗超过 1635 万吨，减排二氧化碳近 5000 万吨。</p><p class="why"><strong>为什么值得注意。</strong> 「华龙一号」是我国自主的第三代核电技术。首次装料是机组从建设转向运行的关键节点，后面还要经过并网和商业运行。按证据包整理，中广核的稿件特意把它和长三角「算力枢纽」需要稳定的基荷电力联系在一起（基荷电力指全天候稳定供应、不随天气波动的电力），说明核电正被当作算力时代的电力底座来宣传。</p><p class="thesis"><strong>与核心思想。</strong> 核电是典型的「长账型」电源：建设周期长、投入大，但一旦运转起来就能几十年稳定供电。它正是为「一直撑住」而设计的。</p><p><strong>来源与核实。</strong></p><ul class="sources"><li><a href="https://www.chinanews.com.cn/cj/2026/11-02/10724916.shtml" target="_blank" rel="noopener noreferrer">https://www.chinanews.com.cn/cj/2026/11-02/10724916.shtml</a> （中国新闻网）</li><li><a href="https://finance.sina.com.cn/stock/s/2026-11-02/doc-inixiynx9278793.shtml" target="_blank" rel="noopener noreferrer">https://finance.sina.com.cn/stock/s/2026-11-02/doc-inixiynx9278793.shtml</a> （中国广核集团官方稿，新浪财经转载）</li></ul><p class="status"><strong>核实状态：多来源确认。</strong> 中广核官方稿与中新社报道的时间、177 组燃料组件等关键事实一致。</p></section>
+<section class="entry"><h3>8. 「九章四号」光量子计算原型机等 20 项成果获 2026 年世界互联网大会领先科技奖</h3><p><strong>发生了什么。</strong> 2026 年世界互联网大会领先科技奖颁奖典礼 11 月 2 日在乌镇举行。新华网（北京时间 2026-11-02 21:39）报道，共有 20 项成果获奖，包括「九章四号」光量子计算原型机等基础研究 2 项、面向空间量子信息的光传输技术及应用等关键技术 10 项、面向物理 AI 的整车智能体技术平台等工程研发 8 项，涵盖量子计算、人工智能、空天信息、智能体生产力平台等前沿领域。今年共征集到来自 43 个国家和地区的 430 余项科技成果。</p><p>光明网（北京时间 2026-11-02 18:51）引述刘华亮的介绍：最新研制的「九章四号」采用创新的时空混合编码架构，同时做到了物理成本的大幅缩减和系统规模的跨越式提升，实现了量子计算优越性「从实现到可扩展」的突破；基于高斯玻色采样模型，按照最优经典算法估算，它的求解速度比最强的超级计算机快约 10 的 54 次方倍。</p><p class="why"><strong>为什么值得注意。</strong> 「九章四号」本身是之前公布的成果，窗内的新闻是它获奖，以及颁奖时对其原理的介绍。按证据包整理，获奖名单里还有空间量子通信、高性能分布式存储，以及肿瘤空间免疫评分、智能仿生手这类和医疗相关的项目，可以当作一张「今年硬科技热点地图」来看。需要特别说明：「快约 10 的 54 次方倍」只针对高斯玻色采样这一个特定任务（一种专门用来展示量子优越性的计算问题），并不代表通用计算能力。</p><p class="thesis"><strong>与核心思想。</strong> 在一个特定任务上快出天文数字是惊艳的「一下」；从「实现」走向「可扩展」，也就是能不能越做越大、越做越稳，才是量子计算要面对的长账。</p><p><strong>来源与核实。</strong></p><ul class="sources"><li><a href="https://www.news.cn/tech/20261102/e966531431ed43e7bc56f5d33af2c3f4/c.html" target="_blank" rel="noopener noreferrer">https://www.news.cn/tech/20261102/e966531431ed43e7bc56f5d33af2c3f4/c.html</a> （新华网）</li><li><a href="https://politics.gmw.cn/2026-11/02/content_39081824.htm" target="_blank" rel="noopener noreferrer">https://politics.gmw.cn/2026-11/02/content_39081824.htm</a> （光明网）</li></ul><p class="status"><strong>核实状态：多来源确认。</strong> 新华网与光明网对颁奖时间、获奖数量和「九章四号」介绍的内容一致。</p></section>
+<section class="entry"><h3>9. 谷歌联合多方摧毁 XCPE 僵尸网络：机顶盒厂商在出厂固件中预装后门，波及超过 130 万台设备</h3><p><strong>发生了什么。</strong> 谷歌威胁情报团队在官方博客（标注 2026-11-02）中公布：上周，谷歌和业界合作伙伴拆除了 XCPE 后门，这个后门曾把超过 130 万台机顶盒纳入一个僵尸网络（僵尸网络是指被黑客远程控制、可以统一调度的大量设备）。原文写道，谷歌以高置信度评估，这个后门和僵尸网络是由 Android 原始设备制造商兼原始设计制造商 Videostrong Technology Co. 为牟利而有意开发、部署和运营的。按证据包整理，谷歌联合了日本警察厅和多家安全公司，并已取消这家厂商的 Android 认证资格。</p><p>原文还写道，由于这些关联方的模块在 XCPE 之外还有多种分发渠道，谷歌评估拿下它们的 C2 域名（指挥控制服务器的域名）将切断对至少 1000 万台其他受感染设备的访问。此外，虽然 XCPE 僵尸网络中绝大多数受感染设备是 Android 电视机顶盒，谷歌也观察到一些其他基于 Android 的物联网设备被感染，包括远程医疗设备、卡拉 OK 机和数字标牌。BleepingComputer（北京时间 2026-11-03 02:16）和 CyberScoop 也做了独立报道；按证据包整理，CyberScoop 还引用 TrendAI 的数据称感染设备遍布 170 多个国家，BleepingComputer 指出清除感染需要刷入干净的固件或直接断网。</p><p class="why"><strong>为什么值得注意。</strong> 这次的问题不是用户「中了毒」，而是厂家在出厂时就把后门写进了固件，用户自己删掉后，重启还会自动装回来。这些设备被拿去刷广告、当住宅代理，还被用来下载更多恶意软件。谷歌提到受感染设备中也有远程医疗设备，这和学医的他直接相关：便宜的联网医疗硬件同样可能带有供应链后门。</p><p class="thesis"><strong>与核心思想。</strong> 设备「长期在线」本来是优点，可一旦出厂就埋了后门，它就会长期地、悄悄地为别人工作。安全不是装一次杀毒软件的「一下」，而是要从供应链开始一直盯着的长账。</p><p><strong>来源与核实。</strong></p><ul class="sources"><li><a href="https://cloud.google.com/blog/topics/threat-intelligence/shutting-the-door-on-the-xcpe-botnet/" target="_blank" rel="noopener noreferrer">https://cloud.google.com/blog/topics/threat-intelligence/shutting-the-door-on-the-xcpe-botnet/</a> （Google Cloud 威胁情报博客，一手）</li><li><a href="https://www.bleepingcomputer.com/news/security/google-disrupts-million-device-xcpe-android-malware-botnet-bans-tv-box-maker/" target="_blank" rel="noopener noreferrer">https://www.bleepingcomputer.com/news/security/google-disrupts-million-device-xcpe-android-malware-botnet-bans-tv-box-maker/</a></li><li><a href="https://cyberscoop.com/google-disrupts-xcpe-botnet-videostrong-android-devices/" target="_blank" rel="noopener noreferrer">https://cyberscoop.com/google-disrupts-xcpe-botnet-videostrong-android-devices/</a></li></ul><p class="status"><strong>核实状态：多来源确认。</strong> 谷歌一手报告与 BleepingComputer、CyberScoop 的独立报道内容一致。需要说明的是，按谷歌原文，拆除行动发生在「上周」，窗内的是谷歌公布这件事的报告和媒体报道；「170 多个国家」这一数字据 CyberScoop 引用 TrendAI 的数据称。</p></section>
+<section class="entry"><h3>10. 开源 XML 解析库 libexpat 发布 2.10.0，一次修复四个安全漏洞</h3><p><strong>发生了什么。</strong> 被大量软件内置使用的 C 语言 XML 解析库 Expat（也叫 libexpat）发布了 2.10.0 版本。XML 是一种常见的结构化数据格式，解析库就是负责读懂这种格式的底层组件。维护者在 oss-security 邮件列表（北京时间 2026-11-03 01:20）中写道，今天发布的 libexpat 2.10.0 修复了四个漏洞：CVE-2026-113351、CVE-2026-115506、CVE-2026-117610 和 CVE-2026-118370（CVE 是公开安全漏洞的统一编号）。按证据包整理，其中包括对「十亿笑声」（billion laughs，一种用层层嵌套让解析器耗尽内存的攻击）变种检测不足的问题，维护者呼吁所有打包或内置 Expat 的项目尽快升级。</p><p>维护者 Sebastian Pipping 在发布博客中写道：libexpat 是一个快速的流式 XML 解析器，与 libxml2 一起，是用 C 语言（具体是 C99）编写的、使用最广泛的自由软件 XML 解析器之一。他还写道：值得注意的是，8 月时 Expat 已知未修复的安全问题有 5 个，而这次发布之后变成了 13 个；也就是说，在同一段时间里，新发现的问题（20 个）比能修好的（12 个）还多。</p><p class="why"><strong>为什么值得注意。</strong> Expat 是那种「几乎人人都在用、却没人注意」的底层开源库，很多编程语言的运行时、浏览器和系统软件都内置了它，所以它的安全更新会层层传导到各个发行版。按证据包整理，维护者在博客里呼吁企业出钱资助维护。这是开源基础设施「靠少数志愿者撑着」这个老问题的最新例子。</p><p class="thesis"><strong>与核心思想。</strong> 一次修四个漏洞是「一下」；可新问题来得比修得快，未修复的数量从 5 个涨到 13 个，这才是开源维护真正难撑的长账。</p><p><strong>来源与核实。</strong></p><ul class="sources"><li><a href="https://www.openwall.com/lists/oss-security/2026/11/02/6" target="_blank" rel="noopener noreferrer">https://www.openwall.com/lists/oss-security/2026/11/02/6</a> （oss-security 邮件列表公告，一手）</li><li><a href="https://blog.hartwork.org/posts/expat-2-10-0-released/" target="_blank" rel="noopener noreferrer">https://blog.hartwork.org/posts/expat-2-10-0-released/</a> （维护者发布博客，一手）</li></ul><p class="status"><strong>核实状态：多来源确认。</strong> oss-security 公告与维护者博客都是一手来源，CVE 编号和数量一致。需要说明的是：邮件标题写的是「修复两个漏洞」，但正文和博客都写明修复了四个，本稿以正文为准。博客发布时间标为 11:03 且未注明时区，采集员按维护者所在的德国时间推算约为北京时间 18:03，在窗内。</p></section>
+<section class="entry"><h3>11. Rocket Lab 完成第 99 次发射，用 Electron 火箭为日本 iQPS 部署雷达成像卫星</h3><p><strong>发生了什么。</strong> Rocket Lab 官方新闻稿写道，「The Sea God Surveys」任务于 2026 年 11 月 3 日新西兰夏令时 5:41（即北京时间 2026-11-03 00:41）从新西兰的 Rocket Lab 1 号发射场升空，把合成孔径雷达成像卫星「WADATSUMI-II」送入 575 公里的低地球轨道。新闻稿称，这是 Electron 的第 99 次飞行，也是 Rocket Lab 2026 年的第 20 次任务，巩固了 Electron 作为全球发射最频繁的商业小型火箭的地位。</p><p>Space.com 的报道给出了不同的统计口径：这是 Rocket Lab 总计第 99 次发射，其中两级、高 18 米（59 英尺）的 Electron 轨道发射为第 90 次，其余 9 次是 Electron 的亚轨道版本 HASTE 执行的。</p><p class="why"><strong>为什么值得注意。</strong> 合成孔径雷达卫星能穿透云层，晚上也能对地成像。按证据包整理，iQPS 正在组建约三十多颗卫星的星座，而 Rocket Lab 马上就要迎来第 100 次发射。这条的分量不算重，但窗内能核实的航天发射不多，可以作为航天方面的补充。</p><p class="thesis"><strong>与核心思想。</strong> 一次成功发射是「一下」；把发射做成像班车一样的常规操作，一年 20 次、累计 99 次，才是商业航天的长账。</p><p><strong>来源与核实。</strong></p><ul class="sources"><li><a href="https://investors.rocketlabcorp.com/news-releases/news-release-details/mission-success-rocket-lab-launches-99th-electron-mission" target="_blank" rel="noopener noreferrer">https://investors.rocketlabcorp.com/news-releases/news-release-details/mission-success-rocket-lab-launches-99th-electron-mission</a> （Rocket Lab 投资者关系官方新闻稿，一手）</li><li><a href="https://www.space.com/space-exploration/launches-spacecraft/rocket-lab-electron-launch-sea-god-surveys-iqps-radar-satellite" target="_blank" rel="noopener noreferrer">https://www.space.com/space-exploration/launches-spacecraft/rocket-lab-electron-launch-sea-god-surveys-iqps-radar-satellite</a></li></ul><p class="status"><strong>核实状态：多来源确认。</strong> Rocket Lab 一手新闻稿与 Space.com 的发射时间、轨道高度和载荷信息一致。只是「第 99 次」的统计口径有差异：新闻稿说是 Electron 第 99 次飞行，Space.com 解释为 Rocket Lab 总计第 99 次发射。本稿标题采用「Rocket Lab 第 99 次发射」的说法。</p></section>
+<section class="entry"><h3>12. 据 The Information 报道，苹果桌面家用机器人可能推迟到 2027 年甚至 2028 年，售价或在 1000 美元左右</h3><p><strong>发生了什么。</strong> The Verge（北京时间 2026-11-03 01:06）转述 The Information 的报道称，苹果传闻中的智能家居机器人发布时间据报道被推迟，最早要到明年，也可能到 2028 年。报道说，这款机器人的硬件「已经完成了大约两年」，但软件还没准备好。按证据包整理，这款机器人代号为 J595。The Verge 写道，这款机器人的价格可能明显高于 HomeView，大约在 1000 美元，而且可能因为内存和其他元器件涨价而更高。The Information 称，它会配备一块装在机械臂上、可以转动的 9 英寸屏幕，以及摄像头和传感器，可以在 FaceTime 通话时跟着人转动。</p><p class="why"><strong>为什么值得注意。</strong> 这是消费电子和家用机器人方向的一条传闻。报道把这款机器人的高价和「内存等元器件涨价」直接联系在一起，正好和本部分第 2、3 条讲的芯片与存储供给紧张连成一条线。它也说明，消费级机器人难的往往不是硬件，而是软件能不能把几个具体功能长期稳定地做好。</p><p class="thesis"><strong>与核心思想。</strong> 硬件做出来是「一下」，而且早在两年前就做出来了；软件要稳定到能每天陪在用户家里，才是这款产品迟迟过不去的长账。</p><p><strong>来源与核实。</strong></p><ul class="sources"><li><a href="https://www.theverge.com/tech/1024496/apple-homeview-ultra-robot-rumor-delay" target="_blank" rel="noopener noreferrer">https://www.theverge.com/tech/1024496/apple-homeview-ultra-robot-rumor-delay</a></li></ul><p class="status"><strong>核实状态：单一来源。</strong> 只能看到 The Verge 转述的 The Information 报道，The Information 原文需要付费，采集员没有打开，苹果也没有官方回应。这是一条据报道的传闻，尚未得到其他来源的确认。</p></section>
+</section>
+<section class="part" id="part-med"><h2 class="part">第三部分 · 医学（11 条）</h2>
+<section class="entry"><h3>1. 美国华盛顿州一名接触感染奶牛的居民死于 H5N1 禽流感，是美国 2026 年首例禽流感死亡</h3><p><strong>发生了什么。</strong> 华盛顿州亚基马卫生区的官方新闻稿（落款为当地 2026-11-01）写道：那位在接触感染牛群的奶牛场后感染禽流感、因重症住院的亚基马县居民于当天死亡，这位患者有基础疾病。CNN（北京时间 2026-11-02 22:09 发布，11-03 02:45 更新）报道称，这是美国 2026 年已知的首例禽流感并发症死亡，也是自 2024 年 2 月病毒首次进入奶牛以来美国第三例禽流感死亡。</p><p>CNN 还写道，自 10 月 8 日以来，华盛顿州已报告 33 个感染 H5N1 的奶牛群；美国至今没有记录到人传人的禽流感病例，卫生官员表示公众风险仍然较低。按证据包整理，亚基马县今年已有三例人感染，都来自感染奶牛的暴露：10 月 15 日一例轻症、这次死亡一例，加上周末新报告的一例轻症。CNN 援引布朗大学专家的看法指出，奶牛场 H5N1 的升温恰好与西海岸季节性流感提前流行同期，这会增加两种病毒发生基因重配（两种流感病毒在同一宿主体内交换基因片段，可能产生新毒株）的风险。美联社（北京时间 11-03 04:44）也做了同题报道。</p><p class="why"><strong>为什么值得注意。</strong> 对他来说，这是「同一健康」（One Health，指人、动物和环境的健康彼此相连，需要一起监测）、职业暴露和人畜共患病监测的现实案例。患者有基础疾病，暴露场所是奶牛场，这些都是临床问诊里需要问清楚的关键信息。</p><p class="thesis"><strong>与核心思想。</strong> 禽流感已经在奶牛中流行了两年多，不是一次突发事件，而是一场长跑。每一次新的死亡病例都在提醒，监测必须持续做下去，而不能只在出事时紧张一下。</p><p><strong>来源与核实。</strong></p><ul class="sources"><li><a href="https://www.yakimacounty.us/DocumentCenter/View/46819/110126_Yakima-County-Resident-Dies-from-Complications-of-Avian-Influenza" target="_blank" rel="noopener noreferrer">https://www.yakimacounty.us/DocumentCenter/View/46819/110126_Yakima-County-Resident-Dies-from-Complications-of-Avian-Influenza</a> （亚基马县官方新闻稿）</li><li><a href="https://edition.cnn.com/2026/11/02/health/bird-flu-death-2026" target="_blank" rel="noopener noreferrer">https://edition.cnn.com/2026/11/02/health/bird-flu-death-2026</a> （CNN）</li><li><a href="https://apnews.com/article/bird-flu-death-yakima-washington-c170f95d65a5ffe966ec52d7dae56f3d" target="_blank" rel="noopener noreferrer">https://apnews.com/article/bird-flu-death-yakima-washington-c170f95d65a5ffe966ec52d7dae56f3d</a> （美联社）</li></ul><p class="status"><strong>核实状态：多来源确认。</strong> 县卫生区官方新闻稿、CNN、美联社的说法一致。需要说明两点：一是 CNN 称 CDC 的数据仪表盘尚未收录这三例；二是县卫生区新闻稿落款为当地 11 月 1 日、未标注具体时刻，换算成北京时间约在 11-01 16:00 至 11-02 16:00 之间，有可能早于时间窗起点，但媒体报道和新增细节都在窗内。</p></section>
+<section class="entry"><h3>2. FDA 暂定批准首个仿制长效注射型 HIV 暴露前预防药来那卡帕韦，预计以每人每年 40 美元供应 120 个中低收入国家</h3><p><strong>发生了什么。</strong> Unitaid 新闻稿（日内瓦 2026-11-02）写道，Dr. Reddy's 实验室生产的首个仿制注射型来那卡帕韦获得美国 FDA 暂定批准，距离吉利德的原研药获批用于 HIV 预防仅 16 个月。根据现有的合作协议，Dr. Reddy's 的来那卡帕韦注射剂将以每人每年 40 美元的价格，供应吉利德自愿许可所覆盖的 120 个中低收入国家。新闻稿还解释：暂定批准是原研药仍在专利期内时 FDA 对仿制药的标准认定，它使美国政府可以进行采购。STAT（北京时间 11-03 00:13）和美联社也做了报道。</p><p>这里的 HIV 暴露前预防（PrEP）是指没有感染 HIV 的人提前用药，以降低感染风险。按证据包整理，来那卡帕韦是一种衣壳抑制剂（作用于病毒外壳蛋白的药物），每半年注射一次即可用于 PrEP，原研药是吉利德的 Yeztugo；新闻稿说已有超过 12.5 万名非洲人开始使用原研药，首批仿制药预计年底前到达各国。</p><p class="why"><strong>为什么值得注意。</strong> 「暂定批准」的意思是，原研药专利仍在保护期，仿制药不能在美国上市销售，但可以由美国政府采购并用于援助国家。这条很适合他理解药物可及性、自愿许可（原研药企业主动授权仿制药企业在特定国家生产销售）以及 505(b)(2) 申报路径在全球卫生中的作用。</p><p class="thesis"><strong>与核心思想。</strong> HIV 预防最难的从来不是某一次用药，而是让人长期坚持。一年只需打两针、每年 40 美元的价格，正是把「一下的有效」变成「长期付得起、坚持得住」的关键一步。</p><p><strong>来源与核实。</strong></p><ul class="sources"><li><a href="https://unitaid.org/news-blog/u-s-fda-approves-first-generic-injectable-lenacapavir-for-hiv-prevention/" target="_blank" rel="noopener noreferrer">https://unitaid.org/news-blog/u-s-fda-approves-first-generic-injectable-lenacapavir-for-hiv-prevention/</a> （Unitaid 新闻稿）</li><li><a href="https://apnews.com/article/generic-lenacapavir-gilead-who-prep-hiv-c3537796e84c54d60179eba3c56561e6" target="_blank" rel="noopener noreferrer">https://apnews.com/article/generic-lenacapavir-gilead-who-prep-hiv-c3537796e84c54d60179eba3c56561e6</a> （美联社，正文加载不完整，标题与图片说明已确认）</li><li><a href="https://wortb.com/sources/stat-news" target="_blank" rel="noopener noreferrer">https://wortb.com/sources/stat-news</a> （STAT 报道列表聚合页，用于确认标题与时间）</li></ul><p class="status"><strong>核实状态：多来源确认。</strong> Unitaid 新闻稿、美联社和 STAT 均有报道，核心事实一致；价格与国家数量来自 Unitaid 新闻稿。</p></section>
+<section class="entry"><h3>3. 刚果（金）Bundibugyo 型埃博拉死亡数经回溯调整升至 5372 例、病死率 51.6%；WHO 同日把一款覆盖 Bundibugyo 的分子检测试剂列入应急使用清单</h3><p><strong>发生了什么。</strong> Africanews（2026-11-02）报道，截至上周五，刚果（金）这次埃博拉疫情的死亡人数已达到 5372 人，病死率为 51.6%；截至 10 月 30 日，该国累计确诊 10414 例。报道引述的声明特别说明，报告死亡数的大幅增加，是由于当地数据处理团队与伊图里省疫情管理团队之间对数据做了回溯调整，而不是某一天的突然激增。Euronews（北京时间 11-03 00:50）报道，非洲疾控中心周一告诉法新社，这次疫情已造成 5376 人死亡，其中刚果（金）5372 人，肯尼亚和乌干达各 2 人。</p><p>同一天，WHO 预认证页面（北京时间 2026-11-02 19:48）公告，已将 RADIONE 埃博拉检测试剂盒列入应急使用清单（EUL，指在突发公共卫生事件中，WHO 允许尚未完成全部常规评估的产品先行使用）。这是一款自动化分子检测，可检出埃博拉病毒 RNA，覆盖扎伊尔型、苏丹型、Bundibugyo 型、塔伊森林型和莱斯顿型五种埃博拉病毒。按证据包整理，非洲疾控中心还指出，约 80% 的新病例来自不在随访名单上的传播链。</p><p class="why"><strong>为什么值得注意。</strong> 昨天的早报只写到死亡逾 5000 例，今天有了新的官方数字，病死率也首次超过 50%。需要特别强调的是，死亡数的跳升来自伊图里省数据的回溯核对，并不代表单日暴增，所以不能说成「一天死了几百人」。按证据包整理，在没有获批疫苗和特效药的情况下，能覆盖本次 Bundibugyo 型的诊断试剂，本身就是防控的关键。</p><p class="thesis"><strong>与核心思想。</strong> 疫情数字的突然跳升，看起来像「一下」，其实是长期积压的数据被补齐；而大部分新病例来自没被追踪的传播链，说明疫情防控真正要拼的，是能不能长期、持续地追踪下去。</p><p><strong>来源与核实。</strong></p><ul class="sources"><li><a href="https://www.africanews.com/2026/11/02/ebola-fatality-rate-in-dr-congo-tops-50-as-death-toll-reaches-5372/" target="_blank" rel="noopener noreferrer">https://www.africanews.com/2026/11/02/ebola-fatality-rate-in-dr-congo-tops-50-as-death-toll-reaches-5372/</a></li><li><a href="https://www.euronews.com/2026/11/02/ebola-kills-over-5300-in-fastest-growing-outbreak-on-record" target="_blank" rel="noopener noreferrer">https://www.euronews.com/2026/11/02/ebola-kills-over-5300-in-fastest-growing-outbreak-on-record</a></li><li><a href="https://www.straitstimes.com/world/ebola-fatality-rate-tops-50-after-hundreds-of-deaths-added-to-congo-toll" target="_blank" rel="noopener noreferrer">https://www.straitstimes.com/world/ebola-fatality-rate-tops-50-after-hundreds-of-deaths-added-to-congo-toll</a></li><li><a href="https://extranet.who.int/prequal/news/new-who-emergency-use-listing-ebola-diagnostics" target="_blank" rel="noopener noreferrer">https://extranet.who.int/prequal/news/new-who-emergency-use-listing-ebola-diagnostics</a> （WHO 预认证公告）</li></ul><p class="status"><strong>核实状态：多来源确认。</strong> Africanews（合作美联社）、Euronews（合作法新社）和 Straits Times 的数字一致；试剂列入清单是 WHO 的一手公告。刚果（金）官方报告本身发布于 11 月 1 日（周日），数据截至 10 月 30 日至 31 日，窗内的是媒体报道和非洲疾控中心的新表态。</p></section>
+<section class="entry"><h3>4. WHO 疾病暴发新闻：法国确认全球首例有记录的人感染沙蒙达病毒，患者为免疫低下的老年男性，死于重症脑炎</h3><p><strong>发生了什么。</strong> WHO 发布疾病暴发新闻，原文写道：2026 年 10 月 20 日，法国的《国际卫生条例》国家归口单位通知 WHO，确认了首例有记录的人感染沙蒙达病毒（Shamonda virus，SHAV）病例。患者是一名来自法国东部、免疫功能低下的老年男性，过去一年没有旅行史；他于 2026 年 9 月 23 日出现严重的神经系统症状，被诊断为重症脑炎（脑部炎症），并于 10 月 8 日死亡。原文还写道，沙蒙达病毒主要被认为是一种与动物相关的病毒，和在欧洲流行的施马伦贝格病毒是近亲，此前没有人类感染的记录。由于这是首例经实验室确认的人类感染，WHO 认为目前还无法可靠地评估公共卫生风险，建议继续开展「同一健康」监测和调查。</p><p>按证据包整理，这种病毒今年 7 月起已在法国动物中广泛传播；患者的脑脊液先通过宏基因组测序发现病毒（宏基因组测序是不预设目标、把样本里所有遗传物质一次测出来的方法），再由 RT-PCR 和尸检组织中的高病毒载量确认；患者曾多次输血，但相关献血者检测为阴性，因此输血传播的可能性被认为不大。</p><p class="why"><strong>为什么值得注意。</strong> 对医学生来说，这是「不明原因脑炎靠宏基因组测序破案」和新发人畜共患病监测的典型案例。免疫低下的患者往往是新病原体最先「露面」的地方，这也是临床上遇到原因不明的重症感染时要多想一步的原因。</p><p class="thesis"><strong>与核心思想。</strong> 一种原本只在动物中流行的病毒，出现了第一例人类感染。它会不会只是偶然的「一下」，还是长期风险的开端，需要靠持续的监测来回答，所以 WHO 现在只说「无法可靠评估」。</p><p><strong>来源与核实。</strong></p><ul class="sources"><li><a href="https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON623" target="_blank" rel="noopener noreferrer">https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON623</a></li></ul><p class="status"><strong>核实状态：单一来源。</strong> 目前只核实到 WHO 的一手公告。它属于权威官方来源，但窗内尚未查到其他独立报道。另外，WHO 页面显示时间为 2026-11-02，但页面的引用格式写作 1 November 2026；如果实际是 11 月 1 日晚间发布，就可能略早于时间窗起点，这一点暂时无法完全确定。</p></section>
+<section class="entry"><h3>5. 五个实验室同步重复实验：裸盖菇素在小鼠身上的急性效应可以重复，但「单次给药后持久抗焦虑、抗抑郁」的效果没能重复出来</h3><p><strong>发生了什么。</strong> Nature Neuroscience 于 2026-11-02 在线发表了一项研究。加州大学伯克利分校、加州大学旧金山分校和斯坦福大学的五个独立实验室，按完全相同的方案测试了裸盖菇素（一种来自「迷幻蘑菇」的致幻成分，剂量为 2 mg/kg，腹腔注射）对多种行为的急性效应和持续效应。论文摘要写道：裸盖菇素在急性期稳定且可重复地增加了焦虑和回避相关行为，并降低了恐惧表达；但令人意外的是，给药 24 小时后，它在减少焦虑样和抑郁样行为、促进恐惧消退学习方面，都没有可重复的效果。</p><p>摘要还写道：这项研究在五个实验室中每个实验使用约 200 只雌雄小鼠，结果显示了若干稳定的急性效应，并提示过去报道的裸盖菇素在小鼠身上的一些持续效应可能幅度不大，或者并不一致。伯克利新闻稿引述研究者 Odilia Lu 的话：「这真正凸显了像这样的多实验室合作的重要性，它能更准确地估计真实的效应量，并降低发表偏倚的风险。」（发表偏倚是指阳性结果更容易被发表，导致文献里的效应看起来比真实情况更大。）STAT（北京时间 11-03 00:47）也做了报道。</p><p class="why"><strong>为什么值得注意。</strong> 用迷幻药治疗抑郁和创伤后应激障碍是近年的热门方向，但动物研究的结论常常互相矛盾。按证据包整理，这项研究里过去报道过的「重开社交奖赏学习关键期」等效果也没有被重复出来；作者也强调，这并不否定裸盖菇素对人可能有疗效，而是提醒我们，小鼠行为学模型（比如强迫游泳实验）未必能代表人类的抑郁。这是给医学生讲「可重复性危机」和「发表偏倚」的好例子。</p><p class="thesis"><strong>与核心思想。</strong> 这一条几乎就是今天核心思想的教科书示范：急性效应是「一下」，稳定、可重复；持久效应才是治疗真正需要的「长账」，而这一部分恰恰没能站住。</p><p><strong>来源与核实。</strong></p><ul class="sources"><li><a href="https://www.nature.com/articles/s41593-026-02500-z" target="_blank" rel="noopener noreferrer">https://www.nature.com/articles/s41593-026-02500-z</a> （Nature Neuroscience 论文）</li><li><a href="https://news.berkeley.edu/2026/11/02/in-parallel-mouse-studies-researchers-fail-to-replicate-many-reported-effects-of-psilocybin/" target="_blank" rel="noopener noreferrer">https://news.berkeley.edu/2026/11/02/in-parallel-mouse-studies-researchers-fail-to-replicate-many-reported-effects-of-psilocybin/</a> （伯克利新闻稿）</li><li><a href="https://www.statnews.com/2026/11/02/biotech-news-psilocybin-lasting-benefits-prove-elusive-in-mice/" target="_blank" rel="noopener noreferrer">https://www.statnews.com/2026/11/02/biotech-news-psilocybin-lasting-benefits-prove-elusive-in-mice/</a> （STAT，付费内容，采集员未读正文）</li></ul><p class="status"><strong>核实状态：多来源确认。</strong> 论文摘要、所属机构新闻稿与 STAT 报道一致；论文已经过同行评议。</p></section>
+<section class="entry"><h3>6. Nature Medicine 全球疾病负担研究：2023 年全球宫颈癌新发约 88.7 万例、死亡约 36.9 万例，到 2050 年绝对病例数和死亡数预计仍将上升</h3><p><strong>发生了什么。</strong> Nature Medicine 于 2026-11-02 在线发表了一项全球疾病负担（GBD，一个持续追踪全世界各种疾病发病、死亡和伤残情况的大型研究项目）宫颈癌研究。摘要写道，2023 年全球估计有 88.7 万例新发病例（95% 不确定区间 68.2 万至 117 万）、36.9 万例死亡（29.2 万至 47.5 万）和 1330 万个伤残调整生命年（DALY，把早死和带病生活的损失合在一起计算的健康损失指标，区间 1010 万至 1740 万）。低收入国家的年龄标化发病率和年龄标化死亡率，分别是高收入国家的四倍和七倍以上。</p><p>摘要还写道，所有宫颈癌的伤残调整生命年都归因于 HPV（人乳头瘤病毒）感染，吸烟在全球的贡献为 5.9%（3.2% 至 9.3%）。预测部分写道：到 2050 年，全球年龄标化发病率和死亡率预计较 2024 年分别变化 −12.5%（−25.7% 至 3.5%）和 −9.0%（−21.5% 至 6.6%），但绝对病例数和死亡数预计将分别上升 20.2%（4.6% 至 38.5%）和 39.3%（23.6% 至 57.3%）。</p><p class="why"><strong>为什么值得注意。</strong> 宫颈癌是可以通过 HPV 疫苗和筛查高度预防的癌症，但这项研究显示，因为人口增长和老龄化，即使年龄标化率在下降，到 2050 年的绝对病例数和死亡数仍预计上升。这条很适合他区分「年龄标化率」（消除了人口年龄结构差异后的比率，便于比较）和「绝对负担」（实际有多少人得病、死亡）这两个流行病学概念，也和世卫组织提出的消除宫颈癌目标直接相关。</p><p class="thesis"><strong>与核心思想。</strong> 比率下降看起来像是取得了进展，但绝对病例数还在上涨，说明预防工作不能因为一时的好数字就松劲，要按几十年的长账来规划。</p><p><strong>来源与核实。</strong></p><ul class="sources"><li><a href="https://www.nature.com/articles/s41591-026-04729-4" target="_blank" rel="noopener noreferrer">https://www.nature.com/articles/s41591-026-04729-4</a></li></ul><p class="status"><strong>核实状态：单一来源。</strong> 目前只核实到期刊原文（已经过同行评议）；窗内尚未查到独立的媒体报道。</p></section>
+<section class="entry"><h3>7. Nature Medicine II 期 UNICORN 试验：术前短程 botensilimab 联合 balstilimab，在通常对免疫治疗不敏感的 pMMR 结肠癌中也取得 36% 的主要病理缓解</h3><p><strong>发生了什么。</strong> Nature Medicine 于 2026-11-02 在线发表 UNICORN 试验结果。按证据包整理，试验纳入 56 例可切除的局部晚期结肠癌患者，在手术前给予 botensilimab（一种 Fc 增强型抗 CTLA-4 抗体）单药，或 botensilimab 联合 balstilimab（抗 PD-1 抗体）。这两类药都属于免疫检查点抑制剂，作用是松开免疫系统的「刹车」，让免疫细胞去攻击肿瘤。</p><p>摘要开头写道：术前免疫检查点抑制剂对错配修复缺陷（dMMR）型结肠癌有效，而错配修复功能完整（pMMR）型结肠癌一直被认为对第一代免疫检查点抑制剂耐药。结果部分写道：主要病理缓解率（指手术切下的肿瘤中残留的活癌细胞很少）在 pMMR 单药组为 0%（95% 置信区间 0 至 23.2%），在 pMMR 联合组为 36%（12.8% 至 64.9%），在 dMMR 单药组为 36%（12.8% 至 64.9%），在 dMMR 联合组为 100%（76.8% 至 100%）。安全性方面，单药组和联合组分别有 8 例（29%）和 15 例（54%）患者出现免疫相关不良事件，最常见的是流感样综合征和腹泻。</p><p class="why"><strong>为什么值得注意。</strong> pMMR 型是结肠癌中的大多数，所以如果联合方案能在 pMMR 中带来 36% 的主要病理缓解，会很值得关注。不过按证据包整理，每组只有 14 人，置信区间很宽，联合组的免疫相关不良事件也达到 54%，它属于提出假设的早期研究。对医学生来说，这是理解 MMR/MSI 分型如何决定免疫治疗策略的好材料。</p><p class="thesis"><strong>与核心思想。</strong> 术前一次短程治疗带来的病理缓解，是肿瘤学里很漂亮的「一下」；它能不能转化为长期的无复发生存，还需要更大规模、更长随访的试验来回答。</p><p><strong>来源与核实。</strong></p><ul class="sources"><li><a href="https://www.nature.com/articles/s41591-026-04710-1" target="_blank" rel="noopener noreferrer">https://www.nature.com/articles/s41591-026-04710-1</a></li></ul><p class="status"><strong>核实状态：单一来源。</strong> 目前只核实到期刊原文（已经过同行评议）；样本量小，属于 II 期研究，尚未得到其他研究的确认。</p></section>
+<section class="entry"><h3>8. JAMA Pediatrics 多中心队列研究：孕期或孕前接种新冠 mRNA 疫苗的母亲所生的孩子，18 至 30 个月时的神经发育评分与未接种组相当</h3><p><strong>发生了什么。</strong> JAMA Network 的媒体稿（解禁时间为北京时间 2026-11-03 00:00）介绍了一项发表在 JAMA Pediatrics 上的多中心队列研究。媒体稿写道：在这项研究中，母亲在孕期或孕前不久接种了新冠 mRNA 疫苗的 18 至 30 个月大的孩子，与母亲未接种的孩子相比，ASQ-3 评分是等效的；这些发现支持继续推荐在孕期接种新冠 mRNA 疫苗。ASQ-3 是一种常用的儿童发育筛查问卷，用来评估沟通、动作、解决问题等方面的发育情况。</p><p class="why"><strong>为什么值得注意。</strong> 按证据包整理，在美国疫苗政策反复、公众对孕期接种存在疑虑的背景下，这类结果对产科和儿科的临床咨询很有用。研究给出的是「等效性」结论，而不只是「没有发现差异」。这两者在统计上很不一样：「没有发现差异」可能只是样本太小看不出来，而「等效」是事先设定了可接受的差异范围、并证明结果落在范围之内。这是他读循证文献时值得区分的概念。</p><p class="thesis"><strong>与核心思想。</strong> 疫苗接种是孕期的「一下」，孩子出生后一两年的神经发育才是家长真正关心的长账。这项研究正是在用随访两年多的长账去检验那一针。</p><p><strong>来源与核实。</strong></p><ul class="sources"><li><a href="https://media.jamanetwork.com/media-releases/10.1001/jamapediatrics.2026.5142" target="_blank" rel="noopener noreferrer">https://media.jamanetwork.com/media-releases/10.1001/jamapediatrics.2026.5142</a> （JAMA Network 媒体稿）</li><li><a href="https://jamanetwork.com/journals/jamapediatrics/fullarticle/10.1001/jamapediatrics.2026.5142" target="_blank" rel="noopener noreferrer">https://jamanetwork.com/journals/jamapediatrics/fullarticle/10.1001/jamapediatrics.2026.5142</a> （论文全文，采集时超时，未能读取）</li></ul><p class="status"><strong>核实状态：单一来源。</strong> 只核实到 JAMA Network 官方媒体稿，论文全文未能打开，所以样本量等具体数字暂时没有核实，本稿只引用媒体稿里的结论。</p></section>
+<section class="entry"><h3>9. JAMA Internal Medicine 队列研究：高龄乳腺癌幸存者继续做监测性乳腺 X 线检查，与晚期第二原发乳腺癌风险降低无关</h3><p><strong>发生了什么。</strong> JAMA Network 的媒体稿（解禁时间为北京时间 2026-11-03 00:00）介绍了耶鲁团队发表在 JAMA Internal Medicine 上的一项队列研究。媒体稿写道：这项队列研究的结果提示，在高龄乳腺癌幸存者中，继续进行监测性乳腺 X 线检查（也就是常说的钼靶检查）与晚期第二原发乳腺癌风险的降低并无关联；晚期癌的绝对风险本来就低，考虑到持续监测可能带来的负担，是否继续监测应当个体化决定。「第二原发乳腺癌」是指在原来的癌症之外新长出来的另一个乳腺癌，而不是原来那个癌的复发。</p><p class="why"><strong>为什么值得注意。</strong> 这项研究讨论的是「什么时候该停止筛查」，也就是高龄患者的过度检查与个体化决策问题，和临床上「少即是多」（Less is More）的思路一致。它提醒我们，筛查的获益会随着年龄和预期寿命而变化，不能一律做到底；检查本身也有负担，比如焦虑、假阳性和后续不必要的活检。按证据包整理，具体的样本量和年龄分层等数字尚未从全文核实。</p><p class="thesis"><strong>与核心思想。</strong> 每年做一次钼靶，看起来是在「一直撑住」，但这项研究提醒我们，长账也要算清楚：坚持下去的成本和负担，到了某个年龄可能已经超过了获益。</p><p><strong>来源与核实。</strong></p><ul class="sources"><li><a href="https://media.jamanetwork.com/media-releases/10.1001/jamainternmed.2026.5465" target="_blank" rel="noopener noreferrer">https://media.jamanetwork.com/media-releases/10.1001/jamainternmed.2026.5465</a> （JAMA Network 媒体稿）</li><li><a href="https://jamanetwork.com/journals/jamainternalmedicine/fullarticle/10.1001/jamainternmed.2026.5465" target="_blank" rel="noopener noreferrer">https://jamanetwork.com/journals/jamainternalmedicine/fullarticle/10.1001/jamainternmed.2026.5465</a> （论文链接，采集员未打开全文）</li></ul><p class="status"><strong>核实状态：单一来源。</strong> 只核实到 JAMA Network 官方媒体稿，本稿只引用媒体稿里的结论。</p></section>
+<section class="entry"><h3>10. STAT 八个月调查：原本用于预防线粒体病的「三亲试管婴儿」技术，正被跨国生殖旅游产业包装成高龄女性的生育治疗，但证据非常薄弱</h3><p><strong>发生了什么。</strong> STAT 于 2026-11-02（北京时间约 17:30）发表了一篇调查报道。报道开头写道：一项为降低孩子从母亲那里遗传致命线粒体疾病风险而开发的开创性试管婴儿技术，正被在网上宣传为高龄女性的生育治疗手段，尽管几乎没有证据表明它有效。这项技术叫线粒体置换技术（MRT），因为胚胎同时带有父亲、母亲和线粒体捐赠者的遗传物质，俗称「三亲试管婴儿」。按证据包整理，MRT 在美国是被禁止的，但一家伊利诺伊州的中介公司把美国和欧洲的高龄女性介绍到阿尔巴尼亚等地的诊所接受治疗，宣传的高成功率缺乏可靠数据。</p><p>报道引述了几组关键数据。一组是：在一组高龄患者中，只有一位 42 岁的女性得到过一个染色体数目正确的胚胎；而在「反向重构」的卵子（用高龄女性的线粒体搭配年轻卵子的细胞核）中，40% 的胚胎发育到了可以移植的阶段，其中 70% 染色体数目正常。报道据此写道：「换句话说，高龄女性的线粒体并不是问题所在。」另一组是：2023 年有团队发表了希腊一家生殖诊所的研究，称在 25 名 40 岁以下的患者中，纺锤体移植的每次移植活产率为 31.6%；但藏在补充材料里的年龄细分显示，其中 12 名 39 岁的患者活产率不到 10%。</p><p class="why"><strong>为什么值得注意。</strong> 报道的核心医学逻辑是：高龄女性的不孕，主要来自卵子细胞核内染色体分离出错导致的非整倍体（染色体数目异常），而不是线粒体「电量不足」，所以换线粒体基本解决不了问题。按证据包整理，乌克兰胚胎学家 Mazur 的「反向重构」实验也指向同一个结论。文章同时涉及纺锤体移植和原核移植两种 MRT 方法、发表在边缘期刊上的可疑数据，以及医学伦理问题，很适合他把胚胎学、生殖医学和研究伦理放在一起理解。</p><p class="thesis"><strong>与核心思想。</strong> 一个漂亮的总成功率是「一下」；把数据按年龄拆开、长期追踪，才发现在最需要帮助的人群里几乎没有效果。看数据时要多问一句「这个数字在谁身上成立」。</p><p><strong>来源与核实。</strong></p><ul class="sources"><li><a href="https://www.statnews.com/2026/11/02/three-parent-ivf-fertility-tourism-investigation-mrt-therapy/" target="_blank" rel="noopener noreferrer">https://www.statnews.com/2026/11/02/three-parent-ivf-fertility-tourism-investigation-mrt-therapy/</a> （STAT 调查报道）</li><li><a href="https://wortb.com/sources/stat-news" target="_blank" rel="noopener noreferrer">https://wortb.com/sources/stat-news</a> （STAT 报道列表，用于确认发布时间）</li></ul><p class="status"><strong>核实状态：单一来源。</strong> 这是 STAT 的独家调查，部分数据来自未发表的手稿和会议海报，尚未得到其他媒体的独立核实。</p></section>
+<section class="entry"><h3>11. medRxiv 预印本：帕金森病患者在常规丘脑底核 DBS 之外，对 Meynert 基底核加做间歇刺激，5 例患者 6 个月后认知都出现有临床意义的改善</h3><p><strong>发生了什么。</strong> 斯坦福团队在 medRxiv 上发布了一篇预印本（预印本是尚未经过同行评议、先公开发布的论文稿件），上线日期为 2026-11-02。DBS 即深部脑刺激，是在大脑特定核团里植入电极、用电流调节神经活动的治疗方法，丘脑底核（STN）刺激是治疗帕金森病运动症状的常规靶点。摘要写道：Meynert 基底核（NBM）是大脑皮层的胆碱能枢纽，它及其外侧传出纤维束在帕金森病中很早就会退化，并与认知障碍和认知—运动障碍有关。研究纳入了 5 名伴有认知障碍、已获准接受 STN DBS 的帕金森病患者，作为一项正在进行的、在美国研究性器械豁免（IDE）下开展的 STN 联合 NBM DBS 临床试验的一部分。结果是：经过 6 个月持续 STN 刺激联合间歇 NBM 刺激，全部 5 名参与者在神经心理评估中都出现了有临床意义的认知改善，同时也获得了 STN DBS 预期的运动获益。</p><p>按证据包整理，NBM 的间歇刺激为每天 1 小时，研究通过同一个骨孔或耳后小孔增加电极，做到了「一次手术、两个靶点」。</p><p class="why"><strong>为什么值得注意。</strong> 帕金森病的认知下降目前几乎没有有效疗法，而 Meynert 基底核是大脑皮层胆碱能投射的核心，这正好可以和神经解剖、药理学里「胆碱能假说」（认为认知障碍与乙酰胆碱系统功能下降有关）的知识点对上。不过，研究只有 5 例、没有对照组，只能证明这种做法可行，还不能证明有效。</p><p class="thesis"><strong>与核心思想。</strong> 5 个人在 6 个月里都有改善，是一个令人鼓舞的「一下」；它能否在更多患者、更长时间、有对照的研究中站住，才是接下来要算的长账。</p><p><strong>来源与核实。</strong></p><ul class="sources"><li><a href="https://www.medrxiv.org/content/10.64898/2026.11.02.26366824v1" target="_blank" rel="noopener noreferrer">https://www.medrxiv.org/content/10.64898/2026.11.02.26366824v1</a></li></ul><p class="status"><strong>核实状态：单一来源，且为预印本，未经同行评议。</strong> 另外，medRxiv 只标注上线日期 2026-11-02（美国太平洋时间），不标注具体时刻；只有在太平洋时间 11-02 14:00 之前上线才落在本时间窗内，因此这一条有出窗的可能。</p></section>
+</section>
+<section class="part" id="part-self"><h2 class="part">第四部分 · 个人轻提示（4 条）</h2>
+<p>这一部分的材料都来自他自己的邮箱和 GitHub 通知。Notion 窗内没有新建页面，「Todo List」里仍只有模板样例任务，没有真实的临近截止事项；Notion 日历没有连接，所以日程部分这次没有内容。下面几条只是温和的小提醒，有空的时候看一眼就好。</p>
+<section class="entry"><h3>1. StudySolo 的 supabase-backup 备份工作流在窗内又一次失败</h3><p><strong>发生了什么。</strong> 北京时间 2026-11-02 09:02，GitHub 发来通知：StudySolo 仓库（1037Solo-StudySolo）的 supabase-backup 工作流在 master 分支、提交 c19421c 上全部失败。通知原文写的是「supabase-backup: All jobs have failed」，backup 任务在 22 秒内失败，整个工作流用时 25.0 秒，并带有 3 条注释（annotations，也就是工作流日志里标出的提示或报错）。邮箱里能看到，从 10 月 28 日到 11 月 2 日，每天都有同类的失败通知；这次的提交已经从 5fa0a27 换成了 c19421c，代码有更新，但备份的问题还在。</p><p class="why"><strong>为什么值得注意。</strong> StudySolo 是他自己的线上笔记产品，备份工作流连续失败，意味着数据库可能已经好几天没有成功备份了。</p><p class="thesis"><strong>与核心思想。</strong> 备份的价值不在某一次跑成功，而在每天都稳稳地跑成功。等哪天有空，可以打开 GitHub 上这个仓库的 Actions 页面，看一眼 supabase-backup 工作流那 3 条注释，确认一下是不是密钥过期或者连接配置出了问题。</p><p><strong>来源与核实。</strong> 依据是 GitHub Actions 发到他自己邮箱的失败通知（仓库 1037Solo-StudySolo，工作流 supabase-backup）。<strong>单一来源</strong>：采集时没有打开 Actions 页面核对具体的报错原因。</p></section>
+<section class="entry"><h3>2. DayDayOn 的 deploy 工作流：构建成功，部署失败，重跑一次后仍然失败</h3><p><strong>发生了什么。</strong> 北京时间 2026-11-02 17:59，GitHub 通知 DayDayOn 仓库在 main 分支、提交 d347ae6 上的 deploy 工作流运行失败：build 任务成功（1 条注释），deploy 任务失败（2 条注释），首次运行总时长 1 分 47 秒。北京时间 18:00 又来了一封通知，说明重跑（Attempt #2）的 deploy 任务在 13 秒内再次失败，build 仍然成功。昨天的早报里，DayDayOn 在提交 8e08ac0 上也出现过同样的「构建成功、部署失败」。</p><p class="why"><strong>为什么值得注意。</strong> 换了新的提交，问题依然是同一个样子，重跑也没有救回来，所以问题很可能出在部署环节的配置或凭据上，而不是代码本身。线上版本可能一直停留在较早的那次成功部署上。</p><p class="thesis"><strong>与核心思想。</strong> 构建成功是「一下」，能顺利部署上线才算真正走完全程。有空时可以在 DayDayOn 仓库的 Actions 页面里，看一下 deploy 工作流里 deploy 步骤的两条注释，大概就能知道卡在哪一步了，不用当成紧急事故。</p><p><strong>来源与核实。</strong> 依据是 GitHub 发到他自己邮箱的两封失败通知（仓库 DayDayOn，工作流 deploy）。首次失败和重跑失败两封通知互相印证，失败形态也与昨天一致；不过两封都来自 GitHub，采集时没有在 Actions 页面核对具体报错。</p></section>
+<section class="entry"><h3>3. 一个已安装的 GitHub App「Arena AI Coding Agent」请求扩大对他账户的权限</h3><p><strong>发生了什么。</strong> 北京时间 2026-11-03 02:26，GitHub 来信说，他账户上已安装的 GitHub App「Arena AI Coding Agent」正在请求更新权限。邮件原文写道：「You may choose to ignore this request. If you do, Arena AI Coding Agent will retain its current permissions.」意思是他可以选择忽略这个请求；如果忽略，这个 App 会保留现在的权限，不会有损失。</p><p class="why"><strong>为什么值得注意。</strong> 这属于账号安全类事项：一个第三方编码代理想要更多访问他 GitHub 仓库的权限，而他名下有 StudySolo、Blog-YuSheng 等正在运行的项目。邮件本身已经说明忽略也没有关系，所以完全不急。</p><p class="thesis"><strong>与核心思想。</strong> 授权是一次点击的事，但权限会一直留在那里。哪天顺手的时候，可以在 GitHub 的已安装应用列表里看看这次新增的是哪些权限、自己是否还在用这个 App，再决定接受还是忽略；如果已经不用了，顺手卸载也可以。</p><p><strong>来源与核实。</strong> 依据是 GitHub 发到他自己邮箱的一封官方通知。<strong>单一来源</strong>：采集时没有登录 GitHub 核对具体请求的权限范围。</p></section>
+<section class="entry"><h3>4. AdventureX REDSkill 奖金催款邮件发出后，窗内暂时还没有回信或到账通知</h3><p><strong>发生了什么。</strong> 北京时间 2026-11-01 21:18，他给 AdventureX 官方发了一封邮件，主题是「AdventureX 2026 小红书 REDSkill 挑战赛奖金未到账」。信里说明自己参加了这个挑战赛，已经签好协议，银行卡信息在补充后于 9 月 25 日显示通过，但一直没有收到奖金；Marco 在群里建议他发邮件，并说会帮忙转给小红书。截至北京时间 2026-11-03 06:00，这个邮件线程里仍然只有他自己发出的这一封；用相关关键词在两个邮箱（包括垃圾邮件和已删除）里检索，也没有找到对方回信或到账通知。</p><p class="why"><strong>为什么值得注意。</strong> 这件事直接关系到他的收入。现在距离发信大约一天半，还在正常的等待时间里。</p><p class="thesis"><strong>与核心思想。</strong> 催款这类事情，本来就要有一点耐心慢慢跟。如果这周还没有回音，可以再到群里请 Marco 帮忙跟进一下，同时留意一下银行账户的入账情况。</p><p><strong>来源与核实。</strong> 依据是他自己邮箱的已发送线程和邮箱检索结果。<strong>未能核实</strong>：「没有回信」是通过邮箱检索得出的结论，对方也可能通过微信群、短信或其他渠道回复，而这些渠道不在这次能读取的范围内。</p></section>
+</section>
+<section class="part" id="part-end"><h2 class="part">文末附录</h2>
+<section class="entry"><h3>今日「单一来源 / 未能核实 / 预印本」清单</h3><div class="table-wrap"><table><thead><tr><th>条目</th><th>类型</th><th>说明</th></tr></thead><tbody><tr><td>人工智能-1 Anthropic S-1/A 中的季度净亏损 233 亿美元</td><td>单一来源（媒体报道数字）</td><td>营收、经营亏损、合同承诺为 SEC 原文多来源确认；净亏损数字来自 The Decoder 转引 The Information / Bloomberg，未在 S-1/A 原文中逐项核对</td></tr><tr><td>人工智能-2 Grok Bot「部分用户额度减半」</td><td>单一来源</td><td>只来自 The Telegraph 收集的用户反映，官方未确认削减幅度；Telegraph 原文未打开</td></tr><tr><td>人工智能-3 ChatGPT Chat/Work 合并</td><td>部分未能核实</td><td>邮件原件未直接看到；OpenAI 员工称尚未开始推送</td></tr><tr><td>人工智能-5 OpenAI 激活分类器</td><td>单一来源</td><td>公司自述的实验结论，无第三方复核</td></tr><tr><td>人工智能-6 MIT 权重空间编程</td><td>单一来源，未经同行评议</td><td>研究博客与作者帖；唯一的复现说法发于窗外 06:01，不计入</td></tr><tr><td>人工智能-7 SemiAnalysis GDPx</td><td>单一来源（自建评测）</td><td>各模型具体分数以官方榜单为准，榜单页未打开</td></tr><tr><td>人工智能-8 LongCat-2.5 性能对比与 W4A4 吞吐</td><td>企业自报</td><td>发布事实多来源确认；性能数据未见独立评测；官方技术博客打不开</td></tr><tr><td>人工智能-9 Hydrogen-1.0「超过 GPT-6 Astra」</td><td>企业自报</td><td>发布、开源、许可多来源确认；评测数字只来自开发方</td></tr><tr><td>人工智能-10 Hyra 2.0 三层架构细节</td><td>部分单一来源</td><td>以 IT之家转述为准，公众号原文与官方发布页均未能打开</td></tr><tr><td>人工智能-11 OpenAI Grid Protectors</td><td>单一来源</td><td>OpenAI 官网；9.5 亿美元节省为转述电力公司预测，未核原始文件</td></tr><tr><td>科技-2 三星关闭 8 英寸产线</td><td>单一来源</td><td>THE ELEC 援引业内人士，三星未公开声明</td></tr><tr><td>科技-3 Intel 股价与产能调整</td><td>单一来源</td><td>窗内只有 CNBC 一篇分析；产能调整为财报中表态的转述</td></tr><tr><td>科技-6 远景 800V 系统「全球首套」</td><td>企业自称</td><td>投运事实多来源确认；「全球首套」无第三方核实</td></tr><tr><td>科技-9 XCPE「170 多个国家」</td><td>单一来源数字</td><td>据 CyberScoop 引用 TrendAI 数据称</td></tr><tr><td>科技-12 苹果家用机器人推迟</td><td>单一来源（传闻）</td><td>The Verge 转述付费的 The Information 报道，苹果未回应</td></tr><tr><td>医学-4 法国首例沙蒙达病毒人感染</td><td>单一来源</td><td>WHO 一手公告，窗内暂无其他独立报道</td></tr><tr><td>医学-6 GBD 宫颈癌负担</td><td>单一来源</td><td>期刊原文（已同行评议），暂无媒体报道</td></tr><tr><td>医学-7 UNICORN 试验</td><td>单一来源</td><td>期刊原文（已同行评议），II 期、样本小</td></tr><tr><td>医学-8 孕期新冠疫苗与神经发育</td><td>单一来源</td><td>只核实到 JAMA 媒体稿，全文未能打开</td></tr><tr><td>医学-9 高龄乳腺癌监测性钼靶</td><td>单一来源</td><td>只核实到 JAMA 媒体稿</td></tr><tr><td>医学-10 STAT「三亲试管婴儿」调查</td><td>单一来源</td><td>STAT 独家调查，部分数据来自未发表手稿与会议海报</td></tr><tr><td>医学-11 帕金森病 STN + NBM 双靶点 DBS</td><td><strong>预印本</strong>，未经同行评议</td><td>medRxiv，5 例、无对照</td></tr><tr><td>个人-1 StudySolo 备份失败</td><td>单一来源</td><td>GitHub 通知邮件，未核对具体报错</td></tr><tr><td>个人-2 DayDayOn 部署失败</td><td>两封 GitHub 通知互证</td><td>未在 Actions 页面核对具体报错</td></tr><tr><td>个人-3 Arena AI Coding Agent 权限请求</td><td>单一来源</td><td>GitHub 官方通知，未核对具体权限范围</td></tr><tr><td>个人-4 AdventureX 奖金</td><td>未能核实</td><td>「没有回信」为邮箱检索得出的缺失结论，其他渠道无法读取</td></tr></tbody></table></div><p>多来源确认、可以用定论语气的主要有：Anthropic S-1/A 的营收、经营亏损与合同承诺数字，Grok Bot 额度被快速耗尽与马斯克的成本表态，Claude message threads，LongCat-2.5 与 Hydrogen-1.0 的发布事实，Hyra 2.0 发布与 GitHub 成果，OpenAI 与阿布扎比的四项协议；Marvell 收购 Lumentum，韩国预算案，「汉江」超算，三澳核电装料，「九章四号」获奖，XCPE 僵尸网络，libexpat 2.10.0，Rocket Lab 发射；H5N1 死亡病例，来那卡帕韦仿制药暂定批准，刚果（金）埃博拉新数字与 WHO 试剂清单，以及裸盖菇素多实验室重复研究。</p></section>
+<section class="entry"><h3>窗外未收录提醒（各路采集备注压缩）</h3><div class="table-wrap"><table><thead><tr><th>路</th><th>话题</th><th>处理原因（北京时间）</th></tr></thead><tbody><tr><td>人工智能</td><td>马斯克本人回复「Grok Bot 成本高到不可持续」</td><td>X 发布于 11-02 04:34，早于窗口；窗内媒体跟进已作为人工智能第 2 条收录</td></tr><tr><td>人工智能</td><td>Alex Krentsel 称复现 MIT 权重空间编程结果</td><td>X 发布于 11-03 06:01，刚好出窗</td></tr><tr><td>人工智能</td><td>Anthropic 限制 Claude Code 复刻现有游戏</td><td>首发约 10-30 23:50 至 10-31 14:26；窗内 Ars Technica 和 The Verge 的跟进只补充了 Addy Osmani 的回应，没有新的规则变化</td></tr><tr><td>人工智能</td><td>OpenAI 拟把数据中心改称「AI 算力园区」并在中期选举后发起游说</td><td>TechCrunch 首发 11-02 05:55，早于窗口；窗内只有 IT之家和 The Decoder 的跟进，可作为人工智能第 11 条的背景</td></tr><tr><td>人工智能</td><td>ChatGPT 收紧青少年账户的武器类信息与历史枪击案细节</td><td>OpenAI 官方公告为 10-30</td></tr><tr><td>人工智能</td><td>沙特阿美完成收购 HUMAIN 49% 股份</td><td>商业交易，官网新闻稿打开超时，未能核实原文时间</td></tr><tr><td>人工智能</td><td>Anthropic S-1/A 提到未来模型可能接近递归自我改进阈值</td><td>采集员未在原文中检索到对应原句，未单列</td></tr><tr><td>人工智能</td><td>ServiceNow 开源 Apriel Voice 27B</td><td>只有二手报道，未找到一手来源和准确时间</td></tr><tr><td>人工智能</td><td>DeepSeek Super-agent、Karpathy 6454 视频、ChatGPT/Codex 共享额度一手公告</td><td>昨日早报已收录，窗内没有超出昨日的新事实（ChatGPT 的新材料见人工智能第 3 条）</td></tr><tr><td>科技</td><td>Linux 内核 TCP 远程 UAF 漏洞 CVE-2026-98432</td><td>内核 CNA 10-15 发布、10-27 披露利用方式；Akamai 11-02 的技术分析只是跟进</td></tr><tr><td>科技</td><td>GitLab CVE-2026-97229</td><td>补丁 10-12 发布，10-29 列入 KEV；窗内报道只补充了「仍有 1000 多台服务器未修补」</td></tr><tr><td>科技</td><td>Synology NAS 遭 C3RB3R 勒索软件攻击</td><td>官方警告发于 10-29，窗内为跟进</td></tr><tr><td>科技</td><td>Counterpoint 2026Q3 智能手机 SoC 出货量同比下降 21%</td><td>原发布于 10-30，窗内为转载</td></tr><tr><td>科技</td><td>TOTO 半导体陶瓷工厂、台积电得州 Sherman 建厂传闻、国仪量子核磁探头、上海硬 X 射线自由电子激光首次出光</td><td>均为 10 月内发布，窗内只是转载</td></tr><tr><td>科技</td><td>华为昇腾 950 超节点获奖、OpenAI 奥尔特曼访韩</td><td>主体属于人工智能领域，未在科技部分收录</td></tr><tr><td>医学</td><td>FDA 加速批准 Voceryq、ILUMYA 银屑病关节炎适应症</td><td>约 10-30，出窗</td></tr><tr><td>医学</td><td>拜耳阿舒克森在中国获批、圣美生物染色体异常细胞检测试剂盒获批</td><td>约 10-26，出窗</td></tr><tr><td>医学</td><td>隆德大学 CLEC7A 常见变异与肺炎风险</td><td>新华社 11-01 首发，窗内为转载</td></tr><tr><td>医学</td><td>南京一院微创瓣膜手术治疗心衰（Circulation）</td><td>约 10-31，出窗</td></tr><tr><td>医学</td><td>宾州麻疹更新（累计 1433 例）</td><td>窗内，但相比昨日已收的 1426 例只新增 7 例，没有实质新进展</td></tr><tr><td>医学</td><td>Nature Medicine STOP-V 白癜风 III 期试验、WHO 西太区 BRIDGE 工具、印尼疟疾显微镜检师认证</td><td>窗内，但优先级较低或属常规项目新闻</td></tr><tr><td>个人</td><td>deepseek-harness E2E 工作流失败、Blog-YuSheng PR #214 推送、已过期的 DayDayOn 登录验证码、各类促销邮件</td><td>属于开发测试、昨日早报流程或提醒价值低，未单列</td></tr></tbody></table></div><p><em>详细稿完。材料只依据 /workspace/briefs/2026-11-03/evidence/ 下的四份证据包与 core-thesis.md，没有另外检索公开网络，也没有加入证据包以外的事实、数字或链接。</em></p></section>
+</section>
+      </article>
+    </div>
+  </section>
+</div>
+<noscript><style>
+  body { overflow: auto; height: auto; }
+  .world { height: auto; min-height: 100vh; overflow: visible; }
+  .notes { display: block !important; position: relative; inset: auto; height: auto; overflow: visible; }
+</style></noscript>
+<script>
+(function () {
+  'use strict';
+  var world = document.getElementById('world');
+  var sky = document.getElementById('sky');
+  var kite = document.getElementById('kite');
+  var kiteInner = document.getElementById('kite-inner');
+  var reel = document.getElementById('reel');
+  var crank = document.getElementById('crank');
+  var tail = document.getElementById('tail');
+  var bud = document.getElementById('bud');
+  var band = document.getElementById('band');
+  var cloth = document.getElementById('vane-cloth');
+  var vaneNote = document.getElementById('vane-note');
+  var shadow = document.getElementById('shadow');
+  var stringSvg = document.getElementById('string');
+  var stringPath = document.getElementById('string-path');
+  var hintMain = document.getElementById('hint-main');
+  var hintSub = document.getElementById('hint-sub');
+  var gesture = document.getElementById('gesture');
+  var card = document.getElementById('card');
+  var cardKicker = document.getElementById('card-kicker');
+  var cardTitle = document.getElementById('card-title');
+  var cardBody = document.getElementById('card-body');
+  var cardLinks = document.getElementById('card-links');
+  var gift = document.getElementById('gift');
+  var sticky = document.getElementById('sticky');
+  var notes = document.getElementById('notes');
+  var satchel = document.getElementById('open-notes');
+  var soundBtn = document.getElementById('sound');
+  var ghost = document.querySelector('.ghost-crank');
+
+  var RIBBONS = [
+    {
+      line: '一下子冲得很高，并不算站住。',
+      body: '今天的消息几乎都在做同一件事：用后面要一直付的账，去看那个漂亮的一下能不能留下来。你让风筝在这层风里多停一会儿，尾巴就会再展开一条。',
+      links: []
+    },
+    {
+      line: '季度营收一百七十亿美元，经营上却由盈转亏。',
+      body: 'Anthropic 交给美国证券交易委员会的更新版上市文件写明，截至 2026 年 9 月 30 日的三个月，营收是 170 亿美元，经营亏损 5.67 亿美元。上一个季度还是 9.74 亿美元的经营利润。文件把由盈转亏主要归因于更贵的短期算力，以及 20 亿美元的非现金费用。另有媒体报道称这个季度净亏损 233 亿美元，这个数字没有在文件原文里逐项核对。',
+      links: [
+        ['SEC 提交索引', 'https://www.sec.gov/Archives/edgar/data/2130357/000162828026068676/0001628280-26-068676-index.htm'],
+        ['S-1/A 正文', 'https://www.sec.gov/Archives/edgar/data/2130357/000162828026068676/anthropicpbc-sx1ax1.htm'],
+        ['The Decoder 的报道', 'https://the-decoder.com/anthropic-grows-revenue-twelvefold-but-posts-23-billion-loss/']
+      ]
+    },
+    {
+      line: '算力和机房的合同，大约八千九百五十四亿美元。',
+      body: '同一份文件第一次写下总的合同承诺：截至 9 月 30 日及之后，采购承诺和租赁协议的总承诺支出约 8954 亿美元，几乎全部与算力和基础设施有关。其中约 4475 亿美元预计在 2030 年 12 月 31 日之前发生，约 698 亿美元要在未来十二个月内支付。约 2138 亿美元可以行使终止权，或者附带条件。',
+      links: [
+        ['SEC 提交索引', 'https://www.sec.gov/Archives/edgar/data/2130357/000162828026068676/0001628280-26-068676-index.htm'],
+        ['S-1/A 正文', 'https://www.sec.gov/Archives/edgar/data/2130357/000162828026068676/anthropicpbc-sx1ax1.htm']
+      ]
+    },
+    {
+      line: '额度被很快用完，因为服务成本撑不住。',
+      body: 'TechCrunch 等媒体报道，万圣节周末有些 Grok Bot 用户发现每周额度被用满，哪怕夜里并没有在用。马斯克在 X 上写道，提供这项服务的成本相对于收入高到不可持续。据 The Telegraph 报道称，有几位用户的额度被砍掉一半；官方还没有确认削减幅度，这个说法也还没有其他来源确认。另外，据 TechCrunch 引述 OpenAI 发给用户的邮件，ChatGPT 的聊天和工作两个标签页将合并，Codex 继续单独保留，两边共用同一份额度。The Verge 补充，OpenAI 的员工说这项改动还没有开始推送。邮件原件没有直接看到。',
+      links: [
+        ['TechCrunch 关于 Grok Bot', 'https://techcrunch.com/2026/11/02/elon-musk-throttles-grok-bot-limits-due-to-unsustainably-high-costs/'],
+        ['TechCrunch 关于标签页合并', 'https://techcrunch.com/2026/11/02/openai-is-finally-merging-chatgpts-chat-and-work-tabs/'],
+        ['The Verge 的跟进', 'https://www.theverge.com/ai-artificial-intelligence/1024679/openai-is-planning-to-combine-chatgpt-chat-and-work']
+      ]
+    },
+    {
+      line: '长对话只发新增的那一点，等待大约少了三成五。',
+      body: 'Claude 官方博客宣布，message threads 在 Claude Platform 上公开测试。有了它，长会话不必每一轮都重发整段历史。在五十万到一百万 token 的请求里，等到第一个字的时间中位数下降约 35%。官方账号补充，长对话里单次请求的中位大小从大约 800 KB 降到 1.8 KB。用量并不因此减少，线程在最后一次请求后五分钟过期。OpenAI 同一天还说，未来的算力园区会在电网紧张时主动少用电，佐治亚州的约定最多包括 1000 兆瓦。其中每年节省约 9.5 亿美元，是 OpenAI 转述电力公司的预测，原始文件没有核对。',
+      links: [
+        ['Claude 官方博客', 'https://claude.com/blog/message-threads'],
+        ['OpenAI 电网守护者计划', 'https://openai.com/index/grid-protectors-program']
+      ]
+    },
+    {
+      line: '急性反应能重复，持久的效果没有重复出来。',
+      body: '《自然·神经科学》发表了一项五个实验室的重复实验：裸盖菇素在小鼠身上的急性效应稳定、可重复，给药二十四小时后的抗焦虑、抗抑郁效果却没有重复出来。另一条把一次有效往长期里推：仿制的长效注射来那卡帕韦获得美国食品药品监督管理局暂定批准，按现有协议，将以每人每年 40 美元供应 120 个中低收入国家，大约一年注射两次。',
+      links: [
+        ['Nature Neuroscience 论文', 'https://www.nature.com/articles/s41593-026-02500-z'],
+        ['伯克利新闻稿', 'https://news.berkeley.edu/2026/11/02/in-parallel-mouse-studies-researchers-fail-to-replicate-many-reported-effects-of-psilocybin/'],
+        ['Unitaid 新闻稿', 'https://unitaid.org/news-blog/u-s-fda-approves-first-generic-injectable-lenacapavir-for-hiv-prevention/']
+      ]
+    },
+    {
+      line: '电、光和核电，是在为后面许多年做准备。',
+      body: 'Marvell 以约 1150 亿美元的企业价值、全股票方式收购 Lumentum，交割预计在 2028 年上半年。韩国 2027 年预算里，半导体、物理人工智能和人工智能数据中心合计 21.3 万亿韩元。第六代国家超算「汉江」投运，理论峰值 614.7 千万亿次浮点运算；它接替的上一代在八年里支撑了 1730 个研究项目。浙江三澳核电 2 号机组完成首次核燃料装载。据韩国媒体 THE ELEC 报道，三星计划在 2030 年底前关闭全部 8 英寸代工产线，三星自己没有公开声明，目前也没有其他独立来源确认。',
+      links: [
+        ['Marvell 新闻稿', 'https://investor.marvell.com/news-events/press-releases/detail/1040/marvell-and-lumentum-to-combine-creating-a-category-leader-in-ai-connectivity'],
+        ['Korea Times 关于汉江', 'https://www.koreatimes.co.kr/business/tech-science/20261102/korea-unveils-276-mil-hangang-supercomputer'],
+        ['中国新闻网关于三澳核电', 'https://www.chinanews.com.cn/cj/2026/11-02/10724916.shtml'],
+        ['THE ELEC 关于三星', 'https://www.thelec.net/news/articleView.html?idxno=15179']
+      ]
+    },
+    {
+      line: '有些一下很亮，还在等更长的检验。',
+      body: '据麻省理工学院计算机科学与人工智能实验室的研究博客称，不经训练、改写大约 0.016% 的权重，能把一个小模型的数学测验从 7.9% 提高到 48.1%；同一方法在另一个模型上没有带来提升。这篇文章还没有经过同行评议。据 SemiAnalysis 自己发布的基准称，最好的模型也只拿到 12%，这是他们自建的评测。美团的 LongCat-2.5、深度原理的 Hydrogen-1.0、腾讯混元的 Hyra 2.0 都指向更长的任务或可反复使用的工具，其中和别的模型比高低的数字，是发布方自己报的。',
+      links: [
+        ['权重空间编程博客', 'https://rikiyat.github.io/blog/weight-space-programming/'],
+        ['SemiAnalysis 的 GDPx', 'https://newsletter.semianalysis.com/p/gdpx-measuring-frontier-model-capabilities'],
+        ['IT之家关于 LongCat-2.5', 'https://www.ithome.com/1/020/873.htm'],
+        ['Hydrogen-1.0 模型卡', 'https://huggingface.co/deep-principle/Hydrogen-1.0'],
+        ['IT之家关于 Hyra 2.0', 'https://www.ithome.com/1/021/266.htm']
+      ]
+    }
+  ];
+  var COLORS = ['#f7c7b8', '#f6d7a2', '#f4efe2', '#d7e4b8', '#f0c9cb', '#d5e7f4', '#f3d4b8', '#e8bdb4'];
+
+  var TRAVEL_TOP = 0.10;
+  var TRAVEL_SPAN = 0.74;
+  var s = {
+    h: 0.24, vy: 0, line: 0.24, wind: 0.05, windTarget: 0.05,
+    stall: 0, hold: 0, opened: 0, resting: false, over: 0, t: 0,
+    crashed: 0, gift: false, bandLo: 0.38, bandHi: 0.74
+  };
+  var queue = { line: 0, yank: false };
+  var keys = { left: false, right: false, yank: false };
+  var pointer = null;
+  var reelAngle = -0.45;
+  var lastNow = 0;
+  var hintKey = '';
+  var noteUntil = 4.6;
+  var lastWindTarget = 0.05;
+  var returnFocus = null;
+  var giftTimer = 0;
+  var thesisAt = -1;
+  var audio = null;
+  var broken = false;
+  var dockQuery = window.matchMedia('(max-width: 760px)');
+
+  function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+  function yFrac(h) { return TRAVEL_TOP + (1 - h) * TRAVEL_SPAN; }
+
+  function windAt(t) {
+    if (t < 8) return 0.05;
+    var keysW = [0.05, 0.30, -0.15, 0.38, 0.02, -0.22, 0.26, 0.08, 0.34, -0.08];
+    var span = 6.5;
+    var n = keysW.length;
+    if (t > 8 + n * span) return Math.sin(t / 6.2) * 0.32;
+    return keysW[Math.min(n - 1, Math.floor((t - 8) / span))];
+  }
+
+  function desiredLine(wind) {
+    return clamp(0.46 + (0.05 - wind * 0.42) / 0.95, 0.12, 0.88);
+  }
+
+  function isPaused() {
+    return notes.classList.contains('is-open') || !card.hidden || !sticky.hidden;
+  }
+
+  function step(dt) {
+    if (s.gift) s.windTarget = 0.04;
+    else s.windTarget = windAt(s.t);
+    if (!s.gift && Math.abs(s.windTarget - lastWindTarget) > 0.12 && s.t > 7.2) {
+      vaneNote.hidden = false;
+      vaneNote.textContent = s.windTarget > lastWindTarget ? '风大了。把线收回一点。' : '风小了。再放一点线。';
+      noteUntil = s.t + 3.4;
+    }
+    lastWindTarget = s.windTarget;
+    s.wind += (s.windTarget - s.wind) * (1 - Math.exp(-1.5 * dt));
+    s.t += dt;
+
+    var lineDelta = queue.line;
+    var yank = queue.yank;
+    queue.line = 0;
+    queue.yank = false;
+    if (keys.right) lineDelta += 0.2 * dt;
+    if (keys.left) lineDelta -= 0.2 * dt;
+    if (keys.yank) { yank = true; keys.yank = false; }
+
+    if (s.resting && !s.gift) {
+      s.h = 0.08; s.vy = 0; s.stall = 0; s.hold = 0; s.over = 0;
+      if (lineDelta > 0) {
+        s.resting = false;
+        s.line = clamp(0.30 + lineDelta, 0.1, 0.9);
+      } else {
+        s.line = 0.22;
+      }
+      return;
+    }
+
+    if (yank && s.stall <= 0 && !s.gift) {
+      s.vy += 2.4;
+      s.stall = 1.35;
+      s.hold = 0;
+      chime(196, 0.09, 0.28);
+    }
+    if (!s.gift) s.line = clamp(s.line + lineDelta, 0.1, 0.9);
+    else s.line += (desiredLine(0.04) - s.line) * Math.min(1, 1.4 * dt);
+
+    var target;
+    if (s.stall > 0) {
+      s.stall -= dt;
+      target = s.stall > 0.95 ? 1.05 : -0.05;
+    } else {
+      target = clamp(0.5 + s.wind * 0.42 + (s.line - 0.46) * 0.95, 0.08, 0.92);
+    }
+    var spring = s.stall > 0 ? (s.stall > 0.95 ? 4.5 : 5.5) : 2.5;
+    s.vy += (target - s.h) * spring * dt;
+    s.vy *= Math.exp(-(s.stall > 0 ? 1.6 : 2.7) * dt);
+    s.h += s.vy * dt;
+
+    if (s.h < 0.055 && !s.gift) {
+      s.h = 0.08; s.vy = 0; s.line = 0.22; s.stall = 0; s.over = 0; s.hold = 0;
+      s.resting = true;
+      s.crashed += 1;
+      if (s.crashed >= 2) { s.bandLo = 0.34; s.bandHi = 0.78; }
+      return;
+    }
+    if (s.h > 0.99) { s.h = 0.99; s.vy = Math.min(s.vy, 0.2); }
+    if (s.stall <= 0 && s.h > 0.86) s.over += dt;
+    else if (s.h <= 0.86) s.over = 0;
+    if (s.over > 0.85 && s.stall <= 0 && !s.gift) {
+      s.stall = 1.15; s.over = 0; s.hold = 0;
+    }
+
+    var inBand = s.stall <= 0 && s.h >= s.bandLo && s.h <= s.bandHi && Math.abs(s.vy) < 0.55;
+    if (inBand && !s.gift) {
+      s.hold += dt;
+      var need = s.opened === 0 ? 2.6 : 4.0;
+      if (s.hold >= need && s.opened < RIBBONS.length) {
+        s.hold = 0;
+        unfurl();
+      }
+    } else if (!s.gift) {
+      s.hold = Math.max(0, s.hold - dt * 0.4);
+    }
+  }
+
+  function unfurl() {
+    var data = RIBBONS[s.opened];
+    var index = s.opened;
+    s.opened += 1;
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'ribbon';
+    btn.style.setProperty('--c', COLORS[index % COLORS.length]);
+    btn.setAttribute('aria-label', data.line + ' 点开可以看完整一点。');
+    var text = document.createElement('span');
+    text.className = 'ribbon-text';
+    text.textContent = data.line;
+    btn.appendChild(text);
+    btn.addEventListener('click', function () { openCard(data, index); });
+    tail.classList.add('has-ribbon');
+    tail.insertBefore(btn, bud);
+    try { tail.scrollTop = tail.scrollHeight; tail.scrollLeft = tail.scrollWidth; } catch (err) {}
+    chime(523.25, 0.045, 0.55);
+    if (s.opened >= RIBBONS.length) {
+      s.gift = true;
+      bud.classList.add('is-bow');
+      world.classList.add('is-gift');
+      if (giftTimer) clearTimeout(giftTimer);
+      giftTimer = setTimeout(showGift, 720);
+    }
+  }
+
+  function showGift() {
+    gift.hidden = false;
+    try { tail.scrollTo({ top: 0, behavior: 'smooth' }); } catch (err) { tail.scrollTop = 0; }
+    satchel.classList.add('nudge');
+    chime(523.25, 0.04, 0.45);
+    setTimeout(function () { chime(659.25, 0.035, 0.5); }, 140);
+    setTimeout(function () { chime(783.99, 0.03, 0.7); }, 280);
+    var btn = document.getElementById('gift-notes');
+    if (btn) btn.focus();
+  }
+
+  function openCard(data, index) {
+    returnFocus = document.activeElement;
+    cardKicker.textContent = '尾巴上的第' + '一二三四五六七八'.charAt(index) + '条';
+    cardTitle.textContent = data.line;
+    cardBody.textContent = data.body;
+    cardLinks.textContent = '';
+    data.links.forEach(function (pair) {
+      var li = document.createElement('li');
+      var a = document.createElement('a');
+      a.href = pair[1];
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+      a.textContent = pair[0];
+      li.appendChild(a);
+      cardLinks.appendChild(li);
+    });
+    card.hidden = false;
+    document.getElementById('card-close').focus();
+  }
+
+  function closeCard() {
+    card.hidden = true;
+    if (returnFocus && returnFocus.focus) returnFocus.focus();
+  }
+
+  function openNotes() {
+    returnFocus = document.activeElement;
+    notes.classList.add('is-open');
+    notes.setAttribute('aria-hidden', 'false');
+    document.getElementById('close-notes').focus();
+  }
+
+  function closeNotes() {
+    notes.classList.remove('is-open');
+    notes.setAttribute('aria-hidden', 'true');
+    if (returnFocus && returnFocus.focus) returnFocus.focus();
+    else satchel.focus();
+  }
+
+  function openSticky() {
+    returnFocus = document.activeElement;
+    sticky.hidden = false;
+    document.getElementById('close-note').focus();
+  }
+
+  function closeSticky() {
+    sticky.hidden = true;
+    if (returnFocus && returnFocus.focus) returnFocus.focus();
+  }
+
+  function replay() {
+    if (giftTimer) clearTimeout(giftTimer);
+    s.h = 0.24; s.vy = 0; s.line = 0.24; s.wind = 0.05; s.windTarget = 0.05;
+    s.stall = 0; s.hold = 0; s.opened = 0; s.resting = false; s.over = 0; s.t = 0;
+    s.crashed = 0; s.gift = false; s.bandLo = 0.38; s.bandHi = 0.74;
+    lastWindTarget = 0.05;
+    noteUntil = s.t + 4;
+    gift.hidden = true;
+    card.hidden = true;
+    world.classList.remove('is-gift');
+    bud.classList.remove('is-bow');
+    tail.classList.remove('has-ribbon');
+    tail.querySelectorAll('.ribbon').forEach(function (node) { node.remove(); });
+    vaneNote.hidden = false;
+    vaneNote.textContent = '风又小下来了。再让它停一会儿。';
+    hintKey = '';
+  }
+
+  function render() {
+    var skyR = sky.getBoundingClientRect();
+    var worldR = world.getBoundingClientRect();
+    var xBase = skyR.width * (0.30 + s.wind * 0.02);
+    var x = xBase + Math.sin(s.t * 0.35) * 6;
+    var y = skyR.height * yFrac(s.h);
+    var tilt = clamp(s.vy * 18 + (s.stall > 0 ? 16 : 0), -32, 32);
+    var scale = 0.82 + (1 - s.h) * 0.28;
+    var yaw = clamp(s.wind * 26 + s.vy * 8, -32, 32);
+    kite.style.transform = 'translate(' + x + 'px,' + y + 'px) translate(-50%,-50%) rotate(' + tilt + 'deg) scale(' + scale + ')';
+    kiteInner.style.transform = 'rotateY(' + yaw + 'deg)';
+    if (!dockQuery.matches) {
+      tail.style.transform = 'translate(' + (xBase + 54) + 'px,' + (Math.max(86, y + 70 * scale)) + 'px)';
+    } else {
+      tail.style.transform = 'none';
+    }
+    var need = s.opened === 0 ? 2.6 : 4.0;
+    var progress = s.gift ? 1 : clamp(s.hold / need, 0, 1);
+    if (!s.gift) {
+      bud.style.opacity = (progress > 0.08 || s.opened > 0) ? '1' : '0';
+      bud.style.transform = 'scaleX(' + (0.55 + progress * 1.3) + ')';
+    }
+    cloth.style.transform = 'rotate(' + (16 - s.wind * 55) + 'deg)';
+    if (s.t > noteUntil) vaneNote.hidden = true;
+
+    var inBand = !s.resting && s.stall <= 0 && s.h >= s.bandLo && s.h <= s.bandHi;
+    world.classList.toggle('is-band', inBand);
+    world.classList.toggle('is-rest', s.resting);
+    band.style.top = (yFrac(s.bandHi) * 100) + '%';
+    band.style.height = ((yFrac(s.bandLo) - yFrac(s.bandHi)) * 100) + '%';
+
+    var axle = document.getElementById('axle').getBoundingClientRect();
+    var bridle = document.getElementById('bridle').getBoundingClientRect();
+    var x1 = axle.left + axle.width / 2 - worldR.left;
+    var y1 = axle.top + axle.height / 2 - worldR.top;
+    var x2 = bridle.left + bridle.width / 2 - worldR.left;
+    var y2 = bridle.top + bridle.height / 2 - worldR.top;
+    var sag = 16 + (1 - s.h) * 54 + (s.stall > 0 ? 36 : 0);
+    var mx = (x1 + x2) / 2;
+    var my = (y1 + y2) / 2 + sag;
+    stringSvg.setAttribute('viewBox', '0 0 ' + worldR.width + ' ' + worldR.height);
+    stringPath.setAttribute('d', 'M ' + x1 + ' ' + y1 + ' Q ' + mx + ' ' + my + ' ' + x2 + ' ' + y2);
+    shadow.style.left = (skyR.left - worldR.left + x) + 'px';
+    shadow.style.transform = 'translateX(-50%) scaleX(' + (0.45 + (1 - s.h) * 0.9) + ')';
+    shadow.style.opacity = String(0.12 + (1 - s.h) * 0.28);
+    crank.setAttribute('transform', 'rotate(' + (reelAngle * 180 / Math.PI) + ' 136 86)');
+    reel.setAttribute('aria-valuenow', String(Math.round(s.h * 100)));
+    syncHint(inBand);
+    if (audio && audio.on) {
+      try {
+        audio.filter.frequency.value = 520 + Math.abs(s.wind) * 380;
+        audio.gain.gain.value = 0.012 + Math.abs(s.wind) * 0.01;
+      } catch (err) {}
+    }
+  }
+
+  function syncHint(inBand) {
+    var key = 'start';
+    var main = '按住线轴，慢慢转。';
+    var sub = '顺时针放线，风筝会上升；逆时针收线，风筝会下降。转得太猛，它会冲高，然后栽下来。';
+    if (s.gift) {
+      key = 'gift';
+      main = '它停住了。';
+      sub = '猛拉只会冲高一下。是你一段一段把它留在风里的。';
+    } else if (s.resting && s.crashed > 0) {
+      key = s.crashed >= 2 ? 'crash2' : 'crash';
+      main = '栽到草地上了。线还连着。';
+      sub = s.crashed >= 2 ? '慢一点转，把它送进那层浅色的风里就好。' : '顺时针慢慢放线，它会再起来。';
+    } else if (s.stall > 0.35) {
+      key = 'yank';
+      main = '这一下冲得太猛，它失速了。';
+      sub = '漂亮的一下过去之后，它就往下栽。';
+    } else if (s.h > s.bandHi + 0.03) {
+      key = 'high';
+      main = '有点高了。逆时针轻轻收一点。';
+      sub = '冲出这层风，它就稳不住。';
+    } else if (inBand && s.opened >= 7) {
+      key = 'almost';
+      main = '它已经撑住一会儿了。';
+      sub = '再留一下，尾巴就齐。风要是变了，就轻轻跟着收放。';
+    } else if (inBand && s.opened === 0) {
+      key = 'band';
+      main = '它停在这层风里了。';
+      sub = '就这样，小幅接着转。飞起来只是开始。';
+    } else if (inBand) {
+      key = 'band' + s.opened;
+      main = '就这样，小幅接着转。';
+      sub = '风还会变。手别一下子松开，也别一下子拽死。';
+    } else if (world.classList.contains('has-touched') && s.h < s.bandLo) {
+      key = 'low';
+      main = '还低了一点。顺时针再放一点线。';
+      sub = '目标是上面那层浅色的风。';
+    }
+    if (key === hintKey) return;
+    hintKey = key;
+    hintMain.textContent = main;
+    hintSub.textContent = sub;
+  }
+
+  function onPointerDown(event) {
+    if (event.button !== undefined && event.button !== 0) return;
+    try { reel.setPointerCapture(event.pointerId); } catch (err) {}
+    pointer = { id: event.pointerId, last: angleOf(event), time: performance.now() };
+    world.classList.add('has-touched');
+    if (ghost) ghost.setAttribute('display', 'none');
+  }
+
+  function onPointerMove(event) {
+    if (!pointer || event.pointerId !== pointer.id) return;
+    var now = performance.now();
+    var dt = Math.max(0.016, (now - pointer.time) / 1000);
+    var next = angleOf(event);
+    var delta = next - pointer.last;
+    while (delta > Math.PI) delta -= Math.PI * 2;
+    while (delta < -Math.PI) delta += Math.PI * 2;
+    // 屏幕坐标里，atan2 增大的方向是顺时针。
+    var clockwise = clamp(delta, -0.9, 0.9);
+    queue.line += clockwise * 0.16;
+    reelAngle += clockwise;
+    if (clockwise < -0.42 && clockwise / dt < -3.2) queue.yank = true;
+    pointer.last = next;
+    pointer.time = now;
+    gesture.hidden = false;
+    gesture.textContent = clockwise >= 0 ? '正在放线' : '正在收线';
+  }
+
+  function onPointerUp(event) {
+    if (!pointer || event.pointerId !== pointer.id) return;
+    pointer = null;
+    gesture.hidden = true;
+  }
+
+  function angleOf(event) {
+    var rect = reel.getBoundingClientRect();
+    return Math.atan2(event.clientY - (rect.top + rect.height / 2), event.clientX - (rect.left + rect.width / 2));
+  }
+
+  function frame(now) {
+    if (broken) return;
+    try {
+      if (!lastNow) lastNow = now;
+      var dt = Math.min(0.05, (now - lastNow) / 1000);
+      lastNow = now;
+      if (!isPaused()) step(dt || 0.016);
+      render();
+    } catch (err) {
+      broken = true;
+      notes.classList.add('is-open');
+      notes.setAttribute('aria-hidden', 'false');
+    }
+    if (!broken) requestAnimationFrame(frame);
+  }
+
+  function chime(freq, gainValue, dur) {
+    if (!audio || !audio.on) return;
+    try {
+      var ctx = audio.ctx;
+      var osc = ctx.createOscillator();
+      var gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(gainValue, ctx.currentTime + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + dur);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + dur + 0.02);
+    } catch (err) {}
+  }
+
+  function toggleSound() {
+    try {
+      var Ctx = window.AudioContext || window.webkitAudioContext;
+      if (!Ctx) return;
+      if (!audio) {
+        var ctx = new Ctx();
+        var length = ctx.sampleRate * 2;
+        var buffer = ctx.createBuffer(1, length, ctx.sampleRate);
+        var data = buffer.getChannelData(0);
+        var last = 0;
+        for (var i = 0; i < length; i++) {
+          var white = Math.random() * 2 - 1;
+          last = (last + 0.02 * white) / 1.02;
+          data[i] = last * 3.2;
+        }
+        var source = ctx.createBufferSource();
+        source.buffer = buffer;
+        source.loop = true;
+        var filter = ctx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.value = 640;
+        var gain = ctx.createGain();
+        gain.gain.value = 0;
+        source.connect(filter);
+        filter.connect(gain);
+        gain.connect(ctx.destination);
+        source.start();
+        audio = { ctx: ctx, filter: filter, gain: gain, on: false };
+      }
+      audio.on = !audio.on;
+      if (audio.ctx.state === 'suspended') audio.ctx.resume();
+      audio.gain.gain.value = audio.on ? 0.015 : 0;
+      soundBtn.setAttribute('aria-pressed', audio.on ? 'true' : 'false');
+      soundBtn.textContent = audio.on ? '关掉风声' : '打开风声';
+    } catch (err) {
+      soundBtn.textContent = '风声开不了';
+    }
+  }
+
+  reel.addEventListener('pointerdown', onPointerDown);
+  reel.addEventListener('pointermove', onPointerMove);
+  reel.addEventListener('pointerup', onPointerUp);
+  reel.addEventListener('pointercancel', onPointerUp);
+  document.getElementById('open-notes').addEventListener('click', openNotes);
+  document.getElementById('close-notes').addEventListener('click', closeNotes);
+  document.getElementById('open-note').addEventListener('click', openSticky);
+  document.getElementById('close-note').addEventListener('click', closeSticky);
+  document.getElementById('card-close').addEventListener('click', closeCard);
+  document.getElementById('gift-notes').addEventListener('click', function () { gift.hidden = true; openNotes(); });
+  document.getElementById('gift-tail').addEventListener('click', function () {
+    gift.hidden = true;
+    try { tail.scrollTo({ top: 0, behavior: 'smooth' }); } catch (err) { tail.scrollTop = 0; }
+  });
+  document.getElementById('replay').addEventListener('click', function () { replay(); reel.focus(); });
+  soundBtn.addEventListener('click', toggleSound);
+  document.getElementById('next-thesis').addEventListener('click', function () {
+    var nodes = Array.prototype.slice.call(document.querySelectorAll('#doc .thesis'));
+    if (!nodes.length) return;
+    thesisAt = (thesisAt + 1) % nodes.length;
+    var el = nodes[thesisAt];
+    var reduce = false;
+    try { reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (err) {}
+    var top = el.getBoundingClientRect().top - notes.getBoundingClientRect().top + notes.scrollTop - 76;
+    notes.scrollTo({ top: top, behavior: reduce ? 'auto' : 'smooth' });
+    el.classList.add('is-mark');
+    setTimeout(function () { el.classList.remove('is-mark'); }, 1600);
+  });
+  document.addEventListener('keydown', function (event) {
+    var inNotes = notes.classList.contains('is-open');
+    if (event.key === 'Escape') {
+      if (!card.hidden) { closeCard(); event.preventDefault(); return; }
+      if (inNotes) { closeNotes(); event.preventDefault(); return; }
+      if (!sticky.hidden) { closeSticky(); event.preventDefault(); return; }
+    }
+    if (inNotes || !card.hidden || !sticky.hidden) return;
+    if (event.key === 'ArrowRight' || event.key === 'd' || event.key === 'D') { keys.right = true; world.classList.add('has-touched'); event.preventDefault(); }
+    if (event.key === 'ArrowLeft' || event.key === 'a' || event.key === 'A') { keys.left = true; world.classList.add('has-touched'); event.preventDefault(); }
+    if ((event.key === 'ArrowUp' || event.key === 'w' || event.key === 'W') && !event.repeat) { keys.yank = true; world.classList.add('has-touched'); event.preventDefault(); }
+  });
+  document.addEventListener('keyup', function (event) {
+    if (event.key === 'ArrowRight' || event.key === 'd' || event.key === 'D') keys.right = false;
+    if (event.key === 'ArrowLeft' || event.key === 'a' || event.key === 'A') keys.left = false;
+  });
+
+  band.style.top = (yFrac(s.bandHi) * 100) + '%';
+  band.style.height = ((yFrac(s.bandLo) - yFrac(s.bandHi)) * 100) + '%';
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+<!--
+DESIGN LESSON
+STYLE: 秋日早晨的浅天蓝河堤，米白云和浅黄绿草地，暖橙与珊瑚红的风筝，用手慢慢收放线。
+GENRE: 要靠持续收放线才能把风筝留在天上的小游戏。
+TITLE: 让风筝停在天上
+THESIS: 冲高一下很容易，能不能一直撑住才是真问题。
+-->
+</html>
