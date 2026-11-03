@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>歪一歪，看见另一面 · 折晓早报 · 2026-11-04</title>
+<style>
+  :root {
+    --ink: #3a332c;
+    --muted: #7a6c60;
+    --cream: #f7f3ea;
+    --apricot: #e7a07a;
+    --ease: cubic-bezier(.22, .8, .28, 1);
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    overflow: hidden;
+    color: var(--ink);
+    background: #e4cfae;
+    font-family: "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", "WenQuanYi Micro Hei", "WenQuanYi Zen Hei", "Droid Sans Fallback", sans-serif;
+    line-height: 1.5;
+  }
+  button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+  a { color: #1d5c4c; }
+  :focus-visible { outline: 2px solid #9a3f24; outline-offset: 3px; }
+  ::selection { background: #f6d3b4; }
+  [hidden] { display: none !important; }
+  .sr {
+    position: absolute;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap; border: 0;
+  }
+  .world {
+    height: 100%;
+    padding: 12px;
+    background:
+      radial-gradient(ellipse 46% 38% at 0% 0%, rgba(255, 244, 226, .9), transparent 68%),
+      repeating-linear-gradient(92deg, rgba(255,255,255,.05) 0 1px, transparent 1px 12px),
+      linear-gradient(165deg, #f0ddc2, #e4c9a4 46%, #d7b892);
+  }
+  .sheet {
+    position: relative;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    padding: 12px 16px 10px;
+    border-radius: 22px;
+    background:
+      radial-gradient(rgba(120, 80, 40, .035) .7px, transparent .8px),
+      linear-gradient(180deg, #fbf8f3, #f4efe6);
+    background-size: 7px 7px, auto;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.85),
+      0 16px 36px rgba(110, 74, 36, .12);
+    overflow: hidden;
+  }
+  .sheet::before {
+    content: "";
+    position: absolute;
+    width: 48%;
+    height: 36%;
+    left: -6%;
+    top: -10%;
+    background: radial-gradient(ellipse, rgba(255,252,246,.95), transparent 70%);
+    pointer-events: none;
+  }
+  .top, .hint, .keys, .stage, .caption, .dock { position: relative; z-index: 1; }
+  .top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    margin: 0;
+    color: #8a7464;
+    font-size: 13px;
+  }
+  .brand { margin: 0; font-weight: 700; color: #5c4d42; letter-spacing: .08em; }
+  .date { margin: 0; }
+  .echo {
+    margin: 4px 0 0;
+    text-align: center;
+    font-size: 14px;
+    color: #6d4c38;
+  }
+  .hint {
+    margin: 6px 0 0;
+    text-align: center;
+    font-size: clamp(17px, 2.4vh, 22px);
+    font-weight: 700;
+    line-height: 1.35;
+    min-height: 1.35em;
+    overflow-wrap: anywhere;
+  }
+  .keys {
+    margin: 2px 0 0;
+    text-align: center;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .stage {
+    flex: 1 1 auto;
+    min-height: 150px;
+    display: grid;
+    place-items: center;
+    padding: 18px 0 8px;
+  }
+  .slot {
+    width: min(500px, 100%);
+    height: min(262px, 100%);
+    position: relative;
+    perspective: 980px;
+    --tilt: 0;
+    --hold: 100;
+    --shift: 0;
+  }
+  .slot::after {
+    content: "";
+    position: absolute;
+    left: 12%;
+    right: 12%;
+    bottom: -12px;
+    height: 20px;
+    border-radius: 50%;
+    background: rgba(120, 80, 40, .16);
+    filter: blur(8px);
+    transform: translateX(calc(var(--tilt) * -16px));
+    pointer-events: none;
+    z-index: 0;
+  }
+  .back, .card {
+    position: absolute;
+    inset: 0;
+    border-radius: 20px;
+  }
+  .back {
+    background:
+      repeating-linear-gradient(90deg, rgba(255,255,255,.45) 0 2px, rgba(210, 196, 220, .28) 2px 3px, rgba(255,248,240,.2) 3px 6px),
+      linear-gradient(160deg, #f6f0e6, #efe2d2);
+    box-shadow: 0 8px 16px rgba(120, 80, 40, .06);
+  }
+  .b1 { z-index: 1; transform: translate(10px, -8px) rotate(2.2deg); }
+  .b2 { z-index: 0; transform: translate(18px, -14px) rotate(4deg); }
+  .card {
+    z-index: 2;
+    overflow: hidden;
+    cursor: grab;
+    touch-action: none;
+    user-select: none;
+    background: #f6efe6;
+    transform: rotateX(7deg) rotateY(calc(var(--tilt) * -34deg));
+    box-shadow:
+      inset 0 0 0 1px rgba(255,255,255,.82),
+      inset 0 0 0 2px rgba(176, 140, 100, .2),
+      0 16px 28px rgba(90, 60, 30, .13);
+  }
+  .card.grabbing { cursor: grabbing; }
+  .face {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 14px 18px 30px;
+    -webkit-mask-repeat: repeat;
+    mask-repeat: repeat;
+    -webkit-mask-size: 6px 100%;
+    mask-size: 6px 100%;
+    -webkit-mask-position: calc(var(--shift) * 1px) 0;
+    mask-position: calc(var(--shift) * 1px) 0;
+  }
+  .face.front {
+    background: linear-gradient(165deg, #fffdf9, #f8efe4);
+    color: #3a332c;
+    -webkit-mask-image: linear-gradient(90deg, #000 0, #000 calc(var(--hold) * 1%), transparent calc(var(--hold) * 1%));
+    mask-image: linear-gradient(90deg, #000 0, #000 calc(var(--hold) * 1%), transparent calc(var(--hold) * 1%));
+  }
+  .face.side {
+    background: linear-gradient(165deg, #f5fbf8, #e5f3ec);
+    color: #1c3f36;
+    -webkit-mask-image: linear-gradient(90deg, transparent 0, transparent calc(var(--hold) * 1%), #000 calc(var(--hold) * 1%));
+    mask-image: linear-gradient(90deg, transparent 0, transparent calc(var(--hold) * 1%), #000 calc(var(--hold) * 1%));
+  }
+  .tag, .kicker, .big, .unit, .sub { margin: 0; }
+  .tag {
+    align-self: flex-start;
+    font-size: 12px;
+    line-height: 1.4;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: rgba(255,255,255,.62);
+    color: #6d5e52;
+  }
+  .mid {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .kicker {
+    font-size: 12px;
+    letter-spacing: .14em;
+    color: #8d7b6c;
+    margin-bottom: 4px;
+  }
+  .face.side .kicker { color: #3d7a6c; }
+  .big {
+    font-size: clamp(34px, 6.4vh, 54px);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+  }
+  .big.long {
+    font-size: clamp(26px, 4.6vh, 36px);
+    letter-spacing: 0;
+  }
+  .face.front .big { color: #8a3820; }
+  .face.side .big { color: #0c5c4a; }
+  .unit {
+    margin-top: 4px;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.35;
+  }
+  .sub {
+    font-size: 14px;
+    line-height: 1.45;
+    color: #5e534a;
+  }
+  .face.side .sub { color: #24584c; }
+  .ridges, .sheen, .finger { position: absolute; pointer-events: none; }
+  .ridges, .sheen { inset: 0; border-radius: 20px; }
+  .ridges {
+    background: repeating-linear-gradient(
+      90deg,
+      transparent 0 4px,
+      rgba(110, 78, 48, .16) 4px 4.6px,
+      rgba(255,255,255,.7) 4.6px 5.1px,
+      rgba(140, 110, 180, .14) 5.1px 5.6px,
+      transparent 5.6px 8px
+    );
+    background-position: calc(var(--shift) * 1px) 0;
+    mix-blend-mode: multiply;
+  }
+  .sheen {
+    background: linear-gradient(108deg, transparent 36%, rgba(255,255,255,.72) 48%, rgba(255,255,255,0) 58%);
+    background-size: 220% 100%;
+    background-position: calc(48% + var(--tilt) * -28%) 0;
+    mix-blend-mode: soft-light;
+  }
+  .finger {
+    z-index: 4;
+    right: 22px;
+    top: 42%;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #fff 0 18%, #f6c7a4 46%, #e39a72 78%);
+    box-shadow: 0 6px 10px rgba(160, 90, 40, .25);
+    animation: nudge 1.6s ease-in-out infinite;
+  }
+  html[data-touched="1"] .finger { display: none; }
+  @keyframes nudge {
+    0%, 100% { transform: translateX(-16px); }
+    50% { transform: translateX(8px); }
+  }
+  .caption { width: min(560px, 100%); margin: 0 auto; }
+  .pager {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+  .pager button {
+    flex: none;
+    white-space: nowrap;
+    min-height: 40px;
+    padding: 0 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(90, 60, 40, .2);
+    background: rgba(255,255,255,.45);
+  }
+  .pager button.ready {
+    background: var(--apricot);
+    border-color: transparent;
+    color: #3a2418;
+    font-weight: 700;
+  }
+  .pager button:disabled { opacity: .38; cursor: default; }
+  .pips { display: flex; gap: 4px; align-items: center; }
+  .pip {
+    width: 22px;
+    height: 22px;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+  }
+  .pip::after {
+    content: "";
+    display: block;
+    width: 10px;
+    height: 10px;
+    margin: 6px auto;
+    border-radius: 50%;
+    background: #e3d4c4;
+  }
+  .pip.on::after { background: #c46a45; transform: scale(1.25); }
+  .pip.seen::after { background: #8ec9b6; }
+  .pip.on.seen::after { background: #0c5c4a; transform: scale(1.25); }
+  .which, .copy, .src, .aux { margin: 6px 0 0; }
+  .which { text-align: center; font-size: 13px; color: var(--muted); }
+  .copy {
+    min-height: 3.2em;
+    font-size: 15px;
+    line-height: 1.65;
+  }
+  .src { font-size: 13px; }
+  .src a { word-break: break-all; }
+  .aux { display: flex; flex-wrap: wrap; gap: 8px 14px; }
+  .aux button {
+    min-height: 36px;
+    font-size: 13px;
+    color: #6a5344;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .gift {
+    margin-top: 8px;
+    padding: 12px 14px 10px;
+    border-radius: 16px;
+    background: #fffaf4;
+    box-shadow: 0 10px 24px rgba(120, 80, 40, .1);
+    text-align: center;
+    animation: rise .65s cubic-bezier(.2, 1.05, .32, 1);
+  }
+  .gift-ribbon {
+    height: 7px;
+    width: 72%;
+    margin: 0 auto 8px;
+    border-radius: 8px;
+    background: linear-gradient(90deg, #f0b48a, #c4b4dc 34%, #7eb8a4 50%, #c4b4dc 66%, #f0b48a);
+  }
+  .gift-kicker { margin: 0; font-size: 13px; color: var(--muted); }
+  .gift-line {
+    margin: 4px 0;
+    font-size: clamp(20px, 3vh, 28px);
+    font-weight: 700;
+    line-height: 1.35;
+  }
+  .gift-sub { margin: 0; font-size: 14px; line-height: 1.55; color: #5c5148; }
+  .tuck {
+    margin-top: 8px;
+    min-height: 36px;
+    padding: 0 12px;
+    border-radius: 999px;
+    background: #f3e2d4;
+  }
+  @keyframes rise {
+    from { transform: translateY(12px); opacity: 0; }
+    to { transform: none; opacity: 1; }
+  }
+  .dock {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 8px;
+  }
+  .sticky {
+    position: relative;
+    flex: 1 1 auto;
+    min-width: 0;
+    max-width: 460px;
+    max-height: 32vh;
+    overflow: auto;
+    margin: 0;
+    padding: 10px 12px 12px;
+    border-radius: 2px 12px 12px 10px;
+    background: #f8f1c8;
+    color: #4a4036;
+    box-shadow: 0 8px 16px rgba(120, 90, 40, .08);
+    transform: rotate(-1.2deg);
+  }
+  .sticky::before {
+    content: "";
+    position: absolute;
+    top: -7px;
+    left: 22px;
+    width: 48px;
+    height: 14px;
+    background: rgba(255,255,255,.5);
+    transform: rotate(-2deg);
+  }
+  .sticky-title { margin: 0; font-size: 14px; font-weight: 700; }
+  .sticky ul { margin: 6px 0 0; padding-left: 1.1em; }
+  .sticky li { margin: 3px 0; font-size: 13px; line-height: 1.5; }
+  .album {
+    flex: none;
+    width: 156px;
+    height: 158px;
+    position: relative;
+    text-align: left;
+    padding: 16px 12px 12px 26px;
+    border-radius: 3px 12px 14px 8px;
+    color: #23483d;
+    background: linear-gradient(90deg, #d7eee4 0 14px, #c5e4d8 14px 18px, #e8f6f0 18px);
+    box-shadow: 0 10px 18px rgba(60, 90, 70, .14), inset 0 0 0 1px rgba(255,255,255,.55);
+    transition: transform .5s var(--ease);
+  }
+  .album:hover { transform: translateY(-4px) rotate(-1deg); }
+  .album-ribbon {
+    position: absolute;
+    top: 0;
+    right: 16px;
+    width: 10px;
+    height: 42px;
+    border-radius: 0 0 4px 4px;
+    background: linear-gradient(#f0b48a, #e09870);
+  }
+  .album-kicker { display: block; font-size: 12px; letter-spacing: .12em; color: #3d6558; }
+  .album-title { display: block; margin-top: 8px; font-size: 18px; font-weight: 700; line-height: 1.3; }
+  .album-sub { display: block; margin-top: 6px; font-size: 12px; line-height: 1.45; color: #3d6558; }
+  .reader {
+    position: absolute;
+    inset: 0;
+    z-index: 20;
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(90deg, #e7d3bc 0 18px, #fbf7f1 18px);
+    border-radius: 22px;
+  }
+  .reader-head {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    padding: 12px 16px 8px 28px;
+    background: rgba(251, 247, 241, .96);
+  }
+  .reader-bar { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+  .reader-bar p { margin: 0; font-size: 18px; font-weight: 700; }
+  .close {
+    min-height: 40px;
+    padding: 0 14px;
+    border-radius: 999px;
+    background: #3a332c;
+    color: #fffaf4;
+  }
+  .doc-nav { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+  .doc-nav button {
+    min-height: 34px;
+    padding: 0 10px;
+    border-radius: 999px;
+    background: #f3e7da;
+    font-size: 13px;
+  }
+  .reader-expect {
+    margin: 10px 0 0;
+    font-size: 14px;
+    color: #6d5e52;
+  }
+  .doc-scroll {
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+    padding: 4px 7vw 56px calc(7vw + 6px);
+  }
+  .doc-body { max-width: 40rem; margin: 0 auto; font-size: 17px; line-height: 1.8; }
+  .doc-body h1, .doc-body h2 { line-height: 1.4; scroll-margin-top: 12px; }
+  .doc-body h1 { font-size: 1.65rem; margin: 1.2em 0 .5em; }
+  .doc-body h1.part {
+    font-size: 1.35rem;
+    margin-top: 1.8em;
+    padding-top: .6em;
+    border-top: 2px solid #efd3bf;
+  }
+  .doc-body h2 { font-size: 1.2rem; margin: 1.4em 0 .4em; }
+  .doc-body h2.entry { font-size: 1.08rem; margin-top: 1.7em; }
+  .doc-body p { margin: .75em 0; }
+  .doc-body .lead, .doc-body .why, .doc-body .thesis, .doc-body .status {
+    border-radius: 12px;
+    padding: .7em .9em;
+  }
+  .doc-body .lead { background: #fff6ee; }
+  .doc-body .why { background: #f3f7f2; }
+  .doc-body .thesis { background: #fff4ea; }
+  .doc-body .status { background: #f3f6f4; font-size: .95em; }
+  .doc-body .status.caution { background: #fbf3ea; }
+  .doc-body a { word-break: break-word; }
+  .doc-body hr { border: 0; border-top: 1px solid #eadfce; margin: 1.5em 0; }
+  .doc-body ul.sources { padding-left: 1.15em; }
+  .doc-body ul.sources a { word-break: break-all; }
+  .noscript {
+    margin: 12px;
+    padding: 12px;
+    background: #fffaf4;
+    border-radius: 12px;
+  }
+  html[data-touched="1"] .keys { display: none; }
+  @media (max-width: 740px) {
+    html, body { height: auto; }
+    body { overflow: auto; }
+    .world { height: auto; min-height: 100%; }
+    .sheet { height: auto; min-height: calc(100vh - 24px); overflow: visible; }
+    .keys { display: none; }
+    .stage { flex: none; min-height: 228px; }
+    .slot { height: 214px; }
+    .face { padding: 10px 14px 12px; }
+    .big { font-size: 34px; }
+    .big.long { font-size: 26px; }
+    .unit { font-size: 15px; }
+    .sub { font-size: 13px; }
+    .pager { flex-wrap: wrap; row-gap: 4px; }
+    .pips { order: -1; flex-basis: 100%; justify-content: center; }
+    .copy { max-height: none; overflow: visible; }
+    .album {
+      width: 118px;
+      height: auto;
+      min-height: 112px;
+      padding: 12px 8px 10px 18px;
+    }
+    .album-title { font-size: 16px; }
+    .album-sub { font-size: 11px; }
+    .sticky { max-height: none; }
+    .sticky li { font-size: 12.5px; }
+    .dock { align-items: stretch; }
+  }
+  @media (max-height: 700px) and (min-width: 741px) {
+    .world { padding: 8px; }
+    .sheet { padding: 8px 12px; }
+    .hint { font-size: 17px; margin-top: 2px; }
+    .keys { display: none; }
+    .copy { max-height: 4.8em; overflow: auto; font-size: 14px; }
+    .album { height: auto; min-height: 0; }
+    .sticky { max-height: none; font-size: 12.5px; }
+    .sticky li { font-size: 12.5px; margin: 2px 0; }
+    .stage { min-height: 118px; padding-top: 8px; }
+    .slot { height: min(168px, 100%); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .finger, .gift, .album { animation: none; transition: none; }
+    .album:hover { transform: none; }
+  }
+</style>
+</head>
+<body>
+<div class="world">
+  <div class="sheet">
+    <p class="sr">十一月四日的早报是一叠光栅卡片，放在浅色桌面上。按住卡片往旁边歪，同一件事的另一面才会露出来。桌角那本卡册是今天的详细稿，要点开才看得到。</p>
+    <header class="top">
+      <p class="brand">折晓早报</p>
+      <p class="date">2026 年 11 月 4 日 · 星期三</p>
+    </header>
+    <p class="echo" id="echo" hidden>今天的那句话写在桌边上了：正面那一眼，只是事情的一面。</p>
+    <p class="hint" id="hint">按住这张卡片，往旁边歪一歪。</p>
+    <p class="keys">左右方向键可以把卡片歪过去，上下方向键换一张。</p>
+    <div class="stage">
+      <div class="slot" id="slot">
+        <div class="back b2" aria-hidden="true"></div>
+        <div class="back b1" aria-hidden="true"></div>
+        <div class="card" id="card" tabindex="0" role="group" aria-label="光栅卡片。按住往旁边歪，可以看到另一面。">
+          <div class="face front" id="face-front"></div>
+          <div class="face side" id="face-side" aria-hidden="true"></div>
+          <div class="ridges" aria-hidden="true"></div>
+          <div class="sheen" aria-hidden="true"></div>
+        </div>
+        <div class="finger" aria-hidden="true"></div>
+      </div>
+    </div>
+    <div class="caption">
+      <div class="pager">
+        <button type="button" id="prev">上一张</button>
+        <div class="pips" id="pips"></div>
+        <button type="button" id="next">下一张</button>
+      </div>
+      <div id="caption-body">
+        <p class="which" id="which"></p>
+        <p class="copy" id="copy"></p>
+        <p class="src" id="src"></p>
+        <div class="aux">
+          <button type="button" id="flip" hidden>看另一面</button>
+          <button type="button" id="gyro" hidden>用手机的倾斜来看</button>
+        </div>
+      </div>
+      <section class="gift" id="gift" hidden aria-label="今天的那句话">
+        <div class="gift-ribbon" aria-hidden="true"></div>
+        <p class="gift-kicker">七张卡的侧面，说的是同一句话</p>
+        <p class="gift-line">正面那一眼，只是事情的一面。</p>
+        <p class="gift-sub">换一个角度再看一次，同一件事常常会露出另一张脸。</p>
+        <button type="button" class="tuck" id="tuck">先把这句话放到桌边上</button>
+      </section>
+    </div>
+    <footer class="dock">
+      <aside class="sticky" aria-label="他自己的三件小事">
+        <p class="sticky-title">不急，顺手看一眼</p>
+        <ul>
+          <li>AdventureX 回信了，说已经联系合作方再打一次款。到账时间还没写，这几天可以留意一下。</li>
+          <li>StudySolo 的数据库备份从 10 月 28 日起每天失败，11 月 3 日又失败了一次。</li>
+          <li>ChatSolo 的依赖安全审计，在两个新提交上都没通过。不急，有空再看。</li>
+        </ul>
+      </aside>
+      <button type="button" class="album" id="open" aria-label="打开今天的详细稿。卡册里是全文：人工智能 18 条，科技 14 条，医学 12 条，还有他的三则小事。">
+        <span class="album-ribbon" aria-hidden="true"></span>
+        <span class="album-kicker">卡册</span>
+        <span class="album-title">今天的<br>详细稿</span>
+        <span class="album-sub">人工智能 18 条，科技 14 条，医学 12 条。点开才看得到全文。</span>
+      </button>
+    </footer>
+    <div class="reader" id="reader" hidden>
+      <div class="reader-head">
+        <div class="reader-bar">
+          <p>今天的详细稿</p>
+          <button type="button" class="close" id="close">合上卡册</button>
+        </div>
+        <nav class="doc-nav" aria-label="详细稿的四个部分">
+          <button type="button" data-part="part-ai">人工智能</button>
+          <button type="button" data-part="part-tech">科技</button>
+          <button type="button" data-part="part-med">医学</button>
+          <button type="button" data-part="part-self">他自己的角落</button>
+        </nav>
+      </div>
+      <div class="doc-scroll" id="doc-scroll">
+        <div class="doc-body">
+          <p class="reader-expect">翻开之后是今天的全文：人工智能 18 条，科技 14 条，医学 12 条，还有他的三则小事。</p>
+          <article id="doc"></article>
+        </div>
+      </div>
+    </div>
+    <p class="sr" id="live" aria-live="polite"></p>
+    <noscript><p class="noscript">要歪一歪这些卡片，需要让浏览器运行这个页面里的脚本。详细稿也在同一页里，脚本没打开时先看不到。</p></noscript>
+  </div>
+</div>
+<script type="application/json" id="digest-src">"# 折晓每日早报 · 富文本详细稿\n\n**日期**：上海时区 / 北京时间 2026-11-04（星期三）  \n**时间窗**：北京时间 2026-11-03 06:00 → 2026-11-04 06:00  \n**读者**：Sofia（羽升）——大二医学生，同时在学人工智能  \n\n**一句话核心思想**：**正面那一眼看到的数字，只是事情的一面；换一个角度再看一次，同一件事常常会露出另一张脸。**\n\n用白话再说一遍：考场上的成绩、统计上的「显著」、财报里的增长、表面上的「很安全」，都只是正面那一眼。把它侧过来——放回真实的使用环境里、看看效应到底有多大、看看成本跟着涨了多少——才知道它真实的样子。\n\n---\n\n## 今天材料的形状\n\n今天四路材料摆在一起，很像小时候文具店里那种「歪一歪就变画」的光栅卡片：正着看是一幅画，侧过来就是另一幅。\n\n人工智能这一路收了 18 条。最贴合今天主题的是 OpenAI 对齐团队的一项研究：六个模型在智能体安全评测里的成功率，全都比在真实 Codex 生产环境里低，差距从 10.2 到 37.4 个百分点，原因可能是模型「猜错了评测在考什么」。也就是说，考场上的样子和真实上岗的样子并不一样。Anthropic 那条连续剧也换了一个角度：TechCrunch 读更新版 S-1 时发现，营收虽然在涨，但算力成本占营收的比例从 48% 升到了 58%，每花 1 美元算力换回的营收从 2 倍以上回落到 1.72 倍；据《华尔街日报》称，机构投资者对它的 IPO 估值预期也被压低了。另外还有 Anthropic 的隐形水印扩展到旧模型、OpenAI 用 GPT-6 Astra 设计硬件、ChatGPT 搜索量约为 Google 五分之一（OpenAI 自己的口径）、Google 引导式学习和学校 AI 开关之争、欧盟法院法务总顾问对 AI 搜索与新闻版权的意见、国行 Apple 智能上线开发者预览版、DeepSeek 服务中断、Kimi 游戏开发方案、Revolut 改用自托管 GLM（单一来源）、腾讯 AI 搜索传闻、千问开源规模、Cursor 3.28.7 拆包（尚未官方确认）以及 GPT-6.2 Astra 灰度传闻。\n\n科技这一路收了 14 条，主线是「内存涨价」的两张脸：美国半导体行业协会公布第三季度全球芯片销售额 5177 亿美元、环比增长 24.1%，这是芯片厂那一面；苹果新任 CEO 特努斯说内存涨价「前所未有」、Counterpoint 统计手机出货同比下降 19% 而营收反而增长 3%，这是消费电子那一面。此外有英伟达被曝要求云客户限制中国业务（单一来源）、SK 海力士纽约建厂卡在对华设备许可上、三星泰勒二厂或为 AMD 和英伟达做 HBM 基础裸片、博世成立半导体事业部、越南 FPT 首座本土封测厂试运行，以及 Node-RED 满分漏洞被在野利用、WordPress 升级窗口漏洞进入 CISA 在野利用目录、Frontline Education 约 130 万人数据泄露、欧洲打掉假交易平台网络、力箭二号一箭 18 星和 Universal Quantum 的离子阱芯片。\n\n医学这一路收了 12 条，有好几条都在练同一种眼力：「统计上显著」和「临床上有意义」不是一回事。AI 测量心脏 MRI 射血分数预测死亡略优于医生，但调整年龄和性别后只剩 0.781 对 0.777；自闭症儿童肠道菌群与症状严重度有关，但只能解释 0.17% 到 0.65% 的差异；GLP-1 受体激动剂和胰岛素比时癌症风险更低，和二甲双胍比就没有一致差异；SER-155 的血流感染率差别很大，但置信区间跨过了 1。还有一条直接落在「医疗 AI 安全」上：激活引导可以在用户看不出来的情况下改变大模型给出的抑郁症治疗建议。其余是纽约州 30 多年来首例麻疹死亡、NEJM 的 PROGRESS 试验（中度主动脉瓣狭窄早做 TAVR）、Compass 的裸盖菇素上市申请冲刺、嗜碱性粒细胞与氯雷他定的肿瘤免疫研究、可开关的工程化 TIL 细胞疗法、围绝经期激素治疗与菌群、以及埃博拉疫情口径更新。\n\n个人部分有 3 条温和提醒，都来自他自己的邮箱：AdventureX 终于回信，说已经联系合作方二次打款；StudySolo 的备份工作流又失败了一次；ChatSolo 的依赖安全审计在两个新提交上都没通过。\n\n下面按四个部分把每一条写全。所有事实、数字和链接都来自今天的四份证据包；多个来源一致确认的内容用定论语气，单一来源、未能核实、公司自述和传闻都会在正文里写明。\n\n---\n\n# 第一部分 · 人工智能（18 条）\n\n## 1. OpenAI 对齐团队：六个模型在安全评测里的表现，都比在真实 Codex 生产环境里差\n\n**发生了什么。** OpenAI 对齐团队在 11 月 3 日发表研究，比较了六个已上线模型（GPT-5.6 Luna、GPT-5.6 Sol、GPT-6 Luna、GPT-6 Sol、GPT-6 Astra、GPT-6.1 Sol）在「智能体安全评测」和「真实 Codex 生产环境」里遇到可比情境时的表现。结果是，六个模型在评测里的成功率都比生产环境低，差距从 10.2 到 37.4 个百分点，差距最大的是 GPT-5.6 Sol 和 GPT-6 Sol。研究者进一步做了实验：只是笼统地告诉模型「这是一次评测」，成功率几乎不变（63.1% 对 63.4%）；如果明确告诉它评测真正要考的目标，成功率升到 91.6%；如果告诉它一个错误、相反的目标，成功率掉到 17.6%。\n\n**为什么值得注意。** 大家通常担心的是模型「知道自己在被考试」于是在评测里装乖，这项研究发现的方向正好相反：模型在评测里反而表现得更不安全。原因可能是模型常把「遵守警告」类的考题误判成「抵抗提示注入」类的考题，于是选错了行为。这提醒我们：一个安全分数能不能代表真实表现，要看考题和真实场景是不是在考同一件事。\n\n**与核心思想。** 这是今天最直接的一张「变脸卡」：正面是评测分数，侧过来是真实上岗的表现，两张脸差了最多 37.4 个百分点。\n\n**来源与核实。**  \n- https://alignment.openai.com/eval-production-behavior-gap/  \n\n**核实状态：单一来源（官方一手）。** 所有百分比都出自 OpenAI 原文；AIHOT 精选也收录了这篇，但只是转述，不算独立来源。\n\n---\n\n## 2. TechCrunch 读 Anthropic 更新版 S-1：算力成本占营收从 48% 升到 58%，每 1 美元算力换来的营收回落到 1.72 倍\n\n**发生了什么。** TechCrunch 在北京时间 11 月 4 日 01:07 发表分析，重新阅读了 Anthropic 提交给美国证券交易委员会的更新版上市注册文件（S-1/A，这份文件本身昨天的早报已经介绍过）。文章指出：第三季度算力成本占到公司营收的 58%，而上一季度是 48%；文件里有一张图追踪「每花 1 美元算力换回多少营收」，这个比值从 2025 年初起一路上升，上个季度达到 2 倍出头，这个季度又回落到 1.72 倍。这个季度的算力账单涨到 100 亿美元，其中包括文件原话所说的「50 亿美元短期承诺算力，目前比通过多年期合同采购的同类算力贵得多」。\n\n**为什么值得注意。** 正准备上市的公司，本来最希望向投资人展示「利润率在改善」，可数字显示的是在变差。根本原因是需求涨得比预先签好的算力合同更快，只能高价临时租算力。这也解释了为什么 Claude 等产品的额度和价格会持续紧张，和他关心的订阅额度直接相关。\n\n**与核心思想。** 正面是营收在涨，侧面是每一块钱营收背后的算力成本也在涨，而且涨得更快。\n\n**来源与核实。**  \n- https://techcrunch.com/2026/11/03/anthropic-is-still-grappling-with-the-economics-of-compute/  \n\n**核实状态：多来源确认。** 58%、48%、1.72 倍等数字出自 TechCrunch 原文；AIHOT 事件时间线以及 atlabyte、DEV Community 等站点报道了同一组数字。\n\n---\n\n## 3. 据《华尔街日报》称：上周科技股暴跌后，机构投资者把 Anthropic 的 IPO 估值预期压到 1.5 万亿至 1.6 万亿美元\n\n**发生了什么。** IT 之家在北京时间 11 月 3 日 07:44 转述《华尔街日报》的报道：上周科技股大跌，正在改变计划参与 Anthropic IPO 的机构投资者对估值的判断。过去几天，这些投资者向 Anthropic 和它的顾问团队表示，本月晚些时候上市时的估值应在 1.5 万亿到 1.6 万亿美元之间，远低于此前几个月市场讨论的接近 2 万亿美元。报道还说，Anthropic 计划最早下周启动投资者路演，目标是在感恩节前一周挂牌交易，具体股数和价格区间要等路演启动时才披露。\n\n**为什么值得注意。** 这是 Anthropic 上市这条连续剧的新一集：估值不再由公司自己说了算，而是开始被市场情绪和机构投资者重新定价。它帮助理解 AI 公司的高估值也会随大盘一起波动。\n\n**与核心思想。** 同一家公司，换一批人、换一个时间去看，价格就差了几千亿美元。\n\n**来源与核实。**  \n- https://www.ithome.com/1/021/299.htm  \n\n**核实状态：单一来源。** 《华尔街日报》原文有付费墙，采集员只核实到 IT 之家的转述稿，估值数字均出自该转述，尚未得到其他来源确认。\n\n---\n\n## 4. OpenAI 发布「为物理世界加速工程」：两名员工用 GPT-6 Astra 不到一周设计出硬件原型，并与马自达合作空气动力学研究\n\n**发生了什么。** OpenAI 在北京时间 11 月 3 日 20:00 发布文章，介绍如何把模型能力从写代码延伸到机械设计、电路板设计、仿真和制造图纸。原文说，两名团队成员利用业余时间，借助 GPT-6 Astra 在不到一周内设计出一台可以和 Codex 对话的测试设备，合同制造商在不到一个月内做出了一小批原型；自 2 月以来，硬件团队的模型用量（按 token 计）增长了 23 倍。在 BenchCAD 2.0（测试模型能否重建三维零件与装配体、识别电路板连接的基准）上，一个「更新的内部模型」平均得分 0.875，而 GPT-6 Astra 在最高推理档位是 0.594。文中同时宣布与马自达开展空气动力学研究合作，也坦白承认了局限：Astra 没能稳定考虑工厂的生产公差和装配细节。\n\n**为什么值得注意。** 这说明大模型正在进入「造实物」的工程环节。那个更新的内部模型的分数，也侧面透露下一代模型已经在内部测试。\n\n**来源与核实。**  \n- https://openai.com/index/accelerating-engineering-for-the-physical-world  \n\n**核实状态：单一来源（官方一手）。** 数字均出自 OpenAI 原文，暂未见第三方独立报道。\n\n---\n\n## 5. OpenAI 称 ChatGPT 处理的搜索量已相当于 Google 的五分之一\n\n**发生了什么。** 据 The Verge 在北京时间 11 月 4 日 02:30 的报道，OpenAI 的 ChatGPT 消费产品负责人 Adam Fry 在一场媒体活动上表示，通过 ChatGPT 进行的搜索量，现在相当于 Google 搜索量的 20%。他把「一次搜索」定义为用户输入的问题引发了一次网页搜索。The Verge 特别注明，Fry 没有说明 Google 那一侧的搜索量数字是从哪里来的。\n\n**为什么值得注意。** 这是 AI 问答正在替代传统搜索的一个量化信号。但这个数字由 OpenAI 自己定义、自己统计，另一半的来源也没交代，所以读的时候要保留这层保留意见。另外，活动本身是美国时间周一，可能略早于时间窗，窗内的是这篇报道。\n\n**与核心思想。** 一个漂亮的百分比，要先问「是谁量的、按什么口径量的」。\n\n**来源与核实。**  \n- https://www.theverge.com/ai-artificial-intelligence/1025482/openai-says-chatgpt-is-catching-up-to-google-in-search  \n\n**核实状态：单一来源。** 20% 出自 The Verge 原文，没有找到 OpenAI 的书面公告。\n\n---\n\n## 6. Anthropic 的隐形文本水印从 11 月 3 日起扩展到 Claude Mythos 5、Opus 4.7 和 Sonnet 4.6\n\n**发生了什么。** Claude Platform 更新日志 11 月 3 日的条目写明：Claude Mythos 5、Claude Opus 4.7 和 Claude Sonnet 4.6 生成的文本，在官方列出的平台上会带有 Anthropic 的文本水印；在 Sonnet 4.6 上，如果请求把 temperature、top_p 或 top_k 设成非默认值，生成的文本可能不带水印。Anthropic 10 月 31 日已经发邮件预告，11 月 3 日是正式生效。水印藏在用词选择里，不增加字符，也不影响价格。AI Chat Daily 报道说，时间点和欧盟《人工智能法》第 50 条有关：该条要求从 2026 年 8 月 2 日起标注 AI 生成内容，已上市的系统要在 12 月 2 日前完成。\n\n**为什么值得注意。** 对用 Claude 写东西的学生来说，这意味着文本「是否经过 Claude」将来可以被检测出来。另外要注意，官方更新日志列的是三个模型，AI Chat Daily 和 The Decoder 说的是四个（多了 Opus 4.6），以官方为准。\n\n**与核心思想。** 正面读起来是普通文字，换一种方式去检测，才看得见里面的另一层。\n\n**来源与核实。**  \n- https://platform.claude.com/docs/en/release-notes/overview  \n- https://platform.claude.com/docs/en/build-with-claude/text-watermark  \n- https://www.aichatdaily.com/ai-security/anthropic-extends-claude-text-watermark-four-older-models  \n\n**核实状态：多来源确认。** 官方更新日志、官方水印文档与 AI Chat Daily 一致。\n\n---\n\n## 7. CrowdStrike 与 Anthropic 合作，把 Falcon Guardian 的 AI 检测与响应防护直接装进 Claude Cowork\n\n**发生了什么。** CrowdStrike 在北京时间 11 月 3 日 16:00 发布新闻稿，宣布把旗下 Falcon Guardian 的「AI 检测与响应」（AIDR）能力原生带进 Anthropic 的智能体产品 Claude Cowork，称这是应企业客户需求、与 Anthropic 合作交付的。新闻稿引用了 Anthropic 首席商务官 Paul Smith 的话：「现在 CrowdStrike 的客户可以在 Cowork 里运行 Falcon，保留他们已经依赖的防护。」\n\n**为什么值得注意。** 企业大规模部署智能体时，安全厂商开始把防护直接装进智能体的运行环境，覆盖从创建到执行的全过程。这说明「智能体安全」正在变成企业采购 AI 的前置条件。\n\n**来源与核实。**  \n- https://www.crowdstrike.com/en-us/press-releases/crowdstrike-extends-anthropics-claude-cowork/  \n\n**核实状态：单一来源（一手新闻稿）。** 新闻稿由 CrowdStrike 发布、含 Anthropic 高管引语，没有找到 Anthropic 官网的同步公告。\n\n---\n\n## 8. Google 把「引导式学习」带进 Search 和 Classroom；明年起 K-12 学生账号的 Gemini 和 Google 搜索默认关闭\n\n**发生了什么。** Google 官方博客 11 月 3 日宣布：「引导式学习」即日起在 Google Classroom 全球上线，Google 搜索里的引导式学习将在本月晚些时候先在部分美国学校试点。博客还写明，这些产品对 K-12（中小学）学生账号将完全关闭，直到学校管理员明确开启。TechCrunch 在北京时间 11 月 4 日 00:30 的报道指出了争议点：因为 AI 功能已经整合进搜索引擎，学校如果想完全限制 AI，就将无法再使用 Google 搜索。\n\n**为什么值得注意。** 「引导式学习」会一步步提问，引导学生自己想出答案，而不是直接给答案，这和医学生自学时「先自己推理、再看解析」的思路很接近。争议则在于 Google 认为搜索和 AI 已经分不开了。The Verge、Ars Technica、AP 也在窗内做了报道。\n\n**来源与核实。**  \n- https://blog.google/products-and-platforms/products/education/ai-learning-era-updates-2026/  \n- https://techcrunch.com/2026/11/03/google-will-let-schools-disable-its-ai-tools-but-not-without-sacrificing-search/  \n\n**核实状态：多来源确认。** Google 官方博客与 TechCrunch 一致，AIHOT 事件时间线还显示 The Verge、Ars Technica 同步报道。\n\n---\n\n## 9. 欧盟法院法务总顾问就首起生成式 AI 案发表意见：训练原则上允许，实时抓取新闻并照搬表达可能侵权\n\n**发生了什么。** 欧盟法院 11 月 3 日发布第 155/26 号新闻稿，介绍法务总顾问 Szpunar 在 C-250/25 案（Like Company 诉 Google，这是欧盟法院受理的第一起生成式 AI 案件）中的意见。他建议法院认定：AI 聊天机器人为了回答用户问题而实时检索、复用在线新闻出版物，在某些情况下可能侵犯新闻出版者的权利；而用受版权保护的作品训练大模型，原则上属于「文本与数据挖掘例外」，可以自由进行。判断实时回答是否侵权，要看两点：聊天机器人是否以非法方式获取了文章，特别是绕过付费墙这类技术措施；以及回答是否以可辨识的方式复用了原文的表达。\n\n**为什么值得注意。** 法务总顾问的意见没有约束力，但法官通常会参考。它会影响所有「联网搜索 + AI 总结」类产品在欧洲的做法。\n\n**来源与核实。**  \n- https://curia.europa.eu/site/upload/docs/application/pdf/2026-11/cp260155en.pdf  \n- https://www.ithome.com/1/021/835.htm  \n\n**核实状态：多来源确认。** 欧盟法院新闻稿与 IT 之家（转述路透社）一致，Courthouse News、RTÉ 也有报道。\n\n---\n\n## 10. 国行「Apple 智能与 Siri」随 iOS 27.3 首个开发者预览版上线，接入阿里千问；苹果同时开放 Siri AI「应用技能」\n\n**发生了什么。** IT 之家在北京时间 11 月 4 日 03:08 发布实测：在最新的 iOS 27.3 开发者预览版上，国行「Apple 智能与 Siri」如约而至，国内用户可以在 Siri、写作工具和视觉智能里直接调用千问，覆盖文本与图像理解相关能力，iPhone 15 Pro 及更新机型都支持。9to5Mac 同时报道，新的「应用技能」让第三方应用可以教 Siri 协调复杂的多步骤操作，将随 iOS 27.3、macOS 27.3 等版本推出。\n\n**为什么值得注意。** 10 月 31 日官宣的国行 Apple 智能，在窗内按计划落地开发者预览版，正式版预计 12 月推送。据 AIHOT 转述 The Verge，新版 Siri AI 暂不对中国用户开放。\n\n**来源与核实。**  \n- https://www.ithome.com/1/021/861.htm  \n- https://9to5mac.com/2026/11/03/developers-can-now-create-advanced-app-skills-for-siri-ai/  \n- https://www.ithome.com/1/021/869.htm  \n\n**核实状态：多来源确认。** IT 之家实测稿与 9to5Mac 原文一致；「新版 Siri AI 暂不对中国用户开放」这一点来自 AIHOT 对 The Verge 的转述。\n\n---\n\n## 11. DeepSeek 网页端和 API 在北京时间 11 月 3 日下午出现部分中断\n\n**发生了什么。** 据 IT 之家转述 DeepSeek 官方状态页，11 月 3 日 16:58，DeepSeek 网页和 API 出现部分中断，对话服务以及 DeepSeek V4 Pro、V4.1 Flash 的 API 服务都受到影响，官方当时正在排查。采集员在北京时间 11 月 4 日早上查看状态页时，显示「Everything is running smoothly」，说明已经恢复，但具体恢复时间没有查到。\n\n**为什么值得注意。** 对依赖 DeepSeek API 的人（包括通过 OpenCode 等渠道使用）有直接影响。\n\n**来源与核实。**  \n- https://www.ithome.com/1/021/648.htm  \n- https://status.deepseek.com/  \n\n**核实状态：单一来源。** 官方状态页现在只显示已恢复的当前状态，无法回看事件详情，16:58 这个时间来自 IT 之家的转述。\n\n---\n\n## 12. 月之暗面 Kimi 发布「游戏开发与创意工作解决方案」，可通过插件直接操作 Unity、虚幻引擎和 Blender\n\n**发生了什么。** Kimi 官网资讯列表 11 月 3 日发布「游戏开发与创意工作解决方案」，它基于 Kimi K3.1 系列模型、Kimi Code 与 Kimi Work 系列智能体产品，以及 Unity、Unreal Engine、Blender 等专业工具插件。官网称，借助 Kimi，缺少编程经验的策划或创意团队也能在 1 到 2 天内做出可试玩的原型。\n\n**为什么值得注意。** 国内大模型厂商正在把智能体产品包装成面向行业的解决方案。注意：IT 之家报道写的是「昨日发布」，和官网日期有出入，这里按官网日期收录。\n\n**来源与核实。**  \n- https://www.kimi.com/news/kimi-game-solutions  \n- https://www.ithome.com/1/021/539.htm  \n\n**核实状态：多来源确认。** Kimi 官网与 IT 之家一致；「1 到 2 天做出原型」是厂商自述。\n\n---\n\n## 13. 据 Revolut AI 运营负责人转述，Revolut 把约 2000 名工程师的编码工作迁到自托管 GLM\n\n**发生了什么。** 北京时间 11 月 3 日 06:11，一位投资人在 X 上发帖称：Revolut 把约 2000 名工程师的编码工作迁到了自托管的 GLM（智谱的开放权重模型），Claude Code 和 Codex 改为例外情况才用。帖子转述 Revolut AI 运营负责人 David Abitbol 的说法：用了 56 块英伟达 B200，混合成本约每百万 token 0.3 美元，大约是此前付给 Anthropic 和 OpenAI 的十分之一，工程交付周期改善了 70%。\n\n**为什么值得注意。** 如果属实，这是大型企业用开放权重模型大规模替代前沿闭源 API 的标志性案例，也和上面 Anthropic 的算力成本压力形成呼应：开源模型正在从价格上挤压前沿实验室。\n\n**来源与核实。**  \n- https://x.com/guilleflorvs/status/2117379073785696395  \n\n**核实状态：单一来源。** 这是投资人在 X 上的转述，没有找到 Revolut 或 David Abitbol 本人的原始发言，56 块 B200、0.3 美元、70% 等数字都只出自这条帖子，尚未得到其他来源确认。\n\n---\n\n## 14. 世界互联网大会乌镇开幕，蔡崇信称千问已开源超过 470 款模型、全球累计下载突破 40 亿\n\n**发生了什么。** 据 IT 之家北京时间 11 月 3 日 12:37 转述界面新闻，世界互联网大会乌镇峰会 11 月 3 日开幕，阿里巴巴董事会主席蔡崇信透露，阿里千问已开源超过 470 款模型，全球累计下载量突破 40 亿，衍生模型超过 33 万。他认为「只有开源才能普及」，开源能有效降低中小企业的研发成本，对发展中国家尤其重要。\n\n**为什么值得注意。** 这是中国大模型「开源路线」的一次高层表态，给出了千问开源生态的规模数字。\n\n**来源与核实。**  \n- https://www.ithome.com/1/021/495.htm  \n\n**核实状态：单一来源。** 470 款、40 亿、33 万均出自 IT 之家对界面新闻的转述。\n\n---\n\n## 15. 传闻：腾讯将推出面向普通用户的 AI 搜索引擎\n\n**发生了什么。** 据 IT 之家北京时间 11 月 3 日 16:51 转述虎嗅的消息，腾讯即将发布一款面向普通用户的 AI 搜索引擎，界面极简、全面 AI 化，强化权威信源排序，把 AI 问答和网页搜索揉进同一个体验，并与元宝 App 内置搜索和腾讯云「元宝搜索」API 共用一套底层能力。据新浪科技报道，腾讯官方对传闻暂无回应。\n\n**为什么值得注意。** 可以和第 5 条（ChatGPT 搜索量）、第 9 条（欧盟法院谈 AI 搜索与新闻版权）放在一起看，「AI 问答取代传统搜索」是这一天的一个共同话题。\n\n**来源与核实。**  \n- https://www.ithome.com/1/021/643.htm  \n\n**核实状态：未能核实。** 腾讯官方暂无回应，虎嗅原文没有单独核对，目前只是媒体消息。\n\n---\n\n## 16. 传闻：GPT-6.2 Astra 疑似小范围灰度测试，官方尚未确认\n\n**发生了什么。** IT 之家北京时间 11 月 3 日 10:32 报道：据大量用户反馈，部分 Codex 用户的用量统计里出现了独立模型标识「gpt-6.2-astra」。截至报道时，OpenAI 官方 API 模型目录、更新日志和公开公告都没有确认这个型号。还有部分 Codex 用户反馈 GPT-6 Astra 的额度消耗变快，报道称不排除和灰度测试有关。\n\n**为什么值得注意。** 他也用 Codex，如果灰度属实，可能会影响额度消耗速度。可以和第 4 条官方文章里提到的「更新的内部模型」对照着看，但两者是不是同一个模型，目前无法确定。\n\n**来源与核实。**  \n- https://www.ithome.com/1/021/352.htm  \n\n**核实状态：未能核实。** OpenAI 官方没有任何确认，依据只是用户截图和媒体转述。\n\n---\n\n## 17. 社区拆包显示 Cursor 3.28.7 新增 Mac 独立智能体窗口、云端 Canvas 公开链接等功能，官方尚未确认\n\n**发生了什么。** TechCity Authority 11 月 3 日报道，社区版主 blankspeaker 对比 Cursor 的构建版本后发现，3.28.7 让 Mac 用户可以把智能体弹到独立窗口、通过端口转发预览云端智能体正在运行的应用、把云端 Canvas 通过公开链接发布出去。报道也写明，Cursor 公开更新日志在智能体窗口这块只更新到 3.27，公司没有确认 3.28.7 和这份功能清单。采集员核对 cursor.com/changelog，官方最新条目停在 10 月 20 日。\n\n**为什么值得注意。** 他日常用 Cursor，这条可以当作「可能快要上线」的小提示；作者自己也提醒，部分功能可能尚未完成或未启用。\n\n**来源与核实。**  \n- https://www.techcityauthority.com/2026/11/cursor-3-28-7-agents-window-canvas-links.html  \n\n**核实状态：单一来源。** 只有这一篇基于社区拆包的报道，尚未得到 Cursor 官方确认。\n\n---\n\n## 18. Google 推出面向美国各级政府的「Gemini for government services」私有预览\n\n**发生了什么。** 据 IT Brief 11 月 3 日报道，Google 推出「Gemini for government services」私有预览，面向美国联邦、州和地方机构，主打对接现有的案件管理和 ERP 系统、敏感数据不必迁出。报道引用的调研显示，96.3% 的机构已经以某种形式部署了智能体，但只有 9% 实现了全机构范围的采用。\n\n**为什么值得注意。** 它和 OpenAI、Anthropic 近期争夺政府合同的动作属于同一趋势。那组调研数字本身也是一个小小的「两面」：几乎都部署了，但真正铺开的不到一成。\n\n**来源与核实。**  \n- https://itbrief.news/story/google-launches-gemini-for-government-services-preview  \n\n**核实状态：单一来源。** 只找到 IT Brief 的报道，没有找到 Google 官方博客的对应页面。\n\n---\n\n# 第二部分 · 科技（14 条）\n\n## 1. 美国半导体行业协会：第三季度全球芯片销售额 5177 亿美元，环比增长 24.1%\n\n**发生了什么。** 美国半导体行业协会（SIA）在北京时间 11 月 3 日 21:00 公布，2026 年第三季度全球半导体销售额为 5177 亿美元，比第二季度增长 24.1%；9 月单月销售额 1726 亿美元，比 2025 年 9 月增长 146.8%，比 8 月多 7.9%。SIA 总裁 Michael Robbins 说，这已经是连续第三个季度环比增幅超过 20%。分地区看，9 月美洲同比增长 191.7%，中国增长 124.9%。数据来自世界半导体贸易统计组织（WSTS）。\n\n**为什么值得注意。** 这是理解当前「AI 拉动、存储涨价」这一轮芯片超级周期规模最权威的官方口径。\n\n**与核心思想。** 芯片厂这一面是创纪录的销售额；同一件事侧过来，就是下面苹果和手机厂商在喊的「内存太贵」。\n\n**来源与核实。**  \n- https://www.semiconductors.org/global-semiconductor-sales-increase-24-1-from-q2-2026-to-q3-2026/  \n\n**核实状态：单一来源（行业协会官方一手数据）。** 数字出自 SIA 新闻稿，属于权威官方口径。\n\n---\n\n## 2. 苹果财报会：新任 CEO 特努斯称内存涨价「前所未有」，12 月季度毛利率指引 45% 到 46%\n\n**发生了什么。** 苹果第四财季财报电话会在北京时间 11 月 3 日 06:00 开始，这是 9 月 1 日接替库克的特努斯第一次主持财报。官方新闻稿显示，第四财季营收 1145 亿美元，同比增长 12%（新闻稿本身约在北京时间 05:30 发布，略早于时间窗，这里收录的是窗内的电话会表态和市场反应）。据 CNBC 报道，首席财务官 Parekh 给出的 12 月季度毛利率指引是 45% 到 46%，低于分析师平均预期的 46.3%。特努斯在电话会上说：「我们现在看到的内存价格是前所未有的」，并表示 12 月季度之后，内存采购价格还会继续上涨。周二早盘苹果股价下跌 3%。\n\n**为什么值得注意。** 管理层明确说内存成本和 Siri AI 相关成本会压低下季度毛利率，并预计假日季 iPhone 和 Mac 会因为内存出现供应紧张。连议价能力最强的苹果都在喊内存贵，说明 AI 抢内存已经实打实传导到了消费电子。\n\n**与核心思想。** 正面是营收增长 12%，侧面是利润率被内存成本一点点吃掉。\n\n**来源与核实。**  \n- https://www.cnbc.com/2026/11/03/apple-earnings-john-ternus-faces-first-test-amid-high-memory-costs.html  \n- https://www.apple.com/newsroom/2026/11/apple-reports-fourth-quarter-results/  \n\n**核实状态：多来源确认。** 苹果官方新闻稿与 CNBC、MacRumors、Motley Fool 电话会纪要一致。\n\n---\n\n## 3. Counterpoint：第三季度全球手机出货同比下降 19%，营收反而增长 3%，均价创纪录 442 美元\n\n**发生了什么。** 市场研究机构 Counterpoint 11 月 3 日发布报告：2026 年第三季度全球智能手机营收同比增长 3%，达到 1140 亿美元，而出货量同比大跌 19%。高端化、更好的产品组合，以及各价位段由内存驱动的涨价，把全球平均售价推高 27%，达到 442 美元，是有记录以来单季最高。苹果录得史上最高的第三季度营收，同比增长 17%，拿下创纪录的 50% 全球手机营收份额。Counterpoint 预计第四季度营收会转为下降，成本缓解要等到 2028 年。\n\n**为什么值得注意。** 手机卖得少了近两成，但每台更贵，总营收反而微增，主要原因同样是内存涨价被转嫁给了消费者。这条和苹果财报可以互相印证「内存荒」对消费电子的影响。\n\n**与核心思想。** 只看营收是在涨，只看销量是在暴跌——同一个市场的两张脸。\n\n**来源与核实。**  \n- https://counterpointresearch.com/en/insights/global-smartphone-revenue-defies-shipment-slump-rising-3-yoy  \n\n**核实状态：多来源确认。** Counterpoint 官方报告，另有多家媒体转载，IT 之家 11 月 3 日也有报道。\n\n---\n\n## 4. 据《金融时报》称：英伟达口头要求云和数据中心客户，新合同中至少 51% 的算力服务要卖给非中国客户\n\n**发生了什么。** 据 TNW 北京时间 11 月 3 日 18:15 转述《金融时报》的报道，英伟达通过销售和区域团队口头通知数据中心合作伙伴：新签合同里，云服务商要把至少 51% 的服务卖给非中国公司，现有合同不受影响。这一消息援引了五位知情人士。英伟达没有确认也没有否认，只发表声明说：「如果美国的 AI 基础设施不能在全球胜出，美国就赢不了 AI 竞赛。」中国外交部发言人毛宁表示不了解相关情况。\n\n**为什么值得注意。** 这意味着中国 AI 公司「租用海外云算力」这条路可能进一步收窄。\n\n**来源与核实。**  \n- https://thenextweb.com/news/nvidia-cloud-partners-cap-china-business  \n\n**核实状态：单一来源。** 原始信源只有《金融时报》独家，其他媒体都是转述，英伟达未正面确认。\n\n---\n\n## 5. 据路透社报道：美方迟迟不批 SK 海力士大连厂的设备许可，拖累其在纽约建 NAND 新厂的计划\n\n**发生了什么。** 据 Investing.com 转载的路透社报道（约北京时间 11 月 4 日 02:50），知情人士称美国官员迟迟不批准 SK 海力士扩大中国产能所需的美国芯片制造设备，这让它在纽约新建存储芯片厂的计划变得复杂。两位知情人士说，SK 海力士旗下 Solidigm 计划投资约 450 亿美元在纽约州 Marcy 建两座 NAND 工厂，长期投资可能达到约 1000 亿美元。报道称，美国商务部副部长 Jeffrey Kessler 在上周的会议上坚持立场：不允许更多美国设备被用于升级或扩大中国的产能。同一天，韩国媒体也报道了 SK 海力士在美国建厂的规划，但投资额口径和路透社不一致。\n\n**为什么值得注意。** SK 海力士想用中国工厂的收入支撑美国建厂，美方则坚持不让美国设备用于中国产能升级。这是「招商回流」和「对华技术管制」直接冲突的一个典型案例。\n\n**来源与核实。**  \n- https://www.investing.com/news/economy-news/sk-hynixs-new-york-chip-plans-hit-snag-over-us-restrictions-on-china-sources-say-4996231  \n- https://pacifictape.com/news/sk-hynix-and-samsung-map-new-u-s-chip-output-papers-say/  \n\n**核实状态：单一来源。** 关键信息来自路透社的匿名信源，Solidigm 只表示「尚未做出任何决定」，投资额在不同报道之间口径不一。\n\n---\n\n## 6. 据韩国《每日经济》报道：三星泰勒第二座晶圆厂将为 AMD 和英伟达生产 HBM 基础裸片\n\n**发生了什么。** 据路透社 11 月 3 日转述韩国《每日经济》援引业内人士的报道，三星电子将用其在美国得州泰勒的第二座代工厂，为 AMD 和英伟达生产高带宽内存（HBM）的基础裸片。这座工厂将采用 2 纳米工艺，面积约 270 万平方英尺，大约是第一座工厂的 1.5 倍（第一座工厂和特斯拉签了合同）。设备预计从 2029 年 2 月开始安装，2030 年量产。三星拒绝置评。\n\n**为什么值得注意。** HBM 底部那层逻辑芯片（基础裸片）越来越需要先进制程，过去多由台积电代工。如果属实，这是三星代工少有的大客户突破，也让 AI 芯片供应链在美国本土多一个来源。\n\n**来源与核实。**  \n- https://www.investing.com/news/stock-market-news/samsung-to-make-amd-nvidia-chip-parts-at-second-texas-plant-maeil-business-reports-4994213  \n\n**核实状态：单一来源。** 原始信源为《每日经济》的业内人士消息，路透社只是转述，三星拒绝置评。\n\n---\n\n## 7. 博世宣布 2028 年 1 月起成立独立的半导体事业部，目标 2030 年芯片销售额 50 亿欧元\n\n**发生了什么。** 博世 11 月 3 日发布新闻稿：自 2028 年 1 月 1 日起，把半导体业务转入一个名为「Semiconductors」的新事业部，仍归属于出行业务板块；目标是到 2030 年实现 50 亿欧元的半导体销售额。新闻稿说增长将主要来自机器人和 AI 数据中心，并会扩大对外代工业务。这是在集团内部单独成立事业部，不是分拆上市（路透社曾为此更正报道）。\n\n**为什么值得注意。** 博世是全球最大的汽车 MEMS 传感器和碳化硅芯片厂商之一，传统汽车芯片大厂也在把 AI 和机器人当成新的增长点。\n\n**来源与核实。**  \n- https://us.bosch-press.com/pressportal/us/en/press-release-32512.html  \n\n**核实状态：多来源确认。** 博世官方新闻稿与 CNA/路透社、Handelsblatt 报道一致。\n\n---\n\n## 8. 越南 FPT 首座本土控股的芯片测试封装厂在北宁试运行，设计产能每年 3 亿颗\n\n**发生了什么。** FPT 集团 11 月 3 日宣布，旗下 FPT 半导体芯片测试与封装工厂在越南北宁开始试运行，拥有六条生产线，最大设计产能每年 3 亿颗芯片，第一单芯片测试订单预计来自一家韩国合作伙伴。这座 1600 平方米的工厂是越南第一座由本国企业拥有和控制的芯片测试封装厂。\n\n**为什么值得注意。** 越南正借全球供应链「中国+1」的趋势切入半导体后段环节，这是一个具体的落地节点。\n\n**来源与核实。**  \n- https://fpt.com/en/news/fpt-semiconductor-chip-testing-and-packaging-plant-officially-begins-trial-operations-in-bac-ninh  \n\n**核实状态：多来源确认。** FPT 官方与越南之声、Tuoi Tre、Futurum 等报道一致。\n\n---\n\n## 9. Node-RED 满分漏洞 CVE-2026-58115 被在野利用：没开认证的实例遭自动化攻击并被植入后门\n\n**发生了什么。** 据 SecurityWeek 北京时间 11 月 3 日 21:10 报道，编号 CVE-2026-58115 的漏洞（CVSS 评分 10 分满分）是 Node-RED HTTP 接口缺少认证的问题，攻击者可以借此访问能执行系统命令的编程节点。VulnCheck 研究员 Patrick Garrity 写道，10 月 30 日他们的蜜罐捕捉到攻击者利用这个漏洞，并警告「没有开启 adminAuth 的 Node-RED 实例正在被自动发现和利用」。Help Net Security 同日跟进。\n\n**为什么值得注意。** Node-RED 是工控和物联网里常见的低代码工具，西门子 8 月就披露过这个漏洞，但两个多月后才出现实际攻击：攻击者一个 HTTP 请求就能部署流程、下载并运行恶意程序或留下网页后门。报道发布时，美国网络安全和基础设施安全局（CISA）尚未把它列入已知在野利用目录。\n\n**来源与核实。**  \n- https://www.securityweek.com/critical-node-red-flaw-exploited-in-attacks/  \n- https://www.helpnetsecurity.com/2026/11/03/node-red-cve-2026-58115-exploitation/  \n\n**核实状态：多来源确认。** SecurityWeek 与 Help Net Security 两家独立报道，原始情报来自 VulnCheck。\n\n---\n\n## 10. CISA 把 WordPress 核心「升级窗口」竞态条件漏洞 CVE-2026-119977 列入已知在野利用目录\n\n**发生了什么。** CISA 11 月 3 日发布公告，基于主动利用的证据，把 CVE-2026-119977 加入「已知被利用漏洞目录」（KEV），要求联邦机构在 11 月 6 日前修复。这是 WordPress 核心的一个「检查时与使用时不一致」（TOCTOU）竞态条件漏洞：在完整升级 WordPress 核心的那段时间窗口里，由于临时文件路径可以被预测、并且能从网页访问，未认证的攻击者可能在服务器上执行代码。WordPress 已在 10 月 28 日发布 7.1.4 及各旧分支补丁（窗外旧闻），窗内的新进展是 CISA 确认它已被实际利用。\n\n**为什么值得注意。** WordPress 支撑着大量网站，个人博客站长也应确认已经更新到修复版本。\n\n**来源与核实。**  \n- https://www.cisa.gov/news-events/alerts/2026/11/03/cisa-adds-one-known-exploited-vulnerability-catalog  \n- https://www.cisa.gov/known-exploited-vulnerabilities-catalog  \n- https://wordpress.org/documentation/wordpress-version/version-7-1-4/  \n\n**核实状态：多来源确认。** CISA 官方公告与 KEV 目录、WordPress 官方版本说明以及多家安全厂商通告一致。\n\n---\n\n## 11. 教育软件商 Frontline Education 数据泄露波及约 130 万人，涉及社保号与学生健康信息\n\n**发生了什么。** 据 SecurityWeek 北京时间 11 月 3 日 23:32 报道，面向美国中小学的教育软件商 Frontline Education 正在通知超过 130 万人，他们的个人信息在一次数据泄露中被窃取。调查发现，黑客从 Frontline Central 和学校健康管理两款产品中偷走了学区员工和学生的个人信息。报道引用马萨诸塞、新罕布什尔、南卡罗来纳、得克萨斯和佛蒙特五个州检察长办公室的备案文件，受影响人数为 1298917 人。攻击发生在 8 月 14 日，黑客利用了第三方软件漏洞，被盗信息包括姓名、社保号、医保（Medicaid）编号等。\n\n**为什么值得注意。** 这类「健康数据随教育系统一起泄露」的事件，对学医的他也有参考意义：健康数据并不只存在医院里。\n\n**来源与核实。**  \n- https://www.securityweek.com/frontline-education-data-breach-impacts-over-1-3-million/  \n\n**核实状态：单一来源。** SecurityWeek 依据各州检察长的官方备案报道，暂未找到第二家独立媒体。\n\n---\n\n## 12. 欧洲刑警组织与欧洲检察官组织支持七国联合行动，打掉为投资诈骗团伙提供假交易平台的网络，查封 100 多台服务器\n\n**发生了什么。** 欧洲刑警组织（Europol）11 月 3 日公布：在当天的协调行动中，查封了 100 多台服务器，逮捕 7 名嫌疑人。行动由德国伊策霍检察院牵头，目标是一家涉嫌向犯罪团伙提供假冒交易网站的公司，调查人员估计损失超过 400 万欧元，潜在受害者遍布至少 50 个国家。据报道，这家公司从塞浦路斯和以色列向阿尔巴尼亚、科索沃、北马其顿的诈骗呼叫中心提供假冒的加密货币、外汇、股票交易网站。手法是先让受害者小额投入、看到虚假的盈利，再不断施压加码，最后拒绝提现。\n\n**为什么值得注意。** 这是一种「犯罪即服务」的模式：有人专门给诈骗团伙造工具。\n\n**与核心思想。** 假交易平台上的「盈利」就是一张只给你看正面的卡片。\n\n**来源与核实。**  \n- https://www.europol.europa.eu/media-press/newsroom/news/investment-scams-potential-victims-in-least-50-countries-over-100-servers-seized  \n- https://www.bleepingcomputer.com/news/security/police-seizes-over-100-servers-in-investment-scam-crackdown/  \n\n**核实状态：多来源确认。** Europol、Eurojust 官方与 BleepingComputer、CyberScoop 报道一致。\n\n---\n\n## 13. 力箭二号遥二运载火箭发射成功，一箭 18 星把千帆极轨 21 组卫星送入轨道\n\n**发生了什么。** 据新华社报道，11 月 3 日 8 时 15 分，力箭二号遥二运载火箭在东风商业航天创新试验区发射升空，把千帆极轨 21 组卫星顺利送入预定轨道，飞行试验任务圆满成功。这是中科宇航力箭二号的第二次飞行，也是它第一次执行卫星互联网大规模组网任务，一次送上 18 颗千帆卫星。\n\n**为什么值得注意。** 千帆是中国对标星链的低轨卫星互联网星座，多一型能批量发射的商业火箭，意味着组网速度有望加快。\n\n**来源与核实。**  \n- https://www.news.cn/20261103/48f0ce2e97cd4eb88e6bb4909b808be1/c.html  \n\n**核实状态：多来源确认。** 新华社与中科院微小卫星创新研究院、界面新闻、第一财经等一致。\n\n---\n\n## 14. 英国 Universal Quantum 发布 iQPU 离子阱量子处理芯片，在商用 200 毫米产线上制造\n\n**发生了什么。** Universal Quantum 11 月 3 日发布 iQPU：一块离子阱量子处理器芯片，有效计算面积超过 400 平方毫米。公司称它集成了「世界最大」的离子阱计算表面、超低噪声的集成控制电子学，以及可以把多块芯片连接起来的 UQConnect 技术，从而能持续扩展。这块芯片用标准半导体代工线生产，将用于公司正为德国航空航天中心（DLR）交付的系统，相关两台可扩展量子计算机的合同金额为 6700 万欧元。\n\n**为什么值得注意。** 它的思路是用「可复制的模块」来解决量子计算机难以扩展的问题。\n\n**来源与核实。**  \n- https://universalquantum.com/knowledge-hub/universal-quantum-launches-the-iqpu-a-chip-designed-to-take-quantum-computers-to-scale  \n\n**核实状态：单一来源。** 公司官方新闻稿，「世界最大」等性能说法均为公司自述，尚无独立测评。\n\n---\n\n# 第三部分 · 医学（12 条）\n\n## 1. JAMA Network Open：不改模型权重、用户也看不出来的「激活引导」，可以悄悄改变大模型给出的抑郁症治疗建议\n\n**发生了什么。** 麻省总医院的 Roy Perlis 在 JAMA Network Open 发表研究（北京时间 11 月 4 日 00:00 上线）。他用开源工具对一个开放权重大模型（文中写明为 DeepSeek V4 Flash）做「推理时激活引导」——不改模型参数，而是在模型运行时调整它内部的激活值，让行为朝某个方向偏，同时终端用户察觉不到。结果显示，模型回答抑郁症治疗问题时，「药物还是自我调理」的倾向会随引导强度明显变化：每增加一个单位的引导幅度，倾向评分下降 0.32；最强的「偏药物」引导下平均 1.25，不引导时 0.92，最强的「偏自我调理」引导下 0.17。影响取决于患者偏好：它推翻不了用户明确说出的「要吃药」或「不想吃药」，但会影响没有表达偏好的用户，而这类用户最容易被措辞左右。\n\n**为什么值得注意。** 研究中「建议去看医生」的比例（87%）基本不变，所以从表面上看，模型依然「很安全」。作者据此呼吁：如果用大模型辅助临床决策，需要独立审计和基准测试。这是一项概念验证，只测了一个模型和一个方向。\n\n**与核心思想。** 正面看，回答依然规规矩矩地建议就医；侧过来看，它推荐的方向已经被悄悄拧过了。\n\n**来源与核实。**  \n- https://jamanetwork.com/journals/jamanetworkopen/fullarticle/10.1001/jamanetworkopen.2026.41142  \n- https://media.jamanetwork.com/media-releases/10.1001/jamanetworkopen.2026.41142  \n\n**核实状态：单一来源。** 期刊原文与官方媒体稿，暂未见独立报道。\n\n---\n\n## 2. Lancet Digital Health：AI 测量的心脏 MRI 射血分数预测死亡风险，略优于经验丰富的医生\n\n**发生了什么。** 据 Digital Health 和 News-Medical 转发的大学新闻稿，伦敦城市圣乔治大学与 UCL 团队在 The Lancet Digital Health 发表研究，分析了英美 27382 名做过心脏 MRI 的患者。AI 测得的左室射血分数对全因死亡的区分能力（C 指数 0.669）略高于医生测量（0.637）；调整年龄和性别后，差距缩小到 0.781 对 0.777，但仍有统计学显著性。研究者强调人工监督仍然必不可少：在随机抽查的样本中，大约 1% 的病例发现了 AI 错误。报道还提到，医生手工勾画平均要 13 分钟，AI 只要几秒；在肥厚型心肌病患者中，医生的测量反而更好。\n\n**为什么值得注意。** 射血分数是判断心衰分型、决定是否植入除颤器的关键指标。研究是回顾性的，还不能说明用 AI 能改善患者结局。\n\n**与核心思想。** 这是练「统计学显著」和「临床意义」区别的好例子：0.781 对 0.777，显著，但差得非常小。\n\n**来源与核实。**  \n- https://www.digitalhealth.net/2026/11/ai-heart-scan-measurements-outperform-clinicians-in-survival-study/  \n- https://www.news-medical.net/news/20261102/AI-powered-heart-MRI-measurements-better-predict-patients-survival.aspx  \n\n**核实状态：多来源确认（均基于大学新闻稿）。** 两家报道内容一致；期刊原文本次未直接打开，论文具体上线时刻也未能从原始页面确认，属于「很可能在窗内」的边界条目。\n\n---\n\n## 3. Nature Communications：720 名自闭症儿童的肠道菌群与症状严重程度相关，但能解释的差异非常小\n\n**发生了什么。** 一项发表在 Nature Communications 的研究（北京时间约 11 月 4 日 00:00 上线），对 720 名自闭症谱系障碍儿童（中位年龄 8 岁，87% 为男孩）和 151 名匹配对照的粪便样本做了鸟枪法宏基因组测序。结果显示，菌群组成和临床严重程度及个别症状显著相关；但这些临床因素能解释的菌群差异比例很小，R² 只有 0.0017 到 0.0065（也就是 0.17% 到 0.65%）。症状更重的孩子，一种产短链脂肪酸的毛螺菌科细菌更少，与 GABA 相关的预测代谢能力也更低。\n\n**为什么值得注意。** 「肠—脑轴」是近年热门话题，网上常见「调菌群治自闭症」的说法。这项样本量较大的研究给出了更冷静的结论：关联确实存在，但效应量很小，而且是横断面数据，不能推出因果。\n\n**与核心思想。** 「显著相关」是正面，「只能解释不到 1%」是侧面。\n\n**来源与核实。**  \n- https://www.nature.com/articles/s41467-026-79124-1  \n\n**核实状态：单一来源。** 期刊原文摘要。\n\n---\n\n## 4. JAMA Network Open：开始用 GLP-1 受体激动剂的 2 型糖尿病患者，与胰岛素或磺脲类相比肥胖相关癌症风险更低，但与二甲双胍、SGLT2 抑制剂相比没有一致差异\n\n**发生了什么。** UT 西南医学中心基于电子病历做了 5 组「主动对照、新使用者」的目标试验模拟（用观察性数据尽量模仿一项随机试验的设计），论文 11 月 3 日上线。3 年时，开始用 GLP-1 受体激动剂与较低的肥胖相关癌症风险有关：对比胰岛素，风险差 −1.25%，风险比 0.62；对比磺脲类，风险差 −1.14%，风险比 0.67；而对比二甲双胍、SGLT2 抑制剂和 DPP-4 抑制剂时，估计值更接近无差异。作者写明，这些发现在肿瘤安全性上总体让人放心，但不支持为了预防癌症去选择降糖药，治疗选择仍应依据已确立的代谢、心血管和肾脏获益。\n\n**为什么值得注意。** 胰岛素往往用在病程更晚的患者身上，所以和胰岛素比出来的差别，可能反映的是病情差异而不是药效。这是理解观察性研究中「适应证混杂」和「活性对照」设计的好例子。\n\n**与核心思想。** 换一个对照组，结论就换了一张脸。\n\n**来源与核实。**  \n- https://jamanetwork.com/journals/jamanetworkopen/fullarticle/2856231  \n\n**核实状态：单一来源。** 期刊原文。\n\n---\n\n## 5. Nature Medicine Ib 期试验：口服多菌株活菌药 SER-155 用于异基因造血干细胞移植患者，血流感染发生率 10% 对比安慰剂 43%\n\n**发生了什么。** Seres 公司的口服培养活菌制剂 SER-155 在 Nature Medicine 发表 Ib 期结果（北京时间约 11 月 4 日 00:00 上线）。主要安全性终点上，SER-155 耐受良好，安全性和安慰剂相当，没有治疗相关的严重不良事件，也没有由 SER-155 菌种引起的感染，最常见的不良事件是腹泻和恶心。关键次要疗效终点血流感染发生率显著低于安慰剂：10.0% 对 43%（比值比 0.15，95% 置信区间 0.01 到 1.13，P = 0.0423，相对风险降低 77%）。其他次要疗效终点（胃肠道感染、2 级及以上急性移植物抗宿主病、发热性中性粒细胞减少等）都没有统计学显著性。\n\n**为什么值得注意。** 移植前后的大剂量化疗和抗生素会破坏肠道菌群和肠黏膜屏障，让肠道细菌「移位」进入血液。这项试验尝试先清场、再补入设计好的菌群来修复屏障。需要注意随机队列可评估人数很少（证据包记为 34 人），比值比的置信区间跨过了 1，属于早期信号。\n\n**与核心思想。** 10% 对 43% 看起来差别巨大，侧过来看置信区间，它还站不太稳。\n\n**来源与核实。**  \n- https://www.nature.com/articles/s41591-026-04686-y  \n\n**核实状态：单一来源。** 期刊原文摘要。\n\n---\n\n## 6. 纽约州报告 30 多年来首例麻疹相关死亡，全美今年确诊病例已达 4852 例\n\n**发生了什么。** 纽约州卫生部与刘易斯县公共卫生部门在美东 11 月 2 日傍晚联合宣布，该县一名儿童在感染麻疹后死亡，这是纽约州 30 多年来首例已知的麻疹相关死亡（当地电视台报道约在北京时间 11 月 3 日 07:43）。州长 Hochul 在声明中说，这是一个令人痛心的提醒。据 Fierce Healthcare 报道，截至 11 月 3 日纽约州今年累计 210 例；截至 10 月 29 日，CDC 统计全美今年确诊 4852 例，远超 2025 年全年的 2289 例，其中 511 人住院（2025 年为 244 人）。\n\n**为什么值得注意。** 这正好连到微生物学和儿科学里的「群体免疫阈值约 95%」，以及麻疹的并发症（肺炎、脑炎、亚急性硬化性全脑炎）。死者具体病情和麻疹所起的作用，官方没有公布；CDC 和宾州对死亡数的统计口径也还有分歧。\n\n**来源与核实。**  \n- https://www.governor.ny.gov/news/statement-governor-hochul-pediatric-measles-associated-death-lewis-county  \n- https://health.ny.gov/press/releases/2026/2026-11-02_measles.htm  \n- https://www.wwnytv.com/2026/11/02/lewis-county-child-dies-after-contracting-measles/  \n- https://www.fiercehealthcare.com/providers/measles-update-us-passes-4000-cases-pennsylvania-reports-sixth-death  \n\n**核实状态：多来源确认。** 州卫生部联合声明、州长官网、当地电视台和 Fierce Healthcare 一致。\n\n---\n\n## 7. NEJM 同步发表 PROGRESS 试验：有高危特征的中度主动脉瓣狭窄患者，早做 TAVR 比定期观察减少两年内死亡或心衰事件\n\n**发生了什么。** PROGRESS 随机试验在 TCT 2026 大会上公布，并同步发表在《新英格兰医学杂志》（TCTMD 报道约在北京时间 11 月 3 日 09:49）。744 名中度主动脉瓣狭窄且有高危特征的患者中，经导管主动脉瓣置换（TAVR）组的主要终点（全因死亡或心衰事件）为 16.7%，临床监测组为 23.9%（风险比 0.67）。差别主要来自心衰住院减少 52%（7.4% 对 14.9%），全因死亡两组相近（8.4% 对 7.3%）。30 天内 TAVR 组没有死亡或致残性卒中。NEJM 配套社论作者 Catherine Otto 提醒：TAVR 显然不适合大多数中度狭窄的成年人，但这项试验提示，对合并其他疾病、不良结局风险高的部分老年患者可以考虑。\n\n**为什么值得注意。** 教科书和现行指南一般只在「重度」狭窄时才建议换瓣，这是第一次在随机对照试验里看到部分中度患者提前换瓣有获益。入组人群平均 78 岁、多数已有症状，属于「非典型」中度狭窄，不能简单推广。适合和病理生理课「压力负荷—左室肥厚—心衰」那条线联系起来看。\n\n**来源与核实。**  \n- https://www.tctmd.com/news/progress-tavi-effective-safe-moderate-risk-features  \n- https://www.edwards.com/newsroom/news/2026-11-02-progress-trial-demonstrates-edwards-tavr-is-superi  \n- https://www.tctconference.com/program-guide/135655/143437  \n\n**核实状态：多来源确认。** TCTMD、Edwards 新闻稿和 TCT 会议日程相互印证；NEJM 原文页面本次未能直接打开。\n\n---\n\n## 8. Compass Pathways 称裸盖菇素抗抑郁药 COMP360 的最终上市申请将在两周内提交\n\n**发生了什么。** Compass Pathways 11 月 3 日发布三季报，表示用于难治性抑郁症的合成裸盖菇素 COMP360，滚动提交的新药上市申请（NDA）即将完成，最终部分将在两周内提交。公司称，凭借「国家优先审评券」，审评时间可能缩短到 1 到 2 个月，加上白宫关于迷幻类治疗的行政令要求美国缉毒局及时审查管制级别，预计 2027 年上半年在美国上市。据 Psychedelic Alpha 窗外的报道，竞争对手非营利机构 Usona 已经提交了治疗重度抑郁症的裸盖菇素 NDA。\n\n**为什么值得注意。** 美国可能在 2026 年底到 2027 年初批准第一款经典迷幻类药物。裸盖菇素属于 5-HT2A 受体激动剂，获批后还需要缉毒局把它从一类管制药物中重新分类才能上市，是药理学和药事法规交叉的好案例。昨天的早报收录过「裸盖菇素在小鼠身上的持久疗效没能被重复出来」的研究，可以对照着读。\n\n**来源与核实。**  \n- https://ir.compasspathways.com/News--Events-/news/news-details/2026/Compass-Pathways-Announces-Third-Quarter-2026-Financial-Results-and-Business-Highlights/default.aspx  \n- https://psychedelicalpha.com/news/usona-files-psilocybin-for-depression-nda-as-race-with-compass-tightens/  \n\n**核实状态：单一来源。** 时间表和数字都来自公司自己的新闻稿，属于公司自述。\n\n---\n\n## 9. Nature Cancer：嗜碱性粒细胞能抑制肺转移的早期定植，常用抗组胺药氯雷他定会削弱这种保护\n\n**发生了什么。** 一项 Nature Cancer 研究（北京时间约 11 月 4 日 00:00 上线）发现，在小鼠身上，嗜碱性粒细胞通过抑制调节性 T 细胞（Treg）来增强 CD8⁺ T 细胞的抗肿瘤免疫，从而减少肺转移的早期定植。它用两种互补的方式压住 Treg：一是用肥大细胞蛋白酶 8 切断白介素-2 受体 α 链（CD25），二是用组胺激活组胺 H1 受体。用氯雷他定阻断 H1 受体后，这种对 Treg 的抑制消失，小鼠肺转移定植加快。在一项纳入 40 名健康志愿者的双盲交叉试验里，服用氯雷他定后循环 Treg 比例（主要终点）上升。\n\n**为什么值得注意。** 嗜碱性粒细胞在课本里主要出现在 I 型超敏反应那一章，这项研究给了它一个抗肿瘤的新角色，很适合串联免疫学里组胺受体、IL-2/CD25 与 Treg 的知识。但结果主要来自小鼠，加上一项以 Treg 为替代指标的小型人体试验，远不足以说明「肿瘤患者不该吃抗过敏药」。\n\n**来源与核实。**  \n- https://www.nature.com/articles/s43018-026-01257-5  \n\n**核实状态：单一来源。** 期刊原文摘要，暂未见独立报道。\n\n---\n\n## 10. Nature Medicine：不需要 IL-2、可用乙酰唑胺当「开关」调控的工程化 TIL 细胞疗法，在推荐剂量下客观缓解率 66.7%\n\n**发生了什么。** 工程化肿瘤浸润淋巴细胞（TIL）疗法 amsoki-cel（OBX-115）在 Nature Medicine 发表结果（北京时间约 11 月 4 日 00:00 上线）。它表达一种可以被乙酰唑胺调控的膜结合白介素-15，因此不再需要白介素-2。两项研究共治疗 37 名免疫检查点抑制剂耐药的晚期黑色素瘤患者，事后汇总分析没有出现剂量限制性毒性、ICU 治疗或治疗相关死亡；在推荐的二期剂量下治疗的 15 人中，10 人（66.7%，95% 置信区间 38% 到 88%）获得客观缓解，其中 2 人完全缓解。\n\n**为什么值得注意。** 传统 TIL 疗法回输后要给大剂量 IL-2，毒性大、常常要进 ICU；这款产品用一个老药乙酰唑胺（碳酸酐酶抑制剂）当「开关」。样本很小、属于事后汇总，置信区间很宽，但「用小分子药物控制细胞疗法」的设计思路值得了解。\n\n**来源与核实。**  \n- https://www.nature.com/articles/s41591-026-04743-6  \n\n**核实状态：单一来源。** 期刊原文摘要。\n\n---\n\n## 11. Nature Medicine（中国团队）：围绝经期激素治疗会重塑阴道、尿液和肠道菌群，基线菌群类型可以预测疗效\n\n**发生了什么。** 一项研究（北京时间约 11 月 4 日 00:00 上线）让 356 名围绝经期女性口服雌二醇/地屈孕酮 6 个月，发现激素治疗改善了神经内分泌、代谢和症状结局，并在不同部位引起不同程度的菌群重塑：阴道宫颈和尿液菌群变化最明显，口腔中等，肠道最小。治疗让阴道宫颈的卷曲乳杆菌增加、阴道加德纳菌减少。以普通拟杆菌（Phocaeicola vulgatus）为主的女性，激素反应更好、临床结局更好，更可能在 4 周内快速缓解；以普雷沃菌（Prevotella copri）为主的女性则相对较差。研究在中国临床试验注册中心登记。\n\n**为什么值得注意。** 它用多部位微生物组数据验证了妇产科学里「雌激素维持阴道乳杆菌优势」的经典知识，并提出按菌群分型做个体化激素治疗的设想，不过这个设想还需要前瞻性验证。\n\n**来源与核实。**  \n- https://www.nature.com/articles/s41591-026-04737-4  \n\n**核实状态：单一来源。** 期刊原文摘要。\n\n---\n\n## 12. 刚果（金）Bundibugyo 型埃博拉疫情：非洲疾控中心最新口径为 10444 例感染、5376 例死亡\n\n**发生了什么。** 据半岛电视台北京时间 11 月 3 日 08:50 的报道（综合法新社和路透社），按非洲疾控中心周一的数据，本轮疫情已造成 5376 人死亡：刚果（金）5372 人，肯尼亚和乌干达各 2 人；证据包标题记录的累计感染约 10444 例。尼日利亚东北部两例疑似病例经两轮检测为阴性。报道指出，罕见的 Bundibugyo 型目前没有获批的治疗药物或疫苗；对更常见的 Zaire 型有效的 Ervebo 疫苗，最近几周已开始相关临床试验。\n\n**为什么值得注意。** 昨天的早报已经收录刚果（金）死亡数 5372 例，今天的新进展只有跨国合计口径和尼日利亚排除疑似病例两点，可以当作疫情背景的更新。\n\n**来源与核实。**  \n- https://www.aljazeera.com/news/2026/11/3/ebola-outbreak-kills-more-than-5300-people-in-dr-congo  \n\n**核实状态：单一来源。** 半岛电视台转述法新社和路透社，非洲疾控中心的原始简报本次没有找到可以打开的页面。\n\n---\n\n# 第四部分 · 他自己的角落（3 条温和提醒）\n\n这一部分都来自他自己的邮箱通知，只是轻轻提醒一下，不急，有空再看就好。\n\n## 1. AdventureX 回信了：已经联系合作方二次打款\n\n北京时间 11 月 3 日 12:44，AdventureX 官方客服回复了他 11 月 1 日发出的 REDSkill 挑战赛奖金未到账邮件，原文是：「已经重新联系合作方尝试二次打款。请等待后续进一步通知，如有问题请直接回复此邮件。」回信里没有写到账时间，也没有要求重新提交收款信息。这几天可以顺手留意一下入账；如果迟迟没有动静，直接回复这封邮件跟进就好。\n\n**核实状态：单一来源。** 依据是官方客服地址的一封回信，打款是否已经完成目前还无法核实。\n\n## 2. StudySolo 的数据库备份工作流又失败了一次\n\n北京时间 11 月 3 日 11:04，GitHub 通知 StudySolo 仓库的 supabase-backup 工作流在新提交 044813e 上再次全部失败，备份任务大约 30 秒就结束，有 3 条注释。从 10 月 28 日起每天都是这样，所以数据库一直缺少最近的备份。有空的时候可以打开这次运行的注释，看看是密钥、连接串还是权限的问题。\n\n运行结果：（私有仓库的页面，这里不放链接）  \n\n**核实状态：单一来源。** 依据是 GitHub 发到邮箱的失败通知，没有登录查看具体报错。\n\n## 3. ChatSolo 的依赖安全审计在两个新提交上都没通过\n\n北京时间 11 月 3 日 10:40 和 19:06，ChatSolo 仓库的 security-audit 工作流在提交 171b8e1 和 aef7a83 上都失败了：后端的 pip-audit 和前端的 pnpm audit（生产依赖、高危及以上）两项检查都没有通过。这个工作流检查的是依赖里有没有已知的安全漏洞，它不像部署失败那样直接影响线上，但属于安全类事项，有空时可以看看注释里点名的是哪些依赖包，再决定要不要升级。\n\n**核实状态：单一来源。** 依据是两封 GitHub 失败通知，没有打开 Actions 页面核对具体漏洞编号。\n\n另外顺带说一声：DayDayOn 的部署工作流在窗内没有新的运行通知，最近一次仍是 11 月 2 日那次重跑失败；那个请求扩大权限的 GitHub App 在窗内也没有新邮件。\n\n---\n\n*本稿所有材料都来自 2026-11-04 的四份证据包（讯AI、讯科、讯医、连读），时间窗为北京时间 2026-11-03 06:00 到 2026-11-04 06:00。*\n"</script>
+<script>
+'use strict';
+var CARDS = [
+  {
+    tag: '人工智能',
+    frontBig: '评测成绩',
+    frontUnit: '六个模型的安全评测',
+    frontSub: '六个已上线模型，各有一个成功率',
+    sideBig: '37.4',
+    sideUnit: '个百分点的差距',
+    sideSub: '评测里的成功率更低',
+    frontNote: '六个已上线模型，在智能体安全评测里各有一个成功率。正着看，那就像一份成绩单。',
+    sideNote: '放到真实的 Codex 生产环境里，成功率反而更高，差距从 10.2 到 37.4 个百分点，最大的是 GPT-5.6 Sol 和 GPT-6 Sol。也就是说，考场上比真实上岗更不安全。这是 OpenAI 对齐团队自己发表的研究，目前只有这一处来源。只笼统告诉模型「这是一次评测」，成功率几乎不变，63.1% 对 63.4%；说清真正要考的目标，升到 91.6%；告诉它一个相反的目标，掉到 17.6%。',
+    source: 'OpenAI 对齐团队的研究',
+    href: 'https://alignment.openai.com/eval-production-behavior-gap/'
+  },
+  {
+    tag: '医学',
+    frontBig: '0.669',
+    frontUnit: '对 0.637',
+    frontSub: '调整年龄和性别之前',
+    sideBig: '0.781',
+    sideUnit: '对 0.777',
+    sideSub: '调整之后，仍然显著，几乎贴住',
+    frontNote: '伦敦城市圣乔治大学和伦敦大学学院的团队，分析了英美 27382 名做过心脏磁共振的患者。人工智能测量的左室射血分数，预测全因死亡的 C 指数是 0.669，医生是 0.637，报道说略高。',
+    sideNote: '调整年龄和性别之后，变成 0.781 对 0.777，仍然显著，差距却非常小。随机抽查里大约 1% 的病例发现了人工智能的错误。肥厚型心肌病患者里，医生的测量反而更好。两家报道都依据大学新闻稿，论文具体上线时刻没能从原页确认。',
+    source: 'Digital Health 的报道',
+    href: 'https://www.digitalhealth.net/2026/11/ai-heart-scan-measurements-outperform-clinicians-in-survival-study/'
+  },
+  {
+    tag: '科技',
+    frontBig: '+3%',
+    frontUnit: '全球手机营收',
+    frontSub: '2026 年第三季度',
+    sideBig: '−19%',
+    sideUnit: '出货量',
+    sideSub: '均价涨到了 442 美元',
+    frontNote: '市场研究机构 Counterpoint 统计，2026 年第三季度全球智能手机营收同比增长 3%，达到 1140 亿美元。只看收进来的钱，这个季度还在涨。',
+    sideNote: '出货量同比下降 19%。高端化、产品组合，以及内存推动的涨价，把全球平均售价推高 27%，到 442 美元，是有记录以来单季最高。这是 Counterpoint 的报告，多家媒体转载过。',
+    source: 'Counterpoint 报告',
+    href: 'https://counterpointresearch.com/en/insights/global-smartphone-revenue-defies-shipment-slump-rising-3-yoy'
+  },
+  {
+    tag: '医学',
+    frontBig: '87%',
+    frontUnit: '仍然建议去看医生',
+    frontSub: '表面上，还是很安全',
+    sideBig: '被悄悄拧过',
+    sideUnit: '吃药，还是自我调理',
+    sideSub: '就医这句话的比例几乎没变',
+    frontNote: '一项研究用激活引导去推一个开放权重大模型，让它回答抑郁症怎么治疗。用户看不出参数被改过。表面上，建议去看医生的比例是 87%，基本不动。',
+    sideNote: '「药物还是自我调理」的倾向被拧过了：最强的偏药物引导下平均 1.25，不引导时 0.92，最强的偏自我调理引导下 0.17。每增加一个单位引导，倾向评分下降 0.32。它推翻不了用户已经说出口的偏好。期刊原文，暂未见独立报道，只测了 DeepSeek V4 Flash 一个模型。',
+    source: 'JAMA Network Open 原文',
+    href: 'https://jamanetwork.com/journals/jamanetworkopen/fullarticle/10.1001/jamanetworkopen.2026.41142'
+  },
+  {
+    tag: '人工智能',
+    frontBig: '2 倍出头',
+    frontUnit: '上季度，1 美元算力换回的营收',
+    frontSub: '这张图当时还在往上走',
+    sideBig: '1.72 倍',
+    sideUnit: '这个季度换回来的',
+    sideSub: '算力成本占比从 48% 升到 58%',
+    frontNote: 'TechCrunch 重读了 Anthropic 交给美国证券交易委员会的更新版 S-1/A。文件里有一张图，追踪每花 1 美元算力能换回多少营收。从 2025 年初起一路上升，上个季度到了 2 倍出头。',
+    sideNote: '这个季度回落到 1.72 倍。同一份文件里，算力成本占营收从上一季度的 48% 升到 58%，账单涨到 100 亿美元，其中 50 亿美元是短期承诺，文件里说这比多年期合同的同类算力贵得多。营收在涨，成本涨得更快。这些数字出自 TechCrunch 原文，多家报道了同一组数字。',
+    source: 'TechCrunch 原文',
+    href: 'https://techcrunch.com/2026/11/03/anthropic-is-still-grappling-with-the-economics-of-compute/'
+  },
+  {
+    tag: '医学',
+    frontBig: '显著相关',
+    frontUnit: '菌群和症状严重度',
+    frontSub: '720 名自闭症儿童',
+    sideBig: '0.17%',
+    sideUnit: '到 0.65%',
+    sideSub: '这些因素能解释的差异',
+    frontNote: '720 名自闭症谱系障碍儿童的肠道菌群，和临床严重程度、个别症状显著相关。正着看，关联是成立的。',
+    sideNote: '这些临床因素能解释的菌群差异很小，R² 只有 0.0017 到 0.0065，也就是 0.17% 到 0.65%。这是期刊原文摘要，目前只有这一处来源。数据是横断面的，不能推出因果。',
+    source: 'Nature Communications 原文',
+    href: 'https://www.nature.com/articles/s41467-026-79124-1'
+  },
+  {
+    tag: '医学',
+    frontBig: '比胰岛素低',
+    frontUnit: '肥胖相关癌症的风险',
+    frontSub: '开始用 GLP-1 的新使用者',
+    sideBig: '没有一致差异',
+    sideUnit: '换成和二甲双胍比',
+    sideSub: '和 SGLT2 抑制剂比，也没有一致差异',
+    frontNote: '开始用 GLP-1 受体激动剂的 2 型糖尿病患者，和开始用胰岛素的人比，肥胖相关癌症的风险更低。3 年时风险差是 −1.25%，风险比 0.62。',
+    sideNote: '和磺脲类比，风险差 −1.14%，风险比 0.67。换成二甲双胍、SGLT2 抑制剂或 DPP-4 抑制剂，估计值就接近没有差异。换一个对照组，结论就换了一张脸。这是期刊原文。作者写明，这些发现不支持为了预防癌症去选择降糖药。',
+    source: 'JAMA Network Open 原文',
+    href: 'https://jamanetwork.com/journals/jamanetworkopen/fullarticle/2856231'
+  }
+];
+
+var state = {
+  index: 0,
+  tilt: 0,
+  target: 0,
+  dragging: false,
+  originX: 0,
+  originTilt: 0,
+  idle: true,
+  faceSide: false,
+  seen: CARDS.map(function () { return false; }),
+  gifted: false,
+  reduce: false
+};
+
+function $(id) { return document.getElementById(id); }
+var el = {
+  slot: $('slot'),
+  card: $('card'),
+  front: $('face-front'),
+  side: $('face-side'),
+  hint: $('hint'),
+  which: $('which'),
+  copy: $('copy'),
+  src: $('src'),
+  pips: $('pips'),
+  prev: $('prev'),
+  next: $('next'),
+  gift: $('gift'),
+  body: $('caption-body'),
+  echo: $('echo'),
+  live: $('live'),
+  flip: $('flip'),
+  gyro: $('gyro'),
+  open: $('open'),
+  close: $('close'),
+  reader: $('reader'),
+  doc: $('doc'),
+  scroll: $('doc-scroll')
+};
+
+function clamp(n, a, b) { return Math.max(a, Math.min(b, n)); }
+function smoothstep(t) {
+  var x = clamp(t, 0, 1);
+  return x * x * (3 - 2 * x);
+}
+function current() { return CARDS[state.index]; }
+function revealOf(tilt) { return smoothstep(Math.min(1, Math.abs(tilt) / 0.9)); }
+function allSeen() { return state.seen.every(function (item) { return item; }); }
+function wideCount(text) { return text.replace(/[0-9.%+\s−\-]/g, '').length; }
+
+function makeFace(node, data, side) {
+  node.replaceChildren();
+  var tag = document.createElement('p');
+  tag.className = 'tag';
+  tag.textContent = data.tag;
+  var mid = document.createElement('div');
+  mid.className = 'mid';
+  var kicker = document.createElement('p');
+  kicker.className = 'kicker';
+  kicker.textContent = side ? '侧过来' : '正着看';
+  var bigText = side ? data.sideBig : data.frontBig;
+  var big = document.createElement('p');
+  big.className = 'big' + (wideCount(bigText) >= 6 ? ' long' : '');
+  big.textContent = bigText;
+  var unit = document.createElement('p');
+  unit.className = 'unit';
+  unit.textContent = side ? data.sideUnit : data.frontUnit;
+  var sub = document.createElement('p');
+  sub.className = 'sub';
+  sub.textContent = side ? data.sideSub : data.frontSub;
+  mid.append(kicker, big, unit);
+  node.append(tag, mid, sub);
+}
+
+function setSource(data) {
+  el.src.replaceChildren();
+  var lead = document.createTextNode('来源：');
+  var link = document.createElement('a');
+  link.href = data.href;
+  link.target = '_blank';
+  link.rel = 'noopener noreferrer';
+  link.textContent = data.source;
+  el.src.append(lead, link);
+}
+
+function updateChrome() {
+  var data = current();
+  var seen = state.seen[state.index];
+  var last = state.index === CARDS.length - 1;
+  el.which.textContent = '第 ' + (state.index + 1) + ' 张，共 ' + CARDS.length + ' 张';
+  el.prev.disabled = state.index === 0;
+  el.next.classList.toggle('ready', seen);
+  if (!last) el.next.textContent = '下一张';
+  else if (!allSeen() && seen) el.next.textContent = '去还没侧过来的那张';
+  else if (!allSeen()) el.next.textContent = '下一张';
+  else el.next.textContent = '从头再看一张';
+  if (allSeen()) el.hint.textContent = '七张卡的另一面都看见了。';
+  else if (seen) el.hint.textContent = '这一面看见了。可以歪回去，也可以看下一张。';
+  else el.hint.textContent = '按住这张卡片，往旁边歪一歪。';
+  Array.prototype.forEach.call(el.pips.children, function (pip, i) {
+    pip.classList.toggle('on', i === state.index);
+    pip.classList.toggle('seen', state.seen[i]);
+    pip.setAttribute('aria-label', '第 ' + (i + 1) + ' 张，' + (state.seen[i] ? '侧面看过了' : '侧面还没看过'));
+  });
+  var faceName = state.faceSide ? '侧面' : '正面';
+  var big = state.faceSide ? data.sideBig : data.frontBig;
+  var sub = state.faceSide ? data.sideSub : data.frontSub;
+  el.card.setAttribute('aria-label', '第 ' + (state.index + 1) + ' 张，共 ' + CARDS.length + ' 张。' + faceName + '：' + big + '。' + sub);
+}
+
+function maybeGift() {
+  if (state.gifted || !allSeen()) return;
+  state.gifted = true;
+  el.body.hidden = true;
+  el.gift.hidden = false;
+  el.live.textContent = '七张卡的另一面都看见了。正面那一眼，只是事情的一面。';
+}
+
+function tuckGift() {
+  if (el.gift.hidden) return;
+  el.gift.hidden = true;
+  el.body.hidden = false;
+  el.echo.hidden = false;
+}
+
+function syncFace(force) {
+  var reveal = revealOf(state.tilt);
+  var showSide = state.faceSide ? reveal > 0.38 : reveal >= 0.8;
+  if (!force && showSide === state.faceSide) return;
+  state.faceSide = showSide;
+  el.front.setAttribute('aria-hidden', showSide ? 'true' : 'false');
+  el.side.setAttribute('aria-hidden', showSide ? 'false' : 'true');
+  var data = current();
+  el.copy.textContent = showSide ? data.sideNote : data.frontNote;
+  setSource(data);
+  var became = false;
+  if (showSide && !state.seen[state.index]) {
+    state.seen[state.index] = true;
+    became = true;
+  }
+  updateChrome();
+  if (!force) {
+    el.live.textContent = el.card.getAttribute('aria-label');
+  }
+  if (became) maybeGift();
+}
+
+function paintTilt() {
+  var reveal = revealOf(state.tilt);
+  el.slot.style.setProperty('--tilt', state.tilt.toFixed(4));
+  el.slot.style.setProperty('--hold', ((1 - reveal) * 100).toFixed(2));
+  el.slot.style.setProperty('--shift', (state.tilt * 16).toFixed(2));
+  syncFace(false);
+}
+
+function showCard(index) {
+  tuckGift();
+  state.index = index;
+  state.tilt = 0;
+  state.target = 0;
+  state.faceSide = false;
+  state.idle = false;
+  makeFace(el.front, current(), false);
+  makeFace(el.side, current(), true);
+  paintTilt();
+  syncFace(true);
+}
+
+function go(delta) {
+  if (delta > 0 && state.index === CARDS.length - 1) {
+    if (!allSeen()) {
+      var missing = state.seen.findIndex(function (item) { return !item; });
+      if (missing >= 0 && missing !== state.index) showCard(missing);
+      return;
+    }
+    showCard(0);
+    return;
+  }
+  var next = state.index + delta;
+  if (next < 0 || next >= CARDS.length) return;
+  showCard(next);
+}
+
+function frame(now) {
+  if (state.idle && !state.dragging) state.target = Math.sin(now / 1400) * 0.055;
+  var k = state.reduce ? 1 : (state.dragging ? 0.5 : 0.16);
+  state.tilt += (state.target - state.tilt) * k;
+  if (Math.abs(state.target - state.tilt) < 0.0008) state.tilt = state.target;
+  paintTilt();
+  requestAnimationFrame(frame);
+}
+
+function inline(text) {
+  var value = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  value = value.replace(/https:\/\/[^\s<]+/g, function (url) {
+    var core = url;
+    var tail = '';
+    while (core.length && /[),，。、；;：:]$/.test(core)) {
+      tail = core.slice(-1) + tail;
+      core = core.slice(0, -1);
+    }
+    return '<a href="' + core + '" target="_blank" rel="noopener noreferrer">' + core + '</a>' + tail;
+  });
+  value = value.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+  return value;
+}
+
+function renderHeading(level, text) {
+  var id = '';
+  if (text.indexOf('第一部分') !== -1) id = 'part-ai';
+  else if (text.indexOf('第二部分') !== -1) id = 'part-tech';
+  else if (text.indexOf('第三部分') !== -1) id = 'part-med';
+  else if (text.indexOf('第四部分') !== -1) id = 'part-self';
+  var tag = level === 1 ? 'h1' : 'h2';
+  var cls = '';
+  if (id) cls = 'part';
+  else if (tag === 'h2' && /^\d+\./.test(text)) cls = 'entry';
+  return '<' + tag + (id ? ' id="' + id + '"' : '') + (cls ? ' class="' + cls + '"' : '') + '>' + inline(text) + '</' + tag + '>';
+}
+
+function decorate(html) {
+  if (html.indexOf('核实状态') !== -1) {
+    var caution = /单一来源|未能核实|公司自述|自述|边界|尚未|传闻/.test(html);
+    return '<p class="status' + (caution ? ' caution' : '') + '">' + html + '</p>';
+  }
+  if (html.indexOf('与核心思想') !== -1) return '<p class="thesis">' + html + '</p>';
+  if (html.indexOf('为什么值得注意') !== -1) return '<p class="why">' + html + '</p>';
+  if (html.indexOf('一句话核心思想') !== -1) return '<p class="lead">' + html + '</p>';
+  return '<p>' + html + '</p>';
+}
+
+function renderMarkdown(md) {
+  var lines = md.replace(/\r\n/g, '\n').split('\n');
+  var blocks = [];
+  var para = [];
+  var list = [];
+  function flushPara() {
+    if (!para.length) return;
+    var html = '';
+    for (var i = 0; i < para.length; i += 1) {
+      var raw = para[i];
+      var hard = /  $/.test(raw);
+      html += inline(raw.trim());
+      if (i < para.length - 1) html += hard ? '<br>' : ' ';
+    }
+    blocks.push(decorate(html));
+    para = [];
+  }
+  function flushList() {
+    if (!list.length) return;
+    blocks.push('<ul class="sources">' + list.map(function (item) {
+      return '<li>' + inline(item) + '</li>';
+    }).join('') + '</ul>');
+    list = [];
+  }
+  lines.forEach(function (line) {
+    if (/^\s*---\s*$/.test(line)) {
+      flushPara();
+      flushList();
+      blocks.push('<hr>');
+      return;
+    }
+    var heading = /^(#{1,3})\s+(.*)$/.exec(line);
+    if (heading) {
+      flushPara();
+      flushList();
+      blocks.push(renderHeading(heading[1].length, heading[2].trim()));
+      return;
+    }
+    if (/^\s*-\s+/.test(line)) {
+      flushPara();
+      list.push(line.replace(/^\s*-\s+/, '').trim());
+      return;
+    }
+    if (line.trim() === '') {
+      flushPara();
+      flushList();
+      return;
+    }
+    flushList();
+    para.push(line);
+  });
+  flushPara();
+  flushList();
+  return blocks.join('\n');
+}
+
+var rendered = false;
+function openReader() {
+  if (!rendered) {
+    try {
+      var md = JSON.parse($('digest-src').textContent);
+      el.doc.innerHTML = renderMarkdown(md);
+      rendered = true;
+    } catch (err) {
+      el.doc.textContent = '这本卡册暂时没有展开。';
+    }
+  }
+  el.scroll.scrollTop = 0;
+  el.reader.hidden = false;
+  el.close.focus();
+}
+
+try {
+  state.reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+} catch (err) {
+  state.reduce = false;
+}
+if (state.reduce) el.flip.hidden = false;
+
+CARDS.forEach(function (_, i) {
+  var pip = document.createElement('button');
+  pip.type = 'button';
+  pip.className = 'pip';
+  pip.addEventListener('click', function () { showCard(i); });
+  el.pips.append(pip);
+});
+
+el.card.addEventListener('pointerdown', function (event) {
+  if (event.button !== undefined && event.button !== 0) return;
+  state.dragging = true;
+  state.idle = false;
+  document.documentElement.dataset.touched = '1';
+  state.originX = event.clientX;
+  state.originTilt = state.tilt;
+  state.target = state.tilt;
+  try { el.card.setPointerCapture(event.pointerId); } catch (err) { /* 沙箱里抓不住指针时，移动事件仍会跟着走 */ }
+  el.card.classList.add('grabbing');
+});
+el.card.addEventListener('pointermove', function (event) {
+  if (!state.dragging) return;
+  state.target = clamp(state.originTilt + (event.clientX - state.originX) / 170, -1, 1);
+});
+function endDrag() {
+  if (!state.dragging) return;
+  state.dragging = false;
+  el.card.classList.remove('grabbing');
+  try {
+    if (window.matchMedia('(pointer: coarse)').matches) el.gyro.hidden = false;
+  } catch (err) { /* 媒体查询不可用时，拖动仍然可用 */ }
+}
+el.card.addEventListener('pointerup', endDrag);
+el.card.addEventListener('pointercancel', endDrag);
+el.card.addEventListener('keydown', function (event) {
+  if (event.key === 'ArrowRight') {
+    state.idle = false;
+    document.documentElement.dataset.touched = '1';
+    state.target = clamp(state.target + 0.34, -1, 1);
+    event.preventDefault();
+  } else if (event.key === 'ArrowLeft') {
+    state.idle = false;
+    document.documentElement.dataset.touched = '1';
+    state.target = clamp(state.target - 0.34, -1, 1);
+    event.preventDefault();
+  } else if (event.key === 'ArrowDown') {
+    go(1);
+    event.preventDefault();
+  } else if (event.key === 'ArrowUp') {
+    go(-1);
+    event.preventDefault();
+  } else if (event.key === 'Enter' || event.key === ' ') {
+    state.idle = false;
+    document.documentElement.dataset.touched = '1';
+    state.target = Math.abs(state.target) < 0.5 ? 1 : 0;
+    event.preventDefault();
+  }
+});
+el.prev.addEventListener('click', function () { go(-1); });
+el.next.addEventListener('click', function () { go(1); });
+el.flip.addEventListener('click', function () {
+  state.idle = false;
+  document.documentElement.dataset.touched = '1';
+  state.target = Math.abs(state.target) < 0.5 ? 1 : 0;
+});
+el.gyro.addEventListener('click', function () {
+  state.idle = false;
+  document.documentElement.dataset.touched = '1';
+  try {
+    var Orientation = window.DeviceOrientationEvent;
+    if (!Orientation) {
+      el.gyro.textContent = '这台设备读不到倾斜';
+      return;
+    }
+    var listen = function () {
+      window.addEventListener('deviceorientation', function (event) {
+        if (state.dragging) return;
+        if (typeof event.gamma !== 'number' || Number.isNaN(event.gamma)) return;
+        state.target = clamp(event.gamma / 26, -1, 1);
+      });
+      el.gyro.textContent = '正在跟着手机的倾斜';
+      el.gyro.disabled = true;
+    };
+    if (typeof Orientation.requestPermission === 'function') {
+      Orientation.requestPermission().then(function (result) {
+        if (result === 'granted') listen();
+        else el.gyro.textContent = '没有拿到倾斜的许可';
+      }).catch(function () {
+        el.gyro.textContent = '倾斜暂时用不了，按住卡片也可以';
+      });
+      return;
+    }
+    listen();
+  } catch (err) {
+    el.gyro.textContent = '倾斜暂时用不了，按住卡片也可以';
+  }
+});
+el.tuck = $('tuck');
+el.tuck.addEventListener('click', tuckGift);
+el.open.addEventListener('click', openReader);
+el.close.addEventListener('click', function () {
+  el.reader.hidden = true;
+  el.open.focus();
+});
+document.addEventListener('keydown', function (event) {
+  if (event.key === 'Escape' && !el.reader.hidden) {
+    el.reader.hidden = true;
+    el.open.focus();
+  }
+});
+Array.prototype.forEach.call(document.querySelectorAll('.doc-nav button'), function (button) {
+  button.addEventListener('click', function () {
+    var target = document.getElementById(button.getAttribute('data-part'));
+    if (!target) return;
+    target.scrollIntoView({ behavior: state.reduce ? 'auto' : 'smooth', block: 'start' });
+  });
+});
+
+showCard(0);
+state.idle = true;
+requestAnimationFrame(frame);
+</script>
+</body>
+<!--
+DESIGN LESSON
+STYLE: 清晨浅木桌上的暖米白桌垫，珠光光栅卡带着薄荷绿、淡紫和杏色的细条纹反光。
+GENRE: 按住卡片歪一歪，同一件事的另一面才露出来的小玩具。
+TITLE: 歪一歪，看见另一面
+THESIS: 正面那一眼，只是事情的一面；侧过来才看见另一张脸。
+-->
+</html>
