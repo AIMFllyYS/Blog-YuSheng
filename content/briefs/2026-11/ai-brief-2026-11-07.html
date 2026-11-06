@@ -1,0 +1,1367 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<link rel="icon" href="data:,">
+<title>清晨总机台 · 折晓每日早报 · 2026-11-07</title>
+<style>
+:root {
+  color-scheme: light;
+  --ink: #3a3128;
+  --soft: #6f6458;
+  --cream: #f7f1e7;
+  --paper: #fffaf3;
+  --wood: #e8d4b6;
+  --wood-deep: #c9ae84;
+  --apricot: #f6e4cf;
+  --mint: #7dbea5;
+  --mint-deep: #1d6b50;
+  --mint-soft: #e7f6ef;
+  --sticky: #f6edb0;
+  --line: rgba(90, 64, 36, 0.14);
+  --ease: cubic-bezier(0.22, 0.8, 0.28, 1);
+  --sans: "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", "WenQuanYi Micro Hei", "Droid Sans Fallback", sans-serif;
+  --serif: "Iowan Old Style", "Palatino Linotype", "Songti SC", "Noto Serif SC", "Source Han Serif SC", "STSong", "SimSun", "WenQuanYi Micro Hei", serif;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { min-height: 100%; margin: 0; }
+body { overflow: auto; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  color: var(--ink);
+  font-family: var(--sans);
+  line-height: 1.5;
+  background: #f3eadf;
+}
+button, input { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 2px solid var(--mint-deep); outline-offset: 3px; }
+::selection { background: #d9f3e8; }
+.sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.room {
+  min-height: 100dvh;
+  display: grid;
+  grid-template-columns: 216px minmax(0, 1fr) 240px;
+  grid-template-rows: auto auto;
+  grid-template-areas:
+    "when when when"
+    "tray board side";
+  gap: 12px 16px;
+  padding: 14px 16px 28px;
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(48% 36% at 0% 0%, rgba(255, 252, 245, 0.95), transparent 70%),
+    linear-gradient(180deg, #fbf6ee 0%, #f3e7d8 100%);
+  user-select: none;
+}
+.room::after {
+  content: "";
+  position: absolute;
+  left: 2%;
+  right: 2%;
+  bottom: 0;
+  height: 22%;
+  background: radial-gradient(70% 100% at 50% 120%, rgba(214, 186, 146, 0.38), transparent 72%);
+  pointer-events: none;
+}
+.when, .instruct, .tray-label, .left-count, .cover-kicker, .cover-title, .cover-sub,
+.plate-name, .plate-sub, .pocket-hint, .env-hint, .letter-kicker, .letter-body,
+.sticky p, .slip p, .doc-title, .part, .entry, .prose p { margin: 0; }
+.when {
+  grid-area: when;
+  color: var(--soft);
+  font-size: 13px;
+  letter-spacing: 0.01em;
+  position: relative;
+  z-index: 1;
+}
+.tray {
+  grid-area: tray;
+  position: sticky;
+  top: 12px;
+  z-index: 1;
+  align-self: start;
+  background: rgba(255, 250, 243, 0.62);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 12px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85);
+}
+.tray-label { font-size: 15px; font-weight: 650; }
+.left-count { margin-top: 4px; color: var(--soft); font-size: 13px; }
+.tray-cards { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
+.card {
+  position: relative;
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: linear-gradient(180deg, #fff6ec, var(--apricot));
+  border: 0;
+  border-radius: 12px;
+  padding: 12px 12px 12px 26px;
+  box-shadow: 0 8px 16px rgba(92, 64, 32, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  border-left: 6px solid var(--tab, #e0b08a);
+  transition: transform 0.25s var(--ease), box-shadow 0.25s var(--ease);
+}
+.tray .card:nth-child(1) { --tab: #e0a07a; transform: rotate(-1.4deg); }
+.tray .card:nth-child(2) { --tab: #7dbea5; transform: rotate(1.1deg); }
+.tray .card:nth-child(3) { --tab: #d2b56a; transform: rotate(-0.6deg); }
+.tray .card:nth-child(4) { --tab: #8eabc4; transform: rotate(1.3deg); }
+.tray .card:hover,
+.tray .card.chosen { transform: translateY(-6px) rotate(0deg); box-shadow: 0 14px 24px rgba(92, 64, 32, 0.12); }
+.card.chosen { outline: 2px solid var(--mint); }
+.card::before {
+  content: "";
+  position: absolute;
+  left: 9px;
+  top: 12px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 2px rgba(90, 64, 36, 0.28);
+  background: radial-gradient(circle at 40% 40%, #fff, #f3e6d4 62%);
+}
+.card-kicker { display: block; color: var(--soft); font-size: 12px; }
+.card-title { display: block; font-size: 16px; font-weight: 700; margin-top: 2px; }
+.card-sub { display: block; margin-top: 4px; color: var(--soft); font-size: 12.5px; line-height: 1.45; }
+.card.dragging {
+  position: fixed;
+  z-index: 40;
+  margin: 0;
+  pointer-events: none;
+  transform: rotate(-2deg) scale(1.03);
+  box-shadow: 0 18px 32px rgba(80, 52, 24, 0.18);
+  width: 190px;
+}
+.card.seated {
+  transform: none;
+  width: 100%;
+  padding: 8px 10px 8px 22px;
+  box-shadow: none;
+  min-height: 0;
+}
+.card.seated .card-sub,
+.card.seated .card-kicker { display: none; }
+.card.seated .card-title { font-size: 14px; margin: 0; }
+.board {
+  grid-area: board;
+  position: relative;
+  z-index: 1;
+  align-self: start;
+  overflow: visible;
+  background:
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.18) 0 1px, transparent 1px 8px),
+    linear-gradient(180deg, #f3e4cd, var(--wood) 28%, #e4cfae);
+  border-radius: 22px;
+  border-bottom: 8px solid var(--wood-deep);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.72),
+    0 18px 36px rgba(92, 64, 32, 0.12);
+  padding: 16px 16px 14px;
+}
+.board-head { display: flex; justify-content: space-between; gap: 12px; align-items: flex-end; }
+.board h1 { font-size: 28px; line-height: 1.2; font-weight: 720; letter-spacing: 0.01em; }
+.screws { display: flex; gap: 8px; padding-bottom: 6px; }
+.screws i {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #f8f1e4, #c3ae8e 55%, #8d7352);
+  box-shadow: inset 0 0 0 1px rgba(90, 64, 36, 0.2);
+}
+.instruct {
+  margin: 8px 0 12px;
+  font-size: 16px;
+  line-height: 1.55;
+  max-width: 46em;
+}
+.board-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(240px, 300px);
+  gap: 12px;
+  align-items: start;
+}
+.slots { display: flex; flex-direction: column; gap: 8px; }
+.slot-top {
+  display: grid;
+  grid-template-columns: minmax(168px, 196px) minmax(0, 1fr);
+  gap: 8px;
+}
+.plate {
+  background: linear-gradient(#fbf6ec, #eadcc4);
+  border-radius: 12px;
+  padding: 8px 8px 8px 10px;
+  box-shadow: inset 0 1px 0 #fff, 0 1px 0 rgba(90, 60, 20, 0.06);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: auto auto;
+  column-gap: 6px;
+  align-items: center;
+}
+.plate-name { font-weight: 700; font-size: 14.5px; grid-column: 1; }
+.plate-sub { grid-column: 1; color: var(--soft); font-size: 12px; line-height: 1.35; white-space: nowrap; }
+.lamp {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #e6d9c6;
+  box-shadow: inset 0 1px 2px rgba(70, 50, 20, 0.18);
+}
+.slot.lit .lamp {
+  background: #8fd0b4;
+  box-shadow: 0 0 0 3px rgba(125, 190, 165, 0.25), 0 0 10px #8fd0b4;
+}
+.pocket {
+  min-height: 62px;
+  border-radius: 12px;
+  background: linear-gradient(180deg, rgba(98, 70, 36, 0.08), rgba(255, 255, 255, 0.28));
+  box-shadow: inset 0 2px 6px rgba(80, 50, 20, 0.12);
+  padding: 6px;
+}
+.pocket-hint {
+  min-height: 50px;
+  display: grid;
+  place-items: center;
+  color: var(--soft);
+  font-size: 13px;
+}
+.slot.hot .pocket { box-shadow: inset 0 0 0 2px var(--mint), inset 0 2px 6px rgba(80, 50, 20, 0.1); }
+.slot.nope .pocket { animation: shake 0.32s var(--ease); background: #f8e6e0; }
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  30% { transform: translateX(-5px); }
+  65% { transform: translateX(5px); }
+}
+.slip {
+  margin: 8px 2px 2px;
+  background: var(--paper);
+  border-radius: 12px;
+  padding: 10px 12px 12px;
+  box-shadow: inset 0 1px 0 #fff;
+  user-select: text;
+}
+.slip .stamp { color: var(--mint-deep); font-size: 12px; margin-bottom: 4px; }
+.slip p { font-size: 14px; line-height: 1.65; }
+.slip a { color: var(--mint-deep); font-size: 13px; word-break: break-all; }
+.envelope {
+  position: relative;
+  border-radius: 16px;
+  background:
+    linear-gradient(#f8f1e4, #f8f1e4) 0 0 / 100% 78px no-repeat,
+    #fffaf3;
+  box-shadow: inset 0 0 0 1px rgba(120, 90, 40, 0.16), 0 10px 0 rgba(201, 174, 132, 0.35);
+  overflow: hidden;
+}
+.flap {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 86px;
+  background: linear-gradient(#f6ead6, #e6d0ae);
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  transition: opacity 0.45s var(--ease), transform 0.45s var(--ease);
+  z-index: 1;
+}
+.seal {
+  position: absolute;
+  z-index: 2;
+  left: 50%;
+  top: 58px;
+  width: 34px;
+  height: 34px;
+  margin-left: -17px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 50% 50%, #fffaf3 0 8px, transparent 9px),
+    conic-gradient(var(--mint) calc(var(--p) * 1%), #e4d8c4 0);
+  box-shadow: 0 2px 0 rgba(90, 60, 20, 0.1);
+  transition: opacity 0.35s var(--ease);
+}
+.envelope { --p: 0; }
+.envelope[data-n="1"] { --p: 25; }
+.envelope[data-n="2"] { --p: 50; }
+.envelope[data-n="3"] { --p: 75; }
+.envelope[data-n="4"] { --p: 100; }
+.env-hint, .letter { padding: 104px 16px 16px; position: relative; z-index: 0; }
+.env-hint { color: var(--soft); font-size: 15px; line-height: 1.6; text-align: center; }
+.letter-kicker { color: var(--mint-deep); font-size: 12px; letter-spacing: 0.04em; }
+.letter { padding-top: 18px; }
+.letter-body {
+  margin-top: 8px;
+  font-family: var(--serif);
+  font-size: 18px;
+  line-height: 1.7;
+  user-select: text;
+}
+.envelope.open .flap { opacity: 0; transform: translateY(-16px); }
+.envelope.open .seal { opacity: 0; }
+.envelope.open {
+  background: #fffaf3;
+  box-shadow: inset 0 0 0 1px rgba(125, 190, 165, 0.7), 0 12px 24px rgba(90, 64, 32, 0.08);
+}
+.text-btn {
+  display: inline-block;
+  grid-column: 1 / -1;
+  margin-top: 4px;
+  background: transparent;
+  border: 0;
+  color: var(--soft);
+  font-size: 13px;
+  text-align: left;
+  padding: 4px 2px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.side {
+  grid-area: side;
+  position: sticky;
+  top: 12px;
+  z-index: 1;
+  align-self: start;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.book {
+  display: block;
+  width: 100%;
+  text-align: left;
+  position: relative;
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.28), transparent 18%),
+    linear-gradient(180deg, #e7f3ec, #d5e8de);
+  color: var(--ink);
+  border: 0;
+  border-radius: 3px 12px 12px 3px;
+  min-height: 228px;
+  padding: 28px 14px 16px 22px;
+  box-shadow: -8px 0 0 #c5ddd2, 0 14px 24px rgba(40, 70, 55, 0.1);
+}
+.book:hover { transform: translateY(-3px); }
+.ribbon {
+  position: absolute;
+  top: 0;
+  right: 18px;
+  width: 10px;
+  height: 42px;
+  background: #e4b7b0;
+  border-radius: 0 0 3px 3px;
+  transition: height 0.45s var(--ease), background 0.45s var(--ease);
+}
+.book.ready .ribbon { height: 62px; background: var(--mint); }
+.cover-kicker { color: var(--soft); font-size: 12px; }
+.cover-title { display: block; margin-top: 10px; font-family: var(--serif); font-size: 22px; line-height: 1.35; }
+.cover-sub { display: block; margin-top: 10px; font-size: 13px; line-height: 1.6; color: #3f4d46; }
+.sticky {
+  position: relative;
+  background: var(--sticky);
+  padding: 22px 12px 12px;
+  box-shadow: 0 10px 18px rgba(90, 70, 20, 0.08);
+  transform: rotate(-2.5deg);
+  font-size: 13px;
+  line-height: 1.55;
+  user-select: text;
+}
+.sticky::before {
+  content: "";
+  position: absolute;
+  top: 7px;
+  left: 50%;
+  width: 12px;
+  height: 12px;
+  margin-left: -6px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #fff, #e0c8a4 42%, #b9897a);
+}
+.sticky-kicker { font-weight: 700; margin-bottom: 4px; }
+.sticky p + p { margin-top: 6px; }
+.sticky a { color: var(--mint-deep); word-break: break-all; }
+.ledger {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  background: #f6f0e6;
+  display: grid;
+  place-items: stretch;
+  padding: 16px 12px;
+}
+.ledger[hidden] { display: none; }
+.sheet {
+  width: min(860px, 100%);
+  height: 100%;
+  margin: 0 auto;
+  overflow: auto;
+  background:
+    linear-gradient(90deg, #e6d3b8 0 16px, transparent 16px),
+    #fbf7f0;
+  box-shadow: 0 24px 60px rgba(60, 40, 20, 0.22);
+  border-radius: 0 14px 14px 0;
+  user-select: text;
+}
+.sheet-bar {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: rgba(251, 247, 240, 0.96);
+  padding: 12px 16px 10px 28px;
+  border-bottom: 1px solid rgba(90, 60, 30, 0.08);
+}
+.readbar { height: 3px; background: #efe4d4; margin: -12px -16px 10px -28px; }
+.readbar span { display: block; height: 100%; width: 0; background: var(--mint); }
+.bar-row { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; }
+.sheet-title { font-family: var(--serif); font-size: 22px; }
+.sheet-expect { color: var(--soft); font-size: 13px; margin-top: 4px; max-width: 40em; }
+.close-book {
+  border: 0;
+  background: #fff;
+  border-radius: 999px;
+  padding: 8px 12px;
+  box-shadow: inset 0 0 0 1px var(--line);
+  white-space: nowrap;
+}
+.tools { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; align-items: center; }
+.tools a, .lit-btn {
+  border: 0;
+  background: #fff;
+  color: var(--ink);
+  text-decoration: none;
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 13px;
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.lit-btn[aria-pressed="true"] { background: var(--mint-soft); color: var(--mint-deep); }
+.prose { max-width: 40rem; margin: 0 auto; padding: 8px 28px 72px 36px; }
+.prose .doc-title { font-family: var(--serif); font-size: 1.7rem; line-height: 1.35; margin: 18px 0 12px; }
+.prose .part { font-size: 1.35rem; line-height: 1.4; margin: 2rem 0 0.8rem; padding-top: 0.4rem; }
+.prose .shape, .prose .entry { font-size: 1.08rem; line-height: 1.5; margin: 1.45rem 0 0.45rem; }
+.prose p { margin: 0.8em 0; font-size: 17px; line-height: 1.78; }
+.prose strong { font-weight: 700; }
+.prose em { font-style: italic; }
+.prose code {
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  font-size: 0.92em;
+  background: #f3ecdf;
+  padding: 0 0.25em;
+  border-radius: 4px;
+}
+.prose ul { margin: 0.4em 0 0.9em; padding-left: 1.2em; }
+.prose li { margin: 0.28em 0; line-height: 1.6; word-break: break-all; }
+.prose a { color: var(--mint-deep); }
+.prose hr { border: 0; height: 1px; background: rgba(90, 64, 36, 0.14); margin: 1.5em 0; }
+.prose .verify, .prose .contrast, .prose .thesis-line { border-radius: 10px; }
+.prose .verify { background: #f3f7f4; padding: 8px 12px; }
+.prose .contrast { background: #f8f1e6; padding: 8px 12px; }
+.prose.lit .thesis-line { background: var(--mint-soft); padding: 8px 12px; box-shadow: inset 3px 0 0 var(--mint); }
+.noscript-note { margin: 0; padding: 12px 16px; background: #fff6df; }
+@media (max-width: 1080px) {
+  .room {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 132px;
+    grid-template-areas:
+      "when book"
+      "tray tray"
+      "board board"
+      "note note";
+    min-height: 100dvh;
+    padding: 12px 12px 24px;
+  }
+  .side { display: contents; position: static; }
+  .tray { position: static; }
+  .when { grid-area: when; align-self: center; }
+  .book {
+    grid-area: book;
+    width: 132px;
+    min-height: 96px;
+    padding: 14px 10px 10px 14px;
+  }
+  .book .cover-kicker { display: none; }
+  .cover-title { font-size: 16px; margin-top: 6px; }
+  .cover-sub { font-size: 12px; margin-top: 6px; }
+  .sticky {
+    grid-area: note;
+    transform: none;
+    width: auto;
+    max-height: none;
+  }
+  .tray { grid-area: tray; }
+  .board { grid-area: board; overflow: visible; }
+  .board-grid { grid-template-columns: 1fr; }
+  .tray-cards {
+    flex-direction: row;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    scroll-snap-type: x mandatory;
+  }
+  .tray .card { min-width: 176px; width: 176px; flex: none; scroll-snap-align: start; }
+  .plate-sub { white-space: normal; }
+}
+@media (max-width: 640px) {
+  .slot-top { grid-template-columns: 1fr; }
+  .board h1 { font-size: 24px; }
+  .prose { padding: 8px 16px 80px 22px; }
+  .prose p { font-size: 16px; }
+  .sheet { border-radius: 0; }
+  .ledger { padding: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+  .tray .card, .tray .card:hover, .tray .card.chosen { transform: none; }
+  .slot.nope .pocket { animation: none; background: #f8e6e0; }
+}
+</style>
+</head>
+<body>
+<p class="sr" id="world-desc">这是一台清晨的总机。左边有四张请求卡，面板上有四个插槽。把卡片插进对得上的插槽，总机就会记下一条。四张都接通以后，旁边的信会打开。台边还有一本册子，点开可以读今天的全文。</p>
+<div class="room">
+  <p class="when">星期六早上 · 2026年11月7日</p>
+  <section class="tray" aria-labelledby="tray-label">
+    <h2 class="tray-label" id="tray-label">待分派的请求</h2>
+    <p class="left-count" id="left-count">左边还有 4 张请求卡。</p>
+    <div class="tray-cards" id="tray">
+      <button class="card" type="button" data-id="threads" data-order="1">
+        <span class="card-kicker">请求</span>
+        <span class="card-title">多线程审查</span>
+        <span class="card-sub">想查近期改动里的安全问题</span>
+      </button>
+      <button class="card" type="button" data-id="route" data-order="2">
+        <span class="card-kicker">请求</span>
+        <span class="card-title">编码选型</span>
+        <span class="card-sub">想让路由替自己挑编码模型</span>
+      </button>
+      <button class="card" type="button" data-id="catalog" data-order="3">
+        <span class="card-kicker">请求</span>
+        <span class="card-title">刷模型名单</span>
+        <span class="card-sub">新模型来了，不想干等发版</span>
+      </button>
+      <button class="card" type="button" data-id="gait" data-order="4">
+        <span class="card-kicker">请求</span>
+        <span class="card-title">读一段步态</span>
+        <span class="card-sub">一台深度相机记下的走路</span>
+      </button>
+    </div>
+  </section>
+  <section class="board" aria-labelledby="board-title">
+    <div class="board-head">
+      <h1 id="board-title">清晨总机台</h1>
+      <div class="screws" aria-hidden="true"><i></i><i></i><i></i></div>
+    </div>
+    <p class="instruct" id="status" aria-live="polite">把左边的请求卡插进右边的插槽。插对了，总机就替你分派。</p>
+    <div class="board-grid">
+      <div class="slots">
+        <div class="slot" data-accept="threads" data-label="协调开线程">
+          <div class="slot-top">
+            <div class="plate">
+              <span class="plate-name">协调开线程</span>
+              <span class="plate-sub">交给协调者去派线程</span>
+              <span class="lamp" aria-hidden="true"></span>
+            </div>
+            <div class="pocket" tabindex="0" role="button" aria-label="协调开线程，把卡片插进来">
+              <span class="pocket-hint">把卡片插进来</span>
+            </div>
+          </div>
+          <div class="slip" hidden></div>
+        </div>
+        <div class="slot" data-accept="route" data-label="自动路由">
+          <div class="slot-top">
+            <div class="plate">
+              <span class="plate-name">自动路由</span>
+              <span class="plate-sub">按请求自己挑模型</span>
+              <span class="lamp" aria-hidden="true"></span>
+            </div>
+            <div class="pocket" tabindex="0" role="button" aria-label="自动路由，把卡片插进来">
+              <span class="pocket-hint">把卡片插进来</span>
+            </div>
+          </div>
+          <div class="slip" hidden></div>
+        </div>
+        <div class="slot" data-accept="catalog" data-label="目录自更新">
+          <div class="slot-top">
+            <div class="plate">
+              <span class="plate-name">目录自更新</span>
+              <span class="plate-sub">名单不用等人发版</span>
+              <span class="lamp" aria-hidden="true"></span>
+            </div>
+            <div class="pocket" tabindex="0" role="button" aria-label="目录自更新，把卡片插进来">
+              <span class="pocket-hint">把卡片插进来</span>
+            </div>
+          </div>
+          <div class="slip" hidden></div>
+        </div>
+        <div class="slot" data-accept="gait" data-label="跨系统读数">
+          <div class="slot-top">
+            <div class="plate">
+              <span class="plate-name">跨系统读数</span>
+              <span class="plate-sub">一段动作读出多个系统</span>
+              <span class="lamp" aria-hidden="true"></span>
+            </div>
+            <div class="pocket" tabindex="0" role="button" aria-label="跨系统读数，把卡片插进来">
+              <span class="pocket-hint">把卡片插进来</span>
+            </div>
+          </div>
+          <div class="slip" hidden></div>
+        </div>
+      </div>
+      <div class="envelope-col">
+        <div class="envelope" id="envelope" data-n="0">
+          <div class="flap" aria-hidden="true"></div>
+          <div class="seal" aria-hidden="true"></div>
+          <p class="env-hint" id="env-hint">四张卡都接通以后，<br>这封信会自己打开。</p>
+          <div class="letter" id="letter" hidden>
+            <p class="letter-kicker">今天的话</p>
+            <p class="letter-body">清单不再等人手一张张维护：协调者替你开线程，路由替你选型，目录自己刷新，连一段步态也能变成跨十八个系统的共用读数。</p>
+          </div>
+        </div>
+      </div>
+      <button class="text-btn" type="button" id="reset">把卡片收回来，再分派一次</button>
+    </div>
+  </section>
+  <div class="side">
+    <button class="book" id="open-book" type="button" aria-haspopup="dialog">
+      <span class="ribbon" aria-hidden="true"></span>
+      <span class="cover-kicker">台边的册子</span>
+      <span class="cover-title">分派值班记录</span>
+      <span class="cover-sub">点开看今天的全文。<br>人工智能、科技、医学，<br>还有一条轻提醒。</span>
+    </button>
+    <aside class="sticky">
+      <p class="sticky-kicker">顺手提醒</p>
+      <p>StudySolo 的 supabase-backup 在 11 月 6 日早上又失败了一次。提交已经切到昨天挂掉的 a013b67，备份大约从 10 月 28 日起就没有成功。昨天的主站部署失败之后，也还没看到修好的信号。有空可以看一眼运行注释。</p>
+      <p>StudySolo 某仓库 Actions 跑次（备份失败）</p>
+    </aside>
+  </div>
+</div>
+<noscript>
+  <p class="noscript-note">脚本没能运行。总机台玩不了，今天的全文直接放在下面。</p>
+  <style>#ledger[hidden]{display:block !important;position:static;background:transparent;padding:0}#sheet{height:auto;overflow:visible;width:100%;box-shadow:none}</style>
+</noscript>
+<div class="ledger" id="ledger" hidden role="dialog" aria-modal="true" aria-labelledby="sheet-title">
+  <div class="sheet" id="sheet">
+    <div class="sheet-bar">
+      <div class="readbar" aria-hidden="true"><span id="readbar"></span></div>
+      <div class="bar-row">
+        <div>
+          <div class="sheet-title" id="sheet-title">分派值班记录</div>
+          <p class="sheet-expect">这是今天的全文，一条都在。可以顺着往下读，也可以跳到人工智能、科技、医学或那条轻提醒。</p>
+        </div>
+        <button class="close-book" id="close-book" type="button">合上册子</button>
+      </div>
+      <div class="tools">
+        <a href="#part-ai">人工智能</a>
+        <a href="#part-tech">科技</a>
+        <a href="#part-med">医学</a>
+        <a href="#part-self">轻提醒</a>
+        <a href="#part-notes">取舍说明</a>
+        <button class="lit-btn" id="lit-toggle" type="button" aria-pressed="false">点亮和今天这句话有关的段落</button>
+      </div>
+    </div>
+    <article class="prose" id="digest">
+<h2 class="doc-title" id="digest-title">折晓每日早报 · 富文本详细稿</h2>
+<p><strong>日期</strong>：上海时区 / 北京时间 2026-11-07（星期六）<br><strong>时间窗</strong>：北京时间 2026-11-06 06:00 → 2026-11-07 06:00（UTC 2026-11-05 22:00 → 2026-11-06 22:00）<br><strong>读者</strong>：Sofia（羽升）——大二医学生，同时在学人工智能</p>
+<p class="thesis-line"><strong>一句话核心思想</strong>：<strong>清单不再等人手一张张维护：协调者替你开线程，路由替你选型，目录自己刷新，连一段步态也能变成跨十八个系统的共用读数。</strong></p>
+<p>用白话再说一遍：过去你得自己开很多 agent 线程、自己挑模型、等客户端发版才能看见新模型；今天 Amp 的 spaces 是「和一个协调者说话，由它去派线程」，OpenRouter 的 Auto / Auto Code 会按请求特征自动选型，OpenClaw 改成托管目录、账号列表和本机 Codex 三路并行刷名单。Meta 的 Muse 也在推 spaces，并用 Muse Wonder 把现有模型特化后再推回产品。医学这边，Nature Medicine 的步态基础模型用一台深度相机记下的运动嵌入，去预测跨十八个身体系统的健康表型——同样是「一个输入，系统自己分派到很多输出」。底座上，DRAM 仍是价格超级周期（营收暴涨、出货量几乎不动），台积电据报道在评估为英伟达做 3D DRAM，美光桃园新厂因劳资纠纷被称停建；资本市场则一边是 OpenAI 首批约 110 亿美元到账，一边是 Anthropic 约 1.5 万亿美元 IPO 估值遇阻。想看懂今天这些材料，先问：这件事是不是在把「人手维护的清单」换成「会自己分派的一层」？</p>
+<hr>
+<h3 class="shape" id="shape">今天材料的形状</h3>
+<p>今天四路材料合在一起，像一张正在自动刷新的清单：人不再逐条开线程、逐个挑模型、逐个搭小工具，而是把目标交给协调者、路由器和托管目录，由系统去分派多条工作线。医学侧把「一段步态」也变成跨十八个系统的共用读数；底座侧则提醒：内存贵、厂建得慢、资本也在自己「选型」。</p>
+<p>人工智能这一路收了 8 条。最贴题的几条都在讲「从人手清单到自动分派」：Cursor 推出与智能体的实时语音聊天，底层用 Grok Voice，覆盖 Agents 窗口、IDE、Web 与 iOS；Amp 发布 spaces——和一个协调者对话，由它去生成并协调多条 agent 线程；OpenRouter 发布新一代 Auto Router，并新增编码专用 Auto Code；OpenClaw 把模型列表改成托管目录、账号可用列表与本机 Codex 三路并行，新模型不再必须等客户端发版。消费级对照里，Meta 同日做了两件事：用 Muse Wonder 训练的专用模型推上 Muse 与 Meta AI，并在 Muse 应用里推出 spaces（与 Amp spaces 名字相同、产品不同，下文会写清楚）。资本市场侧，Bloomberg 称 OpenAI 完成本轮融资首批约 110 亿美元到账、估值约 1.25 万亿美元；Reuters 则写潜在投资者质疑 Anthropic 约 1.5 万亿美元 IPO 估值，路演能否按计划启动存疑。</p>
+<p>科技这一路收了 12 条。存储与算力底座是主线：Counterpoint 写 2026 年三季度全球 DRAM 营收同比增约 369%、接近 2000 亿美元，位元出货仅增约 4%；彭博称美光因劳资纠纷基本停建桃园约 30–45 亿美元新厂，公司称台湾运营正常；《信息报》称台积电应英伟达要求评估生产 3D DRAM，周五 ADR 大涨约 7.7%。中期选举冲击的后续是周五反弹：费城半导体指数涨约 4%，AMD 反弹约 11%、英特尔约 7%；CNBC 则把「地方限制数据中心—电力与许可变稀缺」的消耗战叙事写深一层。航天侧，AST SpaceMobile 公布自研可复用火箭 Blacklift，并与 Firefly 签下逾 13 亿美元发动机大单。消费电子与进博会现场还有：苹果首款触屏 MacBook Pro 在中国大陆开售并出现渠道破发；苹果完成约 75 亿美元七档美元债定价；华为擎云 HM650 系列标价与 12 月 1 日开售日落地；高通 6G 终端原型机全球首秀；英特尔展示基于 18A 的至强 6+ 与绿电储能算力一体化集装箱方案。</p>
+<p>医学这一路收了 8 条。最贴核心思想的是 Nature Medicine 步态基础模型：单台深度相机记下的三维骨骼运动嵌入，预测跨 18 个系统的健康表型。监管与临床落地有两条国内硬新闻：艺妙神州泊基奥仑赛注射液（赛泊华）获批用于成人复发难治大 B 细胞淋巴瘤；塞伐艾替尼（赫新诺）一线治疗 HER2 激活突变晚期 NSCLC 的科学媒体二次传播。安全性侧，诺华确认 Zolgensma 治疗后出现 9 例肿瘤报告，其中 2 例有 AAV 载体 DNA 整合证据。公卫与监管还有：中央网信办部署科普健康类网络谣言专项整治；WHO 欧洲区介绍摩尔多瓦乳腺癌早期诊断路径；WHO 建议两款本迪布焦株候选疫苗加入刚果（金）Tumaini 试验的窗内二次报道；湖北省启动创新药上市后安全性评价研究项目。</p>
+<p>个人部分只有 1 条温和提醒：StudySolo 的 supabase-backup 又失败了一次，提交已切到昨天挂掉的 a013b67；附记里还可见 ci / deploy-mainecs 仍未看到修好后的重新部署信号。他自己的「备份清单」，也还没有自动修好。</p>
+<p>下面按四个部分把每一条写全。所有事实、数字和链接都来自今天的四份证据包；多个来源一致确认的内容用定论语气，单一来源、未能核实、公司自述和边界条目都会在正文里写明。Amp spaces 与 Meta Muse spaces 名字相同但产品不同，各自保留完整条目并在正文里对照说明。讯科第 1、2 条为同一航天大单的卫星侧与发动机侧，各自保留完整条目并交叉引用。</p>
+<hr>
+<h2 class="part" id="part-ai">第一部分 · 人工智能（8 条）</h2>
+<h3 class="entry">1. Cursor 推出与智能体的实时语音聊天，底层使用 Grok Voice，覆盖 Agents 窗口、IDE、Web 与 iOS</h3>
+<p><strong>背景。</strong> Cursor 是 Sofia 每天在用的编程工具。以往已有听写式 Voice Mode；这次是真正的双向实时语音通话，智能体还能边干边播报短进度。</p>
+<p><strong>发生了什么。</strong> Cursor 官方 changelog 写道：现在可以和智能体进行实时语音通话——大声描述想改什么、询问智能体正在做什么，并在工作推进时听到更新。语音聊天在 Agents 窗口、IDE、网页端和 Cursor for iOS 上均可使用。底层运行在 Grok Voice 上；Voice 设置里可选 Ara、Eve、Leo、Rex、Sal 等多种声音；开启 Privacy Mode 时，官方称语音聊天以零数据保留方式运行。</p>
+<p><strong>为什么值得注意。</strong> 这是 Sofia 在用工具的产品增量：调度界面从打字扩到说话，对日常写代码、盯 cloud agent 的人来说入口变化很直观。它与旧版「听写式 Voice Mode」分开。</p>
+<p class="thesis-line"><strong>与核心思想。</strong> 「调度界面」本身也在从人手一张张点开，扩到边说边听智能体推进——清单的入口先变了。</p>
+<p class="sources"><strong>来源与核实。</strong></p>
+<ul><li><a href="https://cursor.com/changelog/voice-chat" target="_blank" rel="noopener noreferrer">https://cursor.com/changelog/voice-chat</a></li></ul>
+<p><strong>发布时间：</strong> 北京时间 2026-11-06（官方 changelog 标注 Nov 6, 2026；AIHOT 标注 11-06 08:00）。</p>
+<p class="verify"><strong>核实状态：多来源确认（Cursor 官方 changelog 已打开核对；AIHOT 精选同步收录并指向同一原文）。</strong></p>
+<hr>
+<h3 class="entry">2. Amp 发布 spaces：由单个 Agent 自动生成并协调多条 Agent 线程的协作空间</h3>
+<p><strong>背景。</strong> 以往在多智能体产品里，人往往要自己创建、组织和盯很多条 agent 线程。Amp 这次把「人管线程」改成「和一个协调者对话」。</p>
+<p><strong>发生了什么。</strong> Amp 官方 Chronicle 宣布推出 spaces：一个 space 是与单个 agent 的对话，这个 agent 的工作就是替你生成并协调其他 agents。你不再需要自己创建和组织线程。官方举例：Will 给一个 space 的目标是「审查近期改动的安全问题」；它的第一次运行把代码库拆成 16 个区域，每个区域在自己的线程里审查，再把每条发现放到另一个线程核对，并在 space 里保留一份摘要工件供 Will 审阅与跟踪。官方还用内部功能开发、上线值守等实例说明用法。</p>
+<p><strong>为什么值得注意。</strong> 对关心多智能体编排、又不一定亲自用 Amp 的读者，这是当前 agent 产品形态的一手样本：协调者替你开线程。</p>
+<p class="thesis-line"><strong>与核心思想。</strong> 人不再逐条开线程，而是把目标交给一层会自己分派的协调者——清单从人手维护，换成系统分派。</p>
+<p class="contrast"><strong>对照提醒。</strong> 同日 Meta 在 Muse 应用也推出了名为 spaces 的功能（见本部分第 6 条）。二者名字相同，但产品不同：Amp spaces 是开发侧「协调多条 agent 线程」的协作空间；Meta Muse spaces 是消费级「用自然语言生成可常驻的个性化体验空间」。详细稿里分开写，避免混读。</p>
+<p class="sources"><strong>来源与核实。</strong></p>
+<ul><li><a href="https://ampcode.com/news/spaces" target="_blank" rel="noopener noreferrer">https://ampcode.com/news/spaces</a></li></ul>
+<p><strong>发布时间：</strong> 北京时间 2026-11-06（官方页面标注 November 6, 2026；AIHOT 标注 11-06 08:00）。</p>
+<p class="verify"><strong>核实状态：单一来源（Amp 官方 Chronicle 已打开核对；AIHOT 补漏指向同一原文）。</strong> 尚未得到其他独立媒体的交叉确认。</p>
+<hr>
+<h3 class="entry">3. OpenRouter 发布新一代 Auto Router，并新增面向编码场景的 Auto Code，官方称编码成本可比 Claude Opus 5.5 低约 74%</h3>
+<p><strong>背景。</strong> OpenRouter 此前已有自动选型路由。这次是从技术底座重建，并把通用选型与编码专用选型拆开。</p>
+<p><strong>发生了什么。</strong> OpenRouter 官方博客宣布推出下一代 Auto Router：在全新技术基础上重建，官方称依基准可高出旧路由最多约 4 倍，路由步骤在 live test 的 p90 上快约 3 倍（0.65 秒对 1.96 秒）。本次一并推出面向编码场景的全新路由 Auto Code（<code>openrouter/auto-code</code>），与旗舰通用 Auto Router（<code>openrouter/auto</code>）并列；官方称二者可直接替换旧 slug。路由会综合十一项请求特征、实时价格、供应商健康与缓存状态。官方还写，在所列五项基准上，Auto Code 得分与 Claude Opus 5.5 相当，而每任务成本低约 74%。</p>
+<p><strong>为什么值得注意。</strong> 对经常手工换模型、或在编码 harness 里跑 agent 的人，这是可直接试用的基础设施变化：选型从手工清单，换成按请求特征自动路由。</p>
+<p class="thesis-line"><strong>与核心思想。</strong> 模型选型本身也在从「人手一张张挑」换成「路由替你选型」——清单的维护层上移了。</p>
+<p class="sources"><strong>来源与核实。</strong></p>
+<ul><li><a href="https://openrouter.ai/blog/announcements/auto-and-auto-code-routers/" target="_blank" rel="noopener noreferrer">https://openrouter.ai/blog/announcements/auto-and-auto-code-routers/</a></li></ul>
+<p><strong>发布时间：</strong> 北京时间 2026-11-06（官方博客标注 11/6/2026；AIHOT 标注 11-06 08:00）。</p>
+<p class="verify"><strong>核实状态：单一来源（OpenRouter 官方公告已打开核对；AIHOT 补漏指向同一原文）。</strong> 「约 4×」「p90 0.65s / 1.96s」「低约 74%」等数字均为官方自报，尚未得到其他来源独立确认。</p>
+<hr>
+<h3 class="entry">4. OpenClaw 重构模型列表来源：托管目录、账号可用列表与本机 Codex 三路并行，新模型不再必须等客户端发版</h3>
+<p><strong>背景。</strong> 以前 OpenClaw 的模型名单打进插件包，往往要等客户端发版才能跟上新模型。官方复盘约五周、约 80 个 PR 的架构改动，正是为了拆掉这层等待。</p>
+<p><strong>发生了什么。</strong> OpenClaw 官方博客写道：现在会从托管目录、你的 provider 账号，以及本机已安装的 Codex 三路学习新模型，因此模型发布不再需要等一次 OpenClaw 发版。托管目录在 catalog.openclaw.ai，作业每四小时重建一次，目前约有 1000 个模型。OpenClaw 会在 <code>PATH</code> 上寻找 Codex；若是稳定版、比内置更新、且同主版本，就会与它做真正的握手，据此决定 ChatGPT 侧可见模型。登录账号后还会拉可用列表。</p>
+<p><strong>为什么值得注意。</strong> 对跟踪开源 agent 客户端怎么接新模型的人，这是一手工程说明，不是产品营销口号：目录自己刷新，人手维护的名单退到后台。</p>
+<p class="thesis-line"><strong>与核心思想。</strong> 「等发版才能看见新模型」本身就是一张要人手维护的清单；三路并行刷名单，正是把这张清单交给会自己刷新的一层。</p>
+<p class="sources"><strong>来源与核实。</strong></p>
+<ul><li><a href="https://openclaw.ai/blog/use-new-models-in-openclaw-without-an-update" target="_blank" rel="noopener noreferrer">https://openclaw.ai/blog/use-new-models-in-openclaw-without-an-update</a></li></ul>
+<p><strong>发布时间：</strong> 北京时间 2026-11-06（官方博客标注 Nov 6, 2026；AIHOT 标注 11-06 08:00）。</p>
+<p class="verify"><strong>核实状态：单一来源（OpenClaw 官方博客已打开核对；AIHOT 补漏指向同一原文）。</strong> 「约 1000 个模型」「每四小时重建」等数字出自官方正文，尚未得到其他来源确认。</p>
+<hr>
+<h3 class="entry">5. Meta 把基于 Muse Wonder 训练的专用模型推上 Muse 与 Meta AI，Personal Superintelligence Index 从 38% 提到 47%</h3>
+<p><strong>背景。</strong> 这不是再发一个全新旗舰，而是用 Muse Wonder 去特化现有 Muse / Meta AI 背后的模型，并把 Active Memory、Active Focus 带给更广用户。</p>
+<p><strong>发生了什么。</strong> Meta AI Research 官方博客宣布：推出用 Muse Wonder 训练的现有模型专用版本，并向使用 Muse 与 Meta AI 的人滚动上线。官方给出 Personal Superintelligence Index 数字：当前与此前 Muse 模型分别为 47% 与 38%。官方还称，改进后的 Muse 模型在「遗忘达成目标所需关键信息」上降低约 2.4 倍；在「出现意外卡点的日常任务」完成上提升约 67%。</p>
+<p><strong>为什么值得注意。</strong> 对观察消费级 agent 记忆与目标坚持能力的读者有参考价值：特化与记忆能力被推回产品，而不是停在研究演示。</p>
+<p class="thesis-line"><strong>与核心思想。</strong> 用 Wonder 学到的东西，再分派回 Muse 与 Meta AI 的用户现场——同样是「一层学到，多处分派」。</p>
+<p class="sources"><strong>来源与核实。</strong></p>
+<ul><li><a href="https://research.meta.ai/blog/specialized-models-for-muse-and-metaai" target="_blank" rel="noopener noreferrer">https://research.meta.ai/blog/specialized-models-for-muse-and-metaai</a></li></ul>
+<p><strong>发布时间：</strong> 北京时间 2026-11-06（官方研究博客标注 November 6, 2026；AIHOT 标注 11-06 15:00）。</p>
+<p class="verify"><strong>核实状态：单一来源（Meta AI Research 官方博客已打开核对；AIHOT 补漏指向同一原文）。</strong> PSI 38%→47%、约 2.4 倍、约 67% 等数字均为 Meta 自报，尚未得到其他来源独立确认。</p>
+<hr>
+<h3 class="entry">6. Meta 在 Muse 应用推出 spaces：用户用自然语言描述想法，即可生成可放进侧边栏或主标签的个性化体验空间</h3>
+<p><strong>背景。</strong> 与同日「专用模型上线」配套，spaces 更偏产品形态——把礼物追踪、学校看板、婚礼筹备这类持续项目做成可常驻的自定义体验。</p>
+<p><strong>发生了什么。</strong> Meta Newsroom 宣布推出 spaces：一种在 Muse 里用自然语言描述想法、即可生成的个性化交互体验，例如节日礼物追踪器、每日单词游戏，或 DIY 项目规划板。连接常用应用后，spaces 可在后台自行更新，让新的演唱会日期、价格变动或储蓄进度不用你再问一遍也会出现。官方称，spaces 自即日起在 Muse 可用的地方上线；同时滚动上线用 Muse Wonder 训练的专用模型版本。TechCrunch 同日报道与官方口径一致。</p>
+<p><strong>为什么值得注意。</strong> 对 Sofia 观察消费级 agent「怎么把长期项目收成一个房间」有直观对照。</p>
+<p class="thesis-line"><strong>与核心思想。</strong> 人不再逐个搭小工具，而是用自然语言描述，由系统生成并维护可持续更新的体验空间。</p>
+<p class="contrast"><strong>对照提醒。</strong> 它与本部分第 2 条 Amp spaces 名字相同但产品不同：Amp spaces 面向开发与多智能体线程协调；Meta Muse spaces 面向消费级个性化长期项目体验。二者同日出现，适合并列阅读，不宜混为一谈。</p>
+<p class="sources"><strong>来源与核实。</strong></p>
+<ul><li><a href="https://about.fb.com/news/2026/11/introducing-spaces-customize-muse-app/" target="_blank" rel="noopener noreferrer">https://about.fb.com/news/2026/11/introducing-spaces-customize-muse-app/</a></li><li><a href="https://techcrunch.com/2026/11/06/meta-introduces-spaces-a-new-way-to-collaborate-with-your-muse-agent/" target="_blank" rel="noopener noreferrer">https://techcrunch.com/2026/11/06/meta-introduces-spaces-a-new-way-to-collaborate-with-your-muse-agent/</a></li></ul>
+<p><strong>发布时间：</strong> 北京时间 2026-11-06（Meta Newsroom 标注 November 6, 2026；TechCrunch 同日跟进）。</p>
+<p class="verify"><strong>核实状态：多来源确认（Meta Newsroom 与 TechCrunch 均已打开核对）。</strong></p>
+<hr>
+<h3 class="entry">7. Bloomberg 报道 OpenAI 完成本轮融资首批约 110 亿美元到账，整轮估值约 1.25 万亿美元，总额或扩至约 200 亿美元</h3>
+<p><strong>背景。</strong> 这是资本市场侧的重大资金事件。原文还写公司曾瞄准更高估值后，因公开市场 AI 股抛售下调目标。</p>
+<p><strong>发生了什么。</strong> 据 Investing.com、CNA 对 Bloomberg 的转述：OpenAI 已完成本轮融资的首批部分，收到 110 亿美元，估值约 1.25 万亿美元；知情人士称资金于周五转入公司。报道称，这只是首段，整轮或在未来数周内扩至约 200 亿美元总额；公司原先寻求筹集 300 亿美元或更多、估值约 1.4 万亿美元，后因公开市场 AI 股抛售下调目标。Bloomberg 原文本身多为付费墙，本条以 Investing.com 与 CNA 的交叉转述为准。</p>
+<p><strong>为什么值得注意。</strong> 在同窗 Anthropic IPO 估值遇阻（见第 8 条）的对照下，资本也在「选型」——钱往哪流、估值能不能过关。</p>
+<p class="thesis-line"><strong>与核心思想。</strong> 资本清单同样不再只按发布会热闹程度维护；融资到账与估值能否过关，是另一层自动筛选。</p>
+<p class="sources"><strong>来源与核实。</strong></p>
+<ul><li><a href="https://www.investing.com/news/stock-market-news/openai-closes-11-billion-funding-at-125-trillion-valuation--report-5009147" target="_blank" rel="noopener noreferrer">https://www.investing.com/news/stock-market-news/openai-closes-11-billion-funding-at-125-trillion-valuation--report-5009147</a></li><li><a href="https://www.channelnewsasia.com/business/openai-secures-11-billion-funding-125-trillion-valuation-bloomberg-news-reports-6532301" target="_blank" rel="noopener noreferrer">https://www.channelnewsasia.com/business/openai-secures-11-billion-funding-125-trillion-valuation-bloomberg-news-reports-6532301</a></li></ul>
+<p><strong>发布时间：</strong> 北京时间 2026-11-07 约 05:07（Investing.com 转述 Bloomberg，标注 Published Nov 06, 2026, 04:07 PM，按美东时间换算；CNA 亦称 Bloomberg Friday 报道；AIHOT 标注 11-07 05:10）。</p>
+<p class="verify"><strong>核实状态：多来源确认（Investing.com 与 CNA 均转述 Bloomberg 且关键数字一致；未能直接打开 Bloomberg 付费原文，故引用时应标明「据 Bloomberg」）。</strong></p>
+<hr>
+<h3 class="entry">8. Reuters：潜在投资者质疑 Anthropic 约 1.5 万亿美元 IPO 估值，路演能否按计划于 11 月启动存疑</h3>
+<p><strong>背景。</strong> 在美股 AI 板块急跌与数据中心公投反弹之后，Anthropic 上市节奏成为市场情绪试纸。它与同窗 OpenAI 下调融资目标、首批资金到账形成对照。</p>
+<p><strong>发生了什么。</strong> 据 BNN Bloomberg 转载的 Reuters exclusive，以及 The Decoder 同日跟进：四位熟悉投资者讨论的人士称，潜在投资者对 Anthropic 能否按计划于下周启动路演、以便赶上 11 月上市提出质疑。投资者正推动更有吸引力的估值才愿意认购，有人认为近期讨论的约 1.5 万亿美元估值处于预期上限。路演最初预期在 11 月 9 日当周启动，定价在随后一周；今年早些时候投资者一度预期 10 月上市、估值最高可达约 2 万亿美元。报道还提到，投资者盯着 10 月营收（更新 S-1 中留白），并讨论是否推迟可能高达约 1000 亿美元规模的发行。Anthropic 拒绝对投资者质疑置评。</p>
+<p><strong>为什么值得注意。</strong> 这对理解「模型公司融资潮是否减速」有直接意义，也和同窗 OpenAI 首批约 110 亿美元到账形成「一边到账、一边遇阻」的对照。</p>
+<p class="thesis-line"><strong>与核心思想。</strong> 资本也在选型：估值清单一味往上推，过不了投资者这道自动筛选，路演与上市节奏就会卡住。</p>
+<p class="sources"><strong>来源与核实。</strong></p>
+<ul><li><a href="https://www.bnnbloomberg.ca/business/artificial-intelligence/2026/11/06/ai-backlash-could-threaten-anthropic-ipo-timing-potential-investors-say-reuters-exclusive/" target="_blank" rel="noopener noreferrer">https://www.bnnbloomberg.ca/business/artificial-intelligence/2026/11/06/ai-backlash-could-threaten-anthropic-ipo-timing-potential-investors-say-reuters-exclusive/</a></li><li><a href="https://the-decoder.com/anthropics-1-5-trillion-ipo-hits-resistance-as-investors-balk-at-valuation/" target="_blank" rel="noopener noreferrer">https://the-decoder.com/anthropics-1-5-trillion-ipo-hits-resistance-as-investors-balk-at-valuation/</a></li></ul>
+<p><strong>发布时间：</strong> 北京时间 2026-11-06 约 19:57（BNN Bloomberg 转载 Reuters exclusive，标注 Published November 06, 2026 at 6:57 a.m. EST；The Decoder 同日跟进；AIHOT 标注 11-06 19:38）。</p>
+<p class="verify"><strong>核实状态：多来源确认（BNN Bloomberg 转载的 Reuters exclusive 与 The Decoder 跟进报道均已打开核对；关键估值与路演时间口径一致）。</strong></p>
+<hr>
+<h2 class="part" id="part-tech">第二部分 · 科技（12 条）</h2>
+<h3 class="entry">1. AST SpaceMobile 公布自研可复用火箭 Blacklift，目标 2028 年底首飞，单次可送最多五颗 BlueBird 直连手机卫星</h3>
+<p><strong>背景。</strong> 得州 AST SpaceMobile 目前靠 SpaceX、Blue Origin 与印度火箭把 BlueBird「直连手机」卫星送上天，已发射约十余颗。在商业发射舱位越来越被星座运营商自用占用的背景下，它决定自研重型火箭。</p>
+<p><strong>发生了什么。</strong> 据 Space.com、Payload 与 AST 产品页，AST SpaceMobile 于 11 月 6 日宣布正在建造名为 Blacklift 的可复用火箭，用于把宽带卫星送入近地轨道，首飞目标为 2028 年。Blacklift 可将约 20 吨送至近地轨道，因此每次发射最多可送五颗 BlueBird。官网把 Blacklift 定位为「补强而非取代」现有发射伙伴，并称仍握有 2027–2028 年超过 100 次外购发射合同。同日 Firefly 宣布逾 13 亿美元发动机与授权协议（见第 2 条）。</p>
+<p><strong>为什么值得注意。</strong> 对航天与通信读者，这是「卫星公司自建运力」从 SpaceX 模式向更多玩家扩散的信号。</p>
+<p class="thesis-line"><strong>与核心思想。</strong> 发射舱位这张稀缺清单，也在从「等人家排期」换成「自己建一层运力来分派」。</p>
+<p class="sources"><strong>来源与核实。</strong></p>
+<ul><li><a href="https://www.space.com/space-exploration/launches-spacecraft/ast-spacemobile-announces-new-blacklift-rocket-targets-2028-launch-debut" target="_blank" rel="noopener noreferrer">https://www.space.com/space-exploration/launches-spacecraft/ast-spacemobile-announces-new-blacklift-rocket-targets-2028-launch-debut</a></li><li><a href="https://fireflyspace.com/news/firefly-aerospace-signs-rocket-engine-deal-valued-at-more-than-1-3-billion-with-ast-spacemobile/" target="_blank" rel="noopener noreferrer">https://fireflyspace.com/news/firefly-aerospace-signs-rocket-engine-deal-valued-at-more-than-1-3-billion-with-ast-spacemobile/</a></li><li><a href="https://payloadspace.com/ast-spacemobile-to-build-new-blacklift-rocket/" target="_blank" rel="noopener noreferrer">https://payloadspace.com/ast-spacemobile-to-build-new-blacklift-rocket/</a></li><li><a href="https://ast-science.com/blacklift/" target="_blank" rel="noopener noreferrer">https://ast-science.com/blacklift/</a></li></ul>
+<p><strong>发布时间：</strong> 北京时间 2026-11-06（Space.com「Published 6 November 2026」；Payload「November 6, 2026」；Firefly 新闻稿「November 6, 2026」）。</p>
+<p class="verify"><strong>核实状态：多来源确认（Firefly 官方新闻稿给出 13 亿美元、36 台发动机数字；Space.com、Payload 与 AST 产品页相互印证首飞目标与运力）。</strong></p>
+<hr>
+<h3 class="entry">2. Firefly 同日确认与 AST 的发动机大单：Miranda/Vira 已累计热试逾 175 次、超过 4200 秒，协议含现金与 AST A 类普通股</h3>
+<p><strong>背景。</strong> 这是第 1 条同一事件的「发动机侧」一手确认。协议被双方描述为非竞争：AST 只发射自家卫星，Firefly 继续服务政府与商业市场。</p>
+<p><strong>发生了什么。</strong> Firefly 官方新闻稿宣布：与 AST SpaceMobile 签署逾 13 亿美元协议，交付 36 台火箭发动机、提供发动机知识产权许可，并在三年期内提供工程支持；其中为首三发火箭交付 27 台 Miranda 与 9 台真空型 Vira。Miranda 已累计热试逾 175 次、超过 4200 秒，含 110% 性能的类飞行试验，推力约 230000 磅力。协议对价含现金与 AST A 类普通股，后者受锁定期约束。据 Reuters（经 Investing.com 转述），消息公布后 Firefly 股价上涨约 18%，AST SpaceMobile 上涨约 1%。Space.com 另记授权费约 8 亿美元、首三发供应与服务约 5 亿美元，与「合计逾 13 亿」量级相符，细节以官网总金额为准。</p>
+<p><strong>为什么值得注意。</strong> 这笔单对 Firefly 的意义不只是卖发动机，还包括授权 AST 日后自制，并用回笼资金扩建得州 Briggs「Rocket Ranch」试车台、加速自有 Alpha/Eclipse 产线。</p>
+<p class="thesis-line"><strong>与核心思想。</strong> 垂直整合是把「稀缺发动机清单」从外购排期，部分改成可分派的自有与授权产能。</p>
+<p class="sources"><strong>来源与核实。</strong></p>
+<ul><li><a href="https://fireflyspace.com/news/firefly-aerospace-signs-rocket-engine-deal-valued-at-more-than-1-3-billion-with-ast-spacemobile/" target="_blank" rel="noopener noreferrer">https://fireflyspace.com/news/firefly-aerospace-signs-rocket-engine-deal-valued-at-more-than-1-3-billion-with-ast-spacemobile/</a></li><li><a href="https://www.investing.com/news/stock-market-news/firefly-inks-13-billion-deal-to-supply-engines-for-new-ast-spacemobile-blacklift-rocket-5008754" target="_blank" rel="noopener noreferrer">https://www.investing.com/news/stock-market-news/firefly-inks-13-billion-deal-to-supply-engines-for-new-ast-spacemobile-blacklift-rocket-5008754</a></li></ul>
+<p><strong>发布时间：</strong> 北京时间 2026-11-06（Firefly「CEDAR PARK, Texas, November 6, 2026」；Reuters/Investing.com「Published Nov 06, 2026, 10:18 AM」按美东理解，合北京约 23:18）。</p>
+<p class="verify"><strong>核实状态：多来源确认（Firefly 官方与 Reuters 转述一致；热试与总金额以官网为准）。</strong></p>
+<hr>
+<h3 class="entry">3. 彭博称美光因劳资纠纷基本停建桃园约 30–45 亿美元新厂；美光称台湾运营正常，经济部表态协助谈判</h3>
+<p><strong>背景。</strong> 桃园工会要更高比例的利润分享与全现金激励，台中大工会已在 10 月底签约，桃园侧谈判未完。该计划中的 Fab 11E 原定约 2028 年上线，预期生产高带宽内存与 DRAM；台湾目前约占美光全球 DRAM 产出的 60%。</p>
+<p><strong>发生了什么。</strong> 据 Focus Taiwan / CNA，美光周四称其台湾运营照常进行；此前彭博报道称，公司因与当地工会的劳资纠纷，已暂停在桃园投资约 30–45 亿美元新建厂的计划，含向 ASML 等采购先进设备。Taipei Times 转载彭博细节给出 Fab 11E / 2028 节点。经济部强调美光累计对台投资约新台币 1.6 万亿元，并愿协助达成双赢。美光未直接承认「停建」措辞，故宜保留「彭博称」与「公司称运营正常」并列。</p>
+<p><strong>为什么值得注意。</strong> 在全球 HBM/DRAM 紧缺、价格暴涨的背景下，连一座不算最大的新厂推迟到 2028 年后，都会被市场解读为供给约束再加码。</p>
+<p class="thesis-line"><strong>与核心思想。</strong> 底座稀缺时，谁能把产能真正分派到缺的地方，谁更有话语权；厂建不动，清单再漂亮也补不上货。</p>
+<p class="sources"><strong>来源与核实。</strong></p>
+<ul><li><a href="https://focustaiwan.tw/business/202611060009" target="_blank" rel="noopener noreferrer">https://focustaiwan.tw/business/202611060009</a></li><li><a href="https://www.taipeitimes.com/News/biz/archives/2026/11/06/2003867231" target="_blank" rel="noopener noreferrer">https://www.taipeitimes.com/News/biz/archives/2026/11/06/2003867231</a></li></ul>
+<p><strong>发布时间：</strong> 北京时间 2026-11-06 13:21（Focus Taiwan / CNA「11/06/2026 01:21 PM」；彭博独家原稿偏 11 月 5 日，窗内实质新进展是周四公司声明与经济部回应）。</p>
+<p class="verify"><strong>核实状态：多来源确认（Focus Taiwan 援引美光与经济部声明；Taipei Times 转载彭博细节；美光未直接承认「停建」措辞，标题保留并列表述）。</strong></p>
+<hr>
+<h3 class="entry">4. 《信息报》称台积电应英伟达要求评估生产 3D DRAM，可新建厂或局部改造既有厂，周五 ADR 大涨约 7.7%</h3>
+<p><strong>背景。</strong> 台积电历来是纯逻辑代工巨头。若认真进军先进 DRAM，会直接挑战三星、SK 海力士与美光的地盘，也和它已替 SK 海力士代工 HBM 基片的既有合作形成微妙关系。</p>
+<p><strong>发生了什么。</strong> 据 Reuters / Investing.com 转述《信息报》：台积电正考虑扩展到先进内存芯片生产；应最大客户英伟达要求，公司近期开始规划一类称为 3D DRAM 的先进内存，报道援引两位直接知情人士。台积电与英伟达未立即回应路透置评请求。市场稿称台积电 ADR 周五早盘大涨约 7.7%；推进负责人是分管先进封装的副总 Hsu Kuo-chin（许国金，音译）。量产时点未定。</p>
+<p><strong>为什么值得注意。</strong> 内存与封装、算力堆叠已经绑在一起；「存储短缺倒逼代工厂跨界」仍属独家知情人士阶段，但对理解供给约束很重要。</p>
+<p class="thesis-line"><strong>与核心思想。</strong> 底座稀缺时，连逻辑代工厂也在评估要不要自己下场分派内存产能——清单的边界被短缺推着扩。</p>
+<p class="sources"><strong>来源与核实。</strong></p>
+<ul><li><a href="https://www.investing.com/news/stock-market-news/tsmc-considers-making-advanced-memory-chips-the-information-reports-5008786" target="_blank" rel="noopener noreferrer">https://www.investing.com/news/stock-market-news/tsmc-considers-making-advanced-memory-chips-the-information-reports-5008786</a></li><li><a href="https://www.investing.com/news/stock-market-news/tsmc-rises-on-report-of-potential-push-into-advanced-memory-for-nvidia-5008637" target="_blank" rel="noopener noreferrer">https://www.investing.com/news/stock-market-news/tsmc-rises-on-report-of-potential-push-into-advanced-memory-for-nvidia-5008637</a></li><li>原始报道指向：<a href="https://www.theinformation.com/articles/tsmc-weighs-making-advanced-memory-chips-capture-ai-spending" target="_blank" rel="noopener noreferrer">https://www.theinformation.com/articles/tsmc-weighs-making-advanced-memory-chips-capture-ai-spending</a></li></ul>
+<p><strong>发布时间：</strong> 北京时间约 2026-11-06 23:45（Reuters/Investing.com「Published Nov 06, 2026, 10:45 AM」按美东；同主题市场稿「09:43 AM」）。</p>
+<p class="verify"><strong>核实状态：单一来源核心事实（《信息报》独家；Reuters 与 Investing.com 转述并注明双方未回应；股价涨幅有盘面可核，战略计划本身尚未获公司确认）。</strong> 尚未得到公司官方确认。</p>
+<hr>
+<h3 class="entry">5. 芯片股周五反弹：费城半导体指数涨约 4%，AMD 反弹约 11%、英特尔约 7%，部分收回周四自 2020 年以来最差单日跌幅</h3>
+<p><strong>背景。</strong> 昨天证据包已写周四纳指与费城半导体暴跌；本窗新进展是周五收盘后的反弹幅度与「最差抛售以来的修复」。</p>
+<p><strong>发生了什么。</strong> 据 Yahoo Finance，芯片股周五反弹：费城半导体指数（^SOX）在周四暴跌约 12% 后反弹约 4%。英特尔上涨约 7%；AMD 在前一日跌约 17% 后反弹约 11%；英伟达前一日跌约 9% 后上涨逾 2%。CNBC 周五早盘稿称，美国科技股已现修复迹象，但市场波动仍是对美国 AI 热潮前路更颠簸的警告。</p>
+<p><strong>为什么值得注意。</strong> 反弹不等于政策风险解除，只是情绪从恐慌里抽了一口气；宜与第 6 条「消耗战」叙事对照阅读。</p>
+<p class="thesis-line"><strong>与核心思想。</strong> 底座被选票晃动之后，市值清单会剧烈刷新；反弹是情绪分派，不是约束消失。</p>
+<p class="sources"><strong>来源与核实。</strong></p>
+<ul><li><a href="https://finance.yahoo.com/markets/article/nvidia-amd-micron-sandsik-lead-chip-sector-higher-134336542.html" target="_blank" rel="noopener noreferrer">https://finance.yahoo.com/markets/article/nvidia-amd-micron-sandsik-lead-chip-sector-higher-134336542.html</a></li><li><a href="https://www.cnbc.com/2026/11/06/ai-data-center-midterms-selloff.html" target="_blank" rel="noopener noreferrer">https://www.cnbc.com/2026/11/06/ai-data-center-midterms-selloff.html</a></li></ul>
+<p><strong>发布时间：</strong> 北京时间 2026-11-07 05:06（Yahoo Finance「Fri, November 6, 2026 at 4:06 PM EST」）。</p>
+<p class="verify"><strong>核实状态：多来源确认（Yahoo 给出 SOX/个股周五涨幅；CNBC 周五稿确认早盘已现修复并补充政策背景；与昨窗暴跌报道连续）。</strong></p>
+<hr>
+<h3 class="entry">6. 中期选举后的数据中心「消耗战」叙事升温：CNBC 梳理地方限制选票与分析师对 2027 年资本开支增速见顶的判断</h3>
+<p><strong>背景。</strong> 这篇不是简单复述周四跌幅，而是把选举结果接到「地方选票限制数据中心—电力与许可变成稀缺资源—大资产负债表玩家更占优」的链条上。</p>
+<p><strong>发生了什么。</strong> CNBC 报道称，据智库 International Data Center Authority（IDCA）研究，2024 年 1 月至 2026 年 5 月，美国 20 个州至少 46 个 AI 数据中心项目、宣布投资逾 1700 亿美元，因社区反对被阻断、撤回或停滞。高盛估计，2026 至 2031 年 AI 相关资本开支（含计算、数据中心与电力）合计约 7.6 万亿美元。Wedbush 的 Dan Ives 被引述称，综合各方因素，他们认为大型科技公司资本开支增速峰值会落在 2027 年，早于此前预期的 2028/2029。Barclays 策略师被引述称反对跨党派但偏地方性，扩建会更贵而非全面停摆。</p>
+<p><strong>为什么值得注意。</strong> 它提供可引用的「逾 1700 亿美元受阻」与「约 7.6 万亿美元开支估计」，适合放在半导体行情之外的基础设施政策板块。</p>
+<p class="thesis-line"><strong>与核心思想。</strong> 电力与许可变成稀缺清单时，谁能把资源分派到真正批得下、接得上电的项目，谁更有优势。</p>
+<p class="sources"><strong>来源与核实。</strong></p>
+<ul><li><a href="https://www.cnbc.com/2026/11/06/ai-data-center-midterms-selloff.html" target="_blank" rel="noopener noreferrer">https://www.cnbc.com/2026/11/06/ai-data-center-midterms-selloff.html</a></li></ul>
+<p><strong>发布时间：</strong> 北京时间 2026-11-06 20:00（CNBC「Published Fri, Nov 6 2026 7:00 AM EST」）。</p>
+<p class="verify"><strong>核实状态：单一来源综述（CNBC 综合多位分析师与 IDCA、高盛估计；原始 IDCA/高盛报告本次未另开，数字以 CNBC 引述为准）。</strong> 尚未逐一回查原始报告。</p>
+<hr>
+<h3 class="entry">7. 苹果首款触屏 MacBook Pro 在中国大陆开售：14 英寸 M5 Pro 起售 22999 元，部分电商渠道当日「破发」</h3>
+<p><strong>背景。</strong> 这是消费电子硬件节点：双层串联 OLED、触控、灵动岛与发光 Logo 同一天落地中国大陆，同日还有 M6 版 14 英寸 MacBook Pro 等机型开卖。</p>
+<p><strong>发生了什么。</strong> 据第一财经，11 月 6 日苹果首款触控版 MacBook Pro 正式开售，官方起售价 22999 元；记者发现，部分电商渠道当日已「破发」。拼多多百亿补贴页面显示，基础款券后价 21299 元，较官方原价低 1700 元；16 英寸纳米纹理玻璃、M5 Max（18 核 CPU / 40 核 GPU）、128GB 内存、16TB 硬盘的顶配版本价格达到 112624 元。快科技写道，新机打破 Mac 笔记本长期不支持触控的传统，首次引入灵动岛，并让经典发光苹果 Logo 回归。第一财经还援引 TrendForce 预计触控版 2027 年出货约 120–150 万台、高价会限制换机动能。</p>
+<p><strong>为什么值得注意。</strong> 对普通读者，它说明苹果在用形态创新拉高客单价，但渠道价格已经提前松动。</p>
+<p class="thesis-line"><strong>与核心思想。</strong> 硬件规格清单再炫，渠道价格会先自己「分派」一刀——破发就是市场在刷新标价单。</p>
+<p class="sources"><strong>来源与核实。</strong></p>
+<ul><li><a href="https://www.yicai.com/news/103429828.html" target="_blank" rel="noopener noreferrer">https://www.yicai.com/news/103429828.html</a></li><li><a href="https://finance.sina.cn/tech/2026-11-06/detail-inixtxma5078602.d.html" target="_blank" rel="noopener noreferrer">https://finance.sina.cn/tech/2026-11-06/detail-inixtxma5078602.d.html</a></li><li><a href="https://themacpost.com/2026/11/06/touchscreen-macbook-pro-out-now/" target="_blank" rel="noopener noreferrer">https://themacpost.com/2026/11/06/touchscreen-macbook-pro-out-now/</a></li></ul>
+<p><strong>发布时间：</strong> 北京时间 2026-11-06 06:19 起有开售报道，破发核实见 18:46（快科技「11.06 06:19」；第一财经「2026-11-06 18:46:27」；TheMacPost datePublished 2026-11-06T13:38:29+00:00，合北京 21:38）。</p>
+<p class="verify"><strong>核实状态：多来源确认（第一财经现场核价；快科技与 TheMacPost 确认开售日与规格；官方起售价多篇一致）。</strong></p>
+<hr>
+<h3 class="entry">8. 苹果完成约 75 亿美元七档美元债定价，最长至 2036 年、最长档票面利率 5.35%，用途为一般公司用途</h3>
+<p><strong>背景。</strong> 这是苹果自 2025 年 5 月以来再次大规模发债。与 Meta、微软、甲骨文等把债款明确导向 AI 基建不同，苹果文件仍写「一般公司用途」。</p>
+<p><strong>发生了什么。</strong> 据 9to5Mac 与每经网，苹果已向 SEC 提交最终定价条款表，确认约 75 亿美元、七档（此前已宣布系列）的发售；其中 20 亿美元固定利率债券 2036 年到期，票面年利率 5.35%。扣除承销折扣与发行费用后，公司预计实收约 74.7 亿美元。用途为「一般公司用途」，可能包括回购、分红、收购与还债。七档里既有浮息也有固息，期限覆盖 2028–2036 年。</p>
+<p><strong>为什么值得注意。</strong> 对理解「科技巨头融资分化」有对照价值：有人借钱扩算力，有人借钱锁长期资金并服务回购。</p>
+<p class="thesis-line"><strong>与核心思想。</strong> 融资用途清单本身也在分流——钱被分派到哪里，决定下一轮真正加厚的是哪一层底座。</p>
+<p class="sources"><strong>来源与核实。</strong></p>
+<ul><li><a href="https://www.nbd.com.cn/articles/2026-11-06/4640513.html" target="_blank" rel="noopener noreferrer">https://www.nbd.com.cn/articles/2026-11-06/4640513.html</a></li><li><a href="https://9to5mac.com/2026/11/06/apple-confirms-7-5-billion-bond-sale-following-strong-investor-demand/" target="_blank" rel="noopener noreferrer">https://9to5mac.com/2026/11/06/apple-confirms-7-5-billion-bond-sale-following-strong-investor-demand/</a></li><li>SEC 定价文件入口：<a href="https://www.stocktitan.net/sec-filings/AAPL/424b2-apple-inc-prospectus-supplement-53d1cacb4e37.html" target="_blank" rel="noopener noreferrer">https://www.stocktitan.net/sec-filings/AAPL/424b2-apple-inc-prospectus-supplement-53d1cacb4e37.html</a></li></ul>
+<p><strong>发布时间：</strong> 北京时间 2026-11-06 13:14（每经网「2026-11-06 13:14:20」；9to5Mac「Nov 6 2026 - 4:15 am PT」，合北京约 20:15）。</p>
+<p class="verify"><strong>核实状态：多来源确认（9to5Mac 详列七档结构；每经网确认 75 亿美元规模与七档；与 SEC 424B2 定价文件指向一致）。</strong></p>
+<hr>
+<h3 class="entry">9. 华为擎云 HM650/HM650g 鸿蒙商用台式机公布电商标价：6899 元起，12 月 1 日开售，搭载麒麟 X90</h3>
+<p><strong>背景。</strong> 昨天多家媒体已报道「国产化率 100%」的发布会叙事；本窗补上可核对的开售日与价位带。发布会本身在 11 月 5 日，窗内新信息是标价与开售日。</p>
+<p><strong>发生了什么。</strong> 据 IT之家，华为擎云 HM650 系列已在京东自营店等官方电商平台上架，将于 12 月 1 日正式开售。标价示例：华为擎云 HM650g（8 核麒麟 X90、16GB 内存、512GB SSD）6899 元；华为擎云 HM650（10 核麒麟 X90、16GB 内存、512GB SSD）7199 元。产品在 11 月 5 日华为擎云 2026 鸿蒙办公产业峰会上由终端平板与 PC 产品线总裁朱懂东正式发布。</p>
+<p><strong>为什么值得注意。</strong> 对消费电子与国产替代读者，价格锚比口号更有用：入门大约七千元量级，高配内存硬盘组合可到一万元以上；虽主打政企，仍走上架电商、面向可下单的路径。</p>
+<p class="thesis-line"><strong>与核心思想。</strong> 发布会清单要接到可下单的标价与开售日，才算从「口号」换成「可分派的货架」。</p>
+<p class="sources"><strong>来源与核实。</strong></p>
+<ul><li><a href="https://www.ithome.com/1/023/324.htm" target="_blank" rel="noopener noreferrer">https://www.ithome.com/1/023/324.htm</a></li></ul>
+<p><strong>发布时间：</strong> 北京时间 2026-11-06 14:44（IT之家「2026/11/6 14:44:24」）。</p>
+<p class="verify"><strong>核实状态：单一来源（IT之家汇总京东在售标价；发布会事实有多日报道可旁证，但 12 月 1 日开售与精确价位以该篇为准，未另开华为官网新闻稿交叉）。</strong> 尚未得到其他来源对精确价位的独立确认。</p>
+<hr>
+<h3 class="entry">10. 高通 6G 终端原型机在进博会全球首秀：符合 3GPP 最新定义，已与中国移动、中兴等做互操作测试</h3>
+<p><strong>背景。</strong> 这不是某款马上能量产的手机，而是标准验证平台。展台人员与其他报道称距商用可能还有三四年，形态也会从「大块头测试机」逐步芯片化。</p>
+<p><strong>发生了什么。</strong> 据新华网，高通在进博会展台公开展示首个符合 3GPP 最新定义的 6G 终端原型机；该设备此前长期在实验室，本次是第一次在全球大型展会公开亮相，并被进博局授予「硬科技展品」「全球首展」双重标识，也是本届进博会通信设备类别唯一入选的硬科技展品。高通已采用该原型机与中国移动、中兴通讯等中国产业伙伴开展联合 6G 技术测试和互操作验证。稿件还提到，近日印发的《国家信息化「十五五」规划》提出，到 2030 年全面建成新一代通信网、适时启动 6G 商用。新华社把它放进「AI 原生 6G」叙事，并点出智能眼镜端侧推理、脑控轮椅等演示。</p>
+<p><strong>为什么值得注意。</strong> 对通信与终端读者，价值在于「实验室原型第一次公开亮相 + 已与国内运营商/设备商联测」。</p>
+<p class="thesis-line"><strong>与核心思想。</strong> 标准验证机第一次走到展台，是把实验室清单接到产业互操作现场的一步。</p>
+<p class="sources"><strong>来源与核实。</strong></p>
+<ul><li><a href="https://www.news.cn/tech/20261106/03e933c5011f4ea9b09c03b9c8c8bb32/c.html" target="_blank" rel="noopener noreferrer">https://www.news.cn/tech/20261106/03e933c5011f4ea9b09c03b9c8c8bb32/c.html</a></li></ul>
+<p><strong>发布时间：</strong> 北京时间 2026-11-06 20:32（新华网「2026-11-06 20:32:01」）。</p>
+<p class="verify"><strong>核实状态：多来源确认（新华社现场报道；科创板日报等 11 月 5 日进博探访可旁证展品存在，但首秀叙事与规划引述以 11 月 6 日新华社稿为准）。</strong></p>
+<hr>
+<h3 class="entry">11. 英特尔在进博会展示基于 Intel 18A 的至强 6+ 与「绿电储能算力一体化」集装箱方案，称到场最快一周可运营</h3>
+<p><strong>背景。</strong> 与高通 6G 同属进博会「系统交付」叙事：英特尔不再只贴制程参数，而是把 CPU、储能、集装箱算力舱打包成可搬迁的基础设施。</p>
+<p><strong>发生了什么。</strong> 据同花顺/财闻上海现场稿，英特尔以「智算提效，绿色同行」为主题亮相第九届中国国际进口博览会技术装备展区，依托 Intel 18A 先进制程与封装能力，展示第三代酷睿 Ultra、至强 6+ 及新一代网络与边缘（NEX）产品的全栈计算矩阵。本届还展示绿电储能算力一体化解决方案：标准化、模块化设计有助于缩短部署与交付周期；整套装备可在工厂内完成定制，设备到场后最快一周内即可投入运营，并支持整体迁移。现场还展示面向企业本地部署的「词元一体机」以及与百度搭子、豆包等工作流结合的智能体 PC。制程上，至强 6+ 被定位为采用 18A 的数据中心产品线成员。</p>
+<p><strong>为什么值得注意。</strong> 适合观察「芯片公司如何卖可部署系统」——从卖芯片参数，转到卖可搬迁的算力集装箱。</p>
+<p class="thesis-line"><strong>与核心思想。</strong> 算力交付清单从「等机房建好」换成「集装箱到场一周可运营」——分派单位变小了、变快了。</p>
+<p class="sources"><strong>来源与核实。</strong></p>
+<ul><li><a href="https://stock.10jqka.com.cn/20261106/c681541935.shtml" target="_blank" rel="noopener noreferrer">https://stock.10jqka.com.cn/20261106/c681541935.shtml</a></li></ul>
+<p><strong>发布时间：</strong> 北京时间 2026-11-06 11:41（同花顺/财闻「2026-11-06 11:41:26」）。</p>
+<p class="verify"><strong>核实状态：单一来源为主（同花顺财闻上海现场稿；科创板日报 11 月 5 日进博探访对 18A 产品与集装箱方案有一致描述，可作旁证）。</strong> 「最快一周可运营」为现场/公司表述，尚未另开英特尔一手新闻稿交叉。</p>
+<hr>
+<h3 class="entry">12. Counterpoint：2026 年三季度全球 DRAM 营收同比增 369%、接近 2000 亿美元，位元出货仅增约 4%，三星份额 38%</h3>
+<p><strong>背景。</strong> 这组数字解释了为什么美光停建、台积电评估进军内存、周五存储股反弹会同时出现：涨的是价格，不是出货量。</p>
+<p><strong>发生了什么。</strong> 据 Electronics Weekly 转述与 Counterpoint 官方洞察：高级分析师 Jeongku Choi 称，「这是定价超级周期，还不是出货量周期」——本季位元出货仅增约 4%，但 DRAM 营收接近 2000 亿美元，约为一年前的近 5 倍；同比增幅约 369%。平均售价达到每吉比特约 1.9 美元。份额方面，三星约 38%，SK 海力士约 29%，美光约 21%，CXMT 约 9%。分析还指出，在英伟达 Vera Rubin 机架中，每 CPU 插槽 DRAM 升至约 1.5 TB，几乎是上一代的三倍；智能体负载还把 GPU:CPU 配比从约 4:1 推向 2:1 甚至 1:1，传统 DDR/LPDDR 营收增速甚至超过 HBM。</p>
+<p><strong>为什么值得注意。</strong> 对医学生读者，它把「AI 很火」翻译成可感的供应链后果——内存变贵、终端与边缘设备承压。</p>
+<p class="thesis-line"><strong>与核心思想。</strong> 价格超级周期说明：供给清单几乎没动，价格却替市场完成了残酷的自动分派。</p>
+<p class="sources"><strong>来源与核实。</strong></p>
+<ul><li><a href="https://www.electronicsweekly.com/news/business/q3-dram-revenue-up-369-yoy-2026-11/" target="_blank" rel="noopener noreferrer">https://www.electronicsweekly.com/news/business/q3-dram-revenue-up-369-yoy-2026-11/</a></li><li><a href="https://counterpointresearch.com/en/insights/dram-super-cycle-nears-dollar-200b" target="_blank" rel="noopener noreferrer">https://counterpointresearch.com/en/insights/dram-super-cycle-nears-dollar-200b</a></li></ul>
+<p><strong>发布时间：</strong> 北京时间 2026-11-06（Electronics Weekly「6th November 2026」；Counterpoint 洞察页标注「Published November 5, 2026」，窗内收录以 11 月 6 日媒体转述与可打开的研究摘要为准）。</p>
+<p class="verify"><strong>核实状态：多来源确认（Counterpoint 官方洞察与 Electronics Weekly 转述数字一致；SemiEngineering 周报亦引用同组数据作旁证）。</strong></p>
+<hr>
+<h2 class="part" id="part-med">第三部分 · 医学（8 条）</h2>
+<h3 class="entry">1. Nature Medicine：步态基础模型用单台深度相机三维骨骼运动，预测 18 个系统的多系统健康表型</h3>
+<p><strong>背景。</strong> 步态越来越被看作生命体征，但现有方法常把它当作特定疾病的症状，而不是系统性生物标志。这篇把步态当作多系统生物信号，主体不是某家大模型公司，而是医学 AI 与临床表型的交界。</p>
+<p><strong>发生了什么。</strong> Weizmann 与合作者在 Nature Medicine 发表步态基础模型研究：对 3328 名深度表型成人，用单台深度相机在 5 项运动任务中记录三维骨骼运动，学习运动嵌入，用以预测握力、睡眠质量等跨 18 个身体系统的健康表型。学习得到的嵌入在年龄（Pearson r=0.69）、体重指数（r=0.91）、内脏脂肪面积（r=0.83）等预测上优于手工工程特征；在测试的 3210 个表型中，有 1887 个被显著预测。相对仅用年龄、体重指数、内脏脂肪与身高的基线模型，步态嵌入在男性全部 18 个系统、女性 18 个中的 17 个改进了预测，并改进临床诊断与用药预测。文中还写腿部动态更偏代谢与衰弱、躯干动态更偏睡眠与生活方式。配套 GlobeNewswire / Newton Tech 新闻稿与期刊摘要相互印证。</p>
+<p><strong>为什么值得注意。</strong> 对大二医学生，可对照「步速是第六生命体征」的传统描述，看学习嵌入相对手工步态特征的增益。需要提醒：这是关联与预测研究，筛查应用仍属探索阶段，且队列来自 Human Phenotype Project，外推要谨慎。</p>
+<p class="thesis-line"><strong>与核心思想。</strong> 一个运动嵌入预测跨系统表型，对应「单一信号 → 多系统分派读数」——医学侧最贴今天核心思想的一条。</p>
+<p class="sources"><strong>来源与核实。</strong></p>
+<ul><li><a href="https://www.nature.com/articles/s41591-026-04724-9" target="_blank" rel="noopener noreferrer">https://www.nature.com/articles/s41591-026-04724-9</a></li><li><a href="https://www.globenewswire.com/news-release/2026/11/06/3397361/0/en/nature-medicine-publication-reveals-how-human-movement-predicts-hidden-biosignals-spanning-18-body-systems-from-heart-and-liver-function-to-metabolic-and-mental-health.html" target="_blank" rel="noopener noreferrer">https://www.globenewswire.com/news-release/2026/11/06/3397361/0/en/nature-medicine-publication-reveals-how-human-movement-predicts-hidden-biosignals-spanning-18-body-systems-from-heart-and-liver-function-to-metabolic-and-mental-health.html</a></li></ul>
+<p><strong>发布时间：</strong> 期刊页标注 Published: 06 November 2026；<code>datePublished</code> 为 2026-11-06T00:00:00Z（北京时间 11-06 08:00）；若按 Nature 系常见伦敦 16:00 上线惯例，则为北京时间 11-07 00:00。两种换算均在窗内。Newton Tech 配套新闻稿时间戳为 Nov 06, 2026 05:00 ET（北京时间 11-06 18:00）。</p>
+<p class="verify"><strong>核实状态：多来源确认（期刊原文与 Newton Tech 配套新闻稿相互印证；数字取自期刊摘要）。</strong></p>
+<hr>
+<h3 class="entry">2. 国家药监局批准艺妙神州泊基奥仑赛注射液（赛泊华）上市，北京首款 CAR-T 用于成人复发难治大 B 细胞淋巴瘤</h3>
+<p><strong>背景。</strong> 这是窗内国内细胞治疗监管与临床落地的硬新闻。多家窗内媒体报道称这是北京市首款获批 CAR-T。批准事件本身报道多为 11-05，但食药监系统媒体、NCSTI 与财经网材料发布时间落在本日窗内。</p>
+<p><strong>发生了什么。</strong> 据中国食品药品网转国家药监局，国家药品监督管理局批准北京艺妙神州生物医药股份有限公司申报的泊基奥仑赛注射液（商品名：赛泊华）上市，用于经过二线或以上系统性治疗后成人复发或难治性大 B 细胞淋巴瘤患者，包括弥漫性大 B 细胞淋巴瘤非特指型、3b 级滤泡性淋巴瘤和高级别 B 细胞淋巴瘤。据 NCSTI 转述确证性试验：有效性分析集纳入 96 例经二线及以上复发或难治大 B 细胞淋巴瘤患者；3 个月客观缓解率 58.3%，全人群最佳客观缓解率 72.9%；其中 65 岁以上老年患者最佳客观缓解率达 80.8%，造血干细胞移植后复发患者最佳客观缓解率达 90%；≥3 级细胞因子释放综合征（CRS）发生率仅 1.0%，未出现 3 级及以上免疫效应细胞相关神经毒性综合征（ICANS）。</p>
+<p><strong>为什么值得注意。</strong> 对血液肿瘤课，可复习 CD19 CAR-T、4-1BB 共刺激与 CRS/ICANS 分级管理。引用疗效数字时请以说明书或注册资料最终文本为准，并注明「NCSTI 转述公司确证性试验」。</p>
+<p class="thesis-line"><strong>与核心思想。</strong> 批件把细胞治疗从试验清单，接到可处方的适应症清单上——分派单位从「研究队列」换成「获批适应症」。</p>
+<p class="sources"><strong>来源与核实。</strong></p>
+<ul><li><a href="https://www.cnpharm.com/c/2026-11-06/1110085.shtml" target="_blank" rel="noopener noreferrer">https://www.cnpharm.com/c/2026-11-06/1110085.shtml</a></li><li><a href="https://www.ncsti.gov.cn/kjdt/xwjj/202611/t20261106_261898.html" target="_blank" rel="noopener noreferrer">https://www.ncsti.gov.cn/kjdt/xwjj/202611/t20261106_261898.html</a></li><li><a href="https://health.caijing.com.cn/20261106/5192066.shtml" target="_blank" rel="noopener noreferrer">https://health.caijing.com.cn/20261106/5192066.shtml</a></li></ul>
+<p><strong>发布时间：</strong> 中国食品药品网稿 2026-11-06 19:57；NCSTI 稿标注 2026-11-06；财经网健康频道 2026/11/06。</p>
+<p class="verify"><strong>核实状态：多来源确认（食药监系统媒体、NCSTI、财经网相互印证；国家药监局官网列表页本次未能直接抓到当日条目正文）。</strong> 疗效数字以 NCSTI 转述为准。</p>
+<hr>
+<h3 class="entry">3. 诺华确认 Zolgensma 治疗后出现 9 例肿瘤报告，其中 2 例有 AAV 载体 DNA 整合证据</h3>
+<p><strong>背景。</strong> Zolgensma（onasemnogene abeparvovec）用 AAV9 递送 SMN1 功能拷贝，自 2019 年获批以来用于脊髓性肌萎缩症（SMA）。说明书里本就写有载体整合与致瘤性的理论风险。窗内新进展是公司对患者组织呼吁后的正式确认。</p>
+<p><strong>发生了什么。</strong> 据 Fierce Pharma、BioPharma Dive 与 GEN，诺华向 Fierce 确认：自 2019 年首次获批以来，已收到 9 例既往接受 Zolgensma 治疗患者的肿瘤报告；其中 2 例迄今显示载体 DNA 整合进患者 DNA，这两例患者均已接受治疗并继续监测。公司称患者安全优先，每个病例都已及时、适当地通报卫生当局，并将继续与当局合作后续步骤。诺华还称，临床试验、管理准入项目与商业渠道合计已有逾 6000 名患者接受 Zolgensma。媒体强调多数病例尚未确立因果，但 2 例整合证据使讨论从「理论风险」推进到「真实世界个案」。这是公司对患者组织与媒体的声明，不是监管结论。</p>
+<p><strong>为什么值得注意。</strong> 对医学生，可对照 AAV 以附加体为主、偶发整合的机制课内容，并与既往肝衰竭黑框警告区分开。</p>
+<p class="thesis-line"><strong>与核心思想。</strong> 获批不是安全故事的终点；真实世界信号会把「理论风险清单」刷新成需要持续分派监测资源的现场清单。</p>
+<p class="sources"><strong>来源与核实。</strong></p>
+<ul><li><a href="https://www.fiercepharma.com/pharma/novartis-confirms-more-reported-tumor-cases-zolgensma-patients-sma-groups-seek-details" target="_blank" rel="noopener noreferrer">https://www.fiercepharma.com/pharma/novartis-confirms-more-reported-tumor-cases-zolgensma-patients-sma-groups-seek-details</a></li><li><a href="https://www.biopharmadive.com/news/zolgensma-tumor-report-novartis-sma-spinal-muscular-atrophy/873990/" target="_blank" rel="noopener noreferrer">https://www.biopharmadive.com/news/zolgensma-tumor-report-novartis-sma-spinal-muscular-atrophy/873990/</a></li><li><a href="https://www.genengnews.com/topics/genome-editing/novartis-confirms-nine-cases-of-tumors-in-children-treated-with-gene-therapy-zolgensma/" target="_blank" rel="noopener noreferrer">https://www.genengnews.com/topics/genome-editing/novartis-confirms-nine-cases-of-tumors-in-children-treated-with-gene-therapy-zolgensma/</a></li></ul>
+<p><strong>发布时间：</strong> Fierce Pharma 标注 Nov 6, 2026 9:59am（美东，约合北京时间 11-06 22:59）；BioPharma Dive 标注 Published Nov. 6, 2026；GEN 标注 November 6, 2026。SMA Europe 页面落款为 Nov 5，早于窗起点，仅作交叉印证。</p>
+<p class="verify"><strong>核实状态：多来源确认（Fierce、BioPharma Dive、GEN 均引用诺华同一声明要点）。</strong></p>
+<hr>
+<h3 class="entry">4. 中央网信办部署为期两个月的「清朗·整治科普健康类网络谣言」专项行动</h3>
+<p><strong>背景。</strong> 这是公卫与医学教育交叉的监管动态。对正在学医又大量接触短视频科普的 Sofia，价值在于官方把信息源治理写进专项。</p>
+<p><strong>发生了什么。</strong> 据新华网，中央网信办近日印发通知，在全国范围内部署开展为期 2 个月的「清朗·整治科普健康类网络谣言」专项行动。重点整治四方面突出问题：编造民生健康网络谣言，借机误导网民；冒用专业身份等，传播伪科学观点；滥用人工智能技术，生成健康科普谣言；虚构康复案例夸大疗效，通过私域等环节诱骗消费。网信部门将督促平台提升对 AI 生成合成涉科普健康谣言信息的发现、识别和处置能力。材料未给出具体查处数字。</p>
+<p><strong>为什么值得注意。</strong> 官方把「AI 生成健康谣言」和「假专家/假康复案例」并列写入整治重点，提醒日常信息源要回到指南、学会与监管公告。</p>
+<p class="thesis-line"><strong>与核心思想。</strong> 健康信息清单若仍靠人手一张张辨真假，成本极高；专项行动是在要求平台侧长出自动发现与分派处置的一层。</p>
+<p class="sources"><strong>来源与核实。</strong></p>
+<ul><li><a href="https://www.news.cn/politics/20261106/886845983f7f4a888bbed32a747697e6/c.html" target="_blank" rel="noopener noreferrer">https://www.news.cn/politics/20261106/886845983f7f4a888bbed32a747697e6/c.html</a></li></ul>
+<p><strong>发布时间：</strong> 北京时间 2026-11-06 20:39:09（新华网标注）。</p>
+<p class="verify"><strong>核实状态：单一来源（新华社/新华网官方通稿；已重新打开确认）。</strong> 尚未另见其他中央部委同期通稿交叉；勿自行补查处数字。</p>
+<hr>
+<h3 class="entry">5. WHO 欧洲区：摩尔多瓦不靠全民筛查、靠早期诊断路径，试点中晚期乳腺癌诊断比例从 36% 降至 22%</h3>
+<p><strong>背景。</strong> 这是公卫与肿瘤早诊的「资源约束下怎么办」案例：先保证有症状女性快速转诊，而不是在人力不足时硬推全民筛查。</p>
+<p><strong>发生了什么。</strong> 据 WHO/Europe，摩尔多瓦共和国乳腺癌早期诊断试点使经该项目诊断患者的中晚期比例由 36% 降至 22%；进展来自按 WHO 建议对卫生系统做渐进改进，没有筛查项目，也没有引入重大额外措施。2018 至 2022 年，该国曾试点 50–70 岁女性乳腺钼靶筛查，完成近 2.7 万次钼靶，但仅覆盖目标人群的 2.6%，因放射科医生与技师人力不足无法扩面。2024 年，经该项目诊断患者的中晚期比例降至 22%。路径重组大致是「家庭医生 → 区域诊断中心 → 肿瘤研究所」。</p>
+<p><strong>为什么值得注意。</strong> 适合对照预防医学里 screening vs early diagnosis 的概念辨析。注意这是试点路径结果，不是全国人群发病率下降的因果证明。</p>
+<p class="thesis-line"><strong>与核心思想。</strong> 在人力不够铺开全民筛查清单时，改成「有症状快速转诊」的分派路径，也能把中晚期比例压下来。</p>
+<p class="sources"><strong>来源与核实。</strong></p>
+<ul><li><a href="https://www.who.int/europe/news/item/06-11-2026-how-early-diagnosis-can-reduce-late-stage-breast-cancer--republic-of-moldova-s-experience" target="_blank" rel="noopener noreferrer">https://www.who.int/europe/news/item/06-11-2026-how-early-diagnosis-can-reduce-late-stage-breast-cancer--republic-of-moldova-s-experience</a></li></ul>
+<p><strong>发布时间：</strong> 北京时间按日历日 2026-11-06（WHO/Europe 新闻页标注 6 November 2026，未给具体时刻）。</p>
+<p class="verify"><strong>核实状态：单一来源（WHO/Europe 官方新闻稿；已重新打开确认）。</strong> 36%→22%、覆盖 2.6%、约 2.7 万次钼靶等数字均出自 WHO 原文。</p>
+<hr>
+<h3 class="entry">6. Clinical Trials Arena 等窗内报道：WHO 建议将牛津 ChAdOx1 与 Moderna mRNA-1469 两款本迪布焦株候选疫苗加入刚果（金）Tumaini 试验</h3>
+<p><strong>背景。</strong> 埃博拉公卫与疫苗试验设计（环围接种、适应性平台）是经典教材场景。WHO 主新闻稿日期为 4 November 2026，早于窗起点；本条以 11 月 6 日医药媒体二次报道为材料，并回链 WHO 原文供核对。</p>
+<p><strong>发生了什么。</strong> 据 Clinical Trials Arena 与 Europe Pharma Today，WHO 独立技术咨询组建议把专门针对 Bundibugyo 病毒的 ChAdOx1（牛津大学/印度血清研究所）和 mRNA-1469（Moderna）纳入刚果民主共和国正在进行的 Tumaini II/III 期环围接种疫苗试验（NCT07842107），待国家批准后入组。这是首次在本迪布焦株暴发中评价专为该株设计的疫苗。推荐不是上市许可。治疗端 PARTNERS 试验（MBP134、瑞德西韦等）与暴露后预防研究可作背景，但不是本条主新闻。不同媒体对累计病例/死亡数字口径不一致，本条不采信未与 CDC/WHO 当日公报交叉核对的病例总数。</p>
+<p><strong>为什么值得注意。</strong> 提醒：监管动作本身在 11-04 已由 WHO 发布，11-06 是二次报道；推荐≠上市许可，入组仍需刚果（金）国家批准。</p>
+<p class="thesis-line"><strong>与核心思想。</strong> 候选疫苗清单不再只靠会前人手点名，而是由独立技术咨询组建议后分派进正在进行的适应性试验平台。</p>
+<p class="sources"><strong>来源与核实。</strong></p>
+<ul><li><a href="https://www.clinicaltrialsarena.com/news/who-adds-two-more-ebola-vaccines-to-clinical-trial/" target="_blank" rel="noopener noreferrer">https://www.clinicaltrialsarena.com/news/who-adds-two-more-ebola-vaccines-to-clinical-trial/</a></li><li><a href="https://europepharmatoday.com/news/who-bundibugyo-vaccines-tumaini-trial-november-2026" target="_blank" rel="noopener noreferrer">https://europepharmatoday.com/news/who-bundibugyo-vaccines-tumaini-trial-november-2026</a></li><li>WHO 主新闻稿（日期 4 Nov，供核对）：<a href="https://www.who.int/news/item/04-11-2026-two-new-candidate-vaccines-to-join-ebola-trial-as-treatment-research-advances" target="_blank" rel="noopener noreferrer">https://www.who.int/news/item/04-11-2026-two-new-candidate-vaccines-to-join-ebola-trial-as-treatment-research-advances</a></li></ul>
+<p><strong>发布时间：</strong> Clinical Trials Arena 署名 November 6, 2026；Europe Pharma Today 标注 6 November 2026。</p>
+<p class="verify"><strong>核实状态：多来源确认（窗内两家媒体与 WHO 4 日主新闻稿要点一致；病例死亡绝对数因口径不一未写入）。</strong> 首发日在窗外，已在时间说明中标明。</p>
+<hr>
+<h3 class="entry">7. 中国科学报/NCSTI：国家药监局批准塞伐艾替尼（赫新诺）一线治疗 HER2 激活突变晚期 NSCLC</h3>
+<p><strong>背景。</strong> HER2 突变 NSCLC 在中国发生率约 4.3%（文中引用），以往靶向选择有限；塞伐艾替尼此前已有经治适应症，此次是一线扩展。拜耳美通社中文稿落款为 2026-11-04，早于窗起点；本条以 NCSTI 窗内转载为材料。</p>
+<p><strong>发生了什么。</strong> 据 NCSTI 转述中国科学报，国家药品监督管理局已批准肺癌新型靶向治疗药物赫新诺（塞伐艾替尼片）单药用于治疗存在 HER2（ERBB2）激活突变的不可切除局部晚期或转移性非小细胞肺癌（NSCLC）成人患者。获批基于正在进行的 I/II 期 SOHO-01 临床试验结果：在 73 例初治患者队列中，客观缓解率（ORR）为 75.3%，其中 5.5% 达到完全缓解，69.9% 达到部分缓解，72.7% 缓解患者缓解持续时间至少达到 6 个月。这是单臂 I/II 期队列，不是与化疗/免疫对照的 III 期。</p>
+<p><strong>为什么值得注意。</strong> 把口服 TKI 的使用阶段前移到一线，对胸部肿瘤靶向治疗课有直接参考；引用时请写明公司首发在 11-04、本条是 11-06 科学媒体二次传播。</p>
+<p class="thesis-line"><strong>与核心思想。</strong> 适应症清单从「经治」扩到「一线」，是把有限靶向选择重新分派到更早的治疗节点。</p>
+<p class="sources"><strong>来源与核实。</strong></p>
+<ul><li><a href="https://www.ncsti.gov.cn/kjdt/kjrd/yyjk_kjrd/202611/t20261106_261825.html" target="_blank" rel="noopener noreferrer">https://www.ncsti.gov.cn/kjdt/kjrd/yyjk_kjrd/202611/t20261106_261825.html</a></li><li>拜耳经美通社稿（11-04，供核对）：<a href="https://www.prnasia.com/story/554675-1.shtml" target="_blank" rel="noopener noreferrer">https://www.prnasia.com/story/554675-1.shtml</a></li></ul>
+<p><strong>发布时间：</strong> NCSTI 页面标注 2026-11-06。</p>
+<p class="verify"><strong>核实状态：多来源确认（NCSTI 与拜耳 11-04 新闻稿数字一致；首发日在窗外，已在标题时间说明中标明）。</strong></p>
+<hr>
+<h3 class="entry">8. 中国食品药品网：湖北省创新药上市后安全性评价研究项目启动，遴选 7 项课题做真实世界评价</h3>
+<p><strong>背景。</strong> 这是药械监管与药物警戒方向的地方实践：从被动收集 ADR 报告转向主动真实世界评价。湖北省药监局官网同题稿时间为 2026-11-05 15:44（早于窗起点）；本条以食药监系统媒体 11-06 报道为材料。</p>
+<p><strong>发生了什么。</strong> 据中国食品药品网，湖北省药品（医疗器械）不良反应监测中心创新药上市后安全性评价研究项目正式启动。项目聚焦创新药全生命周期药物警戒管理，经自主申报、专家评审，共遴选 7 项课题，覆盖化学药、生物制品、中药创新品种，重点关注儿童、老年人等特殊人群，采用前瞻性观察、回顾性数据分析等真实世界研究方法，系统评价创新药上市后用药安全。材料没有公布 7 项课题的具体品种名与样本量。</p>
+<p><strong>为什么值得注意。</strong> 可与第 2、3 条（新药获批 / 基因治疗安全性）对照，说明「获批不是安全故事的终点」。</p>
+<p class="thesis-line"><strong>与核心思想。</strong> 获批清单之后，还要长出一层会主动分派监测资源的真实世界评价——和今天「清单自动维护」的主线同构。</p>
+<p class="sources"><strong>来源与核实。</strong></p>
+<ul><li><a href="https://www.cnpharm.com/c/2026-11-06/1110045.shtml" target="_blank" rel="noopener noreferrer">https://www.cnpharm.com/c/2026-11-06/1110045.shtml</a></li><li>湖北省药监局（11-05，供核对）：<a href="https://mpa.hubei.gov.cn/bmdt/dtyw/202611/t20261105_6071098.shtml" target="_blank" rel="noopener noreferrer">https://mpa.hubei.gov.cn/bmdt/dtyw/202611/t20261105_6071098.shtml</a></li></ul>
+<p><strong>发布时间：</strong> 中国食品药品网稿 2026-11-06 12:32。</p>
+<p class="verify"><strong>核实状态：多来源确认（食药监系统媒体与湖北省药监局官网同题一致；省局首发略早于窗起点，已注明）。</strong> 勿臆造 7 项课题的具体品种名与样本量。</p>
+<hr>
+<h2 class="part" id="part-self">第四部分 · 个人轻提示（1 条）</h2>
+<h3 class="entry">1. StudySolo 的 supabase-backup 备份工作流在窗内又失败了一次，提交已换成昨天挂掉的 a013b67</h3>
+<p>北京时间 11 月 6 日 09:49，GitHub 通知显示：StudySolo 某仓库的 supabase-backup 工作流再次全部失败。提交已从连续多日的 044813e 换成 a013b67，运行约 25 秒结束，backup 任务有 3 条注释。昨天证据包记的是 044813e 的日常备份失败，同时 a013b67 还把 ci 和 deploy-mainecs 一起跑挂了；今天备份任务已经跟着切到 a013b67，仍然很快退出。StudySolo 是他自己的线上产品，数据库已经大约十天没有成功备份（自 10 月 28 日起），而且昨天那次主站部署失败之后，窗内也还没看到修好后的重新部署信号。可以温和地提醒他抽空点开这次运行的注释，确认是密钥、连接串还是权限问题，并顺带看看 a013b67 的 ci/deploy 是否需要回滚或修补——他自己的备份清单，也还没自动修好。</p>
+<p class="sources"><strong>来源与核实。</strong></p>
+<ul><li>StudySolo 某仓库 Actions 跑次（备份失败）</li></ul>
+<p><strong>发布时间：</strong> 北京时间 2026-11-06 09:49（运行结束于 2026-11-06 01:48:58 UTC，即北京时间 09:48:58）。</p>
+<p class="verify"><strong>核实状态：单一来源。</strong> 依据是 GitHub Actions 发到他邮箱的失败通知，以及前几天证据包里每天都有的同类通知；没有登录 Actions 页面查看具体报错，也没有去线上站点做可用性探测。</p>
+<p>另外顺带说一声：窗内 AdventureX 奖金那边没有新邮件，线程仍停在 11 月 3 日「已经重新联系合作方尝试二次打款」的回信；ChatSolo 的 security-audit 和 DayDayOn 的 deploy 在窗内都没有新的运行通知；那个请求扩大权限的 GitHub App 也没有新邮件；deepseek-harness 的 E2E 测试窗内又失败了一次，但没有新的保留/停用确认，故未单列。Notion 里没有新的待办或截止事项；Notion 日历未连接，日程部分已跳过。</p>
+<hr>
+<h2 class="part" id="part-notes">舍弃与合并说明</h2>
+<ul><li><strong>舍弃：无。</strong> 今天原则上不舍弃；四路证据包中的 8 + 12 + 8 + 1 条均已完整写入详细稿。</li><li><strong>对照说明、未做条目合并：</strong> 讯AI 第 2 条 Amp spaces 与第 6 条 Meta Muse spaces 名字相同但产品不同（开发侧多智能体线程协调 vs 消费级个性化长期项目体验），各自保留完整条目，并在正文中互相对照，避免混读。</li><li><strong>交叉引用、未做条目合并：</strong> 讯科第 1 条（AST Blacklift）与第 2 条（Firefly 发动机大单）为同一航天事件的卫星侧与发动机侧，因切面不同各自保留完整条目并交叉引用。</li><li><strong>边界条目说明：</strong> 讯医第 6 条 WHO Tumaini 疫苗建议的主新闻稿在 11-04，本条以 11-06 二次报道入包并回链核对；讯医第 7 条塞伐艾替尼公司首发在 11-04，本条以 NCSTI 11-06 转载为材料；讯科第 3 条美光、第 9 条华为定价的事件起点在窗前或昨日，收录理由是窗内出现可核验的新信息（公司/经济部回应；电商标价与 12 月 1 日开售日），均按证据包口径保留。</li></ul>
+<hr>
+<p><em>本稿所有材料都来自 2026-11-07 的四份证据包（讯AI、讯科、讯医、连读）与 core-thesis.md，时间窗为北京时间 2026-11-06 06:00 到 2026-11-07 06:00。未另行搜索，未发明数字或链接。</em></p>
+    </article>
+  </div>
+</div>
+<script>
+(function () {
+  var IDLE = "把左边的请求卡插进右边的插槽。插对了，总机就替你分派。";
+  var NOTES = {
+    threads: {
+      stamp: "单一来源。Amp 官方说法尚未得到其他独立媒体的交叉确认。",
+      note: "Amp 官方 Chronicle 写道：spaces 是你和单个协调者的对话，由它去生成并协调别的线程，不用你自己一张张建。官方举例里，Will 的目标是审查近期改动的安全问题；第一次运行把代码库拆成 16 个区域，每个区域自己的线程去查，再把发现放到另一个线程核对。",
+      href: "https://ampcode.com/news/spaces",
+      link: "打开 Amp 官方 Chronicle"
+    },
+    route: {
+      stamp: "单一来源。下面的成本数字是官方自报，尚未得到其他来源独立确认。",
+      note: "OpenRouter 官方宣布，新一代 Auto Router 从底座重建，并新增编码专用的 Auto Code。官方称，路由会综合请求特征、实时价格、供应商健康和缓存来选型；还写在所列五项基准上，Auto Code 与 Claude Opus 5.5 得分相当，每任务成本低约 74%。",
+      href: "https://openrouter.ai/blog/announcements/auto-and-auto-code-routers/",
+      link: "打开 OpenRouter 官方公告"
+    },
+    catalog: {
+      stamp: "单一来源。模型数量和重建间隔出自官方正文，尚未得到其他来源确认。",
+      note: "OpenClaw 官方博客写道：模型名单改为从托管目录、账号可用列表和本机已安装的 Codex 三路一起学习，所以新模型不必再等一次客户端发版。托管目录大约每四小时重建一次，目前约有 1000 个模型。",
+      href: "https://openclaw.ai/blog/use-new-models-in-openclaw-without-an-update",
+      link: "打开 OpenClaw 官方博客"
+    },
+    gait: {
+      stamp: "期刊摘要与配套新闻稿相互印证。这是预测研究，筛查应用还在探索。",
+      note: "Nature Medicine 发表的步态基础模型，用一台深度相机在运动任务里记下的三维骨骼运动，去预测跨 18 个身体系统的健康表型。测试的 3210 个表型里，有 1887 个被显著预测。",
+      href: "https://www.nature.com/articles/s41591-026-04724-9",
+      link: "打开 Nature Medicine 论文"
+    }
+  };
+
+  var tray = document.getElementById("tray");
+  var statusEl = document.getElementById("status");
+  var leftCount = document.getElementById("left-count");
+  var envelope = document.getElementById("envelope");
+  var envHint = document.getElementById("env-hint");
+  var letter = document.getElementById("letter");
+  var book = document.getElementById("open-book");
+  var ledger = document.getElementById("ledger");
+  var sheet = document.getElementById("sheet");
+  var closeBook = document.getElementById("close-book");
+  var digest = document.getElementById("digest");
+  var litToggle = document.getElementById("lit-toggle");
+  var readbar = document.getElementById("readbar");
+  var cards = Array.prototype.slice.call(document.querySelectorAll(".card"));
+  var slots = Array.prototype.slice.call(document.querySelectorAll(".slot"));
+  var selected = null;
+  var drag = null;
+  var suppressClick = false;
+  var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  function setStatus(text) { statusEl.textContent = text; }
+  function seatedCount() { return document.querySelectorAll(".card.seated").length; }
+
+  function clearHot() {
+    slots.forEach(function (slot) { slot.classList.remove("hot"); });
+  }
+
+  function showSlip(id) {
+    var data = NOTES[id];
+    slots.forEach(function (slot) {
+      var slip = slot.querySelector(".slip");
+      slip.hidden = true;
+      slip.replaceChildren();
+    });
+    var slot = document.querySelector('.slot[data-accept="' + id + '"]');
+    var slip = slot.querySelector(".slip");
+    var stamp = document.createElement("p");
+    stamp.className = "stamp";
+    stamp.textContent = data.stamp;
+    var para = document.createElement("p");
+    para.textContent = data.note;
+    var link = document.createElement("a");
+    link.href = data.href;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    link.textContent = data.link;
+    slip.append(stamp, para, link);
+    slip.hidden = false;
+  }
+
+  function clearSlips() {
+    slots.forEach(function (slot) {
+      var slip = slot.querySelector(".slip");
+      slip.hidden = true;
+      slip.replaceChildren();
+    });
+  }
+
+  function setPocketEmpty(slot, empty) {
+    var pocket = slot.querySelector(".pocket");
+    if (empty) {
+      pocket.setAttribute("role", "button");
+      pocket.tabIndex = 0;
+    } else {
+      pocket.removeAttribute("role");
+      pocket.tabIndex = -1;
+    }
+  }
+
+  function openLetter() {
+    envelope.classList.add("open");
+    letter.hidden = false;
+    envHint.hidden = true;
+    book.classList.add("ready");
+    setStatus("四张都接通了。信自己打开了。台边那本册子里有今天的全文。");
+    window.requestAnimationFrame(function () {
+      envelope.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "nearest" });
+    });
+  }
+
+  function closeLetter() {
+    envelope.classList.remove("open");
+    letter.hidden = true;
+    envHint.hidden = false;
+    book.classList.remove("ready");
+  }
+
+  function updateProgress() {
+    var n = seatedCount();
+    envelope.dataset.n = String(n);
+    leftCount.textContent = n === 4 ? "四张都在插槽里了。" : "左边还有 " + (4 - n) + " 张请求卡。";
+    if (n === 4) openLetter();
+    else closeLetter();
+  }
+
+  function animateFrom(card, first) {
+    if (reduced) return;
+    var last = card.getBoundingClientRect();
+    var dx = first.left - last.left;
+    var dy = first.top - last.top;
+    if (Math.abs(dx) < 1 && Math.abs(dy) < 1) return;
+    card.animate(
+      [{ transform: "translate(" + dx + "px," + dy + "px)" }, { transform: "translate(0,0)" }],
+      { duration: 340, easing: "cubic-bezier(0.22, 0.8, 0.28, 1)" }
+    );
+  }
+
+  function tryInsert(card, slot) {
+    if (slot.dataset.accept !== card.dataset.id) {
+      slot.classList.remove("nope");
+      void slot.offsetWidth;
+      slot.classList.add("nope");
+      window.setTimeout(function () { slot.classList.remove("nope"); }, 360);
+      setStatus("这张卡不归这个插槽。换一个试试。");
+      return false;
+    }
+    if (slot.querySelector(".card")) return false;
+    var first = card.getBoundingClientRect();
+    var pocket = slot.querySelector(".pocket");
+    var hint = pocket.querySelector(".pocket-hint");
+    if (hint) hint.hidden = true;
+    setPocketEmpty(slot, false);
+    card.classList.remove("dragging", "chosen");
+    card.style.cssText = "";
+    pocket.appendChild(card);
+    card.classList.add("seated");
+    card.setAttribute("aria-pressed", "false");
+    if (selected === card) selected = null;
+    animateFrom(card, first);
+    slot.classList.add("lit");
+    showSlip(card.dataset.id);
+    var n = seatedCount();
+    updateProgress();
+    if (n < 4) setStatus("「" + slot.dataset.label + "」接通了。左边还有 " + (4 - n) + " 张。");
+    return true;
+  }
+
+  function settleBack(card) {
+    var first = card.getBoundingClientRect();
+    card.classList.remove("dragging");
+    card.style.cssText = "";
+    animateFrom(card, first);
+  }
+
+  function selectCard(card) {
+    if (card.classList.contains("seated")) {
+      showSlip(card.dataset.id);
+      setStatus("这张已经接通了。纸条上是总机记下的那一条。");
+      return;
+    }
+    cards.forEach(function (item) {
+      item.classList.remove("chosen");
+      item.setAttribute("aria-pressed", "false");
+    });
+    if (selected === card) {
+      selected = null;
+      setStatus(IDLE);
+      return;
+    }
+    selected = card;
+    card.classList.add("chosen");
+    card.setAttribute("aria-pressed", "true");
+    setStatus("这张是「" + card.querySelector(".card-title").textContent + "」。再点一个插槽，或拖进去。");
+  }
+
+  function slotFromPoint(x, y) {
+    var stack = document.elementsFromPoint(x, y);
+    for (var i = 0; i < stack.length; i += 1) {
+      var slot = stack[i].closest ? stack[i].closest(".slot") : null;
+      if (slot) return slot;
+    }
+    return null;
+  }
+
+  cards.forEach(function (card) {
+    card.setAttribute("aria-pressed", "false");
+    card.addEventListener("pointerdown", function (event) {
+      if (card.classList.contains("seated")) return;
+      if (event.button !== undefined && event.button !== 0) return;
+      var rect = card.getBoundingClientRect();
+      drag = {
+        card: card,
+        id: event.pointerId,
+        dx: event.clientX - rect.left,
+        dy: event.clientY - rect.top,
+        x: event.clientX,
+        y: event.clientY,
+        moved: false
+      };
+      try { card.setPointerCapture(event.pointerId); } catch (err) { /* 捕获失败时仍可点选 */ }
+    });
+    card.addEventListener("pointermove", function (event) {
+      if (!drag || drag.card !== card || drag.id !== event.pointerId) return;
+      if (!drag.moved && Math.hypot(event.clientX - drag.x, event.clientY - drag.y) < 8) return;
+      drag.moved = true;
+      card.classList.add("dragging");
+      card.style.left = (event.clientX - drag.dx) + "px";
+      card.style.top = (event.clientY - drag.dy) + "px";
+      clearHot();
+      var slot = slotFromPoint(event.clientX, event.clientY);
+      if (slot) slot.classList.add("hot");
+    });
+    function endDrag(event) {
+      if (!drag || drag.card !== card) return;
+      var moved = drag.moved;
+      var x = event.clientX;
+      var y = event.clientY;
+      drag = null;
+      clearHot();
+      if (!moved) return;
+      suppressClick = true;
+      var slot = slotFromPoint(x, y);
+      if (slot && tryInsert(card, slot)) return;
+      settleBack(card);
+      if (!slot) setStatus("还没放进插槽。可以拖到插槽上松开，或先点选再点插槽。");
+    }
+    card.addEventListener("pointerup", endDrag);
+    card.addEventListener("pointercancel", endDrag);
+    card.addEventListener("click", function (event) {
+      if (suppressClick) {
+        suppressClick = false;
+        event.preventDefault();
+        return;
+      }
+      selectCard(card);
+    });
+  });
+
+  slots.forEach(function (slot) {
+    var pocket = slot.querySelector(".pocket");
+    function activate() {
+      if (selected && !selected.classList.contains("seated")) {
+        var card = selected;
+        if (!tryInsert(card, slot)) settleBack(card);
+        return;
+      }
+      var seated = slot.querySelector(".card");
+      if (seated) showSlip(seated.dataset.id);
+    }
+    pocket.addEventListener("click", activate);
+    pocket.addEventListener("keydown", function (event) {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        activate();
+      }
+    });
+  });
+
+  document.getElementById("reset").addEventListener("click", function () {
+    cards.slice().sort(function (a, b) { return Number(a.dataset.order) - Number(b.dataset.order); }).forEach(function (card) {
+      card.classList.remove("seated", "chosen", "dragging");
+      card.style.cssText = "";
+      card.setAttribute("aria-pressed", "false");
+      tray.appendChild(card);
+    });
+    slots.forEach(function (slot) {
+      slot.classList.remove("lit", "hot", "nope");
+      var hint = slot.querySelector(".pocket-hint");
+      if (hint) hint.hidden = false;
+      setPocketEmpty(slot, true);
+    });
+    clearSlips();
+    selected = null;
+    updateProgress();
+    setStatus("卡片回到左边了。可以再分派一次。");
+  });
+
+  function openLedger() {
+    ledger.hidden = false;
+    closeBook.focus();
+  }
+  function closeLedger() {
+    ledger.hidden = true;
+    book.focus();
+  }
+  book.addEventListener("click", openLedger);
+  closeBook.addEventListener("click", closeLedger);
+  ledger.addEventListener("click", function (event) {
+    if (event.target === ledger) closeLedger();
+  });
+
+  function focusables() {
+    return Array.prototype.slice.call(ledger.querySelectorAll("a, button, [tabindex]")).filter(function (el) {
+      return !el.hasAttribute("disabled") && el.getClientRects().length > 0;
+    });
+  }
+  document.addEventListener("keydown", function (event) {
+    if (event.key === "Escape") {
+      if (!ledger.hidden) {
+        event.preventDefault();
+        closeLedger();
+        return;
+      }
+      if (selected) {
+        selected.classList.remove("chosen");
+        selected.setAttribute("aria-pressed", "false");
+        selected = null;
+        setStatus(IDLE);
+      }
+    }
+    if (event.key === "Tab" && !ledger.hidden) {
+      var items = focusables();
+      if (!items.length) return;
+      var first = items[0];
+      var last = items[items.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    }
+  });
+
+  sheet.addEventListener("click", function (event) {
+    var link = event.target.closest ? event.target.closest(".tools a") : null;
+    if (!link) return;
+    var id = (link.getAttribute("href") || "").slice(1);
+    var target = document.getElementById(id);
+    if (!target) return;
+    event.preventDefault();
+    target.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
+  });
+  sheet.addEventListener("scroll", function () {
+    var max = sheet.scrollHeight - sheet.clientHeight;
+    var ratio = max > 0 ? sheet.scrollTop / max : 0;
+    readbar.style.width = Math.round(ratio * 100) + "%";
+  });
+  litToggle.addEventListener("click", function () {
+    var on = digest.classList.toggle("lit");
+    litToggle.setAttribute("aria-pressed", on ? "true" : "false");
+    litToggle.textContent = on ? "段落已经点亮，再点一下恢复" : "点亮和今天这句话有关的段落";
+  });
+
+  cards.forEach(function (card) { card.style.touchAction = "none"; });
+})();
+</script>
+<!--
+DESIGN LESSON
+STYLE: 清晨工作室的奶白与浅木色总机台，米杏请求卡插进插槽后亮起薄荷绿
+GENRE: 把请求卡插进分派插槽、最后拆开一封信的二点五维小世界
+TITLE: 清晨总机台
+THESIS: 清单不再等人手一张张维护，系统自己去分派。
+-->
+</html>
