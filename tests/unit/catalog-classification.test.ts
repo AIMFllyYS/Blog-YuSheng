@@ -53,7 +53,7 @@ describe('live catalog classification', () => {
         books.map((book) => [book.slug, book.chapters.length]),
       ),
     ).toEqual({
-      'fullstack-learning': 4,
+      'fullstack-learning': 5,
       'ai-mflly-notes': 3,
       'yu-studies': 5,
       'yu-reflections': 2,

@@ -1,0 +1,1517 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>我们的小相册 - 读书会回忆录</title>
+  
+  <!-- External Resources -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- 【已修复】更换为更稳定的Font Awesome CDN链接 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha512-SfTiTlX6kk+qitfevl/7LibUOeJWlt9rbyDn92a1DqWOw9vWG2MFoays0sgObmWazO5BQPiFucUcgL2QSsaw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link href="https://fonts.googleapis.com/css2?family=ZCOOL+XiaoWei&display=swap" rel="stylesheet" />
+  
+  <!-- Tailwind Config -->
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            hust: { DEFAULT: '#b8860b', dark: '#8a6608', light: '#e6c875' },
+            ink: { DEFAULT: '#5a4b3c', dark: '#e8e6e3' },
+            paper: { DEFAULT: '#f8f5f0', dark: '#1a1a1a' }
+          },
+          animation: {
+            'fade-in': 'fadeIn 0.6s ease-out',
+            'slide-up': 'slideUp 0.8s ease-out',
+            'slide-down': 'slideDown 0.4s ease-out',
+            'scale-in': 'scaleIn 0.5s ease-out',
+            'bounce-gentle': 'bounceGentle 2s ease-in-out infinite',
+            'float': 'float 3s ease-in-out infinite',
+            'shimmer': 'shimmer 2s linear infinite',
+            'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            'clip-float': 'clipFloat 3s ease-in-out infinite',
+            'photo-bounce': 'photoBounce 2s ease-in-out infinite',
+            'heartbeat': 'heartbeat 0.6s ease',
+            'highlight-pulse': 'highlightPulse 1.5s ease-in-out',
+            'section-glow': 'sectionGlow 1.2s ease-in-out'
+          },
+          keyframes: {
+            fadeIn: {
+              '0%': { opacity: '0' },
+              '100%': { opacity: '1' }
+            },
+            slideUp: {
+              '0%': { transform: 'translateY(30px)', opacity: '0' },
+              '100%': { transform: 'translateY(0)', opacity: '1' }
+            },
+            slideDown: {
+              '0%': { transform: 'translateY(-20px)', opacity: '0' },
+              '100%': { transform: 'translateY(0)', opacity: '1' }
+            },
+            scaleIn: {
+              '0%': { transform: 'scale(0.9)', opacity: '0' },
+              '100%': { transform: 'scale(1)', opacity: '1' }
+            },
+            bounceGentle: {
+              '0%, 100%': { transform: 'translateY(0)' },
+              '50%': { transform: 'translateY(-10px)' }
+            },
+            float: {
+              '0%, 100%': { transform: 'translateY(0px)' },
+              '50%': { transform: 'translateY(-20px)' }
+            },
+            shimmer: {
+              '0%': { backgroundPosition: '-1000px 0' },
+              '100%': { backgroundPosition: '1000px 0' }
+            },
+            clipFloat: {
+              '0%, 100%': { transform: 'translateY(0) rotate(-1deg)' },
+              '50%': { transform: 'translateY(-5px) rotate(-1deg)' }
+            },
+            photoBounce: {
+              '0%, 100%': { transform: 'translateY(0) rotate(1deg)' },
+              '50%': { transform: 'translateY(-5px) rotate(1deg)' }
+            },
+            heartbeat: {
+              '0%, 100%': { transform: 'scale(1)' },
+              '25%': { transform: 'scale(1.3)' },
+              '50%': { transform: 'scale(1.1)' },
+              '75%': { transform: 'scale(1.25)' }
+            },
+            highlightPulse: {
+              '0%, 100%': {
+                boxShadow: '0 0 0 4px rgba(52, 211, 153, 0.8), 0 20px 50px rgba(52, 211, 153, 0.3)'
+              },
+              '50%': {
+                boxShadow: '0 0 0 8px rgba(52, 211, 153, 0.6), 0 25px 60px rgba(52, 211, 153, 0.4)'
+              }
+            },
+            sectionGlow: {
+              '0%, 100%': {
+                boxShadow: '0 0 0 0 rgba(184, 134, 11, 0)'
+              },
+              '50%': {
+                boxShadow: '0 0 0 6px rgba(184, 134, 11, 0.5)',
+                borderRadius: '1.5rem'
+              }
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* 全局字体 */
+    * {
+      font-family: "ZCOOL XiaoWei", "STKaiti", "KaiTi", "Microsoft YaHei", serif !important;
+    }
+    /* 页面加载动画 */
+    .page-loader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #f8f5f0 0%, #e6d5b8 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 99999;
+      transition: opacity 0.5s ease, visibility 0.5s ease;
+    }
+    .page-loader.loaded {
+      opacity: 0;
+      visibility: hidden;
+    }
+    html.dark .page-loader {
+      background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+    }
+    /* 加载动画 */
+    .loader-spinner {
+      width: 60px;
+      height: 60px;
+      border: 4px solid rgba(184, 134, 11, 0.2);
+      border-top-color: #b8860b;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    /* 滚动进度条 */
+    .scroll-progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 0%;
+      height: 3px;
+      background: linear-gradient(90deg, #b8860b, #e6c875);
+      z-index: 99998;
+      transition: width 0.1s ease;
+    }
+    /* 导航栏样式 */
+    #hust-navbar {
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+    }
+    #hust-navbar.scrolled {
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+    /* 背景视差效果 */
+    .hust-bg-parallax::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #f8f5f0;
+      background-image:
+        linear-gradient(rgba(248, 245, 240, 0.95), rgba(248, 245, 240, 0.95)),
+        url("https://picsum.photos/id/307/1920/1080");
+      background-attachment: fixed;
+      background-size: cover;
+      background-position: center;
+      z-index: -1;
+      transition: background-color 0.5s ease;
+    }
+    html.dark .hust-bg-parallax::before {
+      background-color: #111827;
+      background-image:
+        linear-gradient(rgba(17, 24, 39, 0.96), rgba(17, 24, 39, 0.96)),
+        url("https://picsum.photos/id/307/1920/1080");
+    }
+    /* 卡片悬停效果 */
+    .hust-menu-card {
+      transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+      backdrop-filter: blur(10px);
+    }
+    .hust-menu-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    }
+    html.dark .hust-menu-card:hover {
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    }
+    /* 相册照片框架 */
+    .hust-photo-frame {
+      position: relative;
+      border-radius: 0.75rem;
+      overflow: hidden;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+      background: rgba(255, 255, 255, 0.9);
+      transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+      cursor: pointer;
+    }
+    .hust-photo-frame:nth-child(odd) {
+      transform: rotate(-1deg);
+      animation: clipFloat 3s ease-in-out infinite;
+    }
+    .hust-photo-frame:nth-child(even) {
+      transform: rotate(1deg);
+      animation: photoBounce 3s ease-in-out infinite;
+    }
+    .hust-photo-frame:hover {
+      transform: translateY(-8px) rotate(0deg) scale(1.02);
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.2);
+      z-index: 10;
+      animation: none;
+    }
+    html.dark .hust-photo-frame {
+      background: rgba(31, 41, 55, 0.95);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    }
+    /* 照片加载骨架屏 */
+    .hust-photo-skeleton {
+      background: linear-gradient(90deg, 
+        rgba(200, 200, 200, 0.3) 25%, 
+        rgba(220, 220, 220, 0.5) 50%, 
+        rgba(200, 200, 200, 0.3) 75%
+      );
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+    }
+    /* 照片图片样式 */
+    .hust-photo-image {
+      width: 100%;
+      height: 14rem;
+      object-fit: contain;
+      filter: saturate(1.05);
+      transition: all 0.4s ease;
+      background: rgba(248, 245, 240, 0.5);
+    }
+    .hust-photo-frame:hover .hust-photo-image {
+      transform: scale(1.02);
+      filter: saturate(1.15) brightness(1.05);
+    }
+    .hust-photo-item-small .hust-photo-image {
+      height: 10rem;
+    }
+    /* 照片夹子效果 */
+    .hust-photo-clip {
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 30px;
+      background: #d97706;
+      border-radius: 5px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+      z-index: 3;
+    }
+    .hust-photo-clip::before,
+    .hust-photo-clip::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      width: 20px;
+      height: 100%;
+      background: #b45309;
+      border-radius: 3px;
+    }
+    .hust-photo-clip::before {
+      left: 8px;
+    }
+    .hust-photo-clip::after {
+      right: 8px;
+    }
+    /* 胶带装饰 */
+    .hust-photo-tape {
+      position: absolute;
+      top: 0.5rem;
+      left: 1.2rem;
+      width: 4rem;
+      height: 1rem;
+      background: rgba(248, 231, 192, 0.9);
+      transform: rotate(-5deg);
+      opacity: 0.9;
+      pointer-events: none;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    /* 点赞按钮 */
+    .hust-like-btn {
+      position: absolute;
+      right: 0.75rem;
+      bottom: 0.75rem;
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.95);
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      z-index: 2;
+    }
+    .hust-like-btn i {
+      color: #f97373;
+      font-size: 1.1rem;
+      transition: all 0.3s ease;
+    }
+    .hust-like-btn:hover {
+      transform: scale(1.15);
+      box-shadow: 0 6px 20px rgba(249, 115, 115, 0.4);
+    }
+    .hust-like-btn:active {
+      transform: scale(0.95);
+    }
+    .hust-like-btn.liked {
+      background: #fee2e2;
+      animation: heartbeat 0.6s ease;
+    }
+    .hust-like-btn.liked i {
+      transform: scale(1.2);
+    }
+    /* 高亮效果 */
+    .hust-photo-highlight {
+      animation: highlightPulse 1.5s ease-in-out;
+      box-shadow: 0 0 0 4px rgba(52, 211, 153, 0.8), 
+                  0 20px 50px rgba(52, 211, 153, 0.3) !important;
+      transform: translateY(-12px) rotate(0deg) scale(1.03) !important;
+    }
+    /* Toast提示 */
+    .hust-floating-toast {
+      position: fixed;
+      left: 50%;
+      bottom: 5rem;
+      transform: translateX(-50%) translateY(20px);
+      background: rgba(0, 0, 0, 0.85);
+      color: #f9fafb;
+      padding: 0.75rem 1.5rem;
+      border-radius: 999px;
+      font-size: 0.9rem;
+      z-index: 99999;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+    .hust-floating-toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+    /* 回到顶部按钮 */
+    .hust-backtop-btn {
+      position: fixed;
+      right: 1.5rem;
+      bottom: 2rem;
+      z-index: 9999;
+      border-radius: 999px;
+      padding: 0.75rem 1rem;
+      background: rgba(248, 245, 240, 0.95);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(20px);
+    }
+    .hust-backtop-btn.show {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+    .hust-backtop-btn:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+    }
+    html.dark .hust-backtop-btn {
+      background: rgba(31, 41, 55, 0.98);
+      color: #e5e7eb;
+    }
+    /* 按钮样式 */
+    .hust-pill-button {
+      border-radius: 999px;
+      padding: 0.6rem 1.5rem;
+      transition: all 0.3s ease;
+    }
+    .hust-pill-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+    .hust-pill-button:active {
+      transform: translateY(0);
+    }
+    /* Chip标签 */
+    .hust-chip {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.5rem 1rem;
+      border-radius: 999px;
+      border: 1px dashed rgba(184, 134, 11, 0.6);
+      font-size: 0.85rem;
+      cursor: pointer;
+      background: rgba(255, 255, 255, 0.9);
+      transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+    .hust-chip:hover {
+      transform: translateY(-3px) scale(1.05);
+      background: rgba(248, 245, 240, 0.95);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+      border-color: rgba(184, 134, 11, 0.9);
+    }
+    html.dark .hust-chip {
+      background: rgba(17, 24, 39, 0.95);
+      border-color: rgba(230, 200, 117, 0.8);
+    }
+    html.dark .hust-chip:hover {
+      background: rgba(31, 41, 55, 0.95);
+    }
+    /* 区域高亮 */
+    .hust-section-highlight {
+      animation: sectionGlow 1.2s ease-in-out;
+    }
+    /* 音乐脉冲 */
+    .hust-music-pulse {
+      animation: musicPulse 1.5s ease-in-out infinite;
+    }
+    @keyframes musicPulse {
+      0%, 100% {
+        transform: scale(1);
+        opacity: 0.9;
+      }
+      50% {
+        transform: scale(1.15);
+        opacity: 1;
+      }
+    }
+    /* 渐变背景 */
+    .hust-gradient-bg {
+      background: linear-gradient(135deg, rgba(184, 134, 11, 0.1) 0%, rgba(230, 200, 117, 0.1) 100%);
+    }
+    html.dark .hust-gradient-bg {
+      background: linear-gradient(135deg, rgba(184, 134, 11, 0.2) 0%, rgba(230, 200, 117, 0.2) 100%);
+    }
+    /* Hero区域闪光效果 */
+    .hust-hero-shine::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.3), transparent 60%);
+      opacity: 0.6;
+      pointer-events: none;
+    }
+    /* 网格展开动画 */
+    .album-grid-animated {
+      animation: slideDown 0.4s ease-out;
+    }
+    /* 灯箱效果 */
+    .lightbox {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.95);
+      z-index: 99999;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .lightbox.active {
+      display: flex;
+      opacity: 1;
+    }
+    .lightbox-content {
+      max-width: 90%;
+      max-height: 90%;
+      position: relative;
+      animation: scaleIn 0.4s ease-out;
+    }
+    .lightbox-image {
+      max-width: 100%;
+      max-height: 90vh;
+      border-radius: 8px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    }
+    .lightbox-close {
+      position: absolute;
+      top: -3rem;
+      right: 0;
+      color: white;
+      font-size: 2rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background: rgba(255, 255, 255, 0.1);
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .lightbox-close:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: rotate(90deg);
+    }
+    .lightbox-caption {
+      color: white;
+      text-align: center;
+      margin-top: 1rem;
+      font-size: 0.95rem;
+      padding: 0 2rem;
+    }
+    /* 响应式调整 */
+    @media (max-width: 768px) {
+      .hust-photo-image {
+        height: 12rem;
+      }
+      
+      .hust-photo-item-small .hust-photo-image {
+        height: 9rem;
+      }
+    }
+    /* 平滑滚动 */
+    html {
+      scroll-behavior: smooth;
+    }
+    /* 文本选择颜色 */
+    ::selection {
+      background-color: rgba(184, 134, 11, 0.3);
+      color: #5a4b3c;
+    }
+    /* 懒加载图片过渡 */
+    img.lazy-load {
+      opacity: 0;
+      transition: opacity 0.6s ease;
+    }
+    img.lazy-load.loaded {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body class="antialiased">
+  <!-- 页面加载器 -->
+  <div class="page-loader">
+    <div class="flex flex-col items-center">
+      <div class="loader-spinner"></div>
+      <p class="mt-4 text-hust font-medium">正在加载相册...</p>
+    </div>
+  </div>
+  <!-- 滚动进度条 -->
+  <div class="scroll-progress"></div>
+  <!-- 导航栏 -->
+  <nav id="hust-navbar" class="fixed top-0 left-0 right-0 z-50 px-4 py-4">
+    <div class="max-w-7xl mx-auto">
+      <div class="bg-white/90 dark:bg-gray-900/90 border border-gray-100 dark:border-gray-800 rounded-full px-4 md:px-6 py-3 shadow-sm backdrop-blur-md">
+        <div class="flex items-center justify-between">
+          <!-- Logo -->
+          <div class="flex items-center space-x-3">
+            <a href="https://husteread.com" class="flex items-center space-x-2 group">
+              <i class="fa fa-book text-2xl text-hust group-hover:rotate-12 transition-transform duration-300"></i>
+              <span class="text-xl md:text-2xl font-bold tracking-wide group-hover:text-hust transition-colors dark:text-gray-200">我们的读书会</span>
+            </a>
+            <button type="button" onclick="window.location.href='https://husteread.com'" 
+                    class="hidden sm:inline-flex items-center text-xs md:text-sm hust-pill-button border border-hust/40 text-hust bg-white/80 dark:bg-gray-800/80 dark:text-gray-100 hover:bg-hust/10">
+              <i class="fa fa-home mr-1.5"></i> 返回主页
+            </button>
+          </div>
+          <!-- 桌面端菜单 -->
+          <div class="hidden md:flex items-center space-x-5">
+            <a href="https://husteread.com" class="hover:text-hust dark:text-gray-300 dark:hover:text-hust transition-colors text-sm font-medium">首页</a>
+            <a href="https://husteread.com/index.php/tp/" class="hover:text-hust dark:text-gray-300 dark:hover:text-hust transition-colors text-sm font-medium">功能菜单</a>
+            <span class="text-sm font-semibold text-hust border-b border-hust/60 pb-0.5">我们的小相册</span>
+            <!-- 音乐按钮 -->
+            <button id="hust-music-toggle" type="button" 
+                    class="ml-2 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-ink dark:text-gray-100" 
+                    title="播放/暂停背景音乐">
+              <i class="fa fa-play-circle hust-music-icon-play text-lg"></i>
+              <i class="fa fa-pause-circle hust-music-icon-pause text-lg hidden"></i>
+            </button>
+            <!-- 夜间模式 -->
+            <button id="hust-theme-toggle" type="button" 
+                    class="ml-1 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-ink dark:text-gray-200" 
+                    title="切换夜读模式">
+              <i class="fa fa-moon-o hust-theme-icon-moon"></i>
+              <i class="fa fa-sun-o hust-theme-icon-sun hidden text-yellow-400"></i>
+            </button>
+          </div>
+          <!-- 移动端菜单触发器 -->
+          <div class="flex md:hidden items-center space-x-2">
+            <button id="hust-music-toggle-mobile" type="button" class="text-xl p-2 text-hust" title="背景音乐">
+              <i class="fa fa-music hust-music-icon-play"></i>
+              <i class="fa fa-pause hust-music-icon-pause hidden"></i>
+            </button>
+            <button id="hust-theme-toggle-mobile" type="button" class="text-xl p-2 text-ink dark:text-gray-200" title="夜读模式">
+              <i class="fa fa-moon-o hust-theme-icon-moon"></i>
+              <i class="fa fa-sun-o hust-theme-icon-sun hidden text-yellow-400"></i>
+            </button>
+            <button class="text-2xl text-hust" id="hust-menu-toggle" type="button">
+              <i class="fa fa-bars"></i>
+            </button>
+          </div>
+        </div>
+        <!-- 移动端菜单 -->
+        <div class="hidden md:hidden mt-3 pt-3 border-t border-gray-200 dark:border-gray-700" id="hust-mobile-menu">
+          <div class="flex flex-col space-y-2 text-center">
+            <a href="https://husteread.com" class="py-1.5 hover:text-hust block text-sm transition-colors">首页</a>
+            <a href="https://husteread.com/index.php/tp/" class="py-1.5 hover:text-hust block text-sm transition-colors">功能菜单</a>
+            <span class="py-1.5 text-hust font-semibold block text-sm">我们的小相册</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+  <!-- 主内容区 -->
+  <main class="hust-bg-parallax min-h-screen pt-32 pb-16 px-4">
+    <!-- 背景音乐 -->
+    <audio id="hust-bgm" src="https://husteread.com/wp-content/uploads/hust-album-bgm.mp3" loop></audio>
+    <!-- 回到顶部 -->
+    <button type="button" id="hust-backtop" class="hust-backtop-btn">
+      <div class="flex items-center space-x-1.5 text-xs">
+        <i class="fa fa-arrow-up"></i>
+        <span>回顶部</span>
+      </div>
+    </button>
+    <!-- Toast -->
+    <div id="hust-toast" class="hust-floating-toast">已悄悄收藏到心里</div>
+    <!-- 灯箱 -->
+    <div id="lightbox" class="lightbox">
+      <div class="lightbox-content">
+        <span class="lightbox-close" onclick="closeLightbox()">&times;</span>
+        <img id="lightbox-img" class="lightbox-image" src="" alt="">
+        <p id="lightbox-caption" class="lightbox-caption"></p>
+      </div>
+    </div>
+    <div class="max-w-7xl mx-auto">
+      <!-- 页面标题 -->
+      <div class="hust-album-hero hust-hero-shine bg-white/70 dark:bg-gray-900/70 rounded-3xl shadow-xl px-6 md:px-10 py-10 md:py-14 border border-gray-100/80 dark:border-gray-700/80 mb-12 animate-fade-in relative overflow-hidden">
+        <h1 class="text-center dark:text-gray-100 mb-4 text-5xl md:text-6xl font-bold animate-slide-up">
+          我们的小相册
+        </h1>
+        
+        <p class="text-center text-gray-600 dark:text-gray-400 mb-6 text-base md:text-lg animate-slide-up" style="animation-delay: 0.1s;">
+          每一张照片,都是读书会写给大家的一封小小情书。<br class="hidden md:block" />
+          把一次次活动里的笑声和灯光,慢慢装进我们的共同记忆里。
+        </p>
+        <!-- 操作按钮 -->
+        <div class="flex flex-wrap justify-center gap-3 md:gap-4 mt-6 animate-slide-up" style="animation-delay: 0.2s;">
+          <button id="hust-random-memory" type="button" 
+                  class="hust-pill-button flex items-center text-xs md:text-sm bg-hust text-white shadow-md hover:shadow-xl">
+            <i class="fa fa-random mr-2"></i> 今天的缘分一张
+          </button>
+          <button id="hust-open-all" type="button" 
+                  class="hust-pill-button flex items-center text-xs md:text-sm border border-hust/50 text-hust bg-white/80 dark:bg-gray-800/80 dark:text-gray-100 hover:bg-hust/10">
+            <i class="fa fa-book mr-2"></i> 一次看完所有回忆
+          </button>
+          <button id="hust-close-all" type="button" 
+                  class="hust-pill-button flex items-center text-xs md:text-sm border border-gray-300 text-gray-600 bg-white/80 dark:bg-gray-800/80 dark:text-gray-200 hover:bg-gray-100/80 dark:hover:bg-gray-700/80">
+            <i class="fa fa-moon-o mr-2"></i> 轻收相册
+          </button>
+        </div>
+        <p class="text-center text-gray-500 mt-6 text-sm animate-slide-up" style="animation-delay: 0.3s;">
+          小提示：点击照片可放大查看；点击右下角的小爱心,可以把它"存进心里的相册"；<br class="hidden md:block" />
+          夜间模式 + 背景音乐一起开,会更像一场安静的"深夜翻相册"。
+        </p>
+      </div>
+      <!-- 活动一：时光邮寄 -->
+      <section id="album-time-mail" class="hust-album-section mb-12 scroll-mt-28">
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-full bg-hust/15 flex items-center justify-center text-hust">
+              <i class="fa fa-envelope-open text-lg"></i>
+            </div>
+            <div>
+              <h2 class="text-2xl md:text-3xl font-bold dark:text-gray-100">时光邮寄 · 写给一年后的自己</h2>
+              <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                那些写给未来的句子,也悄悄留在了当时的光影里。
+              </p>
+            </div>
+          </div>
+          
+          <div class="flex items-center space-x-2">
+            <button type="button" 
+                    class="hust-pill-button text-xs md:text-sm border border-hust/50 text-hust bg-white/80 dark:bg-gray-800/80 dark:text-gray-100 flex items-center hust-album-toggle" 
+                    data-album-toggle="album-time-mail-grid">
+              <i class="fa fa-picture-o mr-1.5"></i> 展开/收起
+            </button>
+            <a href="https://husteread.com/index.php/event/time-mail" target="_blank" 
+               class="hust-pill-button text-xs md:text-sm bg-hust text-white flex items-center">
+              <i class="fa fa-external-link mr-1.5"></i> 活动详情
+            </a>
+          </div>
+        </div>
+        <div id="album-time-mail-grid" class="grid gap-5 md:gap-6 md:grid-cols-3 lg:grid-cols-4 mt-4 hidden">
+          <figure class="hust-photo-frame hust-photo-item" onclick="openLightbox(this)">
+            <div class="relative">
+              <span class="hust-photo-clip"></span>
+              <span class="hust-photo-tape"></span>
+              <div class="hust-photo-skeleton hust-photo-image"></div>
+              <img data-src="http://husteread.com/wp-content/uploads/2025/11/S8OEUWCJTUZD3X5O75N-scaled.jpg" 
+                   alt="时光邮寄活动现场,桌上铺满信纸和信封" 
+                   class="hust-photo-image lazy-load absolute top-0 left-0">
+              <button type="button" class="hust-like-btn" onclick="event.stopPropagation(); toggleLike(this)">
+                <i class="fa fa-heart-o"></i>
+              </button>
+            </div>
+            <figcaption class="p-3 pb-4 text-xs md:text-sm text-gray-600 dark:text-gray-300">
+              写信的那天下午,图书馆外的风刚刚好。有人认真地写下三页纸,也有人只写了一句"辛苦了呀",然后笑着叠起信封。
+            </figcaption>
+          </figure>
+          <figure class="hust-photo-frame hust-photo-item hust-photo-item-small" onclick="openLightbox(this)">
+            <div class="relative">
+              <span class="hust-photo-clip"></span>
+              <span class="hust-photo-tape"></span>
+              <div class="hust-photo-skeleton hust-photo-image"></div>
+              <img data-src="http://husteread.com/wp-content/uploads/2025/11/4OCYRT1L1J4@CD50.jpg" 
+                   alt="近景拍摄写信中的手和信纸" 
+                   class="hust-photo-image lazy-load absolute top-0 left-0">
+              <button type="button" class="hust-like-btn" onclick="event.stopPropagation(); toggleLike(this)">
+                <i class="fa fa-heart-o"></i>
+              </button>
+            </div>
+            <figcaption class="p-3 pb-4 text-xs md:text-sm text-gray-600 dark:text-gray-300">
+              有人给未来的自己画了一个笑脸,说"如果看到这张画,就记得当时也很勇敢。"
+            </figcaption>
+          </figure>
+          <figure class="hust-photo-frame hust-photo-item hust-photo-item-small" onclick="openLightbox(this)">
+            <div class="relative">
+              <span class="hust-photo-clip"></span>
+              <span class="hust-photo-tape"></span>
+              <div class="hust-photo-skeleton hust-photo-image"></div>
+              <img data-src="http://husteread.com/wp-content/uploads/2025/11/6_D3WUMLUYSREWT7OGLS.jpg" 
+                   alt="信箱或收集信件的盒子" 
+                   class="hust-photo-image lazy-load absolute top-0 left-0">
+              <button type="button" class="hust-like-btn" onclick="event.stopPropagation(); toggleLike(this)">
+                <i class="fa fa-heart-o"></i>
+              </button>
+            </div>
+            <figcaption class="p-3 pb-4 text-xs md:text-sm text-gray-600 dark:text-gray-300">
+              所有的信被轻轻装进同一个箱子里,像是大家把各自的"小宇宙"寄存在了同一个地方。
+            </figcaption>
+          </figure>
+        </div>
+      </section>
+      <!-- 活动二：童心拾梦 -->
+      <section id="album-child-dream" class="hust-album-section mb-12 scroll-mt-28">
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-full bg-hust/15 flex items-center justify-center text-hust">
+              <i class="fa fa-star text-lg"></i>
+            </div>
+            <div>
+              <h2 class="text-2xl md:text-3xl font-bold dark:text-gray-100">童心拾梦 · 六一征文</h2>
+              <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                长大的我们,在这一天又偷偷变回了小朋友。
+              </p>
+            </div>
+          </div>
+          
+          <div class="flex items-center space-x-2">
+            <button type="button" 
+                    class="hust-pill-button text-xs md:text-sm border border-hust/50 text-hust bg-white/80 dark:bg-gray-800/80 dark:text-gray-100 flex items-center hust-album-toggle" 
+                    data-album-toggle="album-child-dream-grid">
+              <i class="fa fa-picture-o mr-1.5"></i> 展开/收起
+            </button>
+            <a href="https://husteread.com/index.php/event/child-dream" target="_blank" 
+               class="hust-pill-button text-xs md:text-sm bg-hust text-white flex items-center">
+              <i class="fa fa-external-link mr-1.5"></i> 活动详情
+            </a>
+          </div>
+        </div>
+        <div id="album-child-dream-grid" class="grid gap-5 md:gap-6 md:grid-cols-3 lg:grid-cols-4 mt-4 hidden">
+          <figure class="hust-photo-frame hust-photo-item" onclick="openLightbox(this)">
+            <div class="relative">
+              <span class="hust-photo-clip"></span>
+              <span class="hust-photo-tape"></span>
+              <div class="hust-photo-skeleton hust-photo-image"></div>
+              <img data-src="http://husteread.com/wp-content/uploads/2025/11/E4B8F7B1500D4C9CDBBF726866328DFE.jpg" 
+                   alt="参与童心拾梦活动的同学合照" 
+                   class="hust-photo-image lazy-load absolute top-0 left-0">
+              <button type="button" class="hust-like-btn" onclick="event.stopPropagation(); toggleLike(this)">
+                <i class="fa fa-heart-o"></i>
+              </button>
+            </div>
+            <figcaption class="p-3 pb-4 text-xs md:text-sm text-gray-600 dark:text-gray-300">
+              谁说只有小孩才过六一呢？那天的我们,笑得比礼物袋上的卡通人物还要开心一点点。
+            </figcaption>
+          </figure>
+          <figure class="hust-photo-frame hust-photo-item hust-photo-item-small" onclick="openLightbox(this)">
+            <div class="relative">
+              <span class="hust-photo-clip"></span>
+              <span class="hust-photo-tape"></span>
+              <div class="hust-photo-skeleton hust-photo-image"></div>
+              <img data-src="http://husteread.com/wp-content/uploads/2025/11/C05A8DCDE52AB545F0C775569BDBC4EA.jpg" 
+                   alt="桌上摆放的彩色便签与小礼物" 
+                   class="hust-photo-image lazy-load absolute top-0 left-0">
+              <button type="button" class="hust-like-btn" onclick="event.stopPropagation(); toggleLike(this)">
+                <i class="fa fa-heart-o"></i>
+              </button>
+            </div>
+            <figcaption class="p-3 pb-4 text-xs md:text-sm text-gray-600 dark:text-gray-300">
+              有人写下童年的零食清单,有人认真写"长大后也要记得喜欢自己"。
+            </figcaption>
+          </figure>
+          <figure class="hust-photo-frame hust-photo-item hust-photo-item-small" onclick="openLightbox(this)">
+            <div class="relative">
+              <span class="hust-photo-clip"></span>
+              <span class="hust-photo-tape"></span>
+              <div class="hust-photo-skeleton hust-photo-image"></div>
+              <img data-src="http://husteread.com/wp-content/uploads/2025/11/6B46F43F1E4DBDB7078DD772BDE86843.jpg" 
+                   alt="桌上摆放的彩色便签与小礼物" 
+                   class="hust-photo-image lazy-load absolute top-0 left-0">
+              <button type="button" class="hust-like-btn" onclick="event.stopPropagation(); toggleLike(this)">
+                <i class="fa fa-heart-o"></i>
+              </button>
+            </div>
+            <figcaption class="p-3 pb-4 text-xs md:text-sm text-gray-600 dark:text-gray-300">
+              让我们看一看大家的分享吧~
+            </figcaption>
+          </figure>
+          <figure class="hust-photo-frame hust-photo-item hust-photo-item-small" onclick="openLightbox(this)">
+            <div class="relative">
+              <span class="hust-photo-clip"></span>
+              <span class="hust-photo-tape"></span>
+              <div class="hust-photo-skeleton hust-photo-image"></div>
+              <img data-src="http://husteread.com/wp-content/uploads/2025/11/281BDD6C37FB487A61AA352D4EBB02F8.jpg" 
+                   alt="活动展板前阅读故事的同学" 
+                   class="hust-photo-image lazy-load absolute top-0 left-0">
+              <button type="button" class="hust-like-btn" onclick="event.stopPropagation(); toggleLike(this)">
+                <i class="fa fa-heart-o"></i>
+              </button>
+            </div>
+            <figcaption class="p-3 pb-4 text-xs md:text-sm text-gray-600 dark:text-gray-300">
+              那些关于动画片、玻璃弹珠和小卖部的故事,突然把校园的风都吹甜了一点。
+            </figcaption>
+          </figure>
+        </div>
+      </section>
+      <!-- 活动三：百团大战 -->
+      <section id="album-battle-2021" class="hust-album-section mb-12 scroll-mt-28">
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-full bg-hust/15 flex items-center justify-center text-hust">
+              <i class="fa fa-gamepad text-lg"></i>
+            </div>
+            <div>
+              <h2 class="text-2xl md:text-3xl font-bold dark:text-gray-100">百团大战 · 读书会游戏摊位</h2>
+              <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                那两天,操场上人声鼎沸,我们把喜欢的书也搬上了"游乐场"。
+              </p>
+            </div>
+          </div>
+          
+          <div class="flex items-center space-x-2">
+            <button type="button" 
+                    class="hust-pill-button text-xs md:text-sm border border-hust/50 text-hust bg-white/80 dark:bg-gray-800/80 dark:text-gray-100 flex items-center hust-album-toggle" 
+                    data-album-toggle="album-battle-2021-grid">
+              <i class="fa fa-picture-o mr-1.5"></i> 展开/收起
+            </button>
+            <a href="https://husteread.com/index.php/event/battle-of-clubs-2021" target="_blank" 
+               class="hust-pill-button text-xs md:text-sm bg-hust text-white flex items-center">
+              <i class="fa fa-external-link mr-1.5"></i> 活动详情
+            </a>
+          </div>
+        </div>
+        <div id="album-battle-2021-grid" class="grid gap-5 md:gap-6 md:grid-cols-3 lg:grid-cols-4 mt-4 hidden">
+          <figure class="hust-photo-frame hust-photo-item" onclick="openLightbox(this)">
+            <div class="relative">
+              <span class="hust-photo-clip"></span>
+              <span class="hust-photo-tape"></span>
+              <div class="hust-photo-skeleton hust-photo-image"></div>
+              <img data-src="http://husteread.com/wp-content/uploads/2025/11/QQ%E5%9B%BE%E7%89%8720220309230359.jpg" 
+                   alt="百团大战现场,读书会摊位前人来人往" 
+                   class="hust-photo-image lazy-load absolute top-0 left-0">
+              <button type="button" class="hust-like-btn" onclick="event.stopPropagation(); toggleLike(this)">
+                <i class="fa fa-heart-o"></i>
+              </button>
+            </div>
+            <figcaption class="p-3 pb-4 text-xs md:text-sm text-gray-600 dark:text-gray-300">
+              有人被小游戏吸引停下脚步,有人只是路过,却被一句话里的某个词打动了。
+            </figcaption>
+          </figure>
+          <figure class="hust-photo-frame hust-photo-item hust-photo-item-small" onclick="openLightbox(this)">
+            <div class="relative">
+              <span class="hust-photo-clip"></span>
+              <span class="hust-photo-tape"></span>
+              <div class="hust-photo-skeleton hust-photo-image"></div>
+              <img data-src="http://husteread.com/wp-content/uploads/2025/11/QQ%E5%9B%BE%E7%89%8720220309230407.jpg" 
+                   alt="桌面上摆放的书本和游戏道具" 
+                   class="hust-photo-image lazy-load absolute top-0 left-0">
+              <button type="button" class="hust-like-btn" onclick="event.stopPropagation(); toggleLike(this)">
+                <i class="fa fa-heart-o"></i>
+              </button>
+            </div>
+            <figcaption class="p-3 pb-4 text-xs md:text-sm text-gray-600 dark:text-gray-300">
+              书也可以很好玩,飞花令、看图写话、成语接龙……每个游戏背后都有一个小小的故事。
+            </figcaption>
+          </figure>
+          <figure class="hust-photo-frame hust-photo-item hust-photo-item-small" onclick="openLightbox(this)">
+            <div class="relative">
+              <span class="hust-photo-clip"></span>
+              <span class="hust-photo-tape"></span>
+              <div class="hust-photo-skeleton hust-photo-image"></div>
+              <img data-src="http://husteread.com/wp-content/uploads/2025/11/QQ%E5%9B%BE%E7%89%8720220309232551.jpg" 
+                   alt="活动精彩作品展示" 
+                   class="hust-photo-image lazy-load absolute top-0 left-0">
+              <button type="button" class="hust-like-btn" onclick="event.stopPropagation(); toggleLike(this)">
+                <i class="fa fa-heart-o"></i>
+              </button>
+            </div>
+            <figcaption class="p-3 pb-4 text-xs md:text-sm text-gray-600 dark:text-gray-300">
+              来看一看大家的精彩作品吧~
+            </figcaption>
+          </figure>
+          <figure class="hust-photo-frame hust-photo-item hust-photo-item-small" onclick="openLightbox(this)">
+            <div class="relative">
+              <span class="hust-photo-clip"></span>
+              <span class="hust-photo-tape"></span>
+              <div class="hust-photo-skeleton hust-photo-image"></div>
+              <img data-src="http://husteread.com/wp-content/uploads/2025/11/QQ%E5%9B%BE%E7%89%8720220309232543.jpg" 
+                   alt="活动精彩作品展示" 
+                   class="hust-photo-image lazy-load absolute top-0 left-0">
+              <button type="button" class="hust-like-btn" onclick="event.stopPropagation(); toggleLike(this)">
+                <i class="fa fa-heart-o"></i>
+              </button>
+            </div>
+            <figcaption class="p-3 pb-4 text-xs md:text-sm text-gray-600 dark:text-gray-300">
+              来看一看大家的精彩作品吧~
+            </figcaption>
+          </figure>
+          <figure class="hust-photo-frame hust-photo-item hust-photo-item-small" onclick="openLightbox(this)">
+            <div class="relative">
+              <span class="hust-photo-clip"></span>
+              <span class="hust-photo-tape"></span>
+              <div class="hust-photo-skeleton hust-photo-image"></div>
+              <img data-src="http://husteread.com/wp-content/uploads/2025/11/QQ%E5%9B%BE%E7%89%8720220309232540.jpg" 
+                   alt="活动精彩作品展示" 
+                   class="hust-photo-image lazy-load absolute top-0 left-0">
+              <button type="button" class="hust-like-btn" onclick="event.stopPropagation(); toggleLike(this)">
+                <i class="fa fa-heart-o"></i>
+              </button>
+            </div>
+            <figcaption class="p-3 pb-4 text-xs md:text-sm text-gray-600 dark:text-gray-300">
+              来看一看大家的精彩作品吧~
+            </figcaption>
+          </figure>
+          <figure class="hust-photo-frame hust-photo-item hust-photo-item-small" onclick="openLightbox(this)">
+            <div class="relative">
+              <span class="hust-photo-clip"></span>
+              <span class="hust-photo-tape"></span>
+              <div class="hust-photo-skeleton hust-photo-image"></div>
+              <img data-src="http://husteread.com/wp-content/uploads/2025/11/QQ%E5%9B%BE%E7%89%8720220309232535.jpg" 
+                   alt="活动精彩作品展示" 
+                   class="hust-photo-image lazy-load absolute top-0 left-0">
+              <button type="button" class="hust-like-btn" onclick="event.stopPropagation(); toggleLike(this)">
+                <i class="fa fa-heart-o"></i>
+              </button>
+            </div>
+            <figcaption class="p-3 pb-4 text-xs md:text-sm text-gray-600 dark:text-gray-300">
+              来看一看大家的精彩作品吧~
+            </figcaption>
+          </figure>
+        </div>
+      </section>
+      <!-- 活动四：Sunlight读书会 -->
+      <section id="album-sunlight" class="hust-album-section mb-12 scroll-mt-28">
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-full bg-hust/15 flex items-center justify-center text-hust">
+              <i class="fa fa-sun-o text-lg"></i>
+            </div>
+            <div>
+              <h2 class="text-2xl md:text-3xl font-bold dark:text-gray-100">Sunlight 读书会 · 午后小聚</h2>
+              <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                阳光刚好,书页刚好翻到喜欢的那一章,人也刚好坐在一起。
+              </p>
+            </div>
+          </div>
+          
+          <div class="flex items-center space-x-2">
+            <button type="button" 
+                    class="hust-pill-button text-xs md:text-sm border border-hust/50 text-hust bg-white/80 dark:bg-gray-800/80 dark:text-gray-100 flex items-center hust-album-toggle" 
+                    data-album-toggle="album-sunlight-grid">
+              <i class="fa fa-picture-o mr-1.5"></i> 展开/收起
+            </button>
+            <a href="https://husteread.com/index.php/event/sunlight-club" target="_blank" 
+               class="hust-pill-button text-xs md:text-sm bg-hust text-white flex items-center">
+              <i class="fa fa-external-link mr-1.5"></i> 活动详情
+            </a>
+          </div>
+        </div>
+        <div id="album-sunlight-grid" class="grid gap-5 md:gap-6 md:grid-cols-3 lg:grid-cols-4 mt-4 hidden">
+          <figure class="hust-photo-frame hust-photo-item" onclick="openLightbox(this)">
+            <div class="relative">
+              <span class="hust-photo-clip"></span>
+              <span class="hust-photo-tape"></span>
+              <div class="hust-photo-skeleton hust-photo-image"></div>
+              <img data-src="http://husteread.com/wp-content/uploads/2025/11/%E8%AF%BB%E4%B9%A6%E4%BC%9A2-scaled.jpg" 
+                   alt="阳光下围坐阅读的同学们" 
+                   class="hust-photo-image lazy-load absolute top-0 left-0">
+              <button type="button" class="hust-like-btn" onclick="event.stopPropagation(); toggleLike(this)">
+                <i class="fa fa-heart-o"></i>
+              </button>
+            </div>
+            <figcaption class="p-3 pb-4 text-xs md:text-sm text-gray-600 dark:text-gray-300">
+              有人靠着窗,有人趴在桌上画重点,偶尔有人抬头,阳光就刚好照在眼睛里。
+            </figcaption>
+          </figure>
+          <figure class="hust-photo-frame hust-photo-item hust-photo-item-small" onclick="openLightbox(this)">
+            <div class="relative">
+              <span class="hust-photo-clip"></span>
+              <span class="hust-photo-tape"></span>
+              <div class="hust-photo-skeleton hust-photo-image"></div>
+              <img data-src="http://husteread.com/wp-content/uploads/2025/11/%E8%AF%BB%E4%B9%A6%E4%BC%9A3-scaled.jpg" 
+                   alt="桌上摊开的书与咖啡杯" 
+                   class="hust-photo-image lazy-load absolute top-0 left-0">
+              <button type="button" class="hust-like-btn" onclick="event.stopPropagation(); toggleLike(this)">
+                <i class="fa fa-heart-o"></i>
+              </button>
+            </div>
+            <figcaption class="p-3 pb-4 text-xs md:text-sm text-gray-600 dark:text-gray-300">
+              有人认真分享读书笔记,有人负责准备零食,然后全程鼓掌。
+            </figcaption>
+          </figure>
+          <figure class="hust-photo-frame hust-photo-item hust-photo-item-small" onclick="openLightbox(this)">
+            <div class="relative">
+              <span class="hust-photo-clip"></span>
+              <span class="hust-photo-tape"></span>
+              <div class="hust-photo-skeleton hust-photo-image"></div>
+              <img data-src="http://husteread.com/wp-content/uploads/2025/11/%E8%AF%BB%E4%B9%A6%E4%BC%9A4-scaled.jpg" 
+                   alt="秋季午后的读书会" 
+                   class="hust-photo-image lazy-load absolute top-0 left-0">
+              <button type="button" class="hust-like-btn" onclick="event.stopPropagation(); toggleLike(this)">
+                <i class="fa fa-heart-o"></i>
+              </button>
+            </div>
+            <figcaption class="p-3 pb-4 text-xs md:text-sm text-gray-600 dark:text-gray-300">
+              在这个秋季的午后,我们齐聚于此,共同谈论书目。
+            </figcaption>
+          </figure>
+        </div>
+      </section>
+      <!-- 活动五：线下同观影 -->
+      <section id="album-movie-night" class="hust-album-section mb-12 scroll-mt-28">
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-full bg-hust/15 flex items-center justify-center text-hust">
+              <i class="fa fa-film text-lg"></i>
+            </div>
+            <div>
+              <h2 class="text-2xl md:text-3xl font-bold dark:text-gray-100">线下同观影 · 书与电影的晚上</h2>
+              <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                总有人说"看完电影再走吧",于是那天晚上好像比平常多了一点点不舍。
+              </p>
+            </div>
+          </div>
+          
+          <div class="flex items-center space-x-2">
+            <button type="button" 
+                    class="hust-pill-button text-xs md:text-sm border border-hust/50 text-hust bg-white/80 dark:bg-gray-800/80 dark:text-gray-100 flex items-center hust-album-toggle" 
+                    data-album-toggle="album-movie-night-grid">
+              <i class="fa fa-picture-o mr-1.5"></i> 展开/收起
+            </button>
+            <a href="https://husteread.com/index.php/event/movie-night" target="_blank" 
+               class="hust-pill-button text-xs md:text-sm bg-hust text-white flex items-center">
+              <i class="fa fa-external-link mr-1.5"></i> 活动详情
+            </a>
+          </div>
+        </div>
+        <div id="album-movie-night-grid" class="grid gap-5 md:gap-6 md:grid-cols-3 lg:grid-cols-4 mt-4 hidden">
+          <figure class="hust-photo-frame hust-photo-item" onclick="openLightbox(this)">
+            <div class="relative">
+              <span class="hust-photo-clip"></span>
+              <span class="hust-photo-tape"></span>
+              <div class="hust-photo-skeleton hust-photo-image"></div>
+              <img data-src="http://husteread.com/wp-content/uploads/2025/11/%E8%AF%BB%E4%B9%A6%E4%BC%9A1-scaled.jpg" 
+                   alt="观影活动现场,屏幕发出昏黄的光" 
+                   class="hust-photo-image lazy-load absolute top-0 left-0">
+              <button type="button" class="hust-like-btn" onclick="event.stopPropagation(); toggleLike(this)">
+                <i class="fa fa-heart-o"></i>
+              </button>
+            </div>
+            <figcaption class="p-3 pb-4 text-xs md:text-sm text-gray-600 dark:text-gray-300">
+              有人笑出声,有人偷偷抹眼泪,散场时大家都多留了一会儿,好像舍不得从电影里抽离出来。
+            </figcaption>
+          </figure>
+          <figure class="hust-photo-frame hust-photo-item hust-photo-item-small" onclick="openLightbox(this)">
+            <div class="relative">
+              <span class="hust-photo-clip"></span>
+              <span class="hust-photo-tape"></span>
+              <div class="hust-photo-skeleton hust-photo-image"></div>
+              <img data-src="http://husteread.com/wp-content/uploads/2025/11/%E8%AF%BB%E4%B9%A6%E4%BC%9A5-scaled.jpg" 
+                   alt="观影结束后大家围坐讨论的画面" 
+                   class="hust-photo-image lazy-load absolute top-0 left-0">
+              <button type="button" class="hust-like-btn" onclick="event.stopPropagation(); toggleLike(this)">
+                <i class="fa fa-heart-o"></i>
+              </button>
+            </div>
+            <figcaption class="p-3 pb-4 text-xs md:text-sm text-gray-600 dark:text-gray-300">
+              电影散场之后,真正的交流才刚刚开始——有人从镜头聊到书,有人从角色聊到自己。
+            </figcaption>
+          </figure>
+          <figure class="hust-photo-frame hust-photo-item hust-photo-item-small" onclick="openLightbox(this)">
+            <div class="relative">
+              <span class="hust-photo-clip"></span>
+              <span class="hust-photo-tape"></span>
+              <div class="hust-photo-skeleton hust-photo-image"></div>
+              <img data-src="http://husteread.com/wp-content/uploads/2025/11/%E8%AF%BB%E4%B9%A6%E4%BC%9A6-scaled.jpg" 
+                   alt="观影后的讨论时刻" 
+                   class="hust-photo-image lazy-load absolute top-0 left-0">
+              <button type="button" class="hust-like-btn" onclick="event.stopPropagation(); toggleLike(this)">
+                <i class="fa fa-heart-o"></i>
+              </button>
+            </div>
+            <figcaption class="p-3 pb-4 text-xs md:text-sm text-gray-600 dark:text-gray-300">
+              电影散场之后,真正的交流才刚刚开始——有人从镜头聊到书,有人从角色聊到自己。
+            </figcaption>
+          </figure>
+        </div>
+      </section>
+      <!-- 猜你想找 -->
+      <div class="hust-menu-card hust-gradient-bg border border-dashed border-hust/40 rounded-3xl px-5 md:px-7 py-6 mb-12">
+        <h3 class="text-2xl font-bold dark:text-gray-100 mb-3">
+          <i class="fa fa-lightbulb-o mr-2 text-hust"></i> 猜你想找
+        </h3>
+        
+        <p class="text-gray-600 dark:text-gray-300 mb-4 text-sm md:text-base">
+          也许你还在找某一场活动的合照,或者某一张很久之前的笑脸。下面这些入口,可能刚好可以带你找到——
+        </p>
+        <div class="flex flex-wrap gap-2.5">
+          <button type="button" class="hust-chip" data-scroll-target="album-time-mail">
+            <i class="fa fa-envelope-open mr-1.5 text-hust"></i> 时光邮寄活动照片
+          </button>
+          <button type="button" class="hust-chip" data-scroll-target="album-child-dream">
+            <i class="fa fa-star-o mr-1.5 text-hust"></i> 六一 · 童心拾梦
+          </button>
+          <button type="button" class="hust-chip" data-scroll-target="album-battle-2021">
+            <i class="fa fa-gamepad mr-1.5 text-hust"></i> 百团大战 · 摊位合照
+          </button>
+          <button type="button" class="hust-chip" data-scroll-target="album-movie-night">
+            <i class="fa fa-film mr-1.5 text-hust"></i> 线下同观影 · 那个晚上
+          </button>
+          <button type="button" class="hust-chip" data-scroll-target="album-sunlight">
+            <i class="fa fa-sun-o mr-1.5 text-hust"></i> Sunlight 读书会 · 午后
+          </button>
+          <a href="https://husteread.com/index.php/album/more" target="_blank" class="hust-chip">
+            <i class="fa fa-folder-open-o mr-1.5 text-hust"></i> 更多往期活动相册
+          </a>
+        </div>
+      </div>
+      <!-- 温馨结语 -->
+      <div class="text-center">
+        <p class="text-gray-500 dark:text-gray-300 text-sm md:text-base leading-relaxed">
+          如果有一天,我们都各自忙碌起来,<br class="hidden md:block" />
+          也希望你偶尔还能来这里翻翻相册,看看当时的我们——<br class="hidden md:block" />
+          那些认真读书、认真生活、也认真笑着的日子,都还在这里等你。
+        </p>
+      </div>
+    </div>
+  </main>
+  <!-- 页脚 -->
+  <footer class="bg-ink text-white py-12 px-4">
+    <div class="max-w-7xl mx-auto">
+      <div class="grid md:grid-cols-3 gap-8 mb-8">
+        <!-- Logo区 -->
+        <div>
+          <h4 class="text-xl font-bold mb-2 text-hust-light">我们的读书会</h4>
+          <p class="text-sm text-gray-400 mb-1">Since 2010</p>
+          <p class="text-xs text-gray-500">这里保存着我们一起读书、一起长大的证据。</p>
+        </div>
+        <!-- 联系方式 -->
+        <div>
+          <h4 class="text-lg font-bold mb-3">联系方式</h4>
+          <p class="text-sm text-gray-400 mb-1">地址：华中科技大学 图书馆</p>
+          <p class="text-sm text-gray-400 mb-1">Email: 2158858577@qq.com</p>
+          <p class="text-xs text-gray-500 mt-1">如果你有想分享的照片或故事,也欢迎投递给我们。</p>
+        </div>
+        <!-- 友情链接 -->
+        <div>
+          <h4 class="text-lg font-bold mb-3">友情链接</h4>
+          <div class="flex justify-start space-x-4 text-gray-400 mb-2">
+            <a href="#" class="hover:text-hust-light transition-colors" aria-label="微信">
+              <i class="fa fa-weixin text-xl"></i>
+            </a>
+            <a href="#" class="hover:text-hust-light transition-colors" aria-label="微博">
+              <i class="fa fa-weibo text-xl"></i>
+            </a>
+            <a href="#" class="hover:text-hust-light transition-colors" aria-label="GitHub">
+              <i class="fa fa-github text-xl"></i>
+            </a>
+          </div>
+          <p class="text-xs text-gray-500">期待和更多热爱阅读的朋友相遇。</p>
+        </div>
+      </div>
+      <div class="border-t border-gray-800 pt-6 text-center text-gray-500 text-xs">
+        <p>© 2025 我们的读书会. 保留所有权利.</p>
+      </div>
+    </div>
+  </footer>
+  <!-- JavaScript -->
+  <script>
+    // 页面加载完成后隐藏加载器
+    window.addEventListener('load', function() {
+      setTimeout(function() {
+        document.querySelector('.page-loader').classList.add('loaded');
+      }, 500);
+    });
+    // 滚动进度条
+    window.addEventListener('scroll', function() {
+      const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const scrolled = (winScroll / height) * 100;
+      document.querySelector('.scroll-progress').style.width = scrolled + '%';
+      // 回到顶部按钮显示/隐藏
+      const backtopBtn = document.getElementById('hust-backtop');
+      if (winScroll > 300) {
+        backtopBtn.classList.add('show');
+      } else {
+        backtopBtn.classList.remove('show');
+      }
+      // 导航栏滚动效果
+      const navbar = document.getElementById('hust-navbar');
+      if (winScroll > 50) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
+    });
+    // 回到顶部功能
+    document.getElementById('hust-backtop').addEventListener('click', function() {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    });
+    // 夜间模式切换
+    const themeToggle = document.querySelectorAll('#hust-theme-toggle, #hust-theme-toggle-mobile');
+    themeToggle.forEach(toggle => {
+      toggle.addEventListener('click', function() {
+        document.documentElement.classList.toggle('dark');
+        updateThemeIcons();
+      });
+    });
+    function updateThemeIcons() {
+      const isDark = document.documentElement.classList.contains('dark');
+      const moonIcons = document.querySelectorAll('.hust-theme-icon-moon');
+      const sunIcons = document.querySelectorAll('.hust-theme-icon-sun');
+      
+      moonIcons.forEach(icon => {
+        icon.classList.toggle('hidden', isDark);
+      });
+      sunIcons.forEach(icon => {
+        icon.classList.toggle('hidden', !isDark);
+      });
+    }
+    // 初始化主题图标
+    updateThemeIcons();
+    // 背景音乐控制
+    const bgm = document.getElementById('hust-bgm');
+    const musicToggle = document.querySelectorAll('#hust-music-toggle, #hust-music-toggle-mobile');
+    
+    musicToggle.forEach(toggle => {
+      toggle.addEventListener('click', function() {
+        if (bgm.paused) {
+          bgm.play();
+        } else {
+          bgm.pause();
+        }
+        updateMusicIcons();
+      });
+    });
+    function updateMusicIcons() {
+      const isPlaying = !bgm.paused;
+      const playIcons = document.querySelectorAll('.hust-music-icon-play');
+      const pauseIcons = document.querySelectorAll('.hust-music-icon-pause');
+      
+      playIcons.forEach(icon => {
+        icon.classList.toggle('hidden', isPlaying);
+      });
+      pauseIcons.forEach(icon => {
+        icon.classList.toggle('hidden', !isPlaying);
+      });
+    }
+    // 移动端菜单切换
+    document.getElementById('hust-menu-toggle').addEventListener('click', function() {
+      const mobileMenu = document.getElementById('hust-mobile-menu');
+      mobileMenu.classList.toggle('hidden');
+    });
+    // 相册展开/收起功能
+    document.querySelectorAll('.hust-album-toggle').forEach(toggle => {
+      toggle.addEventListener('click', function() {
+        const targetId = this.getAttribute('data-album-toggle');
+        const targetGrid = document.getElementById(targetId);
+        const isHidden = targetGrid.classList.contains('hidden');
+        
+        if (isHidden) {
+          targetGrid.classList.remove('hidden');
+          targetGrid.classList.add('album-grid-animated');
+        } else {
+          targetGrid.classList.add('hidden');
+          targetGrid.classList.remove('album-grid-animated');
+        }
+      });
+    });
+    // 灯箱功能
+    function openLightbox(element) {
+      const lightbox = document.getElementById('lightbox');
+      const lightboxImg = document.getElementById('lightbox-img');
+      const lightboxCaption = document.getElementById('lightbox-caption');
+      const img = element.querySelector('img');
+      const caption = element.querySelector('figcaption').textContent;
+      
+      lightboxImg.src = img.getAttribute('data-src');
+      lightboxCaption.textContent = caption;
+      lightbox.classList.add('active');
+      
+      // 阻止页面滚动
+      document.body.style.overflow = 'hidden';
+    }
+    function closeLightbox() {
+      const lightbox = document.getElementById('lightbox');
+      lightbox.classList.remove('active');
+      
+      // 恢复页面滚动
+      document.body.style.overflow = '';
+    }
+    // 点击灯箱外部关闭
+    document.getElementById('lightbox').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeLightbox();
+      }
+    });
+    // 键盘支持
+    document.addEventListener('keydown', function(e) {
+      // ESC键关闭灯箱
+      if (e.key === 'Escape') {
+        closeLightbox();
+      }
+      
+      // 空格键播放/暂停音乐
+      if (e.key === ' ') {
+        e.preventDefault();
+        if (bgm.paused) {
+          bgm.play();
+        } else {
+          bgm.pause();
+        }
+        updateMusicIcons();
+      }
+    });
+    // 点赞功能
+    function toggleLike(button) {
+      button.classList.toggle('liked');
+      const icon = button.querySelector('i');
+      
+      if (button.classList.contains('liked')) {
+        icon.classList.remove('fa-heart-o');
+        icon.classList.add('fa-heart');
+        showToast();
+        
+        // 保存点赞状态到localStorage
+        const imgSrc = button.closest('figure').querySelector('img').getAttribute('data-src');
+        saveLikeStatus(imgSrc, true);
+      } else {
+        icon.classList.remove('fa-heart');
+        icon.classList.add('fa-heart-o');
+        
+        // 保存点赞状态到localStorage
+        const imgSrc = button.closest('figure').querySelector('img').getAttribute('data-src');
+        saveLikeStatus(imgSrc, false);
+      }
+    }
+    // 保存点赞状态
+    function saveLikeStatus(imgSrc, isLiked) {
+      let likedPhotos = JSON.parse(localStorage.getItem('hust-album-likes') || '{}');
+      likedPhotos[imgSrc] = isLiked;
+      localStorage.setItem('hust-album-likes', JSON.stringify(likedPhotos));
+    }
+    // 加载点赞状态
+    function loadLikeStatus() {
+      const likedPhotos = JSON.parse(localStorage.getItem('hust-album-likes') || '{}');
+      
+      document.querySelectorAll('.hust-like-btn').forEach(button => {
+        const imgSrc = button.closest('figure').querySelector('img').getAttribute('data-src');
+        if (likedPhotos[imgSrc]) {
+          button.classList.add('liked');
+          button.querySelector('i').classList.remove('fa-heart-o');
+          button.querySelector('i').classList.add('fa-heart');
+        }
+      });
+    }
+    // 初始化点赞状态
+    loadLikeStatus();
+    // Toast提示
+    function showToast() {
+      const toast = document.getElementById('hust-toast');
+      toast.classList.add('show');
+      
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 2000);
+    }
+    // 智能跳转功能
+    document.querySelectorAll('.hust-chip[data-scroll-target]').forEach(chip => {
+      chip.addEventListener('click', function() {
+        const targetId = this.getAttribute('data-scroll-target');
+        const targetSection = document.getElementById(targetId);
+        
+        if (targetSection) {
+          // 平滑滚动到目标区域
+          targetSection.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+          
+          // 高亮目标区域
+          targetSection.classList.add('hust-section-highlight');
+          
+          // 3秒后移除高亮
+          setTimeout(() => {
+            targetSection.classList.remove('hust-section-highlight');
+          }, 3000);
+        }
+      });
+    });
+    // 懒加载图片
+    function lazyLoadImages() {
+      const lazyImages = document.querySelectorAll('.lazy-load');
+      
+      lazyImages.forEach(img => {
+        if (img.getBoundingClientRect().top < window.innerHeight + 200) {
+          img.src = img.getAttribute('data-src');
+          img.classList.add('loaded');
+        }
+      });
+    }
+    // 初始化懒加载
+    lazyLoadImages();
+    
+    // 滚动时懒加载
+    window.addEventListener('scroll', lazyLoadImages);
+    // 随机记忆功能
+    document.getElementById('hust-random-memory').addEventListener('click', function() {
+      const allPhotos = document.querySelectorAll('.hust-photo-frame');
+      if (allPhotos.length > 0) {
+        const randomIndex = Math.floor(Math.random() * allPhotos.length);
+        const randomPhoto = allPhotos[randomIndex];
+        
+        // 高亮随机照片
+        randomPhoto.classList.add('hust-photo-highlight');
+        
+        // 3秒后移除高亮
+        setTimeout(() => {
+          randomPhoto.classList.remove('hust-photo-highlight');
+        }, 3000);
+        
+        // 滚动到随机照片
+        randomPhoto.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center'
+        });
+      }
+    });
+    // 一次展开所有相册
+    document.getElementById('hust-open-all').addEventListener('click', function() {
+      document.querySelectorAll('.hust-album-toggle').forEach(toggle => {
+        const targetId = toggle.getAttribute('data-album-toggle');
+        const targetGrid = document.getElementById(targetId);
+        if (targetGrid.classList.contains('hidden')) {
+          targetGrid.classList.remove('hidden');
+          targetGrid.classList.add('album-grid-animated');
+        }
+      });
+    });
+    // 一次关闭所有相册
+    document.getElementById('hust-close-all').addEventListener('click', function() {
+      document.querySelectorAll('.hust-album-toggle').forEach(toggle => {
+        const targetId = toggle.getAttribute('data-album-toggle');
+        const targetGrid = document.getElementById(targetId);
+        if (!targetGrid.classList.contains('hidden')) {
+          targetGrid.classList.add('hidden');
+          targetGrid.classList.remove('album-grid-animated');
+        }
+      });
+    });
+  </script>
+
+<!-- blog-yusheng:html-embed-handshake v1 -->
+<script>
+  (() => {
+    const nonce = new URLSearchParams(location.hash.slice(1)).get('nonce')
+    if (!nonce || window.parent === window) return
+    window.parent.postMessage({ nonce, message: { type: 'ready' } }, '*')
+    const reportHeight = () => {
+      window.parent.postMessage(
+        { type: 'resize', height: document.documentElement.scrollHeight },
+        '*',
+      )
+    }
+    requestAnimationFrame(reportHeight)
+    new ResizeObserver(reportHeight).observe(document.documentElement)
+  })()
+</script>
+
+</body>
+</html>
