@@ -1,158 +1,439 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>非科班转码四阶进阶探索树</title>
-<style>
-:root{--paper:#f6f1e7;--ink:#302c26;--muted:#70665a;--line:#d8cebd;--accent:#9a6034;--wash:#ebe0cd;--good:#2a7a72;--warn:#a83c1f;--ease-damp:cubic-bezier(.22,.82,.28,1);color-scheme:light dark}
-*{box-sizing:border-box}
-body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.7 "Noto Serif CJK","Source Han Serif SC","Songti SC",SimSun,serif}
-main{padding:clamp(16px,4vw,32px);max-width:920px;margin:auto}
-h1{font-weight:500;font-size:clamp(20px,4vw,28px);margin:6px 0 10px;line-height:1.3}
-.eyebrow{font:11px/1.5 Consolas,monospace;letter-spacing:.18em;text-transform:uppercase;color:var(--accent)}
-.intro{color:var(--muted);font-size:13px;margin-bottom:16px}
-.ladder{display:flex;flex-direction:column;gap:12px;margin:16px 0}
-.ladder-item{background:var(--wash);border:1px solid var(--line);border-radius:6px;padding:14px 18px;cursor:pointer;transition:all .25s var(--ease-damp)}
-.ladder-item:hover{border-color:var(--accent);background:var(--paper)}
-.ladder-item.active{border-color:var(--accent);border-left-width:4px;background:var(--paper);box-shadow:0 3px 12px rgba(0,0,0,0.05)}
-.ladder-header{display:flex;justify-content:space-between;align-items:center}
-.ladder-step{font:700 12px Consolas,monospace;text-transform:uppercase;letter-spacing:.12em;color:var(--accent)}
-.ladder-title{font-size:15px;font-weight:600;margin-top:2px}
-.detail-panel{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:18px;margin-top:16px}
-.tags-row{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
-.tag-badge{font:12px Consolas,monospace;background:var(--wash);border:1px solid var(--line);padding:2px 8px;border-radius:3px}
-.quote-box{border-left:3px solid var(--accent);padding:8px 0 8px 14px;margin-top:12px;font-size:13px;color:var(--muted)}
-.theme{float:right;font-size:12px;padding:2px 10px;min-height:30px}
-.caption{color:var(--muted);font-size:12px;margin-top:14px;border-top:1px solid var(--line);padding-top:8px}
-:root[data-theme=night]{--paper:#171b1c;--ink:#e9e4d8;--muted:#b6b1a6;--line:#444846;--accent:#deb47d;--wash:#232b2d;--good:#4eb5a8;--warn:#e07060;color-scheme:dark}
-@media(prefers-color-scheme:dark){:root:not([data-theme=paper]){--paper:#171b1c;--ink:#e9e4d8;--muted:#b6b1a6;--line:#444846;--accent:#deb47d;--wash:#232b2d;--good:#4eb5a8;--warn:#e07060}}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>非科班转码四阶进阶探索树</title>
+  <style>
+    :root {
+      --bg: #fcfbf9;
+      --card-bg: #ffffff;
+      --card-subtle: #f8f6f2;
+      --border: #e8e3da;
+      --border-focus: #c2b6a3;
+      --ink: #1c1917;
+      --ink-muted: #665e55;
+      --ink-faint: #999084;
+      --accent: #a9762f;
+      --accent-light: #fdf6ec;
+      --green: #15803d;
+      --green-light: #f0fdf4;
+      --blue: #1d4ed8;
+      --blue-light: #eff6ff;
+      --shadow-sm: 0 1px 2px rgba(40, 30, 20, 0.04);
+      --shadow-md: 0 4px 16px -2px rgba(40, 30, 20, 0.06);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      padding: 20px;
+      line-height: 1.5;
+      font-size: 14px;
+    }
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .header-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--ink);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .status-badge {
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: var(--accent-light);
+      color: var(--accent);
+      border: 1px solid rgba(169, 118, 47, 0.25);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Stepper Header */
+    .stepper {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+    @media (max-width: 640px) {
+      .stepper { grid-template-columns: 1fr 1fr; }
+    }
+    .step-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+    }
+    .step-card:hover {
+      border-color: var(--border-focus);
+    }
+    .step-card.active {
+      border-color: var(--accent);
+      background: var(--accent-light);
+      box-shadow: var(--shadow-sm);
+    }
+    .step-num {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--ink-faint);
+      margin-bottom: 2px;
+    }
+    .step-card.active .step-num {
+      color: var(--accent);
+    }
+    .step-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    /* Main Detail Card */
+    .detail-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .stage-intro {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .stage-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--ink);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .stage-tag {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      background: var(--blue-light);
+      color: var(--blue);
+      font-weight: 600;
+    }
+    .stage-desc {
+      font-size: 13px;
+      color: var(--ink-muted);
+      line-height: 1.5;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    @media (max-width: 640px) {
+      .grid-2 { grid-template-columns: 1fr; }
+    }
+
+    .sub-box {
+      background: var(--card-subtle);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .sub-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--ink);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Interactive Checklist */
+    .checklist {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .check-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--ink);
+      cursor: pointer;
+      user-select: none;
+      line-height: 1.4;
+    }
+    .check-item input[type="checkbox"] {
+      margin-top: 2px;
+      accent-color: var(--accent);
+      cursor: pointer;
+    }
+
+    .note-box {
+      background: #faf7f2;
+      border: 1px dashed var(--accent);
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 12px;
+      color: var(--ink-muted);
+      line-height: 1.5;
+    }
+    .note-box strong { color: var(--accent); }
+
+    .icon {
+      width: 15px;
+      height: 15px;
+      stroke-width: 2;
+      stroke: currentColor;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      flex-shrink: 0;
+    }
+  </style>
 </head>
 <body>
-<main>
-  <button class="theme" data-theme-toggle aria-label="切换明暗主题">明 / 暗</button>
-  <div class="eyebrow">FOUR-STAGE LEARNING ROADMAP</div>
-  <h1>非科班转码四阶进阶探索树</h1>
-  <p class="intro">点击不同阶梯，查看从“零基础尝鲜”到“扎根垂直领域、定义结果”的阶段核心认知与避坑建议。</p>
-
-  <div class="ladder">
-    <div class="ladder-item active" data-step="1">
-      <div class="ladder-header">
-        <div>
-          <span class="ladder-step">STEP 01 · 零基础起步</span>
-          <div class="ladder-title">自上而下先拿正反馈</div>
-        </div>
-        <span style="font-size:13px;color:var(--accent)">核心：先跑通，不死磕语法 →</span>
+  <div class="container">
+    <div class="header">
+      <div class="header-title">
+        <svg class="icon" style="color:var(--accent)" viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+        非科班转码四阶进阶探索树
+      </div>
+      <div class="status-badge" id="badge-level">
+        <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+        <span id="level-text">自测段位：L3 规范工程级 (跨越及格线)</span>
       </div>
     </div>
 
-    <div class="ladder-item" data-step="2">
-      <div class="ladder-header">
-        <div>
-          <span class="ladder-step">STEP 02 · 进阶深入</span>
-          <div class="ladder-title">以战代练往底层深挖</div>
-        </div>
-        <span style="font-size:13px;color:var(--accent)">核心：补 Git 与命令行基础 →</span>
+    <!-- Stepper Navigation -->
+    <div class="stepper">
+      <div class="step-card" id="step-btn-1" onclick="setStage(1)">
+        <div class="step-num">STAGE 01</div>
+        <div class="step-name">破冰与工具提效</div>
+      </div>
+      <div class="step-card" id="step-btn-2" onclick="setStage(2)">
+        <div class="step-num">STAGE 02</div>
+        <div class="step-name">首个闭环小项目</div>
+      </div>
+      <div class="step-card active" id="step-btn-3" onclick="setStage(3)">
+        <div class="step-num">STAGE 03</div>
+        <div class="step-name">工程规范与约束</div>
+      </div>
+      <div class="step-card" id="step-btn-4" onclick="setStage(4)">
+        <div class="step-num">STAGE 04</div>
+        <div class="step-name">多智能体系统协同</div>
       </div>
     </div>
 
-    <div class="ladder-item" data-step="3">
-      <div class="ladder-header">
+    <!-- Main Detail Card -->
+    <div class="detail-card">
+      <div class="stage-intro">
         <div>
-          <span class="ladder-step">STEP 03 · 长线项目</span>
-          <div class="ladder-title">把软件工程规范逐步立起来</div>
+          <div class="stage-title">
+            <span id="stage-title-text">阶段三：工程规范与约束 (跨越 AI 淘汰及格线)</span>
+            <span class="stage-tag" id="stage-tag-text">核心转折期</span>
+          </div>
+          <div class="stage-desc" id="stage-desc-text" style="margin-top:4px;">
+            不再依赖模型自由发挥，通过制定清晰的 AGENTS.md、前端设计锁（Playbook）、单测质量门禁与目录隔离，让 AI 从“一次性代码生成器”变成可长期维护的“工程协作伙伴”。
+          </div>
         </div>
-        <span style="font-size:13px;color:var(--accent)">核心：模块解耦 + Git 小步快跑 →</span>
       </div>
-    </div>
 
-    <div class="ladder-item" data-step="4">
-      <div class="ladder-header">
-        <div>
-          <span class="ladder-step">STEP 04 · 终极竞争力</span>
-          <div class="ladder-title">深耕垂直领域并练就“定义结果”的能力</div>
+      <div class="grid-2">
+        <!-- Left: Pain points & Traps -->
+        <div class="sub-box">
+          <div class="sub-title" style="color:var(--red);">
+            <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            典型阵痛与误区 (Pain Points)
+          </div>
+          <div style="font-size:12px; color:var(--ink-muted); line-height:1.5;" id="stage-pains">
+            • 代码改一处崩一片，修一个小 Bug 引发全局连锁报错。<br>
+            • 前端样式每次新建对话就变样，配色字体无统一准绳。<br>
+            • 上下文毫无约束，几万行代码全塞入对话导致 Token 暴涨与注意力幻觉。
+          </div>
         </div>
-        <span style="font-size:13px;color:var(--accent)">核心：专业深度 + 验收标准立住 →</span>
+
+        <!-- Right: Interactive Checklist -->
+        <div class="sub-box">
+          <div class="sub-title" style="color:var(--green);">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>
+            实战自测通关指标 (勾选自查)
+          </div>
+          <div class="checklist" id="stage-checklist">
+            <!-- Filled dynamically -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Author's Personal Field Note -->
+      <div class="note-box" id="stage-fieldnote">
+        <strong>羽升手记：</strong>
+        “写代码越到深处，拼的越不是谁记住了更多的语法关键字，而是在一个功能还没动手写之前，你能不能把需求边界、数据入参与出参、模块出入口讲清楚。把这套 Harness 规则建立起来，普通模型也能写出非常漂亮可靠的代码。”
       </div>
     </div>
   </div>
 
-  <div class="detail-panel" id="detail-panel">
-    <h3 id="panel-title" style="margin:0 0 8px;font-size:16px">第一步：自上而下先拿正反馈</h3>
-    <div class="tags-row" id="panel-tags">
-      <span class="tag-badge">组件库概念</span>
-      <span class="tag-badge">容器与端口</span>
-      <span class="tag-badge">WorkBuddy / WebUI</span>
-      <span class="tag-badge">做出可交互简单 Demo</span>
-    </div>
-    <p id="panel-desc" style="font-size:14px;margin:8px 0;line-height:1.7">
-      最开始千万不要抱着厚厚的编程书从变量死磕。找个身边真实需要的小点子（比如做一个读书会回忆相册、或者把散乱题目转网页），让 AI 带着跑通一个能看、能点的页面。先拿到第一波扎实的正反馈，把继续往下学的热情攒起来。
-    </p>
-    <div class="quote-box" id="panel-quote">
-      <strong>自测关键</strong>：“你是否已经亲手做出过一个身边同学能点开、能跑通的真实小工具？”
-    </div>
-  </div>
+  <script>
+    const stages = {
+      1: {
+        title: '阶段一：打破恐惧与工具提效 (破冰探索)',
+        tag: '新手起步期',
+        desc: '将 AI 视为 24 小时在线耐心的答疑导师与助手，克服对专业术语和黑屏命令行的心理畏难情绪。',
+        pains: '• 觉得计算机深不可测，遇到红字报错容易不知所措直接放弃。<br>• 盲目订阅多个昂贵平台，把钱花在并不需要的重度工作台上。<br>• 不知如何提问，经常发出“帮我写个好玩的网页”等过于宽泛的需求。',
+        items: [
+          { text: '能够把报错日志完整复制给 AI 并读懂其核心修改建议', checked: true },
+          { text: '学会使用无广告搜索与学术提取，替代传统模糊搜索引擎', checked: true },
+          { text: '在腾讯 WorkBuddy 或国内平价工具上完成第一批日常文本/代码总结', checked: true }
+        ],
+        note: '高考刚结束那会儿，我连终端命令都不会敲，第一次用 AI 更多是在深夜倾听与帮我整理晦涩文献。先迈出第一步，破除对技术的神秘感最重要。'
+      },
+      2: {
+        title: '阶段二：交付首个闭环小项目 (建立信心期)',
+        tag: '小试牛刀期',
+        desc: '不贪大求全，从最微小、对自己真实生活有用的场景动手（如读书会相册、课程背题小插件），完成从构思到运行上线的第一个闭环。',
+        pains: '• 试图一上来就做“大型全功能商业系统”，需求过大导致无法收敛烂尾。<br>• 不懂静态托管与部署概念，本地跑起来之后不知道怎么分享给朋友。<br>• 模型偶尔给出的过期依赖库导致 npm install 报错死锁。',
+        items: [
+          { text: '独立完成一个有前后端交互或单页展示的完整功能小玩具', checked: true },
+          { text: '理解本地开发、Git 版本控制与静态部署（如 GitHub Pages / EdgeOne）基础流程', checked: true },
+          { text: '把自己的小项目真实部署上线并发送链接给至少一位朋友体验', checked: true }
+        ],
+        note: '在华科读书会时，我做了一个把相片和时间线串在一起的回忆网页。虽然现在看代码极其稚嫩，但当它真的在屏幕上流动起来时，那种“我也能创造东西”的确定感是无法替代的。'
+      },
+      3: {
+        title: '阶段三：工程规范与约束 (跨越及格线)',
+        tag: '核心转折期',
+        desc: '建立 Harness 意识，通过 AGENTS.md、设计规范锁、模块解耦与自动化单测关卡，把 AI 的产出牢牢锁在专业水准之上。',
+        pains: '• 代码改一处崩一片，修一个热量计算 Bug 引发其他页面空白。<br>• 前端页面风格不一致，新建一个对话就换一套配色排版。<br>• 上下文毫无管理，全量代码盲目倾倒导致 Token 费用暴涨与幻觉丛生。',
+        items: [
+          { text: '在项目根目录维护一份精炼的 AGENTS.md（<300行）交代核心架构', checked: true },
+          { text: '为前端单独设立色彩、字体和动效设计锁（Playbook）', checked: true },
+          { text: '定义明确的数据适配器（Adapter），确保各输入端共用统一计算引擎', checked: true },
+          { text: '每次让 AI 提交代码前，必须能通过自动化 Lint 和单测验证', checked: false }
+        ],
+        note: '这一阶段是我过去一年踩坑最多的地方。正因为不会手写底层算法，我被逼着去死磕模块边界与验证标准。及格线 AI 可以免费送给你，但真正顶尖的代码架构，只能靠你自己用规则去守住。'
+      },
+      4: {
+        title: '阶段四：多智能体系统与跨学科赋能 (专业壁垒)',
+        tag: '生产力质变期',
+        desc: '将 AI 编程能力与自己所在的专业领域（医学、生物、科普、艺术）深度融合，构建专属的垂直领域 Agent 工具与复杂 3D 交互。',
+        pains: '• 试图用单一通用模型解决所有职能，遇到复杂长链任务出现注意力掉帧。<br>• 缺少对模型能力边界的深刻认知，把严谨诊断等高风险事务完全托付给纯概率模型。<br>• 技术与真实专业场景脱节，停留在炫技阶段。',
+        items: [
+          { text: '能够将长周期任务拆解为 Planner 与多个 Sub-agent 并行协作', checked: false },
+          { text: '结合自己的本专业（如医学临床、科研）构建具有实证价值的垂直应用', checked: false },
+          { text: '能清晰地定义出“一个东西还没做出来之前的验收标准与验证方案”', checked: true }
+        ],
+        note: '未来的竞争力从来不是“会用某个具体的 AI 工具”，而是结合你本身的专业深度（比如医学临床直觉、生物信息洞察），去定义那些 AI 无法替代的判断准绳。'
+      }
+    };
 
-  <p class="caption">阅读辅助 · 对应正文第八节：给零基础朋友梳理的一年实践阶梯路线，不用一上来就去碰最难的底层细节。</p>
-</main>
+    let currentStage = 3;
 
-<!-- blog-yusheng:html-embed-handshake v1 -->
-<script>
-(() => {
-  const nonce = new URLSearchParams(location.hash.slice(1)).get('nonce')
-  if (!nonce || window.parent === window) return
-  window.parent.postMessage({ nonce, message: { type: 'ready' } }, '*')
-  const reportHeight = () => window.parent.postMessage({ type: 'resize', height: document.documentElement.scrollHeight }, '*')
-  requestAnimationFrame(reportHeight)
-  new ResizeObserver(reportHeight).observe(document.documentElement)
-})()
-</script>
-<script>
-document.querySelector('[data-theme-toggle]').addEventListener('click',()=>{
-  const isDark = getComputedStyle(document.documentElement).getPropertyValue('--paper').trim() === '#171b1c';
-  document.documentElement.dataset.theme = isDark ? 'paper' : 'night';
-});
+    function setStage(stageId) {
+      currentStage = stageId;
+      document.querySelectorAll('.step-card').forEach((c, idx) => {
+        c.className = (idx + 1 === stageId) ? 'step-card active' : 'step-card';
+      });
 
-const steps = {
-  1: {
-    title: '第一步：自上而下先拿正反馈',
-    tags: ['组件库概念', '容器与端口', '国内轻量工具', '做出可交互 Demo'],
-    desc: '最开始千万不要抱着厚厚的编程语法书死磕。先了解软件工程、服务器、端口这些基本常识，然后找个自己感兴趣的小点子（如做个相册、转个网页），让 AI 带着跑通。拿到第一波实实在在的正反馈，把兴趣保住。',
-    quote: '<strong>自测关键</strong>：“你是否已经亲手做出过一个身边同学能点开、能用上的真实小工具？”'
-  },
-  2: {
-    title: '第二步：以战代练往底层深挖',
-    tags: ['Git 版本回退', 'Linux 基础指令', 'PowerShell 差异', 'Docker 容器', '查报错追原理'],
-    desc: '等做出简单作品后，花两三个月把工程底座补齐。拿具体项目去驱动 AI，遇到看不懂的报错日志和系统名词，顺着好奇心往底层追问。学到的概念一定要挂靠到具体业务场景中，比死背枯燥名词牢靠得多。',
-    quote: '<strong>自测关键</strong>：“当终端出现网络冲突或编译报错时，你是否能看懂 Agent 报错日志的大致意图？”'
-  },
-  3: {
-    title: '第三步：把软件工程规范逐步立起来',
-    tags: ['300行 AGENTS.md', '模块解耦与复用', '细颗粒度需求边界', 'Git 分支小步快跑', '自动化测试退出码 0'],
-    desc: '进入更长周期的复杂项目时，软件工程就成了护城河。目录划分、模块出入口约定、细颗粒度边界兜底、以及“分支修改 → 自动化验证 → AI 端测 → 人工闭环”。不用换更贵的模型，工程规范就能让项目长久维护下去。',
-    quote: '<strong>自测关键</strong>：“你的项目是否拥有清晰的目录规范与 AGENTS.md，隔了三个月还能稳妥改动？”'
-  },
-  4: {
-    title: '第四步：深耕垂直领域并练就“定义结果”的能力',
-    tags: ['垂直专业深度 (如基础医学)', '多 Agent 并行研读', '出入口验收标准', '定义想要的结果'],
-    desc: 'AI 迅速抬高了行业及格线，往上的顶尖深度拼的依然是人本身。深耕自己的垂直学科，把专业理解注入提示词，往往能用普通模型引导出比外行用昂贵模型更惊艳的代码。在动手前把想要的结果和验证标准定义清楚，这就是无法替代的核心壁垒。',
-    quote: '<strong>终极壁垒</strong>：“在一个东西还没做出来之前，你能否把想要的结果清晰定义出来，并立住能够验证它的标准？”'
-  }
-};
+      const s = stages[stageId];
+      document.getElementById('stage-title-text').innerText = s.title;
+      document.getElementById('stage-tag-text').innerText = s.tag;
+      document.getElementById('stage-desc-text').innerText = s.desc;
+      document.getElementById('stage-pains').innerHTML = s.pains;
+      document.getElementById('stage-fieldnote').innerHTML = `<strong>羽升手记：</strong>“${s.note}”`;
 
-document.querySelectorAll('[data-step]').forEach(item => {
-  item.addEventListener('click', () => {
-    document.querySelectorAll('[data-step]').forEach(i => i.classList.remove('active'));
-    item.classList.add('active');
-    const s = steps[item.dataset.step];
-    document.getElementById('panel-title').textContent = s.title;
-    document.getElementById('panel-desc').textContent = s.desc;
-    document.getElementById('panel-quote').innerHTML = s.quote;
-    const tagsBox = document.getElementById('panel-tags');
-    tagsBox.innerHTML = s.tags.map(t => `<span class="tag-badge">${t}</span>`).join('');
-  });
-});
-</script>
+      const listContainer = document.getElementById('stage-checklist');
+      listContainer.innerHTML = s.items.map((item, i) => `
+        <label class="check-item">
+          <input type="checkbox" ${item.checked ? 'checked' : ''} onchange="toggleItem(${stageId}, ${i}, this.checked)">
+          <span>${item.text}</span>
+        </label>
+      `).join('');
+
+      updateDiagnosis();
+    }
+
+    function toggleItem(stageId, itemIdx, val) {
+      stages[stageId].items[itemIdx].checked = val;
+      updateDiagnosis();
+    }
+
+    function updateDiagnosis() {
+      let totalChecked = 0;
+      let totalItems = 0;
+      for (let k in stages) {
+        stages[k].items.forEach(it => {
+          totalItems++;
+          if (it.checked) totalChecked++;
+        });
+      }
+
+      const badge = document.getElementById('badge-level');
+      const text = document.getElementById('level-text');
+
+      if (totalChecked >= 10) {
+        text.innerText = '自测段位：L4 智能体协作与跨学科赋能';
+        badge.style.color = '#15803d';
+        badge.style.background = '#f0fdf4';
+      } else if (totalChecked >= 7) {
+        text.innerText = '自测段位：L3 规范工程级 (跨越及格线)';
+        badge.style.color = 'var(--accent)';
+        badge.style.background = 'var(--accent-light)';
+      } else if (totalChecked >= 4) {
+        text.innerText = '自测段位：L2 闭环项目交付级';
+        badge.style.color = '#1d4ed8';
+        badge.style.background = '#eff6ff';
+      } else {
+        text.innerText = '自测段位：L1 破冰探索起步期';
+        badge.style.color = '#665e55';
+        badge.style.background = '#f8f6f2';
+      }
+    }
+
+    setStage(3);
+
+    (() => {
+      const nonce = new URLSearchParams(location.hash.slice(1)).get('nonce')
+      if (!nonce || window.parent === window) return
+      window.parent.postMessage({ nonce, message: { type: 'ready' } }, '*')
+      const reportHeight = () => {
+        window.parent.postMessage(
+          { type: 'resize', height: document.documentElement.scrollHeight },
+          '*',
+        )
+      }
+      requestAnimationFrame(reportHeight)
+      new ResizeObserver(reportHeight).observe(document.documentElement)
+    })()
+  </script>
 </body>
 </html>

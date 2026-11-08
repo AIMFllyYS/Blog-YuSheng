@@ -1,166 +1,501 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>打卡软件三入口解耦与排错画布</title>
-<style>
-:root{--paper:#f6f1e7;--ink:#302c26;--muted:#70665a;--line:#d8cebd;--accent:#9a6034;--wash:#ebe0cd;--good:#2a7a72;--warn:#a83c1f;--ease-damp:cubic-bezier(.22,.82,.28,1);color-scheme:light dark}
-*{box-sizing:border-box}
-body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.7 "Noto Serif CJK","Source Han Serif SC","Songti SC",SimSun,serif}
-main{padding:clamp(16px,4vw,32px);max-width:920px;margin:auto}
-h1{font-weight:500;font-size:clamp(20px,4vw,28px);margin:6px 0 10px;line-height:1.3}
-.eyebrow{font:11px/1.5 Consolas,monospace;letter-spacing:.18em;text-transform:uppercase;color:var(--accent)}
-.intro{color:var(--muted);font-size:13px;margin-bottom:16px}
-.controls{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}
-button{cursor:pointer;border:1px solid var(--line);background:transparent;color:var(--ink);padding:7px 14px;min-height:38px;font:inherit;font-size:13px;border-radius:4px;transition:all .25s var(--ease-damp)}
-button:hover,button[aria-pressed=true]{background:var(--ink);color:var(--paper)}
-.canvas-box{background:var(--wash);border:1px solid var(--line);border-radius:6px;padding:20px;margin-top:14px}
-.inputs-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
-.input-node{background:var(--paper);border:2px dashed var(--line);border-radius:6px;padding:12px;text-align:center;cursor:pointer;transition:all .25s}
-.input-node.active{border-color:var(--accent);border-style:solid;background:var(--paper);box-shadow:0 2px 8px rgba(0,0,0,0.06)}
-.flow-diagram{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:16px;position:relative}
-.pipeline-step{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;margin:8px 0;background:var(--wash);border-radius:4px;font-size:13px}
-.status-pill{font:700 11px Consolas,monospace;padding:2px 8px;border-radius:3px}
-.status-good{background:rgba(42,122,114,0.15);color:var(--good)}
-.status-warn{background:rgba(168,60,31,0.15);color:var(--warn)}
-.readout{border-left:3px solid var(--accent);padding:10px 0 10px 14px;margin-top:16px;min-height:70px;font-size:13px}
-.theme{float:right;font-size:12px;padding:2px 10px;min-height:30px}
-.caption{color:var(--muted);font-size:12px;margin-top:14px;border-top:1px solid var(--line);padding-top:8px}
-:root[data-theme=night]{--paper:#171b1c;--ink:#e9e4d8;--muted:#b6b1a6;--line:#444846;--accent:#deb47d;--wash:#232b2d;--good:#4eb5a8;--warn:#e07060;color-scheme:dark}
-@media(prefers-color-scheme:dark){:root:not([data-theme=paper]){--paper:#171b1c;--ink:#e9e4d8;--muted:#b6b1a6;--line:#444846;--accent:#deb47d;--wash:#232b2d;--good:#4eb5a8;--warn:#e07060}}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>打卡软件三入口解耦与排错画布</title>
+  <style>
+    :root {
+      --bg: #fcfbf9;
+      --card-bg: #ffffff;
+      --card-subtle: #f8f6f2;
+      --border: #e8e3da;
+      --border-focus: #c2b6a3;
+      --ink: #1c1917;
+      --ink-muted: #665e55;
+      --ink-faint: #999084;
+      --accent: #a9762f;
+      --accent-light: #fdf6ec;
+      --green: #15803d;
+      --green-light: #f0fdf4;
+      --red: #b91c1c;
+      --red-light: #fef2f2;
+      --blue: #1d4ed8;
+      --blue-light: #eff6ff;
+      --shadow-sm: 0 1px 2px rgba(40, 30, 20, 0.04);
+      --shadow-md: 0 4px 16px -2px rgba(40, 30, 20, 0.06);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      padding: 20px;
+      line-height: 1.5;
+      font-size: 14px;
+    }
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .header-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--ink);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .mode-toggle {
+      display: flex;
+      background: var(--card-subtle);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 3px;
+    }
+    .mode-btn {
+      padding: 5px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      border-radius: 999px;
+      border: none;
+      background: transparent;
+      color: var(--ink-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .mode-btn.active-good {
+      background: var(--card-bg);
+      color: var(--green);
+      box-shadow: var(--shadow-sm);
+    }
+    .mode-btn.active-bad {
+      background: var(--card-bg);
+      color: var(--red);
+      box-shadow: var(--shadow-sm);
+    }
+    .canvas-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: var(--shadow-sm);
+      position: relative;
+    }
+    .flow-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      margin-top: 10px;
+    }
+    .entries-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+    @media (max-width: 640px) {
+      .entries-grid { grid-template-columns: 1fr; }
+    }
+    .node-box {
+      border: 1px solid var(--border);
+      background: var(--card-subtle);
+      border-radius: 10px;
+      padding: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+    }
+    .node-box:hover {
+      border-color: var(--border-focus);
+      background: var(--card-bg);
+      box-shadow: var(--shadow-sm);
+    }
+    .node-box.selected {
+      border-color: var(--accent);
+      background: var(--accent-light);
+    }
+    .node-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+    .node-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--ink);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .node-badge {
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+    .node-desc {
+      font-size: 11px;
+      color: var(--ink-muted);
+      line-height: 1.4;
+    }
+
+    .pipeline-connector {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: var(--ink-faint);
+      margin: -6px 0;
+    }
+
+    .core-pipeline {
+      border: 1.5px dashed var(--border-focus);
+      border-radius: 12px;
+      padding: 14px;
+      background: #faf8f5;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .pipeline-header {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .pipeline-steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+    @media (max-width: 640px) {
+      .pipeline-steps { grid-template-columns: 1fr 1fr; }
+    }
+    .step-box {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px;
+      font-size: 11px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .step-box:hover {
+      border-color: var(--accent);
+    }
+    .step-box.active {
+      border-color: var(--accent);
+      background: var(--accent-light);
+    }
+    .step-title {
+      font-weight: 700;
+      color: var(--ink);
+    }
+    .step-sub {
+      color: var(--ink-faint);
+      font-size: 10px;
+    }
+
+    /* Inspector Drawer */
+    .inspector-panel {
+      margin-top: 14px;
+      background: var(--card-subtle);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 12px;
+    }
+    .inspector-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+      font-weight: 700;
+      color: var(--ink);
+    }
+    .inspector-code {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 8px 10px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 11px;
+      color: var(--ink);
+      overflow-x: auto;
+      margin-top: 6px;
+      line-height: 1.45;
+    }
+
+    .icon {
+      width: 15px;
+      height: 15px;
+      stroke-width: 2;
+      stroke: currentColor;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      flex-shrink: 0;
+    }
+  </style>
 </head>
 <body>
-<main>
-  <button class="theme" data-theme-toggle aria-label="切换明暗主题">明 / 暗</button>
-  <div class="eyebrow">MODULE BOUNDARIES &amp; DEBUGGING</div>
-  <h1>打卡软件三入口解耦与排错画布</h1>
-  <p class="intro">点击不同入口，对比“未约定规范各写各的”与“出入口解耦组件复用”下的整条业务链路与 Bug 定位效率。</p>
-
-  <div class="controls">
-    <button data-arch="messy" aria-pressed="true">❌ 早期无约束：各自独立闭塞（易断裂）</button>
-    <button data-arch="clean" aria-pressed="false">✅ 工程解耦：统一底层处理与数据流</button>
-  </div>
-
-  <div class="canvas-box">
-    <div style="font-size:12px;color:var(--muted);margin-bottom:8px">第一层：三个用户入口（点击切换测试入口）</div>
-    <div class="inputs-row">
-      <div class="input-node active" data-node="photo">
-        <strong style="display:block;font-size:14px">📷 智能拍照识别</strong>
-        <span style="font-size:11px;color:var(--muted)">上传餐盘图片提取成分</span>
+  <div class="container">
+    <div class="header">
+      <div class="header-title">
+        <svg class="icon" style="color:var(--accent)" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="m9 12 2 2 4-4"/></svg>
+        打卡软件三入口解耦与排错画布
       </div>
-      <div class="input-node" data-node="manual">
-        <strong style="display:block;font-size:14px">✍️ 手动打卡录入</strong>
-        <span style="font-size:11px;color:var(--muted)">表单直接填入食物与克数</span>
-      </div>
-      <div class="input-node" data-node="chat">
-        <strong style="display:block;font-size:14px">💬 对话式打卡</strong>
-        <span style="font-size:11px;color:var(--muted)">日常聊天由 Agent 提取</span>
+      <div class="mode-toggle">
+        <button class="mode-btn" id="btn-bad" onclick="setMode('bad')">
+          <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          初始耦合踩坑模式
+        </button>
+        <button class="mode-btn active-good" id="btn-good" onclick="setMode('good')">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>
+          模块解耦标准模式
+        </button>
       </div>
     </div>
 
-    <div style="font-size:12px;color:var(--muted);margin-bottom:8px">第二层至第四层：全链路执行状态</div>
-    <div class="flow-diagram" id="flow-diagram">
-      <div class="pipeline-step">
-        <span>1. 数据解析层（Nutrition Intake Parsing）</span>
-        <span class="status-pill status-warn" id="step1-status">重复编写，格式不互通</span>
+    <div class="canvas-card">
+      <div class="flow-wrapper">
+        <!-- 3 Entrypoints -->
+        <div class="entries-grid">
+          <div class="node-box" id="node-photo" onclick="selectNode('photo')">
+            <div class="node-top">
+              <span class="node-title">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                入口 A: 拍照识别
+              </span>
+              <span class="node-badge" id="badge-photo" style="background:#e0f2fe; color:#0369a1;">视觉提取</span>
+            </div>
+            <div class="node-desc" id="desc-photo">食物拍照识别图片中的菜品与份量</div>
+          </div>
+
+          <div class="node-box" id="node-manual" onclick="selectNode('manual')">
+            <div class="node-top">
+              <span class="node-title">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                入口 B: 手动录入
+              </span>
+              <span class="node-badge" id="badge-manual" style="background:#fef3c7; color:#92400e;">结构化表单</span>
+            </div>
+            <div class="node-desc" id="desc-manual">用户精确输入食物名称、克数与餐别</div>
+          </div>
+
+          <div class="node-box" id="node-chat" onclick="selectNode('chat')">
+            <div class="node-top">
+              <span class="node-title">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                入口 C: AI 对话
+              </span>
+              <span class="node-badge" id="badge-chat" style="background:#f3e8ff; color:#6b21a8;">自然语言</span>
+            </div>
+            <div class="node-desc" id="desc-chat">自然语言打卡：“中午吃了一碗牛肉面”</div>
+          </div>
+        </div>
+
+        <div class="pipeline-connector">
+          <svg class="icon" style="width:20px; height:20px;" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+        </div>
+
+        <!-- Central Decoupled Pipeline (Good Mode) or Isolated Chaotic Mess (Bad Mode) -->
+        <div id="pipeline-content">
+          <!-- Filled dynamically -->
+        </div>
       </div>
-      <div class="pipeline-step">
-        <span>2. 核心计算与校验（Calories Normalizer）</span>
-        <span class="status-pill status-warn" id="step2-status">各自独立计算，易出偏差</span>
-      </div>
-      <div class="pipeline-step">
-        <span>3. 数据库持久化（PostgreSQL meals 表）</span>
-        <span class="status-pill status-warn" id="step3-status">写入字段缺漏</span>
-      </div>
-      <div class="pipeline-step">
-        <span>4. 前端状态填充与渲染（Dashboard View）</span>
-        <span class="status-pill status-warn" id="step4-status">💥 报错：热量无法显示 (NaN)</span>
+
+      <!-- Live Inspector -->
+      <div class="inspector-panel" id="inspector">
+        <div class="inspector-top">
+          <span id="inspect-title">数据链路检查器：点击上方节点查看出入参</span>
+          <span style="font-size:11px; color:var(--ink-faint);" id="inspect-status">状态：就绪</span>
+        </div>
+        <div id="inspect-explain" style="color:var(--ink-muted); margin-bottom:4px;">
+          在解耦模式下，三个入口都收敛到统一的 Adapter 接口，不管输入是照片、表单还是语音，输出均标准化为统一 Schema。
+        </div>
+        <pre class="inspector-code" id="inspect-code">{
+  "foodName": "牛肉拉面",
+  "estimatedGrams": 450,
+  "calories": 520,
+  "macros": { "protein": 22, "fat": 14, "carbs": 76 }
+}</pre>
       </div>
     </div>
   </div>
 
-  <div class="readout" id="readout-box" aria-live="polite">
-    <strong>排错痛点</strong>：AI 在写这三个入口时各写各的。拍照识别、手动打卡与对话打卡各自搞了一套数据格式，字段对不上。当时出现“热量显示不出”的 Bug，因为没有全局统一接口，不得不顺着拍照、数据库、前端组件把整套链路从头到尾扒一遍，耗费了整整大半天。
-  </div>
+  <script>
+    let currentMode = 'good';
+    let selectedNode = 'photo';
 
-  <p class="caption">阅读辅助 · 对应正文第四节：不能指望 AI 自动产生架构意识；在写代码前先约定好出入口与数据结构，让 AI 复用同一套组件。</p>
-</main>
+    function setMode(mode) {
+      currentMode = mode;
+      const btnGood = document.getElementById('btn-good');
+      const btnBad = document.getElementById('btn-bad');
 
-<!-- blog-yusheng:html-embed-handshake v1 -->
-<script>
-(() => {
-  const nonce = new URLSearchParams(location.hash.slice(1)).get('nonce')
-  if (!nonce || window.parent === window) return
-  window.parent.postMessage({ nonce, message: { type: 'ready' } }, '*')
-  const reportHeight = () => window.parent.postMessage({ type: 'resize', height: document.documentElement.scrollHeight }, '*')
-  requestAnimationFrame(reportHeight)
-  new ResizeObserver(reportHeight).observe(document.documentElement)
-})()
-</script>
-<script>
-document.querySelector('[data-theme-toggle]').addEventListener('click',()=>{
-  const isDark = getComputedStyle(document.documentElement).getPropertyValue('--paper').trim() === '#171b1c';
-  document.documentElement.dataset.theme = isDark ? 'paper' : 'night';
-});
+      if (mode === 'good') {
+        btnGood.className = 'mode-btn active-good';
+        btnBad.className = 'mode-btn';
+      } else {
+        btnBad.className = 'mode-btn active-bad';
+        btnGood.className = 'mode-btn';
+      }
+      renderPipeline();
+      selectNode(selectedNode);
+    }
 
-let currentArch = 'messy';
-let currentNode = 'photo';
+    function renderPipeline() {
+      const container = document.getElementById('pipeline-content');
+      if (currentMode === 'good') {
+        container.innerHTML = `
+          <div class="core-pipeline">
+            <div class="pipeline-header">
+              <span style="display:flex; align-items:center; gap:6px;">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>
+                统一解耦管道架构 (Standard Data Pipeline)
+              </span>
+              <span style="font-size:11px; font-weight:normal; color:var(--green);">高复用 · 故障快速隔离定位</span>
+            </div>
+            <div class="pipeline-steps">
+              <div class="step-box" onclick="selectStep('adapter')">
+                <span class="step-title">1. 协议适配层</span>
+                <span class="step-sub">将三入口标准化为统一 Schema</span>
+              </div>
+              <div class="step-box" onclick="selectStep('calc')">
+                <span class="step-title">2. 热量计算引擎</span>
+                <span class="step-sub">单例运算，保证公式权威唯一</span>
+              </div>
+              <div class="step-box" onclick="selectStep('db')">
+                <span class="step-title">3. 数据持久仓储</span>
+                <span class="step-sub">原子性写入 SQLite/Supabase</span>
+              </div>
+              <div class="step-box" onclick="selectStep('ui')">
+                <span class="step-title">4. 页面响应式订阅</span>
+                <span class="step-sub">单向数据流自动刷新</span>
+              </div>
+            </div>
+          </div>
+        `;
+      } else {
+        container.innerHTML = `
+          <div style="border:1.5px solid #fca5a5; border-radius:12px; padding:14px; background:#fff1f2;">
+            <div style="font-size:12px; font-weight:700; color:#b91c1c; display:flex; justify-content:space-between; margin-bottom:8px;">
+              <span style="display:flex; align-items:center; gap:6px;">
+                <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                痛点现场：三套割裂逻辑 (Tight-Coupling Anti-Pattern)
+              </span>
+              <span style="font-size:11px; font-weight:normal;">改一处崩一片 · 卡路里无法显示 Bug</span>
+            </div>
+            <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; font-size:11px;">
+              <div style="background:#ffffff; border:1px solid #fecaca; border-radius:8px; padding:10px;">
+                <strong style="color:#b91c1c;">A 独立写入逻辑</strong><br>
+                自建局部 State，属性名用 <code>cal</code>，直接修改 DOM，容易引起渲染死循环。
+              </div>
+              <div style="background:#ffffff; border:1px solid #fecaca; border-radius:8px; padding:10px;">
+                <strong style="color:#b91c1c;">B 独立校验逻辑</strong><br>
+                属性名用 <code>calories</code>，校验未判空，缺失单位直接报错 NaN。
+              </div>
+              <div style="background:#ffffff; border:1px solid #fecaca; border-radius:8px; padding:10px;">
+                <strong style="color:#b91c1c;">C 独立对话状态</strong><br>
+                返回自由文本，未提取结构化数字，统计看板完全无法感知。
+              </div>
+            </div>
+          </div>
+        `;
+      }
+    }
 
-const archData = {
-  messy: {
-    step1: '各自独立编写，格式混乱',
-    step1Class: 'status-warn',
-    step2: '规则不统一，单位换算出错',
-    step2Class: 'status-warn',
-    step3: '字段丢失（缺少 meal_calories）',
-    step3Class: 'status-warn',
-    step4: '💥 页面报错：热量为 NaN，排查耗时大半天',
-    step4Class: 'status-warn',
-    readout: '<strong>排错痛点（各写各的）</strong>：三个入口底层各自搞了一套孤立逻辑。遇到 Bug 时，排查范围扩散到所有入口和零散组件中，你很难一眼看清到底是哪一步数据断掉了，必须沿着完整链路耗费几个小时逐行捉虫。'
-  },
-  clean: {
-    step1: '标准化输入适配器（3 入口归一）',
-    step1Class: 'status-good',
-    step2: '复用统一营养与热量估算内核',
-    step2Class: 'status-good',
-    step3: '严格走统一 PostgreSQL meals Schema 写入',
-    step3Class: 'status-good',
-    step4: '✅ 页面即时响应，热量图表秒级渲染',
-    step4Class: 'status-good',
-    readout: '<strong>解耦收益（组件复用）</strong>：动手前明确模块出入口。三个入口只是不同的触发器，全部传入同一个规范化的数据管道。如果热量显示有问题，直接去检查公用的计算内核即可，排查时间从几个小时骤降到十几分钟。'
-  }
-};
+    function selectNode(node) {
+      selectedNode = node;
+      document.querySelectorAll('.node-box').forEach(n => n.classList.remove('selected'));
+      document.getElementById('node-' + node).classList.add('selected');
 
-function update() {
-  const d = archData[currentArch];
-  const s1 = document.getElementById('step1-status');
-  s1.textContent = d.step1; s1.className = 'status-pill ' + d.step1Class;
-  const s2 = document.getElementById('step2-status');
-  s2.textContent = d.step2; s2.className = 'status-pill ' + d.step2Class;
-  const s3 = document.getElementById('step3-status');
-  s3.textContent = d.step3; s3.className = 'status-pill ' + d.step3Class;
-  const s4 = document.getElementById('step4-status');
-  s4.textContent = d.step4; s4.className = 'status-pill ' + d.step4Class;
-  document.getElementById('readout-box').innerHTML = d.readout;
-}
+      const title = document.getElementById('inspect-title');
+      const explain = document.getElementById('inspect-explain');
+      const code = document.getElementById('inspect-code');
 
-document.querySelectorAll('[data-arch]').forEach(btn => {
-  btn.addEventListener('click', () => {
-    currentArch = btn.dataset.arch;
-    document.querySelectorAll('[data-arch]').forEach(b => b.setAttribute('aria-pressed', String(b === btn)));
-    update();
-  });
-});
+      if (currentMode === 'good') {
+        if (node === 'photo') {
+          title.innerText = '入口 A: 拍照识别 -> 规范输出';
+          explain.innerText = '多模态视觉模型提取食物标签，随后进入统一适配器进行字段归一化。';
+          code.innerText = `// Photo Adapter Output\n{\n  "entry": "photo_vision",\n  "name": "香煎鸡胸肉沙拉",\n  "weightGrams": 280,\n  "rawVisionConfidence": 0.94\n}`;
+        } else if (node === 'manual') {
+          title.innerText = '入口 B: 手动录入 -> 规范输出';
+          explain.innerText = '用户精确表单录入，通过 zod 验证模式，字段与拍照入口严格保持一致。';
+          code.innerText = `// Manual Form Adapter Output\n{\n  "entry": "manual_form",\n  "name": "燕麦酸奶碗",\n  "weightGrams": 300,\n  "isCustomIngredient": false\n}`;
+        } else {
+          title.innerText = '入口 C: AI 对话 -> 规范输出';
+          explain.innerText = 'Agent 解析自然语言后调用标准 Tool Function，输出相同契约的数据。';
+          code.innerText = `// Chat Agent Adapter Output\n{\n  "entry": "chat_tool_call",\n  "name": "牛肉拉面",\n  "weightGrams": 450,\n  "intentAction": "RECORD_MEAL"\n}`;
+        }
+      } else {
+        title.innerText = '故障排查实录：字段命名不一致引发的显示漏洞';
+        explain.innerText = '由于没有给 AI 规定统一接口规范，三个入口产出的字段完全混乱，导致统计组件报错并耗费大半天定位！';
+        code.innerText = `// 灾难现场对比：\n入口A 返回: { "cal": 520, "food_name": "牛肉面" }\n入口B 返回: { "calories": 520, "name": "牛肉面" }\n入口C 返回: { "totalEnergy": "520大卡" }\n// 最终前端汇总: summary.calories 出现 NaN！`;
+      }
+    }
 
-document.querySelectorAll('[data-node]').forEach(node => {
-  node.addEventListener('click', () => {
-    document.querySelectorAll('[data-node]').forEach(n => n.classList.remove('active'));
-    node.classList.add('active');
-    currentNode = node.dataset.node;
-  });
-});
-</script>
+    function selectStep(step) {
+      const title = document.getElementById('inspect-title');
+      const explain = document.getElementById('inspect-explain');
+      const code = document.getElementById('inspect-code');
+
+      if (step === 'adapter') {
+        title.innerText = '组件复用核心：轻量适配器契约 (Adapter)';
+        explain.innerText = '任何新入口（如智能穿戴同步、扫码识别）只需写一个几十行的适配器，核心运算与持久化完全不需要动。';
+        code.innerText = `interface MealAdapter {\n  parseInput(rawPayload: unknown): StandardMealRecord;\n}`;
+      } else if (step === 'calc') {
+        title.innerText = '业务核心：热量计算单例引擎';
+        explain.innerText = '排查 Bug 时只需顺着“识别 -> 写入 -> 读取 -> 渲染”排查单例即可，十分钟内精准定位。';
+        code.innerText = `export function computeMacros(items: StandardFoodItem[]) {\n  return items.reduce((acc, cur) => ({\n    calories: acc.calories + cur.calories,\n    protein: acc.protein + cur.protein\n  }), { calories: 0, protein: 0 });\n}`;
+      } else if (step === 'db') {
+        title.innerText = '数据血缘：单一权威数据源';
+        explain.innerText = '所有入口落库走相同事务，杜绝出现“A入口打卡成功但B入口查不到”的鬼魅 Bug。';
+        code.innerText = `await db.mealRecords.create({ data: validatedPayload });`;
+      } else {
+        title.innerText = '状态展现：统一响应式刷新';
+        explain.innerText = '页面状态只从持久库单向同步，解耦入口事件与渲染逻辑。';
+        code.innerText = `const dailySummary = useMealSummary(userId, selectedDate);`;
+      }
+    }
+
+    renderPipeline();
+    selectNode('photo');
+
+    (() => {
+      const nonce = new URLSearchParams(location.hash.slice(1)).get('nonce')
+      if (!nonce || window.parent === window) return
+      window.parent.postMessage({ nonce, message: { type: 'ready' } }, '*')
+      const reportHeight = () => {
+        window.parent.postMessage(
+          { type: 'resize', height: document.documentElement.scrollHeight },
+          '*',
+        )
+      }
+      requestAnimationFrame(reportHeight)
+      new ResizeObserver(reportHeight).observe(document.documentElement)
+    })()
+  </script>
 </body>
 </html>

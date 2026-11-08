@@ -1,150 +1,606 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>上下文工程与缓存命中模拟器</title>
-<style>
-:root{--paper:#f6f1e7;--ink:#302c26;--muted:#70665a;--line:#d8cebd;--accent:#9a6034;--wash:#ebe0cd;--good:#2a7a72;--warn:#a83c1f;--ease-damp:cubic-bezier(.22,.82,.28,1);color-scheme:light dark}
-*{box-sizing:border-box}
-body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.7 "Noto Serif CJK","Source Han Serif SC","Songti SC",SimSun,serif}
-main{padding:clamp(16px,4vw,32px);max-width:920px;margin:auto}
-h1{font-weight:500;font-size:clamp(20px,4vw,28px);margin:6px 0 10px;line-height:1.3}
-.eyebrow{font:11px/1.5 Consolas,monospace;letter-spacing:.18em;text-transform:uppercase;color:var(--accent)}
-.intro{color:var(--muted);font-size:13px;margin-bottom:18px}
-.controls{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0}
-button{cursor:pointer;border:1px solid var(--line);background:transparent;color:var(--ink);padding:8px 16px;min-height:40px;font:inherit;border-radius:4px;transition:all .25s var(--ease-damp)}
-button:hover,button[aria-pressed=true]{background:var(--ink);color:var(--paper)}
-.meter-card{background:var(--wash);border:1px solid var(--line);border-radius:6px;padding:16px;margin:16px 0}
-.bar-track{background:rgba(0,0,0,0.08);height:18px;border-radius:9px;overflow:hidden;position:relative;margin:10px 0}
-.bar-fill{height:100%;transition:width .4s var(--ease-damp),background .4s}
-.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-top:14px}
-.stat-box{background:var(--paper);border:1px solid var(--line);border-radius:4px;padding:10px;text-align:center}
-.stat-val{font:700 18px/1.2 Consolas,monospace;display:block;margin-top:4px}
-.readout{border-left:3px solid var(--accent);padding:10px 0 10px 16px;margin-top:16px;min-height:76px;font-size:14px}
-.readout strong{color:var(--accent)}
-.theme{float:right;font-size:12px;padding:2px 10px;min-height:30px}
-.caption{color:var(--muted);font-size:12px;margin-top:14px;border-top:1px solid var(--line);padding-top:8px}
-:root[data-theme=night]{--paper:#171b1c;--ink:#e9e4d8;--muted:#b6b1a6;--line:#444846;--accent:#deb47d;--wash:#232b2d;--good:#4eb5a8;--warn:#e07060;color-scheme:dark}
-@media(prefers-color-scheme:dark){:root:not([data-theme=paper]){--paper:#171b1c;--ink:#e9e4d8;--muted:#b6b1a6;--line:#444846;--accent:#deb47d;--wash:#232b2d;--good:#4eb5a8;--warn:#e07060}}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>上下文工程与缓存命中模拟器</title>
+  <style>
+    :root {
+      --bg: #fcfbf9;
+      --card-bg: #ffffff;
+      --card-subtle: #f8f6f2;
+      --border: #e8e3da;
+      --border-focus: #c2b6a3;
+      --ink: #1c1917;
+      --ink-muted: #665e55;
+      --ink-faint: #999084;
+      --accent: #a9762f;
+      --accent-light: #fdf6ec;
+      --green: #15803d;
+      --green-light: #f0fdf4;
+      --red: #b91c1c;
+      --red-light: #fef2f2;
+      --blue: #1d4ed8;
+      --blue-light: #eff6ff;
+      --shadow-sm: 0 1px 2px rgba(40, 30, 20, 0.04);
+      --shadow-md: 0 4px 16px -2px rgba(40, 30, 20, 0.06);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      padding: 20px;
+      line-height: 1.5;
+      font-size: 14px;
+    }
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .header-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--ink);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .header-tag {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: var(--accent-light);
+      color: var(--accent);
+      border: 1px solid rgba(169, 118, 47, 0.2);
+      font-weight: 500;
+    }
+    .controls-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    @media (max-width: 640px) {
+      .controls-grid { grid-template-columns: 1fr; }
+    }
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: var(--shadow-sm);
+    }
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .card-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-group {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+    .btn {
+      flex: 1;
+      padding: 8px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--card-subtle);
+      color: var(--ink-muted);
+      cursor: pointer;
+      transition: all 0.18s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .btn:hover {
+      border-color: var(--border-focus);
+      color: var(--ink);
+    }
+    .btn.active-best {
+      background: var(--green-light);
+      border-color: rgba(21, 128, 61, 0.35);
+      color: var(--green);
+    }
+    .btn.active-worst {
+      background: var(--red-light);
+      border-color: rgba(185, 28, 28, 0.35);
+      color: var(--red);
+    }
+    .slider-row {
+      margin-bottom: 12px;
+    }
+    .slider-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--ink-muted);
+      margin-bottom: 6px;
+    }
+    .slider-val {
+      font-weight: 700;
+      color: var(--ink);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+    input[type="range"] {
+      width: 100%;
+      height: 6px;
+      border-radius: 999px;
+      background: #e5e0d6;
+      outline: none;
+      -webkit-appearance: none;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--accent);
+      cursor: pointer;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    }
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 8px;
+      border-top: 1px dashed var(--border);
+    }
+    .toggle-label {
+      font-size: 12px;
+      color: var(--ink);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 36px;
+      height: 20px;
+    }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider-round {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      background-color: #d6cfc4;
+      transition: .2s;
+      border-radius: 999px;
+    }
+    .slider-round:before {
+      position: absolute;
+      content: "";
+      height: 14px;
+      width: 14px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .2s;
+      border-radius: 50%;
+    }
+    input:checked + .slider-round {
+      background-color: var(--green);
+    }
+    input:checked + .slider-round:before {
+      transform: translateX(16px);
+    }
+
+    /* Visual Context Tape */
+    .tape-container {
+      margin-top: 12px;
+    }
+    .tape-bar {
+      height: 28px;
+      border-radius: 6px;
+      display: flex;
+      overflow: hidden;
+      background: #eee8de;
+      border: 1px solid var(--border);
+    }
+    .tape-seg {
+      height: 100%;
+      transition: width 0.25s ease;
+      position: relative;
+    }
+    .tape-seg-harness { background: #b45309; }
+    .tape-seg-spec { background: #2563eb; }
+    .tape-seg-chat { background: #059669; }
+    .tape-seg-dump { background: #dc2626; }
+    .tape-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 8px;
+      font-size: 11px;
+      color: var(--ink-muted);
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 2px;
+    }
+
+    /* Diagnostics Card */
+    .metrics-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .metric-box {
+      background: var(--card-subtle);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px;
+      text-align: center;
+    }
+    .metric-box-title {
+      font-size: 11px;
+      color: var(--ink-faint);
+      margin-bottom: 4px;
+    }
+    .metric-box-val {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--ink);
+      font-family: ui-monospace, monospace;
+    }
+    .metric-box-desc {
+      font-size: 10px;
+      margin-top: 2px;
+    }
+
+    .callout-box {
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 12px;
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+      line-height: 1.45;
+    }
+    .callout-good {
+      background: var(--green-light);
+      border: 1px solid rgba(21, 128, 61, 0.2);
+      color: #14532d;
+    }
+    .callout-bad {
+      background: var(--red-light);
+      border: 1px solid rgba(185, 28, 28, 0.2);
+      color: #7f1d1d;
+    }
+    .icon {
+      width: 16px;
+      height: 16px;
+      stroke-width: 2;
+      stroke: currentColor;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      flex-shrink: 0;
+    }
+  </style>
 </head>
 <body>
-<main>
-  <button class="theme" data-theme-toggle aria-label="切换明暗主题">明 / 暗</button>
-  <div class="eyebrow">CONTEXT ENGINEERING / SIMULATOR</div>
-  <h1>上下文工程与缓存命中模拟器</h1>
-  <p class="intro">切换不同上下文供给策略，观察 Token 暴涨对模型注意力集中度与调用成本的影响。</p>
-
-  <div class="controls">
-    <button data-mode="bloat" aria-pressed="true">❌ 一股脑倾倒（新手常见）</button>
-    <button data-mode="lean" aria-pressed="false">✅ 渐进式批注 + AGENTS.md 索引</button>
-  </div>
-
-  <div class="meter-card">
-    <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted)">
-      <span>窗口占用量 (Token Budget)</span>
-      <span id="token-val" style="font-family:Consolas,monospace;font-weight:700">118,500 / 128k</span>
-    </div>
-    <div class="bar-track">
-      <div class="bar-fill" id="bar-fill" style="width:92%;background:var(--warn)"></div>
+  <div class="container">
+    <div class="header">
+      <div class="header-title">
+        <svg class="icon" style="color:var(--accent)" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h7"/></svg>
+        上下文工程与缓存命中模拟器
+      </div>
+      <span class="header-tag">交互模拟 · 原理拆解</span>
     </div>
 
-    <div class="stats-grid">
-      <div class="stat-box">
-        <span style="font-size:11px;color:var(--muted)">注意力聚焦度</span>
-        <span class="stat-val" id="attn-val" style="color:var(--warn)">28% (严重稀释)</span>
+    <div class="controls-grid">
+      <!-- Left: Strategy & Sliders -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M12 20V10M18 20V4M6 20v-4"/></svg>
+            投喂策略与交互配置
+          </span>
+        </div>
+
+        <div class="btn-group">
+          <button class="btn" id="btn-worst" onclick="setPreset('worst')">
+            <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6M9 9l6 6"/></svg>
+            一股脑全塞
+          </button>
+          <button class="btn active-best" id="btn-best" onclick="setPreset('best')">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>
+            渐进式批注 + 设计锁
+          </button>
+        </div>
+
+        <div class="slider-row">
+          <div class="slider-label">
+            <span>连续对话轮次 (Turns)</span>
+            <span class="slider-val" id="val-turns">6 轮</span>
+          </div>
+          <input type="range" id="input-turns" min="1" max="20" value="6" oninput="update()">
+        </div>
+
+        <div class="slider-row">
+          <div class="slider-label">
+            <span>代码库投喂规模 (Context Weight)</span>
+            <span class="slider-val" id="val-mode">按需精准切片 (12k)</span>
+          </div>
+          <input type="range" id="input-mode" min="1" max="3" value="1" step="1" oninput="update()">
+        </div>
+
+        <div class="toggle-row">
+          <span class="toggle-label">
+            <svg class="icon" viewBox="0 0 24 24"><path d="m13 2-2 2.5h3L11 8M21 12a9 9 0 1 1-9-9c2.52 0 4.85.99 6.57 2.6L21 8"/></svg>
+            启用 Prompt Caching (前缀缓存)
+          </span>
+          <label class="switch">
+            <input type="checkbox" id="input-cache" checked onchange="update()">
+            <span class="slider-round"></span>
+          </label>
+        </div>
       </div>
-      <div class="stat-box">
-        <span style="font-size:11px;color:var(--muted)">缓存命中率 (Cache)</span>
-        <span class="stat-val" id="cache-val" style="color:var(--warn)">14% (频繁穿透)</span>
+
+      <!-- Right: Real-time Diagnostics -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">
+            <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            大模型注意力与成本诊断
+          </span>
+          <span id="badge-status" style="font-size:11px; font-weight:600; padding:2px 8px; border-radius:4px; background:#dcfce7; color:#15803d;">极高聚焦</span>
+        </div>
+
+        <div class="metrics-row">
+          <div class="metric-box">
+            <div class="metric-box-title">总上下文 Token</div>
+            <div class="metric-box-val" id="metric-tokens">14.8k</div>
+            <div class="metric-box-desc" id="metric-window-usage" style="color:var(--green)">窗口负载健康</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-box-title">注意力聚焦指数</div>
+            <div class="metric-box-val" id="metric-focus" style="color:var(--green)">96%</div>
+            <div class="metric-box-desc" id="metric-focus-desc" style="color:var(--ink-muted)">几乎零幻觉</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-box-title">单轮耗时 / 费用</div>
+            <div class="metric-box-val" id="metric-cost" style="color:var(--accent)">¥0.04</div>
+            <div class="metric-box-desc" id="metric-cache-hit" style="color:var(--green)">缓存减免 85%</div>
+          </div>
+        </div>
+
+        <div class="callout-box" id="callout-tip">
+          <!-- Populated by JS -->
+        </div>
       </div>
-      <div class="stat-box">
-        <span style="font-size:11px;color:var(--muted)">单次轮询预估成本</span>
-        <span class="stat-val" id="cost-val" style="color:var(--warn)">~ ¥1.80 / 轮</span>
+    </div>
+
+    <!-- Bottom: Visual Context Tape -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">
+          <svg class="icon" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 3v18M15 3v18"/></svg>
+          上下文磁带分布图 (Context Memory Tape)
+        </span>
+        <span style="font-size:11px; color:var(--ink-faint);" id="tape-stat">已占用 14,800 / 200,000 Tokens (7.4%)</span>
       </div>
-      <div class="stat-box">
-        <span style="font-size:11px;color:var(--muted)">典型报错风险</span>
-        <span class="stat-val" id="risk-val" style="color:var(--warn)">改一处崩一片</span>
+
+      <div class="tape-container">
+        <div class="tape-bar">
+          <div class="tape-seg tape-seg-harness" id="seg-harness" style="width: 15%;" title="AGENTS.md 规范"></div>
+          <div class="tape-seg tape-seg-spec" id="seg-spec" style="width: 25%;" title="按需设计锁/模块定义"></div>
+          <div class="tape-seg tape-seg-chat" id="seg-chat" style="width: 40%;" title="对话历史与代码生成"></div>
+          <div class="tape-seg tape-seg-dump" id="seg-dump" style="width: 20%;" title="无关代码盲目投喂"></div>
+        </div>
+
+        <div class="tape-legend">
+          <div class="legend-item">
+            <span class="legend-dot" style="background:#b45309"></span>
+            <span>全局规范 (AGENTS.md &lt;300行)</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-dot" style="background:#2563eb"></span>
+            <span>当前业务切片 (按需渐进读取)</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-dot" style="background:#059669"></span>
+            <span>有效历史上下文 (对话与目标)</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-dot" style="background:#dc2626"></span>
+            <span>冗余代码库/全量文档 (噪音倾倒)</span>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
-  <div class="readout" id="readout-box" aria-live="polite">
-    <strong>现象诊断</strong>：一股脑将 10 份冗长文档全塞进对话，模型被海量无关上下文淹没，容易“听前忘后”改错模块，且每轮输入重头计费，额度飞速消耗。
-  </div>
+  <script>
+    function setPreset(type) {
+      const btnWorst = document.getElementById('btn-worst');
+      const btnBest = document.getElementById('btn-best');
+      const inputMode = document.getElementById('input-mode');
+      const inputTurns = document.getElementById('input-turns');
+      const inputCache = document.getElementById('input-cache');
 
-  <p class="caption">互动辅助 · 对应正文第三节：用 300 行以内的 AGENTS.md 交代全局脉络，顺着索引做渐进式批注，按需调入上下文。</p>
-</main>
+      if (type === 'worst') {
+        inputMode.value = 3;
+        inputTurns.value = 14;
+        inputCache.checked = false;
+        btnWorst.className = 'btn active-worst';
+        btnBest.className = 'btn';
+      } else {
+        inputMode.value = 1;
+        inputTurns.value = 6;
+        inputCache.checked = true;
+        btnBest.className = 'btn active-best';
+        btnWorst.className = 'btn';
+      }
+      update();
+    }
 
-<!-- blog-yusheng:html-embed-handshake v1 -->
-<script>
-(() => {
-  const nonce = new URLSearchParams(location.hash.slice(1)).get('nonce')
-  if (!nonce || window.parent === window) return
-  window.parent.postMessage({ nonce, message: { type: 'ready' } }, '*')
-  const reportHeight = () => window.parent.postMessage({ type: 'resize', height: document.documentElement.scrollHeight }, '*')
-  requestAnimationFrame(reportHeight)
-  new ResizeObserver(reportHeight).observe(document.documentElement)
-})()
-</script>
-<script>
-document.querySelector('[data-theme-toggle]').addEventListener('click',()=>{
-  const isDark = getComputedStyle(document.documentElement).getPropertyValue('--paper').trim() === '#171b1c';
-  document.documentElement.dataset.theme = isDark ? 'paper' : 'night';
-});
+    function update() {
+      const turns = parseInt(document.getElementById('input-turns').value, 10);
+      const mode = parseInt(document.getElementById('input-mode').value, 10);
+      const cacheEnabled = document.getElementById('input-cache').checked;
 
-const modes = {
-  bloat: {
-    tokenText: '118,500 / 128k (92%)',
-    pct: '92%',
-    barColor: 'var(--warn)',
-    attn: '28% (严重稀释)',
-    attnColor: 'var(--warn)',
-    cache: '14% (频繁穿透)',
-    cacheColor: 'var(--warn)',
-    cost: '~ ¥1.80 / 轮',
-    costColor: 'var(--warn)',
-    risk: '改一处崩一片',
-    riskColor: 'var(--warn)',
-    readout: '<strong>现象诊断</strong>：一股脑将 10 份冗长规范与不相关的整个目录全塞进会话。无关信息塞得越多，模型注意力越分散，既容易产生幻觉写出相互冲突的逻辑，又因上下文剧烈变动导致 Prompt Cache 无法命中，成本呈指数级上升。'
-  },
-  lean: {
-    tokenText: '8,200 / 128k (6.4%)',
-    pct: '6.4%',
-    barColor: 'var(--good)',
-    attn: '94% (高度聚焦)',
-    attnColor: 'var(--good)',
-    cache: '86% (稳态命中)',
-    cacheColor: 'var(--good)',
-    cost: '~ ¥0.08 / 轮',
-    costColor: 'var(--good)',
-    risk: '精准收敛可控',
-    riskColor: 'var(--good)',
-    readout: '<strong>工程解法</strong>：根目录仅留一份 300 行以内的 AGENTS.md 交代关键路径与全局架构。推进到哪一块功能，才让 AI 按需读取对应规范文件。前序上下文高度稳定，命中 85%+ 缓存，费用骤降至原来的几十分之一，且代码准确率极高。'
-  }
-};
+      document.getElementById('val-turns').innerText = turns + ' 轮';
 
-document.querySelectorAll('[data-mode]').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const m = btn.dataset.mode;
-    document.querySelectorAll('[data-mode]').forEach(b => b.setAttribute('aria-pressed', String(b === btn)));
-    const d = modes[m];
-    document.getElementById('token-val').textContent = d.tokenText;
-    const bar = document.getElementById('bar-fill');
-    bar.style.width = d.pct;
-    bar.style.background = d.barColor;
-    const attn = document.getElementById('attn-val');
-    attn.textContent = d.attn; attn.style.color = d.attnColor;
-    const cache = document.getElementById('cache-val');
-    cache.textContent = d.cache; cache.style.color = d.cacheColor;
-    const cost = document.getElementById('cost-val');
-    cost.textContent = d.cost; cost.style.color = d.costColor;
-    const risk = document.getElementById('risk-val');
-    risk.textContent = d.risk; risk.style.color = d.riskColor;
-    document.getElementById('readout-box').innerHTML = d.readout;
-  });
-});
-</script>
+      let harnessTokens = 800; // AGENTS.md
+      let specTokens = 0;
+      let dumpTokens = 0;
+      let modeText = '';
+
+      if (mode === 1) {
+        modeText = '按需精准切片 (12k)';
+        specTokens = 2500;
+        dumpTokens = 0;
+      } else if (mode === 2) {
+        modeText = '半粗放多模块投喂 (45k)';
+        specTokens = 8000;
+        dumpTokens = 18000;
+      } else {
+        modeText = '全库盲目直接 Dump (120k+)';
+        specTokens = 12000;
+        dumpTokens = 85000;
+      }
+      document.getElementById('val-mode').innerText = modeText;
+
+      const chatTokens = turns * 1600;
+      const totalTokens = harnessTokens + specTokens + dumpTokens + chatTokens;
+
+      // Attention focus calculation
+      let focus = 100 - (dumpTokens / 1200) - (turns * 1.8);
+      if (focus < 25) focus = 25;
+      if (focus > 98) focus = 98;
+      focus = Math.round(focus);
+
+      // Cost calculation
+      let baseCostPer1k = 0.015; // RMB approx for deep reasoning/sonnet
+      let effectiveInput = totalTokens;
+      let cacheSaving = 0;
+      if (cacheEnabled && (harnessTokens + specTokens) > 0) {
+        let cachedPart = harnessTokens + specTokens;
+        cacheSaving = Math.round((cachedPart / totalTokens) * 88);
+        effectiveInput = (totalTokens - cachedPart) + (cachedPart * 0.1);
+      }
+      let roundCost = ((effectiveInput / 1000) * baseCostPer1k).toFixed(2);
+
+      // DOM update
+      document.getElementById('metric-tokens').innerText = (totalTokens / 1000).toFixed(1) + 'k';
+      document.getElementById('metric-focus').innerText = focus + '%';
+      document.getElementById('metric-cost').innerText = '¥' + roundCost;
+
+      const badge = document.getElementById('badge-status');
+      const focusDesc = document.getElementById('metric-focus-desc');
+      const tip = document.getElementById('callout-tip');
+
+      if (focus >= 85) {
+        badge.innerText = '极高聚焦 · 精准';
+        badge.style.background = '#dcfce7';
+        badge.style.color = '#15803d';
+        document.getElementById('metric-focus').style.color = 'var(--green)';
+        focusDesc.innerText = '指示遵循度极高';
+        focusDesc.style.color = 'var(--green)';
+        tip.className = 'callout-box callout-good';
+        tip.innerHTML = `
+          <svg class="icon" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>
+          <div><strong>最佳工程实践：</strong>保持 AGENTS.md 小于 300 行并按需读取模块文件。模型注意力高度集中在当前业务边界，配合前缀缓存（Prompt Caching）大幅降低 Token 延迟与开销。</div>
+        `;
+      } else if (focus >= 60) {
+        badge.innerText = '注意力轻度分散';
+        badge.style.background = '#fef9c3';
+        badge.style.color = '#854d0e';
+        document.getElementById('metric-focus').style.color = '#b45309';
+        focusDesc.innerText = '偶发漏看边界约束';
+        focusDesc.style.color = '#b45309';
+        tip.className = 'callout-box';
+        tip.style.background = '#fefce8';
+        tip.style.border = '1px solid #fef08a';
+        tip.style.color = '#713f12';
+        tip.innerHTML = `
+          <svg class="icon" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          <div><strong>注意防范膨胀：</strong>对话轮次与文件量增加已开始稀释提示词权重。建议在进行下一项子任务前开启新对话，或引导模型阅读指定文档而非整仓倾倒。</div>
+        `;
+      } else {
+        badge.innerText = '注意力涣散 · 幻觉高发';
+        badge.style.background = '#fee2e2';
+        badge.style.color = '#b91c1c';
+        document.getElementById('metric-focus').style.color = 'var(--red)';
+        focusDesc.innerText = '胡说八道/改一崩三';
+        focusDesc.style.color = 'var(--red)';
+        tip.className = 'callout-box callout-bad';
+        tip.innerHTML = `
+          <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <div><strong>上下文污染警告：</strong>一股脑塞入大量无关代码或陈旧规范，模型在“大海捞针”中丢失了核心指引，导致代码反复破坏现有逻辑，且每轮会话消耗巨额费用！</div>
+        `;
+      }
+
+      if (cacheEnabled) {
+        document.getElementById('metric-cache-hit').innerText = `缓存减免 ${cacheSaving}%`;
+        document.getElementById('metric-cache-hit').style.color = 'var(--green)';
+      } else {
+        document.getElementById('metric-cache-hit').innerText = '未启用缓存 (全量重算)';
+        document.getElementById('metric-cache-hit').style.color = 'var(--ink-faint)';
+      }
+
+      // Update Tape
+      const pctHarness = (harnessTokens / totalTokens) * 100;
+      const pctSpec = (specTokens / totalTokens) * 100;
+      const pctChat = (chatTokens / totalTokens) * 100;
+      const pctDump = (dumpTokens / totalTokens) * 100;
+
+      document.getElementById('seg-harness').style.width = pctHarness + '%';
+      document.getElementById('seg-spec').style.width = pctSpec + '%';
+      document.getElementById('seg-chat').style.width = pctChat + '%';
+      document.getElementById('seg-dump').style.width = pctDump + '%';
+
+      const windowPct = ((totalTokens / 200000) * 100).toFixed(1);
+      document.getElementById('tape-stat').innerText = `已占用 ${totalTokens.toLocaleString()} / 200,000 Tokens (${windowPct}%)`;
+    }
+
+    update();
+
+    (() => {
+      const nonce = new URLSearchParams(location.hash.slice(1)).get('nonce')
+      if (!nonce || window.parent === window) return
+      window.parent.postMessage({ nonce, message: { type: 'ready' } }, '*')
+      const reportHeight = () => {
+        window.parent.postMessage(
+          { type: 'resize', height: document.documentElement.scrollHeight },
+          '*',
+        )
+      }
+      requestAnimationFrame(reportHeight)
+      new ResizeObserver(reportHeight).observe(document.documentElement)
+    })()
+  </script>
 </body>
 </html>
