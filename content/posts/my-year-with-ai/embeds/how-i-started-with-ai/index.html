@@ -1,0 +1,1141 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>我怎么入坑 AI · 代码动画</title>
+<style>
+:root{
+  /* 暖调手绘纸感配色：可可棕墨色 + 蜜桃陶土 + 蜂蜜杏 + 鼠尾草绿，取自 IP 头像的水彩纸、围巾与脸颊 */
+  --bg:#F7F0E4;--ink:#4A3A30;--ink2:#8F7E70;--line:#EADFCF;
+  --coral:#E58F72;--honey:#E8B465;--rose:#E6A3A0;--sage:#9CB291;--cocoa:#7A5A44;
+  --grad:linear-gradient(120deg,#E9A39A 0%,#EE9C80 45%,#F0BE7C 100%);
+  --sd:rgba(176,146,110,.30);--sl:rgba(255,253,248,.95);
+  --neu:16px 16px 36px var(--sd),-14px -14px 32px var(--sl);
+  --neu-sm:7px 7px 16px var(--sd),-6px -6px 14px var(--sl);
+  --neu-in:inset 6px 6px 14px var(--sd),inset -6px -6px 14px var(--sl);
+  --font:-apple-system,BlinkMacSystemFont,"PingFang SC","HarmonyOS Sans SC","MiSans","Microsoft YaHei","Noto Sans SC","Noto Sans CJK SC",sans-serif;
+  --mono:"SF Mono","JetBrains Mono",Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--bg);overflow:hidden;font-family:var(--font);color:var(--ink);-webkit-font-smoothing:antialiased}
+button{font-family:inherit;cursor:pointer}
+#viewport{position:fixed;inset:0;overflow:hidden;background:var(--bg)}
+#viewport.hide-cursor{cursor:none}
+#stage{position:absolute;left:0;top:0;width:1920px;height:1080px;transform-origin:0 0;overflow:hidden;background:var(--bg)}
+.paused #stage *,.paused #stage *::before,.paused #stage *::after{animation-play-state:paused!important}
+
+/* background */
+.bg{position:absolute;inset:0;overflow:hidden}
+.blob{position:absolute;border-radius:50%;animation:drift 16s ease-in-out infinite alternate}
+.b1{width:900px;height:900px;left:-260px;top:-320px;background:radial-gradient(circle,rgba(244,188,160,.55),transparent 68%)}
+.b2{width:1000px;height:1000px;right:-320px;top:-200px;background:radial-gradient(circle,rgba(240,206,140,.5),transparent 66%);animation-delay:-5s}
+.b3{width:900px;height:900px;left:30%;bottom:-520px;background:radial-gradient(circle,rgba(192,210,175,.5),transparent 66%);animation-delay:-9s}
+.b4{width:620px;height:620px;left:-120px;bottom:-260px;background:radial-gradient(circle,rgba(238,172,160,.42),transparent 66%);animation-delay:-3s}
+@keyframes drift{to{transform:translate(80px,60px) scale(1.08)}}
+.dots{position:absolute;inset:0;background-image:radial-gradient(rgba(150,125,115,.14) 1.6px,transparent 1.8px);background-size:38px 38px;-webkit-mask-image:radial-gradient(ellipse at center,#000 25%,transparent 78%);mask-image:radial-gradient(ellipse at center,#000 25%,transparent 78%)}
+.spark{position:absolute;color:#fff;text-shadow:0 0 12px rgba(240,180,110,.9);animation:twinkle 3s ease-in-out infinite}
+@keyframes twinkle{0%,100%{opacity:.15;transform:scale(.6) rotate(0)}50%{opacity:1;transform:scale(1.1) rotate(25deg)}}
+
+/* common */
+.scene{position:absolute;inset:0;visibility:hidden;transform-origin:50% 50%}
+.neu{background:var(--bg);box-shadow:var(--neu)}
+.neu-sm{background:var(--bg);box-shadow:var(--neu-sm)}
+.neu-in{background:var(--bg);box-shadow:var(--neu-in)}
+.glass{background:rgba(255,252,246,.6);-webkit-backdrop-filter:blur(18px) saturate(1.4);backdrop-filter:blur(18px) saturate(1.4);border:1.5px solid rgba(255,255,255,.9);box-shadow:0 18px 40px rgba(160,125,95,.16)}
+.grad-text{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.kicker{font-size:26px;font-weight:800;letter-spacing:.22em;color:#D9775E}
+.kicker::before{content:"✦ ";color:var(--honey)}
+.h2{font-size:64px;font-weight:900;letter-spacing:.01em;text-shadow:4px 4px 10px rgba(184,160,136,.25),-3px -3px 8px #fff}
+.h2 .grad-text{text-shadow:none}
+.split>span{display:inline-block;white-space:pre}
+.grad-split>span{-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:none}
+.caret::after{content:"";display:inline-block;width:3px;height:1.05em;margin-left:3px;vertical-align:-.15em;background:#E58F72;border-radius:2px;animation:blinkc .8s steps(1) infinite}
+@keyframes blinkc{50%{opacity:0}}
+.floaty{animation:floaty 3.4s ease-in-out infinite}
+@keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+
+/* IP 形象：羽升（SVG） */
+.mascot{position:relative;width:16em;height:17em;font-size:10px;flex:none}
+.mascot.big{font-size:13px}
+.mascot.mini,.mascot.tiny{width:44px;height:44px;border-radius:50%;background:#FBE9DA;box-shadow:inset 0 0 0 2px #fff,0 4px 10px rgba(176,146,110,.25);overflow:hidden}
+.mascot.tiny{width:38px;height:38px}
+.mascot .ip{width:100%;height:100%;display:block;overflow:visible}
+.mascot.mini .ip-sh,.mascot.tiny .ip-sh{display:none}
+.ip .held{opacity:0;transition:opacity .4s}
+.mascot.hold .held{opacity:1}
+.mascot.hold .held circle:first-child{animation:heldGlow 1.8s ease-in-out infinite;transform-origin:100px 148px}
+@keyframes heldGlow{50%{transform:scale(1.25);opacity:.15}}
+.ip .eh{opacity:0}
+.mascot.happy .eh{opacity:1}.mascot.happy .eo{opacity:0}
+.ip .eo{animation:ipBlink 4.2s infinite;transform-origin:100px 87px}
+@keyframes ipBlink{0%,93%,100%{transform:scaleY(1)}96%{transform:scaleY(.1)}}
+.ip .arm-r{transform-origin:133px 132px;transition:transform .5s}
+.mascot.wave .arm-r{animation:ipWave .55s ease-in-out infinite alternate}
+@keyframes ipWave{from{transform:rotate(150deg)}to{transform:rotate(195deg)}}
+.ip-hero{position:relative}
+.bfly{position:absolute;width:64px;height:54px;filter:drop-shadow(0 0 10px rgba(240,180,120,.75));animation:bflyFloat 4s ease-in-out infinite}
+.bfly .wl,.bfly .wr{transform-origin:30px 25px;animation:flap .32s ease-in-out infinite alternate}
+@keyframes flap{to{transform:scaleX(.35)}}
+@keyframes bflyFloat{0%,100%{transform:translate(0,0) rotate(-8deg)}50%{transform:translate(-14px,-22px) rotate(6deg)}}
+.bfly.b0{right:-70px;top:90px}.bfly.b7{right:-80px;top:70px}
+.bfly-s2{position:absolute;left:640px;top:560px}.bfly-s2 .bfly{position:relative}
+.ic{width:1em;height:1em;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;vertical-align:-.14em;flex:none}
+.paper{position:absolute;inset:0;opacity:.8;mix-blend-mode:multiply;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='320' height='320'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .45 0 0 0 0 .34 0 0 0 0 .24 0 0 0 .09 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")}
+
+/* top bar & subtitle */
+#topbar{position:absolute;left:48px;right:48px;top:36px;display:flex;justify-content:space-between;align-items:center;z-index:40;opacity:0}
+.brand{display:flex;align-items:center;gap:14px;padding:10px 26px 10px 14px;border-radius:40px;font-size:24px}
+.brand b{font-weight:900;letter-spacing:.04em}
+.brand .sep{width:2px;height:22px;background:#E2D7CC}
+#chap{color:var(--ink2);font-weight:700}
+#chapDots{display:flex;gap:12px;padding:16px 22px;border-radius:30px}
+#chapDots i{width:12px;height:12px;border-radius:6px;background:#E3D9CF;transition:all .4s}
+#chapDots i.on{width:36px;background:var(--grad)}
+#sub{position:absolute;left:50%;bottom:52px;transform:translateX(-50%);z-index:40;max-width:1600px;padding:18px 40px;border-radius:44px;font-size:36px;font-weight:700;letter-spacing:.03em;white-space:nowrap;text-align:center;opacity:0}
+
+/* S0 */
+.s0-wrap{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:30px;padding-bottom:70px}
+.eyebrow{padding:12px 30px;border-radius:30px;font-size:24px;font-weight:700;color:var(--ink2);letter-spacing:.14em}
+.mega{display:flex;align-items:center;font-size:160px;font-weight:900;letter-spacing:.02em;line-height:1.15;text-shadow:5px 5px 12px rgba(184,160,136,.35),-4px -4px 10px #fff}
+.ai-badge{margin-left:30px;padding:0 44px;border-radius:60px;background:var(--grad);color:#fff;font-size:132px;text-shadow:none;box-shadow:0 24px 60px rgba(238,150,110,.45),inset 0 4px 0 rgba(255,255,255,.45),inset 0 -8px 20px rgba(170,90,50,.18)}
+.lead{font-size:34px;color:var(--ink2);font-weight:600}
+.tech{display:flex;gap:18px}
+.tech span{padding:10px 22px;border-radius:24px;font-size:22px;font-family:var(--mono);color:var(--ink2);background:var(--bg);box-shadow:var(--neu-sm)}
+
+/* S1 */
+.s1-left{position:absolute;left:170px;top:170px;width:780px}
+.year{font-size:236px;font-weight:900;line-height:.95;letter-spacing:-.02em;margin-top:6px;display:inline-block}
+.s1-title{font-size:56px;font-weight:900;margin:14px 0 40px}
+.ticket{position:relative;width:640px;padding:30px 38px;border-radius:32px}
+.t-head{display:flex;justify-content:space-between;align-items:baseline;padding-bottom:16px;margin-bottom:14px;border-bottom:2px dashed #E4D9CE}
+.t-head span:first-child{font-size:30px;font-weight:900}
+.t-no{font-family:var(--mono);color:var(--ink2);font-size:20px}
+.t-row{display:flex;gap:22px;padding:8px 0;font-size:24px}
+.t-row i{font-style:normal;color:var(--ink2);width:70px}
+.stamp{position:absolute;right:36px;bottom:26px;width:150px;height:150px;border-radius:50%;border:6px double #D9775E;color:#D9775E;display:grid;place-items:center;text-align:center;font-size:30px;font-weight:900;line-height:1.2;transform:rotate(-14deg);background:rgba(253,236,225,.6)}
+.s1-right{position:absolute;left:1000px;top:130px;width:820px;height:820px}
+.phone{position:absolute;left:220px;top:20px;width:360px;height:730px;border-radius:62px;padding:16px}
+.scr{position:relative;height:100%;border-radius:48px;background:#FFFDFB;overflow:hidden;display:flex;flex-direction:column;box-shadow:inset 0 0 0 1.5px #F0E8DF}
+.island{position:absolute;left:50%;top:12px;width:110px;height:32px;margin-left:-55px;border-radius:20px;background:#4A3A30}
+.ph-head{display:flex;align-items:center;gap:12px;padding:58px 20px 14px;border-bottom:1.5px solid var(--line)}
+.ph-head b{display:block;font-size:22px}.ph-head small{font-size:16px;color:#6B9560;font-weight:700}
+.ph-body{flex:1;display:flex;flex-direction:column;gap:16px;padding:22px 18px}
+.bub{max-width:84%;padding:14px 18px;border-radius:22px;font-size:20px;line-height:1.5}
+.bub.ai{align-self:flex-start;background:#fff;box-shadow:var(--neu-sm);border-bottom-left-radius:8px}
+.bub.me{align-self:flex-end;background:linear-gradient(135deg,#EFA184,#F0BC78);color:#fff;border-bottom-right-radius:8px;box-shadow:0 10px 24px rgba(220,150,110,.35)}
+.ph-input{margin:14px;height:54px;border-radius:27px;padding:0 22px;line-height:54px;font-size:18px;color:var(--ink2)}
+.news{position:absolute;padding:16px 28px;border-radius:40px;font-size:26px;font-weight:800;white-space:nowrap;z-index:2}
+.news.n1{left:0;top:120px}.news.n2{left:500px;top:270px}.news.n3{left:20px;top:560px}
+.news>span{display:inline-block;animation:floaty 3.2s ease-in-out infinite}
+.news.n2>span{animation-delay:-1.1s}.news.n3>span{animation-delay:-2s}
+
+/* S2 */
+.chatcard{position:absolute;left:150px;top:170px;width:780px;height:690px;padding:34px;border-radius:38px;display:flex;flex-direction:column;gap:24px}
+.cc-head{display:flex;align-items:center;gap:14px;padding-bottom:16px;border-bottom:1.5px solid rgba(220,205,195,.6)}
+.cc-head b{font-size:26px}.cc-head small{margin-left:auto;font-size:18px;color:var(--ink2)}
+.bub.big{font-size:27px;padding:20px 26px;max-width:88%}
+.tdots{display:flex;gap:8px;padding:22px 26px}
+.tdots i{width:11px;height:11px;border-radius:50%;background:#D8C6B4;animation:tdot 1s ease-in-out infinite}
+.tdots i:nth-child(2){animation-delay:.15s}.tdots i:nth-child(3){animation-delay:.3s}
+@keyframes tdot{50%{transform:translateY(-8px);background:#E58F72}}
+.catch{position:absolute;left:960px;top:0;width:960px;height:1080px}
+.catch-title{position:absolute;top:150px;width:100%;text-align:center;font-size:116px;font-weight:900;letter-spacing:.04em}
+.catch-tags{position:absolute;top:320px;width:100%;display:flex;justify-content:center;gap:18px}
+.catch-tags span{padding:10px 24px;border-radius:26px;font-size:24px;font-weight:700;color:var(--ink2);background:var(--bg);box-shadow:var(--neu-sm)}
+.catcher{position:absolute;left:376px;top:600px;z-index:1}
+.cloud{position:absolute;left:210px;top:840px;width:540px;height:130px;z-index:2;filter:drop-shadow(14px 18px 20px rgba(184,160,136,.35)) drop-shadow(-8px -8px 14px rgba(255,255,255,.9))}
+.cloud i{position:absolute;background:#FBF5EB;border-radius:50%}
+.cloud i:nth-child(1){left:0;right:0;top:30px;bottom:0;border-radius:65px}
+.cloud i:nth-child(2){left:60px;top:-10px;width:170px;height:150px}
+.cloud i:nth-child(3){left:200px;top:-40px;width:200px;height:180px}
+.cloud i:nth-child(4){left:350px;top:0;width:150px;height:130px}
+#heart{position:absolute;left:456px;top:712px;width:48px;height:44px;z-index:3;filter:drop-shadow(0 16px 26px rgba(255,120,160,.45));opacity:0}
+.heart-glow{position:absolute;left:350px;top:605px;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(246,190,140,.6),transparent 70%);z-index:0}
+
+/* S3 */
+.s3-head{position:absolute;top:150px;width:100%;text-align:center}
+.s3-head .h2{margin-top:12px}
+.search{position:absolute;left:410px;top:340px;width:1100px;height:100px;border-radius:50px;font-size:30px;overflow:hidden;transition:box-shadow .6s}
+.search.ai{box-shadow:var(--neu),0 0 0 3px rgba(238,170,130,.55),0 0 50px rgba(240,184,120,.35)}
+.s-old,.s-new{position:absolute;inset:0;display:flex;align-items:center;gap:18px;padding:0 20px 0 36px;transition:opacity .5s,transform .5s}
+.s-old{color:var(--ink2)}
+.s-new{opacity:0;transform:translateY(24px)}
+.search.ai .s-old{opacity:0;transform:translateY(-24px)}
+.search.ai .s-new{opacity:1;transform:none}
+.s-btn{margin-left:auto;width:64px;height:64px;border-radius:50%;display:grid;place-items:center;color:#fff;font-size:30px;font-weight:900;background:var(--grad);flex:none}
+.s-old .s-btn{background:#D9CFC5}
+.results{position:absolute;left:410px;top:480px;width:1100px}
+.res{height:64px;margin-bottom:16px;border-radius:18px;display:flex;align-items:center;gap:16px;padding:0 26px;background:var(--bg);box-shadow:var(--neu-sm)}
+.res em{font-style:normal;font-size:16px;font-weight:700;color:#C46A2A;background:#FBEBDE;border-radius:6px;padding:2px 8px}
+.res i{height:12px;border-radius:6px;background:#E6DDD3}
+.q{position:absolute;padding:18px 26px;border-radius:40px;font-size:27px;font-weight:800;white-space:nowrap;display:flex;align-items:center;gap:12px}
+.q b{width:36px;height:36px;border-radius:50%;background:var(--sage);color:#fff;display:grid;place-items:center;font-size:20px}
+
+/* S4 */
+.sticker{position:absolute;right:110px;top:104px;z-index:6;padding:16px 26px;border-radius:18px;background:#FFF6E3;font-size:23px;line-height:1.45;font-weight:700;transform:rotate(4deg);box-shadow:0 14px 30px rgba(200,160,100,.25)}
+.sticker::before{content:"";position:absolute;left:50%;top:-14px;width:90px;height:26px;margin-left:-45px;background:rgba(156,178,145,.6);transform:rotate(-4deg);border-radius:4px}
+.sticker b{color:#D9775E}
+.win{position:absolute;left:200px;top:150px;width:1520px;height:760px;border-radius:30px;overflow:hidden;background:#FDFBF8}
+.win-bar{position:relative;height:54px;display:flex;align-items:center;gap:10px;padding:0 22px;border-bottom:1.5px solid var(--line);background:rgba(246,241,235,.8)}
+.tl{width:14px;height:14px;border-radius:50%;display:inline-block}.tl.r{background:#E99A86}.tl.y{background:#EDC57E}.tl.g{background:#AFC49F}
+.win-title{position:absolute;left:0;right:0;text-align:center;font-size:18px;color:var(--ink2);font-weight:600;pointer-events:none}
+.win-body{position:absolute;top:54px;bottom:0;left:0;right:0;display:flex}
+.chat{width:580px;flex:none;display:flex;flex-direction:column;border-right:1.5px solid var(--line);background:#FBF8F5}
+.chat-head{height:64px;display:flex;align-items:center;gap:10px;padding:0 24px;font-size:22px;flex:none}
+.chat-head .lg{color:#E08A5F;font-size:28px}
+.chat-head small{font-size:15px;color:var(--ink2);padding:3px 10px;border-radius:10px;background:#F1EAE3}
+.chat-view{position:relative;flex:1;overflow:hidden;padding:0 22px}
+.chat-scroll{display:flex;flex-direction:column;gap:16px;padding:10px 0 24px}
+.chat .bub{font-size:19px}
+.hint{position:absolute;left:0;right:0;top:38%;text-align:center;font-size:26px;color:var(--ink2);font-weight:600}
+.code{border-radius:18px;background:#FBF4E9;box-shadow:inset 0 0 0 1.5px #F0E4D2;font-family:var(--mono);font-size:15px;line-height:1.62;padding-bottom:12px;overflow:hidden}
+.code-h{display:flex;justify-content:space-between;padding:10px 16px;margin-bottom:8px;border-bottom:1.5px solid #EFE2CF;font-size:14px;color:var(--ink2)}
+.ln{padding:0 16px;white-space:pre;color:#7A6A5E}
+.tg{color:#D46F55}.at{color:#B07F3C}.st{color:#6B9560}.cm{color:#B8A898;font-style:italic}.fn{color:#D9822B}
+.done-chip{align-self:flex-start;padding:10px 16px;border-radius:14px;background:#E9F0E2;color:#5E8A55;font-size:17px;font-weight:800}
+.chat-input{position:relative;flex:none;margin:0 20px 20px;min-height:122px;border-radius:22px;padding:16px 76px 16px 20px;font-size:19px;line-height:1.5}
+.chat-input .ph-text{position:absolute;left:20px;top:16px;color:var(--ink2)}
+.sendbtn{position:absolute;right:14px;bottom:14px;width:48px;height:48px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:900;font-size:24px;background:var(--grad);box-shadow:0 8px 18px rgba(220,140,100,.4);transition:transform .15s}
+.sendbtn.press,.embed-btn.press{transform:scale(.88)}
+.preview{position:relative;flex:1;overflow:hidden;background:linear-gradient(#FFFDFB,#FBF5EF)}
+.pv-bar{height:50px;display:flex;align-items:center;justify-content:center;border-bottom:1.5px solid var(--line)}
+.pv-url{font-size:16px;color:var(--ink2);background:#F2ECE6;padding:6px 20px;border-radius:20px}
+.pv-empty{position:absolute;inset:50px 0 0 0;display:grid;place-items:center;align-content:center;gap:18px;color:var(--ink2);font-size:22px}
+.skel{width:420px;height:16px;border-radius:8px;background:linear-gradient(90deg,#EFE8E1 20%,#F9F5F1 50%,#EFE8E1 80%);background-size:200% 100%;animation:shim 1.4s linear infinite}
+.skel.s2{width:300px}
+@keyframes shim{to{background-position:-200% 0}}
+.site{position:absolute;top:50px;left:0;right:0;bottom:0;padding:22px 30px}
+.site-h{display:flex;align-items:center;gap:14px}
+.logo{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:var(--grad);color:#fff;font-weight:900;font-size:22px}
+.site-h b{font-size:23px}
+.site-h nav{display:flex;gap:18px;margin-left:16px;color:var(--ink2);font-size:17px}
+.embed-btn{margin-left:auto;padding:12px 20px;border-radius:16px;border:0;font-size:18px;font-weight:800;color:#C46A4E;background:#fff;box-shadow:var(--neu-sm);transition:transform .15s}
+.site-hero{margin:18px 0 8px}
+.site-hero h3{font-size:36px;font-weight:900}
+.site-hero p{font-size:17px;color:var(--ink2);margin-top:4px}
+.tl-strip{position:relative;display:flex;justify-content:space-between;width:600px;margin:10px 0 16px;padding-top:16px;font-size:14px;color:var(--ink2)}
+.tl-strip::before{content:"";position:absolute;left:6px;right:6px;top:5px;height:3px;border-radius:2px;background:linear-gradient(90deg,#F2B9A0,#F0CC8E,#BFD0B0)}
+.tl-strip span{position:relative}
+.tl-strip span::before{content:"";position:absolute;left:50%;top:-16px;width:12px;height:12px;margin-left:-6px;border-radius:50%;background:#fff;box-shadow:0 0 0 3px #E58F72}
+.polas{display:grid;grid-template-columns:repeat(3,182px);gap:18px 26px}
+.pola{background:#fff;padding:10px 10px 0;border-radius:8px;box-shadow:0 12px 26px rgba(150,120,100,.2);transform:rotate(var(--r))}
+.ph{position:relative;height:108px;border-radius:5px;overflow:hidden;display:grid;place-items:center;font-size:40px;color:#fff}
+.ph::before{content:"";position:absolute;right:16px;top:12px;width:30px;height:30px;border-radius:50%;background:#FFF6E2;box-shadow:0 0 24px rgba(255,255,255,.8)}
+.ph::after{content:"";position:absolute;left:-15%;right:-15%;bottom:-48px;height:96px;border-radius:50%;background:var(--h)}
+.ph span{position:relative;z-index:1;display:grid;filter:drop-shadow(0 2px 4px rgba(120,80,50,.35))}
+.p1{background:linear-gradient(#F8D5C4,#FBEBDD);--h:#B9CDAA}.p2{background:linear-gradient(#F7DCD6,#FCF0EA);--h:#E9B3A8}
+.p3{background:linear-gradient(#E9CDB6,#F6E6D6);--h:#C7A68A}.p4{background:linear-gradient(#E6E9D5,#F4F5EA);--h:#A9BC9E}
+.p5{background:linear-gradient(#FFE7C2,#FFF4E2);--h:#F5C99A}.p6{background:linear-gradient(#F3E6CF,#FBF4E6);--h:#D8B583}
+.cap{text-align:center;font-size:15px;font-weight:700;padding:8px 0 10px}
+.player{position:absolute;right:30px;top:268px;width:236px;padding:18px;border-radius:24px}
+.pl-top{display:flex;gap:12px;align-items:center}
+.art{width:60px;height:60px;border-radius:16px;background:linear-gradient(135deg,#EFA184,#F0BC78);display:grid;place-items:center;color:#fff;font-size:26px;flex:none}
+.pl-top b{display:block;font-size:17px}.pl-top small{font-size:13px;color:var(--ink2)}
+.eq{display:flex;align-items:flex-end;gap:5px;height:42px;margin:16px 0 10px}
+.eq i{flex:1;border-radius:4px;background:linear-gradient(#F0BC78,#E58F72);height:100%;transform-origin:bottom;animation:eq .9s ease-in-out infinite alternate}
+.eq i:nth-child(2){animation-delay:-.3s}.eq i:nth-child(3){animation-delay:-.6s}.eq i:nth-child(4){animation-delay:-.15s}.eq i:nth-child(5){animation-delay:-.45s}.eq i:nth-child(6){animation-delay:-.7s}.eq i:nth-child(7){animation-delay:-.2s}
+@keyframes eq{from{transform:scaleY(.2)}to{transform:scaleY(1)}}
+.pl-bar{height:6px;border-radius:3px;background:#F3E8DA;overflow:hidden}
+.pl-bar i{display:block;height:100%;width:40%;background:var(--grad);animation:plb 8s linear infinite}
+@keyframes plb{from{width:5%}to{width:100%}}
+.board{position:absolute;right:30px;top:470px;width:236px;padding:16px 18px;border-radius:22px;font-size:16px}
+.board b{display:block;font-size:17px;margin-bottom:8px}
+.avs{display:flex}.avs i{width:32px;height:32px;border-radius:50%;border:3px solid #fff;margin-right:-10px}
+.toast{position:absolute;left:50%;bottom:30px;transform:translateX(-50%);padding:16px 30px;border-radius:40px;font-size:22px;font-weight:800;white-space:nowrap;z-index:8}
+#cursor{position:absolute;left:0;top:0;width:40px;height:44px;z-index:60;pointer-events:none;filter:drop-shadow(0 6px 10px rgba(80,60,90,.3))}
+.ripple{position:absolute;width:84px;height:84px;margin:-42px 0 0 -42px;border-radius:50%;border:3px solid rgba(229,143,114,.95);background:rgba(229,143,114,.16);z-index:59;pointer-events:none;opacity:0}
+.confetti i{position:absolute;left:0;top:0;width:14px;height:9px;border-radius:3px;z-index:58;opacity:0}
+
+/* S5 */
+.s5-head{position:absolute;top:140px;width:100%;text-align:center}
+.s5-head .h2{margin-top:12px}
+.cards{position:absolute;top:320px;left:0;right:0;display:flex;justify-content:center;gap:52px}
+.card{width:500px;height:540px;border-radius:36px;padding:26px;position:relative}
+.vis{height:300px;border-radius:24px;position:relative;overflow:hidden}
+.c-tag{position:absolute;left:30px;top:350px;width:46px;height:46px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:900;font-size:22px;background:var(--grad);box-shadow:0 8px 18px rgba(220,140,100,.4)}
+.card h3{margin:26px 0 0 62px;font-size:32px;font-weight:900}
+.card p{margin:16px 0 0 4px;font-size:22px;color:var(--ink2);line-height:1.5}
+.mini-screen{position:absolute;inset:22px;border-radius:18px;background:linear-gradient(135deg,#FFF3EA,#FCEBD8 55%,#F1F3E6);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;box-shadow:0 10px 24px rgba(176,146,110,.18)}
+.mini-screen b{font-size:30px;font-weight:900}
+.mini-screen b em{font-style:normal;padding:0 10px;border-radius:12px;background:var(--grad);color:#fff;margin-left:6px}
+.mini-prog{position:absolute;left:20px;right:20px;bottom:16px;height:6px;border-radius:3px;background:rgba(255,255,255,.8);overflow:hidden}
+.mini-prog i{display:block;height:100%;background:var(--grad);animation:plb 4s linear infinite}
+.rec{position:absolute;left:18px;top:14px;font-size:14px;font-weight:800;color:#D9775E;font-family:var(--mono)}
+.bro{position:absolute;inset:22px;border-radius:18px;background:#fff;overflow:hidden;box-shadow:0 10px 24px rgba(176,146,110,.18)}
+.bro-bar{height:30px;display:flex;align-items:center;gap:6px;padding:0 12px;background:#F6F1EC}
+.bro-bar i{width:9px;height:9px;border-radius:50%;background:#E3D6CB}
+.blk{position:absolute;border-radius:10px}
+.bk1{left:16px;right:16px;top:44px;height:80px;background:linear-gradient(120deg,#F6C9B5,#F4DDB0,#D6E2C8)}
+.bk2,.bk3,.bk4{top:136px;width:116px;height:70px;background:#F6EEE3}
+.bk2{left:16px}.bk3{left:146px}.bk4{left:276px;background:#FDEFE6}
+.bk5{left:16px;top:218px;width:260px;height:12px;background:#ECE5DD}
+.code-badge{position:absolute;right:18px;bottom:14px;padding:6px 14px;border-radius:12px;background:#4A3A30;color:#F0BC78;font-family:var(--mono);font-size:18px;font-weight:700}
+.doc{position:absolute;left:96px;right:96px;top:22px;bottom:22px;border-radius:10px;background:#fff;padding:22px 24px;box-shadow:0 10px 24px rgba(176,146,110,.18)}
+.dl{height:10px;border-radius:5px;margin-bottom:13px;background:#D8CFC6;transition:all .7s cubic-bezier(.3,1.3,.5,1)}
+.doc .dl:nth-of-type(1){width:60%;transform:translateX(40px) rotate(-4deg);background:#FF9A8F;height:16px}
+.doc .dl:nth-of-type(2){width:90%;transform:translateX(-14px) rotate(2deg)}
+.doc .dl:nth-of-type(3){width:50%;transform:translateX(60px);background:#9CB291}
+.doc .dl:nth-of-type(4){width:95%;transform:rotate(-3deg)}
+.doc .dl:nth-of-type(5){width:70%;transform:translateX(30px) rotate(3deg);height:14px;background:#FFD27A}
+.doc .dl:nth-of-type(6){width:40%;transform:translateX(-10px)}
+.doc .dl:nth-of-type(7){width:85%;transform:translateX(20px) rotate(-2deg)}
+.doc.neat .dl{transform:none;background:#E0D6CA;height:8px;width:100%}
+.doc.neat .dl:nth-of-type(1){width:64%;margin-left:18%;height:14px;background:#4A3A30}
+.doc.neat .dl:nth-of-type(2){width:40%;margin-left:30%;height:7px;background:#BCAE9F}
+.eqn{position:absolute;left:0;right:0;bottom:20px;text-align:center;font-family:Georgia,"Times New Roman",serif;font-style:italic;font-size:22px;color:#4A3A30;opacity:0;transition:opacity .6s .3s}
+.doc.neat .eqn{opacity:1}
+.doc-tag{position:absolute;right:-70px;top:10px;padding:5px 12px;border-radius:10px;font-size:15px;font-weight:800;font-family:var(--mono);background:#F4E6D6;color:#A0704A;transition:all .4s}
+.doc-tag::after{content:"Word"}
+.doc.neat .doc-tag{background:#E9F0E2;color:#5E8A55}
+.doc.neat .doc-tag::after{content:"LaTeX ✓"}
+
+/* S6 */
+.s6-head{position:absolute;top:140px;width:100%;text-align:center}
+.s6-head .h2{margin-top:12px}
+.links{position:absolute;left:0;top:0;width:1920px;height:1080px}
+.links path{fill:none;stroke:url(#lg);stroke-width:4;stroke-linecap:round;stroke-dasharray:4000;stroke-dashoffset:4000}
+.term{position:absolute;left:560px;top:420px;width:800px;height:350px;border-radius:30px;overflow:hidden;z-index:2}
+.term-bar{height:48px;display:flex;align-items:center;gap:9px;padding:0 20px;background:rgba(240,233,226,.8)}
+.term-bar span{margin-left:auto;margin-right:auto;font-family:var(--mono);font-size:16px;color:var(--ink2)}
+.term-body{padding:22px 28px;font-family:var(--mono);font-size:22px;line-height:1.75;background:#FFFDFB;height:302px}
+.pr{color:#D9775E;font-weight:900}
+.ok{color:#6B9560}.ok.p{color:#D9775E}
+.node{position:absolute;padding:18px 28px;border-radius:30px;font-size:26px;font-weight:800;white-space:nowrap;z-index:3}
+
+/* S7 */
+.s7-wrap{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px;padding-bottom:110px}
+.mega2{font-size:120px;font-weight:900;letter-spacing:.03em;line-height:1.2}
+.journey{display:flex;align-items:center;gap:14px;font-size:22px;font-weight:700;color:var(--ink2)}
+.journey span{padding:10px 20px;border-radius:24px;background:var(--bg);box-shadow:var(--neu-sm);color:var(--ink)}
+.thanks{font-size:20px;color:var(--ink2);font-family:var(--mono);letter-spacing:.06em}
+
+/* player UI */
+#ctrl{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);width:min(860px,calc(100% - 32px));display:flex;align-items:center;gap:14px;padding:10px 16px;border-radius:26px;z-index:100;transition:opacity .4s,transform .4s}
+#ctrl.hidden{opacity:0;transform:translate(-50%,16px);pointer-events:none}
+.cbtn{width:44px;height:44px;border:0;border-radius:50%;background:var(--bg);box-shadow:var(--neu-sm);display:grid;place-items:center;color:var(--ink);font-size:18px;flex:none}
+.cbtn:active{box-shadow:var(--neu-in)}
+.cbtn:focus-visible,#startBtn:focus-visible{outline:3px solid #E58F72;outline-offset:3px}
+.time{font-family:var(--mono);font-size:14px;color:var(--ink2);white-space:nowrap}
+#track{position:relative;flex:1;height:44px;cursor:pointer}
+.rail{position:absolute;left:0;right:0;top:19px;height:6px;border-radius:3px;background:#E8DFD6}
+#fill{position:absolute;left:0;top:0;bottom:0;border-radius:3px;background:var(--grad);width:0}
+#knob{position:absolute;top:50%;width:18px;height:18px;margin:-9px 0 0 -9px;border-radius:50%;background:#fff;box-shadow:0 2px 8px rgba(140,100,70,.35);left:0}
+.mark{position:absolute;top:-2px;width:3px;height:10px;border-radius:2px;background:rgba(255,255,255,.95)}
+#tip{position:absolute;bottom:42px;padding:5px 10px;border-radius:10px;background:#4A3A30;color:#fff;font-size:13px;white-space:nowrap;transform:translateX(-50%);opacity:0;pointer-events:none;transition:opacity .2s}
+#intro{position:fixed;inset:0;z-index:200;display:grid;place-items:center;background:rgba(246,241,235,.45);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);transition:opacity .5s}
+#intro.gone{opacity:0;pointer-events:none}
+.intro-card{width:min(420px,calc(100% - 40px));padding:34px 30px 26px;border-radius:36px;text-align:center;background:var(--bg);box-shadow:var(--neu)}
+.intro-card .mascot{margin:0 auto 8px}
+.intro-card h2{font-size:30px;font-weight:900}
+.intro-card p{font-size:16px;color:var(--ink2);line-height:1.6;margin:8px 0 22px}
+#startBtn{position:relative;width:100%;height:64px;border:0;border-radius:32px;background:var(--grad);color:#fff;font-size:22px;font-weight:900;letter-spacing:.06em;overflow:hidden;box-shadow:0 14px 30px rgba(220,140,100,.45),inset 0 2px 0 rgba(255,255,255,.5);animation:glow 2s ease-in-out infinite}
+#startBtn::before{content:"";position:absolute;top:0;bottom:0;left:-60%;width:40%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.7),transparent);animation:sweep 2.2s ease-in-out infinite}
+@keyframes sweep{to{left:120%}}
+@keyframes glow{50%{box-shadow:0 18px 44px rgba(238,160,110,.6),inset 0 2px 0 rgba(255,255,255,.5)}}
+.link-btn{margin-top:12px;border:0;background:none;color:var(--ink2);font-size:15px;padding:10px}
+#replay{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:150;padding:16px 30px;border-radius:32px;border:0;font-size:20px;font-weight:900;color:var(--ink);display:none}
+.ended #replay{display:block}
+.clean #ctrl,.clean #replay{display:none!important}
+@media (prefers-reduced-motion:reduce){.blob,.spark{animation:none}}
+
+/* v2 细节 */
+.news .ic{color:var(--coral)}
+.sticker .ic{color:var(--honey);width:1.1em;height:1.1em}
+.pv-url .ic{width:.9em;height:.9em}
+.chat-head .lg{display:grid}
+.s-btn .ic,.sendbtn .ic{width:28px;height:28px;stroke-width:2.4}
+.sendbtn .ic{width:24px;height:24px}
+.s-old>span:first-child{display:grid;font-size:32px}
+.q b .ic{width:20px;height:20px;stroke-width:2.6}
+.art .ic{width:28px;height:28px}
+.board b .ic{color:var(--coral)}
+.toast .ic{color:var(--coral)}
+.done-chip .ic{stroke-width:2.6}
+.node .ic{color:var(--coral);width:1.05em;height:1.05em;margin-right:4px}
+.code-badge .ic{width:24px;height:24px;vertical-align:middle}
+.cbtn .ic{width:20px;height:20px}
+#startBtn .ic{width:22px;height:22px;vertical-align:-.2em}
+#replay .ic{width:20px;height:20px;vertical-align:-.2em}
+.journey span{color:var(--ink)}
+
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><symbol id="i-flame" viewBox="0 0 24 24"><path d="M12 3c1 3 4.5 4.8 4.5 9a4.5 4.5 0 0 1-9 0c0-1.8.8-3.1 1.8-4 .2 1.4 1 2.4 2 2.9C11 8.3 11 5.6 12 3z"/></symbol><symbol id="i-sparkle" viewBox="0 0 24 24"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M19 15v4M17 17h4"/></symbol><symbol id="i-hash" viewBox="0 0 24 24"><path d="M5 9h14M5 15h14M10 4L8 20M16 4l-2 16"/></symbol><symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4"/></symbol><symbol id="i-bulb" viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.6 10.8c.7.6 1.1 1.3 1.1 2.1V16h5v-.1c0-.8.4-1.5 1.1-2.1A6 6 0 0 0 12 3z"/></symbol><symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></symbol><symbol id="i-book" viewBox="0 0 24 24"><path d="M2.5 5.5c3-1.3 6.3-1.1 9.5 1 3.2-2.1 6.5-2.3 9.5-1v13c-3-1.3-6.3-1.1-9.5 1-3.2-2.1-6.5-2.3-9.5-1zM12 6.5v13"/></symbol><symbol id="i-flower" viewBox="0 0 24 24"><circle cx="12" cy="12" r="2.4"/><circle cx="12" cy="6.3" r="3"/><circle cx="17.4" cy="10.2" r="3"/><circle cx="15.3" cy="16.6" r="3"/><circle cx="8.7" cy="16.6" r="3"/><circle cx="6.6" cy="10.2" r="3"/></symbol><symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></symbol><symbol id="i-cap" viewBox="0 0 24 24"><path d="M2 9l10-5 10 5-10 5zM6 11v5c3.2 2.6 8.8 2.6 12 0v-5M22 9v6"/></symbol><symbol id="i-cup" viewBox="0 0 24 24"><path d="M4 9h12v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5zM16 10.5h1.5a2.5 2.5 0 0 1 0 5H16M8 3.5c-.8 1 .8 2 0 3M12 3.5c-.8 1 .8 2 0 3"/></symbol><symbol id="i-party" viewBox="0 0 24 24"><path d="M4 20l4.2-11.2 7 7zM14 4.5l.8 2M19.5 9.2l2-.8M17 6l3-3M11.5 3.5h.01M20.5 13h.01"/></symbol><symbol id="i-note" viewBox="0 0 24 24"><path d="M9 18V5.5l11-2V16"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></symbol><symbol id="i-msg" viewBox="0 0 24 24"><path d="M4 5h16v11H9.5L4 20z"/><path d="M8 9.5h8M8 12.5h5"/></symbol><symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7"/></symbol><symbol id="i-video" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3.5"/><path d="M10 9.3v5.4l4.6-2.7z"/></symbol><symbol id="i-pen" viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6zM14 3v5h5M9 13h7M9 17h5"/></symbol><symbol id="i-chart" viewBox="0 0 24 24"><path d="M5 20V11M11 20V5M17 20v-6M3 20h18"/></symbol><symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v3M12 18.5v3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M2.5 12h3M18.5 12h3M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/></symbol><symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.5 3 14.5 0 18M12 3c-3 3.5-3 14.5 0 18"/></symbol><symbol id="i-sigma" viewBox="0 0 24 24"><path d="M18 5H6.5l6 7-6 7H18"/></symbol><symbol id="i-vol" viewBox="0 0 24 24"><path d="M4 9.5h3.5L13 5v14l-5.5-4.5H4zM16.5 9a4.5 4.5 0 0 1 0 6M19 6.5a8 8 0 0 1 0 11"/></symbol><symbol id="i-mute" viewBox="0 0 24 24"><path d="M4 9.5h3.5L13 5v14l-5.5-4.5H4zM17 9.5l5 5M22 9.5l-5 5"/></symbol><symbol id="i-full" viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></symbol><symbol id="i-play" viewBox="0 0 24 24"><path d="M7.5 4.8v14.4L19.5 12z" fill="currentColor" stroke="none"/></symbol><symbol id="i-pause" viewBox="0 0 24 24"><rect x="6.5" y="5" width="4" height="14" rx="1.3" fill="currentColor" stroke="none"/><rect x="13.5" y="5" width="4" height="14" rx="1.3" fill="currentColor" stroke="none"/></symbol><symbol id="i-send" viewBox="0 0 24 24"><path d="M12 19V5M5.5 11.5L12 5l6.5 6.5"/></symbol><symbol id="i-replay" viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v5h5"/></symbol><symbol id="i-code" viewBox="0 0 24 24"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5M13.5 4l-3 16"/></symbol></defs></svg>
+<div id="viewport" class="paused">
+<div id="stage">
+  <div class="bg"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="blob b4"></div><div class="dots"></div><div class="paper"></div><div id="sparks"></div></div>
+
+  <!-- 顶部标题栏 -->
+  <div id="topbar">
+    <div class="brand glass"><div class="mascot tiny" data-mascot></div><b>我怎么入坑 AI</b><span class="sep"></span><span id="chap">01 · 初遇</span></div>
+    <div id="chapDots" class="glass"></div>
+  </div>
+
+  <!-- S0 开场 -->
+  <section class="scene" id="s0" data-start="0" data-end="5.5" data-name="开场">
+    <div class="s0-wrap">
+      <div class="ip-hero" data-in="0.2" data-fx="pop" data-sfx="pop"><div class="mascot big floaty hold" data-mascot></div><svg class="bfly b0" viewBox="0 0 60 50"><g class="wl"><path d="M30 24C20 4 2 3 4 17c1 9 14 11 26 7z" fill="#F2B08E"/><path d="M30 26c-10 3-20 13-14 19 6 3 12-7 14-19z" fill="#F2CB8C"/><circle cx="13" cy="14" r="2.6" fill="#FFF6E8"/><circle cx="19" cy="38" r="1.8" fill="#FFF6E8"/></g><g class="wr"><path d="M30 24C40 4 58 3 56 17c-1 9-14 11-26 7z" fill="#F2B08E"/><path d="M30 26c10 3 20 13 14 19-6 3-12-7-14-19z" fill="#F2CB8C"/><circle cx="47" cy="14" r="2.6" fill="#FFF6E8"/><circle cx="41" cy="38" r="1.8" fill="#FFF6E8"/></g><path d="M30 14v22" stroke="#5A463A" stroke-width="2.6" stroke-linecap="round"/><path d="M30 14q-3-8-8-9M30 14q3-8 8-9" stroke="#5A463A" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg></div>
+      <div class="eyebrow neu-sm" data-in="0.7" data-fx="up">我的 AI 起点 ・ ORIGIN STORY</div>
+      <h1 class="mega"><span class="split" data-split="1.0,0.09,pop" data-sfx="pop">我怎么入坑</span><span class="ai-badge" data-in="1.6" data-fx="pop" data-sfx="chime">AI</span></h1>
+      <p class="lead" data-in="2.2" data-fx="blur">How I fell into AI ・ 一段关于初遇的纯代码动画</p>
+      <div class="tech" data-in="2.7" data-fx="up"><span>HTML</span><span>CSS</span><span>JavaScript</span><span>Web Audio</span></div>
+    </div>
+  </section>
+
+  <!-- S1 2023 夏天 -->
+  <section class="scene" id="s1" data-start="5.5" data-end="12" data-name="01 · 初遇">
+    <div class="s1-left">
+      <div class="kicker" data-in="0.2" data-fx="up">2023 ・ 夏</div>
+      <div class="year grad-text" data-in="0.35" data-fx="zoom">2023</div>
+      <div class="s1-title" data-in="0.8" data-fx="up">高考结束的那个夏天</div>
+      <div class="ticket neu" data-in="1.1" data-fx="up">
+        <div class="t-head"><span>准考证</span><span class="t-no">No.20230607</span></div>
+        <div class="t-row"><i>考试</i><b>普通高等学校招生全国统一考试</b></div>
+        <div class="t-row"><i>状态</i><b>已结束 ✓</b></div>
+        <div class="t-row"><i>心情</i><b>终于自由啦！</b></div>
+        <div class="stamp" data-in="1.9" data-fx="stamp" data-sfx="stamp">毕业<br>快乐</div>
+      </div>
+    </div>
+    <div class="s1-right">
+      <div class="news n1 glass" data-in="2.7" data-fx="pop" data-sfx="pop"><span><svg class="ic"><use href="#i-flame"/></svg> GPT‑4 火遍全网</span></div>
+      <div class="news n2 glass" data-in="3.0" data-fx="pop"><span><svg class="ic"><use href="#i-hash"/></svg> ChatGPT 冲上热搜</span></div>
+      <div class="news n3 glass" data-in="3.3" data-fx="pop"><span><svg class="ic"><use href="#i-sparkle"/></svg> 人人都在聊 AI</span></div>
+      <div class="phone neu" data-in="2.2" data-fx="up">
+        <div class="scr">
+          <div class="island"></div>
+          <div class="ph-head"><div class="mascot mini" data-mascot></div><div><b>ChatGPT</b><small>● GPT‑4 在线</small></div></div>
+          <div class="ph-body">
+            <div class="bub ai" data-in="3.7" data-fx="pop" data-sfx="pop"><span data-type="3.8" data-cps="16">你好呀～我是 AI，想聊点什么都可以哦～</span></div>
+            <div class="bub me" data-in="5.5" data-fx="pop" data-sfx="pop">哇，你好！我们……认识一下？</div>
+          </div>
+          <div class="ph-input neu-in">发消息…</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- S2 稳稳地接住我 -->
+  <section class="scene" id="s2" data-start="12" data-end="20" data-name="02 · 被接住">
+    <div class="chatcard glass" data-in="0.1" data-fx="left">
+      <div class="cc-head"><div class="mascot mini" data-mascot></div><b>AI</b><small>深夜 01:24</small></div>
+      <div class="bub me big" data-in="0.4" data-fx="pop" data-sfx="pop">最近心里有点乱……感情的事理不清，也不知道该和谁说</div>
+      <div class="bub ai tdots" data-in="1.3" data-out="2.1" data-fx="pop"><i></i><i></i><i></i></div>
+      <div class="bub ai big" data-in="2.3" data-fx="pop" data-sfx="pop"><span data-type="2.4" data-cps="24">我在呢。不用急着理清，先把心里的话慢慢说出来——你的每一种感受，都值得被温柔对待。</span></div>
+      <div class="bub me big" data-in="5.7" data-fx="pop" data-sfx="pop">谢谢你，好像……被接住了</div>
+    </div>
+    <div class="catch">
+      <div class="catch-title split grad-split" data-split="3.9,0.1,pop">稳稳地接住我</div>
+      <div class="catch-tags" data-in="4.8" data-fx="up"><span>不绕弯子</span><span>足够温柔</span><span>永远在线</span></div>
+      <div class="heart-glow" data-in="3.65" data-d="0.9" data-fx="ripple"></div>
+      <div class="mascot big catcher" data-mascot data-in="0.5" data-fx="up" data-cls="happy@3.7"></div>
+      <div class="bfly-s2" data-in="4.6" data-fx="pop"><svg class="bfly" viewBox="0 0 60 50"><g class="wl"><path d="M30 24C20 4 2 3 4 17c1 9 14 11 26 7z" fill="#F2B08E"/><path d="M30 26c-10 3-20 13-14 19 6 3 12-7 14-19z" fill="#F2CB8C"/><circle cx="13" cy="14" r="2.6" fill="#FFF6E8"/><circle cx="19" cy="38" r="1.8" fill="#FFF6E8"/></g><g class="wr"><path d="M30 24C40 4 58 3 56 17c-1 9-14 11-26 7z" fill="#F2B08E"/><path d="M30 26c10 3 20 13 14 19-6 3-12-7-14-19z" fill="#F2CB8C"/><circle cx="47" cy="14" r="2.6" fill="#FFF6E8"/><circle cx="41" cy="38" r="1.8" fill="#FFF6E8"/></g><path d="M30 14v22" stroke="#5A463A" stroke-width="2.6" stroke-linecap="round"/><path d="M30 14q-3-8-8-9M30 14q3-8 8-9" stroke="#5A463A" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg></div><div class="cloud" data-in="0.3" data-fx="up"><i></i><i></i><i></i><i></i></div>
+      <svg id="heart" viewBox="0 0 100 90"><defs><linearGradient id="hg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F7B993"/><stop offset="1" stop-color="#E5806A"/></linearGradient></defs><path fill="url(#hg)" d="M50 86C20 64 4 48 4 28 4 14 15 4 28 4c10 0 18 6 22 14C54 10 62 4 72 4c13 0 24 10 24 24 0 20-16 36-46 58z"/><ellipse cx="30" cy="24" rx="9" ry="6" fill="#fff" opacity=".6" transform="rotate(-30 30 24)"/></svg>
+    </div>
+  </section>
+
+  <!-- S3 替代搜索引擎 -->
+  <section class="scene" id="s3" data-start="20" data-end="26" data-name="03 · 新的搜索">
+    <div class="s3-head"><div class="kicker" data-in="0.1" data-fx="up">它的知识，渊博得不像话</div><h2 class="h2" data-in="0.3" data-fx="blur">于是，AI 替代了我的<span class="grad-text">搜索引擎</span></h2></div>
+    <div class="search neu" data-in="0.4" data-fx="up" data-cls="ai@2.3">
+      <div class="s-old"><span><svg class="ic"><use href="#i-search"/></svg></span><span>为什么肌肉会酸痛 原因 知乎 百度 第2页</span><b class="s-btn"><svg class="ic"><use href="#i-search"/></svg></b></div>
+      <div class="s-new"><div class="mascot mini" data-mascot></div><span data-type="2.6" data-cps="14">问问 AI：为什么肌肉会酸痛？</span><b class="s-btn"><svg class="ic"><use href="#i-send"/></svg></b></div>
+    </div>
+    <div class="results">
+      <div class="res" data-in="0.6" data-out="1.9" data-fx="up"><em>广告</em><i style="width:52%"></i><i style="width:24%"></i></div>
+      <div class="res" data-in="0.7" data-out="1.95" data-fx="up"><em>广告</em><i style="width:66%"></i><i style="width:12%"></i></div>
+      <div class="res" data-in="0.8" data-out="2.0" data-fx="up"><i style="width:40%"></i><i style="width:34%"></i></div>
+      <div class="res" data-in="0.9" data-out="2.05" data-fx="up"><i style="width:72%"></i></div>
+      <div class="res" data-in="1.0" data-out="2.1" data-fx="up"><em>广告</em><i style="width:30%"></i><i style="width:44%"></i></div>
+    </div>
+    <div class="q glass" style="left:230px;top:520px" data-in="2.9" data-fx="pop" data-sfx="pop">黑洞会蒸发吗？<b><svg class="ic"><use href="#i-check"/></svg></b></div>
+    <div class="q glass" style="left:760px;top:520px" data-in="3.1" data-fx="pop">这道物理题怎么解？<b><svg class="ic"><use href="#i-check"/></svg></b></div>
+    <div class="q glass" style="left:1250px;top:530px" data-in="3.3" data-fx="pop" data-sfx="pop">怎么写一封得体的邮件？<b><svg class="ic"><use href="#i-check"/></svg></b></div>
+    <div class="q glass" style="left:470px;top:650px" data-in="3.5" data-fx="pop">论文参考文献格式？<b><svg class="ic"><use href="#i-check"/></svg></b></div>
+    <div class="q glass" style="left:1010px;top:650px" data-in="3.7" data-fx="pop" data-sfx="pop">周末武汉去哪玩？<b><svg class="ic"><use href="#i-check"/></svg></b></div>
+    <div class="q glass" style="left:260px;top:780px" data-in="3.9" data-fx="pop">今晚吃点啥好？<b><svg class="ic"><use href="#i-check"/></svg></b></div>
+    <div class="q glass" style="left:1240px;top:780px" data-in="4.1" data-fx="pop" data-sfx="pop">Python 报错怎么办？<b><svg class="ic"><use href="#i-check"/></svg></b></div>
+  </section>
+
+  <!-- S4 灵机一动：做网站 -->
+  <section class="scene" id="s4" data-start="26" data-end="45" data-name="04 · 灵机一动">
+    <div class="sticker" data-in="0.7" data-fx="stamp" data-sfx="stamp">2025.10 ・ 华中科技大学读书会<br><b>活动部部长</b>的灵机一动 <svg class="ic"><use href="#i-bulb"/></svg></div>
+    <div class="win neu" data-in="0.1" data-fx="zoom" data-sfx="whoosh">
+      <div class="win-bar"><i class="tl r"></i><i class="tl y"></i><i class="tl g"></i><span class="win-title">AI 对话 — 读书会回忆网站</span></div>
+      <div class="win-body">
+        <div class="chat">
+          <div class="chat-head"><span class="lg"><svg class="ic"><use href="#i-sparkle"/></svg></span><b>Claude</b><small>代码助手</small></div>
+          <div class="chat-view" id="chatView">
+            <div class="hint" data-in="0.6" data-fx="fade" data-out="6.6">嗨 羽升，今天想做点什么？</div>
+            <div class="chat-scroll" id="chatScroll">
+              <div class="bub me" data-in="6.9" data-fx="pop" data-sfx="pop">帮我把读书会这一年的活动，做成一个能翻看的回忆相册网站：照片墙 + 时间线，再配一段温柔的 BGM</div>
+              <div class="bub ai" data-in="7.6" data-fx="pop" data-sfx="pop"><span data-type="7.7" data-cps="20">好呀！我来写一个回忆相册页面～</span></div>
+              <div class="code" data-in="8.3" data-fx="up">
+                <div class="code-h"><span>album.html</span><span>HTML · CSS · JS</span></div>
+                <div class="ln" data-in="8.5" data-fx="left"><span class="cm">&lt;!-- 华科读书会 · 回忆相册 --&gt;</span></div>
+                <div class="ln" data-in="8.65" data-fx="left"><span class="tg">&lt;section</span> <span class="at">class</span>=<span class="st">"album"</span><span class="tg">&gt;</span></div>
+                <div class="ln" data-in="8.8" data-fx="left">  <span class="tg">&lt;h1&gt;</span>那些一起读过的书<span class="tg">&lt;/h1&gt;</span></div>
+                <div class="ln" data-in="8.95" data-fx="left">  <span class="tg">&lt;nav</span> <span class="at">class</span>=<span class="st">"timeline"</span><span class="tg">&gt;</span>…<span class="tg">&lt;/nav&gt;</span></div>
+                <div class="ln" data-in="9.1" data-fx="left">  <span class="tg">&lt;div</span> <span class="at">class</span>=<span class="st">"photo-wall"</span><span class="tg">&gt;</span></div>
+                <div class="ln" data-in="9.25" data-fx="left">    <span class="tg">&lt;figure</span> <span class="at">class</span>=<span class="st">"polaroid"</span><span class="tg">&gt;</span>春日共读<span class="tg">&lt;/figure&gt;</span></div>
+                <div class="ln" data-in="9.4" data-fx="left">  <span class="tg">&lt;/div&gt;</span></div>
+                <div class="ln" data-in="9.55" data-fx="left">  <span class="tg">&lt;audio</span> <span class="at">src</span>=<span class="st">"summer.mp3"</span> <span class="at">loop</span><span class="tg">&gt;</span></div>
+                <div class="ln" data-in="9.7" data-fx="left"><span class="tg">&lt;/section&gt;</span></div>
+                <div class="ln" data-in="9.85" data-fx="left"><span class="tg">&lt;script&gt;</span> <span class="fn">fadeInPhotos</span>(); <span class="fn">playBGM</span>(); <span class="tg">&lt;/script&gt;</span></div>
+              </div>
+              <div class="done-chip" data-in="11.4" data-fx="pop" data-sfx="chime"><svg class="ic"><use href="#i-check"/></svg> 渲染完成 · 纯文本变成了可视化组件</div>
+            </div>
+          </div>
+          <div class="chat-input neu-in" id="s4Input">
+            <span class="ph-text" data-in="0" data-d="0.01" data-fx="fade" data-out="2.55">把你的想法告诉我…</span>
+            <span class="typed" data-in="0" data-d="0.01" data-fx="fade" data-out="6.75"><span data-type="2.7" data-cps="17" data-tick="1">帮我把读书会这一年的活动，做成一个能翻看的回忆相册网站：照片墙 + 时间线，再配一段温柔的 BGM</span></span>
+            <b class="sendbtn" id="s4Send" data-cls="press@6.8,_@6.95"><svg class="ic"><use href="#i-send"/></svg></b>
+          </div>
+        </div>
+        <div class="preview">
+          <div class="pv-bar"><span class="pv-url"><svg class="ic"><use href="#i-lock"/></svg> husteread.com / album</span></div>
+          <div class="pv-empty" data-in="0" data-d="0.01" data-fx="fade" data-out="8.8"><div class="skel"></div><div class="skel s2"></div><span>等待你的想法…</span></div>
+          <div class="site">
+            <div class="site-h" data-in="9.0" data-fx="down" data-sfx="whoosh"><span class="logo">读</span><b>华科读书会 · 回忆相册</b><nav><span>活动</span><span>时间线</span><span>留言板</span></nav><button class="embed-btn" id="s4Embed" data-cls="press@14.0,_@14.15">嵌入 WordPress</button></div>
+            <div class="site-hero" data-in="9.3" data-fx="blur"><h3>那些一起读过的书，都在这里</h3><p>一年 ・ 24 场活动 ・ 312 张照片 ・ 无数个闪闪发光的晚上</p></div>
+            <div class="tl-strip" data-in="9.6" data-fx="fade"><span>3月</span><span>4月</span><span>6月</span><span>9月</span><span>10月</span></div>
+            <div class="polas">
+              <div class="pola" style="--r:-3deg" data-in="9.9" data-fx="drop" data-sfx="pop"><div class="ph p1"><span><svg class="ic"><use href="#i-book"/></svg></span></div><div class="cap">春日共读会</div></div>
+              <div class="pola" style="--r:2deg" data-in="10.15" data-fx="drop"><div class="ph p2"><span><svg class="ic"><use href="#i-flower"/></svg></span></div><div class="cap">樱花诗会</div></div>
+              <div class="pola" style="--r:-1.5deg" data-in="10.4" data-fx="drop" data-sfx="pop"><div class="ph p3"><span><svg class="ic"><use href="#i-moon"/></svg></span></div><div class="cap">期末夜读</div></div>
+              <div class="pola" style="--r:2.5deg" data-in="10.65" data-fx="drop"><div class="ph p4"><span><svg class="ic"><use href="#i-cap"/></svg></span></div><div class="cap">毕业寄语</div></div>
+              <div class="pola" style="--r:-2deg" data-in="10.9" data-fx="drop" data-sfx="pop"><div class="ph p5"><span><svg class="ic"><use href="#i-cup"/></svg></span></div><div class="cap">读书分享夜</div></div>
+              <div class="pola" style="--r:1.5deg" data-in="11.15" data-fx="drop"><div class="ph p6"><span><svg class="ic"><use href="#i-party"/></svg></span></div><div class="cap">迎新季</div></div>
+            </div>
+            <div class="player glass" data-in="11.6" data-fx="up" data-sfx="chime"><div class="pl-top"><div class="art"><svg class="ic"><use href="#i-note"/></svg></div><div><b>读书会的夏天</b><small>BGM ・ 正在播放</small></div></div><div class="eq"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="pl-bar"><i></i></div></div>
+            <div class="board glass" data-in="12.0" data-fx="up"><b><svg class="ic"><use href="#i-msg"/></svg> 留言板</b><div class="avs"><i style="background:#F2B9A0"></i><i style="background:#F0CC8E"></i><i style="background:#BFD0B0"></i><i style="background:#E6A3A0"></i></div><div style="margin-top:8px;color:var(--ink2)">37 条新留言</div></div>
+          </div>
+          <div class="toast glass" data-in="14.4" data-fx="pop" data-sfx="chime"><svg class="ic"><use href="#i-party"/></svg> 已嵌入 WordPress ・ 读书会相册上线啦</div>
+        </div>
+      </div>
+    </div>
+    <div class="confetti" id="confetti"></div>
+    <svg id="cursor" viewBox="0 0 40 44"><path d="M6 3v31l8-7.5 5.6 12.2 5.4-2.4-5.5-12H30z" fill="#3B3442" stroke="#fff" stroke-width="2.6" stroke-linejoin="round"/></svg>
+  </section>
+
+  <!-- S5 无限可能 -->
+  <section class="scene" id="s5" data-start="45" data-end="52.5" data-name="05 · 无限可能">
+    <div class="s5-head"><div class="kicker" data-in="0.1" data-fx="up">后来我发现</div><h2 class="h2" data-in="0.3" data-fx="blur">只要我<span class="grad-text">说得出</span>，AI 就能用代码无限贴近</h2></div>
+    <div class="cards">
+      <div class="card neu" data-in="0.8" data-fx="up" data-sfx="pop">
+        <div class="vis neu-in"><div class="mini-screen"><span class="rec">REC</span><div class="mascot mini floaty" data-mascot></div><b>我怎么入坑<em>AI</em></b><div class="mini-prog"><i></i></div></div></div>
+        <div class="c-tag">a</div><h3>用代码生成视频</h3><p>就像你现在看到的这个</p>
+      </div>
+      <div class="card neu" data-in="1.15" data-fx="up" data-sfx="pop">
+        <div class="vis neu-in"><div class="bro"><div class="bro-bar"><i></i><i></i><i></i></div>
+          <div class="blk bk1" data-in="1.7" data-fx="pop"></div><div class="blk bk2" data-in="2.0" data-fx="pop"></div><div class="blk bk3" data-in="2.15" data-fx="pop"></div><div class="blk bk4" data-in="2.3" data-fx="pop"></div><div class="blk bk5" data-in="2.5" data-fx="left"></div>
+          <div class="code-badge" data-in="2.7" data-fx="pop"><svg class="ic"><use href="#i-code"/></svg></div></div></div>
+        <div class="c-tag">b</div><h3>纯代码写网站</h3><p>想到什么样子，就长成什么样子</p>
+      </div>
+      <div class="card neu" data-in="1.5" data-fx="up" data-sfx="pop">
+        <div class="vis neu-in"><div class="doc" data-cls="neat@3.4"><span class="doc-tag"></span><div class="dl"></div><div class="dl"></div><div class="dl"></div><div class="dl"></div><div class="dl"></div><div class="dl"></div><div class="dl"></div><div class="eqn">∮ E · dA = Q / ε₀</div></div></div>
+        <div class="c-tag">c</div><h3>LaTeX 排版</h3><p>把难看的 Word，一键变成标准格式</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- S6 Agent 的本质 -->
+  <section class="scene" id="s6" data-start="52.5" data-end="58.5" data-name="06 · Agent">
+    <div class="s6-head"><div class="kicker" data-in="0.1" data-fx="up">再深入一点</div><h2 class="h2" data-in="0.3" data-fx="blur">通用 Agent 的本质，<span class="grad-text">也是代码</span></h2></div>
+    <svg class="links" viewBox="0 0 1920 1080"><defs><linearGradient id="lg" x1="0" x2="1"><stop offset="0" stop-color="#E9A39A"/><stop offset=".5" stop-color="#EE9C80"/><stop offset="1" stop-color="#F0BE7C"/></linearGradient></defs>
+      <path data-draw="1.0,0.8" d="M960 595C700 595 640 470 470 470"/>
+      <path data-draw="1.2,0.8" d="M960 595C700 595 640 650 420 650"/>
+      <path data-draw="1.4,0.8" d="M960 595C700 595 640 830 480 830"/>
+      <path data-draw="1.1,0.8" d="M960 595C1220 595 1280 470 1450 470"/>
+      <path data-draw="1.3,0.8" d="M960 595C1220 595 1280 650 1500 650"/>
+      <path data-draw="1.5,0.8" d="M960 595C1220 595 1280 830 1440 830"/>
+    </svg>
+    <div class="term neu" data-in="0.4" data-fx="zoom" data-sfx="whoosh">
+      <div class="term-bar"><i class="tl r"></i><i class="tl y"></i><i class="tl g"></i><span>codex — ~/sofia</span></div>
+      <div class="term-body">
+        <div><span class="pr">❯</span> <span data-type="0.9" data-cps="24">codex "把这周的调研整理成报告，再剪一条短视频"</span></div>
+        <div class="ok" data-in="2.7" data-fx="left">✓ 读取 12 份资料，生成大纲与文案</div>
+        <div class="ok" data-in="3.1" data-fx="left">✓ 运行 scripts/aigc_video.py</div>
+        <div class="ok" data-in="3.5" data-fx="left">✓ 导出 report.pdf ・ short.mp4</div>
+        <div class="ok p" data-in="3.9" data-fx="left" data-sfx="chime">✦ 完成！还有什么想做的？</div>
+      </div>
+    </div>
+    <div class="node glass" style="left:200px;top:432px" data-in="1.6" data-fx="pop" data-sfx="pop"><svg class="ic"><use href="#i-video"/></svg> AIGC 短视频</div>
+    <div class="node glass" style="left:170px;top:612px" data-in="1.8" data-fx="pop"><svg class="ic"><use href="#i-pen"/></svg> 文案调研</div>
+    <div class="node glass" style="left:230px;top:792px" data-in="2.0" data-fx="pop" data-sfx="pop"><svg class="ic"><use href="#i-chart"/></svg> 整理报告</div>
+    <div class="node glass" style="left:1450px;top:432px" data-in="1.7" data-fx="pop"><svg class="ic"><use href="#i-gear"/></svg> 自动化脚本</div>
+    <div class="node glass" style="left:1500px;top:612px" data-in="1.9" data-fx="pop" data-sfx="pop"><svg class="ic"><use href="#i-globe"/></svg> 写网站</div>
+    <div class="node glass" style="left:1440px;top:792px" data-in="2.1" data-fx="pop"><svg class="ic"><use href="#i-sigma"/></svg> LaTeX 排版</div>
+  </section>
+
+  <!-- S7 尾声 -->
+  <section class="scene" id="s7" data-start="58.5" data-end="64" data-name="07 · 尾声">
+    <div class="s7-wrap">
+      <div class="ip-hero" data-in="0.2" data-fx="pop" data-sfx="pop"><div class="mascot big hold" data-mascot data-cls="happy@0.6,wave@0.6"></div><svg class="bfly b7" viewBox="0 0 60 50"><g class="wl"><path d="M30 24C20 4 2 3 4 17c1 9 14 11 26 7z" fill="#F2B08E"/><path d="M30 26c-10 3-20 13-14 19 6 3 12-7 14-19z" fill="#F2CB8C"/><circle cx="13" cy="14" r="2.6" fill="#FFF6E8"/><circle cx="19" cy="38" r="1.8" fill="#FFF6E8"/></g><g class="wr"><path d="M30 24C40 4 58 3 56 17c-1 9-14 11-26 7z" fill="#F2B08E"/><path d="M30 26c10 3 20 13 14 19-6 3-12-7-14-19z" fill="#F2CB8C"/><circle cx="47" cy="14" r="2.6" fill="#FFF6E8"/><circle cx="41" cy="38" r="1.8" fill="#FFF6E8"/></g><path d="M30 14v22" stroke="#5A463A" stroke-width="2.6" stroke-linecap="round"/><path d="M30 14q-3-8-8-9M30 14q3-8 8-9" stroke="#5A463A" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg></div>
+      <div class="kicker" data-in="0.6" data-fx="up">所以，我入坑 AI 的那一刻</div>
+      <h1 class="mega2 split grad-split" data-split="1.0,0.08,pop">说出来，就能被实现</h1>
+      <div class="journey" data-in="2.3" data-fx="up"><span>2023 初遇</span>→<span>被稳稳接住</span>→<span>替代搜索</span>→<span>灵机一动做网站</span>→<span>Agent 赋能生活</span></div>
+      <div class="thanks" data-in="3.2" data-fx="fade">made with pure HTML · CSS · JS ♡ 羽升</div>
+    </div>
+  </section>
+
+  <div id="sub" class="glass"><span id="subText"></span></div>
+</div>
+</div>
+
+<!-- 播放控制（不参与画面缩放） -->
+<div id="intro">
+  <div class="intro-card">
+    <div class="mascot floaty" data-mascot style="font-size:7px"></div>
+    <h2>我怎么入坑 AI</h2>
+    <p>一段约 1 分钟的纯代码动画<br>字幕 + 画面 + 实时合成的 BGM，建议开启声音</p>
+    <button id="startBtn"><svg class="ic"><use href="#i-play"/></svg> 开始播放</button>
+    <button id="startMute" class="link-btn">静音播放</button>
+  </div>
+</div>
+<button id="replay" class="glass"><svg class="ic"><use href="#i-replay"/></svg> 再看一遍</button>
+<div id="ctrl" class="glass">
+  <button id="bPlay" class="cbtn" aria-label="播放 / 暂停"><svg class="ic"><use href="#i-play"/></svg></button>
+  <div class="time"><span id="tCur">0:00</span> / <span id="tAll">1:04</span></div>
+  <div id="track"><div class="rail"><div id="fill"></div><div id="marks"></div></div><div id="knob"></div><div id="tip"></div></div>
+  <button id="bMute" class="cbtn" aria-label="静音"><svg class="ic"><use href="#i-vol"/></svg></button>
+  <button id="bFull" class="cbtn" aria-label="全屏"><svg class="ic"><use href="#i-full"/></svg></button>
+</div>
+
+<script>
+/* 纯 Web Audio 实时合成 BGM + 音效（无任何音频文件） */
+window.Sound = (() => {
+  let ctx = null, master, dry, wetIn, bus = null, send = null, noise;
+  let muted = false, events = [], ptr = 0, c0 = 0, t0 = 0, timer = null;
+  const mtof = m => 440 * Math.pow(2, (m - 69) / 12);
+
+  function ensure() {
+    if (ctx) return ctx;
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return null;
+    ctx = new AC();
+    const comp = ctx.createDynamicsCompressor();
+    comp.threshold.value = -16; comp.ratio.value = 3;
+    master = ctx.createGain(); master.gain.value = muted ? 0 : 0.75;
+    master.connect(ctx.destination); comp.connect(master);
+    dry = comp;
+    // 简易回声（让音乐盒更梦幻）
+    wetIn = ctx.createGain(); wetIn.gain.value = 1;
+    const dl = ctx.createDelay(1); dl.delayTime.value = 0.36;
+    const fb = ctx.createGain(); fb.gain.value = 0.32;
+    const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 2600;
+    const wet = ctx.createGain(); wet.gain.value = 0.28;
+    wetIn.connect(dl); dl.connect(lp); lp.connect(fb); fb.connect(dl); lp.connect(wet); wet.connect(comp);
+    noise = ctx.createBuffer(1, ctx.sampleRate, ctx.sampleRate);
+    const d = noise.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+    return ctx;
+  }
+
+  function env(g, t, a, peak, dur) {
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(Math.max(peak, 0.0002), t + a);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  }
+  function tone(type, f, t, dur, peak, a = 0.005, toSend = false, f2) {
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    o.type = type; o.frequency.setValueAtTime(f, t);
+    if (f2) o.frequency.exponentialRampToValueAtTime(f2, t + dur * 0.8);
+    env(g, t, a, peak, dur);
+    o.connect(g); g.connect(bus); if (toSend) g.connect(send);
+    o.start(t); o.stop(t + dur + 0.05);
+  }
+  function noiseHit(t, dur, peak, type, freq, f2) {
+    const s = ctx.createBufferSource(); s.buffer = noise;
+    const f = ctx.createBiquadFilter(); f.type = type; f.frequency.setValueAtTime(freq, t);
+    if (f2) f.frequency.exponentialRampToValueAtTime(f2, t + dur);
+    const g = ctx.createGain(); env(g, t, Math.min(0.01, dur / 3), peak, dur);
+    s.connect(f); f.connect(g); g.connect(bus);
+    s.start(t, Math.random() * 0.5); s.stop(t + dur + 0.05);
+  }
+  const ins = {
+    bell(e, t) { const f = mtof(e.n); tone('sine', f, t, 1.3, e.g, 0.004, true); tone('sine', f * 2, t, 0.45, e.g * 0.25, 0.003, true); tone('triangle', f * 3, t, 0.15, e.g * 0.06); },
+    lead(e, t) { const f = mtof(e.n); tone('triangle', f, t, e.d, e.g, 0.03, true); tone('sine', f * 2, t, e.d * 0.6, e.g * 0.2, 0.02, true); },
+    pad(e, t) {
+      e.n.forEach(m => {
+        [-6, 6].forEach(det => {
+          const o = ctx.createOscillator(), g = ctx.createGain(), lp = ctx.createBiquadFilter();
+          o.type = 'triangle'; o.frequency.value = mtof(m); o.detune.value = det;
+          lp.type = 'lowpass'; lp.frequency.value = 1100;
+          g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(e.g, t + 0.6);
+          g.gain.setValueAtTime(e.g, t + e.d - 0.4); g.gain.linearRampToValueAtTime(0, t + e.d + 0.3);
+          o.connect(lp); lp.connect(g); g.connect(bus); o.start(t); o.stop(t + e.d + 0.4);
+        });
+      });
+    },
+    bass(e, t) { const f = mtof(e.n); tone('sine', f, t, e.d, 0.2, 0.01); tone('triangle', f, t, e.d * 0.5, 0.05, 0.01); },
+    kick(e, t) { tone('sine', 150, t, 0.32, e.g || 0.4, 0.003, false, 42); },
+    hat(e, t) { noiseHit(t, 0.05, e.g || 0.035, 'highpass', 8000); },
+    pop(e, t) { tone('sine', 520, t, 0.12, 0.16, 0.003, true, 1150); },
+    click(e, t) { tone('sine', 1600, t, 0.05, 0.14, 0.002, false, 900); noiseHit(t, 0.03, 0.06, 'highpass', 3000); },
+    tick(e, t) { noiseHit(t, 0.025, 0.05, 'bandpass', 2500 + Math.random() * 1500); },
+    whoosh(e, t) { noiseHit(t, 0.55, 0.12, 'bandpass', 350, 3200); },
+    stamp(e, t) { tone('sine', 120, t, 0.25, 0.35, 0.003, false, 50); noiseHit(t, 0.08, 0.1, 'lowpass', 1200); },
+    chime(e, t) { [84, 88, 91, 96].forEach((m, i) => tone('sine', mtof(m), t + i * 0.06, 0.9, 0.07, 0.003, true)); }
+  };
+
+  /* ---------- 作曲：IV–V–iii–vi（温柔日系进行）---------- */
+  function compose(sfx) {
+    const ev = [];
+    const BAR = 58.5 / 24, B = BAR / 4;
+    const prog = [[53, 57, 60, 64], [55, 59, 62, 67], [52, 55, 59, 62], [57, 60, 64, 67]];
+    const roots = [41, 43, 40, 45];
+    for (let bar = 0; bar < 24; bar++) {
+      const tb = bar * BAR, c = prog[bar % 4];
+      ev.push({ t: tb, k: 'pad', n: c, d: BAR, g: 0.022 });
+      const arp = [0, 1, 2, 3, 2, 1, 2, 3].map(i => c[i] + 12);
+      const step = bar < 2 ? 2 : 1;
+      for (let i = 0; i < 8; i += step) ev.push({ t: tb + i * B / 2, k: 'bell', n: arp[i], g: i % 2 ? 0.045 : 0.07 });
+      if (bar >= 2) {
+        ev.push({ t: tb, k: 'bass', n: roots[bar % 4], d: B * 1.8 });
+        ev.push({ t: tb + 2 * B, k: 'bass', n: roots[bar % 4], d: B * 1.6 });
+        ev.push({ t: tb, k: 'kick' }); ev.push({ t: tb + 2 * B, k: 'kick', g: 0.3 });
+      }
+      if (bar >= 11) {
+        ev.push({ t: tb + B, k: 'kick', g: 0.25 }); ev.push({ t: tb + 3 * B, k: 'kick', g: 0.25 });
+        for (let i = 0; i < 4; i++) ev.push({ t: tb + i * B + B / 2, k: 'hat' });
+        const top = [c[3] + 12, c[2] + 12, c[3] + 12, c[1] + 24 - 12];
+        [0, 1.5, 2, 3].forEach((bt, i) => ev.push({ t: tb + bt * B, k: 'lead', n: top[i], d: B * (i === 1 ? 0.5 : 0.9), g: 0.05 }));
+      }
+      if (bar >= 18) for (let i = 0; i < 4; i++) ev.push({ t: tb + i * B + B / 4, k: 'hat', g: 0.018 });
+    }
+    // 尾声：Cmaj9 + 上行音乐盒
+    ev.push({ t: 58.5, k: 'pad', n: [48, 55, 60, 64, 67, 71, 74], d: 5.3, g: 0.022 });
+    ev.push({ t: 58.5, k: 'bass', n: 36, d: 3.5 });
+    [72, 76, 79, 83, 86, 88].forEach((m, i) => ev.push({ t: 58.6 + i * 0.16, k: 'bell', n: m, g: 0.06 }));
+    [84, 79, 76, 72].forEach((m, i) => ev.push({ t: 61.6 + i * 0.3, k: 'bell', n: m, g: 0.05 }));
+    sfx.forEach(s => ev.push(s));
+    ev.sort((a, b) => a.t - b.t);
+    events = ev;
+  }
+
+  function newBus() {
+    bus = ctx.createGain(); bus.connect(dry);
+    send = ctx.createGain(); send.connect(wetIn);
+  }
+  function killBus() {
+    if (!bus) return;
+    const b = bus, s = send, now = ctx.currentTime;
+    [b, s].forEach(g => { g.gain.setTargetAtTime(0, now, 0.03); });
+    setTimeout(() => { try { b.disconnect(); s.disconnect(); } catch (e) {} }, 400);
+    bus = send = null;
+  }
+  function tick() {
+    if (!bus) return;
+    const now = ctx.currentTime, horizon = now + 0.25;
+    while (ptr < events.length) {
+      const e = events[ptr], ct = c0 + (e.t - t0);
+      if (ct > horizon) break;
+      if (ct >= now - 0.03) { try { ins[e.k](e, Math.max(ct, now)); } catch (err) {} }
+      ptr++;
+    }
+  }
+  return {
+    compose,
+    start(from, lead = 0.06) {
+      if (!ensure()) return;
+      if (ctx.state !== 'running') ctx.resume();
+      killBus(); newBus();
+      t0 = from; c0 = ctx.currentTime + lead;
+      ptr = 0; while (ptr < events.length && events[ptr].t < from) ptr++;
+      clearInterval(timer); timer = setInterval(tick, 40); tick();
+    },
+    stop() { clearInterval(timer); timer = null; if (ctx) killBus(); },
+    setMuted(m) { muted = m; if (master) master.gain.setTargetAtTime(m ? 0 : 0.75, ctx.currentTime, 0.05); },
+    get muted() { return muted; }
+  };
+})();
+
+</script>
+<script>
+/* 我怎么入坑 AI —— 纯代码时间轴动画引擎（可拖动、可暂停、可重播） */
+(() => {
+  const T = 64;
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
+  const E = {
+    out: x => 1 - Math.pow(1 - x, 3),
+    inout: x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2,
+    back: x => { const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); }
+  };
+  const viewport = $('#viewport'), stage = $('#stage');
+  const params = new URLSearchParams(location.search);
+
+  /* ---------- 字幕（无配音，纯字幕） ---------- */
+  const SUBS = [
+    [0.8, 5.2, '这是一段纯代码写成的动画 · 讲讲我和 AI 的初遇'],
+    [5.8, 8.8, '2023 年夏天，高考刚刚结束'],
+    [8.8, 11.9, 'GPT‑4 正火遍全网，我有幸遇见了它'],
+    [12.2, 15.6, '那些说不出口的情绪和感情问题，我试着讲给它听'],
+    [15.6, 19.8, '它用最不绕弯子、最温柔的话，稳稳地接住了我'],
+    [20.2, 23.0, '后来发现，它的知识渊博得不像话'],
+    [23.0, 25.9, '于是，它慢慢替代了我的搜索引擎'],
+    [26.3, 29.4, '2025 年 10 月，我是华科读书会的活动部部长'],
+    [29.4, 32.6, '想给大家一个留存回忆、也能好好交流的地方'],
+    [32.6, 35.6, '于是，我只是把想法说了出来——'],
+    [35.6, 39.8, 'AI 写出代码，把纯文本变成了会动的回忆'],
+    [39.8, 44.8, '照片墙、时间线、BGM……一键嵌入 WordPress，上线！'],
+    [45.2, 48.8, '原来只要我说得出，AI 就能用代码无限贴近'],
+    [48.8, 52.3, '做视频、写网站、LaTeX 排版……本质都是一段代码'],
+    [52.8, 55.6, '再往深处看：通用 Agent 的本质，也是代码'],
+    [55.6, 58.3, '比如 Codex：跑脚本、做短视频、整理调研和报告'],
+    [58.8, 61.6, '而我入坑的那一刻，就是想做网站的那次灵机一动'],
+    [61.6, 64.0, '从此，想法只要说出来，就能被实现 ✦']
+  ];
+
+  /* ---------- 准备 DOM ---------- */
+  const IP_SVG = vb => `<svg class="ip" viewBox="${vb}" aria-hidden="true">
+<ellipse class="ip-sh" cx="100" cy="212" rx="46" ry="6" fill="#4A3A30" opacity=".12"/>
+<path d="M82 184v17M118 184v17" stroke="#5A463A" stroke-width="19" stroke-linecap="round"/><path d="M82 184v17M118 184v17" stroke="#9A8272" stroke-width="15" stroke-linecap="round"/>
+<ellipse cx="80" cy="205" rx="13" ry="7" fill="#F6EFE5" stroke="#5A463A" stroke-width="2"/><ellipse cx="120" cy="205" rx="13" ry="7" fill="#F6EFE5" stroke="#5A463A" stroke-width="2"/>
+<path d="M63 128Q100 113 137 128L146 187Q100 197 54 187Z" fill="#FFFCF6" stroke="#5A463A" stroke-width="2.2" stroke-linejoin="round"/>
+<path d="M88 122L100 162L112 122Z" fill="#A9BC9E"/><path d="M88 122L96 154M112 122L104 154" stroke="#5A463A" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+<circle cx="93" cy="170" r="2" fill="#C9B8A6"/><rect x="117" y="160" width="15" height="11" rx="2" fill="#F3E6D3" stroke="#5A463A" stroke-width="1.4"/>
+<path d="M84 125Q72 150 85 163" stroke="#7D6B60" stroke-width="2.4" fill="none" stroke-linecap="round"/><circle cx="86" cy="165" r="4" fill="#D6CCC1" stroke="#5A463A" stroke-width="1.4"/>
+<path d="M108 128l7 30-10 2-4-30z" fill="#EBD9BC" stroke="#5A463A" stroke-width="1.6" stroke-linejoin="round"/><path d="M106 138l9-1M107 146l9-1" stroke="#D9A86C" stroke-width="2"/>
+<path d="M75 117Q100 131 125 117Q128 126 121 131Q100 139 79 131Q72 126 75 117Z" fill="#EBD9BC" stroke="#5A463A" stroke-width="1.8" stroke-linejoin="round"/><path d="M86 125l2 8M100 128v8M114 125l-2 8" stroke="#D9A86C" stroke-width="2.2" stroke-linecap="round"/>
+<g class="held"><circle cx="100" cy="148" r="24" fill="#F6C28F" opacity=".35"/><path d="M100 163c-10-7-15-12-15-18.5a7 7 0 0 1 15-3 7 7 0 0 1 15 3c0 6.5-5 11.5-15 18.5z" fill="#EE9478" stroke="#C9664E" stroke-width="1.4"/><ellipse cx="93" cy="142" rx="3" ry="2" fill="#fff" opacity=".7"/></g>
+<g class="arm-l"><path d="M67 132Q56 151 79 161" stroke="#5A463A" stroke-width="19" stroke-linecap="round" fill="none"/><path d="M67 132Q56 151 79 161" stroke="#FFFCF6" stroke-width="15" stroke-linecap="round" fill="none"/><ellipse cx="86" cy="161" rx="9" ry="7" fill="#FCE3D0" stroke="#5A463A" stroke-width="1.8"/></g>
+<g class="arm-r"><path d="M133 132Q144 151 121 161" stroke="#5A463A" stroke-width="19" stroke-linecap="round" fill="none"/><path d="M133 132Q144 151 121 161" stroke="#FFFCF6" stroke-width="15" stroke-linecap="round" fill="none"/><ellipse cx="114" cy="161" rx="9" ry="7" fill="#FCE3D0" stroke="#5A463A" stroke-width="1.8"/></g>
+<circle cx="53" cy="80" r="9" fill="#FCE3D0" stroke="#5A463A" stroke-width="2"/><circle cx="147" cy="80" r="9" fill="#FCE3D0" stroke="#5A463A" stroke-width="2"/>
+<ellipse cx="100" cy="74" rx="48" ry="45" fill="#FDE9D8" stroke="#5A463A" stroke-width="2.2"/>
+<path d="M100 21C98 10 106 3 115 6C107 8 105 14 105 21Z" fill="#6E4A33" stroke="#4A3226" stroke-width="1.8" stroke-linejoin="round"/>
+<path d="M49 82C42 41 69 18 100 18C133 18 160 41 151 82C147 68 141 60 133 55C128 63 118 67 108 61C100 67 86 69 78 61C70 67 60 72 49 82Z" fill="#6E4A33" stroke="#4A3226" stroke-width="2" stroke-linejoin="round"/>
+<path d="M49 80C49 92 53 100 58 102C56 92 56 86 58 77ZM151 80C151 92 147 100 142 102C144 92 144 86 142 77Z" fill="#6E4A33" stroke="#4A3226" stroke-width="1.6" stroke-linejoin="round"/>
+<path d="M76 33C88 26 101 26 110 30M121 33c6 2 10 6 12 10" stroke="#9A7052" stroke-width="3" stroke-linecap="round" fill="none" opacity=".75"/>
+<ellipse cx="69" cy="101" rx="7" ry="4" fill="#F2A595" opacity=".55"/><ellipse cx="131" cy="101" rx="7" ry="4" fill="#F2A595" opacity=".55"/>
+<g class="eo"><ellipse cx="80" cy="87" rx="5" ry="6" fill="#4A3226"/><ellipse cx="120" cy="87" rx="5" ry="6" fill="#4A3226"/><circle cx="82" cy="84.5" r="1.8" fill="#fff"/><circle cx="122" cy="84.5" r="1.8" fill="#fff"/></g>
+<g class="eh"><path d="M74 88Q80 81 86 88M114 88Q120 81 126 88" stroke="#4A3226" stroke-width="2.6" fill="none" stroke-linecap="round"/></g>
+<g fill="rgba(255,255,255,.18)" stroke="#5A463A" stroke-width="2.4"><circle cx="80" cy="86" r="14"/><circle cx="120" cy="86" r="14"/></g>
+<path d="M94 84Q100 80 106 84M66 84L54 81M134 84L146 81" stroke="#5A463A" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+<path d="M93 105Q100 111 107 105" stroke="#5A463A" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+</svg>`;
+  $$('[data-mascot]').forEach(m => {
+    const head = m.classList.contains('mini') || m.classList.contains('tiny');
+    m.innerHTML = IP_SVG(head ? '40 4 120 120' : '0 0 200 220');
+  });
+  $$('[data-split]').forEach(el => {
+    const [t0, step, fx] = el.dataset.split.split(',');
+    const chars = Array.from(el.textContent.trim());
+    const grad = el.classList.contains('grad-split');
+    el.innerHTML = '';
+    chars.forEach((c, i) => {
+      const s = document.createElement('span');
+      s.textContent = c;
+      s.dataset.in = (+t0 + i * +step).toFixed(3);
+      s.dataset.fx = fx || 'pop';
+      if (grad) { s.style.backgroundImage = 'var(--grad)'; s.style.backgroundSize = `${chars.length}em 100%`; s.style.backgroundPosition = `${-i}em 0`; }
+      el.appendChild(s);
+    });
+  });
+  // 背景星星
+  const sp = $('#sparks');
+  let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  for (let i = 0; i < 16; i++) {
+    const s = document.createElement('i'); s.className = 'spark'; s.textContent = '✦';
+    s.style.cssText = `left:${rnd() * 100}%;top:${rnd() * 100}%;font-size:${12 + rnd() * 18}px;animation-delay:${-rnd() * 3}s;animation-duration:${2.4 + rnd() * 2}s`;
+    sp.appendChild(s);
+  }
+
+  /* ---------- 收集时间轴 ---------- */
+  const DUR = { pop: .55, stamp: .5, ripple: .8 };
+  const scenes = $$('.scene').map((el, i) => ({
+    el, i, start: +el.dataset.start, end: +el.dataset.end, name: el.dataset.name, shown: false,
+    items: $$('[data-in]', el).map(n => ({ el: n, tin: +n.dataset.in, fx: n.dataset.fx || 'up', d: +(n.dataset.d || DUR[n.dataset.fx] || .6), tout: n.dataset.out != null ? +n.dataset.out : null, key: '' })),
+    types: $$('[data-type]', el).map(n => ({ el: n, t0: +n.dataset.type, cps: +(n.dataset.cps || 18), full: Array.from(n.textContent), n: -1, caret: null })),
+    cls: $$('[data-cls]', el).map(n => ({ el: n, list: n.dataset.cls.split(',').map(p => { const [c, t] = p.split('@'); return { c, t: +t }; }), on: '' })),
+    draws: $$('[data-draw]', el).map(n => { const [t0, d] = n.dataset.draw.split(',').map(Number); return { el: n, t0, d, len: 0 }; })
+  }));
+  const S = id => scenes.find(s => s.el.id === id);
+
+  /* ---------- 布局缩放 ---------- */
+  let SC = 1;
+  function layout() {
+    const w = innerWidth, h = innerHeight;
+    SC = Math.min(w / 1920, h / 1080);
+    stage.style.transform = `translate(${(w - 1920 * SC) / 2}px,${(h - 1080 * SC) / 2}px) scale(${SC})`;
+  }
+  layout(); addEventListener('resize', layout);
+  const pos = el => { const r = el.getBoundingClientRect(), s = stage.getBoundingClientRect(); return { x: (r.left - s.left + r.width / 2) / SC, y: (r.top - s.top + r.height / 2) / SC }; };
+
+  /* ---------- S4：虚拟鼠标、自动滚动、彩带 ---------- */
+  const s4 = S('s4'), cursor = $('#cursor');
+  const P = { input: pos($('#s4Input')), send: pos($('#s4Send')), embed: pos($('#s4Embed')), prev: pos($('.preview')), toast: pos($('.toast')) };
+  const off = { x: 1840, y: 1160 };
+  const add = (p, dx, dy) => ({ x: p.x + dx, y: p.y + dy });
+  const CK = [
+    [0, off], [1.0, off], [2.2, add(P.input, -120, 0)], [6.1, add(P.input, -80, 34)],
+    [6.7, P.send], [7.4, add(P.send, 10, 8)], [8.8, add(P.prev, -100, 60)], [12.6, add(P.prev, 60, 30)],
+    [13.8, P.embed], [14.6, add(P.embed, 6, 6)], [15.8, add(P.embed, 120, 230)], [19, add(P.embed, 130, 240)]
+  ];
+  const CLICKS = [2.4, 6.8, 14.0];
+  CLICKS.forEach(ct => {
+    let p = CK[0][1];
+    for (let i = 0; i < CK.length; i++) if (CK[i][0] <= ct) p = CK[i][1];
+    const r = document.createElement('div'); r.className = 'ripple';
+    r.style.left = p.x + 'px'; r.style.top = p.y + 'px';
+    s4.el.appendChild(r);
+    s4.items.push({ el: r, tin: ct, fx: 'ripple', d: .6, tout: null, key: '' });
+  });
+  function cursorAt(lt) {
+    let i = 0; while (i < CK.length - 1 && CK[i + 1][0] <= lt) i++;
+    const a = CK[i], b = CK[Math.min(i + 1, CK.length - 1)];
+    const q = b[0] === a[0] ? 1 : E.inout(clamp((lt - a[0]) / (b[0] - a[0])));
+    const arc = Math.sin(Math.PI * q) * -36;
+    return { x: a[1].x + (b[1].x - a[1].x) * q, y: a[1].y + (b[1].y - a[1].y) * q + arc };
+  }
+  const chatView = $('#chatView'), chatScroll = $('#chatScroll');
+  const overflow = Math.max(0, chatScroll.offsetHeight - chatView.clientHeight + 12);
+  const conf = $('#confetti'), COLORS = ['#EE9C80', '#F0BE7C', '#E6A3A0', '#9CB291', '#FFF6E3', '#D9775E'];
+  const pieces = Array.from({ length: 56 }, (_, i) => {
+    const el = document.createElement('i');
+    el.style.background = COLORS[i % COLORS.length];
+    if (i % 4 === 0) { el.style.width = el.style.height = '12px'; el.style.borderRadius = '50%'; }
+    conf.appendChild(el);
+    const a = -Math.PI * (0.12 + rnd() * 0.76), v = 700 + rnd() * 700;
+    return { el, vx: Math.cos(a) * v, vy: Math.sin(a) * v, spin: (rnd() - .5) * 1400, key: '' };
+  });
+  const CONF_T = 14.25;
+  s4.render = lt => {
+    const p = cursorAt(lt);
+    const press = CLICKS.some(c => lt >= c && lt < c + .14);
+    cursor.style.translate = `${p.x}px ${p.y}px`;
+    cursor.style.scale = press ? '.82' : '1';
+    cursor.style.opacity = lt < 18.4 ? 1 : 1 - clamp((lt - 18.4) / .4);
+    chatScroll.style.transform = `translateY(${-overflow * E.inout(clamp((lt - 9.3) / 2.6))}px)`;
+    const k = lt - CONF_T;
+    pieces.forEach(c => {
+      if (k < 0 || k > 2.8) { if (c.key !== 'h') { c.el.style.opacity = 0; c.key = 'h'; } return; }
+      c.key = '';
+      const x = P.toast.x + c.vx * k * .9, y = P.toast.y - 20 + c.vy * k + 900 * k * k;
+      c.el.style.opacity = 1 - clamp((k - 2.1) / .7);
+      c.el.style.transform = `translate(${x}px,${y}px) rotate(${c.spin * k}deg)`;
+    });
+  };
+
+  /* ---------- S2：爱心被稳稳接住 ---------- */
+  const heart = $('#heart'); heart.style.transformOrigin = '50% 100%';
+  S('s2').render = lt => {
+    let o = 0, y = -640, sx = 1, sy = 1;
+    if (lt >= 2.9) {
+      if (lt < 3.62) { const q = (lt - 2.9) / .72; y = -640 * (1 - q * q); o = Math.min(1, (lt - 2.9) * 6); }
+      else {
+        const k = lt - 3.62; o = 1;
+        y = -Math.abs(Math.sin(k * 8)) * 60 * Math.exp(-k * 4.5);
+        const sq = Math.exp(-k * 7) * Math.cos(k * 22) * .16; sx = 1 + sq; sy = 1 - sq;
+        if (lt > 4.6) { const bt = Math.pow(Math.max(0, Math.sin((lt - 4.6) * 6.5)), 6) * .08; sx += bt; sy += bt; }
+      }
+    }
+    heart.style.opacity = o; heart.style.translate = `0 ${y}px`; heart.style.scale = `${sx} ${sy}`;
+  };
+
+  /* ---------- 通用渲染 ---------- */
+  function applyItem(it, lt) {
+    let o = 1, x = 0, y = 0, s = 1, r = 0, b = 0;
+    if (lt < it.tin) o = 0;
+    else {
+      const q = clamp((lt - it.tin) / it.d);
+      const e = (it.fx === 'pop' || it.fx === 'stamp') ? E.back(q) : E.out(q);
+      switch (it.fx) {
+        case 'up': o = E.out(q); y = (1 - e) * 44; break;
+        case 'down': o = E.out(q); y = -(1 - e) * 40; break;
+        case 'left': o = E.out(q); x = -(1 - e) * 50; break;
+        case 'right': o = E.out(q); x = (1 - e) * 50; break;
+        case 'pop': o = Math.min(1, q * 2.2); s = .5 + .5 * e; break;
+        case 'stamp': o = Math.min(1, q * 3); s = 2.4 - 1.4 * e; break;
+        case 'zoom': o = E.out(q); s = 1.12 - .12 * e; b = (1 - e) * 12; break;
+        case 'blur': o = E.out(q); b = (1 - e) * 16; y = (1 - e) * 14; break;
+        case 'drop': o = Math.min(1, q * 2.5); y = -(1 - e) * 130; r = (1 - e) * -14; break;
+        case 'ripple': o = 1 - e; s = .3 + 2.2 * e; break;
+        default: o = E.out(q);
+      }
+      if (it.tout != null && lt > it.tout) { const k = E.inout(clamp((lt - it.tout) / .4)); o *= 1 - k; y -= k * 16; s *= 1 - .05 * k; }
+    }
+    const key = `${o.toFixed(3)}|${x.toFixed(1)}|${y.toFixed(1)}|${s.toFixed(3)}|${r.toFixed(1)}|${b.toFixed(1)}`;
+    if (key === it.key) return; it.key = key;
+    const st = it.el.style;
+    st.opacity = o >= .999 ? '' : o.toFixed(3);
+    st.translate = (Math.abs(x) > .05 || Math.abs(y) > .05) ? `${x.toFixed(1)}px ${y.toFixed(1)}px` : '';
+    st.scale = Math.abs(s - 1) > .001 ? s.toFixed(3) : '';
+    st.rotate = Math.abs(r) > .05 ? r.toFixed(1) + 'deg' : '';
+    st.filter = b > .05 ? `blur(${b.toFixed(1)}px)` : '';
+  }
+  function renderScene(sc, t) {
+    const last = sc.i === scenes.length - 1;
+    const vis = t >= sc.start && (t < sc.end || last);
+    if (!vis) { if (sc.shown) { sc.el.style.visibility = 'hidden'; sc.shown = false; } return; }
+    if (!sc.shown) { sc.el.style.visibility = 'visible'; sc.shown = true; }
+    const lt = t - sc.start, dur = sc.end - sc.start;
+    const qi = sc.i === 0 ? 1 : clamp(lt / .55), qo = last ? 0 : clamp((lt - (dur - .45)) / .45);
+    sc.el.style.opacity = (E.out(qi) * (1 - E.inout(qo))).toFixed(3);
+    sc.el.style.scale = ((1.035 - .035 * E.out(qi)) * (1 - .03 * E.inout(qo))).toFixed(4);
+    const bl = (1 - qi) * 10 + qo * 8;
+    sc.el.style.filter = bl > .05 ? `blur(${bl.toFixed(1)}px)` : '';
+    sc.items.forEach(it => applyItem(it, lt));
+    sc.types.forEach(ty => {
+      const n = lt < ty.t0 ? 0 : Math.min(ty.full.length, Math.floor((lt - ty.t0) * ty.cps));
+      if (n !== ty.n) { ty.el.textContent = ty.full.slice(0, n).join(''); ty.n = n; }
+      const c = lt >= ty.t0 - .3 && n < ty.full.length;
+      if (c !== ty.caret) { ty.el.classList.toggle('caret', c); ty.caret = c; }
+    });
+    sc.cls.forEach(cl => {
+      let on = new Set();
+      cl.list.forEach(({ c, t }) => { if (lt >= t) { if (c === '_') on = new Set(); else on.add(c); } });
+      const key = [...on].join(' ');
+      if (key !== cl.on) { cl.list.forEach(({ c }) => c !== '_' && cl.el.classList.toggle(c, on.has(c))); cl.on = key; }
+    });
+    sc.draws.forEach(d => { d.el.style.strokeDashoffset = (d.len * (1 - E.inout(clamp((lt - d.t0) / d.d)))).toFixed(1); });
+    sc.render && sc.render(lt);
+  }
+  scenes.forEach(sc => sc.draws.forEach(d => { d.len = d.el.getTotalLength(); d.el.style.strokeDasharray = d.len; }));
+
+  // 顶栏 & 字幕
+  const topbar = $('#topbar'), chap = $('#chap'), dotsBox = $('#chapDots');
+  const dots = scenes.slice(1).map(() => { const i = document.createElement('i'); dotsBox.appendChild(i); return i; });
+  const sub = $('#sub'), subText = $('#subText');
+  let curSub = -1, curChap = -1;
+  function render(t) {
+    scenes.forEach(sc => renderScene(sc, t));
+    topbar.style.opacity = clamp((t - 5.3) / .6).toFixed(3);
+    let ci = 0; scenes.forEach((sc, i) => { if (t >= sc.start) ci = i; });
+    if (ci !== curChap) { curChap = ci; chap.textContent = scenes[Math.max(1, ci)].name; dots.forEach((d, i) => d.classList.toggle('on', i === ci - 1)); }
+    const si = SUBS.findIndex(([a, b]) => t >= a && t < b);
+    if (si !== curSub) { curSub = si; if (si >= 0) subText.textContent = SUBS[si][2]; }
+    if (si >= 0) {
+      const [a, b] = SUBS[si];
+      const k = Math.min(clamp((t - a) / .22), clamp((b - t) / .18));
+      sub.style.opacity = (si === SUBS.length - 1 ? clamp((t - a) / .22) : k).toFixed(3);
+      sub.style.translate = `0 ${((1 - E.out(clamp((t - a) / .3))) * 14).toFixed(1)}px`;
+    } else sub.style.opacity = 0;
+  }
+
+  /* ---------- 音效事件 ---------- */
+  const sfx = [];
+  scenes.forEach(sc => {
+    $$('[data-sfx]', sc.el).forEach(n => {
+      const tin = n.dataset.in != null ? +n.dataset.in : +(n.dataset.split || '0').split(',')[0];
+      sfx.push({ t: sc.start + tin, k: n.dataset.sfx });
+    });
+    sc.types.forEach(ty => { if (ty.el.dataset.tick) ty.full.forEach((_, i) => sfx.push({ t: sc.start + ty.t0 + i / ty.cps, k: 'tick' })); });
+  });
+  CLICKS.forEach(c => sfx.push({ t: s4.start + c, k: 'click' }));
+  sfx.push({ t: S('s2').start + 3.62, k: 'chime' }, { t: S('s3').start + 2.3, k: 'whoosh' }, { t: S('s5').start + 3.4, k: 'chime' });
+  Sound.compose(sfx);
+
+  /* ---------- 播放器 ---------- */
+  let t = 0, playing = false, tStart = 0, pStart = 0, lastT = -1;
+  const loop = params.has('loop');
+  const bPlay = $('#bPlay'), fill = $('#fill'), knob = $('#knob'), tCur = $('#tCur'), track = $('#track'), tip = $('#tip'), ctrl = $('#ctrl');
+  const fmt = s => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
+  $('#tAll').textContent = fmt(T);
+  scenes.slice(1).forEach(sc => { const m = document.createElement('i'); m.className = 'mark'; m.style.left = (sc.start / T * 100) + '%'; $('#marks').appendChild(m); });
+  function setUI() {
+    bPlay.innerHTML = `<svg class="ic"><use href="#i-${playing ? 'pause' : 'play'}"/></svg>`;
+    viewport.classList.toggle('paused', !playing);
+    document.body.classList.toggle('ended', !playing && t >= T - .01);
+  }
+  function play() {
+    if (t >= T - .05) t = 0;
+    playing = true; tStart = t; pStart = performance.now() + 60;
+    Sound.start(t); setUI(); poke();
+  }
+  function pause() { playing = false; Sound.stop(); setUI(); poke(); }
+  function toggle() { playing ? pause() : play(); }
+  function seek(nt) {
+    t = clamp(nt, 0, T);
+    if (playing) { tStart = t; pStart = performance.now() + 60; Sound.start(t); }
+    setUI();
+  }
+  function frame() {
+    if (playing) {
+      t = tStart + Math.max(0, (performance.now() - pStart) / 1000);
+      if (t >= T) { if (loop) { t = 0; tStart = 0; pStart = performance.now(); Sound.start(0); } else { t = T; playing = false; Sound.stop(); setUI(); } }
+    }
+    if (t !== lastT) {
+      render(t); lastT = t;
+      const p = t / T * 100; fill.style.width = p + '%'; knob.style.left = p + '%'; tCur.textContent = fmt(t);
+    }
+    requestAnimationFrame(frame);
+  }
+
+  // 控件交互
+  bPlay.onclick = toggle;
+  $('#replay').onclick = () => { seek(0); play(); };
+  const bMute = $('#bMute');
+  const setMute = m => { Sound.setMuted(m); bMute.innerHTML = `<svg class="ic"><use href="#i-${m ? 'mute' : 'vol'}"/></svg>`; };
+  bMute.onclick = () => setMute(!Sound.muted);
+  $('#bFull').onclick = () => { document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen?.(); };
+  const tAt = e => { const r = track.getBoundingClientRect(); return clamp((e.clientX - r.left) / r.width) * T; };
+  let drag = false;
+  track.addEventListener('pointerdown', e => { drag = true; track.setPointerCapture(e.pointerId); seek(tAt(e)); });
+  track.addEventListener('pointermove', e => {
+    const tt = tAt(e); let nm = scenes[0].name; scenes.forEach(s => { if (tt >= s.start) nm = s.name; });
+    tip.textContent = `${fmt(tt)} · ${nm}`; tip.style.left = (tt / T * 100) + '%'; tip.style.opacity = 1;
+    if (drag) seek(tt);
+  });
+  track.addEventListener('pointerup', () => drag = false);
+  track.addEventListener('pointerleave', () => tip.style.opacity = 0);
+  addEventListener('keydown', e => {
+    if (e.code === 'Space' || e.key === 'k') { e.preventDefault(); if (!intro.classList.contains('gone')) start(false); else toggle(); }
+    else if (e.key === 'ArrowRight') seek(t + 5);
+    else if (e.key === 'ArrowLeft') seek(t - 5);
+    else if (e.key === 'm') setMute(!Sound.muted);
+    else if (e.key === 'f') $('#bFull').click();
+    else if (e.key === 'Home') seek(0);
+    poke();
+  });
+  // 播放时自动隐藏控件与鼠标
+  let idle;
+  function poke() {
+    ctrl.classList.remove('hidden'); viewport.classList.remove('hide-cursor');
+    clearTimeout(idle);
+    idle = setTimeout(() => { if (playing) { ctrl.classList.add('hidden'); viewport.classList.add('hide-cursor'); } }, 2200);
+  }
+  addEventListener('pointermove', poke);
+  stage.addEventListener('click', () => { if (intro.classList.contains('gone')) toggle(); });
+
+  // 开始弹层
+  const intro = $('#intro');
+  function start(muted) { setMute(muted); intro.classList.add('gone'); seek(0); play(); }
+  $('#startBtn').onclick = () => start(false);
+  $('#startMute').onclick = () => start(true);
+
+  // URL 参数：?autoplay  ?loop  ?clean（隐藏控件，适合录屏/嵌入）  ?muted  ?t=秒
+  if (params.has('clean')) document.body.classList.add('clean');
+  t = params.has('t') ? +params.get('t') : 4.6; // 封面帧
+  if (params.has('autoplay')) {
+    intro.classList.add('gone'); setMute(params.has('muted'));
+    if (!params.has('t')) t = 0;
+    play();
+    addEventListener('pointerdown', () => { if (playing) Sound.start(t); }, { once: true });
+  }
+  setUI(); requestAnimationFrame(frame);
+})();
+
+</script>
+
+<!-- blog-yusheng:html-embed-handshake v1 -->
+<script>
+  (() => {
+    const nonce = new URLSearchParams(location.hash.slice(1)).get('nonce')
+    if (!nonce || window.parent === window) return
+    window.parent.postMessage({ nonce, message: { type: 'ready' } }, '*')
+    const reportHeight = () => {
+      window.parent.postMessage(
+        { type: 'resize', height: document.documentElement.scrollHeight },
+        '*',
+      )
+    }
+    requestAnimationFrame(reportHeight)
+    new ResizeObserver(reportHeight).observe(document.documentElement)
+  })()
+</script>
+
+</body>
+</html>

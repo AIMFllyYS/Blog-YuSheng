@@ -1,0 +1,757 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>DayDayOn · 五层软件工程架构与 PostgreSQL 18 数据血缘画布</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./arch-canvas/styles.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+  </head>
+  <body>
+    <!-- 顶部边缘感应区（默认隐藏导航栏，鼠标移到顶部自动滑出） -->
+    <div class="top-hover-trigger" id="topHoverTrigger">
+      <div class="top-hover-pill" id="topHoverPill">
+        <i data-lucide="chevron-down"></i>
+        <span>鼠标移至顶部切换模块视角与版本历史 · 大模块框与节点均可直接拖动</span>
+      </div>
+    </div>
+
+    <!-- 默认隐藏的顶部导航栏（Hover 滑出，移走自动隐藏） -->
+    <div class="topbar-wrapper" id="topbarWrapper">
+      <header class="topbar">
+        <div class="brand-compact">
+          <i data-lucide="network"></i>
+          <span>DayDayOn 架构画布</span>
+        </div>
+
+        <!-- 视角切换 -->
+        <nav class="view-tabs" id="viewTabs" aria-label="模块视角切换">
+          <div class="tab-pill-bg" id="tabPillBg"></div>
+          <button class="view-tab active" data-view="core">
+            <i data-lucide="workflow"></i><span>核心链路</span>
+          </button>
+          <button class="view-tab" data-view="diet">
+            <i data-lucide="utensils"></i><span>饮食周期</span>
+          </button>
+          <button class="view-tab" data-view="db">
+            <i data-lucide="database"></i><span>PostgreSQL 数据库 ER</span>
+          </button>
+          <button class="view-tab" data-view="agent">
+            <i data-lucide="bot"></i><span>Agent 工具</span>
+          </button>
+          <button class="view-tab" data-view="render">
+            <i data-lucide="layout-template"></i><span>渲染与 Playbook</span>
+          </button>
+          <button class="view-tab" data-view="social">
+            <i data-lucide="users"></i><span>好友社交</span>
+          </button>
+          <button class="view-tab" data-view="all">
+            <i data-lucide="compass"></i><span>全景</span>
+          </button>
+        </nav>
+
+        <!-- 合并下拉菜单：类 Git 版本历史与 JSON 导入导出 -->
+        <div class="dropdown-wrap">
+          <button class="btn btn-primary" data-dropdown-btn="menuVersionExport">
+            <i data-lucide="git-branch"></i>
+            <span>版本与导出</span>
+            <i data-lucide="chevron-down"></i>
+          </button>
+          <div class="dropdown-panel" id="menuVersionExport" style="min-width: 265px">
+            <div class="dropdown-section-title">切换画布版本 (类 Git)</div>
+            <select id="versionSelect" class="ver-select" title="选择历史版本"></select>
+            <button class="dropdown-item" id="btnSaveVersion">
+              <span class="dropdown-item-left"
+                ><i data-lucide="bookmark-plus"></i><span>保存当前为新版本</span></span
+              >
+            </button>
+            <button class="dropdown-item danger" id="btnResetInitial">
+              <span class="dropdown-item-left"
+                ><i data-lucide="rotate-ccw"></i><span>回到初始状态 (自动归档当前)</span></span
+              >
+            </button>
+            <div class="dropdown-divider"></div>
+            <div class="dropdown-section-title">数据交接与备份</div>
+            <button class="dropdown-item" id="btnExportJson">
+              <span class="dropdown-item-left"
+                ><i data-lucide="download"></i><span>导出 JSON 文件</span></span
+              >
+            </button>
+            <button class="dropdown-item" id="btnImportJson">
+              <span class="dropdown-item-left"
+                ><i data-lucide="upload"></i><span>导入 JSON 文件</span></span
+              >
+            </button>
+            <button class="dropdown-item" id="btnMenuCopyJson" data-action="copy-json">
+              <span class="dropdown-item-left"
+                ><i data-lucide="copy"></i><span>一键复制 JSON 快照</span></span
+              >
+            </button>
+            <input
+              type="file"
+              id="fileImportInput"
+              accept=".json,application/json"
+              style="display: none"
+            />
+          </div>
+        </div>
+      </header>
+    </div>
+
+    <!-- 右上角连线图例 -->
+    <aside class="legend-card" aria-label="连线图例">
+      <div class="legend-head">
+        <i data-lucide="git-commit-horizontal"></i><span>连线图例（点线可剪断）</span>
+      </div>
+      <div class="legend-item"><span class="legend-line"></span><span>调用 / 上下文注入</span></div>
+      <div class="legend-item">
+        <span class="legend-line write"></span><span>写入数据库表</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-line read"></span><span>查询读取 / 外键关联</span>
+      </div>
+      <div class="legend-item"><span class="legend-line bi"></span><span>双向状态同步</span></div>
+      <div class="legend-item">
+        <span class="legend-line broken"></span
+        ><span style="color: #8f2420; font-weight: 700">断链 Bug / 待改造</span>
+      </div>
+    </aside>
+
+    <!-- 画布主视口 -->
+    <main class="viewport" id="viewport">
+      <div class="world" id="world">
+        <div id="zonesLayer"></div>
+        <svg class="edges-svg" id="edgesSvg">
+          <defs>
+            <marker
+              id="arrow-flow"
+              viewBox="0 0 10 10"
+              refX="7"
+              refY="5"
+              markerWidth="6"
+              markerHeight="6"
+              orient="auto-start-reverse"
+            >
+              <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#8c735d" />
+            </marker>
+            <marker
+              id="arrow-write"
+              viewBox="0 0 10 10"
+              refX="7"
+              refY="5"
+              markerWidth="6"
+              markerHeight="6"
+              orient="auto-start-reverse"
+            >
+              <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#367356" />
+            </marker>
+            <marker
+              id="arrow-read"
+              viewBox="0 0 10 10"
+              refX="7"
+              refY="5"
+              markerWidth="6"
+              markerHeight="6"
+              orient="auto-start-reverse"
+            >
+              <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#3b6994" />
+            </marker>
+            <marker
+              id="arrow-bi"
+              viewBox="0 0 10 10"
+              refX="7"
+              refY="5"
+              markerWidth="6"
+              markerHeight="6"
+              orient="auto-start-reverse"
+            >
+              <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#5e4f96" />
+            </marker>
+            <marker
+              id="arrow-fk"
+              viewBox="0 0 10 10"
+              refX="7"
+              refY="5"
+              markerWidth="5.5"
+              markerHeight="5.5"
+              orient="auto-start-reverse"
+            >
+              <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#7a6855" />
+            </marker>
+            <marker
+              id="arrow-broken"
+              viewBox="0 0 10 10"
+              refX="7"
+              refY="5"
+              markerWidth="6"
+              markerHeight="6"
+              orient="auto-start-reverse"
+            >
+              <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#b83b36" />
+            </marker>
+          </defs>
+          <g id="edgesGroup"></g>
+          <path
+            id="tempConnectLine"
+            class="edge-path edge-bi"
+            style="display: none; pointer-events: none"
+            marker-end="url(#arrow-bi)"
+          />
+        </svg>
+        <div id="edgeLabelsLayer"></div>
+        <div id="nodesLayer"></div>
+      </div>
+    </main>
+
+    <!-- 底部常驻高频工具栏（运行场景Debug下拉菜单、添加节点下拉菜单、连线/线标、合并间距步进器、缩放与适配） -->
+    <footer class="bottom-dock" aria-label="画布常用工具栏">
+      <!-- 1. 运行场景 Debug（复用统一 dropdown-panel，锚定在按钮正上方） -->
+      <div class="dropdown-wrap">
+        <button
+          class="btn btn-primary"
+          id="btnRunScenarioDock"
+          data-dropdown-btn="menuScenarioDock"
+          title="选择业务场景，按拓扑关系一步步高亮链路与数据表读写"
+        >
+          <i data-lucide="play-circle"></i>
+          <span>运行场景 Debug</span>
+          <i data-lucide="chevron-up"></i>
+        </button>
+        <div class="dropdown-panel dock-up" id="menuScenarioDock" style="min-width: 292px">
+          <div class="dropdown-section-title">选择业务打卡场景 (拓扑 Debug)</div>
+          <div id="dockScenarioList">
+            <button class="dropdown-item dock-scenario-item" data-scenario-id="S1">
+              <span class="dropdown-item-left">
+                <i data-lucide="camera"></i>
+                <span>S1 · 拍照AI识别 → 裁判打分 → 确认入库</span>
+              </span>
+            </button>
+            <button class="dropdown-item dock-scenario-item" data-scenario-id="S2">
+              <span class="dropdown-item-left">
+                <i data-lucide="clipboard-check"></i>
+                <span>S2 · 手动表单打卡 → 服务端重算 → 入库</span>
+              </span>
+            </button>
+            <button class="dropdown-item dock-scenario-item" data-scenario-id="S3">
+              <span class="dropdown-item-left">
+                <i data-lucide="message-square-warning"></i>
+                <span>S3 · 自然语言对话打卡 → 团团断链暴露</span>
+              </span>
+            </button>
+            <button class="dropdown-item dock-scenario-item" data-scenario-id="S4">
+              <span class="dropdown-item-left">
+                <i data-lucide="history"></i>
+                <span>S4 · 历史打卡修正 → 留痕对比与重算</span>
+              </span>
+            </button>
+            <button class="dropdown-item dock-scenario-item" data-scenario-id="S5">
+              <span class="dropdown-item-left">
+                <i data-lucide="heart-handshake"></i>
+                <span>S5 · 好友萌宠互动 → 冷却校验与通知</span>
+              </span>
+            </button>
+          </div>
+          <div class="dropdown-divider"></div>
+          <div class="dropdown-section-title">场景单步与播放控制</div>
+          <button class="dropdown-item" id="btnDockStepNext">
+            <span class="dropdown-item-left">
+              <i data-lucide="skip-forward"></i>
+              <span>单步执行下一步</span>
+            </span>
+          </button>
+          <button class="dropdown-item" id="btnDockPlayToggle">
+            <span class="dropdown-item-left">
+              <i data-lucide="play"></i>
+              <span>打开右侧场景控制台 / 自动播放</span>
+            </span>
+          </button>
+          <button class="dropdown-item danger" id="btnDockResetScenario">
+            <span class="dropdown-item-left">
+              <i data-lucide="rotate-ccw"></i>
+              <span>退出场景 Debug (恢复全图)</span>
+            </span>
+          </button>
+        </div>
+      </div>
+
+      <div class="dock-sep"></div>
+
+      <!-- 2. 添加节点（复用统一 dropdown-panel，锚定在按钮正上方） -->
+      <div class="dropdown-wrap">
+        <button class="btn" id="btnToggleAddMenu" data-dropdown-btn="addNodeMenu">
+          <i data-lucide="plus"></i>
+          <span>添加节点</span>
+          <i data-lucide="chevron-up"></i>
+        </button>
+        <div class="dropdown-panel dock-up" id="addNodeMenu" style="min-width: 268px">
+          <div class="dropdown-section-title">选择要添加的五层架构节点</div>
+          <button
+            class="dropdown-item add-menu-item"
+            data-add-tone="render"
+            data-add-zone="zone-l1-interactive"
+            data-add-layer="L1"
+            data-add-icon="panels-top-left"
+          >
+            <span class="dropdown-item-left">
+              <i data-lucide="panels-top-left"></i>
+              <span>L1 · 前端交互 / 板块表单</span>
+            </span>
+          </button>
+          <button
+            class="dropdown-item add-menu-item"
+            data-add-tone="context"
+            data-add-zone="zone-l2-domain"
+            data-add-layer="L2"
+            data-add-icon="scale"
+          >
+            <span class="dropdown-item-left">
+              <i data-lucide="scale"></i>
+              <span>L2 · 纯领域规则 / 裁判引擎</span>
+            </span>
+          </button>
+          <button
+            class="dropdown-item add-menu-item"
+            data-add-tone="agent"
+            data-add-zone="zone-l3-agent"
+            data-add-layer="L3"
+            data-add-icon="bot"
+          >
+            <span class="dropdown-item-left">
+              <i data-lucide="bot"></i>
+              <span>L3 · AI 智能体 / 工具编排</span>
+            </span>
+          </button>
+          <button
+            class="dropdown-item add-menu-item"
+            data-add-tone="checkin"
+            data-add-zone="zone-l4-services"
+            data-add-layer="L4"
+            data-add-icon="server"
+          >
+            <span class="dropdown-item-left">
+              <i data-lucide="server"></i>
+              <span>L4 · 服务端业务 Service</span>
+            </span>
+          </button>
+          <button
+            class="dropdown-item add-menu-item"
+            data-add-tone="db-table"
+            data-add-zone="zone-l5-persistence"
+            data-add-layer="L5"
+            data-add-icon="table-2"
+          >
+            <span class="dropdown-item-left">
+              <i data-lucide="table-2"></i>
+              <span>L5 · PostgreSQL 18 数据表</span>
+            </span>
+          </button>
+          <div class="dropdown-divider"></div>
+          <button
+            class="dropdown-item danger add-menu-item"
+            data-add-tone="broken"
+            data-add-zone="zone-l1-interactive"
+            data-add-layer="L1"
+            data-add-icon="triangle-alert"
+          >
+            <span class="dropdown-item-left">
+              <i data-lucide="triangle-alert"></i>
+              <span>待改造 / 断链诊断节点</span>
+            </span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 3. 连线与线标 -->
+      <button class="btn" id="btnToggleConnectMode" title="开启后点击起点节点再点终点节点即可连线">
+        <i data-lucide="cable"></i><span id="connectModeText">连线：关</span>
+      </button>
+      <button class="btn" id="btnToggleEdgeLabels" title="切换是否常驻显示所有连线上的说明文字">
+        <i data-lucide="tag"></i><span id="edgeLabelsText">线标：精简</span>
+      </button>
+
+      <div class="dock-sep"></div>
+
+      <!-- 4. 间距合并控件：左减号 · 中间「紧凑间距 / 松散间距」切换 · 右加号 -->
+      <div class="dock-stepper" role="group" aria-label="节点间距控制">
+        <button
+          class="dock-step-btn"
+          id="btnShrinkSpacing"
+          title="收拢间距（相对缩小所有节点与分区距离）"
+        >
+          <i data-lucide="minus"></i>
+        </button>
+        <button
+          class="dock-step-label"
+          id="btnToggleCompactMode"
+          title="点击在「紧凑间距」与「松散间距」之间切换"
+        >
+          <span id="compactModeText">紧凑间距</span>
+        </button>
+        <button
+          class="dock-step-btn"
+          id="btnExpandSpacing"
+          title="拉开间距（相对放大所有节点与分区距离）"
+        >
+          <i data-lucide="plus"></i>
+        </button>
+      </div>
+
+      <div class="dock-sep"></div>
+
+      <!-- 5. 缩放（纯减号/加号图标，无百分比）与经典全图适配图标 -->
+      <div class="dock-stepper" role="group" aria-label="画布缩放与适配">
+        <button class="dock-step-btn" id="btnZoomOut" title="缩小画布">
+          <i data-lucide="minus"></i>
+        </button>
+        <button class="dock-step-btn" id="btnZoomIn" title="放大画布">
+          <i data-lucide="plus"></i>
+        </button>
+        <span id="zoomLabel" style="display: none">72%</span>
+      </div>
+
+      <button class="btn dock-icon-btn" id="btnFitView" title="适配全图 (Fit View)">
+        <i data-lucide="scan"></i>
+      </button>
+    </footer>
+
+    <!-- 节点旁侧详情与批注弹窗 -->
+    <section class="node-popover" id="nodePopover" aria-label="节点详情">
+      <div class="pop-header">
+        <div>
+          <div class="pop-title" id="popTitle">节点标题</div>
+          <div style="font-size: 11px; color: var(--ink-sec); margin-top: 3px" id="popZoneTag">
+            所属分区
+          </div>
+        </div>
+        <button class="pop-close" id="popClose" title="关闭"><i data-lucide="x"></i></button>
+      </div>
+      <div class="pop-section">
+        <div class="pop-label">
+          <i data-lucide="message-square-text"></i><span>大白话职责说明</span>
+        </div>
+        <div class="pop-text" id="popPlain"></div>
+      </div>
+      <div class="pop-section" id="popBugSection" style="display: none">
+        <div class="pop-label" style="color: #8f2420">
+          <i data-lucide="triangle-alert"></i><span>现状问题 / 断链诊断</span>
+        </div>
+        <div class="pop-bug-box" id="popBugText"></div>
+      </div>
+      <div class="pop-section">
+        <div class="pop-label">
+          <i data-lucide="file-code-2"></i><span>项目真实代码 / 表标识</span>
+        </div>
+        <div class="pop-code" id="popCode"></div>
+      </div>
+      <div class="pop-section" id="popItemsSection">
+        <div class="pop-label"><i data-lucide="list-tree"></i><span>补充细节 / 索引约束</span></div>
+        <ul class="pop-list" id="popItemsList"></ul>
+      </div>
+      <div class="pop-section">
+        <div class="pop-label">
+          <i data-lucide="pen-line"></i><span>我的设计批注（右键节点可快速打开）</span>
+        </div>
+        <textarea
+          class="pop-note-textarea"
+          id="popNoteInput"
+          placeholder="写下你的改动想法，例如：这里要支持全天周期汇总、早上空腹不扣分…"
+        ></textarea>
+        <div style="display: flex; justify-content: space-between; gap: 8px; margin-top: 8px">
+          <button class="btn btn-danger" id="popDeleteNode">
+            <i data-lucide="trash-2"></i><span>删除节点</span>
+          </button>
+          <button class="btn btn-primary" id="popSaveNote">
+            <i data-lucide="check"></i><span>保存批注</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 连线点击编辑浮窗 -->
+    <section class="node-popover" id="edgePopover" style="width: 308px" aria-label="连线编辑">
+      <div class="pop-header">
+        <div>
+          <div class="pop-title" id="edgePopTitle">连线详情</div>
+          <div
+            style="font-size: 11px; color: var(--ink-sec); margin-top: 3px"
+            id="edgePopPair"
+          ></div>
+        </div>
+        <button class="pop-close" id="edgePopClose"><i data-lucide="x"></i></button>
+      </div>
+      <div class="pop-section">
+        <div class="pop-label"><i data-lucide="tag"></i><span>连线说明</span></div>
+        <input
+          id="edgePopLabelInput"
+          class="pop-note-textarea"
+          style="min-height: 34px; height: 34px"
+        />
+      </div>
+      <div class="pop-section">
+        <div class="pop-label"><i data-lucide="sliders-horizontal"></i><span>连线类型</span></div>
+        <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 5px">
+          <button class="btn" data-edge-kind="flow">
+            <i data-lucide="arrow-right"></i><span>单向调用</span>
+          </button>
+          <button class="btn" data-edge-kind="write">
+            <i data-lucide="database-zap"></i><span>写入表</span>
+          </button>
+          <button class="btn" data-edge-kind="read">
+            <i data-lucide="search"></i><span>查询读取</span>
+          </button>
+          <button class="btn" data-edge-kind="fk">
+            <i data-lucide="key-round"></i><span>外键关联</span>
+          </button>
+          <button class="btn" data-edge-kind="bi">
+            <i data-lucide="arrow-left-right"></i><span>双向同步</span>
+          </button>
+          <button class="btn btn-danger" data-edge-kind="broken">
+            <i data-lucide="unplug"></i><span>标记断链</span>
+          </button>
+        </div>
+      </div>
+      <div
+        class="pop-section"
+        style="display: flex; justify-content: space-between; gap: 8px; padding-top: 6px"
+      >
+        <button class="btn btn-danger" id="btnCutEdge">
+          <i data-lucide="scissors"></i><span>剪断此连线</span>
+        </button>
+        <button class="btn btn-primary" id="btnSaveEdge">
+          <i data-lucide="check"></i><span>保存修改</span>
+        </button>
+      </div>
+    </section>
+
+    <div class="toast" id="toast"></div>
+
+    <!-- 右侧透视面板可拖拽调节宽度分界线 -->
+    <div class="inspector-splitter" id="inspectorSplitter" title="拖拽调节右侧面板宽度">
+      <div class="splitter-handle"></div>
+    </div>
+
+    <!-- 右侧三态透视解剖面板（Docked / Floating / Collapsed） -->
+    <aside class="inspector-panel mode-docked" id="inspectorPanel" aria-label="架构透视面板">
+      <!-- 面板顶栏 -->
+      <header class="insp-header" id="inspHeader">
+        <div class="insp-header-left">
+          <span class="insp-tag" id="inspTag">L1</span>
+          <h3 class="insp-title" id="inspTitle">模块名称</h3>
+        </div>
+        <div class="insp-header-actions">
+          <div class="insp-mode-switch" role="group" aria-label="面板显示模式">
+            <button
+              class="insp-mode-btn active"
+              id="btnModeDocked"
+              data-mode="docked"
+              title="固定分屏模式"
+            >
+              <i data-lucide="columns-2"></i>
+            </button>
+            <button
+              class="insp-mode-btn"
+              id="btnModeFloating"
+              data-mode="floating"
+              title="悬浮常驻模式"
+            >
+              <i data-lucide="app-window"></i>
+            </button>
+            <button
+              class="insp-mode-btn"
+              id="btnModeCollapsed"
+              data-mode="collapsed"
+              title="收起面板"
+            >
+              <i data-lucide="chevron-right"></i>
+            </button>
+          </div>
+          <button class="insp-close-btn" id="inspCloseBtn" title="关闭面板">
+            <i data-lucide="x"></i>
+          </button>
+        </div>
+      </header>
+
+      <!-- 4 大解剖 Tab 切换导航 -->
+      <nav class="insp-tabs" aria-label="透视解剖视图切换">
+        <button class="insp-tab active" data-tab="tab-positioning" id="tabBtnPositioning">
+          <i data-lucide="compass"></i><span>定位与总思路</span>
+        </button>
+        <button class="insp-tab" data-tab="tab-layers" id="tabBtnLayers">
+          <i data-lucide="layers"></i><span>逻辑层与逐层批注</span>
+        </button>
+        <button class="insp-tab" data-tab="tab-contracts" id="tabBtnContracts">
+          <i data-lucide="git-merge"></i><span>上下游契约与时序</span>
+        </button>
+        <button class="insp-tab" data-tab="tab-scenario" id="tabBtnScenario">
+          <i data-lucide="play-circle"></i><span>场景拓扑 Debug</span>
+        </button>
+      </nav>
+
+      <!-- 4 个 Tab 视图面板（DOM 结构常驻，草稿绝不丢失） -->
+      <div class="insp-body">
+        <!-- Tab 1: 工程定位与总思路 -->
+        <section class="tab-pane active" id="tabPositioning" data-tab-pane="positioning">
+          <div class="insp-section">
+            <div class="insp-section-title">
+              <i data-lucide="layers"></i><span>所属工程架构层</span>
+            </div>
+            <div class="insp-layer-badge inspector-badge" id="inspLayerBadge">
+              L1 前端交互与容器层
+            </div>
+          </div>
+          <div class="insp-section">
+            <div class="insp-section-title">
+              <i data-lucide="shield-check"></i><span>高内聚核心职责</span>
+            </div>
+            <ul class="insp-list" id="inspResponsibilities"></ul>
+          </div>
+          <div class="insp-section">
+            <div class="insp-section-title forbidden">
+              <i data-lucide="shield-alert"></i><span>低耦合严禁越界</span>
+            </div>
+            <ul class="insp-list forbidden" id="inspBoundaries"></ul>
+          </div>
+          <div class="insp-section insp-bug-section" id="inspBugSection" style="display: none">
+            <div class="insp-section-title bug">
+              <i data-lucide="triangle-alert"></i><span>现状缺陷与断链诊断</span>
+            </div>
+            <div class="insp-bug-box" id="inspBugText"></div>
+          </div>
+          <div class="insp-section" id="inspCodeSection">
+            <div class="insp-section-title">
+              <i data-lucide="file-code-2"></i><span>真实项目源码入口</span>
+            </div>
+            <div class="insp-code-path" id="inspCodePath"></div>
+          </div>
+          <div class="insp-section">
+            <div class="insp-section-title">
+              <i data-lucide="pen-line"></i><span>模块级总思路批注</span>
+            </div>
+            <textarea
+              class="insp-textarea"
+              id="inspModuleNote"
+              placeholder="填写此模块的设计思路、重构计划或功能批注..."
+            ></textarea>
+            <div style="margin-top: 8px">
+              <button class="btn btn-primary btn-sm" id="inspSaveNoteBtn">
+                <i data-lucide="check"></i><span>保存模块批注</span>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Tab 2: 内部逻辑层解剖 & 逐层批注 -->
+        <section class="tab-pane" id="tabLayers" data-tab-pane="layers">
+          <div class="layers-container" id="inspLayersList"></div>
+        </section>
+
+        <!-- Tab 3: 上下游契约与 1-2-3-4 时序 -->
+        <section class="tab-pane" id="tabContracts" data-tab-pane="contracts">
+          <div class="insp-section">
+            <div class="insp-section-title">
+              <i data-lucide="arrow-down-left"></i><span>上游输入链路 (Upstream Sequence)</span>
+            </div>
+            <div class="contract-chain" id="inspUpstreamList"></div>
+          </div>
+          <div class="insp-section">
+            <div class="insp-section-title">
+              <i data-lucide="arrow-up-right"></i><span>下游输出链路 (Downstream Sequence)</span>
+            </div>
+            <div class="contract-chain" id="inspDownstreamList"></div>
+          </div>
+          <div class="insp-section">
+            <div class="insp-section-title">
+              <i data-lucide="database"></i><span>关联真实数据库表读写矩阵</span>
+            </div>
+            <div class="db-matrix-grid" id="inspDbMatrix"></div>
+          </div>
+        </section>
+
+        <!-- Tab 4: 场景运行与链路 Debug -->
+        <section class="tab-pane" id="tabScenario" data-tab-pane="scenario">
+          <div class="scenario-ctrl-row">
+            <label for="scenarioSelect" class="insp-label">选择业务打卡场景：</label>
+            <select id="scenarioSelect" class="scenario-select" title="选择业务打卡场景"></select>
+          </div>
+          <div class="scenario-buttons-row">
+            <button class="btn btn-sm" id="btnPlayScenario" data-action="play">
+              <i data-lucide="play"></i><span>播放</span>
+            </button>
+            <button
+              class="btn btn-sm"
+              id="btnPauseScenario"
+              data-action="pause"
+              style="display: none"
+            >
+              <i data-lucide="pause"></i><span>暂停</span>
+            </button>
+            <button class="btn btn-sm" id="btnStepPrev" data-action="step-prev">
+              <i data-lucide="skip-back"></i><span>上一步</span>
+            </button>
+            <button class="btn btn-sm btn-primary" id="btnStepNext" data-action="step-next">
+              <i data-lucide="skip-forward"></i><span>单步下一步</span>
+            </button>
+            <button class="btn btn-sm btn-danger" id="btnResetScenario" data-action="reset">
+              <i data-lucide="rotate-ccw"></i><span>重置</span>
+            </button>
+            <button
+              class="btn btn-sm"
+              id="btnSpeedScenario"
+              data-action="speed"
+              title="切换播放倍速"
+            >
+              <i data-lucide="gauge"></i><span>1x</span>
+            </button>
+          </div>
+          <div class="scenario-step-desc" id="scenarioStepDesc"></div>
+          <div class="scenario-summary-table" id="scenarioSummaryTable"></div>
+        </section>
+      </div>
+    </aside>
+
+    <!-- 收起状态下屏幕最右侧 16px 边缘感应唤出区 -->
+    <div
+      class="inspector-edge-hotspot"
+      id="inspectorEdgeHotspot"
+      title="鼠标移至屏幕最右侧或点击唤出架构透视面板"
+    >
+      <div class="edge-hotspot-pill">
+        <i data-lucide="panel-right-open"></i>
+        <span>透视面板</span>
+      </div>
+    </div>
+
+    <script src="./arch-canvas/canvas-data.js"></script>
+    <script src="./arch-canvas/version-store.js"></script>
+    <script src="./arch-canvas/canvas-core.js"></script>
+    <script src="./arch-canvas/zone-manager.js"></script>
+    <script src="./arch-canvas/inspector-panel.js"></script>
+    <script src="./arch-canvas/scenario-runner.js"></script>
+    <script src="./arch-canvas/app.js"></script>
+  
+<!-- blog-yusheng:html-embed-handshake v1 -->
+<script>
+  (() => {
+    const nonce = new URLSearchParams(location.hash.slice(1)).get('nonce')
+    if (!nonce || window.parent === window) return
+    window.parent.postMessage({ nonce, message: { type: 'ready' } }, '*')
+    const reportHeight = () => {
+      window.parent.postMessage(
+        { type: 'resize', height: document.documentElement.scrollHeight },
+        '*',
+      )
+    }
+    requestAnimationFrame(reportHeight)
+    new ResizeObserver(reportHeight).observe(document.documentElement)
+  })()
+</script>
+
+</body>
+</html>
