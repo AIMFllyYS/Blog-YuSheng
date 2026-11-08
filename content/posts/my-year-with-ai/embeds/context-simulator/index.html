@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>上下文工程与缓存命中模拟器</title>
+<style>
+:root{--paper:#f6f1e7;--ink:#302c26;--muted:#70665a;--line:#d8cebd;--accent:#9a6034;--wash:#ebe0cd;--good:#2a7a72;--warn:#a83c1f;--ease-damp:cubic-bezier(.22,.82,.28,1);color-scheme:light dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.7 "Noto Serif CJK","Source Han Serif SC","Songti SC",SimSun,serif}
+main{padding:clamp(16px,4vw,32px);max-width:920px;margin:auto}
+h1{font-weight:500;font-size:clamp(20px,4vw,28px);margin:6px 0 10px;line-height:1.3}
+.eyebrow{font:11px/1.5 Consolas,monospace;letter-spacing:.18em;text-transform:uppercase;color:var(--accent)}
+.intro{color:var(--muted);font-size:13px;margin-bottom:18px}
+.controls{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0}
+button{cursor:pointer;border:1px solid var(--line);background:transparent;color:var(--ink);padding:8px 16px;min-height:40px;font:inherit;border-radius:4px;transition:all .25s var(--ease-damp)}
+button:hover,button[aria-pressed=true]{background:var(--ink);color:var(--paper)}
+.meter-card{background:var(--wash);border:1px solid var(--line);border-radius:6px;padding:16px;margin:16px 0}
+.bar-track{background:rgba(0,0,0,0.08);height:18px;border-radius:9px;overflow:hidden;position:relative;margin:10px 0}
+.bar-fill{height:100%;transition:width .4s var(--ease-damp),background .4s}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-top:14px}
+.stat-box{background:var(--paper);border:1px solid var(--line);border-radius:4px;padding:10px;text-align:center}
+.stat-val{font:700 18px/1.2 Consolas,monospace;display:block;margin-top:4px}
+.readout{border-left:3px solid var(--accent);padding:10px 0 10px 16px;margin-top:16px;min-height:76px;font-size:14px}
+.readout strong{color:var(--accent)}
+.theme{float:right;font-size:12px;padding:2px 10px;min-height:30px}
+.caption{color:var(--muted);font-size:12px;margin-top:14px;border-top:1px solid var(--line);padding-top:8px}
+:root[data-theme=night]{--paper:#171b1c;--ink:#e9e4d8;--muted:#b6b1a6;--line:#444846;--accent:#deb47d;--wash:#232b2d;--good:#4eb5a8;--warn:#e07060;color-scheme:dark}
+@media(prefers-color-scheme:dark){:root:not([data-theme=paper]){--paper:#171b1c;--ink:#e9e4d8;--muted:#b6b1a6;--line:#444846;--accent:#deb47d;--wash:#232b2d;--good:#4eb5a8;--warn:#e07060}}
+</style>
+</head>
+<body>
+<main>
+  <button class="theme" data-theme-toggle aria-label="切换明暗主题">明 / 暗</button>
+  <div class="eyebrow">CONTEXT ENGINEERING / SIMULATOR</div>
+  <h1>上下文工程与缓存命中模拟器</h1>
+  <p class="intro">切换不同上下文供给策略，观察 Token 暴涨对模型注意力集中度与调用成本的影响。</p>
+
+  <div class="controls">
+    <button data-mode="bloat" aria-pressed="true">❌ 一股脑倾倒（新手常见）</button>
+    <button data-mode="lean" aria-pressed="false">✅ 渐进式批注 + AGENTS.md 索引</button>
+  </div>
+
+  <div class="meter-card">
+    <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted)">
+      <span>窗口占用量 (Token Budget)</span>
+      <span id="token-val" style="font-family:Consolas,monospace;font-weight:700">118,500 / 128k</span>
+    </div>
+    <div class="bar-track">
+      <div class="bar-fill" id="bar-fill" style="width:92%;background:var(--warn)"></div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-box">
+        <span style="font-size:11px;color:var(--muted)">注意力聚焦度</span>
+        <span class="stat-val" id="attn-val" style="color:var(--warn)">28% (严重稀释)</span>
+      </div>
+      <div class="stat-box">
+        <span style="font-size:11px;color:var(--muted)">缓存命中率 (Cache)</span>
+        <span class="stat-val" id="cache-val" style="color:var(--warn)">14% (频繁穿透)</span>
+      </div>
+      <div class="stat-box">
+        <span style="font-size:11px;color:var(--muted)">单次轮询预估成本</span>
+        <span class="stat-val" id="cost-val" style="color:var(--warn)">~ ¥1.80 / 轮</span>
+      </div>
+      <div class="stat-box">
+        <span style="font-size:11px;color:var(--muted)">典型报错风险</span>
+        <span class="stat-val" id="risk-val" style="color:var(--warn)">改一处崩一片</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="readout" id="readout-box" aria-live="polite">
+    <strong>现象诊断</strong>：一股脑将 10 份冗长文档全塞进对话，模型被海量无关上下文淹没，容易“听前忘后”改错模块，且每轮输入重头计费，额度飞速消耗。
+  </div>
+
+  <p class="caption">互动辅助 · 对应正文第三节：用 300 行以内的 AGENTS.md 交代全局脉络，顺着索引做渐进式批注，按需调入上下文。</p>
+</main>
+
+<!-- blog-yusheng:html-embed-handshake v1 -->
+<script>
+(() => {
+  const nonce = new URLSearchParams(location.hash.slice(1)).get('nonce')
+  if (!nonce || window.parent === window) return
+  window.parent.postMessage({ nonce, message: { type: 'ready' } }, '*')
+  const reportHeight = () => window.parent.postMessage({ type: 'resize', height: document.documentElement.scrollHeight }, '*')
+  requestAnimationFrame(reportHeight)
+  new ResizeObserver(reportHeight).observe(document.documentElement)
+})()
+</script>
+<script>
+document.querySelector('[data-theme-toggle]').addEventListener('click',()=>{
+  const isDark = getComputedStyle(document.documentElement).getPropertyValue('--paper').trim() === '#171b1c';
+  document.documentElement.dataset.theme = isDark ? 'paper' : 'night';
+});
+
+const modes = {
+  bloat: {
+    tokenText: '118,500 / 128k (92%)',
+    pct: '92%',
+    barColor: 'var(--warn)',
+    attn: '28% (严重稀释)',
+    attnColor: 'var(--warn)',
+    cache: '14% (频繁穿透)',
+    cacheColor: 'var(--warn)',
+    cost: '~ ¥1.80 / 轮',
+    costColor: 'var(--warn)',
+    risk: '改一处崩一片',
+    riskColor: 'var(--warn)',
+    readout: '<strong>现象诊断</strong>：一股脑将 10 份冗长规范与不相关的整个目录全塞进会话。无关信息塞得越多，模型注意力越分散，既容易产生幻觉写出相互冲突的逻辑，又因上下文剧烈变动导致 Prompt Cache 无法命中，成本呈指数级上升。'
+  },
+  lean: {
+    tokenText: '8,200 / 128k (6.4%)',
+    pct: '6.4%',
+    barColor: 'var(--good)',
+    attn: '94% (高度聚焦)',
+    attnColor: 'var(--good)',
+    cache: '86% (稳态命中)',
+    cacheColor: 'var(--good)',
+    cost: '~ ¥0.08 / 轮',
+    costColor: 'var(--good)',
+    risk: '精准收敛可控',
+    riskColor: 'var(--good)',
+    readout: '<strong>工程解法</strong>：根目录仅留一份 300 行以内的 AGENTS.md 交代关键路径与全局架构。推进到哪一块功能，才让 AI 按需读取对应规范文件。前序上下文高度稳定，命中 85%+ 缓存，费用骤降至原来的几十分之一，且代码准确率极高。'
+  }
+};
+
+document.querySelectorAll('[data-mode]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const m = btn.dataset.mode;
+    document.querySelectorAll('[data-mode]').forEach(b => b.setAttribute('aria-pressed', String(b === btn)));
+    const d = modes[m];
+    document.getElementById('token-val').textContent = d.tokenText;
+    const bar = document.getElementById('bar-fill');
+    bar.style.width = d.pct;
+    bar.style.background = d.barColor;
+    const attn = document.getElementById('attn-val');
+    attn.textContent = d.attn; attn.style.color = d.attnColor;
+    const cache = document.getElementById('cache-val');
+    cache.textContent = d.cache; cache.style.color = d.cacheColor;
+    const cost = document.getElementById('cost-val');
+    cost.textContent = d.cost; cost.style.color = d.costColor;
+    const risk = document.getElementById('risk-val');
+    risk.textContent = d.risk; risk.style.color = d.riskColor;
+    document.getElementById('readout-box').innerHTML = d.readout;
+  });
+});
+</script>
+</body>
+</html>

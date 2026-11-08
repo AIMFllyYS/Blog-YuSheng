@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>打卡软件三入口解耦与排错画布</title>
+<style>
+:root{--paper:#f6f1e7;--ink:#302c26;--muted:#70665a;--line:#d8cebd;--accent:#9a6034;--wash:#ebe0cd;--good:#2a7a72;--warn:#a83c1f;--ease-damp:cubic-bezier(.22,.82,.28,1);color-scheme:light dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.7 "Noto Serif CJK","Source Han Serif SC","Songti SC",SimSun,serif}
+main{padding:clamp(16px,4vw,32px);max-width:920px;margin:auto}
+h1{font-weight:500;font-size:clamp(20px,4vw,28px);margin:6px 0 10px;line-height:1.3}
+.eyebrow{font:11px/1.5 Consolas,monospace;letter-spacing:.18em;text-transform:uppercase;color:var(--accent)}
+.intro{color:var(--muted);font-size:13px;margin-bottom:16px}
+.controls{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}
+button{cursor:pointer;border:1px solid var(--line);background:transparent;color:var(--ink);padding:7px 14px;min-height:38px;font:inherit;font-size:13px;border-radius:4px;transition:all .25s var(--ease-damp)}
+button:hover,button[aria-pressed=true]{background:var(--ink);color:var(--paper)}
+.canvas-box{background:var(--wash);border:1px solid var(--line);border-radius:6px;padding:20px;margin-top:14px}
+.inputs-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
+.input-node{background:var(--paper);border:2px dashed var(--line);border-radius:6px;padding:12px;text-align:center;cursor:pointer;transition:all .25s}
+.input-node.active{border-color:var(--accent);border-style:solid;background:var(--paper);box-shadow:0 2px 8px rgba(0,0,0,0.06)}
+.flow-diagram{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:16px;position:relative}
+.pipeline-step{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;margin:8px 0;background:var(--wash);border-radius:4px;font-size:13px}
+.status-pill{font:700 11px Consolas,monospace;padding:2px 8px;border-radius:3px}
+.status-good{background:rgba(42,122,114,0.15);color:var(--good)}
+.status-warn{background:rgba(168,60,31,0.15);color:var(--warn)}
+.readout{border-left:3px solid var(--accent);padding:10px 0 10px 14px;margin-top:16px;min-height:70px;font-size:13px}
+.theme{float:right;font-size:12px;padding:2px 10px;min-height:30px}
+.caption{color:var(--muted);font-size:12px;margin-top:14px;border-top:1px solid var(--line);padding-top:8px}
+:root[data-theme=night]{--paper:#171b1c;--ink:#e9e4d8;--muted:#b6b1a6;--line:#444846;--accent:#deb47d;--wash:#232b2d;--good:#4eb5a8;--warn:#e07060;color-scheme:dark}
+@media(prefers-color-scheme:dark){:root:not([data-theme=paper]){--paper:#171b1c;--ink:#e9e4d8;--muted:#b6b1a6;--line:#444846;--accent:#deb47d;--wash:#232b2d;--good:#4eb5a8;--warn:#e07060}}
+</style>
+</head>
+<body>
+<main>
+  <button class="theme" data-theme-toggle aria-label="切换明暗主题">明 / 暗</button>
+  <div class="eyebrow">MODULE BOUNDARIES &amp; DEBUGGING</div>
+  <h1>打卡软件三入口解耦与排错画布</h1>
+  <p class="intro">点击不同入口，对比“未约定规范各写各的”与“出入口解耦组件复用”下的整条业务链路与 Bug 定位效率。</p>
+
+  <div class="controls">
+    <button data-arch="messy" aria-pressed="true">❌ 早期无约束：各自独立闭塞（易断裂）</button>
+    <button data-arch="clean" aria-pressed="false">✅ 工程解耦：统一底层处理与数据流</button>
+  </div>
+
+  <div class="canvas-box">
+    <div style="font-size:12px;color:var(--muted);margin-bottom:8px">第一层：三个用户入口（点击切换测试入口）</div>
+    <div class="inputs-row">
+      <div class="input-node active" data-node="photo">
+        <strong style="display:block;font-size:14px">📷 智能拍照识别</strong>
+        <span style="font-size:11px;color:var(--muted)">上传餐盘图片提取成分</span>
+      </div>
+      <div class="input-node" data-node="manual">
+        <strong style="display:block;font-size:14px">✍️ 手动打卡录入</strong>
+        <span style="font-size:11px;color:var(--muted)">表单直接填入食物与克数</span>
+      </div>
+      <div class="input-node" data-node="chat">
+        <strong style="display:block;font-size:14px">💬 对话式打卡</strong>
+        <span style="font-size:11px;color:var(--muted)">日常聊天由 Agent 提取</span>
+      </div>
+    </div>
+
+    <div style="font-size:12px;color:var(--muted);margin-bottom:8px">第二层至第四层：全链路执行状态</div>
+    <div class="flow-diagram" id="flow-diagram">
+      <div class="pipeline-step">
+        <span>1. 数据解析层（Nutrition Intake Parsing）</span>
+        <span class="status-pill status-warn" id="step1-status">重复编写，格式不互通</span>
+      </div>
+      <div class="pipeline-step">
+        <span>2. 核心计算与校验（Calories Normalizer）</span>
+        <span class="status-pill status-warn" id="step2-status">各自独立计算，易出偏差</span>
+      </div>
+      <div class="pipeline-step">
+        <span>3. 数据库持久化（PostgreSQL meals 表）</span>
+        <span class="status-pill status-warn" id="step3-status">写入字段缺漏</span>
+      </div>
+      <div class="pipeline-step">
+        <span>4. 前端状态填充与渲染（Dashboard View）</span>
+        <span class="status-pill status-warn" id="step4-status">💥 报错：热量无法显示 (NaN)</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="readout" id="readout-box" aria-live="polite">
+    <strong>排错痛点</strong>：AI 在写这三个入口时各写各的。拍照识别、手动打卡与对话打卡各自搞了一套数据格式，字段对不上。当时出现“热量显示不出”的 Bug，因为没有全局统一接口，不得不顺着拍照、数据库、前端组件把整套链路从头到尾扒一遍，耗费了整整大半天。
+  </div>
+
+  <p class="caption">阅读辅助 · 对应正文第四节：不能指望 AI 自动产生架构意识；在写代码前先约定好出入口与数据结构，让 AI 复用同一套组件。</p>
+</main>
+
+<!-- blog-yusheng:html-embed-handshake v1 -->
+<script>
+(() => {
+  const nonce = new URLSearchParams(location.hash.slice(1)).get('nonce')
+  if (!nonce || window.parent === window) return
+  window.parent.postMessage({ nonce, message: { type: 'ready' } }, '*')
+  const reportHeight = () => window.parent.postMessage({ type: 'resize', height: document.documentElement.scrollHeight }, '*')
+  requestAnimationFrame(reportHeight)
+  new ResizeObserver(reportHeight).observe(document.documentElement)
+})()
+</script>
+<script>
+document.querySelector('[data-theme-toggle]').addEventListener('click',()=>{
+  const isDark = getComputedStyle(document.documentElement).getPropertyValue('--paper').trim() === '#171b1c';
+  document.documentElement.dataset.theme = isDark ? 'paper' : 'night';
+});
+
+let currentArch = 'messy';
+let currentNode = 'photo';
+
+const archData = {
+  messy: {
+    step1: '各自独立编写，格式混乱',
+    step1Class: 'status-warn',
+    step2: '规则不统一，单位换算出错',
+    step2Class: 'status-warn',
+    step3: '字段丢失（缺少 meal_calories）',
+    step3Class: 'status-warn',
+    step4: '💥 页面报错：热量为 NaN，排查耗时大半天',
+    step4Class: 'status-warn',
+    readout: '<strong>排错痛点（各写各的）</strong>：三个入口底层各自搞了一套孤立逻辑。遇到 Bug 时，排查范围扩散到所有入口和零散组件中，你很难一眼看清到底是哪一步数据断掉了，必须沿着完整链路耗费几个小时逐行捉虫。'
+  },
+  clean: {
+    step1: '标准化输入适配器（3 入口归一）',
+    step1Class: 'status-good',
+    step2: '复用统一营养与热量估算内核',
+    step2Class: 'status-good',
+    step3: '严格走统一 PostgreSQL meals Schema 写入',
+    step3Class: 'status-good',
+    step4: '✅ 页面即时响应，热量图表秒级渲染',
+    step4Class: 'status-good',
+    readout: '<strong>解耦收益（组件复用）</strong>：动手前明确模块出入口。三个入口只是不同的触发器，全部传入同一个规范化的数据管道。如果热量显示有问题，直接去检查公用的计算内核即可，排查时间从几个小时骤降到十几分钟。'
+  }
+};
+
+function update() {
+  const d = archData[currentArch];
+  const s1 = document.getElementById('step1-status');
+  s1.textContent = d.step1; s1.className = 'status-pill ' + d.step1Class;
+  const s2 = document.getElementById('step2-status');
+  s2.textContent = d.step2; s2.className = 'status-pill ' + d.step2Class;
+  const s3 = document.getElementById('step3-status');
+  s3.textContent = d.step3; s3.className = 'status-pill ' + d.step3Class;
+  const s4 = document.getElementById('step4-status');
+  s4.textContent = d.step4; s4.className = 'status-pill ' + d.step4Class;
+  document.getElementById('readout-box').innerHTML = d.readout;
+}
+
+document.querySelectorAll('[data-arch]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    currentArch = btn.dataset.arch;
+    document.querySelectorAll('[data-arch]').forEach(b => b.setAttribute('aria-pressed', String(b === btn)));
+    update();
+  });
+});
+
+document.querySelectorAll('[data-node]').forEach(node => {
+  node.addEventListener('click', () => {
+    document.querySelectorAll('[data-node]').forEach(n => n.classList.remove('active'));
+    node.classList.add('active');
+    currentNode = node.dataset.node;
+  });
+});
+</script>
+</body>
+</html>

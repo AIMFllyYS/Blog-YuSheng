@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>模型分工与多平台解耦选型表</title>
+<style>
+:root{--paper:#f6f1e7;--ink:#302c26;--muted:#70665a;--line:#d8cebd;--accent:#9a6034;--wash:#ebe0cd;--good:#2a7a72;--warn:#a83c1f;--ease-damp:cubic-bezier(.22,.82,.28,1);color-scheme:light dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.7 "Noto Serif CJK","Source Han Serif SC","Songti SC",SimSun,serif}
+main{padding:clamp(16px,4vw,32px);max-width:920px;margin:auto}
+h1{font-weight:500;font-size:clamp(20px,4vw,28px);margin:6px 0 10px;line-height:1.3}
+.eyebrow{font:11px/1.5 Consolas,monospace;letter-spacing:.18em;text-transform:uppercase;color:var(--accent)}
+.intro{color:var(--muted);font-size:13px;margin-bottom:18px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}
+button{cursor:pointer;border:1px solid var(--line);background:transparent;color:var(--ink);padding:7px 14px;min-height:38px;font:inherit;font-size:13px;border-radius:4px;transition:all .25s var(--ease-damp)}
+button:hover,button[aria-pressed=true]{background:var(--ink);color:var(--paper)}
+.card{background:var(--wash);border:1px solid var(--line);border-radius:6px;padding:20px;margin-top:14px}
+.card-header{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px;border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:14px}
+.model-pill{font:700 13px Consolas,monospace;background:var(--paper);border:1px solid var(--line);padding:3px 8px;border-radius:3px}
+.detail-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+.detail-item h4{margin:0 0 4px;font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.detail-item p{margin:0;font-size:13px}
+.callout-box{background:var(--paper);border-left:3px solid var(--accent);padding:10px 14px;border-radius:0 4px 4px 0;margin-top:14px;font-size:13px}
+.theme{float:right;font-size:12px;padding:2px 10px;min-height:30px}
+.caption{color:var(--muted);font-size:12px;margin-top:14px;border-top:1px solid var(--line);padding-top:8px}
+:root[data-theme=night]{--paper:#171b1c;--ink:#e9e4d8;--muted:#b6b1a6;--line:#444846;--accent:#deb47d;--wash:#232b2d;--good:#4eb5a8;--warn:#e07060;color-scheme:dark}
+@media(prefers-color-scheme:dark){:root:not([data-theme=paper]){--paper:#171b1c;--ink:#e9e4d8;--muted:#b6b1a6;--line:#444846;--accent:#deb47d;--wash:#232b2d;--good:#4eb5a8;--warn:#e07060}}
+</style>
+</head>
+<body>
+<main>
+  <button class="theme" data-theme-toggle aria-label="切换明暗主题">明 / 暗</button>
+  <div class="eyebrow">MODEL SPECIALIZATION &amp; DECOUPLING</div>
+  <h1>模型分工与多平台解耦选型表</h1>
+  <p class="intro">点击不同任务场景，查看手记实测得出的高性价比模型搭配与防封号单点解耦方案。</p>
+
+  <div class="tabs" role="tablist">
+    <button data-task="text" aria-pressed="true">写文案与中文思辨</button>
+    <button data-task="frontend" aria-pressed="false">前端 UI / CSS 微调</button>
+    <button data-task="video" aria-pressed="false">纯代码生成视频 / 运镜</button>
+    <button data-task="pubmed" aria-pressed="false">专业医学文献研读</button>
+    <button data-task="bot" aria-pressed="false">后台自动化流水线</button>
+  </div>
+
+  <div class="card" id="task-card">
+    <div class="card-header">
+      <div>
+        <strong id="task-title" style="font-size:16px">写文案与深度中文表达</strong>
+        <span id="task-cost" style="font-size:12px;color:var(--muted);margin-left:8px">成本水平：中偏高</span>
+      </div>
+      <div>
+        <span class="model-pill" id="primary-model">主力：Claude 3.5 Sonnet</span>
+        <span class="model-pill" id="fallback-model" style="margin-left:6px;opacity:0.85">备选：DeepSeek / Kimi</span>
+      </div>
+    </div>
+
+    <div class="detail-grid">
+      <div class="detail-item">
+        <h4>选型依据与优势</h4>
+        <p id="advantage-copy">Claude 在中文长句语感、语气调柔、去机械感和逻辑细腻度上表现出色，适合打磨深度复盘、讲课稿与文案。</p>
+      </div>
+      <div class="detail-item">
+        <h4>单平台解耦与避坑</h4>
+        <p id="decouple-copy">海外订阅需应对信用卡接码与风控。重要文案切勿完全依赖单一海外会话，本地随时保留 Markdown 草稿，国内可无缝平替为 DeepSeek。</p>
+      </div>
+    </div>
+
+    <div class="callout-box" id="harness-tip">
+      <strong>外层 Harness 关键</strong>：文案创作无需复杂代码工具，关键在于提供清晰的“受众画像”与“语气禁忌列表”（比如禁止说空泛套话、保留第一人称思考）。
+    </div>
+  </div>
+
+  <p class="caption">阅读辅助 · 对应正文第二节：大模型决定能力上限，外层 Harness 与上下文组织决定实际落地稳定性；不要把整条业务流程绑死在单一海外模型上。</p>
+</main>
+
+<!-- blog-yusheng:html-embed-handshake v1 -->
+<script>
+(() => {
+  const nonce = new URLSearchParams(location.hash.slice(1)).get('nonce')
+  if (!nonce || window.parent === window) return
+  window.parent.postMessage({ nonce, message: { type: 'ready' } }, '*')
+  const reportHeight = () => window.parent.postMessage({ type: 'resize', height: document.documentElement.scrollHeight }, '*')
+  requestAnimationFrame(reportHeight)
+  new ResizeObserver(reportHeight).observe(document.documentElement)
+})()
+</script>
+<script>
+document.querySelector('[data-theme-toggle]').addEventListener('click',()=>{
+  const isDark = getComputedStyle(document.documentElement).getPropertyValue('--paper').trim() === '#171b1c';
+  document.documentElement.dataset.theme = isDark ? 'paper' : 'night';
+});
+
+const data = {
+  text: {
+    title: '写文案与深度中文表达',
+    cost: '成本水平：中等',
+    primary: '主力：Claude 3.5 Sonnet',
+    fallback: '备选：DeepSeek-V3 / Kimi',
+    advantage: 'Claude 在中文长句语感、语气调柔、去机械感和逻辑细腻度上表现出色，适合打磨深度复盘、讲课稿与文案。',
+    decouple: '海外订阅需应对信用卡接码与时区风控。重要文案切勿完全依赖单一会话，本地随时保留 Markdown 正本，国内可直接平替。',
+    harness: '<strong>外层 Harness 关键</strong>：无需复杂工具链，重在上下文的“受众视角说明”与“语气约束锁”（禁止虚浮的行业黑话，保留真实的医学生切身体验）。'
+  },
+  frontend: {
+    title: '前端 UI 布局与样式调整',
+    cost: '成本水平：极低（性价比最高）',
+    primary: '主力：Gemini 2.5 Flash / Kimi',
+    fallback: '备选：Claude 3.5 Haiku',
+    advantage: '反复调试 CSS、边距、字号和响应式 Flex/Grid 往往需要极多次轮询。用 Gemini Flash 或 Kimi 调用成本极低、生成极快，性价比极高。',
+    decouple: '不要用昂贵的顶尖模型调样式。哪怕调几十遍几百行 CSS，国内高并发低费率模型足以接住，还能省下大笔开销。',
+    harness: '<strong>外层 Harness 关键</strong>：必须配合单独的前端 Playbook（设计锁）与界面截图/DOM 结构树。纯文本描述“哪里歪了”难以一次改准，截图批注准确率提升数倍。'
+  },
+  video: {
+    title: '纯代码生成教学视频与复杂镜头控制',
+    cost: '成本水平：极高（Token 消耗大户）',
+    primary: '主力：Claude Opus / Sonnet 5.5',
+    fallback: '备选：GPT-4o / Codex 高思考档',
+    advantage: '用代码驱动 Three.js 动画、Canvas 关键帧以及时间轴运镜，对复杂数学逻辑与长程连贯性要求极高。实测三四十个学科视频大多靠此系模型跑通。',
+    decouple: '这一类任务极度吃 Token，前前后后可能花去上千元。务必用 Git 独立分支管理每个脚本镜头，不要在单次长会话中一次性跑通全长动画。',
+    harness: '<strong>外层 Harness 关键</strong>：必须引入自动语法校验与本地无头浏览器帧渲染器，让 Agent 自主跑冒烟测试截帧，而不是人工一帧帧人眼肉测。'
+  },
+  pubmed: {
+    title: '专业医学文献研读与交叉检验',
+    cost: '成本水平：中等（多 Agent 并行）',
+    primary: '主力：DeepSeek-R1 / Claude',
+    fallback: '备选：PubMed MCP + 本地知识库',
+    advantage: '结合 MCP 工具接入知网与 PubMed，支持多个智能体并行检索多篇相关文献，提取生词本、交叉比对不同研究的结论差异。',
+    decouple: '论文研读核心在 PubMed 真实 PDF 原文。AI 只是做长句翻译与检索对比，必须在工作台里随时对照原生 PDF，避免模型伪造引用（幻觉）。',
+    harness: '<strong>外层 Harness 关键</strong>：多智能体隔离。Agent A 负责检索提炼，Agent B 负责交叉挑错，最后把材料汇集呈现在 PDF 阅读器侧边栏。'
+  },
+  bot: {
+    title: '后台异步自动化（如每日小日报）',
+    cost: '成本水平：几乎免费 / 极低 VPS 成本',
+    primary: '主力：WorkBuddy / 国内开源框架',
+    fallback: '备选：DeepSeek API + Cron 脚本',
+    advantage: '每天定时在后台分头搜集资讯、总结摘要、提交 Git PR 并联动飞书和邮件发通知。利用离线空闲时间异步派活，完全不占上课与休息时间。',
+    decouple: '租用廉价 VPS 部署开源中控台，密钥严格存放在本地环境变量，不绑死任何第三方云平台，保全长期数据主权。',
+    harness: '<strong>外层 Harness 关键</strong>：严格的任务拆解与定时触发器，失败自动重试，完成后向手机端（飞书机器人）推送带审批按钮的通知卡片。'
+  }
+};
+
+document.querySelectorAll('[data-task]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('[data-task]').forEach(b => b.setAttribute('aria-pressed', String(b === btn)));
+    const item = data[btn.dataset.task];
+    document.getElementById('task-title').textContent = item.title;
+    document.getElementById('task-cost').textContent = item.cost;
+    document.getElementById('primary-model').textContent = item.primary;
+    document.getElementById('fallback-model').textContent = item.fallback;
+    document.getElementById('advantage-copy').textContent = item.advantage;
+    document.getElementById('decouple-copy').textContent = item.decouple;
+    document.getElementById('harness-tip').innerHTML = item.harness;
+  });
+});
+</script>
+</body>
+</html>
