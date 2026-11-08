@@ -1,157 +1,420 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>模型分工与多平台解耦选型表</title>
-<style>
-:root{--paper:#f6f1e7;--ink:#302c26;--muted:#70665a;--line:#d8cebd;--accent:#9a6034;--wash:#ebe0cd;--good:#2a7a72;--warn:#a83c1f;--ease-damp:cubic-bezier(.22,.82,.28,1);color-scheme:light dark}
-*{box-sizing:border-box}
-body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.7 "Noto Serif CJK","Source Han Serif SC","Songti SC",SimSun,serif}
-main{padding:clamp(16px,4vw,32px);max-width:920px;margin:auto}
-h1{font-weight:500;font-size:clamp(20px,4vw,28px);margin:6px 0 10px;line-height:1.3}
-.eyebrow{font:11px/1.5 Consolas,monospace;letter-spacing:.18em;text-transform:uppercase;color:var(--accent)}
-.intro{color:var(--muted);font-size:13px;margin-bottom:18px}
-.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}
-button{cursor:pointer;border:1px solid var(--line);background:transparent;color:var(--ink);padding:7px 14px;min-height:38px;font:inherit;font-size:13px;border-radius:4px;transition:all .25s var(--ease-damp)}
-button:hover,button[aria-pressed=true]{background:var(--ink);color:var(--paper)}
-.card{background:var(--wash);border:1px solid var(--line);border-radius:6px;padding:20px;margin-top:14px}
-.card-header{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px;border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:14px}
-.model-pill{font:700 13px Consolas,monospace;background:var(--paper);border:1px solid var(--line);padding:3px 8px;border-radius:3px}
-.detail-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
-.detail-item h4{margin:0 0 4px;font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
-.detail-item p{margin:0;font-size:13px}
-.callout-box{background:var(--paper);border-left:3px solid var(--accent);padding:10px 14px;border-radius:0 4px 4px 0;margin-top:14px;font-size:13px}
-.theme{float:right;font-size:12px;padding:2px 10px;min-height:30px}
-.caption{color:var(--muted);font-size:12px;margin-top:14px;border-top:1px solid var(--line);padding-top:8px}
-:root[data-theme=night]{--paper:#171b1c;--ink:#e9e4d8;--muted:#b6b1a6;--line:#444846;--accent:#deb47d;--wash:#232b2d;--good:#4eb5a8;--warn:#e07060;color-scheme:dark}
-@media(prefers-color-scheme:dark){:root:not([data-theme=paper]){--paper:#171b1c;--ink:#e9e4d8;--muted:#b6b1a6;--line:#444846;--accent:#deb47d;--wash:#232b2d;--good:#4eb5a8;--warn:#e07060}}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>模型分工与多平台解耦选型表</title>
+  <style>
+    :root {
+      --bg: #fcfbf9;
+      --card-bg: #ffffff;
+      --card-subtle: #f8f6f2;
+      --border: #e8e3da;
+      --border-focus: #c2b6a3;
+      --ink: #1c1917;
+      --ink-muted: #665e55;
+      --ink-faint: #999084;
+      --accent: #a9762f;
+      --accent-light: #fdf6ec;
+      --green: #15803d;
+      --green-light: #f0fdf4;
+      --red: #b91c1c;
+      --red-light: #fef2f2;
+      --blue: #1d4ed8;
+      --blue-light: #eff6ff;
+      --amber: #b45309;
+      --amber-light: #fffbeb;
+      --shadow-sm: 0 1px 2px rgba(40, 30, 20, 0.04);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      padding: 20px;
+      line-height: 1.5;
+      font-size: 14px;
+    }
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .header-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--ink);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .sim-toggle-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--card-bg);
+      color: var(--ink);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .sim-toggle-btn:hover {
+      border-color: var(--border-focus);
+    }
+    .sim-toggle-btn.active {
+      background: var(--red-light);
+      border-color: rgba(185, 28, 28, 0.4);
+      color: var(--red);
+    }
+    .filter-tabs {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+    .tab {
+      padding: 6px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--card-bg);
+      color: var(--ink-muted);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      transition: all 0.15s ease;
+    }
+    .tab:hover {
+      color: var(--ink);
+      border-color: var(--border-focus);
+    }
+    .tab.active {
+      background: var(--accent-light);
+      border-color: rgba(169, 118, 47, 0.4);
+      color: var(--accent);
+    }
+    .matrix-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+    .item-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transition: border-color 0.2s;
+    }
+    .item-card:hover {
+      border-color: var(--border-focus);
+    }
+    .item-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .item-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .role-badge {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .item-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--ink);
+    }
+    .item-scope {
+      font-size: 12px;
+      color: var(--ink-muted);
+    }
+    .badge-group {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+    .tag {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-weight: 500;
+      border: 1px solid transparent;
+    }
+    .tag-blue { background: var(--blue-light); color: var(--blue); border-color: rgba(29, 78, 216, 0.15); }
+    .tag-green { background: var(--green-light); color: var(--green); border-color: rgba(21, 128, 61, 0.15); }
+    .tag-amber { background: var(--amber-light); color: var(--amber); border-color: rgba(180, 83, 9, 0.15); }
+    .tag-red { background: var(--red-light); color: var(--red); border-color: rgba(185, 28, 28, 0.15); }
+
+    .decouple-box {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      background: var(--card-subtle);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+    }
+    @media (max-width: 600px) {
+      .decouple-box { grid-template-columns: 1fr; }
+    }
+    .plan-side {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .plan-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--ink-faint);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .plan-val {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--ink);
+    }
+    .plan-desc {
+      font-size: 11px;
+      color: var(--ink-muted);
+      line-height: 1.4;
+    }
+    .note-foot {
+      font-size: 12px;
+      color: var(--ink-muted);
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+      line-height: 1.4;
+    }
+    .icon {
+      width: 15px;
+      height: 15px;
+      stroke-width: 2;
+      stroke: currentColor;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      flex-shrink: 0;
+    }
+  </style>
 </head>
 <body>
-<main>
-  <button class="theme" data-theme-toggle aria-label="切换明暗主题">明 / 暗</button>
-  <div class="eyebrow">MODEL SPECIALIZATION &amp; DECOUPLING</div>
-  <h1>模型分工与多平台解耦选型表</h1>
-  <p class="intro">点击不同任务场景，查看手记实测得出的高性价比模型搭配与防封号单点解耦方案。</p>
-
-  <div class="tabs" role="tablist">
-    <button data-task="text" aria-pressed="true">写文案与中文思辨</button>
-    <button data-task="frontend" aria-pressed="false">前端 UI / CSS 微调</button>
-    <button data-task="video" aria-pressed="false">纯代码生成视频 / 运镜</button>
-    <button data-task="pubmed" aria-pressed="false">专业医学文献研读</button>
-    <button data-task="bot" aria-pressed="false">后台自动化流水线</button>
-  </div>
-
-  <div class="card" id="task-card">
-    <div class="card-header">
-      <div>
-        <strong id="task-title" style="font-size:16px">写文案与深度中文表达</strong>
-        <span id="task-cost" style="font-size:12px;color:var(--muted);margin-left:8px">成本水平：中偏高</span>
+  <div class="container">
+    <div class="header">
+      <div class="header-title">
+        <svg class="icon" style="color:var(--accent)" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+        模型分工与多平台解耦选型表
       </div>
-      <div>
-        <span class="model-pill" id="primary-model">主力：Claude 3.5 Sonnet</span>
-        <span class="model-pill" id="fallback-model" style="margin-left:6px;opacity:0.85">备选：DeepSeek / Kimi</span>
-      </div>
+      <button class="sim-toggle-btn" id="btn-simulate" onclick="toggleSimulation()">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <span>模拟海外链路异常 (点击切换)</span>
+      </button>
     </div>
 
-    <div class="detail-grid">
-      <div class="detail-item">
-        <h4>选型依据与优势</h4>
-        <p id="advantage-copy">Claude 在中文长句语感、语气调柔、去机械感和逻辑细腻度上表现出色，适合打磨深度复盘、讲课稿与文案。</p>
-      </div>
-      <div class="detail-item">
-        <h4>单平台解耦与避坑</h4>
-        <p id="decouple-copy">海外订阅需应对信用卡接码与风控。重要文案切勿完全依赖单一海外会话，本地随时保留 Markdown 草稿，国内可无缝平替为 DeepSeek。</p>
-      </div>
+    <!-- Filter Tabs -->
+    <div class="filter-tabs">
+      <button class="tab active" onclick="setFilter('all', this)">全部场景</button>
+      <button class="tab" onclick="setFilter('architect', this)">顶层规划与逻辑</button>
+      <button class="tab" onclick="setFilter('coder', this)">代码全栈与工程</button>
+      <button class="tab" onclick="setFilter('longdoc', this)">海量长文与多模态</button>
+      <button class="tab" onclick="setFilter('search', this)">极速检索与平价基座</button>
     </div>
 
-    <div class="callout-box" id="harness-tip">
-      <strong>外层 Harness 关键</strong>：文案创作无需复杂代码工具，关键在于提供清晰的“受众画像”与“语气禁忌列表”（比如禁止说空泛套话、保留第一人称思考）。
+    <!-- Cards Matrix -->
+    <div class="matrix-grid" id="matrix-container">
+      <!-- Generated via JS -->
     </div>
   </div>
 
-  <p class="caption">阅读辅助 · 对应正文第二节：大模型决定能力上限，外层 Harness 与上下文组织决定实际落地稳定性；不要把整条业务流程绑死在单一海外模型上。</p>
-</main>
+  <script>
+    const data = [
+      {
+        category: 'architect',
+        title: '顶层需求拆解与架构规划',
+        scope: '适合：项目立项架构、模块边界切割、防退化测试用例设计、复杂算法逻辑推演',
+        iconBg: '#fef3c7',
+        iconColor: '#b45309',
+        primary: 'Claude 3.7 Sonnet (Thinking) / Opus / O3',
+        primaryStatus: '逻辑严密，复杂系统推演极少跳步',
+        fallback: 'DeepSeek-R1 (满血版) / 阶跃星辰 Step-2',
+        fallbackStatus: '国内高性价比深度思考，中文语境对齐良好',
+        protocol: '仅传递业务边界规范与 Markdown PRD，禁止直接写入生产依赖',
+        pitfall: '切忌直接让规划模型批量直接写 500 行无单测代码，应只产出阶段性验收清单与模块接口。'
+      },
+      {
+        category: 'coder',
+        title: '代码全栈实现与重构交付',
+        scope: '适合：React/Next.js 前端、TypeScript strict、复杂 CSS 布局、后端 API 路由开发',
+        iconBg: '#eff6ff',
+        iconColor: '#1d4ed8',
+        primary: 'Claude 3.7 Sonnet / Cursor Composer / GPT Codex',
+        primaryStatus: '前端组件拆分细腻，单测通过率极高',
+        fallback: 'Qwen-2.5-Coder (32B/72B) / DeepSeek-V3',
+        fallbackStatus: '国内直连低延迟，支持私有化部署与本地 Ollama',
+        protocol: '严格受 AGENTS.md 约束，所有破坏性改动必须运行测试关卡拦截',
+        pitfall: 'Windows 环境下注意模型容易漏写 .exe 或混淆 PowerShell/bash 语法差异。'
+      },
+      {
+        category: 'longdoc',
+        title: '百万字长文整理与多模态摄取',
+        scope: '适合：整本医学教科书跨章节比对、数百页行业报告摘要、UI 设计稿视觉标注提取',
+        iconBg: '#f0fdf4',
+        iconColor: '#15803d',
+        primary: 'Gemini 2.5 Pro / Flash (200万上下文)',
+        primaryStatus: '超大窗口针在海中检索极度稳定，原生多模态视频/音频直读',
+        fallback: 'Kimi K1.5 / 智谱 GLM-4 Long',
+        fallbackStatus: '中文长文本检索与网页直接解析能力出色',
+        protocol: '提取中间结构化 JSON / 摘要卡片，不污染下游代码对话上下文',
+        pitfall: '长上下文模型容易在中间区域产生注意力衰减，必须在 Prompt 末尾重复核心提取格式。'
+      },
+      {
+        category: 'search',
+        title: '极速信息检索与轻量级平价基座',
+        scope: '适合：开源库最新 API 文档查阅、会议纪要快速整理、日常报错快速问答',
+        iconBg: '#fdf4ff',
+        iconColor: '#a21caf',
+        primary: 'Perplexity / 腾讯 WorkBuddy (内置轻量 Skills)',
+        primaryStatus: '带准确出处引文，免折腾开箱即用',
+        fallback: '豆包 / 秘塔 AI 搜索 / 通义千问',
+        fallbackStatus: '国内免代理极速响应，适合非研发协同人员上手',
+        protocol: '外接 Web 检索或预设提示词卡片，保持无状态快速查询',
+        pitfall: '搜索模型对深度长链代码容易出现幻觉引用不存在的 npm 包名，必须查验官方文档。'
+      }
+    ];
 
-<!-- blog-yusheng:html-embed-handshake v1 -->
-<script>
-(() => {
-  const nonce = new URLSearchParams(location.hash.slice(1)).get('nonce')
-  if (!nonce || window.parent === window) return
-  window.parent.postMessage({ nonce, message: { type: 'ready' } }, '*')
-  const reportHeight = () => window.parent.postMessage({ type: 'resize', height: document.documentElement.scrollHeight }, '*')
-  requestAnimationFrame(reportHeight)
-  new ResizeObserver(reportHeight).observe(document.documentElement)
-})()
-</script>
-<script>
-document.querySelector('[data-theme-toggle]').addEventListener('click',()=>{
-  const isDark = getComputedStyle(document.documentElement).getPropertyValue('--paper').trim() === '#171b1c';
-  document.documentElement.dataset.theme = isDark ? 'paper' : 'night';
-});
+    let currentFilter = 'all';
+    let isSimulatingFailure = false;
 
-const data = {
-  text: {
-    title: '写文案与深度中文表达',
-    cost: '成本水平：中等',
-    primary: '主力：Claude 3.5 Sonnet',
-    fallback: '备选：DeepSeek-V3 / Kimi',
-    advantage: 'Claude 在中文长句语感、语气调柔、去机械感和逻辑细腻度上表现出色，适合打磨深度复盘、讲课稿与文案。',
-    decouple: '海外订阅需应对信用卡接码与时区风控。重要文案切勿完全依赖单一会话，本地随时保留 Markdown 正本，国内可直接平替。',
-    harness: '<strong>外层 Harness 关键</strong>：无需复杂工具链，重在上下文的“受众视角说明”与“语气约束锁”（禁止虚浮的行业黑话，保留真实的医学生切身体验）。'
-  },
-  frontend: {
-    title: '前端 UI 布局与样式调整',
-    cost: '成本水平：极低（性价比最高）',
-    primary: '主力：Gemini 2.5 Flash / Kimi',
-    fallback: '备选：Claude 3.5 Haiku',
-    advantage: '反复调试 CSS、边距、字号和响应式 Flex/Grid 往往需要极多次轮询。用 Gemini Flash 或 Kimi 调用成本极低、生成极快，性价比极高。',
-    decouple: '不要用昂贵的顶尖模型调样式。哪怕调几十遍几百行 CSS，国内高并发低费率模型足以接住，还能省下大笔开销。',
-    harness: '<strong>外层 Harness 关键</strong>：必须配合单独的前端 Playbook（设计锁）与界面截图/DOM 结构树。纯文本描述“哪里歪了”难以一次改准，截图批注准确率提升数倍。'
-  },
-  video: {
-    title: '纯代码生成教学视频与复杂镜头控制',
-    cost: '成本水平：极高（Token 消耗大户）',
-    primary: '主力：Claude Opus / Sonnet 5.5',
-    fallback: '备选：GPT-4o / Codex 高思考档',
-    advantage: '用代码驱动 Three.js 动画、Canvas 关键帧以及时间轴运镜，对复杂数学逻辑与长程连贯性要求极高。实测三四十个学科视频大多靠此系模型跑通。',
-    decouple: '这一类任务极度吃 Token，前前后后可能花去上千元。务必用 Git 独立分支管理每个脚本镜头，不要在单次长会话中一次性跑通全长动画。',
-    harness: '<strong>外层 Harness 关键</strong>：必须引入自动语法校验与本地无头浏览器帧渲染器，让 Agent 自主跑冒烟测试截帧，而不是人工一帧帧人眼肉测。'
-  },
-  pubmed: {
-    title: '专业医学文献研读与交叉检验',
-    cost: '成本水平：中等（多 Agent 并行）',
-    primary: '主力：DeepSeek-R1 / Claude',
-    fallback: '备选：PubMed MCP + 本地知识库',
-    advantage: '结合 MCP 工具接入知网与 PubMed，支持多个智能体并行检索多篇相关文献，提取生词本、交叉比对不同研究的结论差异。',
-    decouple: '论文研读核心在 PubMed 真实 PDF 原文。AI 只是做长句翻译与检索对比，必须在工作台里随时对照原生 PDF，避免模型伪造引用（幻觉）。',
-    harness: '<strong>外层 Harness 关键</strong>：多智能体隔离。Agent A 负责检索提炼，Agent B 负责交叉挑错，最后把材料汇集呈现在 PDF 阅读器侧边栏。'
-  },
-  bot: {
-    title: '后台异步自动化（如每日小日报）',
-    cost: '成本水平：几乎免费 / 极低 VPS 成本',
-    primary: '主力：WorkBuddy / 国内开源框架',
-    fallback: '备选：DeepSeek API + Cron 脚本',
-    advantage: '每天定时在后台分头搜集资讯、总结摘要、提交 Git PR 并联动飞书和邮件发通知。利用离线空闲时间异步派活，完全不占上课与休息时间。',
-    decouple: '租用廉价 VPS 部署开源中控台，密钥严格存放在本地环境变量，不绑死任何第三方云平台，保全长期数据主权。',
-    harness: '<strong>外层 Harness 关键</strong>：严格的任务拆解与定时触发器，失败自动重试，完成后向手机端（飞书机器人）推送带审批按钮的通知卡片。'
-  }
-};
+    function toggleSimulation() {
+      isSimulatingFailure = !isSimulatingFailure;
+      const btn = document.getElementById('btn-simulate');
+      if (isSimulatingFailure) {
+        btn.className = 'sim-toggle-btn active';
+        btn.innerHTML = `
+          <svg class="icon" viewBox="0 0 24 24"><polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span>已模拟海外链路异常 · 兜底链路生效中</span>
+        `;
+      } else {
+        btn.className = 'sim-toggle-btn';
+        btn.innerHTML = `
+          <svg class="icon" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <span>模拟海外链路异常 (点击切换)</span>
+        `;
+      }
+      render();
+    }
 
-document.querySelectorAll('[data-task]').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('[data-task]').forEach(b => b.setAttribute('aria-pressed', String(b === btn)));
-    const item = data[btn.dataset.task];
-    document.getElementById('task-title').textContent = item.title;
-    document.getElementById('task-cost').textContent = item.cost;
-    document.getElementById('primary-model').textContent = item.primary;
-    document.getElementById('fallback-model').textContent = item.fallback;
-    document.getElementById('advantage-copy').textContent = item.advantage;
-    document.getElementById('decouple-copy').textContent = item.decouple;
-    document.getElementById('harness-tip').innerHTML = item.harness;
-  });
-});
-</script>
+    function setFilter(cat, btn) {
+      currentFilter = cat;
+      document.querySelectorAll('.tab').forEach(t => t.className = 'tab');
+      btn.className = 'tab active';
+      render();
+    }
+
+    function render() {
+      const container = document.getElementById('matrix-container');
+      const filtered = currentFilter === 'all' ? data : data.filter(d => d.category === currentFilter);
+
+      container.innerHTML = filtered.map(item => {
+        const primaryClass = isSimulatingFailure ? 'tag tag-red' : 'tag tag-blue';
+        const primaryText = isSimulatingFailure ? '连接中断 / 熔断降级' : '主力方案 (推荐)';
+        const fallbackClass = isSimulatingFailure ? 'tag tag-green' : 'tag tag-amber';
+        const fallbackText = isSimulatingFailure ? '已无缝承接流量' : '国内解耦兜底';
+
+        return `
+          <div class="item-card">
+            <div class="item-top">
+              <div class="item-title-wrap">
+                <div class="role-badge" style="background:${item.iconBg}; color:${item.iconColor};">
+                  <svg class="icon" viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                </div>
+                <div>
+                  <div class="item-name">${item.title}</div>
+                  <div class="item-scope">${item.scope}</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="decouple-box">
+              <div class="plan-side" style="${isSimulatingFailure ? 'opacity:0.6;' : ''}">
+                <div class="plan-label">
+                  <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+                  <span>首选模型</span>
+                  <span class="${primaryClass}">${primaryText}</span>
+                </div>
+                <div class="plan-val">${item.primary}</div>
+                <div class="plan-desc">${item.primaryStatus}</div>
+              </div>
+
+              <div class="plan-side" style="${isSimulatingFailure ? 'background:#f0fdf4; padding:6px; border-radius:6px;' : ''}">
+                <div class="plan-label">
+                  <svg class="icon" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                  <span>解耦方案</span>
+                  <span class="${fallbackClass}">${fallbackText}</span>
+                </div>
+                <div class="plan-val">${item.fallback}</div>
+                <div class="plan-desc">${item.fallbackStatus}</div>
+              </div>
+            </div>
+
+            <div class="note-foot">
+              <svg class="icon" style="color:var(--accent)" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+              <div><strong>解耦关键：</strong>${item.protocol}。<strong>避坑手记：</strong>${item.pitfall}</div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    render();
+
+    (() => {
+      const nonce = new URLSearchParams(location.hash.slice(1)).get('nonce')
+      if (!nonce || window.parent === window) return
+      window.parent.postMessage({ nonce, message: { type: 'ready' } }, '*')
+      const reportHeight = () => {
+        window.parent.postMessage(
+          { type: 'resize', height: document.documentElement.scrollHeight },
+          '*',
+        )
+      }
+      requestAnimationFrame(reportHeight)
+      new ResizeObserver(reportHeight).observe(document.documentElement)
+    })()
+  </script>
 </body>
 </html>
