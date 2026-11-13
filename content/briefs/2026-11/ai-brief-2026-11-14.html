@@ -1,0 +1,2220 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>折晓早报 · 交出去了，还要看有没有人签收 · 2026-11-14</title>
+<script>document.documentElement.classList.add('js')</script>
+<style>
+:root {
+  color-scheme: light;
+  --ink: #3a322b;
+  --ink-soft: #6b5e53;
+  --paper: #fffaf3;
+  --wall: #f4efe6;
+  --jia: #e39b6d;
+  --jia-ink: #8a4e28;
+  --yi: #6eaea0;
+  --yi-ink: #1d6a5c;
+  --bing: #8aa3b8;
+  --bing-ink: #3d5a70;
+  --wood-1: #f0ddc4;
+  --wood-2: #e4c8a4;
+  --wood-3: #d2ae80;
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--wall);
+  color: var(--ink);
+  font-family: "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", "WenQuanYi Zen Hei", "Source Han Sans SC", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+[hidden] { display: none !important; }
+
+:focus-visible {
+  outline: 2px solid var(--yi-ink);
+  outline-offset: 3px;
+}
+
+.room {
+  height: 100%;
+  max-width: 1080px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-rows: auto minmax(108px, 22%) minmax(250px, 1fr) auto;
+  position: relative;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(255, 246, 226, 0.7), transparent 42%),
+    linear-gradient(180deg, #f7f3ea 0%, #f3ece2 42%, #efe4d4 100%);
+}
+
+.sill {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 22px 0;
+}
+
+.date, .sound {
+  margin: 0;
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+
+.sound { padding: 4px 2px; }
+
+.sound[aria-pressed="true"] { color: var(--yi-ink); }
+
+.window-wrap {
+  padding: 8px 22px 0;
+  min-height: 0;
+}
+
+.window {
+  height: 100%;
+  border: 10px solid #ead7b8;
+  border-bottom-width: 14px;
+  border-radius: 10px 10px 3px 3px;
+  position: relative;
+  overflow: hidden;
+  box-shadow:
+    inset 0 0 0 2px rgba(255, 250, 243, 0.8),
+    0 12px 24px rgba(90, 60, 30, 0.08);
+  background: #ead7b8;
+}
+
+.sky {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, #d5e6ef 0%, #f4eadc 56%, #f6e4c8 100%);
+}
+
+.sun {
+  position: absolute;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  left: 16%;
+  bottom: 26%;
+  background: #fff8e4;
+  box-shadow: 0 0 28px 12px rgba(255, 236, 196, 0.9);
+}
+
+.hill {
+  position: absolute;
+  left: -8%;
+  right: -8%;
+  bottom: -28%;
+  height: 52%;
+  border-radius: 50% 50% 0 0;
+  background: linear-gradient(180deg, #e7f0e4, #d5e3d4);
+}
+
+.muntin-h, .muntin-v {
+  position: absolute;
+  background: #ead7b8;
+  z-index: 2;
+}
+
+.muntin-h { left: 0; right: 0; top: 50%; height: 8px; margin-top: -4px; }
+.muntin-v { top: 0; bottom: 0; left: 50%; width: 8px; margin-left: -4px; }
+
+.curtain {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.curtain.left {
+  left: 0;
+  width: 13%;
+  background: linear-gradient(90deg, rgba(255, 250, 244, 0.94), rgba(255, 250, 244, 0.35));
+}
+
+.curtain.right {
+  right: 0;
+  width: 7%;
+  background: linear-gradient(270deg, rgba(255, 250, 244, 0.82), rgba(255, 250, 244, 0.15));
+}
+
+.play {
+  position: relative;
+  min-height: 0;
+  margin: 0 16px;
+}
+
+.counter {
+  position: absolute;
+  inset: 6px 8px 0;
+  display: flex;
+  flex-direction: column;
+  pointer-events: none;
+}
+
+.counter-top {
+  flex: 1;
+  min-height: 0;
+  margin: 0 2%;
+  position: relative;
+  clip-path: polygon(6% 0, 94% 0, 100% 100%, 0 100%);
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.28), transparent 14%, transparent 86%, rgba(90, 60, 30, 0.05)),
+    repeating-linear-gradient(90deg, rgba(120, 78, 36, 0.045) 0 1px, transparent 1px 22px),
+    linear-gradient(180deg, var(--wood-1), var(--wood-2) 46%, var(--wood-3));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65);
+}
+
+.counter-top::after {
+  content: "";
+  position: absolute;
+  left: 20%;
+  right: 24%;
+  top: 10%;
+  bottom: 18%;
+  background: radial-gradient(ellipse at center, rgba(255, 246, 220, 0.45), transparent 70%);
+  pointer-events: none;
+}
+
+.trays {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px 9% 0;
+}
+
+.tray {
+  flex: 1;
+  max-width: 190px;
+  min-height: 84px;
+  border-radius: 16px;
+  padding: 8px 8px 7px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 4px;
+  box-shadow: inset 0 2px 8px rgba(90, 60, 30, 0.08);
+}
+
+.tray strong {
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.3;
+  text-align: center;
+}
+
+.tray-jia { background: rgba(227, 155, 109, 0.24); }
+.tray-yi { background: rgba(110, 174, 160, 0.24); }
+.tray-bing { background: rgba(138, 163, 184, 0.28); }
+.tray-jia.has-paper { background: rgba(227, 155, 109, 0.42); }
+.tray-yi.has-paper { background: rgba(110, 174, 160, 0.4); }
+.tray-bing.has-paper { background: rgba(138, 163, 184, 0.46); }
+
+.stack {
+  width: 74%;
+  height: 32px;
+  position: relative;
+}
+
+.stack i {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 7px;
+  border-radius: 2px;
+  bottom: calc(var(--n) * 6px);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.45);
+}
+
+.tray-jia .stack i { background: var(--jia); }
+.tray-yi .stack i { background: var(--yi); }
+.tray-bing .stack i { background: var(--bing); }
+
+.counter-front {
+  min-height: 54px;
+  margin: 0 1% 0;
+  padding: 8px 7% 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  border-radius: 0 0 16px 16px;
+  background: linear-gradient(180deg, #e0c29a, #c89a64 58%, #b88856);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 14px 20px rgba(90, 60, 30, 0.08);
+  color: #2c2118;
+  pointer-events: auto;
+}
+
+.hint, .remain { margin: 0; }
+
+.hint { font-size: 16px; line-height: 1.4; }
+
+.remain { font-size: 13px; color: #5c4632; white-space: nowrap; }
+
+.hint.is-wiggle { animation: wiggle 480ms var(--ease); }
+
+@keyframes wiggle {
+  40% { transform: translateY(-2px); }
+}
+
+.stop {
+  position: absolute;
+  left: 50%;
+  top: 44%;
+  width: 108px;
+  height: 14px;
+  margin-left: -54px;
+  border-radius: 4px;
+  background: linear-gradient(180deg, #c9a06e, #a67c48);
+  box-shadow: 0 2px 0 rgba(90, 50, 20, 0.18);
+  transform: scaleX(0.4);
+  opacity: 0;
+  z-index: 2;
+  transition: transform 180ms var(--ease), opacity 180ms var(--ease);
+}
+
+.stop.is-in { opacity: 1; transform: scaleX(1); }
+
+.parcel {
+  position: absolute;
+  left: 50%;
+  bottom: 62px;
+  z-index: 3;
+  width: 236px;
+  min-height: 138px;
+  padding: 0 0 12px;
+  background: linear-gradient(180deg, #fffaf3, #f4e7d4);
+  border: 1px solid #e4d3b8;
+  border-radius: 3px 14px 12px 12px;
+  box-shadow: 0 14px 26px rgba(80, 50, 20, 0.16);
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.parcel.is-held { cursor: grabbing; }
+
+.parcel::before {
+  content: "";
+  position: absolute;
+  left: 12%;
+  right: 12%;
+  bottom: -12px;
+  height: 14px;
+  background: rgba(80, 50, 20, 0.16);
+  filter: blur(6px);
+  border-radius: 50%;
+  z-index: -1;
+}
+
+.flap {
+  height: 46px;
+  background: linear-gradient(180deg, #fbf6ee, #efe2cf);
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+}
+
+.seal {
+  position: absolute;
+  left: 50%;
+  top: 34px;
+  width: 22px;
+  height: 22px;
+  margin-left: -11px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #e8a890, #c56a52 62%, #a4503e);
+  box-shadow: 0 1px 2px rgba(80, 40, 20, 0.28);
+}
+
+.eyebrow {
+  position: relative;
+  z-index: 2;
+  margin: 8px 0 0;
+  text-align: center;
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+
+.face {
+  position: relative;
+  z-index: 2;
+  margin: 4px 14px 8px;
+  text-align: center;
+  font-size: 18px;
+  line-height: 1.35;
+  font-weight: 600;
+}
+
+.hand {
+  position: absolute;
+  left: 50%;
+  bottom: -16px;
+  z-index: 0;
+  width: 32px;
+  height: 32px;
+  margin-left: -16px;
+  border-radius: 50%;
+  border: 2px solid rgba(58, 50, 43, 0.38);
+  background: rgba(255, 250, 243, 0.72);
+  animation: nudge 2s var(--ease) infinite;
+  pointer-events: none;
+}
+
+.hand::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 9px;
+  width: 8px;
+  height: 8px;
+  border-top: 2px solid rgba(58, 50, 43, 0.55);
+  border-left: 2px solid rgba(58, 50, 43, 0.55);
+  transform: translateX(-50%) rotate(45deg);
+}
+
+@keyframes nudge {
+  0%, 100% { transform: translateY(8px); opacity: 0.28; }
+  42% { opacity: 0.95; }
+  76% { transform: translateY(-18px); opacity: 0; }
+}
+
+.pad {
+  position: absolute;
+  left: 50%;
+  bottom: 68px;
+  z-index: 4;
+  transform: translateX(-50%);
+  width: min(440px, 92%);
+}
+
+.pad-btn {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 16px 8px 8px;
+  background: #fffdf8;
+  border: 1px solid #d7ebe4;
+  border-radius: 999px;
+  box-shadow: 0 12px 28px rgba(40, 70, 60, 0.14);
+}
+
+.pad-disc {
+  width: 74px;
+  height: 74px;
+  border-radius: 50%;
+  background: #e7f6f1;
+  border: 8px solid #b7ddd2;
+  box-shadow: 0 8px 16px rgba(40, 80, 70, 0.12);
+  transition: transform 160ms var(--ease);
+}
+
+.pad.is-pressed .pad-disc { transform: scale(0.92); }
+
+.pad[data-kind="finger"] .pad-disc {
+  background:
+    repeating-radial-gradient(circle at 50% 50%, rgba(31, 111, 98, 0.7) 0 1px, transparent 1px 7px),
+    #e7f6f1;
+}
+
+.pad[data-kind="stamp"] .pad-disc {
+  border-radius: 10px;
+  box-shadow: inset 0 0 0 3px var(--yi-ink), 0 8px 16px rgba(40, 80, 70, 0.12);
+}
+
+.pad[data-kind="look"] .pad-disc::after {
+  content: "";
+  display: block;
+  width: 16px;
+  height: 16px;
+  margin: 14px auto 0;
+  border: 2px solid var(--yi-ink);
+  border-radius: 50%;
+}
+
+.pad[data-kind="toggle"] .pad-disc {
+  background: linear-gradient(90deg, #b7ddd2 0 50%, #e7f6f1 50% 100%);
+}
+
+.pad-label {
+  font-size: 16px;
+  line-height: 1.4;
+  text-align: left;
+  color: var(--yi-ink);
+}
+
+.slip, .gift {
+  position: absolute;
+  left: 50%;
+  bottom: 64px;
+  z-index: 5;
+  width: min(520px, calc(100% - 28px));
+  max-height: calc(100% - 168px);
+  overflow: auto;
+  transform: translateX(-50%);
+  background: #fffdf8;
+  color: #2a241e;
+  border: 1px solid #e4d3b8;
+  border-top: 5px solid var(--jia);
+  border-radius: 14px;
+  box-shadow: 0 18px 40px rgba(80, 50, 20, 0.18);
+  padding: 16px 18px 14px;
+}
+
+.slip[data-cat="jia"] { border-top-color: var(--jia); }
+.slip[data-cat="yi"] { border-top-color: var(--yi); }
+.slip[data-cat="bing"] { border-top-color: var(--bing); }
+
+.slip-kicker, .gift-kicker {
+  margin: 0 0 6px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.slip-kicker[data-cat="jia"] { color: var(--jia-ink); }
+.slip-kicker[data-cat="yi"] { color: var(--yi-ink); }
+.slip-kicker[data-cat="bing"] { color: var(--bing-ink); }
+
+.slip p, .gift p { margin: 0 0 8px; font-size: 16.5px; line-height: 1.65; color: #2a241e; }
+
+.slip .paper-btn.primary { width: 100%; margin-top: 8px; }
+
+.slip.is-in { animation: slip-in 420ms var(--ease) both; }
+
+@keyframes slip-in {
+  from { transform: translateX(-50%) translateY(12px); }
+  to { transform: translateX(-50%) translateY(0); }
+}
+
+.gift {
+  z-index: 6;
+  top: 124px;
+  bottom: 60px;
+  max-height: none;
+  border-top-color: #e7d3b4;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.gift-kicker { color: var(--ink-soft); font-weight: 600; }
+
+.gift-title {
+  margin: 0 0 8px;
+  font-size: clamp(22px, 3vw, 28px);
+  line-height: 1.35;
+  font-weight: 600;
+}
+
+.gift-legend {
+  list-style: none;
+  margin: 4px 0 8px;
+  padding: 0;
+}
+
+.gift-legend li {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  margin: 6px 0;
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+.gift-more { color: var(--ink-soft); font-size: 14px !important; }
+
+.gift-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+
+.room.is-end .gift:not([hidden]) { animation: slip-in 520ms var(--ease) both; }
+
+.room.is-end .sun { box-shadow: 0 0 36px 16px rgba(255, 236, 196, 0.95); }
+
+.dot {
+  flex: none;
+  width: 10px;
+  height: 10px;
+  margin-top: 0.45em;
+  border-radius: 50%;
+}
+
+.dot.jia { background: var(--jia); }
+.dot.yi { background: var(--yi); }
+.dot.bing { background: var(--bing); }
+
+.paper-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: #fffaf3;
+  border: 1px solid #e4d3b8;
+  color: var(--ink);
+}
+
+.paper-btn.primary {
+  background: #3a322b;
+  border-color: #3a322b;
+  color: #fbf6ee;
+}
+
+.ledge {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 12px;
+  padding: 10px 18px 14px;
+}
+
+.book {
+  display: flex;
+  width: min(250px, 46vw);
+  text-align: left;
+  background: #8d5e3c;
+  color: #fbf6ee;
+  border-radius: 3px 8px 8px 3px;
+  overflow: hidden;
+  box-shadow: 0 8px 16px rgba(80, 50, 20, 0.12);
+}
+
+.book-edge {
+  width: 14px;
+  flex: none;
+  background: repeating-linear-gradient(#f7f1e6 0 2px, #e7d7c0 2px 3px);
+}
+
+.book-copy { padding: 8px 10px 9px; }
+
+.book-title { display: block; font-size: 16px; font-weight: 600; }
+
+.book-sub {
+  display: block;
+  margin-top: 2px;
+  font-size: 12px;
+  line-height: 1.35;
+  color: rgba(255, 250, 243, 0.86);
+}
+
+.note {
+  width: min(180px, 42vw);
+  background: #f8efc2;
+  color: #4a3b22;
+  text-align: left;
+  line-height: 1.4;
+  font-size: 14px;
+  padding: 10px 12px;
+  box-shadow: 0 8px 16px rgba(80, 50, 20, 0.1);
+  transform: rotate(-2.4deg);
+}
+
+.note-panel {
+  position: absolute;
+  right: 16px;
+  bottom: 78px;
+  z-index: 8;
+  width: min(340px, calc(100% - 24px));
+  max-height: min(62%, 440px);
+  overflow: auto;
+  background: #f8efc2;
+  color: #3f3424;
+  padding: 12px 14px 22px;
+  box-shadow: 0 16px 32px rgba(80, 50, 20, 0.16);
+  transform: rotate(-1deg);
+}
+
+.note-panel h2 {
+  margin: 8px 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.note-panel p { margin: 0 0 10px; font-size: 14.5px; line-height: 1.6; }
+
+.note-panel .close-note { margin-bottom: 4px; }
+
+.reader {
+  background: #fbf6ee;
+  color: #2c2824;
+  font-family: "Iowan Old Style", Palatino, "Palatino Linotype", "Songti SC", "Noto Serif SC", "Source Han Serif SC", "PingFang SC", "Microsoft YaHei", "WenQuanYi Zen Hei", serif;
+}
+
+.js .reader { display: none; }
+
+.js .reader.is-open {
+  display: block;
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  overflow: auto;
+}
+
+html:not(.js) body { overflow: auto; height: auto; }
+html:not(.js) .room { height: auto; min-height: 100%; }
+
+.reader-bar {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  padding: 12px 18px;
+  background: rgba(251, 246, 238, 0.94);
+  border-bottom: 1px solid #eadfce;
+}
+
+.filters { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.filter {
+  min-height: 34px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid #e4d3b8;
+  background: #fffaf3;
+  font-size: 13px;
+}
+
+.filter[aria-pressed="true"] {
+  background: #3a322b;
+  border-color: #3a322b;
+  color: #fbf6ee;
+}
+
+.reader-body {
+  max-width: 42rem;
+  margin: 0 auto;
+  padding: 1.4rem 1.25rem 4rem;
+}
+
+.reader h1 {
+  font-size: 1.55rem;
+  line-height: 1.4;
+  font-weight: 600;
+  margin: 0.2rem 0 1rem;
+}
+
+.reader h2 {
+  font-size: 1.28rem;
+  line-height: 1.4;
+  margin: 2.2rem 0 0.8rem;
+  font-weight: 600;
+}
+
+.reader h3 {
+  font-size: 1.12rem;
+  line-height: 1.45;
+  margin: 0 0 0.55rem;
+  font-weight: 600;
+}
+
+.reader p, .reader li {
+  font-size: 17px;
+  line-height: 1.85;
+}
+
+.reader p { margin: 0.75rem 0; }
+
+.reader ul { margin: 0.4rem 0 0.8rem; padding-left: 1.2rem; }
+
+.reader li { margin: 0.35rem 0; }
+
+.reader a {
+  color: #1d6a5c;
+  text-underline-offset: 0.18em;
+  overflow-wrap: anywhere;
+}
+
+.reader hr {
+  border: 0;
+  border-top: 1px solid #eadfce;
+  width: 36%;
+  margin: 2rem auto;
+}
+
+.reader article {
+  margin: 0 0 1.4rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid #f0e6d8;
+}
+
+.stamp {
+  display: inline-block;
+  margin: 0 0 0.7rem;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-family: "PingFang SC", "Microsoft YaHei", "WenQuanYi Zen Hei", sans-serif;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.stamp-jia { background: #f6e3d4; color: var(--jia-ink); }
+.stamp-yi { background: #dceee8; color: var(--yi-ink); }
+.stamp-bing { background: #e1e8ee; color: var(--bing-ink); }
+
+.reader code {
+  font-family: ui-monospace, "Sarasa Mono SC", "Noto Sans Mono", monospace;
+  font-size: 0.92em;
+}
+
+@media (max-width: 720px) {
+  .room { grid-template-rows: auto minmax(84px, 16%) minmax(240px, 1fr) auto; }
+  .sill, .window-wrap { padding-left: 12px; padding-right: 12px; }
+  .play { margin: 0 8px; }
+  .trays { gap: 6px; padding-top: 8px; }
+  .tray { min-height: 72px; padding: 6px; }
+  .tray strong { font-size: 12px; }
+  .parcel { width: min(210px, 68vw); bottom: 56px; }
+  .face { font-size: 16px; }
+  .hint { font-size: 14px; }
+  .ledge { padding: 8px 10px 12px; }
+  .book-sub { font-size: 11px; }
+  .slip, .gift { max-height: calc(100% - 150px); }
+  .gift { top: 108px; bottom: 52px; }
+  .pad { bottom: 60px; }
+  .tray strong { font-size: 11px; text-wrap: balance; }
+  .note-panel {
+    left: 10px;
+    right: 10px;
+    width: auto;
+    bottom: 8px;
+    max-height: 72%;
+  }
+}
+
+@media (max-height: 680px) {
+  .sill { padding-top: 6px; }
+  .tray { min-height: 64px; }
+  .stack { height: 22px; }
+  .parcel { min-height: 118px; }
+  .flap { height: 36px; }
+  .gift { top: 96px; bottom: 48px; }
+  .gift-title { font-size: 20px; }
+  .slip, .gift { bottom: 50px; }
+  .slip p, .gift p { font-size: 15px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hand, .slip.is-in, .room.is-end .gift, .hint.is-wiggle { animation: none !important; }
+  .stop { transition: none; }
+}
+
+</style>
+</head>
+<body>
+<div class="room" id="room" data-phase="idle">
+  <header class="sill">
+    <p class="date">2026 年 11 月 14 日，星期六清晨</p>
+    <button type="button" class="sound" id="sound" aria-pressed="false">声音关着</button>
+  </header>
+  <div class="window-wrap">
+    <div class="window" aria-hidden="true">
+      <div class="sky">
+        <div class="sun"></div>
+        <div class="hill"></div>
+      </div>
+      <div class="muntin-h"></div>
+      <div class="muntin-v"></div>
+      <div class="curtain left"></div>
+      <div class="curtain right"></div>
+    </div>
+  </div>
+  <div class="play" id="play">
+    <div class="counter">
+      <div class="counter-top">
+        <div class="trays">
+          <div class="tray tray-jia"><div class="stack"></div><strong>还没真正交到</strong></div>
+          <div class="tray tray-yi"><div class="stack"></div><strong>交的时候留了确认</strong></div>
+          <div class="tray tray-bing"><div class="stack"></div><strong>接住以后要核对</strong></div>
+        </div>
+      </div>
+      <div class="counter-front">
+        <p class="hint" id="hint">按住这件，推向对面。</p>
+        <p class="remain" id="remain">一共 12 件</p>
+      </div>
+    </div>
+    <div class="stop" id="stop" aria-hidden="true"></div>
+    <div class="parcel" id="parcel" role="button" tabindex="0" aria-describedby="hint">
+      <div class="flap" aria-hidden="true"></div>
+      <div class="seal" aria-hidden="true"></div>
+      <p class="eyebrow">封面上写着</p>
+      <p class="face" id="face">HomeView 从今天起开售</p>
+      <div class="hand" id="hand" aria-hidden="true"></div>
+    </div>
+    <div class="pad" id="pad" hidden>
+      <button type="button" class="pad-btn" id="pad-btn">
+        <span class="pad-disc" aria-hidden="true"></span>
+        <span class="pad-label" id="pad-label">按一下</span>
+      </button>
+    </div>
+    <div class="slip" id="slip" hidden aria-live="polite">
+      <p class="slip-kicker" id="slip-kicker"></p>
+      <div id="slip-body"></div>
+      <button type="button" class="paper-btn primary" id="next">看下一件</button>
+    </div>
+    <section class="gift" id="gift" hidden aria-labelledby="gift-title">
+      <p class="gift-kicker">这一轮签完了</p>
+      <p class="gift-title" id="gift-title">交出去了，还不等于已经成立。</p>
+      <p>还要看谁被允许接住，中间有没有人确认过，以及接住的那一层是不是真的靠得住。</p>
+      <ul class="gift-legend">
+        <li><i class="dot jia" aria-hidden="true"></i><span>暖杏色的那一叠，看着像已经交出，其实还没被完整接住。</span></li>
+        <li><i class="dot yi" aria-hidden="true"></i><span>青绿色的那一叠，交出去的时候留下了确认。</span></li>
+        <li><i class="dot bing" aria-hidden="true"></i><span>灰蓝色的那一叠，已经递到对面，还要再核对那一层靠不靠得住。</span></li>
+      </ul>
+      <p class="gift-more">五十二条的全文，在柜台下的签收底联里。</p>
+      <div class="gift-actions">
+        <button type="button" class="paper-btn" id="replay">再签一轮</button>
+        <button type="button" class="paper-btn primary" id="open-from-gift">翻开签收底联</button>
+      </div>
+    </section>
+  </div>
+  <footer class="ledge">
+    <button type="button" class="book" id="open-reader">
+      <span class="book-edge" aria-hidden="true"></span>
+      <span class="book-copy">
+        <span class="book-title">签收底联</span>
+        <span class="book-sub">今天的详细稿<br>52 条都在里面</span>
+      </span>
+    </button>
+    <button type="button" class="note" id="open-note">几件只给他的小事</button>
+  </footer>
+  <aside class="note-panel" id="note-panel" hidden>
+    <button type="button" class="paper-btn close-note" id="close-note">合上便利贴</button>
+    <h2>这几件是给他的提醒</h2>
+    <p>GitHub 上的 Claude 应用正在申请更新权限。信里没有列出具体要新增哪些权限，建议先看清再接受。如果选择忽略，应用会保持现有权限。</p>
+    <p>学习站每天的备份文件其实已经上传成功。被标成失败的是后面的出站流量检查，读数约 7.39 GB，大约是限额的 137.6%，比前一天又高了一点。读数来自网卡的累计值，可以到后台核对一下是不是账单口径。</p>
+    <p>ChatGPT 通知说，Health 的数据使用规则将从 11 月 19 日起变化。如果用过这项功能，或连接过健康数据，建议在此之前到设置里确认「Improve the model for everyone」是否符合他的意愿。通过 Health 同步的原始数据，通知里写明仍有额外加密，不用于训练基础模型或投放广告。</p>
+    <p>那封 Notion 安全通知还没打开。如果在 Notion AI 的对话里贴过接口密钥、服务器密码或数据库连接串，建议到对应的地方把旧的作废、换成新的。</p>
+    <p>一个 GitHub 访问令牌大约在北京时间 11 月 15 日下午到期，今天只剩大约一天。如果还有自动任务在用它，可以在到期前换成一个同等权限的新令牌。新令牌不要写进聊天或邮件。</p>
+  </aside>
+</div>
+<article class="reader" id="reader" aria-label="今天的详细稿">
+  <div class="reader-bar">
+    <button type="button" class="paper-btn primary" id="close-reader">合上底联</button>
+    <div class="filters">
+      <button type="button" class="filter" data-filter="all" aria-pressed="true">全部 52 条</button>
+      <button type="button" class="filter" data-filter="jia" aria-pressed="false">还没真正交到 21 条</button>
+      <button type="button" class="filter" data-filter="yi" aria-pressed="false">交的时候留了确认 10 条</button>
+      <button type="button" class="filter" data-filter="bing" aria-pressed="false">接住以后要核对 21 条</button>
+    </div>
+  </div>
+  <div class="reader-body">
+<h1>折晓每日早报 · 富文本详细稿 · 2026 年 11 月 14 日（星期六）</h1>
+<p>这份详细稿覆盖的时间窗是北京时间 2026 年 11 月 13 日 06:00 到 11 月 14 日 06:00。四份证据包一共交来 53 条材料：讯AI 20 条、讯科 8 条、讯医 22 条、连读 3 条。其中苹果 HomeView 开售同时出现在讯AI 第 18 条和讯科第 6 条，主编把两边的事实合并成科技部分的一条，所以正文实际收录 52 条：人工智能 19 条、科技 8 条、医学 22 条、给他的轻提示 3 条。按三类来分，甲类「还没真正交到」21 条，乙类「交的时候留了确认」10 条，丙类「接住以后要核对」21 条。</p>
+<p>今天的核心思想是：「今天很多事都看上去已经交出去了：权交给了下一个人，能力交给了智能体，接口也向外面打开了。可是交出去并不等于这件事已经成立。还要看谁被允许接住、中间有没有人确认过，以及接住的那一层是不是真的靠得住。」</p>
+<p>每一条材料都按这个思想归入三类中的一类。甲类叫「还没真正交到」，意思是已经宣布开放、交接、恢复或放出，但范围、许可、结果或核对还没有落地，看起来交出去了，其实还没被完整接住；乙类叫「交的时候留了确认」，意思是能力、权限或规则交出去时，明确留着人的点头、许可、书面规则或先评估再继续的步骤；丙类叫「接住以后要核对」，意思是事情已经交到某一层或某个人手里，现在要问这一层靠不靠得住，或者数字、口径、来路需要重新核对。正文里每一条都依次写背景、发生了什么、为什么值得注意、归类、核实状态和来源；所有数字都照证据包原文转述并注明出处，所有时间都是北京时间。英伟达宣布黄仁勋辞职这件事本身发生在昨天的时间窗里，今天只写窗口内出现的后续，不把辞职公告当成新事实。</p>
+<p>阅读提示：证据包里标为「单一来源」或「未能核实」的内容，正文都会写清楚「据某来源称」，并注明「尚未得到其他来源确认」。厂商自己报出的性能数字、媒体转述的说法、匿名信源透露的计划，都会写明到底是谁说的。医学条目会标出研究类型，比如观察性研究、随机对照试验、交叉随机试验、预先设定的次要分析、综述、监测报告、监管会议或新闻发布会，结论一律照原话转述，不往大里说。另外，正文有时会把两件事放在一起对照着看，这只是为了帮助理解，并排放在一起并不代表两者之间有因果关系。</p>
+<hr>
+<h2>第一部分 人工智能（19 条）</h2>
+<article id="ai-01" class="piece" data-cat="bing">
+<h3>AI-01 美国民主党议员就英伟达对华芯片销售的许可证安排，向商务部启动调查，并要求保存相关记录。</h3>
+<p class="stamp stamp-bing">接住以后要核对</p>
+<p><strong>背景</strong>：英伟达前总裁兼首席执行官黄仁勋辞职的官方消息，是在昨天时间窗里公布的。英伟达是目前大模型训练最主要的算力供应方之一，它的芯片能不能卖到中国、按什么条件卖，会直接影响全球模型训练的算力格局。今天这条是辞职公布之后、刚好落入本窗口的第一条明确的国会动作。</p>
+<p><strong>发生了什么</strong>：据 TechCrunch 报道，北京时间 11 月 13 日 06:42，美国众议院筹款委员会首席民主党议员 Richard Neal 和参议院财政委员会首席民主党议员 Ron Wyden，就特朗普政府如何处理英伟达对华芯片销售，对商务部启动了质询。信是写给商务部长 Howard Lutnick 的，要求该部保存他们所质疑的那套安排的相关记录，并指称这套安排是非法的。据 TechCrunch 转述这封信的写法，安排是这样的：特朗普同意向中国销售英伟达的 H200 芯片，条件是这些在台湾制造的芯片先运到美国，抵达后再加征关税，信里把这写成「看起来像是违宪的出口税，相当于从英伟达对华销售里抽成」；随后商务部在 Lutnick 任内发放了出口许可证。TechCrunch 还转述美联社 2025 年 8 月的报道称，英伟达和 AMD 当时都同意，把对华芯片销售收入的 15% 分给美国政府，作为换取出口许可证的一部分。信中还提到，这项出口安排是在特朗普得知黄仁勋「处于被利用的位置」（原文写的是与一名被指为间谍的人发生关系）之后，以及英伟达向特朗普的项目捐赠了 2600 万美元之后获批的。因为民主党现在是少数党，他们可以要求保存记录、提出质询，但还不能强制对方作答。</p>
+<p><strong>为什么值得注意</strong>：调查的主要对象是政府和商务部的许可证安排，而不只是英伟达公司本身。用今天的核心思想来看，对华芯片销售看似已经按一套许可证交了出去，但这套安排现在正被国会重新拿出来核对。对在学人工智能的他来说，这能帮助理解：模型能在哪里训练，并不只取决于芯片造没造出来，还取决于谁被允许接住这些芯片、中间的许可是怎么批的。需要分清的是，「非法」「违宪出口税」是议员在信里的主张，不是已经成立的司法结论；「15% 分成」和「2600 万美元捐赠」也是媒体转述，不是今天新公布的官方数字。</p>
+<p><strong>归类</strong>：丙类「接住以后要核对」。理由是对华芯片销售的许可证安排已经发生，现在被国会要求保存记录并重新核对，而「非法」「违宪」只是议员的主张，还不能当成已经坐实的结论。</p>
+<p><strong>核实状态</strong>：单一来源。TechCrunch 页面可以打开，但证据包没有直接打开这封致 Lutnick 的原信，也没有独立核对美联社 2025 年 8 月关于 15% 分成的报道，尚未得到其他来源确认。信中「非法」「违宪出口税」的定性是议员的主张，必须标明出处。</p>
+<p><strong>来源</strong>：</p>
+<ul>
+<li>TechCrunch，北京时间 2026-11-13 06:42：<a href="https://techcrunch.com/2026/11/12/democrats-launch-nvidia-investigation-write-scathing-letter-on-huangs-scheme-with-trump/" target="_blank" rel="noopener noreferrer">https://techcrunch.com/2026/11/12/democrats-launch-nvidia-investigation-write-scathing-letter-on-huangs-scheme-with-trump/</a></li>
+</ul>
+</article>
+<article id="ai-02" class="piece" data-cat="jia">
+<h3>AI-02 WIRED 报道英伟达内部建议箱的一篇帖文收获超过 1600 条评论，多数员工呼吁让黄仁勋回来。</h3>
+<p class="stamp stamp-jia">还没真正交到</p>
+<p><strong>背景</strong>：黄仁勋的权已经交到董事会和临时首席执行官手里，但这并不等于公司内部已经把这次交接接住。WIRED 这篇是辞职后第一次比较完整的内部情绪报道。</p>
+<p><strong>发生了什么</strong>：据 WIRED 北京时间 11 月 13 日 09:17 的报道，一位在英伟达工作多年的工程师，在黄仁勋辞职之前就向内部「建议箱」提交了一篇帖文，要求董事会先考虑员工的感受，再采取行动。这篇帖文此后吸引了超过 1600 条评论，其中有不少人请董事会想办法让黄仁勋回来。一名匿名评论者写道：「如果你相信这项使命，就把老板请回来。」另一人写道：「我们都是人，都会犯错。Jensen 做了这么多好事，他需要第二次机会。」WIRED 还写到，自相关指控曝光以来，这场危机已让公司市值蒸发 1 万亿美元，并促使美国议员和联邦调查局展开调查，还让人担心会出台新的芯片出口管制。一名员工对 WIRED 说：「英伟达之所以是英伟达，就是因为 Jensen。」证据包补充说明：这篇帖子写于辞职之前，要求董事会先公布调查结果、再正式征询员工意见，但董事会在调查刚开始时就接受了辞呈，所以员工会觉得程序被打断。文中「超过 1600 条评论」和「市值蒸发 1 万亿美元」都出自 WIRED 原文。Rohan Paul 等人在北京时间 14:56 转发了同一组数字。</p>
+<p><strong>为什么值得注意</strong>：权已经交出去了，可是交接在公司里还没有被接住。对关心开源和算力生态的他来说，这条有助于把「已经换帅」和「内部是不是真的接受了」分开来看。市值「1 万亿美元」是 WIRED 的统计，引用时要标明出处，不能当成另一家机构已经复核过的数字。这条也要和后面的 AI-07 分开读：内部建议箱里的讨论，和网上流传的伪造联名信，不是同一件事。</p>
+<p><strong>归类</strong>：甲类「还没真正交到」。理由是权已经交到董事会和临时首席执行官手里，但内部员工觉得程序被打断，交接在公司里还没有被真正接住。</p>
+<p><strong>核实状态</strong>：单一来源。WIRED 称查阅了内部通信，页面可以打开；Rohan Paul 等人转发了同一组数字，但没有另一家媒体独立复核评论区，尚未得到其他来源确认。市值「1 万亿美元」是 WIRED 的统计，引用时已标明出处。</p>
+<p><strong>来源</strong>：</p>
+<ul>
+<li>WIRED，北京时间 2026-11-13 09:17：<a href="https://www.wired.com/story/nvidia-employees-petition-for-jensen-huangs-return/" target="_blank" rel="noopener noreferrer">https://www.wired.com/story/nvidia-employees-petition-for-jensen-huangs-return/</a></li>
+</ul>
+</article>
+<article id="ai-03" class="piece" data-cat="bing">
+<h3>AI-03 路透社梳理出，中国仍有超过 32 亿美元的人工智能算力项目围绕英伟达受限芯片展开；官方曾说中国市场份额到零，和 IDC 的出货数字对不上。</h3>
+<p class="stamp stamp-bing">接住以后要核对</p>
+<p><strong>背景</strong>：黄仁勋去年曾公开说，美国出口管制实际上把英伟达关在了中国人工智能数据中心市场之外，公司在中国的市场份额已经从 95% 降到零。路透这篇调查，是换帅之后对华算力项目最具体的一次盘点。</p>
+<p><strong>发生了什么</strong>：路透社在北京时间 11 月 13 日约 16:31 至 16:42 发表调查报道。路透查阅了 150 多份中国采购公告、投资计划、建设合同和公司披露，识别出一批围绕英伟达受限处理器展开的计算项目和设备协议，合计申报价值超过 230 亿人民币，也就是约 32 亿美元。路透明确写了口径：这个估计既包括计划中的投资和已签署的合同，也包括已经完工的设施，覆盖厂房、电力系统和其他基础设施，并不等于花在英伟达芯片本身上的采购额。文中同时写下黄仁勋所说的「中国市场份额从 95% 降到零」，以及路透在 10 月转引的一份 IDC 报告：该报告估计，2026 年上半年英伟达仍占中国人工智能加速器出货的 34%。路透自己提醒，这两套数字衡量的不是同一件事，也不能据此说明调查中识别出的受限硬件是怎么到达中国用户手里的。</p>
+<p><strong>为什么值得注意</strong>：对关心开源模型训练算力从哪里来的他来说，这条最要紧的不是「32 亿美元」这个整数，而是口径。路透的 32 亿美元是项目合计，含基础设施，含计划中的项目，不能写成芯片采购额；「95% 到零」讲的是黄仁勋所说的中国市场份额，IDC 的 34% 讲的是上半年加速器出货占比，两件事不能合成一句「其实还占三分之一」。用今天的核心思想来看，官方叙述和市场盘点已经交到公众手里，但它们对不上，还要分开核对。科技部分的 TK-05 是马来西亚部委就再出口做的核查，可以对照着看，但两件事并没有被证实有因果关系。</p>
+<p><strong>归类</strong>：丙类「接住以后要核对」。理由是官方曾说中国市场份额已经到零，路透的项目盘点和 IDC 的出货数字却对不上，而且衡量的不是同一件事，必须分开核对，不能合成一个结论。</p>
+<p><strong>核实状态</strong>：多来源确认（指路透这篇调查已经发表）。路透英文原稿对无登录访问返回 401，但 Rappler 和 Investing.com 的转载正文一致，均标明 By Reuters / Eduardo Baptista。文中的 150 份文件、230 亿元和 32 亿美元是路透自己的统计；IDC 的 34% 是路透转引 10 月旧报告，证据包没有打开 IDC 原文。</p>
+<p><strong>来源</strong>：</p>
+<ul>
+<li>路透社英文原稿（无登录访问返回 401），约北京时间 2026-11-13 16:31：<a href="https://www.reuters.com/world/china/huang-exit-us-scrutiny-imperil-3-billion-chinese-ai-projects-reliant-nvidia-2026-11-13/" target="_blank" rel="noopener noreferrer">https://www.reuters.com/world/china/huang-exit-us-scrutiny-imperil-3-billion-chinese-ai-projects-reliant-nvidia-2026-11-13/</a></li>
+<li>Rappler 完整转载（可打开），约北京时间 2026-11-13 16:42：<a href="https://www.rappler.com/technology/jensen-huang-exit-us-scrutiny-imperil-chinese-ai-projects-reliant-nvidia/" target="_blank" rel="noopener noreferrer">https://www.rappler.com/technology/jensen-huang-exit-us-scrutiny-imperil-chinese-ai-projects-reliant-nvidia/</a></li>
+</ul>
+</article>
+<article id="ai-04" class="piece" data-cat="bing">
+<h3>AI-04 《华尔街日报》相关报道称，黄仁勋去职还涉及高风险财务担保，并对临时首席执行官 Kress 评价很低；两家媒体对俄亥俄项目最终承诺额的写法有出入。</h3>
+<p class="stamp stamp-bing">接住以后要核对</p>
+<p><strong>背景</strong>：除了私生活方面的报道，窗口里还有一组转述把焦点转到了英伟达向云厂商和数据中心提供巨额担保、以便对方先买芯片的做法。Colette Kress 原先是公司首席财务官，现在担任临时首席执行官。</p>
+<p><strong>发生了什么</strong>：TechCrunch 在北京时间 11 月 13 日 20:28 转述《华尔街日报》称，据一名匿名信源，黄仁勋在今年夏天早些时候的一次汇报中，把接任临时首席执行官的 Colette Kress 形容成「受了惊的鹿」（原文为 a deer in the headlights）。TechCrunch 还写道，同年早些时候，她缩减了英伟达对 OpenAI 俄亥俄数据中心项目的承诺：公司一度在洽谈向 OpenAI 提供 2500 亿美元信贷，最终承诺了 1050 亿美元。The Decoder 在北京时间 11 月 14 日 04:07 的分析稿同样转述《华尔街日报》，写法却不完全一样：它写的是，英伟达在黄仁勋任内建立了一套高风险信贷计划，向人工智能云厂商和数据中心开发商提供数十亿美元财务担保，好让对方买得起英伟达芯片，黄仁勋的女婿 Nico Caprez 推动了这件事；其中最大的一笔是与 OpenAI 洽谈的 2500 亿美元担保，临时首席执行官、前首席财务官 Kress 在内部对担保如何估值提出疑问后，把承诺砍半。两处对「最终承诺到多少」的表述不能合成一个数字。</p>
+<p><strong>为什么值得注意</strong>：巨额担保是不是靠得住、临时交接是不是顺畅，目前都还只是对《华尔街日报》的转述，不是英伟达的官方声明。对在学人工智能的他来说，这条适合用来练习分清「洽谈额」「承诺额」和「砍半」：TechCrunch 写的是最终承诺 1050 亿美元，The Decoder 写的是砍半，两边都不能互相替代。用今天的核心思想来看，担保已经交了出去，但这一层的数字和交接评价都还要核对。</p>
+<p><strong>归类</strong>：丙类「接住以后要核对」。理由是巨额担保和临时交接是否顺畅，目前只是对《华尔街日报》的转述，而且两家媒体对最终承诺额的写法有出入，必须分开标明，不能合成一个数字。</p>
+<p><strong>核实状态</strong>：单一来源。两家媒体都在转述《华尔街日报》，证据包没有打开《华尔街日报》原文，也没有官方确认「2500 亿美元」「1050 亿美元」或那句评价，尚未得到其他来源确认。TechCrunch 与 The Decoder 在「最终承诺额」上的写法有出入，正文已分开标明。</p>
+<p><strong>来源</strong>：</p>
+<ul>
+<li>TechCrunch（转述《华尔街日报》），北京时间 2026-11-13 20:28：<a href="https://techcrunch.com/2026/11/13/jensen-huang-didnt-show-confidence-in-his-successor-report-says/" target="_blank" rel="noopener noreferrer">https://techcrunch.com/2026/11/13/jensen-huang-didnt-show-confidence-in-his-successor-report-says/</a></li>
+<li>The Decoder（转述《华尔街日报》），北京时间 2026-11-14 04:07：<a href="https://the-decoder.com/jensen-huangs-ouster-likely-traces-back-to-nvidias-risky-business-practices-more-than-his-personal-life/" target="_blank" rel="noopener noreferrer">https://the-decoder.com/jensen-huangs-ouster-likely-traces-back-to-nvidias-risky-business-practices-more-than-his-personal-life/</a></li>
+</ul>
+</article>
+<article id="ai-05" class="piece" data-cat="bing">
+<h3>AI-05 以色列投资人评估英伟达换帅影响：决策变慢可能给挑战者留窗口，但整个市场也可能一起变小。</h3>
+<p class="stamp stamp-bing">接住以后要核对</p>
+<p><strong>背景</strong>：据 TechCrunch 报道，英伟达在以色列约有 6000 名员工，并以 2019 年 69 亿美元收购 Mellanox 后的团队，作为美国以外最大的研发中心，所以换帅会立刻变成当地科技圈的问题。69 亿美元是对 2019 年交易的回顾，不是今天新宣布的数字。</p>
+<p><strong>发生了什么</strong>：北京时间 11 月 13 日 20:52，TechCrunch 报道了以色列创业者和投资人对这次人事变动的判断。Vertex Ventures Israel 的普通合伙人 Yanai Oron 说，英伟达决策变慢可能给竞争对手留出开口，可如果这种不确定性也让整个行业的人工智能支出放缓，他们最后分到的只是一块更大份额、但整体更小的机会。文章还提出一个更大的问题：换了掌舵人之后，公司对以色列的投入会不会还像以前那样坚定。</p>
+<p><strong>为什么值得注意</strong>：投资人的判断很克制，并没有把「挑战者能抢到空间」说成已经发生的事实。用今天的核心思想来看，决策会不会变慢、市场会不会一起变小，目前都还是投资人的判断，需要继续观察，不能写成已经成立的行业结论。对在学人工智能的他来说，这条适合用来练习把「现场感受」和「已经发生的订单或人事变化」分开。</p>
+<p><strong>归类</strong>：丙类「接住以后要核对」。理由是决策变慢会不会被接住、市场会不会一起变小，目前还只是投资人的判断，不是已经发生的业务变更。</p>
+<p><strong>核实状态</strong>：单一来源。TechCrunch 页面可以打开，引用了当地创业者和 Vertex Ventures Israel 合伙人的话，但没有第二家媒体独立核实员工人数或收购金额，尚未得到其他来源确认。69 亿美元是对 2019 年交易的回顾，不是新宣布的数字。</p>
+<p><strong>来源</strong>：</p>
+<ul>
+<li>TechCrunch，北京时间 2026-11-13 20:52：<a href="https://techcrunch.com/2026/11/13/israels-vcs-see-opportunity-for-challengers-in-nvidias-turmoil/" target="_blank" rel="noopener noreferrer">https://techcrunch.com/2026/11/13/israels-vcs-see-opportunity-for-challengers-in-nvidias-turmoil/</a></li>
+</ul>
+</article>
+<article id="ai-06" class="piece" data-cat="bing">
+<h3>AI-06 Newcomer 在 Cerebral Valley 人工智能峰会现场记录行业对英伟达危机和 Anthropic 上市的即时反应，有人把英伟达称作整个生态的「脊梁」。</h3>
+<p class="stamp stamp-bing">接住以后要核对</p>
+<p><strong>背景</strong>：这不是一条新的硬事实，而是峰会现场的气氛记录。同一窗口里，Anthropic 的上市路演也在继续，行业把两件事放在一起讨论。</p>
+<p><strong>发生了什么</strong>：据 Newcomer 北京时间 11 月 14 日 03:27 的现场报道，人工智能创始人和投资人周四聚集在旧金山，参加 Newcomer 举办的 Cerebral Valley AI 峰会。Databricks 的 Ali Ghodsi 在台上谈到英伟达的危机时说：「这对几乎所有参与者都是打击，只有他们的直接竞争对手例外。这对生态不好，对新兴云厂商不好，对每个人都不好。他们曾是整个生态的脊梁。」</p>
+<p><strong>为什么值得注意</strong>：如果要看「行业怎么看换帅」，这比一般评论稿更接近现场原话。用今天的核心思想来看，现场已经把英伟达称作生态的脊梁，接下来这一层还靠不靠得住，是行业正在问的问题，但现场感受本身不能代替后续的业务事实。它可以和科技部分 TK-07 里亚洲供应链「近端未必立即中断、中长期仍被重新定价」的分析对照着读，两者并排放在一起，并不表示有因果关系。</p>
+<p><strong>归类</strong>：丙类「接住以后要核对」。理由是现场把英伟达称作生态的脊梁，接下来这一层还靠不靠得住，是行业在问的问题，而不是已经得出的结论。</p>
+<p><strong>核实状态</strong>：单一来源。Newcomer 是峰会主办方自己的现场报道，页面可以打开；Ghodsi 的话只有这一处完整记录，没有第二家媒体的独立录音或文字稿，尚未得到其他来源确认。</p>
+<p><strong>来源</strong>：</p>
+<ul>
+<li>Newcomer，北京时间 2026-11-14 03:27：<a href="https://www.newcomer.co/p/nvidia-crises-anthropic-ipo-and-off" target="_blank" rel="noopener noreferrer">https://www.newcomer.co/p/nvidia-crises-anthropic-ipo-and-off</a></li>
+</ul>
+</article>
+<article id="ai-07" class="piece" data-cat="bing">
+<h3>AI-07 英伟达应用深度学习研究副总裁 Bryan Catanzaro 声明：网上要求恢复黄仁勋职务、并声称有他参与的信件是伪造的。</h3>
+<p class="stamp stamp-bing">接住以后要核对</p>
+<p><strong>背景</strong>：辞职之后，网上出现了要求董事会恢复黄仁勋职务的联名信，并把 Catanzaro 列为参与者。这条要和 AI-02 里的内部建议箱讨论分开看，两者不是一回事。</p>
+<p><strong>发生了什么</strong>：北京时间 11 月 14 日 03:28，Catanzaro 本人发帖说，网上流传着一封要求英伟达董事会恢复黄仁勋职务、并声称有他参与的信件，这封信显然是假的；即便是真的，他也不会签。他同时写道，自己为黄仁勋不再在英伟达而感到悲痛，但又完全支持董事会及其决定；他与 Colette 共事多年，把她视为出色的领导者，并给予充分支持。Rohan Paul 等人在北京时间 05:27 转发了同一段文字。</p>
+<p><strong>为什么值得注意</strong>：如果把伪造联名信和内部建议箱里的真实讨论混在一起，就会误判公司内部的态度。Catanzaro 一方面为黄仁勋离开感到悲痛，另一方面明确支持董事会和临时首席执行官，这说明「员工呼吁他回来」并不能自动写成「高层也在联署请愿」。用今天的核心思想来看，网上那封信靠不住，要和内部建议箱分开核对。</p>
+<p><strong>归类</strong>：丙类「接住以后要核对」。理由是网上那封联名信靠不住，必须和内部建议箱里的讨论分开核对，不能当成同一件请愿。</p>
+<p><strong>核实状态</strong>：多来源确认。Catanzaro 的原帖可以打开，Rohan Paul 等人在其后转发了同一段文字。信件本身的来源和传播范围，原帖没有提供更多细节。</p>
+<p><strong>来源</strong>：</p>
+<ul>
+<li>Bryan Catanzaro 的 X 帖，北京时间 2026-11-14 03:28：<a href="https://x.com/ctnzr/status/2121324405112635467" target="_blank" rel="noopener noreferrer">https://x.com/ctnzr/status/2121324405112635467</a></li>
+</ul>
+</article>
+<article id="ai-08" class="piece" data-cat="yi">
+<h3>AI-08 OpenAI 推出 ChatGPT Wallet：美国 Pro 用户可在逐笔查看并做生物识别批准后，让 dot 智能体代为付款，智能体拿不到真实卡号。</h3>
+<p class="stamp stamp-yi">交的时候留了确认</p>
+<p><strong>背景</strong>：「智能体」指的是能自己分步骤调用工具、完成任务的人工智能程序。以前这类程序多半停在「帮你选」，现在 OpenAI 往前走了一步，开始让它在严格确认之后「帮你付钱」。这和后面人工智能部分的 Poppy 协议（AI-15）是同一方向上的不同层：一个管怎么安全付钱，一个管怎么接入商家。连读材料里还有一封 ChatGPT Health 数据规则通知，相关但不是同一件事，放在轻提示部分单独写。</p>
+<p><strong>发生了什么</strong>：OpenAI 官方博客只标注 2026 年 11 月 13 日，没有具体时刻。CNBC 在北京时间 11 月 13 日 23:00 报道，ChatGPT 官方账号在 11 月 14 日 00:44 宣布，The Verge 在 11 月 14 日 04:45 跟进。据官方博客，ChatGPT Wallet 是第一个让智能体付款却不接触用户真实卡号、并且要求每一笔都做安全核验的钱包，同时保留符合条件的争议处理和卡片奖励。它与美国运通、万事达和 Visa 合作，初期通过 dots，向美国的 ChatGPT Pro 订阅者开放。官方写明的流程是：每一笔付款前，用户先查看商品、金额和所用卡，再用面容识别或指纹扫描批准；批准之后，卡组织再提供一枚支付令牌，用来代替真实卡号。初期范围是年满 18 岁、持有符合条件的美国发卡行卡片的美国 ChatGPT Pro 用户；一些网站仍可能拦截智能体访问。官方还说，未来希望用户能按限额、类别或时间预先授权。博客里的「每周 12 亿人使用 ChatGPT」是厂商自报数字。The Verge 还补充，支持的卡组织包括美国运通、Chase、万事达和 Visa，这一表述来自媒体对支持文档的转述。</p>
+<p><strong>为什么值得注意</strong>：对正在观察智能体能不能真正办事的他来说，这是从「帮你选」走到「帮你付钱」的一步，但开放范围仍然很窄，而且每一笔都把确认留在用户手里。用今天的核心思想来看，能力交出去了，可中间明确留了「先看再点头」这一道确认，智能体也拿不到真实卡号。机制以官方博客为准；「每周 12 亿人」是厂商自报，卡组织名单里 The Verge 多写的 Chase 是媒体转述，要分开看。</p>
+<p><strong>归类</strong>：乙类「交的时候留了确认」。理由是每一笔付款都要用户先看商品、金额和所用卡，再做生物识别批准，智能体拿不到真实卡号，确认被明确留了下来。</p>
+<p><strong>核实状态</strong>：多来源确认。官方博客（网页抓取可读全文）、官方 X 帖、CNBC 和 The Verge 都对得上开放范围和「逐笔生物识别批准、不分享真实卡号」的机制。The Verge 补充的卡组织名单，是媒体对支持文档的转述。官方博客用命令行访问会返回 403，但页面存在，证据包已用网页抓取读到全文。</p>
+<p><strong>来源</strong>：</p>
+<ul>
+<li>OpenAI 官方博客，2026-11-13（原文只标日期）：<a href="https://openai.com/index/introducing-chatgpt-wallet/" target="_blank" rel="noopener noreferrer">https://openai.com/index/introducing-chatgpt-wallet/</a></li>
+<li>ChatGPT 官方 X，北京时间 2026-11-14 00:44：<a href="https://x.com/ChatGPT/status/2121283151729496235" target="_blank" rel="noopener noreferrer">https://x.com/ChatGPT/status/2121283151729496235</a></li>
+<li>CNBC，北京时间 2026-11-13 23:00：<a href="https://www.cnbc.com/2026/11/13/openai-chatgpt-wallet-dot-purchases.html" target="_blank" rel="noopener noreferrer">https://www.cnbc.com/2026/11/13/openai-chatgpt-wallet-dot-purchases.html</a></li>
+<li>The Verge，北京时间 2026-11-14 04:45：<a href="https://www.theverge.com/ai-artificial-intelligence/1033425/openai-chatgpt-wallet" target="_blank" rel="noopener noreferrer">https://www.theverge.com/ai-artificial-intelligence/1033425/openai-chatgpt-wallet</a></li>
+</ul>
+</article>
+<article id="ai-09" class="piece" data-cat="yi">
+<h3>AI-09 Anthropic 发表常驻智能体架构指南，把系统设计拆成收件箱、定时器、记忆、权限和发件箱五个基本部件，并把权限写成其中之一。</h3>
+<p class="stamp stamp-yi">交的时候留了确认</p>
+<p><strong>背景</strong>：这不是发布新产品，而是一篇写给要做「一直在线」智能体的工程指南。「常驻」或「一直在线」，指的是用户感觉上这个智能体一直在帮自己看着事、主动做事；文章强调，这种体验其实是一次次被事件唤醒的短任务，智能体大部分时间是在休眠。</p>
+<p><strong>发生了什么</strong>：Anthropic 官方页面只标注 2026 年 11 月 13 日，没有具体时刻。按美国机构的日期，这篇稿落在本窗口内。文章把常驻智能体的外围架构拆成五个核心原语：事件收件箱、定时器、记忆、权限和发件箱。文中还给出一组成本数字：在某个长程编码基准上，Opus 5.5 每解决一个任务的成本比 Opus 5 低 78%，普通工作负载上则低 40%。这两个数字都出自官方博客，属于厂商自报，文中没有给出基准名称以外的第三方复核。</p>
+<p><strong>为什么值得注意</strong>：对正在用 Claude Code 或自己搭智能体的他来说，这篇比一般产品稿更有动手价值，因为它把「权限」写成了五个基本部件之一，而不是事后再补的附件。用今天的核心思想来看，能力交出去的时候，官方把确认权写成了架构里不可缺少的一层。成本低 78% 和 40% 是 Anthropic 自己报的，读的时候要标清楚出处，不能当成独立评测。</p>
+<p><strong>归类</strong>：乙类「交的时候留了确认」。理由是这篇指南把权限写成常驻智能体五个基本部件之一，等于在交出自运行能力的同时，把「谁允许它做什么」留在了系统设计里。</p>
+<p><strong>核实状态</strong>：单一来源。官方博客可以打开，但 78% 和 40% 没有给出基准名称以外的第三方复核，也没有看到同期的官方 X 公告来补精确时刻，尚未得到其他来源确认。</p>
+<p><strong>来源</strong>：</p>
+<ul>
+<li>Anthropic 官方博客，2026-11-13（原文只标日期；打开后指向 resources 下的同文）：<a href="https://claude.com/blog/building-always-on-agents" target="_blank" rel="noopener noreferrer">https://claude.com/blog/building-always-on-agents</a></li>
+</ul>
+</article>
+<article id="ai-10" class="piece" data-cat="jia">
+<h3>AI-10 Anthropic 上市进程在窗口内出现三则后续：官方路演直播和向证监会上交注册声明已得到多方确认，但超额认购、估值和对中国大陆、香港投资者的限制目前多为转述，注册声明生效前不得售股。</h3>
+<p class="stamp stamp-jia">还没真正交到</p>
+<p><strong>背景</strong>：Anthropic 是 Claude 背后的公司。启动首次公开募股（IPO，也就是第一次把股票卖给公众并在交易所上市）是前几天的事，本窗口只收新的后续。路演是向投资人介绍公司、收集认购意向的过程；向美国证券交易委员会（SEC）提交的注册声明生效之前，依法不得售股，也不得接受买盘。</p>
+<p><strong>发生了什么</strong>：窗口里有三件后续。第一，The Decoder 在北京时间 11 月 13 日 23:15 转述彭博社称，订单已经超过可供股份的六倍，公司及其联合创始人计划通过公开募股最多筹集 644 亿美元，另通过私募筹集 260 亿美元，目标估值约 1.4 万亿美元；年化收入到 10 月下旬升至 810 亿美元，9 月时是 710 亿美元；英伟达本身计划通过私募认购 100 亿美元 Anthropic 股票；高盛和摩根士丹利负责以代码 ANT 在纳斯达克上市。第二，Anthropic 官方账号在北京时间 11 月 14 日 00:00 预告，将于美东时间中午 12 点（也就是北京时间 01:00）直播首席执行官 Dario Amodei 与摩根大通首席执行官 Jamie Dimon 的炉边谈话，并附上了向 SEC 提交的注册说明书链接，同时写明注册声明生效前不得售股。第三，The Decoder 在北京时间 11 月 14 日 02:01 同样转引彭博社称，多家银行以出口管制（报道中提到 ITAR，也就是美国管制国防相关物项的规则）为由，拒绝或几乎不会向中国大陆和香港投资者分配股份；Anthropic 对限制一事拒绝置评，并写股票预计在 11 月 18 日定价后以代码 ANT 在纳斯达克交易。</p>
+<p><strong>为什么值得注意</strong>：路演直播和向 SEC 提交注册声明，是已经发生、也能打开原文的事实；超额认购倍数、募资金额、估值、年化收入、英伟达认购 100 亿美元，以及对中国大陆和香港投资者的限制，目前主要是 The Decoder 转述彭博社，公司对限制一事拒绝置评，不能写成已经成立的募资结果。用今天的核心思想来看，路演和注册材料已经交了出去，但注册声明生效前不得售股，中国大陆和香港投资者据报还接不住，看起来热闹，并不等于股份已经交到该交的人手里。对每天用 Claude 的他来说，这也是理解「做模型的公司上市以后对谁负责、谁被允许接住股份」的一个窗口。</p>
+<p><strong>归类</strong>：甲类「还没真正交到」。理由是路演和向证监会上交注册声明是事实，但注册声明生效前不得售股，超额认购和估值多为转述，中国大陆和香港投资者据报还接不住。</p>
+<p><strong>核实状态</strong>：多来源确认（指「周五有官方路演直播、公司已向 SEC 提交注册声明」这件事）。官方 X 帖、YouTube 直播页和 SEC 文件链接都可以打开。超额认购倍数、募资金额、估值、年化收入、英伟达认购 100 亿美元，以及对中国大陆和香港投资者的限制，目前只看到 The Decoder 转述彭博社，Anthropic 对限制一事拒绝置评，这些具体数字仍应视为单一来源，尚未得到其他来源确认。</p>
+<p><strong>来源</strong>：</p>
+<ul>
+<li>The Decoder（转述彭博社，超额认购与估值），北京时间 2026-11-13 23:15：<a href="https://the-decoder.com/anthropics-ipo-is-six-times-oversubscribed-and-on-track-to-become-the-largest-public-offering-in-history/" target="_blank" rel="noopener noreferrer">https://the-decoder.com/anthropics-ipo-is-six-times-oversubscribed-and-on-track-to-become-the-largest-public-offering-in-history/</a></li>
+<li>Anthropic 官方 X，北京时间 2026-11-14 00:00：<a href="https://x.com/AnthropicAI/status/2121272083863011714" target="_blank" rel="noopener noreferrer">https://x.com/AnthropicAI/status/2121272083863011714</a></li>
+<li>YouTube 路演直播页：<a href="https://www.youtube.com/live/YHEaEpeY3ew" target="_blank" rel="noopener noreferrer">https://www.youtube.com/live/YHEaEpeY3ew</a></li>
+<li>美国证券交易委员会注册声明：<a href="https://sec.gov/Archives/edgar/data/2130357/000162828026072484/anthropicpbc-sx1ax2.htm" target="_blank" rel="noopener noreferrer">https://sec.gov/Archives/edgar/data/2130357/000162828026072484/anthropicpbc-sx1ax2.htm</a></li>
+<li>The Decoder（转述彭博社，限制中国大陆和香港投资者），北京时间 2026-11-14 02:01：<a href="https://the-decoder.com/banks-bar-chinese-and-hong-kong-investors-from-anthropic-ipo-over-us-export-controls/" target="_blank" rel="noopener noreferrer">https://the-decoder.com/banks-bar-chinese-and-hong-kong-investors-from-anthropic-ipo-over-us-export-controls/</a></li>
+</ul>
+</article>
+<article id="ai-11" class="piece" data-cat="jia">
+<h3>AI-11 Claude Duet 称，截至前一天仍在美国等待名单上的全部 Pro、Max 和 Ultra 订阅者都已收到邀请，美国以外还接不住。</h3>
+<p class="stamp stamp-jia">还没真正交到</p>
+<p><strong>背景</strong>：Claude Duet 本身是 10 月就宣布过的研究预览，指的是会主动办事的个人智能体。这条新信息不是新产品发布，而是等待名单的进度。</p>
+<p><strong>发生了什么</strong>：北京时间 11 月 14 日 04:02，Anthropic 的工作人员 Karan Ahuja 发帖说，截至昨天仍在美国等待名单上的全部 Pro、Max 和 Ultra 订阅者都已收到邀请，并给出了产品页链接。官方同时说明，为了让用户有空间试用，这次研究预览附带限额重置：Pro 为 3 次，Max 和 Ultra 为 1 次。帖子还写，很快会向美国以外更多国家开放，并请已经受邀的人查收邮箱、试用并反馈。Ado Kukic 在 04:22 转发了这条消息。</p>
+<p><strong>为什么值得注意</strong>：如果他不在美国，现在还不能直接用。看起来「已经开放邀请」，其实范围只包括美国、而且是「截至昨天已经登记」的三类付费订阅者，美国以外还接不住。用今天的核心思想来看，邀请已经发出去了，但还没有交到更大范围的用户手里。限额重置次数目前只见于这则工作人员帖子，没有同步的产品博客或帮助中心更新来交叉核对。</p>
+<p><strong>归类</strong>：甲类「还没真正交到」。理由是美国等待名单上的人收到了邀请，但这只覆盖截至前一天已登记的美国 Pro、Max 和 Ultra 订阅者，美国以外还接不住。</p>
+<p><strong>核实状态</strong>：单一来源。这是 Anthropic 工作人员的官方账号声明，帖子可以打开，但没有看到同步的产品博客或帮助中心更新来交叉核对重置次数，尚未得到其他来源确认。</p>
+<p><strong>来源</strong>：</p>
+<ul>
+<li>Karan Ahuja 的 X 帖（Anthropic 工作人员），北京时间 2026-11-14 04:02：<a href="https://x.com/ahuja_karan/status/2121332990836163033" target="_blank" rel="noopener noreferrer">https://x.com/ahuja_karan/status/2121332990836163033</a></li>
+</ul>
+</article>
+<article id="ai-12" class="piece" data-cat="jia">
+<h3>AI-12 Claude 在窗口内经历两轮自身故障，微软 365 连接器事故也在窗口结束前被标为已解决，但仍提醒可能有偶发错误，新建连接器暂不可用，定时任务可能延误。</h3>
+<p class="stamp stamp-jia">还没真正交到</p>
+<p><strong>背景</strong>：对日常使用 Claude、Claude Code 和连接器的人，这是窗口里最直接的服务信息。需要和科技部分的 TK-01 分开看：TK-01 写的是微软 365 本身的全球故障、周五致歉和大范围恢复；本条写的是 Claude 自己的两轮故障，以及 Claude 里微软 365 连接器在窗口结束前被标为已解决。两件事有关联，但不是同一条事故。</p>
+<p><strong>发生了什么</strong>：据 Anthropic 官方状态页和事故通报，窗口内先出现一轮认证故障：北京时间 11 月 13 日 17:58 开始调查用户登录 Claude.ai 和 Claude Code 的问题，19:58 宣布 claude.ai 与 Cowork 已恢复。随后出现更大规模的多产品故障：21:09 开始调查官网、Claude API 和 Claude Code 的性能下降，23:38 宣布影响多个界面的问题已解决。监测中的说明还写到，官网、移动应用、API 和 Claude Code 的错误已回到正常水平，已有的 Docs、Sheets 等连接器重新可用，Claude Managed Agents 和 Claude Meetings 正在恢复；但在 claude.ai 上新建连接器暂时不可用，定时任务和例行任务可能延误超过两小时，有些运行被跳过。微软 365 连接器事故始于窗口前的 11 月 13 日 01:52，窗口内 06:23 仍为已定位，23:40 进入监测，11 月 14 日 05:49 宣布已解决。官方写明，受影响时段按换算是北京时间 11 月 13 日 00:03 到 11 月 14 日 00:40，期间微软 365 连接器里的邮件、日历、搜索工具以及 Claude for Outlook 的许多请求报错，原因是微软 365 的一次服务事故；微软仍在收尾，因此仍可能看到偶发错误或延迟。采集结束时，状态页总览为 All Systems Operational。</p>
+<p><strong>为什么值得注意</strong>：主故障和连接器都已经被标成「已解决」，但官方同时提醒偶发错误仍可能出现，新建连接器暂不可用，定时任务可能延误。用今天的核心思想来看，看起来已经恢复并交还给用户，其实还没有被完整接住。如果他在窗口里遇到过登录失败、连接器报错或例行任务没跑，可以从这两轮通报里对一下时间。它和 TK-01 可以互相参照，但不要把微软自己的全球故障和 Claude 侧的连接器事故合成一条。</p>
+<p><strong>归类</strong>：甲类「还没真正交到」。理由是主故障和连接器都标成已解决，却仍提醒可能有偶发错误，新建连接器暂不可用，定时任务可能延误，恢复还没有完全落地。</p>
+<p><strong>核实状态</strong>：多来源确认。以上内容都来自 Anthropic 官方状态页和三份事故通报，页面可以打开。这是公司对自己服务的说明，不是第三方评测。</p>
+<p><strong>来源</strong>：</p>
+<ul>
+<li>Claude 官方状态页：<a href="https://status.claude.com/" target="_blank" rel="noopener noreferrer">https://status.claude.com/</a></li>
+<li>认证故障通报：<a href="https://stspg.io/6kqyd0c5b1gr" target="_blank" rel="noopener noreferrer">https://stspg.io/6kqyd0c5b1gr</a></li>
+<li>多产品故障通报：<a href="https://stspg.io/264r547qtkky" target="_blank" rel="noopener noreferrer">https://stspg.io/264r547qtkky</a></li>
+<li>微软 365 连接器事故通报：<a href="https://stspg.io/m0rbx38nmy1c" target="_blank" rel="noopener noreferrer">https://stspg.io/m0rbx38nmy1c</a></li>
+</ul>
+</article>
+<article id="ai-13" class="piece" data-cat="bing">
+<h3>AI-13 Google Research 介绍 Antigravity 的 /teamwork 多智能体成果，并向外部研究者开放这些工具；各项数字均出自官方博客，还要经得起后续同行评审。</h3>
+<p class="stamp stamp-bing">接住以后要核对</p>
+<p><strong>背景</strong>：「多智能体」指的是多个人工智能程序分工协作，而不是单个模型一次答完。Google 把这套能力叫做 Antigravity 的 /teamwork。官方强调，这些工作都是与人类专家合作完成的，不是模型独自发现。</p>
+<p><strong>发生了什么</strong>：Google Research 官方博客标注 2026 年 11 月 13 日，没有具体时刻。按美国机构的日期，这篇稿落在本窗口内。博客介绍了 /teamwork 在数学、化学、系统软件和机器学习工程等开放问题上的近期结果，并写明这些工具将向外部开放。文中数字都出自这篇官方博客，例如：来自 Google、香港中文大学、南加州大学和卡内基梅隆大学的研究者，用 /teamwork 的 Long Proof 模式，完整证明了信息论中 2013 年的 Courtade–Kumar 猜想，并在 Lean 4 里形式化了全部证明，产生 5000 万行代码；/teamwork-LEAP 又全自动完成了 Weil 猜想的端到端、机器校验形式化，约 180 万行 Lean 代码、28800 次子智能体调用；在 STOC 2027 之前，578 篇投稿（超过全部投稿的三分之一）的作者选择接收 Deep Review 反馈，70 人问卷里 90% 的受访者认为反馈大体或几乎全部属实，超过 30% 表示 Deep Review 抓住了实质性的证明漏洞或有数学意义的笔误。外部科学家和开发者现在可以在 Antigravity 和 Deep Review 中使用 Gemini 4 模型以及 /teamwork、/boost；官方还开放了申请，向 10000 名学术研究者提供六个月最高用量档的免费使用。博客在分子结构一节还提到，在复杂基准分子上达到 95% 的 top-1 精确匹配和 100% 的 top-3 准确率。</p>
+<p><strong>为什么值得注意</strong>：这是窗口里最重的一篇研究发布，而且工具已经向外部开放。对同时在学医学和人工智能的他来说，形式化验证和分子结构这两部分尤其值得看一眼，但所有数字都是研究团队自报，还要看后续是否以论文形式接受同行评审。用今天的核心思想来看，研究工具已经交到外面，接住这些结果的那一层是不是靠得住，还要再核对。</p>
+<p><strong>归类</strong>：丙类「接住以后要核对」。理由是研究工具已向外部开放，但 5000 万行、180 万行、28800 次调用、578 篇投稿、70 人问卷和 10000 名学者名额都出自官方博客，还要经得起后续同行评审。</p>
+<p><strong>核实状态</strong>：单一来源。Google Research 官方博客可以打开，内容完整；目前没有看到独立数学或化学团队在同一天发表的复核，也没有找到带精确时刻的官方社交媒体公告，尚未得到其他来源确认。文中各项数字均应标明出自该博客。</p>
+<p><strong>来源</strong>：</p>
+<ul>
+<li>Google Research 官方博客，2026-11-13（原文只标日期）：<a href="https://research.google/blog/advancing-science-engineering-with-antigravitys-teamwork-feature/" target="_blank" rel="noopener noreferrer">https://research.google/blog/advancing-science-engineering-with-antigravitys-teamwork-feature/</a></li>
+</ul>
+</article>
+<article id="ai-14" class="piece" data-cat="yi">
+<h3>AI-14 llama.cpp 和 ggml 发布首个稳定大版本 v1.0.0，本地运行模型库开始按语义化版本管理公开接口，并用主版本号来承诺兼容规则。</h3>
+<p class="stamp stamp-yi">交的时候留了确认</p>
+<p><strong>背景</strong>：llama.cpp 是现在最常用的、把大模型放在自己电脑或设备上运行的程序库之一，ggml 是它底层的张量计算库。「语义化版本」的意思是：以后如果公开的编程接口或二进制接口不再兼容，就会提升主版本号，让开发者能一眼看出这次更新会不会把现有程序弄坏。这不是发布了新的基础模型。</p>
+<p><strong>发生了什么</strong>：GitHub 发布页出现北京时间 11 月 13 日 17:09 和 18:20 两个时间戳，Hugging Face 官方博客为 22:05，作者 Georgi Gerganov 在 22:17 宣布，Hugging Face 首席执行官 Clément Delangue 在 23:13 转发。Hugging Face 博客写明，双方即日起发布 v1.0.0，并强调对开发者的责任：以后 llama.cpp 和 ggml 都会用主版本号提升，来反映公开应用程序接口（API）和二进制接口（ABI）的不兼容变化。</p>
+<p><strong>为什么值得注意</strong>：对希望把模型放在自己电脑或手机上、少把数据送到云端的人，这是一个里程碑，因为它把「公开接口怎么变」写成了可以核对的规则。用今天的核心思想来看，第一个稳定大版本在交出去的时候，留下了兼容规则这道确认。证据包以官方博客和发布页为准，不转述第三方对「支持所有硬件」的发挥性表述。</p>
+<p><strong>归类</strong>：乙类「交的时候留了确认」。理由是第一个稳定大版本用主版本号来承诺公开接口的兼容规则，等于在把库交给开发者时，把「什么时候会不兼容」写清楚了。</p>
+<p><strong>核实状态</strong>：多来源确认。GitHub 发布页、Hugging Face 博客和作者本人的帖子都指向同一版本。本条以官方博客和发布页为准。</p>
+<p><strong>来源</strong>：</p>
+<ul>
+<li>Hugging Face 官方博客，北京时间 2026-11-13 22:05：<a href="https://huggingface.co/blog/ggml-org/llama-cpp-v1" target="_blank" rel="noopener noreferrer">https://huggingface.co/blog/ggml-org/llama-cpp-v1</a></li>
+<li>GitHub 发布页 v1.0.0：<a href="https://github.com/ggml-org/llama.cpp/releases/tag/v1.0.0" target="_blank" rel="noopener noreferrer">https://github.com/ggml-org/llama.cpp/releases/tag/v1.0.0</a></li>
+<li>Georgi Gerganov 的 X 帖，北京时间 2026-11-13 22:17：<a href="https://x.com/ggerganov/status/2121246103312212124" target="_blank" rel="noopener noreferrer">https://x.com/ggerganov/status/2121246103312212124</a></li>
+</ul>
+</article>
+<article id="ai-15" class="piece" data-cat="yi">
+<h3>AI-15 Sierra 发布个人智能体协议 Poppy v1.0，Shopify 全量启用，认证走 OAuth，权限由用户控制。</h3>
+<p class="stamp stamp-yi">交的时候留了确认</p>
+<p><strong>背景</strong>：Sierra 由 Bret Taylor 和 Clay Bavor 写作并发布。Poppy 解决的是个人智能体先如何向一家公司表明身份、发现自己被允许做什么；购物过程本身仍由通用商务协议（UCP）等协议处理。这和同一窗口里的 ChatGPT Wallet（AI-08）是同一方向上的不同层：一个管「怎么接入商家」，一个管「怎么安全付钱」。OAuth 是一种常见的授权方式，用户可以决定把哪些权限交给应用程序，也可以事后收回。</p>
+<p><strong>发生了什么</strong>：Sierra 官方博客的发布时间为北京时间 11 月 14 日 01:00。据官方博客，协议的 v1.0 现已可用；Shopify 已为平台上的每一家商家启用 Poppy；Meta 的智能体 Muse 在访问每个网站时会优先查找该协议；又有 60 家新公司加入成为设计合作伙伴，总数超过 100 家。协议主要建立在 MCP、OpenAPI 和 UCP 等现有标准之上，认证走 OAuth，顾客可以控制个人智能体能够和不能够做什么，并随时间管理这些权限。官方还写，Shopify 的业务覆盖超过 175 个国家，每家 Shopify 店铺默认支持 UCP，现在也会自动发布一份 Poppy 文件。证据包说明里补充，设计合作伙伴包括 Salesforce、Stripe 生态里的新成员，以及 Mercury、Synchrony、土耳其航空等已上线案例。文中「超过 100 家」「175 个国家」「Shopify 全量启用」都是官方自报，证据包没有抽查某个店铺的协议文件来复核。</p>
+<p><strong>为什么值得注意</strong>：对观察个人智能体何时能在真实购物和客服场景里办事的他来说，这条的重点不是又一个产品名，而是权限被写成了用户可以开关的一层。用今天的核心思想来看，接入方式交出去了，但确认权留在用户手里。覆盖范围和合作伙伴数字目前都是 Sierra 自报。</p>
+<p><strong>归类</strong>：乙类「交的时候留了确认」。理由是认证走 OAuth，权限由用户控制，协议在向商家和智能体开放接入的同时，把「能做什么」留给了用户点头。</p>
+<p><strong>核实状态</strong>：单一来源。Sierra 官方博客可以打开，文中「超过 100 家」「175 个国家」「Shopify 全量启用」都是官方自报，证据包没有抽查某个 Shopify 店铺来复核，尚未得到其他来源确认。</p>
+<p><strong>来源</strong>：</p>
+<ul>
+<li>Sierra 官方博客，北京时间 2026-11-14 01:00：<a href="https://sierra.ai/blog/releasing-poppy" target="_blank" rel="noopener noreferrer">https://sierra.ai/blog/releasing-poppy</a></li>
+</ul>
+</article>
+<article id="ai-16" class="piece" data-cat="yi">
+<h3>AI-16 DeepSeek 于 11 月 13 日晚间开放全家桶应用接口，开发者可在官方接口里调用搜索、读链接、文件解析和语音能力，并另行计费。</h3>
+<p class="stamp stamp-yi">交的时候留了确认</p>
+<p><strong>背景</strong>：以前这些能力主要出现在 DeepSeek 自家应用里，开发者若要做类似产品，往往还得自己接搜索、解析和语音服务。现在官方把它们放进现有应用程序接口（API），等于把应用能力连同计费规则一起交给开发者。</p>
+<p><strong>发生了什么</strong>：官方文档只标注 2026 年 11 月 13 日；第一财经报道时间为 22:22:41，IT之家为 22:29:06，并写明是「今天（13 日）晚间」宣布。据官方新闻稿，开发者在原有接口里开启对应参数，即可获得深度思考搜索、文件输入等对话功能；语音及相关底层能力也已开放独立接口，包括光学字符识别（OCR）、语音识别（ASR）和语音合成（TTS），支持单独或组合调用，甚至可以 1 比 1 复刻出完整的 DeepSeek 应用。目前 V4.1-Flash 模型（deepseek-flash）已在 Messages、Responses 与 Chat Completions 接口下支持联网搜索、深度思考搜索、文件输入、阅读链接和模型安全等能力；Search、Fetch、OCR、ASR、TTS 也可作为独立接口调用。官方写明，用户调用扩展能力时，除收取 Token 费用外，也将收取相关工具的调用费用。具体价目来自官方「模型 &amp; 价格」页：搜索（文字、图片）每 1000 次 5 元；网页抓取每 1000 次 5 元；文件解析、OCR 接口每 1000 页 1.5 元；语音合成刊例价每 1 万字符 3 元、限时 5 折后 1.5 元；语音识别刊例价每小时音频 0.78 元、限时 5 折后 0.39 元。官方还开源了一个可导入历史对话的演示客户端。</p>
+<p><strong>为什么值得注意</strong>：对想自己做聊天应用或比较国内模型开放程度的人，这是窗口里最具体的开发者向更新。用今天的核心思想来看，能力交出去的时候，官方把另计费规则一并写清楚了，开发者先看到价目再调用。价目数字全部来自官方价格页，不是媒体估算。</p>
+<p><strong>归类</strong>：乙类「交的时候留了确认」。理由是官方把应用能力连同另计费规则一起交给开发者，调用前可以先看到价格和计费方式，而不是只把能力放开、把费用留到事后。</p>
+<p><strong>核实状态</strong>：多来源确认。官方新闻页、官方价格页、第一财经和 IT之家都对得上「晚间开放全家桶 API」这件事。价目数字全部来自官方价格页。</p>
+<p><strong>来源</strong>：</p>
+<ul>
+<li>DeepSeek 官方新闻页，2026-11-13（原文只标日期）：<a href="https://api-docs.deepseek.com/zh-cn/news/news261113/" target="_blank" rel="noopener noreferrer">https://api-docs.deepseek.com/zh-cn/news/news261113/</a></li>
+<li>DeepSeek 官方「模型 &amp; 价格」页：<a href="https://api-docs.deepseek.com/zh-cn/quick_start/pricing" target="_blank" rel="noopener noreferrer">https://api-docs.deepseek.com/zh-cn/quick_start/pricing</a></li>
+<li>第一财经，北京时间 2026-11-13 22:22:41：<a href="https://www.yicai.com/news/103440560.html" target="_blank" rel="noopener noreferrer">https://www.yicai.com/news/103440560.html</a></li>
+<li>IT之家，北京时间 2026-11-13 22:29:06：<a href="https://www.ithome.com/1/026/960.htm" target="_blank" rel="noopener noreferrer">https://www.ithome.com/1/026/960.htm</a></li>
+</ul>
+</article>
+<article id="ai-17" class="piece" data-cat="jia">
+<h3>AI-17 腾讯混元发布实时语音模型 Hy Realtime，新增工具调用和唱歌能力，并已在元宝和腾讯客服上线，但对外接口仍写的是即将上线。</h3>
+<p class="stamp stamp-jia">还没真正交到</p>
+<p><strong>背景</strong>：这是窗口内国内厂商最明确的一次语音模型更新。「工具调用」指模型可以根据上下文决定要不要去搜索或调用其他能力，而不是只会聊天。</p>
+<p><strong>发生了什么</strong>：混元官方微信稿的时间为北京时间 11 月 13 日 16:32，第一财经为 16:38:55，IT之家为 16:41:34。据官方微信稿，全新实时语音模型 Hy Realtime 在语音理解、指令遵循和拟人化表达等基础对话能力上有优异表现，同时新增智能体式工具调用与唱歌能力；已经在元宝语音通话、腾讯客服等产品上线，近期也将上线腾讯云，对外提供接口服务。官方给出的训练数据数字包括：把高质量文本数据向语音任务的有效迁移保留率从 21% 大幅提升至 69%；连续语音预训练数据达到千万小时级规模，并配合 51 套纯文本集与 50 多套语音评测集。这些数字都来自官方微信稿，属于厂商自报。IT之家转述称，官方表示该模型仍在迭代，下一步将重点提升双工交互、长期个性化记忆和前后台智能体交互；当前版本可通过最新版元宝应用体验，在语音通话功能中选择「初语」音色。官方还强调它能处理口齿不清、中途改口，并能根据上下文决定是否联网搜索，并和腾讯音乐合作加入点歌、演唱。公开基准的具体分数在稿件正文的文字部分没有完整列出，这里不转写为未经原文表格核对的排名。</p>
+<p><strong>为什么值得注意</strong>：产品入口已经有了，对外接口却仍写「即将上线」，看起来交出去了，其实开发者还没有完整接住。训练数据和评测数字目前只有官方稿，引用时要标明是混元自报。对比较国内语音模型开放程度的他来说，先看得到的是元宝里的「初语」音色，而不是已经可用的对外接口。</p>
+<p><strong>归类</strong>：甲类「还没真正交到」。理由是元宝等产品入口已经有了，对外接口仍写的是即将上线，能力还没有完整交到外部开发者手里。</p>
+<p><strong>核实状态</strong>：多来源确认。官方微信稿、IT之家和第一财经都对得上发布时间、产品入口和「工具调用 + 唱歌」这两项新能力。训练数据和评测数字目前只有官方稿，引用时已标明是混元自报。</p>
+<p><strong>来源</strong>：</p>
+<ul>
+<li>混元官方微信稿，北京时间 2026-11-13 16:32：<a href="https://mp.weixin.qq.com/s/bFxAT04ohJs9hPcjjin3bg" target="_blank" rel="noopener noreferrer">https://mp.weixin.qq.com/s/bFxAT04ohJs9hPcjjin3bg</a></li>
+<li>IT之家，北京时间 2026-11-13 16:41:34：<a href="https://www.ithome.com/1/026/825.htm" target="_blank" rel="noopener noreferrer">https://www.ithome.com/1/026/825.htm</a></li>
+<li>第一财经，北京时间 2026-11-13 16:38:55：<a href="https://www.yicai.com/news/103440081.html" target="_blank" rel="noopener noreferrer">https://www.yicai.com/news/103440081.html</a></li>
+</ul>
+</article>
+<article id="ai-18" class="piece" data-cat="bing">
+<h3>AI-18 LangChain 宣布完成 3 亿美元 C 轮融资，估值达到 30 亿美元，用于推动企业自行掌握智能体的运行和治理。</h3>
+<p class="stamp stamp-bing">接住以后要核对</p>
+<p><strong>背景</strong>：LangChain 最早以开源编排库为人所知，现在转向做不绑定特定模型和云的智能体运行、改进与治理平台 LangSmith。也就是说，公司想自己掌控智能体怎么跑、怎么改、怎么管，而不是完全交给某一家模型实验室。</p>
+<p><strong>发生了什么</strong>：LangChain 官方博客的发布时间为北京时间 11 月 13 日 23:55，TechCrunch 报道为 11 月 14 日 03:37。据官方博客，本轮融资 3 亿美元，估值 30 亿美元，由原有投资人 CapitalG 领投，新投资人 GIC 和 DFJ Growth 以及原有投资人 IVP、Sapphire Ventures 大幅参与。官方给出的客户规模是超过 7000 家组织已经依赖 LangSmith，例子包括 Harvey、Rippling、Listen Labs 等快速成长的初创公司，以及英伟达、丰田、Salesforce 等财富 500 强企业；并把 Workday 把新智能体部署周期从五个月缩短到一天内，作为治理平台的效果例子。TechCrunch 补充，此轮估值超过一年前 12.5 亿美元、1.25 亿美元那一轮的两倍。官方还预告 11 月 20 日会发布新的 LangSmith 能力。文中「7000 家」和「五个月到一天」都出自官方博客；一年前那一轮的数字来自 TechCrunch 的回顾，不是这篇官方公告里的原句。</p>
+<p><strong>为什么值得注意</strong>：对公司想自己掌控智能体、而不是完全交给某一家模型实验室的趋势，这是窗口里最明确的融资信号。用今天的核心思想来看，这笔钱被用来推动企业把运行和治理这一层接在自己手里，但客户规模和部署周期缩短都是官方自报，还要看后续是不是真的靠得住。11 月 20 日的产品更新可以再对照。</p>
+<p><strong>归类</strong>：丙类「接住以后要核对」。理由是融资用来推动企业自己掌控智能体的运行和治理，但「7000 家」和「五个月到一天」都出自官方博客，这一层到底接得稳不稳，还要继续核对。</p>
+<p><strong>核实状态</strong>：多来源确认。官方博客和 TechCrunch 都对得上 3 亿美元、30 亿美元估值和 CapitalG 领投。一年前那一轮的 1.25 亿美元和 12.5 亿美元估值来自 TechCrunch 的回顾，不是这篇官方公告里的原句。</p>
+<p><strong>来源</strong>：</p>
+<ul>
+<li>LangChain 官方博客，北京时间 2026-11-13 23:55：<a href="https://www.langchain.com/blog/series-c" target="_blank" rel="noopener noreferrer">https://www.langchain.com/blog/series-c</a></li>
+<li>TechCrunch，北京时间 2026-11-14 03:37：<a href="https://techcrunch.com/2026/11/13/ai-agent-startup-langchain-hits-3b-valuation/" target="_blank" rel="noopener noreferrer">https://techcrunch.com/2026/11/13/ai-agent-startup-langchain-hits-3b-valuation/</a></li>
+</ul>
+</article>
+<article id="ai-19" class="piece" data-cat="bing">
+<h3>AI-19 研究报告称，部分中国开源前沿模型的权重里留下了被禁运的英伟达 Blackwell 芯片训练痕迹；这是有待独立复核的研究主张，不能写成已经坐实的结论。</h3>
+<p class="stamp stamp-bing">接住以后要核对</p>
+<p><strong>背景</strong>：模型「权重」可以理解为训练完成后保存下来的参数。有研究认为，这些参数里仍会留下训练时所用芯片的配置痕迹。这条把黄仁勋辞职后的出口管制讨论、开源模型训练算力，以及科技部分 TK-05 里马来西亚的再出口核查连到了一起，但它们并排放在一起，并不表示已经构成因果关系。</p>
+<p><strong>发生了什么</strong>：北京时间 11 月 14 日 02:40，TechCrunch 报道称，前 OpenAI 研究员、非营利组织 Unemployment Labs 负责人 Will DePue，分析了深度求索（DeepSeek）、月之暗面（Moonshot AI）、MiniMax 和蚂蚁集团公开放出的开源权重，并认为包括月之暗面 Kimi 的 K3 版本和 DeepSeek 的 V4 模型在内、最受关注的模型带有在 Blackwell 芯片上训练的痕迹。TechCrunch 自己也写了限定语：这不一定等于模型完全用英伟达芯片训练，也不一定等于已经违反出口管制，因为芯片可能位于境外数据中心，马来西亚就是常被提到的路径。文中「约 200 万枚先进芯片在 2024 年和 2025 年进入中国」「27.5 万枚英伟达加速器在 2024 年和 2025 年进入马来西亚」来自对 Epoch AI 的转引。白宫顾问此前曾就月之暗面使用禁运芯片做过表态，属于更早的背景，不是本次新证据。</p>
+<p><strong>为什么值得注意</strong>：开源权重已经交到外面，但训练算力从哪来，目前只是一家研究机构的主张，TechCrunch 自己也加了限定语。用今天的核心思想来看，接住这些开源模型的人，还需要核对训练算力的来路，不能把研究主张写成已经坐实的走私或违法结论。它和 TK-05 可以互相参照：马来西亚部委强调「来查看过并不等于已经放行」，两边都还在核对，而不是已经结案。</p>
+<p><strong>归类</strong>：丙类「接住以后要核对」。理由是开源权重已经交到外面，训练算力从哪来是有待独立复核的研究主张，不能写成已经坐实的走私结论。</p>
+<p><strong>核实状态</strong>：单一来源。TechCrunch 页面可以打开，但证据包没有打开 Unemployment Labs 的原始报告或 Epoch AI 的原始数据表，也没有看到深度求索、月之暗面等公司的官方回应，尚未得到其他来源确认。</p>
+<p><strong>来源</strong>：</p>
+<ul>
+<li>TechCrunch，北京时间 2026-11-14 02:40：<a href="https://techcrunch.com/2026/11/13/export-banned-nvidia-chips-are-behind-chinas-most-powerful-ai-models-uh-oh-jensen/" target="_blank" rel="noopener noreferrer">https://techcrunch.com/2026/11/13/export-banned-nvidia-chips-are-behind-chinas-most-powerful-ai-models-uh-oh-jensen/</a></li>
+</ul>
+</article>
+<hr>
+<h2>第二部分 科技（8 条）</h2>
+<article id="tk-01" class="piece" data-cat="jia">
+<h3>TK-01 微软就 Outlook、Teams 等微软 365 全球故障公开致歉，并称原因是此前网络扩容中的技术问题，周五服务已出现大范围恢复，但当时仍未给出全面恢复的确定时间。</h3>
+<p class="stamp stamp-jia">还没真正交到</p>
+<p><strong>背景</strong>：这次故障影响 Outlook、Teams、SharePoint 和部分微软 365 应用，是时间窗内最重要的云计算与互联网基础设施事件。故障本身始于世界时 2026 年 11 月 12 日约 16:17，也就是北京时间 11 月 13 日 00:17，早于本采集窗起始点；本条收录的是窗内的原因说明、致歉与恢复进展。它要和人工智能部分的 AI-12 分开看：AI-12 写的是 Claude 自己的两轮故障，以及 Claude 里微软 365 连接器在窗口结束前被标为已解决；本条写的是微软 365 本身的全球故障。两件事可以互相参照，但不要合成一条。</p>
+<p><strong>发生了什么</strong>：据 The Verge 转引的微软声明，公司对给客户和合作伙伴造成的中断深表歉意，并称正在看到服务大范围恢复和稳定。微软明确说，这是技术问题，与网络攻击或人工智能智能体无关，问题来自更早一次网络容量升级，并在最近一次网络变更之后暴露；公司已经处理了根本问题，并继续为剩余客户和地区恢复服务。微软还解释，因为需求规模大，恢复是分阶段进行的，每一步都先验证稳定性，所以花的时间更长，但有助于保证恢复平稳，并承诺审查完成后会提供完整的事故报告。The Verge 于北京时间 11 月 14 日 00:17 更新报道，并在 03:15 补充了最新声明。BBC 同日报道称，到周五下午服务已大体恢复，微软说进展令人鼓舞，但不知道服务何时将全面恢复；故障影响了 70 多个国家，波及企业运营、政府服务和个人用户；受影响产品在全球有超过 4.3 亿人使用，这一数字是 BBC 转述微软网站的说法。BBC 还写到，日本政府、菲律宾最高法院、英国部分国民保健体系机构，以及北美的医院、法庭和铁路都受到波及。Ars Technica 补充了微软状态页关于服务器健康检查失败、邮件超时延长至 48 小时，以及北美、欧洲、亚太分区恢复的说明。</p>
+<p><strong>为什么值得注意</strong>：全球办公通信仍高度依赖少数云服务商，服务看似已经大范围交还给用户，但微软当时仍未给出全面恢复的确定时间。用今天的核心思想来看，周五已经致歉并宣布大范围恢复，并不等于全面恢复已经落地。对每天使用这些工具的他来说，窗内最需要知道的是：服务在恢复，完整事故报告还要等，偶发问题仍可能出现。它和 AI-12 里 Claude 连接器「已解决但仍可能有偶发错误」的提醒，可以对照着读。</p>
+<p><strong>归类</strong>：甲类「还没真正交到」。理由是周五已大范围恢复并致歉，当时仍未给出全面恢复的确定时间，看起来交还给用户了，其实还没有完整落地。</p>
+<p><strong>核实状态</strong>：多来源确认。微软官方声明被 The Verge 完整引用，BBC 独立报道了致歉、恢复进展和影响范围，Ars Technica 补充了状态页说明。故障起始时间在采集窗之前，但周五的原因定性、致歉和恢复进展均在窗内。</p>
+<p><strong>来源</strong>：</p>
+<ul>
+<li>The Verge，北京时间 2026-11-14 00:17 更新、03:15 补充：<a href="https://www.theverge.com/tech/1032862/microsoft-outlook-down-outage" target="_blank" rel="noopener noreferrer">https://www.theverge.com/tech/1032862/microsoft-outlook-down-outage</a></li>
+<li>BBC：<a href="https://www.bbc.com/news/articles/c6rrg51rkz09o" target="_blank" rel="noopener noreferrer">https://www.bbc.com/news/articles/c6rrg51rkz09o</a></li>
+<li>Ars Technica：<a href="https://arstechnica.com/tech-policy/2026/11/microsoft-blames-failed-server-health-checks-not-hackers-for-global-outage/" target="_blank" rel="noopener noreferrer">https://arstechnica.com/tech-policy/2026/11/microsoft-blames-failed-server-health-checks-not-hackers-for-global-outage/</a></li>
+</ul>
+</article>
+<article id="tk-02" class="piece" data-cat="jia">
+<h3>TK-02 SpaceX 准备在星舰第 15 次试飞中首次尝试助推器和飞船双回收，但发射窗口本身已落在本采集窗结束之后，不能写成已经完成的发射。</h3>
+<p class="stamp stamp-jia">还没真正交到</p>
+<p><strong>背景</strong>：星舰是 SpaceX 正在试验的大型可重复使用运载系统，由超级重型助推器和上面的飞船组成。「回收到发射场并由塔架捕捉」，指的是让返回的箭体被发射塔上的机械臂接住，而不是落到海上，目的是加快复飞。本条只收录窗内公布的飞行计划和发射准备。</p>
+<p><strong>发生了什么</strong>：SpaceX 官方任务页在时间窗内持续发布并更新这次飞行的方案，写明最早可在 2026 年 11 月 13 日美国中部时间下午 4:45 升空，对应北京时间 11 月 14 日 06:45，已经超出本采集窗结束点（北京时间 06:00）。75 分钟的发射窗口将在这一时刻打开，还要等待监管批准。官方写道，这次飞行计划首次把星舰和超级重型助推器都送回发射场捕获；如果成功，这将是轨道运载系统第一次完整回收，也是让星舰成为可快速重复使用火箭的突破。飞船预计在约 275 公里高度绕地球飞行，在超过 22 小时的飞行中完成大约 14 圈，并部署 26 颗星链 V3 卫星；官方称每颗可给星座增加 1 太比特容量，26 颗大约相当于 10 次猎鹰 9 号发射的 V2 Mini 运力。助推器预计在升空约 6 分 35 秒后尝试塔架捕获，飞船则要到次日再返回；如果飞船状态不佳，公司会改为在太平洋溅落。Space.com 在 11 月 13 日刊发了预告，美联社稿标注时间为 11 月 13 日 12:30（若为美国东部时间，则对应北京时间 11 月 14 日 01:30，仍在窗内）。美联社还写到，这是首次尝试捕获升级后的超级重型助推器（文中称其高度为 236 英尺，约 72 米）以及飞船本身（文中称 171 英尺，约 52 米）。截至本采集窗结束，公开报道仍处于发射准备和待美国联邦航空管理局批准阶段，没有已确认的发射结果。</p>
+<p><strong>为什么值得注意</strong>：如果这次任务按计划成功，意义会很大，但采集窗结束时发射还没有发生。用今天的核心思想来看，双回收方案已经公布，结果却还没有交到，不能把「准备进行」写成「已经完成」。对关心航天和基础设施的他来说，这条只应读成即将进行的试验。</p>
+<p><strong>归类</strong>：甲类「还没真正交到」。理由是双回收方案已经公布，发射窗口在采集窗之后，不能写成已经完成的发射，卫星和两级回收都还没有交到。</p>
+<p><strong>核实状态</strong>：多来源确认。飞行方案、双回收目标和星链 V3 载荷数字来自 SpaceX 官方页面，Space.com 与美联社作了交叉报道。截至本采集窗结束，没有已确认的发射结果。</p>
+<p><strong>来源</strong>：</p>
+<ul>
+<li>SpaceX 官方任务页：<a href="https://www.spacex.com/launches/starship-flight-15" target="_blank" rel="noopener noreferrer">https://www.spacex.com/launches/starship-flight-15</a></li>
+<li>Space.com，2026-11-13：<a href="https://www.space.com/space-exploration/launches-spacecraft/spacex-launching-historic-double-catch-starship-test-flight-today-watch-it-live" target="_blank" rel="noopener noreferrer">https://www.space.com/space-exploration/launches-spacecraft/spacex-launching-historic-double-catch-starship-test-flight-today-watch-it-live</a></li>
+<li>美联社稿（经 ABC News 转载）：<a href="https://abcnews.com/Technology/wireStory/spacex-aims-double-catch-starship-ambitious-test-flight-138116144" target="_blank" rel="noopener noreferrer">https://abcnews.com/Technology/wireStory/spacex-aims-double-catch-starship-ambitious-test-flight-138116144</a></li>
+</ul>
+</article>
+<article id="tk-03" class="piece" data-cat="jia">
+<h3>TK-03 联合发射联盟把携带 40 颗亚马逊 Leo 卫星的火神火箭发射，因氮气工厂断电推迟，新的升空时间已不在本采集窗内，卫星还没交到轨道上。</h3>
+<p class="stamp stamp-jia">还没真正交到</p>
+<p><strong>背景</strong>：这是火神火箭在固体助推器喷管连续出问题后的复飞任务，也是亚马逊为 Leo 宽带星座采购的 38 次火神发射中的第一次。美国太空军仍在评估火神能否重新执行国家安全发射，因此这次商业复飞的数据也会被用来判断后续安排。「38 次采购」「超过 5 万磅载荷」等数字，目前主要来自 Spaceflight Now 对联合发射联盟和亚马逊人士表态的转述。</p>
+<p><strong>发生了什么</strong>：据 Spaceflight Now 转引的联合发射联盟声明，公司在美国东部时间 11 月 13 日 08:41（北京时间 21:41）宣布推迟，这时距原定周五升空只剩四个多小时，发射团队已经开始向半人马座 5 上面级加注液氧。声明说，推迟原因是 Air Liquide 气态氮工厂断电，导致高压泵失效；在无法确认持续工质供应的情况下，团队决定改到备份机会。新的升空时间是美国东部时间 11 月 14 日 12:32:30，对应北京时间 11 月 15 日 01:32:30，已经不在本采集窗内。公司称火箭和它所携带的 40 颗亚马逊 Leo 卫星仍然状态良好。USA Today 同日确认推迟到 11 月 14 日，并写新的发射窗口为美国东部时间 12:32 至 13:01。Spaceflight Now 还写道，火箭将首次采用六台固体助推器和较短的半人马座上面级，载荷超过 5 万磅，并称这是该公司的纪录。本条只记录窗内宣布的推迟决定，不写出发射结果。</p>
+<p><strong>为什么值得注意</strong>：原计划在窗内发射，结果因为地面保障断电而推迟，卫星还停留在发射准备阶段。用今天的核心思想来看，复飞方案已经公布，东西还没有交到轨道上。它和 TK-02 的星舰试飞一样，都只能写成即将进行或已经改期的安排，不能提前写成成功或失败。</p>
+<p><strong>归类</strong>：甲类「还没真正交到」。理由是原计划窗内发射，因氮气工厂断电推迟，新的升空时间已出采集窗，卫星还没交到轨道上。</p>
+<p><strong>核实状态</strong>：多来源确认。推迟原因、新的发射时刻和卫星状态来自联合发射联盟声明，并由 Spaceflight Now 详细记录；USA Today 独立确认了推迟到 11 月 14 日，以及新的发射窗口。关于「38 次采购」「超过 5 万磅载荷」等数字，目前主要来自 Spaceflight Now 的转述。</p>
+<p><strong>来源</strong>：</p>
+<ul>
+<li>Spaceflight Now，报道标注 2026-11-13 12:25（若为美国东部时间，则对应北京时间 11-14 01:25）：<a href="https://spaceflightnow.com/2026/11/13/ulas-vulcan-rocket-plans-return-to-flight-with-launch-of-40-leo-satellites-for-amazon/" target="_blank" rel="noopener noreferrer">https://spaceflightnow.com/2026/11/13/ulas-vulcan-rocket-plans-return-to-flight-with-launch-of-40-leo-satellites-for-amazon/</a></li>
+<li>USA Today 同日更新：<a href="https://www.usatoday.com/story/tech/space/2026/11/13/spacex-ula-starship-vulcan-rocket-launch-friday-13th/92739627007/" target="_blank" rel="noopener noreferrer">https://www.usatoday.com/story/tech/space/2026/11/13/spacex-ula-starship-vulcan-rocket-launch-friday-13th/92739627007/</a></li>
+</ul>
+</article>
+<article id="tk-04" class="piece" data-cat="yi">
+<h3>TK-04 中国国家航天局启动天问四号有效载荷征集，任务目标包括环绕木星，并对木卫四进行环绕和着陆探测，申报须在 12 月 31 日前提交。</h3>
+<p class="stamp stamp-yi">交的时候留了确认</p>
+<p><strong>背景</strong>：天问四号是中国的木星探测任务。约 2029 年由长征五号在文昌发射这一时间表，被《中国日报》明确写为「此前已经公布」的规划，不是本次通知新给出的发射日期。</p>
+<p><strong>发生了什么</strong>：国家航天局探月与航天工程中心通知标注发布日期为 2026 年 11 月 13 日，《中国日报》报道更新时间为当天 18:12，央视新闻客户端稿经中新网转发的时间为 19:29。官方通知写明，天问四号任务主要目标是实现木星环绕、木卫四环绕和着陆探测，深化木星系科学研究；为发挥国（境）内外优势力量，拟开展研制意向征集，通过竞争择优方式遴选有效载荷设计方案与承担单位。申报单位须按指南论证，于 2026 年 12 月 31 日前将项目建议书报送至探月与航天工程中心。官方通知鼓励境外科研机构参加由中国机构牵头的联合申报，也可以自行牵头申报，但境外机构承担的研制经费原则上自担；意向单位还要在 11 月 26 日前反馈参加宣贯会的人员信息。《中国日报》补充，探测器将在轨道器和着陆器上配备 12 台科学载荷：轨道器携带 10 项，面向两个核心研究领域；前往木卫四的着陆器将带两台就位测量仪器，一台用拉曼光谱识别着陆点物质的表面成分分析仪，一台做现场磁场测量的表面磁强计，用来研究木卫四内部结构以及是否可能存在地下海洋。</p>
+<p><strong>为什么值得注意</strong>：这是中国把深空探测从火星拓展到木星系、并向国内外公开征集科学载荷的一步。用今天的核心思想来看，征集已经公开，方案却要先提交、再走遴选和确认，载荷还没有交到任务上。对医学和科学读者来说，值得记住的是任务目标和公开征集这件事本身；2029 年发射不是今天新给的日期。</p>
+<p><strong>归类</strong>：乙类「交的时候留了确认」。理由是公开征集载荷方案，12 月 31 日前要提交，先走遴选和确认，而不是方案一经交出就直接成立。</p>
+<p><strong>核实状态</strong>：多来源确认。任务目标和征集程序来自国家航天局官网通知；《中国日报》和央视新闻客户端对 12 项载荷构成、轨道器与着陆器分工作了补充报道，二者相互吻合。约 2029 年发射是此前已公布的规划，不是本次通知新给的日期。</p>
+<p><strong>来源</strong>：</p>
+<ul>
+<li>中国国家航天局网站通知，2026-11-13：<a href="https://www.cnsa.gov.cn/n6758823/n6758839/c10808380/content.html" target="_blank" rel="noopener noreferrer">https://www.cnsa.gov.cn/n6758823/n6758839/c10808380/content.html</a></li>
+<li>《中国日报》，北京时间 2026-11-13 18:12：<a href="https://www.chinadaily.com.cn/a/202611/13/WS6af6e2a4e4b03ebf8519c4c9.html" target="_blank" rel="noopener noreferrer">https://www.chinadaily.com.cn/a/202611/13/WS6af6e2a4e4b03ebf8519c4c9.html</a></li>
+<li>中新网转发央视新闻客户端稿，北京时间 2026-11-13 19:29：<a href="https://www.chinanews.com.cn/gn/2026/11-13/10731669.shtml" target="_blank" rel="noopener noreferrer">https://www.chinanews.com.cn/gn/2026/11-13/10731669.shtml</a></li>
+</ul>
+</article>
+<article id="tk-05" class="piece" data-cat="bing">
+<h3>TK-05 马来西亚投资、贸易及工业部声明，正在核查云公司 Megaspeed 的马来西亚子公司是否把先进人工智能芯片再出口，并强调来查看过并不等于已经放行。</h3>
+<p class="stamp stamp-bing">接住以后要核对</p>
+<p><strong>背景</strong>：这条属于芯片出口管制和半导体供应链新闻，而不是人工智能产品发布。它和前一天英伟达人事变动、以及人工智能部分 AI-19 里关于 Blackwell 训练痕迹、马来西亚转运路径的研究主张，处在同一条供应链背景里，但本条依据的是 11 月 13 日马来西亚官方新表态。两边可以互相参照，并排放在一起并不表示已经构成因果关系。</p>
+<p><strong>发生了什么</strong>：马来西亚投资、贸易及工业部声明标注日期为 2026 年 11 月 13 日，该部网站上这份 PDF 的最后修改时间为世界时 11 月 13 日 03:23:13，对应北京时间 11:23；《马来邮报》首发时间也是马来西亚时间 11 月 13 日 11:23，CNA 报道时间为 12:51。部委声明写明，该部从未对总部位于新加坡的 Megaspeed International Pte Ltd 或其马来西亚关联公司 Speedmatrix Sdn Bhd「放行」或背书；Speedmatrix 是马来西亚数据中心的租户，该部对这些设施的核查属于对数据中心行业的日常监管，不应被理解为某家公司已经获得放行。声明还划清了规则：作为数据中心租户，Speedmatrix 把自己的服务器和人工智能芯片带进马来西亚开展业务，把人工智能芯片带进马来西亚目前不需要许可证；但自 2025 年 7 月起，任何人寻求从马来西亚或经马来西亚出口、再出口、转运或过境美国高性能人工智能芯片，必须先根据 2010 年《战略贸易法》向该部取得许可。该部因此正与马来西亚皇家海关合作，确定带进马来西亚的芯片是否此后被再出口到其他国家，以及这类再出口是否依法进行。声明最后说，马来西亚欢迎数据中心和技术投资，但不会允许自己被用来绕开出口管制。路透社另引国家通讯社 Bernama 报道，首相安瓦尔表示，目前没有迹象表明与 Megaspeed 相关的芯片已从马来西亚运出，马方也会配合调查。这句不是部委声明正文里的原句。部委声明本身并没有公布核查结论，也没有给出涉及芯片的具体数量。</p>
+<p><strong>为什么值得注意</strong>：用今天的核心思想来看，部委明确说来查看过并不等于已经放行，正在核对芯片有没有再出口。对关心开源模型训练算力来路的他来说，这条提供的是官方正在核查、但还没有给出结论的一层，不能把「正在查」写成「已经查实」或「已经排除」。</p>
+<p><strong>归类</strong>：丙类「接住以后要核对」。理由是部委明确说来查看过并不等于已经放行，正在核对芯片有没有再出口，核查结论还没有交出来。</p>
+<p><strong>核实状态</strong>：多来源确认。核心表述来自马来西亚投资、贸易及工业部官方声明 PDF，CNA 和《马来邮报》均作了转述，内容一致。首相安瓦尔「没有迹象表明相关芯片已从马来西亚运出」的说法，来自路透社对 Bernama 的转述，不是这份部委声明正文里的原句。</p>
+<p><strong>来源</strong>：</p>
+<ul>
+<li>马来西亚投资、贸易及工业部声明 PDF，北京时间 2026-11-13 11:23：<a href="https://www.miti.gov.my/miti/resources/Speech/MEDIA_STATEMENT_13112026.pdf" target="_blank" rel="noopener noreferrer">https://www.miti.gov.my/miti/resources/Speech/MEDIA_STATEMENT_13112026.pdf</a></li>
+<li>CNA，北京时间 2026-11-13 12:51：<a href="https://www.channelnewsasia.com/asia/malaysia-probe-megaspeed-speedmatrix-ai-alice-huang-nvidia-6548491" target="_blank" rel="noopener noreferrer">https://www.channelnewsasia.com/asia/malaysia-probe-megaspeed-speedmatrix-ai-alice-huang-nvidia-6548491</a></li>
+<li>《马来邮报》，马来西亚时间 2026-11-13 11:23：<a href="https://www.malaymail.com/news/malaysia/2026/11/13/miti-says-it-never-cleared-megaspeed-speedmatrix-as-malaysia-probes-possible-chip-re-exports/243065" target="_blank" rel="noopener noreferrer">https://www.malaymail.com/news/malaysia/2026/11/13/miti-says-it-never-cleared-megaspeed-speedmatrix-as-malaysia-probes-possible-chip-re-exports/243065</a></li>
+</ul>
+</article>
+<article id="tk-06" class="piece" data-cat="jia">
+<h3>TK-06 苹果官方宣布智能家居屏幕 HomeView 从 11 月 13 日起开售，但欧盟因 iOS 尚无 Siri AI 暂不出售；同日新款 Apple TV 4K 开卖，Home Collection 首批配件还只是预购，发货要到 12 月中旬。</h3>
+<p class="stamp stamp-jia">还没真正交到</p>
+<p><strong>背景</strong>：这是苹果智能家居硬件在本时间窗内正式进入零售的一天，而不是新的模型发布会。产品线本身已在 2026 年 10 月发布，本条新信息是 11 月 13 日的开售和预购。官方把 HomeView 写成「由 Apple Intelligence 和 Siri AI 驱动的家庭中心」，因此讯AI 和讯科都收录了这条，主编把两边合并，放在科技部分，不再在人工智能部分单列。</p>
+<p><strong>发生了什么</strong>：苹果新闻室稿标注日期为 2026 年 11 月 13 日，页面的修改时间为北京时间 21:59，并写明「从今天 11 月 13 日开始」可在部分地区的苹果零售店、官网和官方应用购买。据官方新闻稿，澳大利亚、加拿大、印度、新西兰、新加坡、英国和美国的顾客，可以从当天起订购桌面版 HomeView，有银色、星光色、玫瑰粉色和深空灰色，美国售价 299 美元；壁挂版有深空灰色和银色，美国售价同样是 299 美元。HomeView 配备 7 英寸 Liquid Retina 显示屏，最多可识别 6 个人，并在信息、FaceTime、日历、提醒事项和查找里显示各自的个人内容。因为欧盟的 iOS 目前还没有 Siri AI，该产品暂不在欧盟出售。讯AI 证据包还写到，壁挂版有三种支架，其中 USB-C 款起价 59.95 美元、交流电款起价 79.95 美元，这些价格都出自新闻稿。9to5Mac 在北京时间 21:57 报道，搭载 A19 芯片的新款 Apple TV 4K 同日开卖，美国售价同样是 299 美元。The Verge 在北京时间 23:22 确认，苹果与 LG、施耐德联合开发的 Home Collection 中，目前只有少数 LG 配件开放预购，包括定价 299.95 美元的 LG 户外摄像头、199.95 美元的室内摄像头，以及 249.95 美元的 LG 视频门铃，预计发货时间是 12 月 11 日至 17 日；其余门锁、温控器和传感器仍未给出预购或发货时间。The Verge 与 9to5Mac 对这三款配件的预购价格和发货时间有交叉确认。</p>
+<p><strong>为什么值得注意</strong>：产品看起来已经开卖，但欧盟接不住，配件还只是预购，发货要到 12 月中旬。用今天的核心思想来看，宣布开售并不等于所有市场、所有配件都已经被接住。对关心端侧助手何时走进日常空间的他来说，这条的重点是：独立屏幕开始零售了，但范围和配套硬件都还有缺口。Siri AI 的实际能力和「仍处测试」的细节，要以官方和后续评测为准，新闻稿本身的用语偏宣传。</p>
+<p><strong>归类</strong>：甲类「还没真正交到」。理由是 HomeView 已开售，但欧盟接不住；配件还只是预购，发货要到 12 月中旬，并没有完整交到所有计划中的市场和配套产品上。</p>
+<p><strong>核实状态</strong>：多来源确认。HomeView 的开售日期、售价、销售地区和欧盟暂缺，均来自苹果官方新闻室，并与 9to5Mac、The Verge、Digital Trends 的报道相符。新款 Apple TV 4K 同日开卖，目前主要得到 9to5Mac 的详细报道；Apple Home Collection 首批三款 LG 配件的预购价格和 12 月中旬发货时间，由 The Verge 与 9to5Mac 交叉确认。</p>
+<p><strong>来源</strong>：</p>
+<ul>
+<li>苹果新闻室，2026-11-13（页面修改时间约为北京时间 21:59）：<a href="https://www.apple.com/newsroom/2026/11/apple-homeview-available-today/" target="_blank" rel="noopener noreferrer">https://www.apple.com/newsroom/2026/11/apple-homeview-available-today/</a></li>
+<li>9to5Mac（HomeView 与新款 Apple TV 4K），北京时间 2026-11-13 21:57：<a href="https://9to5mac.com/2026/11/13/new-apple-tv-4k-and-homeview-now-available-heres-everything-you-need-to-know/" target="_blank" rel="noopener noreferrer">https://9to5mac.com/2026/11/13/new-apple-tv-4k-and-homeview-now-available-heres-everything-you-need-to-know/</a></li>
+<li>The Verge（Home Collection 预购），北京时间 2026-11-13 23:22：<a href="https://www.theverge.com/tech/1032920/apple-smart-home-collection-release-ship-dates-available-pricing" target="_blank" rel="noopener noreferrer">https://www.theverge.com/tech/1032920/apple-smart-home-collection-release-ship-dates-available-pricing</a></li>
+<li>9to5Mac（门铃与智能摄像头预购）：<a href="https://9to5mac.com/2026/11/13/apple-homes-new-video-doorbell-smart-cameras-now-available-to-order/" target="_blank" rel="noopener noreferrer">https://9to5mac.com/2026/11/13/apple-homes-new-video-doorbell-smart-cameras-now-available-to-order/</a></li>
+</ul>
+</article>
+<article id="tk-07" class="piece" data-cat="bing">
+<h3>TK-07 英伟达高层变动后的下一个交易日，亚洲芯片供应链评估近端影响有限，但美国芯片股周五普遍收跌；SK 海力士的两个跌幅口径要分开写。</h3>
+<p class="stamp stamp-bing">接住以后要核对</p>
+<p><strong>背景</strong>：黄仁勋辞职本身发布于 11 月 12 日美国开盘前，对应北京时间 11 月 12 日晚间，已在本采集窗之外。本条只收录 11 月 13 日的供应链分析和美股收盘结果。它可以和人工智能部分关于国会调查、对华项目盘点和行业现场反应的条目对照着读，但并排放在一起并不表示有因果关系。</p>
+<p><strong>发生了什么</strong>：CNBC 报道发布于北京时间 11 月 13 日 15:29。报道称，英伟达的高层变动不太可能给三星电子、台积电等亚洲主要半导体供应商带来立即中断，但黄仁勋离开引发了对其更长期产品战略和供应链关系的疑问。韩国券商多亿投资证券分析师 Nam Dae-jong 和 Kim Yeon-mi 在周五的研究报告中对 CNBC 表示，黄仁勋离开不太可能影响半导体行业的近端前景；他们预计英伟达与台积电的代工关系将维持不变，与三星代工业务的合作也会继续，理由包括三星 4 纳米制程制造以及下一代高带宽内存技术方面的合作。CNBC 还写到，英伟达的另一家关键供应商 SK 海力士在周五扭转早盘涨幅，收跌 3.03%。华硕共同首席执行官许先越也对 CNBC 说，英伟达的产品和生态系统优势不会一夜改变，不过公司会观察产品质量、服务成本和交货是否受到影响。Forbes 记者 Fiona Riley 的收盘综述经 Yahoo Finance 转载，标注时间为北京时间 11 月 14 日 05:36：英伟达股价周五收跌 2%，此前周四已跌 4.3%；超微、博通和高通在周四宣布后的几个小时里曾随英伟达急跌而上涨，但周五分别收跌 8.8%、4.9% 和 2.6%；英特尔收跌 2.5%，台积电 1.7%，美光 2.5%，Sandisk 5.6%，SK 海力士 4.3%，三星 1%，CoreWeave 6.2%。需要分开引用的是：CNBC 写到 SK 海力士在韩国市场周五收跌 3.03%，Forbes 列出的 4.3% 可能对应不同交易场所或统计口径，不能混成同一个数字。</p>
+<p><strong>为什么值得注意</strong>：对芯片和半导体制造环节来说，11 月 13 日最需要记下的不是前一天已经发生的人事宣布，而是供应链会不会马上断裂，以及市场如何重新定价。用今天的核心思想来看，近端供应链据称还能接住，中长期路线和周五收盘跌幅都在被重新定价。分析师判断和华硕管理层表态属于单一机构或单家公司的看法，不是已经发生的订单变更。超微周五收跌 8.8%，明显高于英伟达自身的 2%，说明市场在给整个板块重新定价，而不只是给一家公司定价。</p>
+<p><strong>归类</strong>：丙类「接住以后要核对」。理由是近端供应链据称还能接住，中长期路线和周五收盘跌幅都在被重新定价，而且 SK 海力士的两个跌幅口径要分开写，不能合成一个数字。</p>
+<p><strong>核实状态</strong>：多来源确认周五芯片股普遍下跌，以及「近端供应链未必立即中断、中长期仍有疑问」这一分析方向。具体收盘跌幅以 Forbes 收盘综述为准；SK 海力士 3.03% 这一数字来自 CNBC 对韩国市场收盘的表述，与 Forbes 列出的 4.3% 不完全一致，已分开标注。分析师判断和华硕管理层表态属于单一机构或单家公司的看法。黄仁勋辞职事实本身发生在采集窗之前，本条不把它当作窗内新公告。</p>
+<p><strong>来源</strong>：</p>
+<ul>
+<li>CNBC，北京时间 2026-11-13 15:29：<a href="https://www.cnbc.com/2026/11/13/nvidia-without-jensen-huang-what-lies-ahead-for-asian-chipmakers-.html" target="_blank" rel="noopener noreferrer">https://www.cnbc.com/2026/11/13/nvidia-without-jensen-huang-what-lies-ahead-for-asian-chipmakers-.html</a></li>
+<li>Forbes 收盘综述（经 Yahoo Finance 转载），北京时间 2026-11-14 05:36：<a href="https://finance.yahoo.com/markets/stocks/articles/ai-chip-stocks-finish-down-213620910.html" target="_blank" rel="noopener noreferrer">https://finance.yahoo.com/markets/stocks/articles/ai-chip-stocks-finish-down-213620910.html</a></li>
+</ul>
+</article>
+<article id="tk-08" class="piece" data-cat="jia">
+<h3>TK-08 荣耀首席执行官李健宣布，荣耀 700 系列发布会定于 11 月 23 日 14:30 在武汉举行，产品和售价还没交到。</h3>
+<p class="stamp stamp-jia">还没真正交到</p>
+<p><strong>背景</strong>：这是一条消费电子档期新闻。11 月 13 日新确认的信息是发布会时间、地点和代言人，而不是全新的硬件发布。IT之家明确写到，9000 毫安时电池、2 亿像素主摄等配置，已经在 11 月 12 日的媒体沟通会上公布，因此这些规格不属于本采集窗内的首次披露，只适合作为背景。</p>
+<p><strong>发生了什么</strong>：据 IT之家北京时间 11 月 13 日 13:04 的报道，荣耀终端股份有限公司首席执行官李健于 11 月 13 日在微博预热即将推出的荣耀 700 系列新机，公布代言人为鞠婧祎，并官宣新品发布时间定档 11 月 23 日。配图海报明确显示，荣耀 700 系列追光之旅暨全场景新品发布会定档 11 月 23 日 14:30。荣耀品牌营销部总裁、全球首席营销官关海涛也在微博发文表示「11 月 23 日，武汉见」，可见发布会将在武汉举行。Gizmochina 同样报道了 11 月 23 日举行发布会。采集时未能打开微博原帖本身。</p>
+<p><strong>为什么值得注意</strong>：发布会日期已经定了，产品和售价却还没有交到用户手里。对关注国内中端手机市场的读者来说，下一步应看 11 月 23 日发布会上是否公布售价和开售安排，不宜把 12 日沟通会上的配置当成 13 日的新发布。</p>
+<p><strong>归类</strong>：甲类「还没真正交到」。理由是只定了 11 月 23 日的发布会，产品和售价还没交到。</p>
+<p><strong>核实状态</strong>：多来源确认发布会定档。IT之家和 Gizmochina 都报道了 11 月 23 日举行发布会，IT之家还写明时间为 14:30、地点在武汉，并直接转述了李健和关海涛的微博内容。采集时未能打开微博原帖本身。配置参数来自 11 月 12 日沟通会，已超出本采集窗，不能当作 13 日的新发布。</p>
+<p><strong>来源</strong>：</p>
+<ul>
+<li>IT之家，北京时间 2026-11-13 13:04：<a href="https://www.ithome.com/1/026/674.htm" target="_blank" rel="noopener noreferrer">https://www.ithome.com/1/026/674.htm</a></li>
+<li>Gizmochina，2026-11-13：<a href="https://www.gizmochina.com/2026/11/13/honor-700-series-launch-event-officially-set-november-23/" target="_blank" rel="noopener noreferrer">https://www.gizmochina.com/2026/11/13/honor-700-series-launch-event-officially-set-november-23/</a></li>
+</ul>
+</article>
+<hr>
+<h2>第三部分 医学（22 条）</h2>
+<article id="med-01" class="piece" data-cat="jia">
+<h3>MED-01 世界卫生组织发布第 46 次脊灰《国际卫生条例》紧急委员会声明：总干事认定野生脊灰和循环疫苗衍生脊灰仍构成国际关注的突发公共卫生事件。</h3>
+<p class="stamp stamp-jia">还没真正交到</p>
+<p><strong>背景</strong>：这是世界卫生组织依据《国际卫生条例》对脊灰疫情的例行紧急委员会声明。国际关注的突发公共卫生事件（PHEIC）是该条例下的最高警示级别之一，意味着疫情仍有国际传播风险，需要继续采取临时建议。会议本身在 2026 年 9 月 30 日召开，但声明 11 月 13 日才公布。</p>
+<p><strong>发生了什么</strong>：世界卫生组织官网标注声明发布于 2026 年 11 月 13 日，日内瓦；文中写明总干事于 11 月 12 日作出决定，声明于 13 日正式发布。声明写到，自 2026 年 5 月上次紧急委员会会议以来，两个地方性流行国家新报告了 25 例野生脊灰病毒 1 型（WPV1）病例，其中阿富汗 22 例、巴基斯坦 3 例。2026 年迄今 WPV1 病例为 29 例：阿富汗 25 例、巴基斯坦 4 例。2025 年全年报告 52 例（阿富汗 21 例、巴基斯坦 31 例），2024 年则为 99 例。环境监测方面，2026 年迄今共报告 204 份 WPV1 阳性样本，其中阿富汗 76 份、巴基斯坦 128 份。基于当前野生脊灰和循环疫苗衍生脊灰（cVDPV）的形势以及受影响国家提交的报告，总干事接受委员会评估，于 2026 年 11 月 12 日认定脊灰病毒形势继续构成针对 WPV1 和 cVDPV 的国际关注的突发公共卫生事件；同时采纳委员会意见，认为这一形势不构成大流行紧急情况，并批准延长《国际卫生条例》下的临时建议，以降低脊灰病毒国际传播风险，自 2026 年 11 月 12 日起生效。阿富汗南部、巴基斯坦开伯尔-普赫图赫瓦南部和卡拉奇仍是持续传播的关键地带。</p>
+<p><strong>为什么值得注意</strong>：2026 年迄今病例较前两年继续下降，但 PHEIC 并没有解除。用今天的核心思想来看，消灭脊灰还没有交到，警示和临时建议仍要继续接住。对正在学流行病学和预防医学的他来说，这是把课本里的「消灭脊灰」放到当前全球卫生治理里看的一份一手材料。病例和环境监测数字均出自该声明。</p>
+<p><strong>归类</strong>：甲类「还没真正交到」。理由是国际关注的突发公共卫生事件继续存在，消灭脊灰还没有交到。</p>
+<p><strong>核实状态</strong>：单一来源（官方一手）。这是世界卫生组织官网正式声明；总干事决定日期（11 月 12 日）与声明发布日期（11 月 13 日）均以原文为准。尚未得到其他来源确认，但作为官方一手声明，正文已按原文转述。</p>
+<p><strong>来源</strong>：</p>
+<ul>
+<li>世界卫生组织第 46 次脊灰紧急委员会声明，2026-11-13：<a href="https://www.who.int/news/item/13-11-2026-statement-of-the-forty-sixth-meeting-of-the-polio-ihr-emergency-committee" target="_blank" rel="noopener noreferrer">https://www.who.int/news/item/13-11-2026-statement-of-the-forty-sixth-meeting-of-the-polio-ihr-emergency-committee</a></li>
+</ul>
+</article>
+<article id="med-02" class="piece" data-cat="jia">
+<h3>MED-02 世界卫生组织：成员国重申将力争在 2027 年 5 月世界卫生大会前完成《大流行病协定》病原体获取与惠益分享附件谈判，但文本还没谈成。</h3>
+<p class="stamp stamp-jia">还没真正交到</p>
+<p><strong>背景</strong>：病原体获取与惠益分享（PABS）附件要解决的，是下次大流行来临时「谁能及时拿到病毒样本和序列、谁能公平获得疫苗和药物」这一核心治理问题。这次谈判是 11 月 2 日至 13 日举行的第 9 次政府间工作组会议。</p>
+<p><strong>发生了什么</strong>：世界卫生组织新闻稿标注 2026 年 11 月 13 日，日内瓦。成员国推进了《大流行病协定》PABS 附件谈判，并重申承诺在 2027 年 5 月世界卫生大会审议前完成该附件。附件将建立一个系统，确保迅速、透明地分享具有大流行潜力的病原体及其基因序列数据，同时确保对由此产生的疫苗、诊断和治疗产品给予迅速而公平的获取。成员国同意在接下来几个月保持势头，包括通过非正式会议拉近立场。第 9 次政府间工作组将在 2027 年 1 月 11 日至 15 日恢复正式谈判，并已排定 2 月 15 日至 19 日、3 月 15 日至 25 日两轮追加正式谈判。这次为期两周的谈判没有宣布谈成最终文本。</p>
+<p><strong>为什么值得注意</strong>：它和具体临床发现不同，却直接关系到未来传染病应对的国际规则。用今天的核心思想来看，成员国再次承诺 2027 年 5 月完成，文本却还没有谈成，承诺还没有交到可以执行的规则上。对学预防医学的他来说，值得记住的是时间表和「还没有谈成」这一点，而不是把重申承诺写成已经达成协定。</p>
+<p><strong>归类</strong>：甲类「还没真正交到」。理由是成员国再次承诺 2027 年 5 月完成，文本还没谈成，规则还没有交到。</p>
+<p><strong>核实状态</strong>：单一来源（官方一手）。这是世界卫生组织官网正式新闻稿。</p>
+<p><strong>来源</strong>：</p>
+<ul>
+<li>世界卫生组织新闻稿，2026-11-13：<a href="https://www.who.int/news/item/13-11-2026-member-states-reiterate-commitment-to-finalize-pandemic-agreement-pabs-annex-by-may-2027" target="_blank" rel="noopener noreferrer">https://www.who.int/news/item/13-11-2026-member-states-reiterate-commitment-to-finalize-pandemic-agreement-pabs-annex-by-may-2027</a></li>
+</ul>
+</article>
+<article id="med-03" class="piece" data-cat="jia">
+<h3>MED-03 世界粮食计划署、粮农组织、儿童基金会与世界卫生组织联合警告：刚果（金）急性粮食不安全人数预计再创新高，埃博拉等疫情正在叠加危机，人还没有被接住。</h3>
+<p class="stamp stamp-jia">还没真正交到</p>
+<p><strong>背景</strong>：昨天窗内已经有无国界医生和世界卫生组织非洲区关于刚果民主共和国本迪布焦型埃博拉的通报，今天这条新材料把疫情放回「冲突 + 饥荒 + 多种传染病」的叠加背景里。IPC 是综合粮食安全阶段分类，第 3 阶段为危机级，第 4 阶段为紧急级。</p>
+<p><strong>发生了什么</strong>：世界卫生组织转载的四机构联合新闻稿标注 2026 年 11 月 13 日。据最新 IPC 分析，预计 2027 年 1 月至 6 月将有创纪录的 3030 万人处于危机级或以上急性粮食不安全，冲突、流离失所和粮价上涨是主要推动因素，并叠加埃博拉和其他疾病暴发。2026 年 9 月至 12 月，已有近 2900 万人——几乎占人口的四分之一——处于危机级或以上，其中 360 万人处于紧急级。到 2027 年初，处于紧急级饥饿的人数预计再增加近 60 万，达到 420 万；危机级或以上的总人数将从 2026 年 1 月至 6 月的 2650 万升至 3030 万。新闻稿明确提到，埃博拉、mpox 和霍乱同时加重医疗和营养服务的中断，冲击农作和生计，限制人员流动，并抬高家庭支出。人数均出自该联合新闻稿。</p>
+<p><strong>为什么值得注意</strong>：对医学生来说，这是理解复杂人道主义危机里营养不良、卫生设施中断和疫情传播如何互相放大的一份联合报告。用今天的核心思想来看，预计 2027 年上半年将有创纪录的 3030 万人处于危机级或以上粮食不安全，叠加疫情，人还没有被接住。它和昨天已经出现的埃博拉通报可以对照着读，但并排放在一起并不表示某一项疫情单独造成了饥荒数字。</p>
+<p><strong>归类</strong>：甲类「还没真正交到」。理由是预计 2027 年上半年将有创纪录的 3030 万人处于危机级或以上粮食不安全，叠加疫情，人还没有被接住。</p>
+<p><strong>核实状态</strong>：多来源确认。世界卫生组织官网发布的是世界粮食计划署、粮农组织、儿童基金会与世界卫生组织的联合新闻稿，数字来自 IPC 分析；四家联合国机构共同背书。</p>
+<p><strong>来源</strong>：</p>
+<ul>
+<li>四机构联合新闻稿（经世界卫生组织发布），2026-11-13：<a href="https://www.who.int/news/item/13-11-2026-conflict-and-disease-outbreaks-deepen-dr-congo-s-hunger-crisis-as-record-numbers-are-projected-to-face-acute-food-insecurity" target="_blank" rel="noopener noreferrer">https://www.who.int/news/item/13-11-2026-conflict-and-disease-outbreaks-deepen-dr-congo-s-hunger-crisis-as-record-numbers-are-projected-to-face-acute-food-insecurity</a></li>
+</ul>
+</article>
+<article id="med-04" class="piece" data-cat="jia">
+<h3>MED-04 世界卫生组织东南亚区域办事处呼吁以更强的多部门行动终结结核：该区域治疗成功率好于全球平均，但只有 47% 的新发和复发患者在诊断时用上了推荐的快速检测。</h3>
+<p class="stamp stamp-jia">还没真正交到</p>
+<p><strong>背景</strong>：全球结核病报告已在昨天窗内由世界卫生组织总部发布，今天这条是东南亚区域办事处给出的区域拆解，有新的区域数字，不宜当成同一份报告的重复转载。</p>
+<p><strong>发生了什么</strong>：该区域新闻稿标注 2026 年 11 月 13 日，新德里。最新估计显示，该区域 2025 年约有 360 万人罹患结核，占全球新发的 34%；结核相关死亡 40 万，占全球的 35%。该区域还约占全球利福平耐药和耐多药结核负担的 38%，估计有 14 万人发生这些类型的结核。尽管负担高，区域内国家也有进展：2025 年，87% 的结核患者得到了诊断和治疗服务，全球这一比例为 79%；治疗成功率也高于全球平均，药物敏感结核为 93%，利福平耐药结核为 74%。但早期发现仍有缺口，只有 47% 的新发和复发患者在诊断时使用了世界卫生组织推荐的快速检测方法。2025 年，该区域用于结核预防和关怀的资金为 10.3 亿美元，其中 91% 来自国内，但这只约占全球结核资金的 16%，而该区域占全球病例的 34%。证据包还写到，营养不良和糖尿病每年分别贡献约 45 万和 40 万新发病例，44% 的患者家庭面临灾难性支出。数字均出自该区域新闻稿。</p>
+<p><strong>为什么值得注意</strong>：对中国读者也很有对照意义，因为南亚和东南亚是全球结核负担的重心。用今天的核心思想来看，治疗成功率看起来已经交了出去，快速检测却还没有交到一半新发和复发患者手里，「治疗成绩好」不等于发现这一层已经成立。对正在学传染病学的他来说，87%、93% 和 47% 这组数字适合放在一起读，看清进展和缺口不在同一层。</p>
+<p><strong>归类</strong>：甲类「还没真正交到」。理由是治疗成功率好于全球平均，但只有 47% 的新发和复发患者在诊断时用上了推荐的快速检测，早期发现还没有交到该交的位置。</p>
+<p><strong>核实状态</strong>：单一来源（官方一手）。这是世界卫生组织东南亚区域办事处正式新闻稿，区域数字与 11 月 12 日全球报告相衔接，但本日才以区域新闻稿形式发布。</p>
+<p><strong>来源</strong>：</p>
+<ul>
+<li>世界卫生组织东南亚区域办事处新闻稿，2026-11-13：<a href="https://www.who.int/southeastasia/news/detail/13-11-2026-who-calls-for-stronger-multisectoral-action-to-end-tb-in-south-east-asia-region" target="_blank" rel="noopener noreferrer">https://www.who.int/southeastasia/news/detail/13-11-2026-who-calls-for-stronger-multisectoral-action-to-end-tb-in-south-east-asia-region</a></li>
+</ul>
+</article>
+<article id="med-05" class="piece" data-cat="jia">
+<h3>MED-05 全球模拟世界卫生大会青年代表通过《塑料与健康青年宣言》，要求在全球塑料条约中写入具有约束力的健康条款；主席非正式文本里还没有健康专章，这也不是成员国决议。</h3>
+<p class="stamp stamp-jia">还没真正交到</p>
+<p><strong>背景</strong>：这不是政府间谈判的最终结果，而是世界卫生组织与联合国协会世界联合会合作的模拟世界卫生大会上，青年代表通过的一份宣言。会议于 11 月 10 日至 13 日在日内瓦总部举行。</p>
+<p><strong>发生了什么</strong>：世界卫生组织新闻稿标注 2026 年 11 月 13 日。来自 50 多个国家、世界卫生组织全部六个区域的 400 多名青年领袖，在第四届全球模拟世界卫生大会闭幕式上通过了这份宣言，呼吁政府保护人类健康免受塑料可预防的危害。宣言面向 2027 年的两场会议：3 月恢复的全球塑料条约谈判，以及 5 月的第八十届世界卫生大会。代表们指出，2026 年 8 月的条约主席非正式文本里没有健康专章。宣言提出 11 项行动呼吁，并写到：塑料中使用或发现的化学物超过 1.6 万种，其中至少四分之一具有危害性；塑料微粒已在人的血液、脑组织和羊水中被检测到。代表人数和化学物数字出自该新闻稿。</p>
+<p><strong>为什么值得注意</strong>：对正在学环境卫生和全球卫生治理的他来说，这既是环境卫生议题，也是「青年如何参与全球卫生治理」的一个具体例子。用今天的核心思想来看，青年宣言已经通过，全球塑料条约的主席非正式文本里还没有健康专章，也不是成员国决议，呼吁还没有交到有约束力的条约条款上。</p>
+<p><strong>归类</strong>：甲类「还没真正交到」。理由是青年宣言已经通过，全球塑料条约的主席非正式文本里还没有健康专章，也不是成员国决议，健康义务还没有被接住。</p>
+<p><strong>核实状态</strong>：单一来源（官方一手）。世界卫生组织官网正式新闻稿；宣言本身是模拟大会文件，不是成员国决议。</p>
+<p><strong>来源</strong>：</p>
+<ul>
+<li>世界卫生组织新闻稿，2026-11-13：<a href="https://www.who.int/news/item/13-11-2026-put-health-in-the-treaty---youth-delegates-at-the-global-model-who-2026-adopt-declaration-on-plastics-and-health" target="_blank" rel="noopener noreferrer">https://www.who.int/news/item/13-11-2026-put-health-in-the-treaty---youth-delegates-at-the-global-model-who-2026-adopt-declaration-on-plastics-and-health</a></li>
+</ul>
+</article>
+<article id="med-06" class="piece" data-cat="yi">
+<h3>MED-06 欧洲药品管理局人用药品委员会 11 月会议建议批准 7 个新药、扩展 11 个适应证，并就替尔泊肽可能影响口服避孕药可靠性发布医生函；各项推荐仍待欧盟委员会决定。</h3>
+<p class="stamp stamp-yi">交的时候留了确认</p>
+<p><strong>背景</strong>：这是欧洲药品管理局每月例行的人用药品委员会（CHMP）会议纪要。委员会给出的是上市推荐和安全通讯，在欧盟委员会作出决定前尚未成为最终许可。替尔泊肽的商品名是 Mounjaro，属于同时作用于 GLP-1 和 GIP 受体的减重和降糖药，近期使用很广。这条可以和国家卫生健康委员会对司美格鲁肽的提醒（MED-08）、以及基因组研究（MED-11）对照着看，但并排放在一起并不表示有因果关系。</p>
+<p><strong>发生了什么</strong>：欧洲药品管理局新闻页标注 2026 年 11 月 13 日，阿姆斯特丹，对应的是 11 月 9 日至 12 日的会议。委员会在这次会议上建议批准 7 个药品，包括用于非小细胞肺癌的 Aumseqa（aumolertinib，阿美替尼）、用于控制不足的高血压的 Baxfendy（baxdrostat），以及用于成人非鳞状非小细胞肺癌的 Zybrivo（sintilimab，信迪利单抗）。委员会还建议扩展已上市药物的适应证，其中包括把 Gazyvaro（obinutuzumab）扩展到中重度活动性系统性红斑狼疮成人患者，称其可降低疾病活动度，并让患者减少糖皮质激素使用及相应副作用；另有 osilodrostat 扩展到 6 岁及以上儿童库欣综合征。会议通过了一封直接面向医护人员的通讯（DHPC），关于 Mounjaro（tirzepatide，替尔泊肽）可能影响口服避孕药可靠性：现在建议使用口服避孕药的女性，在起始替尔泊肽以及每次加量后 4 周，加用屏障避孕，或改用非口服避孕方法。2026 年 11 月的统计是：7 项新药积极意见（3 个非孤儿新药、2 个生物类似药、2 个仿制或杂交药），当年累计 79 项；11 项适应证扩展积极意见，当年累计 108 项。药品名、适应证和统计数字均出自该新闻稿。阿美替尼和信迪利单抗都来自中国研发背景。</p>
+<p><strong>为什么值得注意</strong>：替尔泊肽的医生函和他正在学的药学、全科和妇产科都直接相关：这类药可能影响口服避孕药的可靠性，所以交出去的时候留下了「起始及每次加量后先确认避孕方式」的步骤。新药推荐也值得看，但它们在欧盟委员会决定前还不是最终许可。对正在关注 GLP-1 类药物安全信息的他来说，先记住这封医生函的具体建议，比记住会议统计更有用。</p>
+<p><strong>归类</strong>：乙类「交的时候留了确认」。理由是替尔泊肽医生函要求起始及每次加量后 4 周加用屏障或改用非口服避孕，等于在继续使用时留下确认步骤；各项推荐仍待欧盟委员会决定。</p>
+<p><strong>核实状态</strong>：单一来源（官方一手）。这是欧洲药品管理局官网正式会议要点；各项推荐仍待欧盟委员会决定。</p>
+<p><strong>来源</strong>：</p>
+<ul>
+<li>欧洲药品管理局人用药品委员会会议要点，2026-11-13：<a href="https://www.ema.europa.eu/en/news/meeting-highlights-committee-medicinal-products-human-use-chmp-9-12-november-2026" target="_blank" rel="noopener noreferrer">https://www.ema.europa.eu/en/news/meeting-highlights-committee-medicinal-products-human-use-chmp-9-12-november-2026</a></li>
+</ul>
+</article>
+<article id="med-07" class="piece" data-cat="jia">
+<h3>MED-07 国家药监局审议通过细胞与基因治疗药品审评审批优化公告和化学原料药登记主体变更管理规定，将于近日发布实施，正式公告还没有对外发布。</h3>
+<p class="stamp stamp-jia">还没真正交到</p>
+<p><strong>背景</strong>：这是国家药品监督管理局当天的内部决策会议通报，两份文件还没有正式对外发布。方向已经明确：一是落实新修订《药品管理法实施条例》中化学原料药批准证书可以转让的规定；二是从临床试验到上市后变更，给细胞与基因治疗（CGT）药品提供全流程的审评审批优化。</p>
+<p><strong>发生了什么</strong>：据中国食品药品网北京时间 11 月 13 日 18:41 的报道，11 月 13 日，国家药监局党组书记、局长黄果主持召开会议，研究部署优化化学原料药管理及细胞与基因治疗药品审评审批等有关工作，审议通过《化学原料药登记主体变更管理规定》和《关于优化细胞与基因治疗药品审评审批有关事项的公告》。会议指出，要制定实施好这份公告，从提高临床研发质量和效率、服务支持重点创新品种、加强注册检验早期介入、强化专家支撑作用、持续完善技术标准等方面，明确优化细胞与基因治疗药品审评审批的具体工作举措，覆盖临床研发、注册申报、审评审批、上市后变更等药品全生命周期关键环节，提供全流程制度支持。会议同意这两份文件于近日发布实施。稿件来源标注为「国家药监局网站」；本次采集未能打开国家药监局官网原页，正式公告文本尚未见到。</p>
+<p><strong>为什么值得注意</strong>：对关心创新药和药械监管的他来说，这是了解中国如何给细胞与基因治疗产品「修路」的一条重要监管信号，但后续仍需等正式公告文本才能看到具体时限和通道安排。用今天的核心思想来看，两份文件已审议通过，正式公告还没有对外发布，制度还没有真正交到可以执行的文本上。</p>
+<p><strong>归类</strong>：甲类「还没真正交到」。理由是两份文件已审议通过，正式公告还没有对外发布，具体安排还没有交到公开文本上。</p>
+<p><strong>核实状态</strong>：单一来源（官方媒体转述官方会议）。中国食品药品网是国家药监局主管的行业官方媒体，稿件来源标注为「国家药监局网站」；本次采集未能打开 nmpa.gov.cn 原页，因此暂按该官方媒体报道收录，正式公告文本尚未见到。</p>
+<p><strong>来源</strong>：</p>
+<ul>
+<li>中国食品药品网，北京时间 2026-11-13 18:41：<a href="https://www.cnpharm.com/c/2026-11-13/1110495.shtml" target="_blank" rel="noopener noreferrer">https://www.cnpharm.com/c/2026-11-13/1110495.shtml</a></li>
+</ul>
+</article>
+<article id="med-08" class="piece" data-cat="yi">
+<h3>MED-08 国家卫生健康委员会新闻发布会强调，糖尿病高风险人群应主动筛查，并提醒不能把司美格鲁肽等 GLP-1 受体激动剂当作非处方药使用，使用前要由医生评估。</h3>
+<p class="stamp stamp-yi">交的时候留了确认</p>
+<p><strong>背景</strong>：这是国家卫生健康委员会当天「时令节气与健康」发布会上，临床专家面向公众的用药和筛查提醒，不是新的法规或指南修订。司美格鲁肽等 GLP-1 受体激动剂在减重场景中被不当获取、自行注射的问题已经相当常见。这条可以和 MED-06 的替尔泊肽医生函、MED-11 的基因组研究对照着看，但并排放在一起并不表示有因果关系。</p>
+<p><strong>发生了什么</strong>：发布会于 11 月 13 日在北京举行。中新网稿件时间为 18:13，澎湃新闻对同一场发布会作了报道。北京协和医院主任医师许岭翎在会上指出，不能把司美格鲁肽等 GLP-1 受体激动剂当作普通的「非处方药」来用。她表示，很多糖尿病人在早期没有典型表现，因此提倡主动筛查；有糖尿病家族史、超重肥胖、年龄在 35 岁以上、有妊娠糖尿病史或者分娩过巨大儿的产妇，都属于糖尿病的高风险人群，应该主动筛查血糖。她特别强调，这类处方药有严格的适应证和禁忌证，应该在使用前由医生进行评估，不合理地使用这些药物可能会导致急性胰腺炎、肠梗阻以及甲状腺髓样癌等严重后果。</p>
+<p><strong>为什么值得注意</strong>：急性胰腺炎、肠梗阻和甲状腺髓样癌风险，正是这类药物说明书里需要认真对待的安全性信息。发布会同时给出了高风险人群主动筛查的具体条件，和内科学、全科医学的教学内容是对得上的。用今天的核心思想来看，药物已经在市场上，但官方明确把「先由医生评估再使用」留了下来，不能把方便获取当成可以自行使用。</p>
+<p><strong>归类</strong>：乙类「交的时候留了确认」。理由是明确不能把司美格鲁肽等当作非处方药，使用前要由医生评估，确认被留在用药之前。</p>
+<p><strong>核实状态</strong>：多来源确认。中新网和澎湃新闻均报道了同一场国家卫生健康委员会新闻发布会及许岭翎的同一表述；本次采集未能打开卫健委官网文字实录，因此引用的是权威通讯社对官方发布会的报道。</p>
+<p><strong>来源</strong>：</p>
+<ul>
+<li>中新网，北京时间 2026-11-13 18:13：<a href="https://www.chinanews.com.cn/gn/2026/11-13/10731643.shtml" target="_blank" rel="noopener noreferrer">https://www.chinanews.com.cn/gn/2026/11-13/10731643.shtml</a></li>
+<li>澎湃新闻对同一场发布会的报道：<a href="https://www.thepaper.cn/newsDetail_forward_34467278" target="_blank" rel="noopener noreferrer">https://www.thepaper.cn/newsDetail_forward_34467278</a></li>
+</ul>
+</article>
+<article id="med-09" class="piece" data-cat="jia">
+<h3>MED-09 中国食品药品网报道：我国申请加入药品检查合作计划的首次观摩检查已启动，将接受 12 个国家评估团队来华观摩，这还不是入会结果。</h3>
+<p class="stamp stamp-jia">还没真正交到</p>
+<p><strong>背景</strong>：药品检查合作计划（PIC/S）是药品生产质量管理规范（GMP）检查领域最重要的国际合作机制之一，加入后意味着中国药品检查体系更容易获得国际互认。需要注意时间：观摩检查本身在 11 月 11 日启动，但这篇把程序、背景和「12 次考试」讲清楚的报道是 11 月 13 日才刊出的。</p>
+<p><strong>发生了什么</strong>：中国食品药品网稿件时间为北京时间 11 月 13 日 15:39。报道写明，11 月 11 日，我国申请加入 PIC/S 工作的首次观摩检查正式启动，标志着该项工作进入关键攻坚期。公开资料显示，国家药监局作为申请机构，已于 2023 年 9 月向 PIC/S 提交正式申请材料，并于当年 11 月被确认为正式申请者，进入正式申请评估阶段。按照相关程序，评估由合规小组委员会（SCC）主导，申请机构应在进入正式申请评估阶段后 6 年内完成资料评估、接受 PIC/S 评估团队对药品现场检查情况开展观摩检查及全体成员投票等程序后，正式加入。据国家药监局有关人士介绍，今年 8 月初，PIC/S 对国家药监局进行了现场资料评估，评估结果向好；自本月起，来自欧洲、亚洲、南北美洲等地区共计 12 个国家的观摩检查小组将依次来华开展现场观摩检查。「通常情况下，SCC 对申请机构开展的观摩检查在 1 到 2 次左右，而我国由于药品生产企业多、药品检查责任更重，将经历 12 次『考试』。」</p>
+<p><strong>为什么值得注意</strong>：它还不是入会结果，只是评估进入现场观摩阶段。用今天的核心思想来看，观摩检查已经启动，入会还没有交到，前面还有 12 次观摩。对关心药品监管国际互认的他来说，先记下「已经开始考试，还没有拿到结果」这一点。</p>
+<p><strong>归类</strong>：甲类「还没真正交到」。理由是观摩检查已经启动，还不是入会结果，将经历 12 次观摩，资格还没有交到。</p>
+<p><strong>核实状态</strong>：单一来源（官方媒体）。中国食品药品网记者稿，并引述国家药监局有关人士；启动日期为 11 月 11 日，稍早于本采集窗，但详细报道在窗内发布。</p>
+<p><strong>来源</strong>：</p>
+<ul>
+<li>中国食品药品网，北京时间 2026-11-13 15:39：<a href="https://www.cnpharm.com/c/2026-11-13/1110471.shtml" target="_blank" rel="noopener noreferrer">https://www.cnpharm.com/c/2026-11-13/1110471.shtml</a></li>
+</ul>
+</article>
+<article id="med-10" class="piece" data-cat="bing">
+<h3>MED-10 Nature Medicine：一项为期 6 个月的研究显示，围绝经期激素治疗会重塑肠道和阴道微生物组，而基线菌群类型又会影响治疗反应。</h3>
+<p class="stamp stamp-bing">接住以后要核对</p>
+<p><strong>背景</strong>：围绝经期激素治疗（MHT）是用激素来缓解更年期相关症状的常用方法。临床上一直能看到「同样的激素治疗，效果却不一样」，这篇研究把微生物组直接连到了临床反应上。本次采集只能读到期刊公开题要，详细人数和效应量需看全文。</p>
+<p><strong>发生了什么</strong>：该文于 2026 年 11 月 13 日在 Nature Medicine 发表，Crossref 记录创建于世界时 11 月 12 日 23:03:19，对应北京时间 11 月 13 日 07:03。公开摘要写的是一项为期 6 个月的研究：绝经激素治疗会带来多部位微生物组重塑，包括让阴道微生物群落向生殖年龄状态「回春」；反过来，基线肠道和阴道菌群类型又会影响治疗的临床反应。整合临床特征和肠道微生物组特征，还能预测症状是否迅速缓解，从而为精准的围绝经期照护提供一个蓝图。</p>
+<p><strong>为什么值得注意</strong>：对妇产科学和内分泌学来说，这是「同样的激素治疗为什么效果不同」的一个新解释方向。用今天的核心思想来看，同样的激素治疗，接在不同的基线菌群上，反应会不一样，接住药物的那一层本身需要核对。公开题要没有给出详细人数和效应量，结论不要往大里说。</p>
+<p><strong>归类</strong>：丙类「接住以后要核对」。理由是同样的激素治疗，接在不同的基线菌群上，反应会不一样，疗效不能默认对所有人都一样成立。</p>
+<p><strong>核实状态</strong>：单一来源（期刊一手）。Nature Medicine 正式发表；公开题要已核对，全文在订阅墙后。</p>
+<p><strong>来源</strong>：</p>
+<ul>
+<li>Nature Medicine，北京时间 2026-11-13 07:03：<a href="https://www.nature.com/articles/s41591-026-04789-6" target="_blank" rel="noopener noreferrer">https://www.nature.com/articles/s41591-026-04789-6</a></li>
+</ul>
+</article>
+<article id="med-11" class="piece" data-cat="bing">
+<h3>MED-11 Nature Metabolism：真实世界基因组研究发现，罕见有害的 GLP-1 受体基因变异会减弱司美格鲁肽的减重效果，但对替尔泊肽没有显著影响。</h3>
+<p class="stamp stamp-bing">接住以后要核对</p>
+<p><strong>背景</strong>：司美格鲁肽主要靶向 GLP-1 受体，替尔泊肽同时靶向 GLP-1 受体和 GIP 受体。这条和当天国家卫生健康委员会对 GLP-1 类药物的提醒（MED-08）、欧洲药品管理局对替尔泊肽与口服避孕药的医生函（MED-06），可以放在同一条「GLP-1 药物」线索里看，但并排放在一起并不表示有因果关系。公开题要没有给出样本量或具体减重差值，因此这里不另行引用次级网站上的数字。</p>
+<p><strong>发生了什么</strong>：该文于 2026 年 11 月 13 日在 Nature Metabolism 发表，Crossref 记录创建于世界时 11 月 13 日 12:03:00，对应北京时间 20:03。公开摘要写的是一项大型真实世界基因组研究：编码胰高血糖素样肽 1（GLP-1）受体的基因上的罕见有害变异，会减弱服用司美格鲁肽者的减重效果，但对同时靶向葡萄糖依赖性促胰岛素多肽（GIP）受体的替尔泊肽的减重没有显著影响。</p>
+<p><strong>为什么值得注意</strong>：它提示部分「药物效果不好」可能有遗传学原因，而不是简单的依从性或剂量问题。用今天的核心思想来看，同样是减重药，接在不同的受体基因上，效果也会不一样，接住药物的那一层需要核对。具体数字以论文全文为准，这里不补充公开题要里没有的效应量。</p>
+<p><strong>归类</strong>：丙类「接住以后要核对」。理由是同样是减重药，GLP-1 受体上的罕见有害变异会减弱司美格鲁肽的效果，对替尔泊肽没有显著影响，不能默认两种药在同一批人身上同样成立。</p>
+<p><strong>核实状态</strong>：单一来源（期刊一手）。Nature Metabolism 正式发表；公开题要已核对，全文在订阅墙后，具体数字以论文为准。</p>
+<p><strong>来源</strong>：</p>
+<ul>
+<li>Nature Metabolism，北京时间 2026-11-13 20:03：<a href="https://www.nature.com/articles/s42255-026-01661-2" target="_blank" rel="noopener noreferrer">https://www.nature.com/articles/s42255-026-01661-2</a></li>
+</ul>
+</article>
+<article id="med-12" class="piece" data-cat="bing">
+<h3>MED-12 Nature Cancer：深度学习框架 Hist2Prot 能从常规苏木精-伊红切片推断单细胞空间蛋白质组，并改善生物标志物、预后和免疫治疗反应预测，但目前仍是研究框架。</h3>
+<p class="stamp stamp-bing">接住以后要核对</p>
+<p><strong>背景</strong>：空间蛋白质组能把肿瘤微环境里的蛋白表达看得很细，但成本高、难以常规开展。苏木精-伊红（H&amp;E）切片是病理科最常见的常规染色切片。这篇论文训练了一个叫 Hist2Prot 的深度学习模型，试图只用常规病理切片就「虚拟」出单细胞空间蛋白质组。这是医学发现和临床病理落地并重的医学人工智能，主体不是模型公司本身。</p>
+<p><strong>发生了什么</strong>：该文于 2026 年 11 月 13 日在 Nature Cancer 发表，Crossref 记录创建于世界时 11 月 13 日 10:02:50，对应北京时间 18:02。公开摘要写明，Hist2Prot 从常规苏木精-伊红组织学图像生成单细胞空间蛋白质组图谱，训练用了同一切片 G4X 空间蛋白质组数据集中约 5100 万对配对细胞；并在内部测试队列、独立的同一平台 G4X 队列，以及约 7200 万个额外细胞的外部跨平台数据集中评估，显示与实测蛋白图谱一致，并优于已有基线。在 7 个独立患者队列共 1774 名患者中，虚拟空间蛋白质组在分子生物标志物、预后和免疫治疗反应预测上，比单独使用苏木精-伊红形态学有所改善。细胞数和患者数均出自该论文公开摘要。</p>
+<p><strong>为什么值得注意</strong>：对同时在学病理学和人工智能的他来说，这是一条很具体的「AI 怎么辅助病理」材料，但需要提醒：它目前仍是研究框架，还不是可以立刻替代真实空间组学或病理诊断的常规工具。用今天的核心思想来看，从常规切片推断出的空间蛋白质组已经交到研究层面，接住临床决策的那一层还要继续核对。</p>
+<p><strong>归类</strong>：丙类「接住以后要核对」。理由是从常规切片推断出的空间蛋白质组还是研究框架，不是可以立刻替代真实检测的常规工具，这一层还经不起当成常规诊断来用。</p>
+<p><strong>核实状态</strong>：单一来源（期刊一手）。Nature Cancer 正式发表，公开摘要已核对。</p>
+<p><strong>来源</strong>：</p>
+<ul>
+<li>Nature Cancer，北京时间 2026-11-13 18:02：<a href="https://www.nature.com/articles/s43018-026-01270-8" target="_blank" rel="noopener noreferrer">https://www.nature.com/articles/s43018-026-01270-8</a></li>
+</ul>
+</article>
+<article id="med-13" class="piece" data-cat="bing">
+<h3>MED-13 npj Digital Medicine：随机对照研究显示，当人工智能辅助心脏听诊系统逐渐失灵时，医生的诊断表现会随系统一起下降。</h3>
+<p class="stamp stamp-bing">接住以后要核对</p>
+<p><strong>背景</strong>：很多讨论都假设「只要有医生把关，人工智能出错就能被发现」。这篇随机对照研究把这个假设拿来做了检验。心脏听诊是用听诊器听心音来判断心脏情况。</p>
+<p><strong>发生了什么</strong>：该文于 2026 年 11 月 13 日在 npj Digital Medicine 发表，Crossref 记录创建于世界时 11 月 13 日 13:06:56，对应北京时间 21:06。公开摘要写明，研究纳入 48 名医生，在随机对照设计中使用一套逐渐失灵的人工智能心脏听诊系统。结果显示，诊断表现会跟着人工智能可靠性一起下降；即便强迫医生先自己做出分类，即便人的表现其实已经好过失灵的人工智能，这种情况仍然出现。医生的自信下降得比他们对人工智能的信任更快。作者认为，结果提示需要明确监管目标，并建立能够保障患者安全的流程。医生人数出自该论文公开摘要。</p>
+<p><strong>为什么值得注意</strong>：对正在同时学习医学和人工智能的他来说，这是一条很具体的临床安全证据：人机共管不能只写在流程里，还需要被认真设计。用今天的核心思想来看，以为医生把关这一层会自动靠得住，结果人的诊断会跟着失灵的人工智能一起下降，接住安全的那一层并不会自动成立。</p>
+<p><strong>归类</strong>：丙类「接住以后要核对」。理由是以为医生把关这一层会自动靠得住，结果人的诊断会跟着失灵的人工智能一起下降，把关这一层本身需要被重新核对和设计。</p>
+<p><strong>核实状态</strong>：单一来源（期刊一手）。npj Digital Medicine 正式发表，公开摘要已核对。</p>
+<p><strong>来源</strong>：</p>
+<ul>
+<li>npj Digital Medicine，北京时间 2026-11-13 21:06：<a href="https://www.nature.com/articles/s41746-026-03410-x" target="_blank" rel="noopener noreferrer">https://www.nature.com/articles/s41746-026-03410-x</a></li>
+</ul>
+</article>
+<article id="med-14" class="piece" data-cat="bing">
+<h3>MED-14 Nature Communications：对澳门约 188 万份流感临床检测的分析显示，疫情后「免疫债」改变了城市流感传播，并削弱了它与气候的原有联系，流感并没有回到历史基线。</h3>
+<p class="stamp stamp-bing">接住以后要核对</p>
+<p><strong>背景</strong>：「免疫债」指的是疫情期间人们较少接触常见呼吸道病毒，人群易感性随后上升，从而导致反弹。这篇研究用澳门 2010 年至 2025 年约 188 万份临床流感检测，再加上气象、空气质量、数字信息搜寻、香港独立监测和分时段病毒基因组，并与全球监测数据对照。</p>
+<p><strong>发生了什么</strong>：该文于 2026 年 11 月 13 日在 Nature Communications 发表，Crossref 记录创建于世界时 11 月 13 日 07:35:31，对应北京时间 15:35。反事实推断显示，疫情后流感活动存在与免疫债相符的超额，并与全球再流行模式相一致；一个独立参数化的易感-暴露-感染-康复-再易感模型也再现了这一超额，最佳拟合的债务比例为 42%，近似贝叶斯计算的后验为 58%（95% 不确定区间 32%–77%）。易感性上升主要发生在成人而不是儿童，而且高风险人群疫苗接种覆盖率并没有下降，因此不能简单归咎于接种率走低。研究还发现，高易感性会削弱气象因素原先对流感传播的约束。作者认为，这些发现提示疫情后流感动态出现了机制转换，而不是回到历史基线，高密度城市需要适应性的多源监测。检测量和模型数字均出自该论文公开摘要。</p>
+<p><strong>为什么值得注意</strong>：这对理解当前呼吸道传染病监测很有帮助。用今天的核心思想来看，疫情后流感并没有回到历史基线，免疫债改变了接住传播的那一层，不能把「好像又像以前一样了」当成已经成立。易感性上升主要在成人、且高风险人群接种率并未下降，这两个细节尤其值得在流行病学课上记下。</p>
+<p><strong>归类</strong>：丙类「接住以后要核对」。理由是疫情后流感并没有回到历史基线，免疫债改变了接住传播的那一层，监测和应对都不能按旧基线直接沿用。</p>
+<p><strong>核实状态</strong>：单一来源（期刊一手）。Nature Communications 正式发表，公开摘要已核对。</p>
+<p><strong>来源</strong>：</p>
+<ul>
+<li>Nature Communications，北京时间 2026-11-13 15:35：<a href="https://www.nature.com/articles/s41467-026-79600-8" target="_blank" rel="noopener noreferrer">https://www.nature.com/articles/s41467-026-79600-8</a></li>
+</ul>
+</article>
+<article id="med-15" class="piece" data-cat="bing">
+<h3>MED-15 npj Parkinson's Disease：英国生物银行队列显示，多系统血管相关疾病负担越高，新发帕金森综合征风险也越高；这是观察性研究，不能写成因果。</h3>
+<p class="stamp stamp-bing">接住以后要核对</p>
+<p><strong>背景</strong>：这是一项基于英国生物银行的前瞻性队列研究。作者把缺血性心脏病、卒中、慢性肾病、视网膜病变和神经病变合并为「多系统血管相关疾病」（MVRD），并在随访中观察新发帕金森综合征（已排除血管性帕金森综合征）。</p>
+<p><strong>发生了什么</strong>：该文于 2026 年 11 月 13 日在 npj Parkinson's Disease 发表，Crossref 记录创建于世界时 11 月 13 日 07:04:32，对应北京时间 15:04。研究纳入 456,862 名基线无帕金森综合征诊断、且有遗传数据的白人参与者，中位随访 11.8 年，共观察到 2559 例新发帕金森综合征。有任一 MVRD 时，风险比为 1.35（95% 置信区间 1.23–1.48）；每多一种相关病变，风险比为 1.30（95% 置信区间 1.21–1.40）。与没有任何相关病变相比，有 1、2、3 种及以上病变时，风险比分别为 1.29、1.73 和 2.52。这种关联在遗传风险高低两组中都存在，没有交互作用的证据。人数和风险比均出自该论文公开摘要。</p>
+<p><strong>为什么值得注意</strong>：它提醒我们，帕金森综合征不只是中枢神经系统的事，周围血管和代谢负担也可能相关。用今天的核心思想来看，周围血管和代谢负担这一层也和随后的帕金森综合征风险相关，但观察性研究不能写成因果，接住「风险升高」的那一层还要继续核对机制。对正在学神经病学的他来说，风险比随病变数目上升这一梯度，比单独记住 1.35 更有教学价值。</p>
+<p><strong>归类</strong>：丙类「接住以后要核对」。理由是周围血管和代谢负担这一层也和随后的帕金森综合征风险相关，但这是观察性研究，不能写成因果，还需要继续核对。</p>
+<p><strong>核实状态</strong>：单一来源（期刊一手）。npj Parkinson's Disease 正式发表，公开摘要已核对。</p>
+<p><strong>来源</strong>：</p>
+<ul>
+<li>npj Parkinson's Disease，北京时间 2026-11-13 15:04：<a href="https://www.nature.com/articles/s41531-026-01624-0" target="_blank" rel="noopener noreferrer">https://www.nature.com/articles/s41531-026-01624-0</a></li>
+</ul>
+</article>
+<article id="med-16" class="piece" data-cat="jia">
+<h3>MED-16 Communications Medicine：英国生物银行血浆蛋白分析筛选出若干与脂肪量相关、但不一定减少瘦体组织的潜在药物靶点，还不是已经验证的减肥新药。</h3>
+<p class="stamp stamp-jia">还没真正交到</p>
+<p><strong>背景</strong>：GLP-1 受体激动剂减重效果显著，但瘦体组织丢失一直是临床担心的问题。这项研究用英国生物银行约 3.5 万人的血浆蛋白和约 36.8 万人的体成分数据，结合机器学习筛选蛋白，再做顺式孟德尔随机化分析。孟德尔随机化是一种用基因变异来接近因果推断的观察性方法，仍不是临床试验验证。</p>
+<p><strong>发生了什么</strong>：该文于 2026 年 11 月 13 日在 Communications Medicine 发表，Crossref 记录创建于世界时 11 月 13 日 10:24:50，对应北京时间 18:24。作者报告了 21 个蛋白的遗传预测水平与脂肪量相关，其中 5 个还有共定位证据，分别是 AGER、CRIM1、DNER、NEFL 和 PRRT3。21 个蛋白里有 7 个与瘦体组织没有明确关联，ADM 与瘦体组织的关联方向甚至和它与脂肪量的关联相反，提示调控这些蛋白时较不容易同时降低瘦体组织。AGER 和 ADM 已在与肥胖无关的适应证中进入后期临床试验，存在潜在的药物再利用空间。蛋白数量和样本规模均出自该论文公开摘要。</p>
+<p><strong>为什么值得注意</strong>：这仍是靶点优先排序研究，不是已经验证的减肥新药。用今天的核心思想来看，筛选出了潜在靶点，还没有交到经临床试验验证的新药上，不能把「找到相关蛋白」写成「已经有了新的减肥药」。对正在关注减重药物安全性的他来说，这条的价值在于「不一定减少瘦体组织」这个筛选方向，而不是具体药名。</p>
+<p><strong>归类</strong>：甲类「还没真正交到」。理由是筛选出了潜在靶点，还不是已经验证的减肥新药，发现还没有交到可以临床使用的药物上。</p>
+<p><strong>核实状态</strong>：单一来源（期刊一手）。Communications Medicine 正式发表，公开摘要已核对。</p>
+<p><strong>来源</strong>：</p>
+<ul>
+<li>Communications Medicine，北京时间 2026-11-13 18:24：<a href="https://www.nature.com/articles/s43856-026-01964-1" target="_blank" rel="noopener noreferrer">https://www.nature.com/articles/s43856-026-01964-1</a></li>
+</ul>
+</article>
+<article id="med-17" class="piece" data-cat="bing">
+<h3>MED-17 Nature Reviews Neuroscience 发表谵妄神经科学综述：把它概括为急性打击遇上预先存在的易损性后出现的「完美风暴」。</h3>
+<p class="stamp stamp-bing">接住以后要核对</p>
+<p><strong>背景</strong>：谵妄是住院患者、尤其是老年患者中非常常见却常常被忽视的综合征，表现为注意力、觉醒和认知的急性紊乱，和随后的认知下降、痴呆和死亡都有关联，目前也还没有针对谵妄本身的特效治疗。</p>
+<p><strong>发生了什么</strong>：该文于 2026 年 11 月 13 日在 Nature Reviews Neuroscience 发表，Crossref 记录创建于世界时 11 月 13 日 14:02:53，对应北京时间 22:02。这篇综述把现有电生理、影像、生物标志物和动物模型证据汇总起来，提出谵妄可以概念化为急性全身或脑内应激与预先存在的易损性相互作用，从而形成脑功能障碍的「完美风暴」。广泛的脑电图减慢和网络瓦解，是不同类型谵妄中收敛出现的特征。公开摘要在中途截断，全文细节需看原刊。</p>
+<p><strong>为什么值得注意</strong>：对正在学神经病学、老年医学和重症医学的他来说，这是一篇可以直接用来建立机制框架的高年资综述。用今天的核心思想来看，谵妄被概括为急性打击遇上预先存在的易损性，接住谵妄的那一层不是单一病因，而是两者叠加后是否还靠得住。目前没有针对谵妄本身的特效治疗，这一点尤其不能略过。</p>
+<p><strong>归类</strong>：丙类「接住以后要核对」。理由是谵妄被概括为急性打击遇上预先存在的易损性，机制框架有助于核对「这一层为什么会垮」，但还不是已经交到的特效治疗。</p>
+<p><strong>核实状态</strong>：单一来源（期刊一手）。Nature Reviews Neuroscience 正式发表；公开摘要已核对，后半段在订阅墙后。</p>
+<p><strong>来源</strong>：</p>
+<ul>
+<li>Nature Reviews Neuroscience，北京时间 2026-11-13 22:02：<a href="https://www.nature.com/articles/s41583-026-01092-8" target="_blank" rel="noopener noreferrer">https://www.nature.com/articles/s41583-026-01092-8</a></li>
+</ul>
+</article>
+<article id="med-18" class="piece" data-cat="bing">
+<h3>MED-18 JAMA Network Open：PANOVA-3 试验预先设定的次要分析显示，肿瘤治疗电场联合吉西他滨和白蛋白紫杉醇可改善局部晚期胰腺癌患者的生活质量和疼痛结局；这是开放标签试验，还要结合主研究一起看。</h3>
+<p class="stamp stamp-bing">接住以后要核对</p>
+<p><strong>背景</strong>：肿瘤治疗电场（TTFields）是一种通过皮肤电极施加低频电场、用于肿瘤治疗的方法。PANOVA-3 本身已经报告过生存获益，这篇是对生活质量和疼痛的预先设定次要分析。试验是开放标签的，也就是医生和患者知道自己分在哪一组，生活质量终点仍需结合主研究的生存和安全性一起看。</p>
+<p><strong>发生了什么</strong>：该文于 2026 年 11 月 13 日在 JAMA Network Open 在线发表，Crossref 记录创建于世界时 11 月 13 日 16:30:35，对应北京时间 11 月 14 日 00:30。2018 年 5 月 1 日至 2023 年 3 月 31 日共随机入组 571 名患者，随访完成于 2024 年 10 月 31 日，对象是未经治疗的局部晚期不可切除胰腺癌患者，按 1 比 1 接受 150 千赫兹肿瘤治疗电场联合吉西他滨和白蛋白紫杉醇，或仅接受吉西他滨和白蛋白紫杉醇。加上肿瘤治疗电场后，总体健康状况无恶化生存期中位数从 5.7 个月（四分位距 2.3–11.5）延长到 7.1 个月（3.5–14.8），风险比 0.77（95% 置信区间 0.61–0.97，P=0.02）；疼痛无恶化生存期中位数从 7.4 个月延长到 10.1 个月，风险比 0.70（P=0.003）；胰腺痛无恶化生存期中位数从 10.2 个月延长到 14.7 个月，风险比 0.69（P=0.006）；在改良意向性治疗人群中，开始使用阿片类药物的时间中位数从 6.7 个月延长到 9.3 个月，风险比 0.72（P=0.01）。人数、中位时间和风险比均出自 Crossref 提供的论文摘要。命令行访问该站返回 403，摘要与发表时间已通过 Crossref 核对。</p>
+<p><strong>为什么值得注意</strong>：胰腺癌止痛和生活质量一直是临床上很难做的部分，因此这篇次要分析有独立价值。用今天的核心思想来看，开放标签试验里的生活质量次要分析已经交到期刊上，还要结合主研究的生存和安全性一起核对，不能单独把生活质量改善写成已经完全成立的治疗结论。</p>
+<p><strong>归类</strong>：丙类「接住以后要核对」。理由是这是开放标签试验里的生活质量次要分析，还要结合主研究的生存和安全性一起看，不能单独把这一层当成已经完整成立。</p>
+<p><strong>核实状态</strong>：单一来源（期刊一手）。JAMA Network Open 正式在线发表；命令行访问该站返回 403，摘要与发表时间已通过 Crossref 核对。</p>
+<p><strong>来源</strong>：</p>
+<ul>
+<li>JAMA Network Open（DOI），北京时间 2026-11-14 00:30：<a href="https://doi.org/10.1001/jamanetworkopen.2026.41241" target="_blank" rel="noopener noreferrer">https://doi.org/10.1001/jamanetworkopen.2026.41241</a></li>
+</ul>
+</article>
+<article id="med-19" class="piece" data-cat="jia">
+<h3>MED-19 JAMA Network Open：在佛罗里达 30 家儿科诊所进行的双层随机试验中，诊所水平的 HPV 接种率整体上升，但按随机分配看，医生沟通培训和家长短信并未显示组间差异。</h3>
+<p class="stamp stamp-jia">还没真正交到</p>
+<p><strong>背景</strong>：提高人乳头瘤病毒（HPV）疫苗接种率是预防医学里的经典课题。这项研究是在佛罗里达 30 家儿科诊所进行的双层随机、两层嵌套临床试验，时间为 2022 年 2 月至 2024 年 9 月，对象是这些诊所的医生、尚未接种 3 种青少年 HPV 疫苗的 10 至 12 岁儿童及其家长。这条要区分两件不同的事：诊所水平前后变化，和按随机分配做的组间比较。</p>
+<p><strong>发生了什么</strong>：该文于 2026 年 11 月 13 日在 JAMA Network Open 在线发表，Crossref 记录创建于世界时 11 月 13 日 16:30:21，对应北京时间 11 月 14 日 00:30。研究纳入 7234 名儿童，研究开始时 10 岁 3576 人（49%）、11 岁 2617 人（36%）、12 岁 1041 人（14%）。诊所水平的接种启动率在研究前后平均上升 28.2 个百分点（95% 置信区间 25.3–31.1），完成率平均上升 16.1 个百分点（95% 置信区间 13.3–18.9）。但按照随机分配来看，医生沟通培训和家长短信在启动或完成接种上都没有显示出组间差别。只有在「实际收到短信」与未收到的比较里，启动接种的风险比为 1.17（95% 置信区间 1.08–1.26），完成接种的风险比为 1.29（95% 置信区间 1.06–1.56）。作者的结论是：佛罗里达 10 至 12 岁儿童的诊所水平 HPV 接种随时间上升；按随机分配，医生培训或短信没有显示出差别；当短信实际被收到时，与更高的接种相关。儿童数、百分数和风险比均出自论文摘要。命令行访问返回 403，摘要与发表时间已通过 Crossref 核对。</p>
+<p><strong>为什么值得注意</strong>：这是一个很好的方法学教学例子：意向治疗分析和实际接受分析可能得出不同结论，解释干预效果时必须把设计讲清楚。用今天的核心思想来看，诊所接种率整体上升了，但按随机分配看，培训和短信并没有显示出组间差别，「看起来上升了」不等于该干预已经成立。</p>
+<p><strong>归类</strong>：甲类「还没真正交到」。理由是诊所接种率整体上升了，但按随机分配看，培训和短信并没有显示出组间差别，「看起来上升了」不等于该干预已经成立。</p>
+<p><strong>核实状态</strong>：单一来源（期刊一手）。JAMA Network Open 正式在线发表；命令行访问返回 403，摘要与发表时间已通过 Crossref 核对。</p>
+<p><strong>来源</strong>：</p>
+<ul>
+<li>JAMA Network Open（DOI），北京时间 2026-11-14 00:30：<a href="https://doi.org/10.1001/jamanetworkopen.2026.42247" target="_blank" rel="noopener noreferrer">https://doi.org/10.1001/jamanetworkopen.2026.42247</a></li>
+</ul>
+</article>
+<article id="med-20" class="piece" data-cat="jia">
+<h3>MED-20 JAMA Pediatrics：交叉随机对照试验显示，注意缺陷多动障碍的学业便利措施单独或联合使用均未改善课堂行为或学业结果，行为和药物治疗仍然有效；摘要里平均年龄写成 8.8 months，与入组条件不符，可能是转写笔误。</h3>
+<p class="stamp stamp-jia">还没真正交到</p>
+<p><strong>背景</strong>：延长考试时间、增加休息、低干扰座位和允许站立，是学校里给注意缺陷多动障碍（ADHD）儿童最常见的学业便利措施，但高质量疗效证据一直不多。这项交叉随机对照试验在暑期治疗项目课堂里完成，对便利措施、行为治疗和哌甲酯（0.3 毫克/千克）做了单独和联合比较。</p>
+<p><strong>发生了什么</strong>：该文于 2026 年 11 月 13 日在 JAMA Pediatrics 在线发表，Crossref 记录创建于世界时 11 月 13 日 15:30:16，对应北京时间 23:30。306 名儿童经过筛查，280 名入组；255 名儿童开始干预，其中 201 名为男性（79%），235 名（84%）完成研究。与安慰剂相比，兴奋剂让座位作业生产率提高 22%，测验分数显著提高 3.9 分（95% 置信区间 3.10–4.70）；药物和行为治疗分别使违反课堂规则减少 37%（风险比 0.63，95% 置信区间 0.60–0.67）和 61%（风险比 0.39，95% 置信区间 0.37–0.42）。没有任何一种学业便利措施显著改善行为或学业结果，交互作用也都不显著。作者认为，结果质疑是否应继续把学校里的学业便利措施作为强调重点，因为它们单用或与其他 ADHD 治疗联用均无效，并支持继续使用行为和药物治疗。需要注意，Crossref 摘要把平均年龄写成了 8.8（标准差 1.6）months，这与「幼儿园到六年级」的入组条件明显不符，很可能是摘要转写笔误，原文应以论文全文为准。入组人数和效应量均出自论文摘要。命令行访问返回 403，摘要与发表时间已通过 Crossref 核对。</p>
+<p><strong>为什么值得注意</strong>：即便必须把年龄单位的疑似笔误注明清楚，这项结果对儿科和精神科教学都很有冲击力，因为它直接挑战了「先给便利措施」的常见做法。用今天的核心思想来看，学业便利措施交出去了，却没有接住课堂行为或学业结果；行为和药物仍然有效。读的时候要以论文全文为准，不要把摘要里的 8.8 months 当成已经核对过的年龄。</p>
+<p><strong>归类</strong>：甲类「还没真正交到」。理由是学业便利措施交出去了，却没有接住课堂行为或学业结果；行为和药物仍然有效。摘要里平均年龄写成 8.8 months，与入组条件不符，正文已注明可能是转写笔误，以论文全文为准。</p>
+<p><strong>核实状态</strong>：单一来源（期刊一手）。JAMA Pediatrics 正式在线发表；命令行访问返回 403，摘要与发表时间已通过 Crossref 核对。平均年龄单位疑有转写错误，已在正文中注明。</p>
+<p><strong>来源</strong>：</p>
+<ul>
+<li>JAMA Pediatrics（DOI），北京时间 2026-11-13 23:30：<a href="https://doi.org/10.1001/jamapediatrics.2026.5973" target="_blank" rel="noopener noreferrer">https://doi.org/10.1001/jamapediatrics.2026.5973</a></li>
+</ul>
+</article>
+<article id="med-21" class="piece" data-cat="bing">
+<h3>MED-21 宾夕法尼亚州卫生部确认 2026 年第 7 例麻疹相关死亡，全州确诊病例达 1542 例；CIDRAP 报道美国全年病例已升至 5412 例，州卫生部门与疾病控制与预防中心的死亡统计口径不一致。</h3>
+<p class="stamp stamp-bing">接住以后要核对</p>
+<p><strong>背景</strong>：美洲区麻疹消除状态的复核会议正在进行，结论预计 11 月 17 日公布，昨天窗内已有相关背景。今天的新事实是州级死亡确认和全国病例更新。未接种或接种史不明者占报告病例的绝大多数，这是疫苗可预防疾病在高收入国家重新流行的最新进展。</p>
+<p><strong>发生了什么</strong>：宾夕法尼亚州卫生部新闻稿标注 2026 年 11 月 13 日，未给到具体钟点。该部当天确认，蒙图尔县一名未接种疫苗的居民检测出麻疹阳性后死亡，这是宾夕法尼亚州确认的第 7 例麻疹相关死亡；2026 年迄今全州确诊病例为 1542 例，覆盖 46 个县。截至 11 月 13 日，7 名死者分别来自杰斐逊县（2 人）、兰开斯特县（3 人）、米夫林县（1 人）和蒙图尔县（1 人）。该部还写，通常每个月卫生保健提供者大约接种 2.5 万剂麻疹-腮腺炎-风疹（MMR）疫苗，而 9 月和 10 月分别接种了超过 5.6 万剂和 6.1 万剂。CIDRAP 报道时间为北京时间 11 月 14 日 05:50，仍在窗口截止前 10 分钟，援引美国疾病控制与预防中心（CDC）当日更新称，全美 2026 年麻疹病例已到 5412 例，本周增加 230 例，连续第 14 周出现三位数增长；州卫生部门累计报告 10 例相关死亡，而 CDC 在当天的更新中又计入两例，总计为 6 例。未接种或接种史不明者占报告病例的 96%，住院率仍为 11%。CIDRAP 同时报道了威斯康星州卫生部门的另一例儿童死亡。CDC 原页本次采集返回 403，未能直接打开；威斯康星州死亡细节以 CIDRAP 转述为准。宾州数字出自该州卫生部新闻稿，全美数字转引自 CIDRAP 对 CDC 的报道。</p>
+<p><strong>为什么值得注意</strong>：对医学生来说，这既是疫苗可预防疾病再流行的最新进展，也提醒「官方死亡统计口径可能滞后于州卫生部门」。用今天的核心思想来看，州卫生部门与 CDC 的死亡统计口径不一致，需要分开核对；全国数字是 CIDRAP 转述，不能把 7 例、6 例和 10 例合成一个「美国已有多少人死于麻疹」的单一数字。</p>
+<p><strong>归类</strong>：丙类「接住以后要核对」。理由是州卫生部门与 CDC 的死亡统计口径不一致，需要分开核对；全国数字是 CIDRAP 转述，不能合成一个数字。</p>
+<p><strong>核实状态</strong>：多来源确认（州级官方为一手，全国数字为权威专业媒体转述官方更新）。宾夕法尼亚州卫生部新闻稿已打开核对；CIDRAP 同时报道了威斯康星州卫生部门的另一例儿童死亡和 CDC 的全国更新。CDC 原页本次采集返回 403，未能直接打开；威斯康星州卫生部门专题页可见，但未能打开其单独新闻稿，因此威斯康星州死亡细节以 CIDRAP 转述为准。</p>
+<p><strong>来源</strong>：</p>
+<ul>
+<li>宾夕法尼亚州卫生部新闻稿，2026-11-13：<a href="https://www.pa.gov/agencies/health/newsroom/pa-department-of-health-confirms-seventh-measles-associated-deat" target="_blank" rel="noopener noreferrer">https://www.pa.gov/agencies/health/newsroom/pa-department-of-health-confirms-seventh-measles-associated-deat</a></li>
+<li>CIDRAP，北京时间 2026-11-14 05:50：<a href="https://www.cidrap.umn.edu/measles/2-more-people-die-measles-complications-us-cases-top-5400" target="_blank" rel="noopener noreferrer">https://www.cidrap.umn.edu/measles/2-more-people-die-measles-complications-us-cases-top-5400</a></li>
+</ul>
+</article>
+<article id="med-22" class="piece" data-cat="bing">
+<h3>MED-22 Science Advances：欧洲 HELIX 队列显示，生命早期暴露组中的「主调控」因素会对精神、心血管代谢、呼吸和过敏等多个健康领域产生持续到青春期的影响。</h3>
+<p class="stamp stamp-bing">接住以后要核对</p>
+<p><strong>背景</strong>：暴露组（exposome）研究想回答的是：孕期和童年生活环境里那些彼此纠缠的因素，到底怎样一起塑造后来的健康。这项研究使用欧洲人类生命早期暴露组（HELIX）队列——据摘要称，这是一般儿科人群中最大的暴露组数据集。</p>
+<p><strong>发生了什么</strong>：该文于北京时间 2026 年 11 月 14 日 02:58 在 Science Advances 发表，Crossref 记录创建于世界时 11 月 13 日 18:58:41。研究纳入 586 对母子、近 200 项孕期和童年暴露，包括空气污染物、化学物、生活方式（饮食、身体活动和有毒习惯）以及邻里户外因素，并对儿童期（6 至 11 岁）和青春期（12 至 18 岁）精神、心血管代谢、呼吸和过敏等 11 项结局做了全结局、全暴露分析。研究找出一组会跨多个健康领域起作用的「主调控」暴露，例如母亲吸烟、室内空气污染、内分泌干扰物以及饮食和城市因素，影响可以持续到青春期。母子对数和暴露项数均出自 Crossref 提供的论文摘要。命令行访问 science.org 返回 403，摘要与发表时间已通过 Crossref 核对。</p>
+<p><strong>为什么值得注意</strong>：对预防医学和环境卫生教学来说，这是一份把「早期生活环境」说得很具体的队列证据。用今天的核心思想来看，生命早期暴露里的主调控因素已经被接住到青春期结局上，影响可以持续很久，这一层值得在预防医学里反复核对，而不能只看成儿童期的短暂作用。</p>
+<p><strong>归类</strong>：丙类「接住以后要核对」。理由是生命早期暴露里的主调控因素，影响可以持续到青春期，接住健康结局的那一层从很早就开始，需要长期核对。</p>
+<p><strong>核实状态</strong>：单一来源（期刊一手）。Science Advances 正式发表；命令行访问 science.org 返回 403，摘要与发表时间已通过 Crossref 核对。</p>
+<p><strong>来源</strong>：</p>
+<ul>
+<li>Science Advances（DOI），北京时间 2026-11-14 02:58：<a href="https://doi.org/10.1126/sciadv.aec2089" target="_blank" rel="noopener noreferrer">https://doi.org/10.1126/sciadv.aec2089</a></li>
+</ul>
+</article>
+<hr>
+<h2>第四部分 给他的轻提示（3 条）</h2>
+<article id="p-01" class="piece" data-cat="yi">
+<h3>P-01 GitHub 应用 Claude 正在向他的账户申请更新权限，需要他自己看清再接受或忽略。</h3>
+<p class="stamp stamp-yi">交的时候留了确认</p>
+<p><strong>背景</strong>：他的账户上已经安装了 GitHub 应用 Claude。GitHub 在变更这类应用的权限时，会发官方通知，请账户主人到设置页查看后选择接受或忽略。如果忽略，该应用会继续使用现有权限。</p>
+<p><strong>发生了什么</strong>：北京时间 11 月 13 日 17:48，他收到 GitHub 发来的官方权限变更申请，邮件当时仍为未读。信里没有列出具体要新增哪些权限，只请他到应用安装设置里查看后选择接受或忽略，并写明如果忽略，Claude 将保留当前权限。时间窗内没有第二封确认信，也没有其他渠道补充说明具体权限清单。</p>
+<p><strong>为什么值得注意</strong>：这件事涉及账号授权范围，值得他本人看一眼，不要在不了解新增权限的情况下直接同意。用今天的核心思想来看，应用在申请把权限交出去，确认必须留在他自己手里：看清再接受，或者暂时忽略，让应用保持现有权限。</p>
+<p><strong>归类</strong>：乙类「交的时候留了确认」。理由是 GitHub 应用 Claude 申请更新权限，要他自己看清再接受或忽略，确认被明确留了下来。</p>
+<p><strong>核实状态</strong>：单一来源。依据是 GitHub 官方通知邮件本身；时间窗内没有第二封确认信，也没有其他渠道补充说明具体权限清单，尚未得到其他来源确认。</p>
+<p><strong>来源</strong>：</p>
+<ul>
+<li>他的邮箱通知与 GitHub Actions 运行记录（私有，不放链接），北京时间 2026-11-13 17:48</li>
+</ul>
+</article>
+<article id="p-02" class="piece" data-cat="jia">
+<h3>P-02 他的学习站每天的数据库备份文件已经上传成功，却被后面的用量检查判成失败，出站读数约 7.39 GB、相当于限额的 137.6%，口径仍是网卡累计值，需要到后台核对。</h3>
+<p class="stamp stamp-jia">还没真正交到</p>
+<p><strong>背景</strong>：他的学习站项目每天会自动给数据库做一次备份，备份之后还有一个检查步骤，会看本周期的「出站流量」（也就是从数据库往外传出去的数据量）有没有超过 5 GiB 的限额，超了就把整次运行标成失败。昨天早报里记录的读数约 7.28 GB、135.6%，问题还在继续。</p>
+<p><strong>发生了什么</strong>：北京时间 11 月 13 日 10:08:24，这次备份运行结束，10:08:45 他收到了失败通知，运行时长 27.0 秒。备份文件的导出、加密和上传都成功了，失败出在后面的用量检查：脚本在告警为真时以退出码 2 结束。日志里的出站流量读数是 7,388,521,716 字节，约 7.39 GB，对照脚本里的 5 GiB 限额（5,368,709,120 字节）为 137.6%；数据库体积是 20,753,555 字节，约占 500 MiB 限额的 3.96%，这一项没有超限。读数来源仍是网卡累计发送字节，和此前几天同一检查脚本的口径一致。和昨天早报里记录的约 7.28 GB、135.6% 相比，读数又高了一点。同一时间窗内，学习站的持续集成和两次部署都是成功的，两次部署分别在北京时间 11 月 13 日 14:16 和 11 月 14 日 00:03，所以这不是整站部署中断，而是每日备份流程仍被用量检查拦住。</p>
+<p><strong>为什么值得注意</strong>：备份这件事本身做成了，却被后面的用量检查报成了失败，每天一封失败通知，很容易让人对真正的问题麻木。但读数确实在慢慢涨，这一点不能忽略。这个读数来自网卡的累计计数，不一定是真实账单的口径，所以最稳的做法是他到后台看一眼本周期官方的出站用量：如果真的超了免费额度，就查查有没有图片或文件绕过缓存直接被读出去；如果只是口径不同，就改检查脚本，别再把成功的备份报成失败。用今天的核心思想来看，文件已经交了出去，却被后面那一层检查判成失败，还要到后台核对口径。</p>
+<p><strong>归类</strong>：甲类「还没真正交到」。理由是备份文件已经上传成功，却被用量检查判成失败，出站读数约 7.39 GB、137.6%，口径仍是网卡累计值，需到后台核对，看起来失败了，其实备份本身还没有被完整接住。</p>
+<p><strong>核实状态</strong>：多来源确认。失败通知邮件、运行结论以及该次作业日志里的用量数字彼此对应；数字均来自该次运行日志。读数来自网卡累计计数，是不是真实账单口径的超额，仍需要他到后台核对。</p>
+<p><strong>来源</strong>：</p>
+<ul>
+<li>他的邮箱通知与 GitHub Actions 运行记录（私有，不放链接），北京时间 2026-11-13 10:08</li>
+</ul>
+</article>
+<article id="p-03" class="piece" data-cat="yi">
+<h3>P-03 ChatGPT 通知 Health 功能的数据使用规则将从 11 月 19 日起变化，要在此之前自己确认设置。</h3>
+<p class="stamp stamp-yi">交的时候留了确认</p>
+<p><strong>背景</strong>：这是 OpenAI 发来的产品与隐私规则更新，不是营销信。它和人工智能部分的 ChatGPT Wallet（AI-08）相关，但不是同一件事：Wallet 讲的是付款确认，本条讲的是健康数据如何被用于改进模型。如果他用过 ChatGPT Health，或把健康数据连进过 ChatGPT，这条有明确的截止日期。</p>
+<p><strong>发生了什么</strong>：北京时间 11 月 13 日 10:40，他收到 ChatGPT 的官方通知，邮件当时仍为未读。信里说，以前只要对话使用了已连接的 Health 数据，无论设置如何，都不会被用于模型训练；从 11 月 19 日起，只要对话里引用了已连接的 Health 数据，以及由这些数据衍生出的内容，是否用于改进模型，将改由设置里的「Improve the model for everyone」这项决定。如果不希望这类内容被用于改进模型，需要在 11 月 19 日之前到 Settings 里的 Data Controls 关闭该项。信里同时说明，通过 Health 同步的原始数据，例如病历、Apple Health 数据，仍有额外加密，OpenAI 不把这些同步数据用来训练基础模型或投放广告。信里还提到，Health 即将出现在更多 ChatGPT 入口。</p>
+<p><strong>为什么值得注意</strong>：规则变化有明确日期，过了 11 月 19 日，默认是否把相关对话用于改进模型，就取决于那一项设置，而不再一律排除。用今天的核心思想来看，数据规则交出去之前，官方把确认留在了设置里，要他自己在截止日期前看一眼。同步过去的原始健康数据，官方仍写明有额外保护、不用于训练基础模型或广告，和「引用了这些数据的对话」不是同一层，读的时候要分开。</p>
+<p><strong>归类</strong>：乙类「交的时候留了确认」。理由是 ChatGPT Health 数据规则将从 11 月 19 日起变化，要在此之前自己确认设置，确认被留在规则生效之前。</p>
+<p><strong>核实状态</strong>：单一来源。依据是 OpenAI 官方通知邮件本身；时间窗内没有其他渠道交叉印证，尚未得到其他来源确认。</p>
+<p><strong>来源</strong>：</p>
+<ul>
+<li>他的邮箱通知与 GitHub Actions 运行记录（私有，不放链接），北京时间 2026-11-13 10:40</li>
+</ul>
+</article>
+<article class="piece piece-plain">
+<h3>附：这几天可以顺手留意的小事（不计入条数）</h3>
+<ul>
+<li><strong>那封 Notion 安全通知还没打开。</strong> 北京时间 11 月 11 日收到的 Notion 官方安全通知，到现在还是未读，时间窗内也没有后续邮件。有空的时候可以先点开通知里的查看链接，看看是哪些 Notion AI 对话可能受了影响；如果在那些对话里贴过接口密钥、服务器密码或数据库连接串，就到对应平台把旧的作废、换成新的，再把用到的地方改过来。</li>
+<li><strong>DeepSeek 余额还低于告警线。</strong> 窗内没有新的余额告警，也没有充值回执，最后一次读数仍是北京时间 11 月 11 日的 16.64 元，低于 20 元的告警线。监控信里写过「持续不足每 24 小时提醒一次」，但 11 月 12 日、13 日没有再来信，单凭这一点不能确认余额已经回到线以上，需要他自己到后台核对当前数字，必要时充一点，或者先把调用量降下来。</li>
+<li><strong>一个 GitHub 访问令牌大约北京时间 11 月 15 日下午到期，今天只剩大约一天。</strong> 窗内没有新的到期提醒，也没有已经更换的通知。如果还有自动任务在用它，到期前到 GitHub 的个人访问令牌设置里重新生成一个同等权限的新令牌，再把所有用到旧令牌的地方换掉。不要把新令牌写进聊天或邮件正文。</li>
+<li><strong>Cloudflare Tunnel 的升级还没确认。</strong> 窗内没有新的 Cloudflare 邮件，没法确认是否已经升级到 2026.10.2 或更新的版本。可以到 Cloudflare 控制台的 Networking &gt; Tunnels 页面看连接器版本，或者在各台机器上查一下 cloudflared 的版本，统一升上去。</li>
+<li><strong>X 订阅在 11 月 13 日预定的第一次扣款 8.00 美元，回执还没看到。</strong> 这是根据 10 月 25 日的确认邮件，套餐从 Premium 降到 Plus，新套餐第一次扣款是 8.00 美元，日期为 11 月 13 日。窗内还没有看到对应的扣款回执或账单，可以到 X 的账单页，以及银行卡或账单明细里核对这 8.00 美元有没有已经划走；如果已经扣了却没有回执，可以把回执邮箱设置再看一眼。</li>
+<li><strong>从 11 月 13 日起，Google AI Plus 不能再在 Gemini 应用和搜索的 AI Mode 里选 Pro 模型。</strong> 根据 10 月 14 日的通知邮件，仍然可以用 Flash 和最新的 Flash-Lite。时间窗内没有新的邮件来更改这条规则。如果他习惯用 Pro 模型做什么事，需要换个工具或换个入口。</li>
+<li><strong>AdventureX 的二次打款还没有新消息。</strong> 北京时间 11 月 3 日对方回信说已经重新联系合作方尝试二次打款，请等待后续通知；窗内仍没有到账或进度的新邮件。如果奖金还没到账，可以回复那封旧邮件问一下进度。</li>
+<li><strong>学习站这一天的部署和持续集成是成功的，只有每日备份仍被用量检查拦住。</strong> 详见上面的 P-02。早报仓库在时间窗内的三次持续集成（审查分支、合入主分支、同步开发分支）全部成功，发布链路是通的。</li>
+</ul>
+</article>
+<hr>
+<h2>来源与核实说明</h2>
+<p><strong>单一来源或部分未能核实的条目</strong>（正文里都已写明是谁说的，并注明「尚未得到其他来源确认」）：</p>
+<ul>
+<li>人工智能部分：AI-01（只有 TechCrunch，原信和美联社旧闻没有直接打开）；AI-02（只有 WIRED，评论区没有另一家媒体独立复核，市值 1 万亿美元是 WIRED 的统计）；AI-04（两家媒体都在转述《华尔街日报》，没有打开原文，最终承诺额写法有出入）；AI-05（只有 TechCrunch）；AI-06（只有峰会主办方 Newcomer 的现场记录）；AI-09（官方一手，78% 和 40% 没有第三方复核）；AI-10（路演直播和向 SEC 提交注册声明是多来源确认，但超额认购、募资、估值、年化收入、英伟达认购 100 亿美元，以及对中国大陆和香港投资者的限制，目前只看到 The Decoder 转述彭博社，公司对限制一事拒绝置评）；AI-11（只有 Anthropic 工作人员的官方账号声明，限额重置次数没有产品博客交叉核对）；AI-13（只有 Google Research 官方博客，各项数字均为研究团队自报）；AI-15（只有 Sierra 官方博客，「超过 100 家」「175 个国家」「Shopify 全量启用」为官方自报，没有抽查店铺文件）；AI-19（只有 TechCrunch，没有打开 Unemployment Labs 原始报告或 Epoch AI 原始数据表，也没有相关公司官方回应）。另外，AI-03 中 IDC 的 34% 是路透转引 10 月旧报告，证据包没有打开 IDC 原文；AI-08 中「每周 12 亿人」为厂商自报，The Verge 补充的卡组织名单是媒体转述；AI-16 的价目以官方价格页为准；AI-17 的训练数据和评测数字目前只有官方稿；AI-18 中「7000 家」「五个月到一天」出自官方博客，一年前那一轮估值来自 TechCrunch 回顾。</li>
+<li>科技部分：TK-03 中「38 次采购」「超过 5 万磅载荷」主要来自 Spaceflight Now 的转述；TK-05 中首相安瓦尔「没有迹象表明相关芯片已从马来西亚运出」来自路透社对 Bernama 的转述，不是部委声明正文里的原句；TK-06 中新款 Apple TV 4K 同日开卖目前主要得到 9to5Mac 的详细报道；TK-07 中分析师判断和华硕管理层表态属于单一机构或单家公司的看法，SK 海力士 3.03% 与 4.3% 两个口径已分开标注；TK-08 采集时未能打开微博原帖，配置参数来自窗外的 11 月 12 日沟通会，正文只作为背景。</li>
+<li>医学部分：MED-01、MED-02、MED-04、MED-05、MED-06（官方一手）；MED-07（官方媒体转述官方会议，未能打开国家药监局官网原页，正式公告文本尚未见到）；MED-09（官方媒体，并引述有关人士）；MED-10、MED-11、MED-12、MED-13、MED-14、MED-15、MED-16、MED-17、MED-18、MED-19、MED-20、MED-22（期刊一手；其中 MED-10、MED-11、MED-17 全文或部分内容在订阅墙后，MED-18、MED-19、MED-20、MED-22 的期刊页对命令行返回 403，摘要与发表时间已通过 Crossref 核对；MED-20 摘要平均年龄单位疑有转写笔误，已在正文注明）。MED-21 中全美病例和死亡数字转引自 CIDRAP 对 CDC 的报道，CDC 原页返回 403，未能直接打开；威斯康星州死亡细节以 CIDRAP 转述为准。另外，MED-08 未能打开卫健委官网文字实录，引用的是权威通讯社对官方发布会的报道。</li>
+<li>轻提示部分：P-01（只有 GitHub 官方通知邮件，信里没有列出具体权限清单）；P-03（只有 OpenAI 官方通知邮件）。</li>
+</ul>
+<p><strong>链接复核情况</strong>：</p>
+<ul>
+<li>讯AI：所有链接都在北京时间 2026 年 11 月 14 日 06:3x 前后重新打开过。openai.com 的 Wallet 介绍页用命令行访问会被反爬返回 403，但用网页抓取能读到全文，页面存在；路透社英文原稿对无登录访问返回 401，正文以 Rappler、Investing.com 的完整转载核对，仍把路透原链接作为来源；X 帖都用 fxtwitter 接口核对了原文和时间戳；混元稿来自官方微信公众号原文。本包没有「仅 AIHOT 聚合」的条目。</li>
+<li>讯科：HomeView、火神推迟、天问四号征集、马来西亚部委声明和芯片股收盘等条目的链接，均在证据包中写明已打开或与转载核对。</li>
+<li>讯医：世界卫生组织、欧洲药品管理局、中国食品药品网、中新网、澎湃新闻、Nature 系列、宾夕法尼亚州卫生部和 CIDRAP 的链接均返回 200，并已重新打开核对正文。jamanetwork.com、science.org 与部分 doi.org 跳转对命令行返回 403 反爬，但已通过 Crossref 元数据核对该文标题、摘要和上线时间（JAMA 系列 Crossref 记录创建于世界时 11 月 13 日 15:30–16:30，即北京时间 11 月 13 日 23:30 至 11 月 14 日 00:30；Science Advances 为世界时 11 月 13 日 18:58，即北京时间 11 月 14 日 02:58），均落在窗内。国家药监局官网 nmpa.gov.cn、国家卫生健康委员会官网 nhc.gov.cn 对命令行返回 412，未能打开原始页面，已改用其官方媒体或权威通讯社报道，并在相应条目注明。美国 CDC 麻疹数据页对命令行返回 403，全国病例数字转引自 CIDRAP 对 CDC 当日更新的报道。</li>
+<li>轻提示部分来自他的邮箱通知与 GitHub Actions 运行记录，属于私有材料，正文不放链接。</li>
+</ul>
+<p><strong>时间说明</strong>：Google Research、Anthropic、Apple Newsroom 等官方博客有的只标了日期（2026 年 11 月 13 日），没有具体时刻；凡是能拿到精确时间戳、官方社交媒体帖或媒体报道精确时刻的，正文都换算成了北京时间，只有日期的照实注明。英伟达宣布黄仁勋辞职的官方消息本身在窗外，正文只写窗口内的后续。</p>
+<h2>主编按语：未收录</h2>
+<p>下面这些材料采集员查到了，但因为落在时间窗之外、属于对旧闻的回顾，或未能获得足够原文，所以没有收进正文。写在这里，是为了让他知道这些事不是被漏掉了，而是有意没收。</p>
+<p><strong>讯AI 排除的窗外材料</strong>：</p>
+<ul>
+<li>英伟达宣布黄仁勋辞职的官方新闻稿本身：北京时间 11 月 12 日约 21:48，已在昨日证据包，今天只写窗口内的后续。</li>
+<li>Gemini 4 Hydrogen 及配套评测：官方博客日期为 11 月 12 日，官方社交媒体帖在北京时间 11 月 13 日 06:00 之前。</li>
+<li>Claude Meetings 测试版与 Gemini Decision 1 / Decisions API：更早发布。</li>
+<li>Meta Muse 向美国付费用户开放代打电话：相关官方帖为北京时间 11 月 13 日 01:23，早于窗口。</li>
+<li>ElevenLabs 的 ElevenAI 应用：文中写明是在 11 月 11 日的峰会上发布，TechCrunch 11 月 13 日的报道是迟来的转述。</li>
+<li>Thinking Machines 开源 Inkling 2 Small、Edge0-145B、World Labs Atlas，以及 OpenAI GPT-6 Astra 误停对齐评估：均在北京时间 11 月 13 日 06:00 之前。</li>
+<li>MOSS-Live 全双工评测解读：官网只标 2026 年 11 月 13 日，找不到 06:00 之后的精确时刻，未收。</li>
+<li>Lydia Hallie 关于 Claude Code Stop hook 的使用技巧是一条教程帖，不算新闻，未单列。</li>
+</ul>
+<p><strong>讯科采集说明中的窗外或证据不足材料</strong>：</p>
+<ul>
+<li>亚马逊云智利区域启用、台积电批准向 OpenAI 与 Anthropic 投资、AMD 第六代 EPYC 发布、三星牙山高带宽内存封装厂开工、中芯国际第三季度业绩，以及英飞凌高压配电板参考设计等，原始发布时间都在本采集窗开始之前。</li>
+<li>中国「探源计划」探路者卫星发射发生于 11 月 11 日，不在窗内。</li>
+<li>Windows「SignDrop」权限提升漏洞由研究者在 11 月 10 日（周二）披露，Ars Technica 的 11 月 13 日报道属于对窗外事件的后续转述，故未单列。</li>
+<li>三星代工再获美国云厂商 2 纳米订单的说法，目前几乎只见于 DIGITIMES 11 月 13 日一篇付费文章的导语，未见官方确认，也缺少可核对的完整细节，故暂不收录。</li>
+</ul>
+<p><strong>讯医附录中的窗外、回顾性或原文不足材料</strong>：</p>
+<ul>
+<li>美国食品药品管理局《实体瘤早期 IND 方案建议》征求意见稿：美国联邦公报标注 2026 年 11 月 12 日发布，按美东上午公开的惯例落在昨天采集窗内，本窗不收录。</li>
+<li>JAMA 11 月 12 日在线发表的 PANKU-Esophagus01 Ⅲ期试验（izalontamab brengitecan 用于既往治疗过的食管鳞癌）等原创研究：Crossref 创建时间为世界时 2026 年 11 月 12 日 16:00:36，即北京时间 11 月 13 日 00:00，属于昨天采集窗，本窗不重复收录。</li>
+<li>JAMA Medical News 于北京时间 11 月 14 日 00:30 左右上线的多篇简讯，主要内容是回顾更早已经发生的事件，包括 10 月 20 日美国食品药品管理局批准慢性乙肝新药和首个雌孕激素通用贴剂、10 月 27 日 CDC 抗菌耐药威胁报告、10 月美国妇产科医师学会关于妊娠和哺乳期使用 GLP-1 药物的实践建议，以及 11 月 11 日已发表的《新英格兰医学杂志》个性化黑色素瘤 mRNA 疫苗（intismeran autogene）Ⅲ期结果。简讯本身在窗内，但不是新的一手事件，故不单列。同期还有盐替代、新冠疫苗后发热与肠道微生物组、美国医保覆盖下降、慢性创伤性脑病与电子烟血管功能等话题，因多为对既有研究或政策的科普综述，且部分原研究时间未能在窗内确认，不单列。</li>
+<li>The Lancet Global Health 于世界时 11 月 13 日 11:53（北京时间 19:53）上线《莱索托农村由社区卫生工作者独立处方管理高血压：整群随机非劣效试验》。标题和发表时间已由 Crossref 确认，但期刊页返回 403，摘要也未出现在 Crossref 记录中，缺乏可核对的原文摘录和数字，故不单列。请注意，同一研究团队较早前已在 Nature Medicine 发表过针对未控制高血压的另一项整群随机试验，不宜把旧文数字误接到这篇新论文上。</li>
+<li>CIDRAP 于北京时间 11 月 14 日 03:38 报道《COVID 疫苗每投入 1 美元可产生最高 809 美元经济收益》。文中写明研究上上周刊于 PLOS Medicine，属对窗外论文的评述，不作为本窗新研究条目。</li>
+<li>Science Advances 同期（北京时间 11 月 14 日 02:58）还上线多篇转化或动物研究，包括生酮饮食通过长链饱和脂肪酸和 cGAS-STING 通路促进促炎巨噬细胞聚集、以及增强抗耗竭特性的 CD19 CAR-T（PRGN-3008）等，本包优先保留人群队列和监管、公共卫生类材料，这些未单列。</li>
+<li>Nature Reviews Drug Discovery 窗内刊出对 Merck/Moderna 黑色素瘤个性化疫苗的评述，以及就罕见病基因治疗规模化采访美国国立卫生研究院官员的稿件；前者评论的是 11 月 11 日已发表的《新英格兰医学杂志》试验，后者是人物访谈，不单列。</li>
+<li>《新英格兰医学杂志》intismeran autogene 联合帕博利珠单抗治疗切除后 IIB–IV 期黑色素瘤：Crossref 显示 2026 年 11 月 11 日发表，窗外。</li>
+</ul>
+<p><strong>合并与对照说明</strong>：讯AI 第 18 条与讯科第 6 条（苹果 HomeView 开售）合并为 TK-06，人工智能部分不再单列。讯科第 1 条（微软 365 全球故障）为 TK-01，讯AI 第 12 条（Claude 两轮自身故障及微软 365 连接器在窗口结束前标为已解决）为 AI-12，正文互相点了一下，没有把两件事合成一条。英伟达换帅本身在窗外，窗口内的后续各留各的：国会调查、员工请愿、路透对华项目盘点、担保与临时首席执行官评价、以色列投资人、峰会现场、伪造信件、Blackwell 训练痕迹留在人工智能部分；马来西亚核查再出口、亚洲供应链与美股收盘留在科技部分，正文可互相参照。ChatGPT Wallet（AI-08）和 ChatGPT Health 数据规则通知（P-03）相关但没有合并。连读证据包「要紧事与待办」里的内容写进了第四部分的附，不计入条数。星舰第 15 次试飞的发射窗口和火神火箭推迟后的新升空时间都已出采集窗，正文只写成即将进行的试验或窗内宣布的推迟决定，没有写出发射结果。</p>
+  </div>
+</article>
+<script>
+'use strict';
+
+(function () {
+  const PARCELS = [{"cat":"jia","face":"HomeView 从今天起开售","kicker":"这件没有被接住","confirm":null,"pad":null,"paragraphs":["苹果新闻室写明，桌面版和壁挂版从 11 月 13 日起在七个市场开售，美国都标价 299 美元。欧盟因为 iOS 还没有 Siri AI，暂时不卖。","同日新款 Apple TV 4K 开卖。Home Collection 首批配件还只是预购，发货要到 12 月中旬。开售了，并不是每个市场、每件配件都已经接住。"]},{"cat":"yi","face":"智能体可以代为付款","kicker":"确认留在了这一下","confirm":"按一下，用指纹批准这一笔","pad":"finger","paragraphs":["据 OpenAI 官方博客，每一笔付款都要先看清商品、金额和所用卡，再用面容或指纹批准，智能体拿不到真实卡号。目前先开放给美国的 ChatGPT Pro 用户。","博客里的「每周 12 亿人」是厂商自己报的数字。"]},{"cat":"bing","face":"网上有人联名请他回来","kicker":"过去了，还要再核对","confirm":null,"pad":null,"paragraphs":["英伟达副总裁 Bryan Catanzaro 发帖说，网上那封要求恢复黄仁勋职务、并声称有他参与的信是伪造的。即便是真的，他也不会签。","这和公司内部建议箱里的讨论，不是同一件事。"]},{"cat":"jia","face":"星舰准备做双回收","kicker":"这件没有被接住","confirm":null,"pad":null,"paragraphs":["SpaceX 已经公布第 15 次试飞的方案，准备第一次把助推器和飞船都送回发射场捕捉。最早的窗口是北京时间 11 月 14 日 06:45，晚于这份早报的采集结束。","到采集结束为止，还没有已确认的发射结果。方案交出去了，发射本身还没有发生。"]},{"cat":"yi","face":"替尔泊肽已经在使用","kicker":"确认留在了这一下","confirm":"盖一下，先确认避孕方式","pad":"stamp","paragraphs":["欧洲药品管理局建议：使用口服避孕药的女性，在开始替尔泊肽以及每次加量后的 4 周里，加用屏障避孕，或改用非口服的方法。","这次会议上的新药推荐，还要等欧盟委员会决定。"]},{"cat":"bing","face":"有医生把关就可以","kicker":"过去了，还要再核对","confirm":null,"pad":null,"paragraphs":["npj Digital Medicine 的一项随机对照研究纳入了 48 名医生。辅助心脏听诊的人工智能逐渐失灵时，医生的诊断也会跟着往下走。","就算先让医生自己判断，这种情况仍然出现。人把关的这一层，并不会自动靠得住。"]},{"cat":"jia","face":"火神火箭准备升空","kicker":"这件没有被接住","confirm":null,"pad":null,"paragraphs":["联合发射联盟宣布推迟，原因是氮气工厂断电。新的升空时间是北京时间 11 月 15 日 01:32:30。","40 颗卫星当时还在火箭上，没有交到轨道。这里只记下这次推迟。"]},{"cat":"yi","face":"减重药可以自己拿来用","kicker":"确认留在了这一下","confirm":"请医生先看一眼","pad":"look","paragraphs":["国家卫生健康委员会的发布会上，北京协和医院的许岭翎提醒：不能把司美格鲁肽等药物当作非处方药，使用前要由医生评估。","不合理使用可能带来急性胰腺炎、肠梗阻或甲状腺髓样癌。中新网和澎湃新闻都报道了这场发布会。"]},{"cat":"bing","face":"部委已经来查看过","kicker":"过去了，还要再核对","confirm":null,"pad":null,"paragraphs":["马来西亚投资、贸易及工业部声明，正在核查 Megaspeed 的本地子公司有没有把先进芯片再出口，并写明自己从未放行这家公司。","来查看过，并不等于已经放行。核查结论还没有公布。"]},{"cat":"jia","face":"权已经交出去了","kicker":"这件没有被接住","confirm":null,"pad":null,"paragraphs":["据 WIRED 报道，内部建议箱里一篇帖文有超过 1600 条评论，不少员工请董事会让黄仁勋回来。文中写到的市值蒸发 1 万亿美元，是 WIRED 的统计，尚未得到其他来源确认。","权已经交出去了，公司里面还没有真正接住。这和网上那封伪造的联名信不是同一件事。"]},{"cat":"yi","face":"智能体可以进商店了","kicker":"确认留在了这一下","confirm":"点一下，权限留在用户手里","pad":"toggle","paragraphs":["Sierra 发布的 Poppy 协议用 OAuth 做认证，用户可以决定智能体能做什么，也可以事后收回。","「超过 100 家」和「Shopify 已经全部启用」是官方自己报的，尚未得到其他来源确认。"]},{"cat":"bing","face":"开源权重已经交到外面","kicker":"过去了，还要再核对","confirm":null,"pad":null,"paragraphs":["据 TechCrunch 报道，Unemployment Labs 的一项研究认为，部分中国开源模型的权重里有被禁运的 Blackwell 芯片留下的训练痕迹。这是有待独立复核的主张。","报道自己也写了：这不一定等于已经违反出口管制。不能把它写成已经坐实的结论。尚未得到其他来源确认。"]}];
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const WAIT = reduceMotion ? 40 : 560;
+  const HINT = '按住这件，推向对面。';
+
+  const room = document.getElementById('room');
+  const play = document.getElementById('play');
+  const parcel = document.getElementById('parcel');
+  const face = document.getElementById('face');
+  const hand = document.getElementById('hand');
+  const hint = document.getElementById('hint');
+  const remain = document.getElementById('remain');
+  const slip = document.getElementById('slip');
+  const slipKicker = document.getElementById('slip-kicker');
+  const slipBody = document.getElementById('slip-body');
+  const nextBtn = document.getElementById('next');
+  const pad = document.getElementById('pad');
+  const padBtn = document.getElementById('pad-btn');
+  const padLabel = document.getElementById('pad-label');
+  const stop = document.getElementById('stop');
+  const gift = document.getElementById('gift');
+  const reader = document.getElementById('reader');
+  const openReaderBtn = document.getElementById('open-reader');
+  const openFromGift = document.getElementById('open-from-gift');
+  const closeReaderBtn = document.getElementById('close-reader');
+  const notePanel = document.getElementById('note-panel');
+  const openNoteBtn = document.getElementById('open-note');
+  const closeNoteBtn = document.getElementById('close-note');
+  const soundBtn = document.getElementById('sound');
+  const replayBtn = document.getElementById('replay');
+
+  const state = {
+    i: 0,
+    p: 0,
+    dx: 0,
+    phase: 'idle',
+    travel: 220,
+    startX: 0,
+    startY: 0,
+  };
+  let timers = [];
+  let learned = false;
+  let audioCtx = null;
+  let soundOn = false;
+
+  function later(fn, ms) {
+    const id = window.setTimeout(fn, ms);
+    timers.push(id);
+  }
+
+  function clearTimers() {
+    timers.forEach((id) => window.clearTimeout(id));
+    timers = [];
+  }
+
+  function clamp(n, a, b) {
+    return Math.max(a, Math.min(b, n));
+  }
+
+  function setPhase(name) {
+    state.phase = name;
+    room.dataset.phase = name;
+  }
+
+  function measure() {
+    const available = play.clientHeight - 70 - parcel.offsetHeight - 96;
+    state.travel = Math.round(Math.max(110, Math.min(260, available)));
+  }
+
+  function apply(animate) {
+    const y = -state.p * state.travel;
+    const scale = 1 - state.p * 0.16;
+    const use = Boolean(animate) && !reduceMotion;
+    parcel.style.transition = use ? 'transform 520ms cubic-bezier(.22,.61,.36,1)' : 'none';
+    parcel.style.transform =
+      'translate(calc(-50% + ' + state.dx + 'px), ' + y + 'px) scale(' + scale + ')';
+  }
+
+  function updateRemain() {
+    if (state.phase === 'end') {
+      remain.textContent = '';
+      return;
+    }
+    const left = PARCELS.length - state.i;
+    remain.textContent =
+      left === PARCELS.length ? '一共 12 件' : left === 1 ? '还剩最后一件' : '还剩 ' + left + ' 件';
+  }
+
+  function fillParcel() {
+    const item = PARCELS[state.i];
+    face.textContent = item.face;
+    parcel.setAttribute(
+      'aria-label',
+      '第 ' +
+        (state.i + 1) +
+        ' 件，一共 12 件。封面上写着：' +
+        item.face +
+        '。按住并推向对面，也可以按向上键。',
+    );
+  }
+
+  function addPaper(cat) {
+    const stack = document.querySelector('.tray-' + cat + ' .stack');
+    const paper = document.createElement('i');
+    paper.style.setProperty('--n', String(stack.children.length));
+    stack.appendChild(paper);
+    stack.parentElement.classList.add('has-paper');
+  }
+
+  function clearPapers() {
+    document.querySelectorAll('.stack').forEach((stack) => {
+      stack.replaceChildren();
+      stack.parentElement.classList.remove('has-paper');
+    });
+  }
+
+  function hideHand() {
+    learned = true;
+    hand.hidden = true;
+  }
+
+  function showSlip(item) {
+    slip.dataset.cat = item.cat;
+    slipKicker.dataset.cat = item.cat;
+    slipKicker.textContent = item.kicker;
+    slipBody.replaceChildren();
+    item.paragraphs.forEach((text) => {
+      const p = document.createElement('p');
+      p.textContent = text;
+      slipBody.appendChild(p);
+    });
+    nextBtn.textContent = state.i === PARCELS.length - 1 ? '看看这三叠' : '看下一件';
+    parcel.style.opacity = '0';
+    parcel.style.pointerEvents = 'none';
+    const left = PARCELS.length - state.i - 1;
+    remain.textContent = left === 0 ? '最后一件也放下了' : '还剩 ' + left + ' 件';
+    slip.hidden = false;
+    if (!reduceMotion) {
+      slip.classList.remove('is-in');
+      void slip.offsetWidth;
+      slip.classList.add('is-in');
+    }
+    setPhase('reading');
+    paperSound();
+    nextBtn.focus();
+  }
+
+  function goJia(item) {
+    hint.textContent = '往对面送。';
+    state.p = 0.82;
+    state.dx = 0;
+    apply(true);
+    later(() => {
+      if (state.phase === 'end') return;
+      stop.classList.add('is-in');
+      hint.textContent = '对面没有接住，它退回来了。';
+      state.p = 0.66;
+      apply(true);
+      tone(180, 0.12);
+      later(() => {
+        if (state.phase === 'end') return;
+        state.p = 0.04;
+        state.dx = -18;
+        apply(true);
+        later(() => {
+          if (state.phase === 'end') return;
+          addPaper('jia');
+          showSlip(item);
+        }, WAIT);
+      }, Math.round(WAIT * 0.45));
+    }, WAIT);
+  }
+
+  function goYi(item) {
+    state.p = 0.74;
+    state.dx = 0;
+    apply(true);
+    later(() => {
+      if (state.phase === 'end') return;
+      padLabel.textContent = item.confirm;
+      pad.dataset.kind = item.pad;
+      pad.hidden = false;
+      hint.textContent = '它停在半路，等这一下确认。';
+      setPhase('confirm');
+      tone(520, 0.08);
+      padBtn.focus();
+    }, WAIT);
+  }
+
+  function finishYi() {
+    if (state.phase !== 'confirm') return;
+    const item = PARCELS[state.i];
+    setPhase('lock');
+    pad.classList.add('is-pressed');
+    tone(660, 0.09);
+    later(() => {
+      pad.hidden = true;
+      pad.classList.remove('is-pressed');
+      hint.textContent = '确认留下了，它才过去。';
+      state.p = 0.9;
+      state.dx = 30;
+      apply(true);
+      later(() => {
+        if (state.phase === 'end') return;
+        addPaper('yi');
+        showSlip(item);
+      }, WAIT);
+    }, reduceMotion ? 20 : 160);
+  }
+
+  function goBing(item) {
+    state.p = 0.9;
+    state.dx = 40;
+    apply(true);
+    later(() => {
+      if (state.phase === 'end') return;
+      hint.textContent = '它过去了，回执在下面。';
+      addPaper('bing');
+      showSlip(item);
+    }, WAIT);
+  }
+
+  function commit() {
+    if (state.phase !== 'idle' && state.phase !== 'drag') return;
+    const item = PARCELS[state.i];
+    hideHand();
+    setPhase('lock');
+    parcel.classList.remove('is-held');
+    if (item.cat === 'jia') goJia(item);
+    else if (item.cat === 'yi') goYi(item);
+    else goBing(item);
+  }
+
+  function nextItem() {
+    if (state.phase !== 'reading') return;
+    clearTimers();
+    slip.hidden = true;
+    slip.classList.remove('is-in');
+    stop.classList.remove('is-in');
+    if (state.i >= PARCELS.length - 1) {
+      showEnd();
+      return;
+    }
+    state.i += 1;
+    state.p = 0;
+    state.dx = 0;
+    parcel.style.opacity = '1';
+    parcel.style.pointerEvents = '';
+    parcel.classList.add('is-held');
+    apply(false);
+    fillParcel();
+    hint.textContent = HINT;
+    setPhase('idle');
+    updateRemain();
+    window.requestAnimationFrame(function () {
+      parcel.classList.remove('is-held');
+    });
+  }
+
+  function showEnd() {
+    clearTimers();
+    setPhase('end');
+    room.classList.add('is-end');
+    parcel.hidden = true;
+    slip.hidden = true;
+    pad.hidden = true;
+    stop.classList.remove('is-in');
+    gift.hidden = false;
+    hint.textContent = '三叠都在对面了。';
+    remain.textContent = '';
+    chime();
+    replayBtn.focus();
+  }
+
+  function replay() {
+    clearTimers();
+    state.i = 0;
+    state.p = 0;
+    state.dx = 0;
+    learned = false;
+    room.classList.remove('is-end');
+    gift.hidden = true;
+    slip.hidden = true;
+    slip.classList.remove('is-in');
+    pad.hidden = true;
+    pad.classList.remove('is-pressed');
+    stop.classList.remove('is-in');
+    clearPapers();
+    parcel.hidden = false;
+    parcel.style.opacity = '1';
+    parcel.style.pointerEvents = '';
+    parcel.classList.add('is-held');
+    apply(false);
+    fillParcel();
+    hand.hidden = false;
+    hint.textContent = HINT;
+    setPhase('idle');
+    updateRemain();
+    window.requestAnimationFrame(function () {
+      parcel.classList.remove('is-held');
+    });
+  }
+
+  function openReader() {
+    reader.classList.add('is-open');
+    closeReaderBtn.focus();
+  }
+
+  function closeReader() {
+    reader.classList.remove('is-open');
+    openReaderBtn.focus();
+  }
+
+  function openNote() {
+    notePanel.hidden = false;
+    closeNoteBtn.focus();
+  }
+
+  function closeNote() {
+    notePanel.hidden = true;
+    openNoteBtn.focus();
+  }
+
+  function ensureAudio() {
+    if (!audioCtx) {
+      const Ctx = window.AudioContext || window.webkitAudioContext;
+      if (!Ctx) return null;
+      audioCtx = new Ctx();
+    }
+    if (audioCtx.state === 'suspended') audioCtx.resume().catch(function () {});
+    return audioCtx;
+  }
+
+  function tone(freq, dur) {
+    if (!soundOn) return;
+    try {
+      const ctx = ensureAudio();
+      if (!ctx) return;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.03, ctx.currentTime + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + dur);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + dur + 0.02);
+    } catch (err) {
+      /* 声音不可用时，柜台照常可以推。 */
+    }
+  }
+
+  function paperSound() {
+    if (!soundOn) return;
+    try {
+      const ctx = ensureAudio();
+      if (!ctx) return;
+      const dur = 0.12;
+      const length = Math.floor(ctx.sampleRate * dur);
+      const buffer = ctx.createBuffer(1, length, ctx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < length; i += 1) data[i] = (Math.random() * 2 - 1) * (1 - i / length);
+      const src = ctx.createBufferSource();
+      src.buffer = buffer;
+      const filter = ctx.createBiquadFilter();
+      filter.type = 'highpass';
+      filter.frequency.value = 900;
+      const gain = ctx.createGain();
+      gain.gain.value = 0.02;
+      src.connect(filter);
+      filter.connect(gain);
+      gain.connect(ctx.destination);
+      src.start();
+    } catch (err) {
+      /* 忽略 */
+    }
+  }
+
+  function chime() {
+    tone(523, 0.12);
+    later(function () {
+      tone(659, 0.16);
+    }, 90);
+  }
+
+  parcel.addEventListener('pointerdown', function (event) {
+    if (state.phase !== 'idle') return;
+    if (typeof event.button === 'number' && event.button !== 0) return;
+    parcel.setPointerCapture(event.pointerId);
+    state.startX = event.clientX;
+    state.startY = event.clientY;
+    parcel.classList.add('is-held');
+    setPhase('drag');
+  });
+
+  parcel.addEventListener('pointermove', function (event) {
+    if (state.phase !== 'drag') return;
+    const dy = state.startY - event.clientY;
+    const dx = event.clientX - state.startX;
+    state.p = clamp(dy / state.travel, 0, 1);
+    state.dx = clamp(dx / 5, -28, 28);
+    apply(false);
+  });
+
+  function endDrag() {
+    if (state.phase !== 'drag') return;
+    parcel.classList.remove('is-held');
+    if (state.p >= 0.58) {
+      commit();
+      return;
+    }
+    const nudged = state.p > 0.12;
+    state.p = 0;
+    state.dx = 0;
+    setPhase('idle');
+    apply(true);
+    if (nudged) {
+      hint.textContent = '再往对面送一送。';
+      later(function () {
+        if (state.phase === 'idle') hint.textContent = HINT;
+      }, 1500);
+    } else if (!learned) {
+      hint.classList.remove('is-wiggle');
+      void hint.offsetWidth;
+      hint.classList.add('is-wiggle');
+    }
+  }
+
+  parcel.addEventListener('pointerup', endDrag);
+  parcel.addEventListener('pointercancel', endDrag);
+
+  parcel.addEventListener('keydown', function (event) {
+    if (event.key !== 'ArrowUp' && event.key !== 'Enter' && event.key !== ' ') return;
+    event.preventDefault();
+    if (state.phase !== 'idle') return;
+    commit();
+  });
+
+  padBtn.addEventListener('click', finishYi);
+  nextBtn.addEventListener('click', nextItem);
+  replayBtn.addEventListener('click', replay);
+  openReaderBtn.addEventListener('click', openReader);
+  openFromGift.addEventListener('click', openReader);
+  closeReaderBtn.addEventListener('click', closeReader);
+  openNoteBtn.addEventListener('click', openNote);
+  closeNoteBtn.addEventListener('click', closeNote);
+
+  soundBtn.addEventListener('click', function () {
+    soundOn = !soundOn;
+    soundBtn.setAttribute('aria-pressed', soundOn ? 'true' : 'false');
+    soundBtn.textContent = soundOn ? '声音开着' : '声音关着';
+    if (soundOn) {
+      ensureAudio();
+      tone(640, 0.08);
+    }
+  });
+
+  document.querySelectorAll('[data-filter]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      const cat = btn.dataset.filter;
+      document.querySelectorAll('[data-filter]').forEach(function (other) {
+        other.setAttribute('aria-pressed', other === btn ? 'true' : 'false');
+      });
+      document.querySelectorAll('#reader article[data-cat]').forEach(function (el) {
+        el.hidden = cat !== 'all' && el.dataset.cat !== cat;
+      });
+    });
+  });
+
+  document.addEventListener('keydown', function (event) {
+    if (event.key !== 'Escape') return;
+    if (reader.classList.contains('is-open')) closeReader();
+    else if (!notePanel.hidden) closeNote();
+  });
+
+  measure();
+  apply(false);
+  fillParcel();
+  updateRemain();
+  setPhase('idle');
+  room.dataset.ready = '1';
+
+  window.addEventListener('resize', function () {
+    measure();
+    if (state.phase === 'idle' || state.phase === 'drag') apply(false);
+  });
+})();
+
+</script>
+</body>
+<!--
+DESIGN LESSON
+STYLE: 星期六清晨的窗边有一张浅木柜台，信封要亲手推向对面。
+GENRE: 一个把东西推向柜台、看有没有被签收的小游戏。
+TITLE: 交出去了，还要看有没有人签收
+THESIS: 交出去了，还不等于已经成立。
+-->
+</html>
