@@ -1,0 +1,1623 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>折晓早报 · 合上回收臂 · 2026-11-15</title>
+<style>
+:root {
+  color-scheme: light;
+  --ink: #3c342c;
+  --soft: #6b5e53;
+  --paper: #fffaf4;
+  --jia: #e7a57a;
+  --jia-ink: #9a5a34;
+  --yi: #7dbaa8;
+  --yi-ink: #1f6d5e;
+  --bing: #93a9bb;
+  --bing-ink: #3e5870;
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  color: var(--ink);
+  font-family: "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", "WenQuanYi Zen Hei", "Source Han Sans SC", sans-serif;
+  background: #f3ecdf;
+  -webkit-font-smoothing: antialiased;
+}
+
+button, summary { font: inherit; color: inherit; }
+
+button {
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+[hidden] { display: none !important; }
+
+:focus-visible {
+  outline: 2px solid var(--yi-ink);
+  outline-offset: 3px;
+}
+
+.sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+.app {
+  height: 100%;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 18px 0;
+  flex-shrink: 0;
+}
+
+.date, .hint, .gift-more, .card-aside, .arrive, .engraving, .note-body, .book-copy em {
+  margin: 0;
+}
+
+.date {
+  font-size: 13px;
+  color: var(--soft);
+}
+
+.sound, .next, .replay, .when-open, .filters button {
+  border-radius: 999px;
+  background: var(--paper);
+  box-shadow: 0 2px 8px rgba(80, 60, 40, 0.08);
+}
+
+.sound {
+  padding: 6px 12px;
+  font-size: 13px;
+}
+
+.hint {
+  margin: 0;
+  padding: 8px 18px 0;
+  text-align: center;
+  font-size: 17px;
+  line-height: 1.45;
+  flex-shrink: 0;
+}
+
+.dots {
+  display: flex;
+  justify-content: center;
+  gap: 7px;
+  padding: 8px 0 4px;
+  flex-shrink: 0;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(80, 60, 40, 0.16);
+}
+
+.dot.is-now {
+  outline: 2px solid rgba(80, 60, 40, 0.35);
+  outline-offset: 2px;
+}
+
+.dot.is-done[data-cat="jia"] { background: var(--jia); }
+.dot.is-done[data-cat="yi"] { background: var(--yi); }
+.dot.is-done[data-cat="bing"] { background: var(--bing); }
+
+.scene {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}
+
+.stage {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 112px;
+}
+
+.world {
+  position: absolute;
+  inset: 0;
+  perspective: 1100px;
+  background:
+    radial-gradient(ellipse at 16% 0%, rgba(255, 248, 230, 0.95), transparent 42%),
+    linear-gradient(180deg, #f7f3ea 0%, #f4eee4 48%, #efe4d4 100%);
+  overflow: hidden;
+}
+
+.sun {
+  position: absolute;
+  left: 7%;
+  top: 4%;
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff 0%, #fff6e2 42%, rgba(255, 246, 226, 0) 72%);
+  pointer-events: none;
+}
+
+.desk {
+  position: absolute;
+  left: 50%;
+  bottom: 6%;
+  width: min(780px, 94%);
+  height: 48%;
+  transform: translateX(-50%) rotateX(18deg);
+  transform-origin: center bottom;
+  border-radius: 46% 46% 28px 28px / 22% 22% 28px 28px;
+  background:
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.22) 0 2px, transparent 2px 18px),
+    linear-gradient(180deg, #f8ebda, #e7d2b8 74%, #dec6a8);
+  box-shadow:
+    0 18px 28px rgba(90, 70, 40, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.75);
+  pointer-events: none;
+}
+
+.desk::after {
+  content: "";
+  position: absolute;
+  left: 7%;
+  right: 7%;
+  bottom: -12px;
+  height: 16px;
+  border-radius: 0 0 18px 18px;
+  background: linear-gradient(#d8c1a4, #c9ae8c);
+}
+
+.tower {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: min(540px, 100%);
+  transform: translateX(-50%);
+  user-select: none;
+  transition: opacity 0.5s var(--ease);
+}
+
+.tower.is-away {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.shadow {
+  position: absolute;
+  left: 50%;
+  top: 76%;
+  width: 240px;
+  height: 30px;
+  transform: translateX(-50%);
+  background: radial-gradient(ellipse, rgba(90, 70, 40, 0.16), transparent 70%);
+  pointer-events: none;
+}
+
+.mast {
+  position: absolute;
+  left: 50%;
+  top: 24%;
+  width: 52px;
+  height: 48%;
+  transform: translateX(-50%);
+  border-radius: 14px;
+  background: linear-gradient(90deg, #e6ddd2, #fffefb 46%, #e8dfd4);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.85),
+    0 12px 18px rgba(80, 60, 40, 0.08);
+}
+
+.mast i {
+  display: block;
+  width: 16px;
+  height: 10px;
+  margin: 22px auto 0;
+  border-radius: 3px;
+  background: #f6e6cb;
+  box-shadow: inset 0 0 0 1px rgba(196, 156, 112, 0.35);
+}
+
+.base {
+  position: absolute;
+  left: 50%;
+  top: 68%;
+  width: 196px;
+  height: 34px;
+  transform: translateX(-50%);
+  border-radius: 12px;
+  background: linear-gradient(#fff, #eadfD0);
+  box-shadow: 0 8px 16px rgba(80, 60, 40, 0.1);
+}
+
+.engraving {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 8px;
+  text-align: center;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: #8d7866;
+}
+
+.hinge {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  margin: -8px 0 0 -8px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #fff, #d9c7b4);
+  box-shadow: 0 2px 4px rgba(80, 60, 40, 0.15);
+  z-index: 5;
+  pointer-events: none;
+}
+
+.hinge.l { left: 43%; top: 50%; }
+.hinge.r { left: 57%; top: 50%; }
+
+.arm {
+  position: absolute;
+  top: 50%;
+  width: 34%;
+  z-index: 4;
+  background: transparent;
+  box-shadow: none;
+}
+
+.stick {
+  position: absolute;
+  top: 50%;
+  height: 18px;
+  margin-top: -9px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #ffffff 0%, #f3ebe2 48%, #e2d3c3 100%);
+  box-shadow:
+    inset 0 1px 0 #fff,
+    0 8px 12px rgba(80, 60, 40, 0.12);
+  pointer-events: none;
+}
+
+.stick::before {
+  content: "";
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  top: 8px;
+  height: 2px;
+  background: rgba(176, 146, 116, 0.35);
+  border-radius: 2px;
+}
+
+.left-arm {
+  left: calc(43% - 34%);
+  height: 18px;
+  margin-top: -9px;
+  transform-origin: 100% 50%;
+  transform: rotate(var(--arm, 104deg));
+  pointer-events: none;
+}
+
+.left-arm .stick { left: 14px; right: 0; }
+
+.right-arm {
+  left: 57%;
+  height: 76px;
+  margin-top: -38px;
+  transform-origin: 0 50%;
+  transform: rotate(var(--arm, -50deg));
+  touch-action: none;
+  cursor: grab;
+}
+
+.right-arm .stick { left: 0; right: 14px; }
+
+.right-arm.is-held { cursor: grabbing; }
+
+.pad {
+  position: absolute;
+  top: 50%;
+  width: 32px;
+  height: 32px;
+  margin-top: -16px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #fff, #f1e3d4 68%, #e7c8a8);
+  box-shadow: 0 4px 8px rgba(80, 60, 40, 0.16);
+}
+
+.left-arm .pad { left: -2px; }
+.right-arm .pad { right: -2px; }
+
+.right-arm .pad {
+  animation: pulse 2.6s var(--ease) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 0 6px rgba(231, 165, 122, 0.18), 0 4px 8px rgba(80, 60, 40, 0.16); }
+  50% { box-shadow: 0 0 0 14px rgba(231, 165, 122, 0.05), 0 4px 8px rgba(80, 60, 40, 0.16); }
+}
+
+.object {
+  position: absolute;
+  left: 50%;
+  top: 7%;
+  width: 150px;
+  margin-left: -75px;
+  z-index: 6;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(-12px);
+  transition: opacity 0.7s var(--ease), transform 0.7s var(--ease);
+  pointer-events: none;
+}
+
+.object.is-in {
+  opacity: 1;
+  transform: none;
+}
+
+.object.is-caught {
+  opacity: 1;
+  z-index: 3;
+  transform: translateY(22px) scale(0.94);
+}
+
+.object svg {
+  width: 128px;
+  height: 78px;
+  display: block;
+  margin: 0 auto;
+  filter: drop-shadow(0 10px 8px rgba(90, 70, 40, 0.12));
+}
+
+.piece-name {
+  margin: 2px 18px 0;
+  min-height: 1.4em;
+  text-align: center;
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--soft);
+  flex-shrink: 0;
+}
+
+.hang {
+  position: absolute;
+  right: 4%;
+  top: 5%;
+  width: 124px;
+  text-align: center;
+  z-index: 3;
+  color: var(--jia);
+}
+
+.hang svg {
+  width: 72px;
+  height: 72px;
+  animation: spin 22s linear infinite;
+}
+
+.hang p {
+  margin: 0 auto;
+  max-width: 9em;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--jia-ink);
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.gap {
+  position: absolute;
+  left: 50%;
+  top: 46%;
+  transform: translateX(-50%);
+  z-index: 6;
+  margin: 0;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(255, 250, 244, 0.94);
+  color: var(--yi-ink);
+  font-size: 14px;
+  box-shadow: 0 6px 14px rgba(80, 60, 40, 0.08);
+}
+
+.notch {
+  position: absolute;
+  left: 50%;
+  top: 73%;
+  width: 120px;
+  height: 46px;
+  transform: translateX(-50%);
+  border: 2px dashed rgba(62, 88, 112, 0.55);
+  border-radius: 12px;
+  background: rgba(147, 169, 187, 0.16);
+  color: var(--bing-ink);
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+.plate {
+  position: absolute;
+  left: 5%;
+  top: 60%;
+  z-index: 6;
+  width: 112px;
+  min-height: 64px;
+  padding: 8px;
+  border-radius: 12px;
+  border: 2px dashed var(--bing);
+  background: rgba(255, 255, 255, 0.94);
+  color: var(--bing-ink);
+  font-size: 15px;
+  line-height: 1.35;
+  cursor: grab;
+  touch-action: none;
+  box-shadow: 0 8px 16px rgba(80, 60, 40, 0.1);
+  transition: left 0.45s var(--ease), top 0.45s var(--ease), transform 0.45s var(--ease);
+}
+
+.plate.is-dragging {
+  transition: none;
+  cursor: grabbing;
+}
+
+.plate.is-seated {
+  left: 50%;
+  top: 78%;
+  transform: translateX(-58%) rotate(-9deg);
+}
+
+.plate.is-seamed::after {
+  content: "";
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: 7px;
+  height: 2px;
+  background: repeating-linear-gradient(90deg, var(--bing) 0 6px, transparent 6px 10px);
+}
+
+.card {
+  position: absolute;
+  z-index: 8;
+  right: 14px;
+  bottom: 10px;
+  width: min(390px, calc(100% - 28px));
+  max-height: 52%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px 16px 12px;
+  border-radius: 18px;
+  background: var(--paper);
+  box-shadow: 0 18px 40px rgba(80, 60, 40, 0.14);
+  text-align: left;
+}
+
+.card-body { overflow: auto; }
+
+.card-kicker { margin: 0; font-size: 13px; line-height: 1.45; }
+.card-kicker.jia { color: var(--jia-ink); }
+.card-kicker.yi { color: var(--yi-ink); }
+.card-kicker.bing { color: var(--bing-ink); }
+
+.card-line {
+  margin: 6px 0;
+  font-size: 17px;
+  line-height: 1.55;
+}
+
+.card-aside {
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--soft);
+}
+
+.next, .replay {
+  align-self: flex-start;
+  padding: 8px 14px;
+  font-size: 15px;
+}
+
+.finale {
+  position: absolute;
+  inset: 0;
+  z-index: 7;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 10px 14px 8px;
+  overflow: auto;
+  text-align: center;
+  animation: rise 0.8s var(--ease);
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
+
+.stacks {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  width: min(920px, 100%);
+}
+
+.stack {
+  flex: 1 1 210px;
+  max-width: 280px;
+  padding: 8px 8px 12px;
+  border-radius: 18px;
+  background: rgba(255, 250, 244, 0.78);
+  box-shadow: 0 10px 24px rgba(80, 60, 40, 0.06);
+}
+
+.ring { width: 64px; height: 64px; display: block; margin: 0 auto 4px; }
+.stack.is-jia .ring { color: var(--jia); }
+.stack.is-yi .ring { color: var(--yi); }
+.stack.is-bing .ring { color: var(--bing); }
+
+.mini {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px;
+}
+
+.mini figure { margin: 0; width: 72px; }
+
+.mini svg { width: 68px; height: 42px; display: block; margin: 0 auto; }
+
+.mini figcaption {
+  font-size: 12px;
+  line-height: 1.3;
+  color: var(--soft);
+}
+
+.stack-line {
+  margin: 8px 8px 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--soft);
+}
+
+.gift-line {
+  width: min(40rem, 100%);
+  padding: 12px 16px 14px;
+  border-radius: 16px;
+  background: var(--paper);
+  box-shadow: 0 12px 30px rgba(80, 60, 40, 0.08);
+}
+
+.gift-kicker {
+  margin: 0;
+  font-size: 13px;
+  color: var(--soft);
+}
+
+.thesis {
+  margin: 8px 0;
+  font-size: 20px;
+  line-height: 1.55;
+}
+
+.gift-more {
+  margin-bottom: 10px;
+  font-size: 14px;
+  color: var(--soft);
+}
+
+.dock {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 112px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding: 0 16px 12px;
+  pointer-events: none;
+}
+
+.dock > * { pointer-events: auto; }
+
+.dock-balance { width: 148px; flex: 0 0 148px; }
+
+.ledger:not([open]) { width: 210px; }
+
+.ledger:not([open]) summary,
+.note:not([open]) summary {
+  list-style: none;
+  cursor: pointer;
+}
+
+.ledger summary::-webkit-details-marker,
+.note summary::-webkit-details-marker { display: none; }
+
+.ledger:not([open]) summary {
+  position: relative;
+  display: block;
+  height: 86px;
+  border-radius: 4px 12px 12px 4px;
+  background: linear-gradient(90deg, #e6d2bc 0 16px, #fffaf4 16px);
+  box-shadow:
+    0 12px 18px rgba(80, 60, 40, 0.12),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.7);
+}
+
+.ledger:not([open]) summary::after {
+  content: "";
+  position: absolute;
+  left: 30px;
+  top: -6px;
+  width: 10px;
+  height: 26px;
+  border-radius: 0 0 3px 3px;
+  background: var(--jia);
+}
+
+.book-copy {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+  padding: 0 12px 0 28px;
+}
+
+.book-copy strong {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.book-copy em {
+  margin-top: 4px;
+  font-style: normal;
+  font-size: 12px;
+  line-height: 1.35;
+  color: var(--soft);
+}
+
+.ledger:not([open]) .when-open,
+.note:not([open]) .when-open { display: none; }
+
+.ledger[open] {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  overflow: auto;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(255, 248, 230, 0.8), transparent 36%),
+    #fbf7f1;
+  width: auto;
+}
+
+.ledger[open] > summary {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  justify-content: flex-end;
+  padding: 10px 16px;
+  background: rgba(251, 247, 241, 0.94);
+  border-bottom: 1px solid rgba(80, 60, 40, 0.08);
+  list-style: none;
+  cursor: pointer;
+}
+
+.ledger[open] .when-closed { display: none; }
+
+.when-open {
+  display: inline-block;
+  padding: 8px 14px;
+  font-size: 15px;
+}
+
+.note:not([open]) {
+  width: 148px;
+  transform: rotate(-2.5deg);
+}
+
+.note:not([open]) summary {
+  display: block;
+  min-height: 86px;
+  padding: 18px 10px 10px;
+  background: #fff3bf;
+  box-shadow: 0 8px 16px rgba(80, 60, 40, 0.1);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.note:not([open]) summary::before {
+  content: "";
+  position: absolute;
+  left: 18px;
+  top: -7px;
+  width: 34px;
+  height: 12px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.55);
+}
+
+.note:not([open]) summary { position: relative; }
+
+.note b { font-weight: 700; }
+
+.note[open] {
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  z-index: 9;
+  width: min(380px, calc(100% - 24px));
+  max-height: min(62vh, 460px);
+  overflow: auto;
+  padding: 8px 12px 12px;
+  background: #fff6d4;
+  border-radius: 6px;
+  box-shadow: 0 16px 40px rgba(80, 60, 40, 0.16);
+  transform: none;
+}
+
+.note[open] summary {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  list-style: none;
+  cursor: pointer;
+  text-align: right;
+  padding: 6px 0 8px;
+  background: #fff6d4;
+}
+
+.note[open] .when-closed { display: none; }
+
+.note-body p {
+  margin: 0 0 0.75em;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.note-body p:last-child { margin-bottom: 0; }
+
+.prose {
+  max-width: 40rem;
+  margin: 0 auto;
+  padding: 8px 22px 80px;
+  font-size: 17px;
+  line-height: 1.8;
+  user-select: text;
+}
+
+.prose h1 {
+  margin: 0.4rem 0 0.6rem;
+  font-size: 1.5rem;
+  line-height: 1.35;
+  font-weight: 700;
+}
+
+.prose h2 {
+  margin: 2.1rem 0 0.6rem;
+  font-size: 1.25rem;
+  line-height: 1.4;
+}
+
+.prose h3 {
+  margin: 0.2rem 0 0.35rem;
+  font-size: 1.06rem;
+  line-height: 1.45;
+}
+
+.prose h4 {
+  margin: 1.05rem 0 0.1rem;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--soft);
+}
+
+.prose p { margin: 0.75em 0; }
+
+.prose ul { margin: 0.4em 0 0.8em; padding-left: 1.2em; }
+
+.prose li { margin: 0.35em 0; }
+
+.prose a {
+  color: var(--yi-ink);
+  word-break: break-all;
+}
+
+.prose hr {
+  border: 0;
+  border-top: 1px solid rgba(80, 60, 40, 0.12);
+  margin: 1.6rem 0;
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 0 4px;
+}
+
+.filters button {
+  padding: 8px 12px;
+  font-size: 14px;
+  line-height: 1.35;
+  text-align: left;
+}
+
+.filters button[aria-pressed="true"] {
+  background: var(--ink);
+  color: #fff;
+}
+
+.entry {
+  margin: 1.5rem 0 1.8rem;
+  padding: 0.15rem 0 0.15rem 0.9rem;
+  border-left: 4px solid var(--pip, #e6d9cc);
+}
+
+.entry[data-cat="jia"] { --pip: var(--jia); }
+.entry[data-cat="yi"] { --pip: var(--yi); }
+.entry[data-cat="bing"] { --pip: var(--bing); }
+.entry[data-cat="fu"] { --pip: #e6d3a3; }
+
+.kicker {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.kicker.jia { color: var(--jia-ink); }
+.kicker.yi { color: var(--yi-ink); }
+.kicker.bing { color: var(--bing-ink); }
+
+.noscript {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  top: 8px;
+  margin: 0;
+  font-size: 14px;
+}
+
+@media (max-width: 720px) {
+  .hint { font-size: 15px; }
+  .dock-balance { display: none; }
+  .ledger:not([open]) { width: 168px; }
+  .ledger:not([open]) summary { height: 78px; }
+  .note:not([open]) { width: 118px; }
+  .book-copy { padding-left: 22px; }
+  .book-copy strong { font-size: 15px; }
+  .hang { width: 96px; right: 1%; }
+  .card { left: 10px; right: 10px; width: auto; }
+  .thesis { font-size: 18px; }
+  .prose { font-size: 16px; padding: 8px 16px 72px; }
+  .sun { width: 64px; height: 64px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="bar">
+    <p class="date">2026 年 11 月 15 日 · 星期日清晨</p>
+    <button type="button" class="sound" id="sound" aria-pressed="false">声音关着</button>
+  </header>
+  <p class="hint" id="hint">按住右边发亮的回收臂，朝左边合上。</p>
+  <p class="piece-name" id="piece-name"></p>
+  <div class="dots" id="dots" aria-hidden="true">
+    <span class="dot is-now"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span>
+  </div>
+  <p class="sr" id="live" aria-live="polite"></p>
+  <div class="scene">
+    <div class="stage" id="stage">
+      <div class="world">
+        <div class="sun" aria-hidden="true"></div>
+        <div class="desk" aria-hidden="true"></div>
+        <div class="tower" id="tower">
+          <div class="shadow" aria-hidden="true"></div>
+          <div class="mast" aria-hidden="true"><i></i><i></i></div>
+          <div class="base"><p class="engraving">桌面回收臂</p></div>
+          <div class="hinge l" aria-hidden="true"></div>
+          <div class="hinge r" id="hinge" aria-hidden="true"></div>
+          <div class="arm left-arm" id="left-arm" aria-hidden="true"><span class="stick"></span><span class="pad"></span></div>
+          <button type="button" class="arm right-arm" id="arm" aria-describedby="hint" aria-label="右边的回收臂">
+            <span class="stick" aria-hidden="true"></span>
+            <span class="pad" aria-hidden="true"></span>
+          </button>
+          <div class="object" id="object"></div>
+          <div class="hang" id="hang" hidden>
+            <svg viewBox="0 0 80 80" aria-hidden="true"><circle cx="40" cy="40" r="24" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-dasharray="110 42" transform="rotate(-60 40 40)"/></svg>
+            <p id="hang-label"></p>
+          </div>
+          <p class="gap" id="gap" hidden>这里还缺一截。</p>
+          <div class="notch" id="notch" hidden>缺口</div>
+          <button type="button" class="plate" id="plate" hidden>书面合同</button>
+        </div>
+      </div>
+      <div class="finale" id="finale" hidden>
+        <div class="stacks" id="stacks"></div>
+        <div class="gift-line">
+          <p class="gift-kicker">今天看过的这一圈</p>
+          <p class="thesis" id="thesis">第一次已经发生了，圆环却还没合上。还要看缺的那一层有没有补上，最后那一下有没有接住。</p>
+          <p class="gift-more">今天一共二十三条。其余的都写在底座上的底账里。</p>
+          <button type="button" class="replay" id="replay">再接一遍</button>
+        </div>
+      </div>
+      <div class="card" id="card" hidden>
+        <div class="card-body">
+          <p class="card-kicker" id="card-kicker"></p>
+          <p class="card-line" id="card-line"></p>
+          <p class="card-aside" id="card-aside"></p>
+        </div>
+        <button type="button" class="next" id="next">继续接下一件</button>
+      </div>
+    </div>
+    <div class="dock">
+      <details class="note" id="note">
+        <summary>
+          <span class="when-closed"><b>便利贴</b><br>四件可以顺手看的小事</span>
+          <span class="when-open">收起便利贴</span>
+        </summary>
+        <div class="note-body">
+          <p>一个 GitHub 访问令牌的官方提醒写明还将在 1 天内到期，今天已经是预计到期日，大约在北京时间 11 月 15 日 15:13 前后。这是对照旧通知的推算，不是后台确认的精确时刻。如果还有自动任务在用它，建议尽快生成同等权限的新令牌，并逐处替换。不要把新令牌写进聊天或邮件。</p>
+          <p>OpenCode 通知，Default 工作区的 Go 订阅将在北京时间 11 月 17 日 13:20 续费 10.00 美元。续或不续，还留在他自己手里。</p>
+          <p>他的学习站项目里，备份文件已经上传成功，后面的用量检查却判成了失败。出站读数约 7.49 GB，大约是限额的 139.4%，口径仍是网卡累计值。可以到后台核对一下。</p>
+          <p>OpenRouter 发来过一封登录验证码邮件。这封信已经没有未读标记，但仍要他自己确认是不是本人在登录。验证码不要转给任何人，也不要写进聊天或邮件。</p>
+          <p>附里还有几件可以顺手留意的：Notion 那封安全通知还没打开；GitHub 应用 Claude 仍在申请更新权限，信里没有列出具体清单，可以先看清再决定，忽略就保持现有权限；DeepSeek 余额仍按 11 月 11 日的 16.64 元、低于 20 元告警线来看，需要他自己到后台核对；Cloudflare Tunnel 的升级还没确认；X 订阅在 11 月 13 日预定的第一次扣款 8.00 美元，回执还没看到；从 11 月 13 日起，Google AI Plus 不能再在 Gemini 应用和搜索的 AI Mode 里选 Pro 模型；ChatGPT Health 的数据使用规则将从 11 月 19 日起变化。底账里写得更全。</p>
+        </div>
+      </details>
+      <details class="ledger" id="ledger">
+        <summary>
+          <span class="book-face">
+            <span class="book-copy">
+              <span class="when-closed"><strong>回收底账</strong><em>打开以后是今天的二十三条详细稿</em></span>
+              <span class="when-open">合上底账</span>
+            </span>
+          </span>
+        </summary>
+        <div class="prose" id="prose">
+<h1>折晓每日早报 · 富文本详细稿 · 2026 年 11 月 15 日（星期日）</h1>
+<div class="filters" role="toolbar" aria-label="按三类查看详细稿">
+<button type="button" data-filter="all" aria-pressed="true">看全部</button>
+<button type="button" data-filter="jia" aria-pressed="false">只看第一次已经发生的</button>
+<button type="button" data-filter="yi" aria-pressed="false">只看圆环还没合上的</button>
+<button type="button" data-filter="bing" aria-pressed="false">只看还缺那一层的</button>
+</div><p>这份详细稿覆盖的时间窗是北京时间 2026 年 11 月 14 日 06:00 到 11 月 15 日 06:00。四份证据包一共交来 24 条材料：讯AI 12 条、讯科 4 条、讯医 4 条、连读 4 条。其中阿尔蒂米特（Altimeter Capital）的 Brad Gerstner 与阿特雷德斯（Atreides Management）的 Gavin Baker 致英伟达董事会的信，同时出现在讯AI 第 4 条和讯科第 2 条，主编把两边的事实合并成人工智能部分的 AI-04，所以正文实际收录 23 条：人工智能 12 条、科技 3 条、医学 4 条、给他的轻提示 4 条。按三类来分，甲类「第一次已经发生，下一环还没落到」6 条，乙类「圆环还没合上」9 条，丙类「缺的那一层还要补上」8 条。</p><p>今天的核心思想是：「今天到处都是已经发生的『第一次』和已经说出的『决定』，可圆环还没有合上：飞船被接住了，助推器却改道了；人已经离开了，回归的选项还被留在桌上；地位已经失去了，公开宣布却还要再等几天。真正要看的，不是宣言有没有发出，而是缺的那一层有没有补上、最后那一下有没有接住。」</p><p>每一条材料都按这个思想归入三类中的一类。甲类叫「第一次已经发生，下一环还没落到」，意思是窗口里已经出现了一个明确的第一次、一次正式批准、一份新发出的官方文件或一次已经落地的公开展示，但下一环（发射验证、临床使用、出席听证会、实际供应、全面可及）还没有落到；乙类叫「圆环还没合上」，意思是事情看起来已经走完了关键一步，可返回、修复、接替、恢复或替换的圆环还缺一截，选项仍留在桌上，或者故障、到期、告警还没有真正收住；丙类叫「缺的那一层还要补上」，意思是要让判断站住，还缺一层事实、一层书面合同、一份官方宣布、一个确定的根因，或者一次需要本人做出的核对，现有数字、口径或主张需要分开标明，不能写成已经坐实的结论。正文里每一条都依次写背景、发生了什么、为什么值得注意、归类、核实状态和来源；所有数字都照证据包原文转述并注明出处，所有时间都是北京时间。英伟达宣布黄仁勋辞职这件事本身发生在 11 月 12 日，落在更早的时间窗里，今天只写窗口内出现的后续，不把辞职公告当成新事实。</p><p>阅读提示：证据包里标为「单一来源」或「未能核实」的内容，正文都会写清楚「据某来源称」，并注明「尚未得到其他来源确认」。厂商自己报出的性能数字、媒体转述的说法、匿名信源透露的计划，都会写明到底是谁说的。医学条目会标出研究类型，比如随机对照试验、病例对照研究、监管批准或指南发布，结论一律照原话转述，不往大里说。另外，正文有时会把两件事放在一起对照着看，这只是为了帮助理解，并排放在一起并不代表两者之间有因果关系。</p><hr><h2>第一部分 人工智能（12 条）</h2>
+<article class="entry" id="AI-01" data-cat="bing"><p class="kicker bing">丙类 · 缺的那一层还要补上</p><h3>AI-01 创投人士对 TechCrunch 表示，黄仁勋离任可能给人工智能创业公司融资留下很大缺口。</h3><h4>背景：</h4><p>英伟达不只卖芯片，这些年也深度参与创业公司融资，经常在轮次里当最大投资人。黄仁勋已经在 11 月 12 日辞去总裁、首席执行官和董事职务，这件事本身落在更早的时间窗里。今天这条不是重复辞职消息，而是窗口开始后不到一小时出现的行业融资观察：创投圈在判断，临时首席执行官接任之后，出支票的节奏会不会变。</p><h4>发生了什么：</h4><p>据 TechCrunch 报道，北京时间 11 月 14 日 06:43，多位投资人和创始人表示，黄仁勋离任可能在人工智能创业公司融资上留下很大缺口。文中转引 PitchBook 的数据称，英伟达这些年每年向创业公司投入数百亿美元，仅今年就参与了 105 轮融资，而且经常是轮次里最大的投资人。Relational Capital 创始人 Maria Davidson 说，如果这个方向变了，「对那么多年轻公司会是很大的打击」。一位投资人谈到临时首席执行官 Colette Kress 时说「她要保守得多」，并认为她不太会拿出同样多的钱来维持早期生态。TechCrunch 还写道，英伟达今年以 130 亿美元收购了 Hugging Face，预计 2027 年交割，并持有 Mistral AI、Lambda 和 Black Forest Labs 的投资；据该文转述《华尔街日报》，英伟达去年向 Reflection AI 的 20 亿美元 B 轮投入了 8 亿美元，当时这家开源创业公司还没有开始拿到有意义的收入。多位投资人预计，英伟达可能缩小对尚无收入的基础设施创业公司的支票，从而影响估值和跟投意愿。需要标明：105 轮、每年数百亿美元来自对 PitchBook 的转引；130 亿美元收购 Hugging Face 是 TechCrunch 的表述；8 亿美元支票是对《华尔街日报》的转述。这些都不是英伟达同期官方公告。</p><h4>为什么值得注意：</h4><p>对正在学人工智能、也会关注开源模型和智能体创业还能不能拿到算力与资金的他来说，这条是窗口里最早的一笔系统梳理。用今天的核心思想来看，黄仁勋已经离开，可后续出支票的节奏还缺一层可以核对的官方安排，现在听到的只是创投人士的判断。不能把「105 轮」「130 亿美元」「8 亿美元」写成已经由英伟达同期确认的新数字。</p><h4>归类：</h4><p>丙类「缺的那一层还要补上」。理由是这是创投人士对后续出支票节奏的判断，不是英伟达同期官方政策；105 轮、130 亿美元收购和 8 亿美元支票都是转引，尚未独立复核，还缺一层可以核对的事实。</p><h4>核实状态：</h4><p>单一来源。TechCrunch 页面可以打开，引用了多名投资人和创始人的话，但 105 轮、130 亿美元收购和 8 亿美元支票都不是英伟达同期官方公告，证据包没有打开 PitchBook 或《华尔街日报》原文逐条复核，尚未得到其他来源确认。</p><h4>来源：</h4><ul><li>TechCrunch，北京时间 2026-11-14 06:43：<a href="https://techcrunch.com/2026/11/13/jensen-huangs-departure-blasts-big-hole-in-ai-startup-funding-vcs-and-founders-say/" target="_blank" rel="noopener noreferrer">https://techcrunch.com/2026/11/13/jensen-huangs-departure-blasts-big-hole-in-ai-startup-funding-vcs-and-founders-say/</a></li></ul></article>
+<article class="entry" id="AI-02" data-cat="bing"><p class="kicker bing">丙类 · 缺的那一层还要补上</p><h3>AI-02 ChinaTalk 与 SemiAnalysis 在紧急播客里讨论：黄仁勋离场后，MATCH 法案可能比限制远程租用算力的 RASA 更关键。</h3><h4>背景：</h4><p>黄仁勋和英伟达过去是反对切断对华芯片销售的主要声音之一。有人担心，他离开之后，美国国会可能更快推动更严的出口管制。这里要先用白话解释两个法案名字。RASA 的全称是 Remote Access Security Act，中文可以叫「远程访问安全法案」，它想把「在境外远程租用美国受控芯片」也按出口来管，也就是说，不一定要把芯片运出国，云上租用也可能算出口。MATCH 法案则把管制重心放在光刻等制造设备上。这场讨论不是新的立法表决。</p><h4>发生了什么：</h4><p>据 ChinaTalk 页面，北京时间 11 月 14 日 07:13 刊出了一场紧急播客的对谈记录，参与者是 Jordan Schneider、Dylan Patel 和 Jordan Nanos。Dylan Patel 说，自己长期以来偏鹰派，但担心这次人事会被拿来当掩护，通过「非常愚蠢的法律」；他认为，没有黄仁勋的英伟达会弱很多，而黄仁勋和英伟达过去是反对切断对华芯片销售的最大阻力，现在他们「出局了」，关键就变成会通过什么监管。他希望通过的是 MATCH 法案，并认为这对美国国家利益远比 RASA 更重要，还直接说 RASA 是「相当愚蠢的法案」。稿件里 Quinn Ennis 的背景说明写道：RASA 会修改出口管制法，明确远程访问美国受控芯片也算出口，从而使云租用适用与运送芯片本身相同的规则；RASA 今年 1 月已在众议院以 269 票对 22 票通过，但参议院尚未举行或安排表决，现行国防授权法案（NDAA）文本里也还没有写入 RASA。Patel 的主张是：完全切断远程访问，反而可能刺激走私和本土替代，并让美国失去「可随时关掉」的杠杆。Jordan Nanos 与 Patel 还说，一个人可以同时做鹰派、同时继续辩论 RASA，但很难去辩论 MATCH。需要标明：269 对 22 的票数，以及「现行 NDAA 文本未写入」，都来自稿内 Quinn Ennis 的背景说明，不是本包打开的国会记录。</p><h4>为什么值得注意：</h4><p>对关心中美算力和开源模型训练环境的他来说，这场讨论比一般评论更接近政策细节。用今天的核心思想来看，这是已经说出的主张，不是国会已经通过的新法，还缺一层立法事实。不能把「MATCH 更关键」写成已经落地的政策，也不能把 RASA 的票数写成这次窗口里新发生的表决。</p><h4>归类：</h4><p>丙类「缺的那一层还要补上」。理由是这是评论和主张，不是国会已经通过新法；RASA 的 269-22 票和「现行 NDAA 文本未写入」来自稿内背景注释，本包没有打开国会记录原文，还缺一层可以核对的立法事实。</p><h4>核实状态：</h4><p>单一来源。ChinaTalk 页面可以打开，内容是对谈记录，属于评论和主张，不是国会已经通过新法的报道。RASA 的 269-22 票和「现行 NDAA 文本未写入」来自稿内背景注释，证据包没有打开国会记录原文复核，尚未得到其他来源确认。</p><h4>来源：</h4><ul><li>ChinaTalk，北京时间 2026-11-14 07:13：<a href="https://www.chinatalk.media/p/jensen-out-match-act-in" target="_blank" rel="noopener noreferrer">https://www.chinatalk.media/p/jensen-out-match-act-in</a></li></ul></article>
+<article class="entry" id="AI-03" data-cat="jia"><p class="kicker jia">甲类 · 第一次已经发生，下一环还没落到</p><h3>AI-03 美国众议院情报委员会主席与首席成员致信商务部长 Lutnick，要求他就英伟达、Megaspeed 和芯片出口管制到委员会说明。</h3><h4>背景：</h4><p>美国商务部负责出口管制的具体执行。窗口里最明确的一项新的国会监督动作，不是又一篇评论，而是众议院情报委员会发出了一封正式信，请商务部长 Howard Lutnick 到会说明英伟达、新加坡公司 Megaspeed，以及更广泛的芯片出口管制问题。Lutnick 已经约定要在 12 月 10 日出席参议院银行委员会的听证会，这封信要求他同样到众议院这边来。</p><h4>发生了什么：</h4><p>北京时间 11 月 14 日 07:28，美国众议院情报委员会官方账号发帖称，当天委员会主席 Eric “Rick” Crawford 和首席成员 James A. Himes（官方账号写作 Ranking Member Jim Himes）向商务部长 Lutnick 发了一封信，信件本身署期为 2026 年 11 月 13 日。核心诉求是请 Lutnick 也到众议院情报委员会出席说明，而不是只去已经约定的参议院银行委员会 12 月 10 日听证会。信里转述了财政部长 Scott Bessent「当天早些时候」的采访：财政部、国务院、五角大楼和美国贸易代表办公室长期支持把新加坡公司 Megaspeed International 列入出口管制名单，以限制其采购英伟达先进人工智能芯片，理由是担心这些芯片会被提供给中国，但商务部没有采取行动。Bessent 的采访本身可能发生在本窗口开始之前，这里只把它作为这封已核信件里的转述，而不是一条独立新发布。Lutnick 是否同意出席众议院情报委员会、商务部是否认可「拒绝采取行动」的说法，都还没有独立确认。</p><h4>为什么值得注意：</h4><p>对关注出口管制和训练算力的他来说，这比一般评论更接近下一步会在国会出现的问题。用今天的核心思想来看，委员会已经发出这封信，这是窗口里新的正式监督动作，但下一环——Lutnick 是否到众议院出席、商务部如何回应——还没有落到。</p><h4>归类：</h4><p>甲类「第一次已经发生，下一环还没落到」。理由是委员会已经发出这封信，这是窗口里新的正式监督动作；Lutnick 是否同意出席众议院情报委员会、商务部是否认可「拒绝采取行动」，下一环还没落到。</p><h4>核实状态：</h4><p>多来源确认（指「委员会已发出这封信」这件事）。官方账号帖子可以打开，配发的两页信件图片与帖文一致，签署人与署期都可以对上。Bessent 采访的完整原文、商务部是否认可「拒绝采取行动」的说法，以及 Lutnick 是否同意出席众议院情报委员会，证据包没有看到独立确认。</p><h4>来源：</h4><ul><li>美国众议院情报委员会官方账号，北京时间 2026-11-14 07:28：<a href="https://x.com/HouseIntelDems/status/2121384638790963280" target="_blank" rel="noopener noreferrer">https://x.com/HouseIntelDems/status/2121384638790963280</a></li></ul></article>
+<article class="entry" id="AI-04" data-cat="yi"><p class="kicker yi">乙类 · 圆环还没合上</p><h3>AI-04 投资人 Brad Gerstner 和 Gavin Baker 致信英伟达董事会，要求放慢更换首席执行官的节奏，并保留黄仁勋回归的选项。</h3><h4>背景：</h4><p>黄仁勋已于 11 月 12 日辞去英伟达总裁、首席执行官和董事职务，临时首席执行官是原先的首席财务官 Colette Kress。窗口里出现了两件容易被混在一起、其实不是同一诉求的事：一件是本条的投资人来信，另一件是后文 AI-12 的公开请愿。公开请愿要求在独立调查得出事实之前先让黄仁勋回来；这封信则是要求放慢换人节奏、保留回归选项，并且写明不排除董事会在查清事实后仍决定不让他回来，也没有要求立刻复职。</p><h4>发生了什么：</h4><p>北京时间 11 月 14 日 07:47，阿尔蒂米特（Altimeter Capital）的 Brad Gerstner 在官方账号发帖，公布了当天发给英伟达董事会的一封信，阿特雷德斯（Atreides Management）的 Gavin Baker 也在信上署名。据 24/7 Wall St. 对发帖时间的整理，Gerstner 于美国东部时间 11 月 13 日 18:47（即北京时间 07:47）公布这封信，Baker 于东部时间 19:34（北京时间 08:34）转发。CNBC 后续报道刊于北京时间 11 月 15 日 01:35，仍在窗口内。信的核心口径是：鉴于黄仁勋长期领导的成绩，以及围绕他离职的近期事件存在巨大不确定性，董事会应当用缓慢、审慎、有条理的程序来安排英伟达未来的领导层，并把所有选项留在桌上，包括黄仁勋回归的可能；同时写明，公司过渡期可以由 Kress 和团队有能力地带领。信里还说，如果在全部事实清楚之后，董事会认定让黄仁勋回来不符合股东利益，那是董事会的职权；但不能在事实查清之前仓促永久替换。CNBC 明确写道，这封信没有要求立刻恢复他的职务。CNBC 还补充，按两家机构最近一次披露，截至 6 月 30 日，Altimeter 持有约 940 万股、价值近 19 亿美元，是其最大已披露持股；Atreides 持有约 120 万股、价值近 2.5 亿美元。这两个持股数字来自 CNBC 对监管文件的转述，不是信里的原句，证据包没有打开对应的 SEC 文件。</p><h4>为什么值得注意：</h4><p>英伟达仍是全球先进加速芯片的核心供应商，董事会接下来如何安排常任首席执行官，可能影响产品路线和客户、伙伴的预期，但不能把它理解成已经发生了芯片断供或路线调整。用今天的核心思想来看，人已经离开了，投资人却要求把回归选项留在桌上、先查清事实再决定是否永久替换，圆环还没合上。这条必须和 AI-12 的公开请愿分开读：两边都在谈「回归」，但请愿要求先回来再调查，来信是保留选项、反对仓促换人。</p><h4>归类：</h4><p>乙类「圆环还没合上」。理由是黄仁勋已经离职，投资人要求把回归选项留在桌上、先查清事实再决定是否永久替换，圆环还没合上。</p><h4>核实状态：</h4><p>多来源确认。Gerstner 原帖、信件图片、CNBC 报道和 24/7 Wall St. 对发帖时间的整理都对得上写信人、核心措辞和「不要求立即复职、但保留回归选项」这一口径。持股数量和市值以 CNBC 为准，证据包没有打开对应的 SEC 文件逐项复核。</p><h4>来源：</h4><ul><li>Brad Gerstner 官方账号原帖，北京时间 2026-11-14 07:47：<a href="https://x.com/altcap/status/2121389561414623679" target="_blank" rel="noopener noreferrer">https://x.com/altcap/status/2121389561414623679</a></li><li>CNBC，北京时间 2026-11-15 01:35：<a href="https://www.cnbc.com/2026/11/14/nvidia-investors-jensen-huang-return-board-letter.html" target="_blank" rel="noopener noreferrer">https://www.cnbc.com/2026/11/14/nvidia-investors-jensen-huang-return-board-letter.html</a></li><li>24/7 Wall St. 对发帖时间与持股披露的整理：<a href="https://247wallst.com/investing/2026/11/14/big-shareholders-and-3000-nvidia-employees-want-jensen-huang-back/" target="_blank" rel="noopener noreferrer">https://247wallst.com/investing/2026/11/14/big-shareholders-and-3000-nvidia-employees-want-jensen-huang-back/</a></li></ul></article>
+<article class="entry" id="AI-05" data-cat="jia"><p class="kicker jia">甲类 · 第一次已经发生，下一环还没落到</p><h3>AI-05 Claude 官方开发者账号宣布，桌面版 Claude Code 可以用 mods 自定义主题和动态背景。</h3><h4>背景：</h4><p>Claude Code 是 Anthropic 面向开发者的编程助手。窗口里为数不多的官方产品更新，体量不大，但来源清楚：桌面版现在可以用 mods（可以理解为扩展或插件模块）自定义外观。</p><h4>发生了什么：</h4><p>北京时间 11 月 14 日 07:59:59，Claude 面向开发者的官方账号 ClaudeDevs 发帖宣布：用户现在可以在桌面版 Claude Code 里用 mods 做自定义主题，改颜色、加动态背景，把界面做成自己喜欢的样子。也可以直接告诉 Claude 想要的外观，或先安装 theme-examples 插件上手。官方这条帖子只写了桌面版，没有说明云端会话是否同步支持，因此不宜把第三方转述里的「云端即将推出」写成已经证实的官方承诺。</p><h4>为什么值得注意：</h4><p>如果他平时用 Claude Code 桌面版，更新到最新版本就可以自己看一看。用今天的核心思想来看，桌面版自定义主题已经由官方账号宣布可用，这是一个明确的第一次亮相；云端会话是否同步支持，官方这条帖子没有说明，下一环还没落到。</p><h4>归类：</h4><p>甲类「第一次已经发生，下一环还没落到」。理由是桌面版自定义主题已经由官方账号宣布可用；云端会话是否同步支持，官方这条帖子没有说明，下一环还没落到。</p><h4>核实状态：</h4><p>单一来源。这是 Anthropic 面向开发者的官方账号声明，帖子和时间戳都可以打开核对；目前没有看到同步的产品博客来补充更多技术细节，尚未得到其他来源确认。</p><h4>来源：</h4><ul><li>ClaudeDevs 官方账号，北京时间 2026-11-14 07:59:59：<a href="https://x.com/ClaudeDevs/status/2121392666244186327" target="_blank" rel="noopener noreferrer">https://x.com/ClaudeDevs/status/2121392666244186327</a></li></ul></article>
+<article class="entry" id="AI-06" data-cat="yi"><p class="kicker yi">乙类 · 圆环还没合上</p><h3>AI-06 Anthropic 通报：部分用户无法在 Claude iOS 应用里用 Apple 账号注册，事故仍在调查中。</h3><h4>背景：</h4><p>昨天窗口结束时，Claude 状态页曾回到全部正常。本窗口里新出现的是 iOS 端「使用 Apple 登录」故障。这对已经能登录的用户影响可能有限，但如果有人打算新装或重新注册 iOS 版 Claude，现在用 Apple 账号可能会卡住。</p><h4>发生了什么：</h4><p>官方调查始于北京时间 11 月 14 日 15:11。当时的说明是：正在调查 Claude iOS 应用里「使用 Apple 登录」的问题，主要影响新账号；新用户可以改用 Google 或电子邮箱注册，会尽快再提供更新。最新说明发布于北京时间 11 月 15 日 04:12，措辞几乎相同，事故仍停留在 investigating（调查中），没有宣布修复。采集结束时，状态页总览为 Partially Degraded Service（部分服务降级），claude.ai 组件为 degraded_performance（性能降级）。从 15:11 到次日 04:12，修复这一环还没有合上。</p><h4>为什么值得注意：</h4><p>如果他或周围的人打算新装 iOS 版 Claude，现在用 Apple 账号可能会卡住，可以先改用 Google 或电子邮箱。用今天的核心思想来看，故障已经发生并开始调查，但修复还没有完成，圆环还没合上。</p><h4>归类：</h4><p>乙类「圆环还没合上」。理由是故障已经发生并开始调查，从 15:11 到次日 04:12 仍停在 investigating，修复这一环还没合上。</p><h4>核实状态：</h4><p>多来源确认。以上内容都来自 Anthropic 官方状态页和同一份事故通报，页面可以打开。这是公司对自己服务的说明，不是第三方评测。采集结束时尚未宣布解决。</p><h4>来源：</h4><ul><li>Claude 状态页总览：<a href="https://status.claude.com/" target="_blank" rel="noopener noreferrer">https://status.claude.com/</a></li><li>Claude 事故通报页：<a href="https://status.claude.com/incidents/ct4c2pwf2xpj" target="_blank" rel="noopener noreferrer">https://status.claude.com/incidents/ct4c2pwf2xpj</a></li><li>事故短链：<a href="https://stspg.io/4858wf40dx89" target="_blank" rel="noopener noreferrer">https://stspg.io/4858wf40dx89</a></li></ul><p>（调查始于北京时间 2026-11-14 15:11，最新说明发布于 2026-11-15 04:12）</p></article>
+<article class="entry" id="AI-07" data-cat="bing"><p class="kicker bing">丙类 · 缺的那一层还要补上</p><h3>AI-07 The Verge 发表长文，把黄仁勋离任写成「远见型创始人兼表演型首席执行官」时代的落幕。</h3><h4>背景：</h4><p>这不是一条新的硬事实稿，而是窗口里对黄仁勋角色最完整的一篇媒体综述。作者想讨论的，不只是一家芯片公司换帅，而是整个科技圈里这类「既管愿景、又亲自表演和执行的创始人兼首席执行官」是不是走到了尽头。</p><h4>发生了什么：</h4><p>据 The Verge，北京时间 11 月 14 日 20:00 刊出长文。文章写道，全世界都在看这场风波会不会冲击整个美国人工智能产业，甚至连带动摇股市，因为黄仁勋不只是在执掌「首家 5 万亿美元公司」，还掌控着支撑全球人工智能热潮、别人必须用到的 GPU，而这家公司自身就约占标普 500 指数的 6%；并且，他没有为万一自己卸任安排继任计划。文中引述 IDC 分析师、前计算记者 Tom Mainelli 说，大约 60 名员工直接向首席执行官汇报，「他把公司建在自己周围，那里发生的每件事都经过他」。Moor Insights &amp; Strategy 首席分析师 Pat Moorhead 则对作者说，他既是远见者也是战术领导者，「是科技圈里最接近史蒂夫·乔布斯的人」。需要标明：「首家 5 万亿美元公司」「约占标普 500 的 6%」「约 60 名直接下属」都出自这篇 The Verge 原文或其所引分析师的话，不是英伟达同期官方声明。</p><h4>为什么值得注意：</h4><p>如果要理解「行业怎么看待这次人事」，可以把这条和下面 Lambert 对开源生态的判断（AI-08）分开使用：一篇写的是创始人角色，一篇写的是开源资助会不会收紧。用今天的核心思想来看，这是评论和主张，5 万亿美元、6%、约 60 名直接下属都还缺一层官方或可独立核对的数字，不能当成已经坐实的公司数据。</p><h4>归类：</h4><p>丙类「缺的那一层还要补上」。理由是这是媒体综述和分析师表述，5 万亿美元、约占标普 500 的 6%、约 60 名直接下属不是英伟达同期官方声明，还缺一层可以核对的事实。</p><h4>核实状态：</h4><p>单一来源。The Verge 页面可以打开；5 万亿美元、6% 和 60 名直接下属是该文及受访分析师的表述，不是英伟达同期官方声明，引用时需标明出处，尚未得到其他来源确认。</p><h4>来源：</h4><ul><li>The Verge，北京时间 2026-11-14 20:00：<a href="https://www.theverge.com/tech/1033781/nvidia-jensen-huang-last-visionary-showman-founder-ceo" target="_blank" rel="noopener noreferrer">https://www.theverge.com/tech/1033781/nvidia-jensen-huang-last-visionary-showman-founder-ceo</a></li></ul></article>
+<article class="entry" id="AI-08" data-cat="bing"><p class="kicker bing">丙类 · 缺的那一层还要补上</p><h3>AI-08 Nathan Lambert 撰文认为，黄仁勋离开后，英伟达对美国开源模型生态的资金支持很可能随之收紧。</h3><h4>背景：</h4><p>开源模型指的是把模型权重（也就是训练好的参数）公开出来、供他人使用和再训练的做法。Nathan Lambert 长期跟踪这一领域。这篇文章的重点不是公司股价，而是美国开源权重生态在「还没形成稳定商业模式」的这几年里，会不会失去英伟达这种愿意先砸钱、再挡住草率监管的保护伞。它与 AI-01 里创投人士对融资缺口的担心是同一方向上的不同切片，但更明确地落到了开源模型，而不是一般创业公司。</p><h4>发生了什么：</h4><p>据 Interconnects，北京时间 11 月 14 日 20:23 刊出 Nathan Lambert 的文章。他认为，黄仁勋辞职对美国开源模型生态的发展是一次重大挫折。英伟达支持开源模型，仍有财务上的理由，那就是避免权力集中到少数大客户手里，让这些客户去自研芯片、削弱英伟达利润；但支持开源生态更像一道难解的谜题，而不是靠工程就能打磨出来的方案。他的判断是：公司眼下的第一目标会变成稳住局面、在未来 24 个月里向客户交货、防止内部分裂；开源模型是黄仁勋更有野心的、创始人风格的押注，他过去「向这个领域大量砸钱」的方式「很可能先干涸」。他还写道，今天推倒开源人工智能这张多米诺骨牌很容易，可一旦推倒，要再解开随之而来的权力集中、安全研究减少和长期创新受阻，就会难得多。需要标明：文中没有引用英伟达官方对开源预算的新安排，这是作者的分析，「资金会干涸」不能写成已经宣布的公司决策。</p><h4>为什么值得注意：</h4><p>对关心开源模型训练环境的他来说，这条把「融资会不会收缩」从一般创业公司，更明确地落到了开源权重生态。用今天的核心思想来看，这是分析，还缺一层官方宣布，不能把作者的预判写成已经落地的预算决定。</p><h4>归类：</h4><p>丙类「缺的那一层还要补上」。理由是这是作者对开源资助可能收紧的分析，没有英伟达官方对开源预算的新安排，不能写成已经宣布的公司决策，还缺一层官方事实。</p><h4>核实状态：</h4><p>单一来源。Interconnects 页面可以打开，作者身份清楚；目前没有看到英伟达官方回应「将停止或收紧开源资助」，因此不能把「资金会干涸」写成已经宣布的公司决策，尚未得到其他来源确认。</p><h4>来源：</h4><ul><li>Interconnects（Nathan Lambert），北京时间 2026-11-14 20:23：<a href="https://www.interconnects.ai/p/open-source-ai-without-jensen" target="_blank" rel="noopener noreferrer">https://www.interconnects.ai/p/open-source-ai-without-jensen</a></li></ul></article>
+<article class="entry" id="AI-09" data-cat="bing"><p class="kicker bing">丙类 · 缺的那一层还要补上</p><h3>AI-09 马斯克发帖称，黄仁勋许多供应链安排靠的是握手而非书面合同，没有他之后至少会丢掉一部分关键交易。</h3><h4>背景：</h4><p>马斯克在窗口开始前（北京时间 11 月 14 日 04:51）已经表示会签署要求恢复黄仁勋职务的请愿，那次表态落在窗外，不能写成今天的新事实。本条只写他在窗口内就「握手交易」发表的新判断。握手交易，就是口头谈妥、没有写成书面合同的安排。</p><h4>发生了什么：</h4><p>北京时间 11 月 14 日 22:37，马斯克发帖称：黄仁勋在英伟达把供应链运转得非常出色，但其中许多交易靠的是跟他握手，而不是书面合同；没有他之后，至少会丢掉一部分关键交易。帖子引用了一段 Dylan Patel 的相关讨论，但马斯克自己写下的新句子就是上面这两句。这仍然是个人评论，不是英伟达或供应商的官方确认。CNBC 后来在报道投资人来信（见 AI-04）时也提到了这则周六帖子。</p><h4>为什么值得注意：</h4><p>这类评论会直接影响外界对交货和产能的预期，但交易是否普遍存在、会不会真的失去，目前都还没有官方说明。用今天的核心思想来看，「许多供应安排靠握手」还缺一层书面或官方确认，不能把个人评论写成已经坐实的供应链事实。马斯克窗口前表示会签名，属于窗外，不要和这条新判断混在一起。</p><h4>归类：</h4><p>丙类「缺的那一层还要补上」。理由是「许多供应安排靠握手、没有他之后至少会丢掉一部分关键交易」是马斯克的个人评论，英伟达或供应商尚未官方确认，还缺一层可以核对的事实。</p><h4>核实状态：</h4><p>多来源确认（指「马斯克发表了这段话」这件事）。原帖可以打开，CNBC 亦有转述。握手交易是否普遍存在、会不会真的失去，目前没有看到英伟达或相关供应商的官方说明。</p><h4>来源：</h4><ul><li>马斯克原帖，北京时间 2026-11-14 22:37：<a href="https://x.com/elonmusk/status/2121613402846204253" target="_blank" rel="noopener noreferrer">https://x.com/elonmusk/status/2121613402846204253</a></li></ul></article>
+<article class="entry" id="AI-10" data-cat="yi"><p class="kicker yi">乙类 · 圆环还没合上</p><h3>AI-10 TechCrunch 梳理亚洲多国政府在黄仁勋离任后的回应：韩国称英伟达重申供应 26 万块先进 GPU，台湾和日本则偏向观察。</h3><h4>背景：</h4><p>这是窗口里对亚洲官方态度的一次汇总，而不是英伟达又发布了新的供应计划。黄仁勋离职本身在窗外，本条只写窗口内出现的政府回应。文中提到的中国超过 30 亿美元相关算力项目，是对路透社前一天调查的回顾，不是本窗口的新统计；新加坡部分补充了内政部对 Alice Huang 和 Megaspeed 调查的既有结果，同样属于背景梳理。</p><h4>发生了什么：</h4><p>据 TechCrunch 报道，北京时间 11 月 15 日 00:34 刊出汇总。最具体的新表述是韩国科技部所称：英伟达重申向韩国供应 26 万块先进 GPU，并继续联合人工智能项目；另据当地媒体，韩国政府人工智能战略委员会周五还开了紧急会议，评估黄仁勋离任对该国人工智能产业的潜在影响。台湾经济部长龚明鑫据当地媒体称，此事不太可能显著改变全球人工智能产业增长；台北市政府则说，英伟达在当地规划的海外总部仍按计划推进。日本经济产业省据路透社报道表示会密切关注，称英伟达是日本人工智能半导体产业的重要参与者；官房副长官尾崎正直说，现在评估对全球人工智能产业的影响还太早，同时强调日本会努力保证半导体稳定供应。需要标明：韩国 26 万块 GPU、台湾总部「仍按计划」和日本官方表态，主要转自当地媒体和路透社，原稿未逐条打开各部委原始新闻稿核对。</p><h4>为什么值得注意：</h4><p>离任已经发生，但实际交付还没有新的官方进度。用今天的核心思想来看，韩国「重申供应 26 万块」、台湾「总部仍按计划」、日本「现在评估还太早」，都是把后续选项留在桌上，圆环还没合上。这些表态主要转自当地媒体，引用时要标明是 TechCrunch 的汇总，不能写成已经由各部委官网直接确认的新承诺。这条也可以和 AI-04 对照着看：投资人把回归选项留在桌上，亚洲政府则把供应和总部计划留在桌上，但两件事并排放在一起，并不等于有因果关系。</p><h4>归类：</h4><p>乙类「圆环还没合上」。理由是离任已经发生，韩国「重申供应 26 万块」、台湾「总部仍按计划」、日本「现在评估还太早」都是把后续选项留在桌上，实际交付还没合上；且这些表态主要转自当地媒体，原稿未逐条核对。</p><h4>核实状态：</h4><p>单一来源。TechCrunch 页面可以打开，但韩国 26 万块 GPU、台湾总部「仍按计划」和日本官方表态，主要转自当地媒体和路透社，证据包没有打开韩国科技部、台湾经济部或日本经济产业省的原始新闻稿逐条核对，尚未得到其他来源确认。</p><h4>来源：</h4><ul><li>TechCrunch，北京时间 2026-11-15 00:34：<a href="https://techcrunch.com/2026/11/14/asian-governments-react-to-nvidia-ceo-jensen-huangs-exit/" target="_blank" rel="noopener noreferrer">https://techcrunch.com/2026/11/14/asian-governments-react-to-nvidia-ceo-jensen-huangs-exit/</a></li></ul></article>
+<article class="entry" id="AI-11" data-cat="bing"><p class="kicker bing">丙类 · 缺的那一层还要补上</p><h3>AI-11 The Decoder 报道，Anthropic 首席执行官 Amodei 在上市前夕称「明年存在巨大不确定性」，并把算力采购称为公司最深的商业两难。</h3><h4>背景：</h4><p>Anthropic 是 Claude 的开发公司，正临近一次备受关注的上市。Amodei 与摩根大通首席执行官 Jamie Dimon 的炉边谈话发生在美国东部时间周五中午 12 点，也就是北京时间 11 月 14 日 01:00，活动本身落在昨日窗口；本条写的是本窗口内出现的第一篇较完整内容报道，不要把谈话本身写成今天才发生。昨日证据包已经预告这场路演直播，但当时还没有把 Amodei 的具体表述整理出来。</p><h4>发生了什么：</h4><p>据 The Decoder，稿件刊于北京时间 11 月 15 日 03:05。Amodei 在纽约一场摩根大通投资者活动上，用「明年会发生什么，存在巨大不确定性」来概括公司面临的问题。他对 Jamie Dimon 说，「算力是公司面临的最深的商业两难」：算力必须提前一到两年购买，在谁也不知道收入能不能撑住成本之前就要下单；买少了，就没有足够资源服务客户和新技术，收入会受影响；买多了，则可能把财务撑得过满。他同时谈到用较高毛利率、账上现金，以及先少买、再在现货市场补容量的办法，来给这种错配留出缓冲，并说这是公司选择上市的重要原因。文中「已承诺近 9010 亿美元、其中约 710 亿美元将在 2027 年 9 月前到期」「公开发行最多 644 亿美元、私募 260 亿美元」「订单约超认购六倍」，以及「10 月底年化收入 810 亿美元、比 9 月末增加 100 亿美元」等数字，是 The Decoder 对彭博社和公司文件的转述，不完全是这次谈话里新宣布的数据，不宜当成这次谈话里首次披露的新数字。Amodei 在同一场谈话里还说，他希望人工智能能在五到十五年里帮助治疗癌症和阿尔茨海默病，并自己补了一句「也不确切知道」。这是他的希望，不是承诺。</p><h4>为什么值得注意：</h4><p>对同时在学医学和人工智能的他来说，这条有两层可读的地方。一层是算力采购的时间错配：必须提前买，收入却还对不上，这能帮助理解大模型公司为什么急于上市融资。另一层是 Amodei 谈到用人工智能帮助治疗癌症和阿尔茨海默病，但他自己也说并不确切知道，应当按希望而不是按承诺来读。用今天的核心思想来看，9010 亿、710 亿、644 亿、260 亿、超认购六倍、年化收入 810 亿这些数字，要补上对彭博社和公司文件的核对，不能当成这次谈话里首次披露的新数字。</p><h4>归类：</h4><p>丙类「缺的那一层还要补上」。理由是算力必须提前一到两年购买，收入还对不上；9010 亿、710 亿、644 亿、260 亿、超认购六倍、年化收入 810 亿等是对彭博社和公司文件的转述，要补上核对，不能当成这次谈话里首次披露的新数字。</p><h4>核实状态：</h4><p>单一来源。The Decoder 页面可以打开，引语写明来自周五与 Dimon 的活动；证据包没有找到官方逐字稿或彭博社原稿来交叉核对 9010 亿美元、710 亿美元等数字，这些数字引用时必须标明是对彭博社的转述，尚未得到其他来源确认。上市规模和年化收入此前已有报道，不宜当成这次谈话里首次披露的新数字。</p><h4>来源：</h4><ul><li>The Decoder，北京时间 2026-11-15 03:05：<a href="https://the-decoder.com/anthropic-ceo-amodei-admits-theres-a-huge-uncertainty-in-whats-going-to-happen-next-year-days-before-a-record-ipo/" target="_blank" rel="noopener noreferrer">https://the-decoder.com/anthropic-ceo-amodei-admits-theres-a-huge-uncertainty-in-whats-going-to-happen-next-year-days-before-a-record-ipo/</a></li></ul></article>
+<article class="entry" id="AI-12" data-cat="yi"><p class="kicker yi">乙类 · 圆环还没合上</p><h3>AI-12 TechCrunch 和 Business Insider 报道，要求恢复黄仁勋职务的公开请愿在周六下午已有超过 11.5 万个签名，联署者包括马斯克等科技高管。</h3><h4>背景：</h4><p>这条要和 AI-04 的投资人来信分开看。公开请愿的要求更直接，是在独立调查得出事实之前先让黄仁勋回来；Gerstner 和 Baker 的信则是保留回归选项、反对仓促换人，并写明不排除董事会在查清事实后仍决定不让他回来。马斯克本人在北京时间 11 月 14 日 04:51（窗口开始前）就说过会签名，本条只把窗口内出现的签名规模和具名高管作为新进展，不要把窗口前的表态写成今天的新事实。</p><h4>发生了什么：</h4><p>Business Insider 的报道刊于北京时间 11 月 15 日 04:35，TechCrunch 刊于北京时间 11 月 15 日 05:41。据 TechCrunch，截至周六下午，这份要求英伟达恢复黄仁勋职务的请愿看起来已有超过 11.5 万个签名；请愿网站称，签名者包括现任英伟达员工 5965 人、前员工 1108 人、股东 63063 人。点名的支持者包括特斯拉和 SpaceX 首席执行官马斯克、Replit 首席执行官 Amjad Masad，以及 Epic Games 首席执行官 Tim Sweeney。请愿文本称，签名者「担心黄仁勋在没有有意义的正当程序的情况下被免职」，并要求董事会「在独立调查查清事实期间先让他回来」；请愿还写道「黄仁勋应得的是正当程序，而不是群体正义」。请愿网站上的公开信还写明：签名者各自代表自己发言，这份信独立于英伟达，也没有得到黄仁勋背书。网站自身写明，签名和职务都是自报、未经核实。具体人数是持续变动的网站计数，以「截至周六下午」为准。</p><h4>为什么值得注意：</h4><p>人已经离开，公开请愿却要求在调查得出事实之前先让他回来，回归的选项仍被留在桌上。但签名人数是持续变动的网站计数，而且网站自己写明未经核实，不能把「5965 名现任员工」当成已经核对过的花名册。用今天的核心思想来看，圆环还没合上，同时还缺一层对签名真实性的核对。这条必须和 AI-04 分开：两边都在谈回归，诉求并不相同。</p><h4>归类：</h4><p>乙类「圆环还没合上」。理由是人已经离开，公开请愿要求在独立调查得出事实之前先让他回来；签名人数是持续变动的网站计数，且网站写明自报、未经核实。</p><h4>核实状态：</h4><p>多来源确认（指「周六确有一篇公开请愿，并且多家媒体作了报道」这件事）。TechCrunch、Business Insider 和请愿网站都可以打开，公开信关键措辞一致。具体签名人数是一个持续变动的网站计数，TechCrunch 写的是「截至周六下午超过 11.5 万」，现任员工等分类数字也来自当时的网站展示，证据包没有办法独立验证签名是否都真实、职务是否属实；网站自己也说未经核实。</p><h4>来源：</h4><ul><li>TechCrunch，北京时间 2026-11-15 05:41：<a href="https://techcrunch.com/2026/11/14/elon-musk-other-tech-execs-sign-petition-calling-on-nvidia-to-reinstate-jensen-huang/" target="_blank" rel="noopener noreferrer">https://techcrunch.com/2026/11/14/elon-musk-other-tech-execs-sign-petition-calling-on-nvidia-to-reinstate-jensen-huang/</a></li><li>Business Insider，北京时间 2026-11-15 04:35：<a href="https://www.businessinsider.com/petition-reinstate-jensen-huang-nvidia-elon-musk-2026-11" target="_blank" rel="noopener noreferrer">https://www.businessinsider.com/petition-reinstate-jensen-huang-nvidia-elon-musk-2026-11</a></li><li>请愿网站：<a href="https://standwithjensen.com/" target="_blank" rel="noopener noreferrer">https://standwithjensen.com/</a></li></ul></article>
+<hr><h2>第二部分 科技（3 条）</h2>
+<article class="entry" id="TK-01" data-cat="jia"><p class="kicker jia">甲类 · 第一次已经发生，下一环还没落到</p><h3>TK-01 上海上观新闻报道，中科天算在沪展示全国产芯片的「极光5000C」业务化太空超算载荷原型机。</h3><h4>背景：</h4><p>太空超算，指的是把计算载荷送到轨道上，在天上直接处理数据，而不是把原始数据全部传回地面再算。所谓「业务化」，报道的解释是：这个载荷能持续开展在轨算力服务，具备可交付、可复用的商用能力。此前 SpaceX 发射的算力卫星，被这篇稿件称为试验星。这条材料的核心不是某个人工智能模型发布，而是国产芯片、真空散热和抗辐照方案能不能支撑可重复提供的在轨算力服务。</p><h4>发生了什么：</h4><p>据上观新闻，稿件标注时间为北京时间 2026 年 11 月 14 日 06:00，该时刻为本次采集窗口起点，予以收录。解放日报记者俞陶然采写，上观新闻与解放日报站点刊出的是同一篇原文。报道写道，在毗邻 G60 科创云廊的上海天基计算产业基地，中科天算展示了名为「极光5000C」的业务化太空超算载荷 1:1 实物原型机，外形像一台服务器机柜，搭载数十张计算卡，集成了 CPU（中央处理器）、GPU（图形处理器）、NPU（神经网络处理单元）和 FPGA（现场可编程门阵列）等 4 种芯片，而且都是来自国内多家企业的国产芯片，科研团队用异构集成技术实现了不同品牌、不同类型芯片之间的兼容协同，达到了以 POPS 为单位的集群级算力。POPS 的意思是：1 POPS 等于每秒 1000 万亿次运算。报道还给出了前代载荷的数字：「极光1000A」算力为 32 TOPS、存储 1 TB，并称其在轨验证已稳定运行 1200 天以上；「极光3000B」算力为 0.5 POPS、存储 8 TB。稿件称，择期发射并完成在轨验证后，有望成为全球首个实现业务化运行的太空超算载荷。根据「天算计划」，中科天算将以「极光5000」系列载荷为节点，2035 年前后完成万卡级太空超算中心在轨部署，部署于晨昏太阳同步轨道，由算力舱、能源舱、通信舱、运维舱组成；其中算力舱的总算力设计目标为 10 EOPS（每秒 100 亿亿次运算），能源舱柔性光伏总装机功率超 100 兆瓦，通信舱总带宽超 10 Tbps，运维舱可在轨组装并开展自动化维修。需要标明：2035 年前后万卡级、10 EOPS、超 100 兆瓦、超 10 Tbps 都是「天算计划」的设计目标，不是已经在轨运行的结果。</p><h4>为什么值得注意：</h4><p>对正在同时关注医学与人工智能的他来说，这条有助于理解太空计算仍处在「载荷研制与计划发射验证」阶段。用今天的核心思想来看，「极光5000C」业务化太空超算载荷原型机已经公开展示，这是窗口里的第一次亮相；择期发射、在轨验证和 2035 年万卡级部署都还是计划，下一环还没落到。</p><h4>归类：</h4><p>甲类「第一次已经发生，下一环还没落到」。理由是「极光5000C」业务化太空超算载荷原型机已经公开展示，这是窗口里的第一次亮相；择期发射、在轨验证和 2035 年万卡级部署都还是计划，下一环还没落到。</p><h4>核实状态：</h4><p>单一来源。稿件由解放日报记者俞陶然采写，上观新闻与解放日报站点刊出的是同一篇原文，同花顺、新浪财经等只是转载，目前没有看到中科天算官方公告或第二家独立媒体的原创新闻来交叉验证原型机性能与发射时间表，尚未得到其他来源确认。</p><h4>来源：</h4><ul><li>上观新闻，北京时间 2026-11-14 06:00：<a href="https://www.shobserver.com/wx/detail.do?id=1210465" target="_blank" rel="noopener noreferrer">https://www.shobserver.com/wx/detail.do?id=1210465</a></li><li>同一稿件在解放日报站点的页面：<a href="https://www.jfdaily.com/wx/detail.do?id=1210465" target="_blank" rel="noopener noreferrer">https://www.jfdaily.com/wx/detail.do?id=1210465</a></li></ul></article>
+<article class="entry" id="TK-02" data-cat="yi"><p class="kicker yi">乙类 · 圆环还没合上</p><h3>TK-02 美国交通部与联邦航空局在记者会上称，周五全国停飞是因为承包商在铜缆改光纤时出现路由器故障，并排除网络攻击。</h3><h4>背景：</h4><p>这是美国空管通信网的一次大范围故障，属于关键信息基础设施，而不是普通民航延误新闻。联邦航空局称，网络不稳大约始于东部时间 13 日 15:36，并于 15:44 宣布全国停飞，这两个时点对应北京时间 14 日 04:36 和 04:44，略早于窗口起点；停飞持续到东部时间 20:15 才解除，对应北京时间 14 日 09:15，已进入窗口。本条收录的是窗口内公布的官方原因说明，以及窗口内完成的复飞。讯科证据包里另外还有一封投资人来信，已经合并到人工智能部分的 AI-04，这里不再单列，只在需要时互指。</p><h4>发生了什么：</h4><p>美国交通部长 Sean Duffy 与联邦航空局局长 Bryan Bedford 在美国东部时间 11 月 14 日上午举行记者会，对应北京时间大约 19:40 至 20:40；NPR《周末版》在东部时间 07:40 播出时称记者会「就在过去一小时内」举行。美国交通部随后在周六发布文字稿。官方在周六才把原因说清楚：承包商 L3Harris 在一处偏远台站把老旧铜缆改成光纤时，被更换的路由器开始向空管网其他路由器发起连接请求，频率是每四到五秒超过 1000 次，进而影响地空通信和雷达画面。交通部长表示，正在区分是 L3Harris 的操作或安装失误，还是路由器本身故障，目前还没有确定；他不认为这是网络攻击，因为隔离该处施工后系统恢复。L3Harris 是为联邦航空局工作超过 20 年的传统供应商，而且空管所用的这张网络本身由 L3Harris 所有。交通部文字稿还写道：当时迅速处置了超过 3500 个航班，停飞解除后仅当晚就恢复了超过 8000 架次运行；Duffy 在同一场记者会上还提到，国会已拨付的 125 亿美元中，已有 69% 的铜缆通信被替换为高速光纤。NPR 提到超过 1 万个航班被取消，这一数字与交通部「超过 3500 个航班被迅速处置、当晚恢复超过 8000 架次」的口径并不直接对应，不以 NPR 的取消架次作为确定数字。</p><h4>为什么值得注意：</h4><p>对学医学也在学系统思维的他来说，这条的价值在于提醒：高度中心化的通信升级如果在日常维护里出错，也可能在短时间内波及全国性系统。用今天的核心思想来看，全国停飞已经解除、当晚航班已经恢复，但「是承包商操作失误还是路由器本身故障」这一环还没合上。NPR 的取消架次与交通部的处置、恢复口径不要混成一个数字。</p><h4>归类：</h4><p>乙类「圆环还没合上」。理由是全国停飞已经解除、当晚航班已经恢复，但「是承包商操作失误还是路由器本身故障」这一环还没合上；NPR 的取消架次与交通部的处置、恢复口径不要混成一个数字。</p><h4>核实状态：</h4><p>多来源确认。停飞事实有联邦航空局周五声明、美国交通部周六文字稿和 NPR 报道相互印证；故障原因、承包商名称、路由器泛洪频率和「不认为是网络攻击」等关键表述来自交通部长在官方记者会上的讲话，并写进交通部发布的文字稿。NPR 提到超过 1 万个航班被取消，与交通部口径并不直接对应，不以 NPR 的取消架次作为确定数字。</p><h4>来源：</h4><ul><li>美国交通部周六文字稿：<a href="https://www.transportation.gov/briefing-room/icymi-us-transportation-secretary-sean-p-duffy-provides-update-restoration-airspace" target="_blank" rel="noopener noreferrer">https://www.transportation.gov/briefing-room/icymi-us-transportation-secretary-sean-p-duffy-provides-update-restoration-airspace</a></li><li>联邦航空局周五初步声明：<a href="https://www.faa.gov/newsroom/faa-statement-nationwide-ground-stop" target="_blank" rel="noopener noreferrer">https://www.faa.gov/newsroom/faa-statement-nationwide-ground-stop</a></li><li>NPR 对时间线与记者会的报道：<a href="https://www.npr.org/2026/11/14/nx-s1-6040463/telecom-outage-triggers-rare-nationwide-faa-ground-stop-stranding-travelers" target="_blank" rel="noopener noreferrer">https://www.npr.org/2026/11/14/nx-s1-6040463/telecom-outage-triggers-rare-nationwide-faa-ground-stop-stranding-travelers</a></li></ul><p>（记者会约在北京时间 2026-11-14 19:40 至 20:40）</p></article>
+<article class="entry" id="TK-03" data-cat="jia"><p class="kicker jia">甲类 · 第一次已经发生，下一环还没落到</p><h3>TK-03 SpaceX 在星舰第 15 次试飞中首次用发射塔机械臂从轨道捕获上级飞船，同时助推器放弃回收并在墨西哥湾销毁。</h3><h4>背景：</h4><p>星舰是 SpaceX 正在试验的可重复使用超重型运载系统，由「超级重型」助推器和上级飞船组成。SpaceX 过去已经多次用发射塔上被称为「筷子」的机械臂接住助推器，但此前从未从轨道上接住星舰上级飞船。这次试飞原计划尝试助推器和飞船都返回发射场回收。</p><h4>发生了什么：</h4><p>整次任务的发射已在窗口内：世界时 11 月 13 日 22:47（美国东部时间 13 日 17:47）升空，对应北京时间 11 月 14 日 06:47。捕获发生在北京时间 11 月 15 日 05:20（Space.com 记录为世界时 11 月 14 日 21:20，即美国东部时间约 16:20）。新华社稿件标注时间为北京时间 11 月 15 日 05:28，The Verge 报道刊于北京时间 15 日 05:44，均在窗口结束前。Space.com 与 The Verge 都确认，飞船大约在东部时间 16:20 被发射塔机械臂抓住；飞船和助推器是约 22.5 小时前从同一地点升起的。SpaceX 的 Dan Huot 在着陆转播中说，这是「缺失的一环」，「是航天的圣杯：穿过火焰，再被钢铁从空中抓住。我们接住了一艘星舰，从现在起一切都会改变。」与此同时，助推器未能按原计划返回发射场。SpaceX 的 Kate Tice 在转播中说，初步迹象是助推器因低燃料质量警报提前结束返回点火，团队仍在调查根本原因；随后制导系统判断位置不适合回收，于是正确中止了塔上捕获，改走墨西哥湾海上 divert（改道溅落），并触发飞行中止系统。Space.com 还确认，飞船在入轨后成功放出全部 26 颗星链第三代卫星；CNBC 写道，发射前星链在轨活跃卫星已超过 1.1 万颗。SpaceX 任务页在发射前说明，每颗第三代卫星计划为星座增加 1 Tbps 容量，26 颗大约相当于 10 次猎鹰 9 号发射的第二代 Mini 卫星容量，这是公司自己的计划口径，不是事后测得的实测吞吐。任务页在采集时尚未改写成飞行结果公报。</p><h4>为什么值得注意：</h4><p>这件事既关系到未来月球着陆和更大规模卫星互联网的运载能力，也说明完全可重复使用还没有走完：飞船捕获成功了，助推器却没有在这次任务里回收。用今天的核心思想来看，上级飞船第一次被发射塔机械臂从轨道上接住，这是明确的第一次；助推器因低燃料质量警报改道墨西哥湾，完全可重复使用的圆环还没合上。今天的核心思想里「飞船被接住了，助推器却改道了」，指的就是这件事。</p><h4>归类：</h4><p>甲类「第一次已经发生，下一环还没落到」。理由是上级飞船第一次被发射塔机械臂从轨道上接住，这是明确的第一次；助推器因低燃料质量警报改道墨西哥湾，完全可重复使用的圆环还没合上，但本条的新闻核是这次捕获本身。</p><h4>核实状态：</h4><p>多来源确认。捕获成功、约 22.5 小时任务时长、助推器未能返回发射场，以及 26 颗星链第三代卫星入轨，已得到 Space.com、新华社、The Verge 和 CNBC 的一致报道；捕获时刻和 SpaceX 现场发言人 Huot、Tice 的说明来自公司官方转播，由 Space.com 记录。SpaceX 官方任务页在采集时尚未改写成飞行结果公报，因此第三代卫星「每颗 1 Tbps、26 颗约等于 10 次第二代 Mini 发射」仍按发射前官方说明引用。</p><h4>来源：</h4><ul><li>Space.com 第 15 次试飞实时报道，捕获约在北京时间 2026-11-15 05:20：<a href="https://www.space.com/news/live/spacex-starship-flight-15-live-updates-nov-14-2026-starship-first-double-landing-attempt" target="_blank" rel="noopener noreferrer">https://www.space.com/news/live/spacex-starship-flight-15-live-updates-nov-14-2026-starship-first-double-landing-attempt</a></li><li>新华社，北京时间 2026-11-15 05:28：<a href="https://www.news.cn/20261115/3c8db8eb684e46f3856686f0a43345b6/c.html" target="_blank" rel="noopener noreferrer">https://www.news.cn/20261115/3c8db8eb684e46f3856686f0a43345b6/c.html</a></li><li>The Verge，北京时间 2026-11-15 05:44：<a href="https://www.theverge.com/science/1033930/spacex-chopstick-starship-catch" target="_blank" rel="noopener noreferrer">https://www.theverge.com/science/1033930/spacex-chopstick-starship-catch</a></li><li>CNBC：<a href="https://www.cnbc.com/2026/11/14/spacex-plans-to-try-first-ever-catch-of-starship-rocket-from-orbit.html" target="_blank" rel="noopener noreferrer">https://www.cnbc.com/2026/11/14/spacex-plans-to-try-first-ever-catch-of-starship-rocket-from-orbit.html</a></li><li>SpaceX 第 15 次试飞任务页（采集时仍为发射前官方说明）：<a href="https://www.spacex.com/launches/starship-flight-15/" target="_blank" rel="noopener noreferrer">https://www.spacex.com/launches/starship-flight-15/</a></li></ul></article>
+<hr><h2>第三部分 医学（4 条）</h2>
+<article class="entry" id="MED-01" data-cat="jia"><p class="kicker jia">甲类 · 第一次已经发生，下一环还没落到</p><h3>MED-01 美国食品药品管理局批准 Gazyva（obinutuzumab）用于有进展风险的成人原发性膜性肾病，这是该适应证获批的首个专门药物。</h3><h4>背景：</h4><p>原发性膜性肾病是一种因免疫系统攻击肾小球（肾脏里负责过滤血液的结构）而导致大量蛋白尿的罕见肾脏病。此前临床上常把他克莫司等药物拿来超适应证使用，一直没有专门获批的治疗。Gazyva（通用名 obinutuzumab，中文可称为奥妥珠单抗）是一种抗 CD20 单抗，此前已获批用于某些癌症、活动性狼疮肾炎，以及儿童起病的特发性肾病综合征。抗 CD20 单抗，简单说，就是针对免疫细胞表面 CD20 分子的抗体药。</p><h4>发生了什么：</h4><p>美国食品药品管理局（FDA）官方页面的发布时刻按美国东部标准时换算，对应北京时间 11 月 14 日 06:33，刚过窗口起点。FDA 批准 Gazyva 注射剂用于有疾病进展风险的成人原发性膜性肾病，以诱导蛋白尿缓解。这是该适应证获批的首个专门药物。疗效和安全性依据是 III 期随机对照、开放标签、多中心试验 MAJESTY（NCT04629248）：142 名成人在 104 周主要研究期内随机接受 Gazyva 或他克莫司。主要终点是第 104 周时蛋白尿完全缓解的比例，定义是尿蛋白-肌酐比（UPCR）不超过 0.3 g/g，且估计肾小球滤过率（eGFR）稳定，同时没有接受挽救治疗、没有治疗失败、也没有提前退出研究。据 FDA 官方说明，104 周时完全缓解率在 Gazyva 组为 36%，他克莫司组为 6%。HCPLive 在北京时间 11 月 14 日 20:57 的后续报道转引《新英格兰医学杂志》论文时写的是 37% 对 6%，对应 26/71 与 4/70，四舍五入口径不同，必须分开标明，以 FDA 官方说明为批准依据。说明书有黑框警告：乙肝病毒再激活，以及进行性多灶性白质脑病（PML，一种在免疫力低下的人中由病毒引起的罕见而严重的脑部感染）。该适应证临床试验中最常见的副作用是输液相关反应和上呼吸道感染。Gazyva 此次批准曾获得突破性疗法（Breakthrough Therapy）、孤儿药（Orphan Drug）和优先审评（Priority Review）资格。</p><h4>为什么值得注意：</h4><p>对正在学肾脏病和免疫治疗的他来说，这是把「抗 CD20 单抗从血液肿瘤走到自身免疫性肾病」落到监管批准上的一条清晰材料。用今天的核心思想来看，这是该适应证获批的首个专门药物；进入常规临床使用还是下一环，说明书有黑框警告，不能把批准写成故事的结束。36% 和 37% 两套口径必须分开标明。</p><h4>归类：</h4><p>甲类「第一次已经发生，下一环还没落到」。理由是这是该适应证获批的首个专门药物；进入常规临床使用还是下一环，说明书有黑框警告，不能把批准写成故事的结束。</p><h4>核实状态：</h4><p>多来源确认。FDA 官网发布了正式批准说明，并已列入「Notable Approvals」页面，日期同为 2026 年 11 月 13 日；HCPLive 在窗内依据该 FDA 页面和已发表的 MAJESTY 试验作了专业报道。完全缓解率以 FDA 官方的 36% 对 6% 为批准依据，HCPLive 转引的 37% 对 6% 已分开标明。</p><h4>来源：</h4><ul><li>美国食品药品管理局官方批准说明，北京时间 2026-11-14 06:33：<a href="https://www.fda.gov/drugs/news-events-human-drugs/fda-approves-first-drug-treat-adults-primary-membranous-nephropathy" target="_blank" rel="noopener noreferrer">https://www.fda.gov/drugs/news-events-human-drugs/fda-approves-first-drug-treat-adults-primary-membranous-nephropathy</a></li><li>HCPLive，北京时间 2026-11-14 20:57：<a href="https://www.hcplive.com/view/fda-approves-obinutuzumab-gazyva-for-primary-membranous-nephropathy" target="_blank" rel="noopener noreferrer">https://www.hcplive.com/view/fda-approves-obinutuzumab-gazyva-for-primary-membranous-nephropathy</a></li></ul></article>
+<article class="entry" id="MED-02" data-cat="yi"><p class="kicker yi">乙类 · 圆环还没合上</p><h3>MED-02 多家媒体和美国传染病基金会确认：泛美卫生组织认定美国麻疹已再出现持续本地传播，美国失去保持约 26 年的麻疹消除地位。</h3><h4>背景：</h4><p>在公共卫生里，「消除」不是「永远消灭这种病」，而是指一个国家把本土持续传播挡住，只剩下偶尔由境外传入引起的散发或能在 12 个月内结束的暴发。美国自 2000 年被认定消除麻疹后，这次是二十多年来首次失去该地位。判断标准是本土传播是否连续超过 12 个月。报道称，泛美卫生组织（PAHO）依据美国疾控中心和独立专家组的分析作出了这一判断，但该组织原计划在 11 月 17 日（星期二）才举行公开通报，采集时其官网新闻列表中尚未出现正式声明页。</p><h4>发生了什么：</h4><p>最早可核时间戳为北京时间 11 月 14 日 10:20（檀香山《星广告报》转载路透社/华尔街日报报道）；费城问询报写明华尔街日报于周五夜间率先报道。随后 Al Jazeera 于北京时间 10:34 发布，KFF Health News 于北京时间 22:20 作详细核实报道，CBS News 于北京时间 11 月 15 日 00:11 转发并补充，美国传染病基金会（NFID）声明发布于北京时间 11 月 15 日 01:36。KFF 写道：知情研究人员告诉他们，泛美卫生组织本周已得出结论，麻疹已在美国重新建立规律传播；该组织原计划在 11 月 17 日公开宣布。病例和死亡数字必须分开看。NFID 和 CBS 都写到，截至 11 月 13 日，2026 年确诊麻疹至少 5412 例。约 96% 的病例发生在未接种或接种情况不明的人中。死亡口径并不统一：美国疾控中心官网统计为至少 6 例麻疹相关死亡；部分州按「出现症状 30 天内死亡」统计的「麻疹相关死亡」更高；NFID 声明写今年 10 例；KFF 则提到过去两年各州累计报告 13 例。Al Jazeera 还写到联邦与州在死亡定义上存在争议。CBS 还写道，今年住院已超过 590 例；最大的一起暴发在宾夕法尼亚州，州卫生官员报告超过 1500 例、7 例相关死亡。2024 年报告 285 例；2025 年的数字必须分开标明出处：NFID 写 2289 例，CBS 写「继去年创下 30 年来最高的 2242 例之后」，两个 2025 年数字不一致，不能合成一个。NFID 医学主任 Robert H. Hopkins, Jr. 说，两剂 MMR 疫苗预防麻疹约 97% 有效，恢复消除地位是可以做到的，也应当成为重大公共卫生优先事项。恢复消除地位需要重新阻断传播并再保持至少 12 个月无持续流行。</p><h4>为什么值得注意：</h4><p>对正在学医学的他来说，这条的教学价值很直接：消除地位建立在高接种率和及时阻断传播之上，失去它并不等于「麻疹又无法控制了」，而是连续 12 个月的本土传播这一判断标准被突破了；恢复还要再走完「阻断并再保持至少 12 个月」。用今天的核心思想来看，消除地位已被认定失去，但这是二十多年来的第一次失去，公开通报原定 11 月 17 日、采集时尚未见到该组织官网正式声明页，恢复还远没合上；死亡统计口径也不一致，必须分开标明。今天的核心思想里「地位已经失去了，公开宣布却还要再等几天」，指的就是这件事。</p><h4>归类：</h4><p>乙类「圆环还没合上」。理由是消除地位已被认定失去，但这是二十多年来的第一次失去，公开通报原定 11 月 17 日、采集时尚未见到该组织官网正式声明页，恢复还要再阻断并保持至少 12 个月，圆环远没合上；死亡统计口径也不一致，正文必须分开标明。</p><h4>核实状态：</h4><p>多来源确认。华尔街日报、路透社（经 Star-Advertiser 转载）、KFF Health News、CBS News、Al Jazeera 和费城问询报的报道指向同一判断，KFF 与 CBS 均称知情研究人员作了确认；美国传染病基金会随后发布正式声明，把此事称为「reported loss」并给出截至 11 月 13 日的病例和死亡汇总。仍需注意：泛美卫生组织的公开新闻发布会原定 11 月 17 日，采集时尚未见到该组织官网的正式声明页，死亡统计口径也不一致，引用时应标明出处。</p><h4>来源：</h4><ul><li>KFF Health News，北京时间 2026-11-14 22:20：<a href="https://kffhealthnews.org/public-health/us-measles-elimination-status-lost-outbreaks-continuous-spread-year-paho-cdc/" target="_blank" rel="noopener noreferrer">https://kffhealthnews.org/public-health/us-measles-elimination-status-lost-outbreaks-continuous-spread-year-paho-cdc/</a></li><li>檀香山《星广告报》转载，北京时间 2026-11-14 10:20：<a href="https://www.staradvertiser.com/2026/11/13/breaking-news/u-s-loses-measles-free-status-as-disease-continues-to-spread/" target="_blank" rel="noopener noreferrer">https://www.staradvertiser.com/2026/11/13/breaking-news/u-s-loses-measles-free-status-as-disease-continues-to-spread/</a></li><li>美国传染病基金会声明，北京时间 2026-11-15 01:36：<a href="https://www.nfid.org/nfid-statement-on-us-measles-elimination-status/" target="_blank" rel="noopener noreferrer">https://www.nfid.org/nfid-statement-on-us-measles-elimination-status/</a></li><li>CBS News，北京时间 2026-11-15 00:11：<a href="https://www.cbsnews.com/news/measles-elimination-status-united-states/" target="_blank" rel="noopener noreferrer">https://www.cbsnews.com/news/measles-elimination-status-united-states/</a></li><li>Al Jazeera，北京时间 2026-11-14 10:34：<a href="https://www.aljazeera.com/news/2026/11/14/measles-associated-deaths-reach-10-in-us-after-two-more-deaths-reported" target="_blank" rel="noopener noreferrer">https://www.aljazeera.com/news/2026/11/14/measles-associated-deaths-reach-10-in-us-after-two-more-deaths-reported</a></li><li>费城问询报：<a href="https://www.inquirer.com/health/measles-elimination-status-lost-pennsylvania-united-states-20261114.html" target="_blank" rel="noopener noreferrer">https://www.inquirer.com/health/measles-elimination-status-lost-pennsylvania-united-states-20261114.html</a></li></ul></article>
+<article class="entry" id="MED-03" data-cat="bing"><p class="kicker bing">丙类 · 缺的那一层还要补上</p><h3>MED-03 JAMA 研究显示血液和脑脊液中的 tau 片段 eMTBR-tau243 在阿尔茨海默病、晚期慢性创伤性脑病和部分遗传性额颞叶变性中升高，或有助于未来在活体识别这类混合 3R/4R tau 病理。</h3><h4>背景：</h4><p>tau 是神经元里的一种蛋白质，发生异常聚集时会形成不同的神经退行性疾病，这类病统称为 tau 病。可以按聚集的 tau 异构体分成 3 重复（3R）、4 重复（4R），或混合 3R/4R。混合 3R/4R 这一类里，包括慢性创伤性脑病（CTE，和反复头部创伤相关）、部分额颞叶变性，以及阿尔茨海默病。慢性创伤性脑病目前仍只能在死后通过脑组织检查确诊，这给运动员、退伍军人等高风险人群的活体诊断和药物试验造成很大困难。eMTBR-tau243 是 tau 微管结合区里含第 243 位氨基酸、经过体内自身剪切后的片段，已经可以在脑脊液和血液里测到，此前主要和阿尔茨海默病的 tau 病理相关，它在非阿尔茨海默病的 tau 病里有多特异，过去还不太清楚。</p><h4>发生了什么：</h4><p>这项由华盛顿大学医学院等机构完成的病例对照研究，于北京时间 11 月 14 日 12:30:16 上线 JAMA（Crossref 记录创建时间为 2026-11-14T04:30:16Z）。华盛顿大学医学院新闻稿的发布时间对应北京时间 12:00:01。研究检测了 229 名参与者（脑脊液 196 人、血浆 55 人，其中 22 人两份都有），取样时平均年龄 63 岁（标准差 13），108 人（47%）为女性。结果显示，血浆和脑脊液里的 eMTBR-tau243 在混合 3R/4R tau 病中升高，包括阿尔茨海默病、高分期 CTE，以及一部分与 MAPT 基因变异相关、带有混合 3R/4R 病理的额颞叶变性，都高于认知未受损的对照。血浆中位数（四分位距）为：11 例 CTE 1.93（0.42–3.68）fmol/L，20 名认知未受损对照 0.29（0.05–0.62）fmol/L（校正后 P=0.007），14 例阿尔茨海默病 11.25（2.29–19.38）fmol/L。区分 III–IV 期 CTE 与对照的 AUC 为 0.97（95% CI 0.92–1.00），区分 I 期 CTE 的 AUC 为 0.64（95% CI 0.32–0.97）。AUC 可以粗懂为「靠这个指标把两组人分开的能力」，1.0 是理想情况，0.5 相当于靠猜。作者强调，还需要在更大队列中验证，才能确定它作为 CTE 及其他非阿尔茨海默病 tau 病潜在诊断标志物的临床用途。共同通讯作者 Chihiro Sato 在校方新闻稿里说：「这不会是一个单独使用的生物标志物。但如果一个人有反复头部受伤的病史，阿尔茨海默病检测是阴性，而这个标志物升高，那它可能是 CTE。」数字均出自论文摘要；jamanetwork.com 与 doi.org 对命令行返回 403，标题、摘要、DOI 与上线时间已通过 Crossref 核对，并用华盛顿大学医学院同日新闻稿对照了关键数字。</p><h4>为什么值得注意：</h4><p>对正在学神经退行性疾病和生物标志物的他来说，它把课本里的 tau 异构体分类、灵敏度和特异度，以及「阿尔茨海默病与 CTE 可共存」这些概念放到了一项刚发表的研究里。用今天的核心思想来看，血浆和脑脊液里的 eMTBR-tau243 已经给出有希望的信号，但还不能单独用来区分 CTE 和阿尔茨海默病，也尚未获批用于诊断，I 期 CTE 区分力不足，还缺一层在更大队列中的验证。</p><h4>归类：</h4><p>丙类「缺的那一层还要补上」。理由是血浆和脑脊液里的 eMTBR-tau243 已经给出有希望的信号，但还不能单独用来区分 CTE 和阿尔茨海默病，也尚未获批用于诊断，需要在更大队列中验证；I 期 CTE 区分力不足。</p><h4>核实状态：</h4><p>多来源确认。JAMA 论文的标题、摘要、DOI（10.1001/jama.2026.24689）和上线时间已通过 Crossref 核对；华盛顿大学医学院在相近时刻发布新闻稿，关键结论与论文摘要一致，并补充了作者对临床解释的说明。jamanetwork.com 与 doi.org 跳转对命令行返回 403 反爬。</p><h4>来源：</h4><ul><li>JAMA 论文，北京时间 2026-11-14 12:30:16：<a href="https://jamanetwork.com/journals/jama/fullarticle/2856780" target="_blank" rel="noopener noreferrer">https://jamanetwork.com/journals/jama/fullarticle/2856780</a></li><li>DOI：<a href="https://doi.org/10.1001/jama.2026.24689" target="_blank" rel="noopener noreferrer">https://doi.org/10.1001/jama.2026.24689</a></li><li>华盛顿大学医学院新闻稿，北京时间 2026-11-14 12:00:01：<a href="https://medicine.washu.edu/news/progress-toward-a-blood-test-for-disease-caused-by-brain-injury/" target="_blank" rel="noopener noreferrer">https://medicine.washu.edu/news/progress-toward-a-blood-test-for-disease-caused-by-brain-injury/</a></li></ul></article>
+<article class="entry" id="MED-04" data-cat="jia"><p class="kicker jia">甲类 · 第一次已经发生，下一环还没落到</p><h3>MED-04 世界卫生组织在世界糖尿病日发布首份成人 1 型糖尿病诊断与管理指南，强调在包括资源有限和人道主义环境在内的各类场所提供胰岛素和血糖监测。</h3><h4>背景：</h4><p>11 月 14 日是世界糖尿病日，今年的主题是「对糖尿病早行动」。1 型糖尿病是一种终身疾病，身体自身不能产生足够的胰岛素，患者必须每天补充胰岛素才能存活。胰岛素已经发现一百多年，但许多人仍然得不到负担得起、质量可靠的胰岛素和相应的监测。这份指南特别把低收入、紧急和人道主义环境写进了适用场景。</p><h4>发生了什么：</h4><p>世界卫生组织新闻稿的发布时间为北京时间 11 月 14 日 21:30:42。指南出版页的记录日期写作 12 November 2026，但面向公众的新闻稿和世界糖尿病日发布安排以 11 月 14 日为准，这个日期差异提一句即可，不以出版页日期把新闻稿移出窗口。指南全称是《成人 1 型糖尿病胰岛素使用指南，包括紧急和人道主义环境》，ISBN 978-92-4-012624-4。这是该组织首份专门面向成人 1 型糖尿病的指南。世界卫生组织非传染性疾病和精神卫生司司长 Søren Brostrøm 说，新指南提供循证建议，帮助各国提供尽可能好的照护，包括资源有限、卫生服务中断的环境。指南建议：1 型糖尿病患者一日多次注射胰岛素，并根据血糖调整剂量；人胰岛素（一种按人体自身胰岛素方式工作的制成药物）是合适且有效的选择，需要时也可以使用其他类型胰岛素。监测方面，门诊可做反映过去几个月平均血糖的定期血液检测；在家可用指尖血糖或持续葡萄糖监测（戴在皮肤上的小传感器）；在无法测血糖时，可以考虑尿糖。新指南支持世界卫生组织的目标：到 2030 年，让所有 1 型糖尿病患者都能获得可负担的胰岛素治疗和血糖自我监测。新闻稿给出的负担数字是：2025 年全球约 950 万人患有 1 型糖尿病，同年另有 50 万新诊断；虽然 1 型常常被视为主要发生在儿童中的病，但它也越来越多地影响成人。2022 年全球糖尿病患者（以 2 型为主）为 8.30 亿，超过 40% 尚未被诊断。这些数字均出自该新闻稿。5000.news 和印度 AajTak 在窗内依据该新闻稿作了转述，要点与原文一致。</p><h4>为什么值得注意：</h4><p>对正在学内分泌的他来说，指南并不只是重复「要打胰岛素」，而是把可及性、资源分层和 2030 年「人人获得可负担胰岛素与自我监测」的目标放到了全球卫生政策里，值得和课本对读。用今天的核心思想来看，这是世界卫生组织首份专门面向成人 1 型糖尿病的指南，已经发布；可及性、资源分层和 2030 年目标还是下一环。</p><h4>归类：</h4><p>甲类「第一次已经发生，下一环还没落到」。理由是这是世界卫生组织首份专门面向成人 1 型糖尿病的指南，已经发布；可及性、资源分层和 2030 年「人人获得可负担胰岛素与自我监测」的目标还是下一环。</p><h4>核实状态：</h4><p>多来源确认。世界卫生组织官网同时发布了新闻稿和指南出版页（ISBN 978-92-4-012624-4）；多家媒体在窗内依据该新闻稿作了转述，要点与原文一致。</p><h4>来源：</h4><ul><li>世界卫生组织新闻稿，北京时间 2026-11-14 21:30:42：<a href="https://www.who.int/news/item/14-11-2026-who-issues-first-guidelines-on-type-1-diabetes-for-adults" target="_blank" rel="noopener noreferrer">https://www.who.int/news/item/14-11-2026-who-issues-first-guidelines-on-type-1-diabetes-for-adults</a></li><li>指南出版页（ISBN 978-92-4-012624-4）：<a href="https://www.who.int/publications/i/item/9789240126244" target="_blank" rel="noopener noreferrer">https://www.who.int/publications/i/item/9789240126244</a></li></ul></article>
+<hr><h2>第四部分 给他的轻提示（4 条）</h2>
+<article class="entry" id="P-01" data-cat="yi"><p class="kicker yi">乙类 · 圆环还没合上</p><h3>P-01 一个 GitHub 访问令牌的官方提醒写明还将在 1 天内到期，今天已是预计到期日，但还没有更换成功的通知。</h3><h4>背景：</h4><p>这是 GitHub 发来的正式到期提醒，不再只是根据 11 月 8 日那封「7 天后到期」通知推算。如果还有自动任务在用这个令牌，需要他本人尽快生成同等权限的新令牌并逐处替换；不要把新令牌写进聊天或邮件。</p><h4>发生了什么：</h4><p>北京时间 11 月 14 日 15:14，他收到 GitHub 官方通知，信里写该令牌还会在 1 天内到期，并没有给出精确到分钟的截止时刻。对照 11 月 8 日 15:13 的旧通知，推算出来的大约到期时刻是北京时间 2026 年 11 月 15 日 15:13 前后，和这封「1 天」的说法对得上，但仍不是后台确认的精确截止时间。今天（11 月 15 日）已经到了预计到期日的下午。时间窗内没有看到已经更换成功的新通知。邮件在采集时仍为未读。</p><h4>为什么值得注意：</h4><p>如果还有自动任务在用它，拖过预计到期日，相关流程可能会突然停掉。用今天的核心思想来看，官方已经发出「还将在 1 天内到期」的提醒，今天已是预计到期日，但还没有更换成功的通知，替换这一环还没合上。</p><h4>归类：</h4><p>乙类「圆环还没合上」。理由是官方已经发出「还将在 1 天内到期」的提醒，今天已是预计到期日，但还没有更换成功的通知，替换这一环还没合上。</p><h4>核实状态：</h4><p>多来源确认。依据是 GitHub 官方通知邮件本身，并与 2026 年 11 月 8 日那封同样主题、当时写「将在 7 天后到期」的旧通知相互印证；时间窗内没有看到已经更换成功的新通知。</p><h4>来源：</h4><ul><li>他的邮箱通知与 GitHub Actions 运行记录（私有，不放链接），北京时间 2026-11-14 15:14</li></ul></article>
+<article class="entry" id="P-02" data-cat="yi"><p class="kicker yi">乙类 · 圆环还没合上</p><h3>P-02 OpenCode 通知，Default 工作区的 Go 订阅将在北京时间 11 月 17 日 13:20 续费 10.00 美元，续或不续还留在他自己手里。</h3><h4>背景：</h4><p>这是 OpenCode 控制台发来的续费前提醒，不是已经扣款的回执。这笔即将发生的扣费和他常用的 OpenCode Go 订阅有关，值得提前决定是否续上。</p><h4>发生了什么：</h4><p>北京时间 11 月 14 日 13:23，他收到 OpenCode 控制台的官方通知，邮件当时仍为未读。信里写明，将在 11 月 17 日 5:20 AM UTC 收取 Default 工作区 Go 订阅的续费 10.00 美元，换算成北京时间是 2026 年 11 月 17 日 13:20。如果在此之前到 Go 页面取消，当前周期仍可用到上述时刻。时间窗内没有对应的扣款回执，也没有第二封更正或取消确认。</p><h4>为什么值得注意：</h4><p>如果还要继续用 Go，需要提前确认支付方式可用，并记住北京时间 11 月 17 日 13:20 会扣 10.00 美元；如果这次不打算续，需要在此之前到 OpenCode 的 Go 页面取消。用今天的核心思想来看，续费通知已经发出，扣款还没发生，续或不续还留在他自己手里，圆环还没合上。</p><h4>归类：</h4><p>乙类「圆环还没合上」。理由是续费通知已经发出，10.00 美元的扣款要到北京时间 11 月 17 日 13:20 才发生，续或不续还留在他自己手里。</p><h4>核实状态：</h4><p>单一来源。依据是 OpenCode 控制台官方通知邮件本身；时间窗内没有对应的扣款回执，也没有第二封更正或取消确认，尚未得到其他来源确认。</p><h4>来源：</h4><ul><li>他的邮箱通知与 GitHub Actions 运行记录（私有，不放链接），北京时间 2026-11-14 13:23</li></ul></article>
+<article class="entry" id="P-03" data-cat="yi"><p class="kicker yi">乙类 · 圆环还没合上</p><h3>P-03 他的学习站每天的数据库备份文件已经上传成功，却被后面的用量检查判成失败，出站读数约 7.49 GB、相当于限额的 139.4%，口径仍是网卡累计值，需要到后台核对。</h3><h4>背景：</h4><p>他的学习站项目每天会自动给数据库做一次备份，备份之后还有一个检查步骤，会看本周期的「出站流量」（也就是从数据库往外传出去的数据量）有没有超过 5 GiB 的限额，超了就把整次运行标成失败。昨天早报里记录的读数约 7.39 GB、137.6%，问题还在继续。</p><h4>发生了什么：</h4><p>北京时间 11 月 14 日 09:48:08，这次备份运行结束，09:48:28 他收到了失败通知，运行时长 25.0 秒。备份文件的导出、加密和上传都成功了，失败出在后面的用量检查：脚本在告警为真时以退出码 2 结束。日志里的出站流量读数是 7,485,765,973 字节，约 7.49 GB，对照脚本里的 5 GiB 限额（5,368,709,120 字节）为 139.4%；数据库体积是 20,753,555 字节，约占 500 MiB 限额的 3.96%，这一项没有超限。读数来源仍是网卡累计发送字节，和此前几天同一检查脚本的口径一致。和昨天早报里记录的约 7.39 GB、137.6% 相比，读数又高了一点。同一时间窗内，学习站还有一次存活探测是成功的，所以这不是整站宕机，而是每日备份流程仍被用量检查拦住。</p><h4>为什么值得注意：</h4><p>备份这件事本身做成了，却被后面的用量检查报成了失败，每天一封失败通知，很容易让人对真正的问题麻木。但读数确实在慢慢涨，这一点不能忽略。这个读数来自网卡的累计计数，不一定是真实账单的口径，所以最稳的做法是他到后台看一眼本周期官方的出站用量：如果真的超了免费额度，就查查有没有图片或文件绕过缓存直接被读出去；如果只是口径不同，就改检查脚本，别再把成功的备份报成失败。用今天的核心思想来看，备份文件已经上传成功，却被后面的用量检查判成失败，告警这一环还没合上。</p><h4>归类：</h4><p>乙类「圆环还没合上」。理由是备份文件已经上传成功，却被用量检查判成失败，出站读数约 7.49 GB、139.4%，口径仍是网卡累计值，告警这一环还没合上。</p><h4>核实状态：</h4><p>多来源确认。失败通知邮件、运行结论以及该次作业日志里的用量数字彼此对应；数字均来自该次运行日志。读数来自网卡累计计数，是不是真实账单口径的超额，仍需要他到后台核对。</p><h4>来源：</h4><ul><li>他的邮箱通知与 GitHub Actions 运行记录（私有，不放链接），北京时间 2026-11-14 09:48</li></ul></article>
+<article class="entry" id="P-04" data-cat="bing"><p class="kicker bing">丙类 · 缺的那一层还要补上</p><h3>P-04 OpenRouter 发来一封登录验证码邮件，这封信已没有未读标记，但仍缺他本人确认是不是自己在登录。</h3><h4>背景：</h4><p>这是 OpenRouter 发来的账户验证码邮件，属于账号安全事件，不是营销信。信里提醒不要把验证码分享给别人。验证码本身不写入详细稿。</p><h4>发生了什么：</h4><p>北京时间 11 月 14 日 15:36，他的邮箱收到 OpenRouter 发来的一封登录验证码邮件。这封信目前已经没有未读标记，有可能是他本人刚刚完成了登录或验证，但不能只凭「已读」就断定这次请求一定是他发起的。如果他没有向 OpenRouter 申请过验证码，应立刻到 OpenRouter 账户安全设置里检查近期登录，并视情况作废旧凭证、开启额外保护。时间窗内没有第二封说明或异常登录警报来交叉印证这次请求的来源。</p><h4>为什么值得注意：</h4><p>验证码邮件本身不等于已经发生了盗号，但「已读」也不等于已经确认是本人操作。用今天的核心思想来看，还缺他本人确认是不是自己在登录这一层。如果这次验证是他本人发起的，可以不用再处理；如果不是，应立刻检查近期登录和安全设置。不要把验证码转发给任何人，也不要写进聊天或邮件。</p><h4>归类：</h4><p>丙类「缺的那一层还要补上」。理由是 OpenRouter 发来验证码邮件，这封信已没有未读标记，但仍缺他本人确认是不是自己在登录这一层。</p><h4>核实状态：</h4><p>单一来源。依据是 OpenRouter 官方通知邮件本身；时间窗内没有第二封说明或异常登录警报来交叉印证这次请求的来源，尚未得到其他来源确认。</p><h4>来源：</h4><ul><li>他的邮箱通知与 GitHub Actions 运行记录（私有，不放链接），北京时间 2026-11-14 15:36</li></ul></article>
+<article class="entry" id="fu" data-cat="fu"><h3>附：这几天可以顺手留意的小事（不计入条数）</h3><ul><li><strong>那封 Notion 安全通知还没打开。</strong> 北京时间 11 月 11 日收到的 Notion 官方安全通知，到现在还是未读，时间窗内也没有后续邮件。有空的时候可以先点开通知里的查看链接，看看是哪些 Notion AI 对话可能受了影响；如果在那些对话里贴过接口密钥、服务器密码或数据库连接串，就到对应平台把旧的作废、换成新的，再把用到的地方改过来。</li><li><strong>GitHub 应用 Claude 的权限更新申请还没处理。</strong> 北京时间 11 月 13 日收到的官方通知仍是未读，时间窗内没有新的权限说明，也没有列出具体要新增哪些权限。可以打开 GitHub 的应用安装设置，看清要新增的权限再决定；若暂时不想扩大授权，可以直接忽略，应用会保持现有权限。</li><li><strong>DeepSeek 余额仍应按低于告警线来看待。</strong> 窗内没有新的余额告警，也没有充值回执，最后一次读数仍是北京时间 11 月 11 日的 16.64 元，低于 20 元的告警线。监控信里写过「持续不足每 24 小时提醒一次」，但 11 月 12 日、13 日、14 日都没有再来信，单凭这一点不能确认余额已经回到线以上，需要他自己到后台核对当前数字，必要时充一点，或者先把调用量降下来。</li><li><strong>Cloudflare Tunnel 的升级还没确认。</strong> 窗内没有新的 Cloudflare 邮件，没法确认是否已经升级到 2026.10.2 或更新的版本。可以到 Cloudflare 控制台的 Networking &gt; Tunnels 页面看连接器版本，或者在各台机器上查一下 cloudflared 的版本，统一升上去。</li><li><strong>X 订阅在 11 月 13 日预定的第一次扣款 8.00 美元，回执还没看到。</strong> 这是根据 10 月 25 日的确认邮件，套餐从 Premium 降到 Plus，新套餐第一次扣款是 8.00 美元，日期为 11 月 13 日。窗内还没有看到对应的扣款回执或账单，可以到 X 或相关账单页，以及银行卡或账单明细里核对这 8.00 美元有没有已经划走；如果已经扣了却没有回执，可以把回执邮箱设置再看一眼。</li><li><strong>从 11 月 13 日起，Google AI Plus 不能再在 Gemini 应用和搜索的 AI Mode 里选 Pro 模型。</strong> 根据 10 月 14 日的通知邮件，仍然可以用 Flash 和最新的 Flash-Lite。时间窗内没有新的邮件来更改这条规则。原通知仍未读，也没有写出具体时区和时刻。如果他习惯用 Pro 模型做什么事，需要换个工具或换个入口。</li><li><strong>ChatGPT Health 的数据使用规则将从 11 月 19 日起变化，原通知仍未读。</strong> 如果他用过 ChatGPT Health，或把健康数据连进过 ChatGPT，最好在 11 月 19 日之前打开 Settings 里的 Data Controls，确认「Improve the model for everyone」是否符合自己的意愿。通知没有提供精确生效时刻，不要拖到最后一天。</li><li><strong>AdventureX 的二次打款还没有新消息。</strong> 北京时间 11 月 3 日对方回信说已经重新联系合作方尝试二次打款，请等待后续通知；窗内仍没有到账或进度的新邮件。如果奖金还没到账，可以回复那封旧邮件问一下进度。</li><li><strong>deepseek-harness 的自动测试这一天仍没有运行，和此前已被停用对得上。</strong> 如果还要用，得先把下载地址修好再手动启用。</li><li><strong>学习站这一天的存活探测是成功的，只有每日备份仍被用量检查拦住。</strong> 详见上面的 P-03。早报仓库在时间窗内的五次持续集成全部成功，发布链路是通的。</li><li><strong>一个 GitHub 访问令牌今天已到预计到期日。</strong> 详见上面的 P-01。如果还有自动任务在用它，建议尽快完成替换与验证，不要把新令牌写进聊天或邮件正文。</li><li><strong>OpenCode 的 Go 订阅将在北京时间 11 月 17 日 13:20 续费 10.00 美元。</strong> 详见上面的 P-02。</li><li><strong>OpenRouter 发来过一封登录验证码邮件。</strong> 详见上面的 P-04。如果这次验证不是他本人发起的，应立刻检查账户安全设置。</li></ul></article>
+<hr><h2>来源与核实说明</h2><p><strong>单一来源或部分未能核实的条目</strong>（正文里都已写明是谁说的，并注明「尚未得到其他来源确认」）：</p><ul><li>人工智能部分：AI-01（只有 TechCrunch，105 轮、130 亿美元收购和 8 亿美元支票分别转引 PitchBook、出自 TechCrunch 表述或转述《华尔街日报》，证据包没有打开原始数据库或原文）；AI-02（只有 ChinaTalk 对谈记录，属于评论和主张；RASA 的 269-22 票和「现行 NDAA 文本未写入」来自稿内背景注释，没有打开国会记录原文）；AI-03 中，委员会已发出这封信是多来源确认，但 Bessent 采访的完整原文、商务部是否认可「拒绝采取行动」，以及 Lutnick 是否同意出席众议院情报委员会，尚未独立确认；AI-04 中，来信本身是多来源确认，持股数量和市值以 CNBC 为准，证据包没有打开对应的 SEC 文件；AI-05（只有 Anthropic 面向开发者的官方账号声明，没有同步的产品博客）；AI-07（只有 The Verge；5 万亿美元、约占标普 500 的 6%、约 60 名直接下属是该文及受访分析师的表述，不是英伟达同期官方声明）；AI-08（只有 Interconnects 上 Nathan Lambert 的分析，没有英伟达官方对开源预算的新安排）；AI-09 中，「马斯克发表了这段话」是多来源确认，但握手交易是否普遍存在、会不会真的失去，没有英伟达或供应商的官方说明；AI-10（只有 TechCrunch 汇总，韩国 26 万块 GPU、台湾总部「仍按计划」和日本官方表态主要转自当地媒体和路透社，没有打开各部委原始新闻稿）；AI-11（只有 The Decoder；9010 亿、710 亿、644 亿、260 亿、超认购六倍、年化收入 810 亿是对彭博社和公司文件的转述，没有找到官方逐字稿或彭博社原稿）；AI-12 中，公开请愿已经多家媒体报道，但具体签名人数是持续变动的网站计数，签名和职务均为自报、未经核实。</li><li>科技部分：TK-01（只有上观新闻/解放日报同一稿，没有中科天算官方公告或第二家独立媒体的原创新闻）；TK-02 中，停飞事实和官方原因说明是多来源确认，但 NPR 提到的超过 1 万个航班被取消，与交通部「超过 3500 个航班被迅速处置、当晚恢复超过 8000 架次」的口径并不直接对应，不以 NPR 的取消架次作为确定数字，且「是操作失误还是路由器本身故障」尚未确定；TK-03 中，捕获成功、任务时长、助推器未能返回和 26 颗卫星入轨是多来源确认，但第三代卫星「每颗 1 Tbps、26 颗约等于 10 次第二代 Mini 发射」仍是发射前的计划口径，不是事后测得的实测吞吐。</li><li>医学部分：MED-01 以 FDA 官方说明为批准依据，HCPLive 转引《新英格兰医学杂志》的 37% 对 6% 已与 FDA 的 36% 对 6% 分开标明；MED-02 中，「消除地位已失去」这一判断是多来源确认，但泛美卫生组织公开新闻发布会原定 11 月 17 日，采集时尚未见到该组织官网正式声明页，死亡口径和 2025 年病例数字也不一致，正文已分开标明出处；MED-03 的标题、摘要、DOI 与上线时间已通过 Crossref 核对，并与华盛顿大学医学院新闻稿对照，但 jamanetwork.com 与 doi.org 对命令行返回 403，作者也强调需要在更大队列中验证、不能单独用于诊断；MED-04 为世界卫生组织官方新闻稿和指南出版页，指南出版页记录日期写作 12 November 2026，面向公众的发布安排以 11 月 14 日为准。</li><li>轻提示部分：P-01（GitHub 官方通知与 11 月 8 日旧通知相互印证，但精确截止时刻仍是推算，不是后台确认）；P-02（只有 OpenCode 控制台官方通知邮件，时间窗内没有扣款回执）；P-03（失败通知、运行结论和日志用量数字彼此对应，但出站读数是网卡累计值，是不是真实账单口径仍需到后台核对）；P-04（只有 OpenRouter 官方验证码邮件，没有第二封说明或异常登录警报来交叉印证请求来源）。</li></ul><p><strong>链接复核情况</strong>：</p><ul><li>讯AI：所有链接都在北京时间 2026 年 11 月 15 日 06:0x 前后重新打开过，HTTP 状态均为可访问。X 帖用 fxtwitter 接口核对了原文和时间戳；众议院情报委员会致商务部长的信、以及 Gerstner 与 Baker 致英伟达董事会的信，都对照了官方账号配发的信件图片原文。本包没有「仅 AIHOT 聚合」的条目。</li><li>讯科：上观新闻与解放日报为同一稿；美国交通部文字稿、联邦航空局声明和 NPR 报道，以及 Space.com、新华社、The Verge、CNBC 和 SpaceX 任务页，均已在证据包中写明可核。SpaceX 官方任务页在采集时尚未改写成飞行结果公报。</li><li>讯医：世界卫生组织新闻稿与指南出版页、FDA 官方批准页、KFF Health News、CBS News、美国传染病基金会、Star-Advertiser、Al Jazeera、费城问询报、华盛顿大学医学院新闻稿、HCPLive 的链接均返回 200，并已重新打开核对正文与时间戳。jamanetwork.com 与 doi.org 跳转对命令行返回 403 反爬，JAMA 论文的标题、摘要、DOI 与 Crossref 记录创建时间（`created`：2026-11-14T04:30:16Z，即北京时间 11-14 12:30:16）已通过 Crossref 核对；同时用华盛顿大学医学院同日新闻稿对照了关键数字。泛美卫生组织新闻列表在采集时尚未出现正式声明页。</li><li>轻提示部分来自他的邮箱通知与 GitHub Actions 运行记录，属于私有材料，正文不放链接。</li></ul><p><strong>时间说明</strong>：凡是能拿到精确时间戳、官方社交媒体帖或媒体报道精确时刻的，正文都换算成了北京时间。英伟达宣布黄仁勋辞职这件事本身发生在 11 月 12 日，落在更早的时间窗里，正文只写窗口内的后续。Amodei 与 Jamie Dimon 的炉边谈话发生在北京时间 11 月 14 日 01:00，活动本身落在昨日窗口，AI-11 写的是本窗口内出现的第一篇较完整内容报道。美国空管网络不稳和宣布全国停飞的两个时点略早于窗口起点，TK-02 收录的是窗口内公布的官方原因说明，以及窗口内完成的复飞。世界卫生组织指南出版页记录日期写作 12 November 2026，面向公众的新闻稿以 11 月 14 日为准，不以出版页日期把新闻稿移出窗口。</p><h2>主编按语：未收录</h2><p>下面这些材料采集员查到了，但因为落在时间窗之外、属于对旧闻的回顾，或未能获得足够原文，所以没有收进正文。写在这里，是为了让他知道这些事不是被漏掉了，而是有意没收。</p><p><strong>讯AI 排除的窗外材料</strong>：</p><ul><li>英伟达宣布黄仁勋辞职的官方消息本身：发生在 11 月 12 日，落在更早的时间窗里，今天只写窗口内出现的后续，不把辞职公告当成新事实。</li><li>Cursor 于官方博客发布的安全事件完整调查：页面 datePublished 为 2026-11-13T12:00:00.000Z，即北京时间 11 月 13 日 20:00，落在昨日窗口。</li><li>Fortune 关于 OpenAI 解散独立机器人团队的独家报道：2026-11-13 17:05 UTC，即北京时间 11 月 14 日 01:05，亦在昨日窗口；The Decoder 于北京时间 11 月 14 日 19:40 的稿件是迟来的转述，未再单列。</li><li>Google 把 Google Wallet 接入 Gemini 个人智能的官方博客：2026-11-13T17:00:00+00:00，即北京时间 11 月 14 日 01:00，落在昨日窗口。</li><li>美联储 11 月《金融稳定报告》及 CNBC 报道：2026-11-13T21:00:12Z，即北京时间 11 月 14 日 05:00，早于本窗口一小时。</li><li>马斯克在北京时间 11 月 14 日 04:51 首次表示会签署恢复黄仁勋职务的请愿：对应 11 月 13 日 20:51 UTC，早于窗口；本包只收窗口内他就「握手交易」发表的新判断，以及窗口内出现的签名规模和具名高管，不把窗口前的表态写成今天的新事实。</li><li>Gemini 4 Hydrogen、ChatGPT Wallet、llama.cpp v1.0.0、DeepSeek 全家桶 API、混元 Hy Realtime 等，均已在更早窗口发布。</li><li>DeepMind 公开地球科学数据集的博客日期为 11 月 13 日。</li><li>内容农场提到的 Anthropic 上市相关诉讼没有找到可靠原文，未收。</li></ul><p><strong>讯科采集说明中的窗外材料</strong>：</p><ul><li>11 月 12 日英伟达首席执行官黄仁勋辞职公告本身。</li><li>11 月 13 日白天公布的中芯国际业绩会与源杰科技订单。</li><li>11 月 13 日印度安得拉邦与 AirTrunk 签署谅解备忘录。</li><li>11 月 12 日起的微软 365 全球故障主体。</li></ul><p><strong>讯医时间换算说明里点名的窗前材料</strong>：</p><ul><li>11 月 13 日白天的美国医保和医助服务中心（CMS）医助工作要求暂缓通知。</li><li>欧洲药品管理局（EMA）人用药品委员会（CHMP）会议要点。</li><li>阿斯利康 Imfinzi 联合方案批准新闻稿。</li><li>CIDRAP 麻疹/流感周报。</li><li>中国药审中心 11 月 13 日两份征求意见稿。</li><li>11 月 9 日的 asundexian 批准。</li></ul><p><strong>合并与对照说明</strong>：讯AI 第 4 条与讯科第 2 条（阿尔蒂米特的 Brad Gerstner 与阿特雷德斯的 Gavin Baker 致英伟达董事会的信）合并为人工智能部分的 AI-04，科技部分不再单列；两边的链接和数字都保留，持股数字以 CNBC 为准。公开请愿（AI-12）和这封投资人来信不是同一件事，已经分开写。Amodei 与 Jamie Dimon 的炉边谈话本身落在昨日窗口，AI-11 只写本窗口内出现的第一篇较完整内容报道。连读证据包「要紧事与待办」里的内容写进了第四部分的附，不计入条数。不同事件之间只做并排对照，不写因果。</p>
+        </div>
+      </details>
+      <div class="dock-balance" aria-hidden="true"></div>
+    </div>
+    <noscript><p class="noscript">回收臂的动作需要脚本。底账可以直接拉开，二十三条都在里面。</p></noscript>
+  </div>
+</div>
+<script>
+(function () {
+  var OPEN = -50;
+  var SHUT = -104;
+  var LEFT = 104;
+  var reduceMotion = false;
+  try {
+    reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  } catch (err) {
+    reduceMotion = false;
+  }
+
+  var ICONS = {
+    ship: '<svg viewBox="0 0 120 86" aria-hidden="true"><path d="M60 6c8 0 16 12 16 24v30c0 10-7 16-16 16s-16-6-16-16V30c0-12 8-24 16-24z" fill="#fff" stroke="#e0b08a" stroke-width="2"/><circle cx="60" cy="28" r="5" fill="#f6e4cc" stroke="#e0b08a"/><path d="M44 54 L26 74 L46 62Z" fill="#f6e2d0" stroke="#e0b08a"/><path d="M76 54 L94 74 L74 62Z" fill="#f6e2d0" stroke="#e0b08a"/><path d="M52 70h16" stroke="#f0d2ba" stroke-width="2"/></svg>',
+    drug: '<svg viewBox="0 0 120 86" aria-hidden="true"><rect x="16" y="14" width="52" height="58" rx="6" fill="#fff" stroke="#e0b08a" stroke-width="2"/><path d="M26 30h32M26 42h24M26 54h18" stroke="#ead6c6" stroke-width="2"/><rect x="76" y="28" width="24" height="40" rx="10" fill="#fff7ef" stroke="#e0b08a" stroke-width="2"/><rect x="82" y="20" width="12" height="12" rx="3" fill="#e7a57a"/></svg>',
+    letter: '<svg viewBox="0 0 120 86" aria-hidden="true"><rect x="22" y="18" width="76" height="50" rx="6" fill="#fff" stroke="#e0c8b2" stroke-width="2"/><path d="M24 22 L60 48 L96 22" fill="none" stroke="#e7a57a" stroke-width="2"/></svg>',
+    ring: '<svg viewBox="0 0 120 86" aria-hidden="true"><path d="M28 58a32 32 0 1 1 64 0" fill="none" stroke="#93a9bb" stroke-width="8" stroke-linecap="round"/></svg>',
+    guide: '<svg viewBox="0 0 120 86" aria-hidden="true"><path d="M18 16h40v54H24a6 6 0 0 1-6-6V16z" fill="#fff" stroke="#e0c8b2" stroke-width="2"/><path d="M58 16h38a6 6 0 0 1 6 6v42a6 6 0 0 1-6 6H58V16z" fill="#fffaf4" stroke="#e0c8b2" stroke-width="2"/><path d="M58 16v54" stroke="#e7a57a" stroke-width="2"/></svg>',
+    calendar: '<svg viewBox="0 0 120 86" aria-hidden="true"><rect x="30" y="14" width="60" height="58" rx="8" fill="#fff" stroke="#e0c8b2" stroke-width="2"/><path d="M30 28h60" stroke="#7dbaa8" stroke-width="12"/><text x="60" y="62" text-anchor="middle" font-size="22" fill="#3c342c" font-family="sans-serif">17</text></svg>',
+    mail: '<svg viewBox="0 0 120 86" aria-hidden="true"><rect x="26" y="20" width="68" height="46" rx="6" fill="#fff" stroke="#7dbaa8" stroke-width="2"/><path d="M28 24 L60 46 L92 24" fill="none" stroke="#1f6d5e" stroke-width="2"/></svg>',
+    clipboard: '<svg viewBox="0 0 120 86" aria-hidden="true"><rect x="36" y="16" width="48" height="58" rx="6" fill="#fff" stroke="#e0c8b2" stroke-width="2"/><rect x="50" y="10" width="20" height="10" rx="3" fill="#d9c7b4"/><path d="M46 34h28M46 46h28M46 58h18" stroke="#ead6c6" stroke-width="2"/></svg>',
+    card: '<svg viewBox="0 0 120 86" aria-hidden="true"><rect x="28" y="14" width="64" height="58" rx="8" fill="#fff" stroke="#e0c8b2" stroke-width="2"/><circle cx="48" cy="52" r="4" fill="#93a9bb"/><circle cx="64" cy="40" r="4" fill="#93a9bb"/><circle cx="80" cy="30" r="4" fill="#e7a57a"/><path d="M44 54c10-2 20-12 40-24" fill="none" stroke="#ead6c6" stroke-width="2"/></svg>'
+  };
+
+  var PIECES = [
+    {
+      cat: 'jia', mode: 'hang', icon: 'ship', name: '飞船', plate: '',
+      arrive: '回来的是一艘飞船模型。',
+      hang: '助推器改道了。',
+      kicker: '第一次已经接住了，下一环还悬在上面。',
+      line: '上级飞船第一次被发射塔机械臂从轨道上接住，助推器却因低燃料质量警报改道墨西哥湾。',
+      aside: '这次捕获是多来源确认的。任务大约 22.5 小时，放出了全部 26 颗星链第三代卫星。每颗计划增加 1 Tbps 容量，26 颗大约相当于 10 次猎鹰 9 号第二代 Mini 发射，仍是发射前的计划口径，不是事后实测。来源和数字在底账的 TK-03。'
+    },
+    {
+      cat: 'jia', mode: 'hang', icon: 'drug', name: '说明书', plate: '',
+      arrive: '回来的是一份刚获批的说明书。',
+      hang: '常规使用还在后面。',
+      kicker: '第一次已经接住了，下一环还悬在上面。',
+      line: '美国 FDA 批准了 Gazyva，作为有进展风险的成人原发性膜性肾病的首个专门药物，进入常规临床使用还是下一环。',
+      aside: 'FDA 所列 MAJESTY 试验第 104 周蛋白尿完全缓解率为 Gazyva 36%、他克莫司 6%，不是治愈率。HCPLive 转引《新英格兰医学杂志》为 37% 对 6%，两套口径不混用。说明书有黑框警告。来源在底账的 MED-01。'
+    },
+    {
+      cat: 'yi', mode: 'gap', icon: 'letter', name: '桌上的信', plate: '',
+      arrive: '回来的是一封留在桌上的信。',
+      hang: '',
+      kicker: '这一下差一点，圆环还缺一截。',
+      line: '黄仁勋已经离开，投资人来信要求放慢更换首席执行官的节奏，把回归选项留在桌上，并没有要求立刻复职。',
+      aside: '这是离任之后的后续，不是今天才宣布的辞职。这封信和公开请愿不是同一件事。持股数字以 CNBC 为准。来源在底账的 AI-04。'
+    },
+    {
+      cat: 'bing', mode: 'plate', icon: 'ring', name: '供应安排', plate: '书面合同',
+      arrive: '回来的是一截还没写成合同的供应安排。',
+      hang: '',
+      kicker: '板件放上去了，可这一层还没有核对实。',
+      line: '马斯克发帖称，许多供应安排靠握手而不是书面合同；英伟达或供应商还没有官方确认。',
+      aside: '这是窗口内的个人评论。窗口开始前表示会在请愿上签名，那一句不算今天的新事实。来源在底账的 AI-09。'
+    },
+    {
+      cat: 'jia', mode: 'hang', icon: 'guide', name: '指南', plate: '',
+      arrive: '回来的是一本刚印发的指南。',
+      hang: '2030 年的目标还在后面。',
+      kicker: '第一次已经接住了，下一环还悬在上面。',
+      line: '世界卫生组织发布了首份成人 1 型糖尿病指南，2030 年让患者获得可负担胰岛素和自我监测的目标还是下一环。',
+      aside: '新闻稿写 2025 年全球约 950 万人患有 1 型糖尿病，同年另有 50 万新诊断。出版页日期写作 12 November 2026，面向公众的发布以 11 月 14 日为准。来源在底账的 MED-04。'
+    },
+    {
+      cat: 'yi', mode: 'gap', icon: 'calendar', name: '麻疹通报', plate: '',
+      arrive: '回来的是一张还停在 17 日的日历。',
+      hang: '',
+      kicker: '这一下差一点，圆环还缺一截。',
+      line: '据 KFF 引述了解评议的研究者，美国麻疹消除地位已失去；PAHO 原计划 11 月 17 日公开，截至采集截止尚无官网正式通报。',
+      aside: '2026 年确诊至少 5412 例。死亡口径要分开：疾控中心至少 6 例，传染病基金会写今年 10 例，不能合成一个数字。失去的是消除地位，不是说麻疹曾被根除。来源在底账的 MED-02。'
+    },
+    {
+      cat: 'jia', mode: 'hang', icon: 'mail', name: '监督的信', plate: '',
+      arrive: '回来的是一封已经发出的信。',
+      hang: '到会说明还没落到。',
+      kicker: '第一次已经接住了，下一环还悬在上面。',
+      line: '众议院情报委员会的信已经发出，商务部长是否到会说明，下一环还没落到。',
+      aside: '信已发出是多来源确认。信里转述的「拒绝采取行动」，以及部长是否出席，都还没有独立确认。来源在底账的 AI-03。'
+    },
+    {
+      cat: 'yi', mode: 'gap', icon: 'clipboard', name: '请愿', plate: '',
+      arrive: '回来的是一份公开请愿。',
+      hang: '',
+      kicker: '这一下差一点，圆环还缺一截。',
+      line: '黄仁勋已经离开，公开请愿要求在调查得出事实之前先让黄仁勋回来；签名和职务仍是自报，未经核实。',
+      aside: '截至周六下午超过 11.5 万个签名，这个人数是网站自己的计数。请愿独立于英伟达，也没有得到黄仁勋背书。它和投资人那封信不是同一诉求。来源在底账的 AI-12。'
+    },
+    {
+      cat: 'bing', mode: 'plate', icon: 'card', name: '标志物', plate: '更大队列',
+      arrive: '回来的是一张标志物卡片。',
+      hang: '',
+      kicker: '板件放上去了，可这一层还没有核对实。',
+      line: '血液和脑脊液里的 tau 片段 eMTBR-tau243 给出了信号，但还不能单独用来诊断。',
+      aside: '这是病例对照研究，229 名参与者。区分 III 到 IV 期与对照的 AUC 是 0.97，区分 I 期是 0.64。作者写明还要在更大队列里验证。来源在底账的 MED-03。'
+    }
+  ];
+
+  var RING = '<svg class="ring" viewBox="0 0 80 80" aria-hidden="true"><circle cx="40" cy="40" r="26" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-dasharray="118 46" transform="rotate(-70 40 40)"/></svg>';
+
+  var arm = document.getElementById('arm');
+  var leftArm = document.getElementById('left-arm');
+  var hinge = document.getElementById('hinge');
+  var tower = document.getElementById('tower');
+  var object = document.getElementById('object');
+  var hang = document.getElementById('hang');
+  var hangLabel = document.getElementById('hang-label');
+  var gap = document.getElementById('gap');
+  var notch = document.getElementById('notch');
+  var plate = document.getElementById('plate');
+  var hint = document.getElementById('hint');
+  var pieceName = document.getElementById('piece-name');
+  var live = document.getElementById('live');
+  var card = document.getElementById('card');
+  var cardKicker = document.getElementById('card-kicker');
+  var cardLine = document.getElementById('card-line');
+  var cardAside = document.getElementById('card-aside');
+  var nextBtn = document.getElementById('next');
+  var finale = document.getElementById('finale');
+  var stacks = document.getElementById('stacks');
+  var replay = document.getElementById('replay');
+  var soundBtn = document.getElementById('sound');
+  var ledger = document.getElementById('ledger');
+  var note = document.getElementById('note');
+  var dots = document.querySelectorAll('#dots .dot');
+
+  var index = 0;
+  var phase = 'boot';
+  var currentDeg = OPEN;
+  var motionGen = 0;
+  var plateSeated = false;
+  var soundOn = false;
+  var audioCtx = null;
+  var suppressClick = false;
+  var suppressPlateClick = false;
+  var dragMoved = false;
+  var plateMoved = false;
+  var plateOffsetX = 0;
+  var plateOffsetY = 0;
+
+  function say(text) {
+    live.textContent = text;
+  }
+
+  function paintArm() {
+    arm.style.setProperty('--arm', currentDeg.toFixed(2) + 'deg');
+    leftArm.style.setProperty('--arm', LEFT + 'deg');
+  }
+
+  function clamp(value, min, max) {
+    return Math.max(min, Math.min(max, value));
+  }
+
+  function openness(deg) {
+    return (OPEN - deg) / (OPEN - SHUT);
+  }
+
+  function swingToDeg(target, done) {
+    var gen = ++motionGen;
+    var from = currentDeg;
+    var started = performance.now();
+    var duration = reduceMotion ? 1 : 760;
+    function frame(now) {
+      if (gen !== motionGen) return;
+      var progress = Math.min(1, (now - started) / duration);
+      var eased = 1 - Math.pow(1 - progress, 3);
+      currentDeg = from + (target - from) * eased;
+      paintArm();
+      if (progress < 1) requestAnimationFrame(frame);
+      else if (done) done();
+    }
+    requestAnimationFrame(frame);
+  }
+
+  function tone(freq, duration) {
+    if (!soundOn) return;
+    try {
+      var Ctx = window.AudioContext || window.webkitAudioContext;
+      if (!Ctx) return;
+      if (!audioCtx) audioCtx = new Ctx();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      var osc = audioCtx.createOscillator();
+      var gain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.0001, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.04, audioCtx.currentTime + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + duration + 0.02);
+    } catch (err) {
+      soundOn = false;
+    }
+  }
+
+  function soundFor(piece) {
+    if (piece.mode === 'gap') {
+      tone(466, 0.12);
+      setTimeout(function () { tone(440, 0.16); }, 100);
+    } else if (piece.mode === 'plate') {
+      tone(392, 0.09);
+      setTimeout(function () { tone(523, 0.12); }, 90);
+    } else {
+      tone(523, 0.1);
+      setTimeout(function () { tone(659, 0.14); }, 100);
+    }
+  }
+
+  function markDots() {
+    dots.forEach(function (dot, dotIndex) {
+      var done = dotIndex < index || (dotIndex === index && (phase === 'card' || phase === 'end'));
+      dot.classList.toggle('is-done', done);
+      dot.classList.toggle('is-now', dotIndex === index && phase !== 'end');
+      if (done && PIECES[dotIndex]) dot.setAttribute('data-cat', PIECES[dotIndex].cat);
+      else dot.removeAttribute('data-cat');
+    });
+  }
+
+  function showPiece() {
+    var piece = PIECES[index];
+    phase = 'arrive';
+    plateSeated = false;
+    currentDeg = OPEN;
+    paintArm();
+    hang.hidden = true;
+    gap.hidden = true;
+    tower.classList.remove('is-jia', 'is-yi', 'is-bing', 'is-away');
+    object.className = 'object';
+    object.hidden = false;
+    object.innerHTML = ICONS[piece.icon];
+    pieceName.textContent = piece.arrive;
+    notch.hidden = piece.mode !== 'plate';
+    plate.hidden = piece.mode !== 'plate';
+    plate.className = 'plate';
+    plate.style.left = '';
+    plate.style.top = '';
+    if (piece.mode === 'plate') {
+      plate.textContent = piece.plate;
+      plate.setAttribute('aria-label', piece.plate + '，对到底座的缺口上');
+      hint.textContent = '先把「' + piece.plate + '」这块板件对到底座的缺口上，再合上回收臂。';
+    } else {
+      hint.textContent = '按住右边发亮的回收臂，朝左边合上。';
+    }
+    markDots();
+    say('第 ' + (index + 1) + ' 件，共 ' + PIECES.length + ' 件。' + piece.arrive + hint.textContent);
+    requestAnimationFrame(function () {
+      object.classList.add('is-in');
+      phase = 'ready';
+    });
+  }
+
+  function reveal(piece) {
+    tower.classList.add('is-' + piece.cat);
+    object.classList.add('is-caught');
+    if (piece.mode === 'hang') {
+      hang.hidden = false;
+      hangLabel.textContent = piece.hang;
+    }
+    if (piece.mode === 'gap') gap.hidden = false;
+    if (piece.mode === 'plate') plate.classList.add('is-seamed');
+    cardKicker.textContent = piece.kicker;
+    cardKicker.className = 'card-kicker ' + piece.cat;
+    cardLine.textContent = piece.line;
+    cardAside.textContent = piece.aside;
+    nextBtn.textContent = index === PIECES.length - 1 ? '看看今天这一圈' : '继续接下一件';
+    hint.textContent = piece.kicker;
+    card.hidden = false;
+    phase = 'card';
+    markDots();
+    soundFor(piece);
+    say(piece.kicker + piece.line);
+  }
+
+  function resolve() {
+    if (phase === 'settle' || phase === 'card' || phase === 'end') return;
+    var piece = PIECES[index];
+    phase = 'settle';
+    var target = piece.mode === 'gap' ? OPEN + (SHUT - OPEN) * 0.74 : SHUT;
+    swingToDeg(target, function () { reveal(piece); });
+  }
+
+  function rejectShort(message) {
+    phase = 'reject';
+    swingToDeg(OPEN, function () {
+      phase = 'ready';
+      if (message) {
+        hint.textContent = message;
+        say(message);
+      }
+    });
+  }
+
+  function attemptClose() {
+    if (phase !== 'ready') return;
+    var piece = PIECES[index];
+    if (piece.mode === 'plate' && !plateSeated) {
+      phase = 'reject';
+      swingToDeg(OPEN + (SHUT - OPEN) * 0.42, function () {
+        rejectShort('先把缺的那一块对到底座的缺口上。');
+      });
+      return;
+    }
+    resolve();
+  }
+
+  function releaseArm() {
+    var piece = PIECES[index];
+    var amount = openness(currentDeg);
+    if (piece.mode === 'plate' && !plateSeated) {
+      rejectShort(amount > 0.18 ? '先把缺的那一块对到底座的缺口上。' : '');
+      return;
+    }
+    var need = piece.mode === 'gap' ? 0.52 : 0.7;
+    if (amount >= need) resolve();
+    else rejectShort(amount > 0.12 ? '再往左边合一点。' : '');
+  }
+
+  function degFromEvent(event) {
+    var rect = hinge.getBoundingClientRect();
+    var x = event.clientX - (rect.left + rect.width / 2);
+    var y = event.clientY - (rect.top + rect.height / 2);
+    var deg = Math.atan2(y, x) * 180 / Math.PI;
+    if (deg > 0) deg = deg > 90 ? deg - 360 : deg;
+    return clamp(deg, SHUT, OPEN);
+  }
+
+  arm.addEventListener('pointerdown', function (event) {
+    if (phase !== 'ready') return;
+    if (typeof event.button === 'number' && event.button !== 0) return;
+    motionGen += 1;
+    phase = 'drag';
+    dragMoved = false;
+    arm.classList.add('is-held');
+    if (arm.setPointerCapture) arm.setPointerCapture(event.pointerId);
+    event.preventDefault();
+  });
+
+  arm.addEventListener('pointermove', function (event) {
+    if (phase !== 'drag') return;
+    dragMoved = true;
+    currentDeg = degFromEvent(event);
+    paintArm();
+  });
+
+  function endArmDrag() {
+    if (phase !== 'drag') return;
+    arm.classList.remove('is-held');
+    phase = 'ready';
+    if (dragMoved) {
+      suppressClick = true;
+      releaseArm();
+    }
+  }
+
+  arm.addEventListener('pointerup', endArmDrag);
+  arm.addEventListener('pointercancel', endArmDrag);
+
+  arm.addEventListener('click', function (event) {
+    if (suppressClick) {
+      suppressClick = false;
+      event.preventDefault();
+      return;
+    }
+    attemptClose();
+  });
+
+  function seatPlate() {
+    if (plateSeated || phase === 'end') return;
+    plateSeated = true;
+    plate.classList.remove('is-dragging');
+    plate.style.left = '';
+    plate.style.top = '';
+    plate.classList.add('is-seated');
+    hint.textContent = '这块还没有完全对严。现在可以把回收臂合上。';
+    say(hint.textContent);
+    tone(494, 0.08);
+  }
+
+  plate.addEventListener('pointerdown', function (event) {
+    if (plate.hidden || plateSeated || phase !== 'ready') return;
+    if (typeof event.button === 'number' && event.button !== 0) return;
+    plateMoved = false;
+    var towerRect = tower.getBoundingClientRect();
+    var plateRect = plate.getBoundingClientRect();
+    plateOffsetX = event.clientX - plateRect.left;
+    plateOffsetY = event.clientY - plateRect.top;
+    plate.style.left = (plateRect.left - towerRect.left) + 'px';
+    plate.style.top = (plateRect.top - towerRect.top) + 'px';
+    plate.classList.add('is-dragging');
+    if (plate.setPointerCapture) plate.setPointerCapture(event.pointerId);
+    event.preventDefault();
+  });
+
+  plate.addEventListener('pointermove', function (event) {
+    if (!plate.classList.contains('is-dragging')) return;
+    plateMoved = true;
+    var towerRect = tower.getBoundingClientRect();
+    plate.style.left = (event.clientX - towerRect.left - plateOffsetX) + 'px';
+    plate.style.top = (event.clientY - towerRect.top - plateOffsetY) + 'px';
+  });
+
+  function endPlateDrag() {
+    if (!plate.classList.contains('is-dragging')) return;
+    plate.classList.remove('is-dragging');
+    if (!plateMoved) return;
+    suppressPlateClick = true;
+    var plateRect = plate.getBoundingClientRect();
+    var notchRect = notch.getBoundingClientRect();
+    var dx = (plateRect.left + plateRect.width / 2) - (notchRect.left + notchRect.width / 2);
+    var dy = (plateRect.top + plateRect.height / 2) - (notchRect.top + notchRect.height / 2);
+    if (Math.hypot(dx, dy) < 120) seatPlate();
+    else {
+      plate.style.left = '';
+      plate.style.top = '';
+    }
+  }
+
+  plate.addEventListener('pointerup', endPlateDrag);
+  plate.addEventListener('pointercancel', endPlateDrag);
+  plate.addEventListener('click', function () {
+    if (suppressPlateClick) {
+      suppressPlateClick = false;
+      return;
+    }
+    if (phase !== 'ready' || plateSeated) return;
+    seatPlate();
+  });
+
+  nextBtn.addEventListener('click', function () {
+    if (phase !== 'card') return;
+    card.hidden = true;
+    index += 1;
+    if (index >= PIECES.length) showFinale();
+    else showPiece();
+  });
+
+  function showFinale() {
+    phase = 'end';
+    card.hidden = true;
+    hang.hidden = true;
+    gap.hidden = true;
+    plate.hidden = true;
+    notch.hidden = true;
+    tower.classList.add('is-away');
+    hint.textContent = '想看全部二十三条，拉开底座上的底账。';
+    pieceName.textContent = '';
+    var groups = [
+      { cat: 'jia', title: '暖杏这一叠，第一次已经接住，下一环还悬着。' },
+      { cat: 'yi', title: '青绿这一叠，圆环还缺一截。' },
+      { cat: 'bing', title: '灰蓝这一叠，缺的那一层还没核对实。' }
+    ];
+    stacks.replaceChildren();
+    groups.forEach(function (group) {
+      var section = document.createElement('section');
+      section.className = 'stack is-' + group.cat;
+      section.innerHTML = RING + '<div class="mini"></div><p class="stack-line"></p>';
+      section.querySelector('.stack-line').textContent = group.title;
+      var mini = section.querySelector('.mini');
+      PIECES.forEach(function (piece) {
+        if (piece.cat !== group.cat) return;
+        var figure = document.createElement('figure');
+        figure.innerHTML = ICONS[piece.icon] + '<figcaption></figcaption>';
+        figure.querySelector('figcaption').textContent = piece.name;
+        mini.appendChild(figure);
+      });
+      stacks.appendChild(section);
+    });
+    finale.hidden = false;
+    markDots();
+    say('第一次已经发生了，圆环却还没合上。还要看缺的那一层有没有补上，最后那一下有没有接住。');
+    tone(523, 0.12);
+    setTimeout(function () { tone(659, 0.16); }, 140);
+  }
+
+  replay.addEventListener('click', function () {
+    index = 0;
+    finale.hidden = true;
+    stacks.replaceChildren();
+    dots.forEach(function (dot) {
+      dot.className = 'dot';
+      dot.removeAttribute('data-cat');
+    });
+    showPiece();
+  });
+
+  soundBtn.addEventListener('click', function () {
+    soundOn = !soundOn;
+    soundBtn.setAttribute('aria-pressed', soundOn ? 'true' : 'false');
+    soundBtn.textContent = soundOn ? '声音开着' : '声音关着';
+    if (soundOn) tone(640, 0.08);
+  });
+
+  document.querySelectorAll('[data-filter]').forEach(function (button) {
+    button.addEventListener('click', function () {
+      var cat = button.getAttribute('data-filter');
+      document.querySelectorAll('[data-filter]').forEach(function (other) {
+        other.setAttribute('aria-pressed', other === button ? 'true' : 'false');
+      });
+      var shown = 0;
+      document.querySelectorAll('.entry').forEach(function (entry) {
+        var entryCat = entry.getAttribute('data-cat');
+        var hide = cat !== 'all' && entryCat !== cat;
+        entry.hidden = hide;
+        if (!hide && entryCat !== 'fu') shown += 1;
+      });
+      var lead = cat === 'all' ? '现在看全部' : button.textContent;
+      say(lead + '，共 ' + shown + ' 条。');
+    });
+  });
+
+  document.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape') {
+      if (ledger.open) {
+        ledger.open = false;
+        event.preventDefault();
+      } else if (note.open) {
+        note.open = false;
+        event.preventDefault();
+      }
+      return;
+    }
+    if (ledger.open || note.open) return;
+    var target = event.target;
+    var inControl = target && target.closest && target.closest('button, a, summary, input, textarea');
+    if (inControl && target !== arm) return;
+    if ((event.key === 'ArrowLeft' || (event.key === 'Enter' && target === arm)) && phase === 'ready') {
+      event.preventDefault();
+      attemptClose();
+    }
+    if (event.key === 'ArrowDown' && phase === 'ready' && PIECES[index].mode === 'plate' && !plateSeated) {
+      event.preventDefault();
+      seatPlate();
+    }
+  });
+
+  paintArm();
+  showPiece();
+  document.body.dataset.ready = '1';
+
+  if (!reduceMotion) {
+    setTimeout(function () {
+      if (phase === 'ready' && index === 0 && Math.abs(currentDeg - OPEN) < 0.5) {
+        swingToDeg(OPEN - 14, function () {
+          if (phase === 'ready') swingToDeg(OPEN, function () {});
+        });
+      }
+    }, 2600);
+  }
+})();
+</script>
+</body>
+<!--
+DESIGN LESSON
+STYLE: 星期日清晨的奶白天光下，浅木工作台上有一座桌面发射塔和一副可以合上的回收臂。
+GENRE: 用手把回收臂合上，看这一下是接住了、还缺一截，还是要先补上一层。
+TITLE: 合上回收臂
+THESIS: 第一次已经发生了，圆环却还没合上；还要看缺的那一层有没有补上、最后那一下有没有接住。
+-->
+</html>
